@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Styles CSS pour le système d'onboarding de PDF Builder Pro
  * Design classique avec les couleurs du plugin
  */
@@ -287,7 +287,7 @@
 
 
 /* Styles pour le contenu des étapes */
-.welcome-features {
+.pdf-builder-onboarding-modal .welcome-features {
     display: flex;
     display: -webkit-flex;
     display: -moz-flex;
@@ -302,7 +302,7 @@
     margin-bottom: 24px;
 }
 
-.feature-item {
+.pdf-builder-onboarding-modal .feature-item {
     flex: 1;
     -webkit-flex: 1;
     -moz-flex: 1;
@@ -324,7 +324,7 @@
     -o-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.feature-item:hover {
+.pdf-builder-onboarding-modal .feature-item:hover {
     background: rgba(219, 234, 254, 0.8);
     border-color: rgba(59, 130, 246, 0.2);
     transform: translateY(-2px);
@@ -339,28 +339,28 @@
     -o-box-shadow: 0 8px 20px rgba(59, 130, 246, 0.08);
 }
 
-.feature-item h4 {
+.pdf-builder-onboarding-modal .feature-item h4 {
     margin: 12px 0 8px 0;
     color: #1e293b;
     font-size: 16px;
     font-weight: 600;
 }
 
-.feature-item p {
+.pdf-builder-onboarding-modal .feature-item p {
     margin: 0;
     color: #334155;
     font-size: 14px;
     line-height: 1.5;
 }
 
-.feature-icon {
+.pdf-builder-onboarding-modal .feature-icon {
     font-size: 32px;
     display: block;
     margin-bottom: 12px;
     color: #3b82f6;
 }
 
-.environment-checks {
+.pdf-builder-onboarding-modal .environment-checks {
     display: flex;
     display: -webkit-flex;
     display: -moz-flex;
@@ -375,7 +375,7 @@
     margin-bottom: 24px;
 }
 
-.check-item {
+.pdf-builder-onboarding-modal .check-item {
     display: flex;
     display: -webkit-flex;
     display: -moz-flex;
@@ -401,24 +401,24 @@
     -o-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.check-item:hover {
+.pdf-builder-onboarding-modal .check-item:hover {
     background: rgba(219, 234, 254, 0.9);
     border-color: rgba(59, 130, 246, 0.2);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(59, 130, 246, 0.08);
 }
 
-.check-item.success {
+.pdf-builder-onboarding-modal .check-item.success {
     background: rgba(34, 197, 94, 0.02);
     border-color: rgba(34, 197, 94, 0.1);
 }
 
-.check-item.warning {
+.pdf-builder-onboarding-modal .check-item.warning {
     background: rgba(245, 158, 11, 0.02);
     border-color: rgba(245, 158, 11, 0.1);
 }
 
-.check-icon {
+.pdf-builder-onboarding-modal .check-icon {
     font-size: 18px;
     flex-shrink: 0;
     -webkit-flex-shrink: 0;
@@ -427,21 +427,21 @@
     -o-flex-shrink: 0;
 }
 
-.check-content h5 {
+.pdf-builder-onboarding-modal .check-content h5 {
     margin: 0 0 4px 0;
     font-size: 14px;
     font-weight: 600;
     color: #1e293b;
 }
 
-.check-content p {
+.pdf-builder-onboarding-modal .check-content p {
     margin: 0;
     font-size: 13px;
     color: #334155;
     line-height: 1.4;
 }
 
-.template-suggestions {
+.pdf-builder-onboarding-modal .template-suggestions {
     display: flex;
     display: -webkit-flex;
     display: -moz-flex;
@@ -456,7 +456,7 @@
     margin-bottom: 24px;
 }
 
-.template-card {
+.pdf-builder-onboarding-modal .template-card {
     flex: 1;
     min-width: 140px;
     border: 1px solid #ddd;
@@ -468,17 +468,17 @@
     background: #ffffff;
 }
 
-.template-card:hover {
+.pdf-builder-onboarding-modal .template-card:hover {
     border-color: #3b82f6;
     background: #f8f9fa;
 }
 
-.template-card.selected {
+.pdf-builder-onboarding-modal .template-card.selected {
     border-color: #3b82f6;
     background: #e3f2fd;
 }
 
-.template-preview {
+.pdf-builder-onboarding-modal .template-preview {
     width: 60px;
     height: 60px;
     background: #f8fafc;
@@ -507,21 +507,21 @@
     border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
-.template-card h4 {
+.pdf-builder-onboarding-modal .template-card h4 {
     margin: 0 0 8px 0;
     font-size: 16px;
     font-weight: 600;
     color: #1e293b;
 }
 
-.template-card p {
+.pdf-builder-onboarding-modal .template-card p {
     margin: 0;
     font-size: 14px;
     color: #334155;
     line-height: 1.4;
 }
 
-.setup-notice {
+.pdf-builder-onboarding-modal .setup-notice {
     padding: 16px;
     border-radius: 12px;
     -webkit-border-radius: 12px;
@@ -551,45 +551,45 @@
     -o-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.setup-notice.success {
+.pdf-builder-onboarding-modal .setup-notice.success {
     background: #f0fdf4;
     border-color: #d1fae5;
 }
 
-.setup-notice.info {
+.pdf-builder-onboarding-modal .setup-notice.info {
     background: #eff6ff;
     border-color: #dbeafe;
 }
 
-.setup-notice .notice-icon {
+.pdf-builder-onboarding-modal .setup-notice .notice-icon {
     font-size: 20px;
 }
 
-.setup-notice .notice-content h4 {
+.pdf-builder-onboarding-modal .setup-notice .notice-content h4 {
     margin: 0 0 4px 0;
     font-size: 16px;
     font-weight: 600;
     color: #1d2327;
 }
 
-.setup-notice .notice-content p {
+.pdf-builder-onboarding-modal .setup-notice .notice-content p {
     margin: 0;
     font-size: 14px;
     color: #334155;
 }
 
-.setup-options {
+.pdf-builder-onboarding-modal .setup-options {
     margin-bottom: 24px;
 }
 
-.setup-options h5 {
+.pdf-builder-onboarding-modal .setup-options h5 {
     margin: 0 0 12px 0;
     font-size: 16px;
     font-weight: 600;
     color: #1d2327;
 }
 
-.option-item {
+.pdf-builder-onboarding-modal .option-item {
     display: flex;
     display: -webkit-flex;
     display: -moz-flex;
@@ -618,7 +618,7 @@
     -o-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.option-item:hover {
+.pdf-builder-onboarding-modal .option-item:hover {
     background: #f9fafb;
     border-color: #d1d5db;
     transform: translateY(-2px);
@@ -633,11 +633,11 @@
     -o-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
 }
 
-.option-item input[type="checkbox"] {
+.pdf-builder-onboarding-modal .option-item input[type="checkbox"] {
     margin: 0;
 }
 
-.completion-summary {
+.pdf-builder-onboarding-modal .completion-summary {
     display: grid;
     display: -webkit-grid;
     display: -moz-grid;
@@ -652,7 +652,7 @@
     margin-bottom: 24px;
 }
 
-.summary-item {
+.pdf-builder-onboarding-modal .summary-item {
     text-align: center;
     padding: 20px 16px;
     background: #fff;
@@ -668,7 +668,7 @@
     -o-transition: all 0.2s ease;
 }
 
-.summary-item:hover {
+.pdf-builder-onboarding-modal .summary-item:hover {
     background: #fff;
     border-color: #3b82f6;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -678,28 +678,28 @@
     -o-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.summary-item h4 {
+.pdf-builder-onboarding-modal .summary-item h4 {
     margin: 12px 0 8px 0;
     font-size: 16px;
     font-weight: 600;
     color: #1d2327;
 }
 
-.summary-item p {
+.pdf-builder-onboarding-modal .summary-item p {
     margin: 0 0 16px 0;
     color: #334155;
     font-size: 14px;
     line-height: 1.4;
 }
 
-.summary-icon {
+.pdf-builder-onboarding-modal .summary-icon {
     font-size: 28px;
     display: block;
     margin-bottom: 8px;
     color: #3b82f6;
 }
 
-.completion-tips {
+.pdf-builder-onboarding-modal .completion-tips {
     background: #d1ecf1;
     padding: 16px;
     border: 1px solid #bee5eb;
@@ -712,7 +712,7 @@
 }
 
 /* Indicateurs de progression */
-.progress-indicator {
+.pdf-builder-onboarding-modal .progress-indicator {
     display: flex;
     display: -webkit-flex;
     display: -moz-flex;
@@ -732,7 +732,7 @@
     margin: 24px 0;
 }
 
-.progress-indicator .step-dot {
+.pdf-builder-onboarding-modal .progress-indicator .step-dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -747,11 +747,11 @@
     -o-transition: all 0.2s ease;
 }
 
-.progress-indicator .step-dot.active {
+.pdf-builder-onboarding-modal .progress-indicator .step-dot.active {
     background: #3b82f6;
 }
 
-.progress-indicator .step-dot.completed {
+.pdf-builder-onboarding-modal .progress-indicator .step-dot.completed {
     background: #46b450;
 }
 
@@ -767,12 +767,12 @@
     }
 }
 
-.fade-in-up {
+.pdf-builder-onboarding-modal .fade-in-up {
     animation: fadeInUp 0.5s ease;
 }
 
 /* États de chargement */
-.loading-spinner {
+.pdf-builder-onboarding-modal .loading-spinner {
     display: inline-block;
     width: 24px;
     height: 24px;
@@ -787,7 +787,7 @@
 }
 
 /* États de succès/erreur */
-.success-message {
+.pdf-builder-onboarding-modal .success-message {
     background: #d4edda;
     border: 1px solid #c3e6cb;
     color: #155724;
@@ -800,7 +800,7 @@
     margin: 12px 0;
 }
 
-.error-message {
+.pdf-builder-onboarding-modal .error-message {
     background: #f8d7da;
     border: 1px solid #f5c6cb;
     color: #721c24;
@@ -813,19 +813,19 @@
     margin: 12px 0;
 }
 
-.completion-tips h5 {
+.pdf-builder-onboarding-modal .completion-tips h5 {
     margin: 0 0 8px 0;
     font-size: 16px;
     font-weight: 600;
     color: #1d2327;
 }
 
-.completion-tips ul {
+.pdf-builder-onboarding-modal .completion-tips ul {
     margin: 0;
     padding-left: 20px;
 }
 
-.completion-tips li {
+.pdf-builder-onboarding-modal .completion-tips li {
     margin-bottom: 4px;
     color: #334155;
     font-size: 14px;
@@ -1105,33 +1105,33 @@
 }
 
 /* Classes d'animation */
-.fade-in {
+.pdf-builder-onboarding-modal .fade-in {
     animation: fadeIn 0.3s ease;
 }
 
-.slide-in {
+.pdf-builder-onboarding-modal .slide-in {
     animation: slideIn 0.3s ease;
 }
 
 /* États de validation */
-.input-valid {
+.pdf-builder-onboarding-modal .input-valid {
     border-color: #46b450 !important;
 }
 
-.input-invalid {
+.pdf-builder-onboarding-modal .input-invalid {
     border-color: #dc3545 !important;
 }
 
-.feedback-success {
+.pdf-builder-onboarding-modal .feedback-success {
     color: #46b450;
 }
 
-.feedback-error {
+.pdf-builder-onboarding-modal .feedback-error {
     color: #dc3545;
 }
 
 /* Boutons d'aide */
-.onboarding-help-btn {
+.pdf-builder-onboarding-modal .onboarding-help-btn {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -1149,25 +1149,25 @@
     font-size: 16px;
 }
 
-.onboarding-help-btn:hover {
+.pdf-builder-onboarding-modal .onboarding-help-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: scale(1.1);
 }
 
 /* Indicateurs de progression améliorés */
-.progress-container {
+.pdf-builder-onboarding-modal .progress-container {
     position: relative;
     margin-bottom: 20px;
 }
 
-.step-indicators {
+.pdf-builder-onboarding-modal .step-indicators {
     display: flex;
     justify-content: center;
     gap: 8px;
     margin-bottom: 16px;
 }
 
-.step-indicator {
+.pdf-builder-onboarding-modal .step-indicator {
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -1177,41 +1177,41 @@
     position: relative;
 }
 
-.step-indicator.active {
+.pdf-builder-onboarding-modal .step-indicator.active {
     background: white;
     transform: scale(1.2);
 }
 
-.step-indicator.completed {
+.pdf-builder-onboarding-modal .step-indicator.completed {
     background: #10b981;
 }
 
-.step-indicator:hover {
+.pdf-builder-onboarding-modal .step-indicator:hover {
     transform: scale(1.1);
 }
 
 /* Micro-interactions */
-.template-card {
+.pdf-builder-onboarding-modal .template-card {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: center;
 }
 
-.template-card:hover {
+.pdf-builder-onboarding-modal .template-card:hover {
     transform: translateY(-4px) scale(1.02);
 }
 
-.template-card.selected {
+.pdf-builder-onboarding-modal .template-card.selected {
     transform: translateY(-2px) scale(1.01);
     box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
 }
 
-.btn {
+.pdf-builder-onboarding-modal .btn {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
 }
 
-.btn:before {
+.pdf-builder-onboarding-modal .btn:before {
     content: '';
     position: absolute;
     top: 50%;
@@ -1224,19 +1224,19 @@
     transition: width 0.3s, height 0.3s;
 }
 
-.btn:active:before {
+.pdf-builder-onboarding-modal .btn:active:before {
     width: 300px;
     height: 300px;
 }
 
 /* États de chargement */
-.btn.loading {
+.pdf-builder-onboarding-modal .btn.loading {
     pointer-events: none;
     position: relative;
     opacity: 0.7;
 }
 
-.btn.loading:after {
+.pdf-builder-onboarding-modal .btn.loading:after {
     content: '';
     position: absolute;
     width: 14px;
@@ -1276,7 +1276,7 @@ kbd {
 }
 
 /* Indicateurs d'accessibilité */
-.sr-only {
+.pdf-builder-onboarding-modal .sr-only {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -1290,14 +1290,14 @@ kbd {
 
 /* Mode focus */
 .onboarding-modal button:focus,
-.onboarding-modal [tabindex]:focus {
+.pdf-builder-onboarding-modal .onboarding-modal [tabindex]:focus {
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
 }
 
 /* Responsive amélioré */
 @media (max-width: 768px) {
-    .onboarding-help-btn {
+    .pdf-builder-onboarding-modal .onboarding-help-btn {
         top: 15px;
         right: 15px;
         width: 28px;
@@ -1305,11 +1305,11 @@ kbd {
         font-size: 14px;
     }
 
-    .step-indicators {
+    .pdf-builder-onboarding-modal .step-indicators {
         gap: 6px;
     }
 
-    .step-indicator {
+    .pdf-builder-onboarding-modal .step-indicator {
         width: 10px;
         height: 10px;
     }
@@ -1327,12 +1327,12 @@ kbd {
     }
 }
 
-.fade-in-up {
+.pdf-builder-onboarding-modal .fade-in-up {
     animation: fadeInUp 0.6s ease-out;
 }
 
 /* États de succès/erreur */
-.success-message {
+.pdf-builder-onboarding-modal .success-message {
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     padding: 16px;
@@ -1341,7 +1341,7 @@ kbd {
     animation: fadeInUp 0.5s ease-out;
 }
 
-.error-message {
+.pdf-builder-onboarding-modal .error-message {
     background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
     padding: 16px;
@@ -1351,7 +1351,7 @@ kbd {
 }
 
 /* Indicateurs de progression circulaire */
-.progress-circle {
+.pdf-builder-onboarding-modal .progress-circle {
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -1766,27 +1766,27 @@ kbd {
    STYLES POUR L'ÉTAPE FREEMIUM MODE
    =========================================== */
 
-.freemium-mode-selection {
+.pdf-builder-onboarding-modal .freemium-mode-selection {
     text-align: center;
     max-width: 800px;
     margin: 0 auto;
 }
 
-.freemium-mode-selection > p {
+.pdf-builder-onboarding-modal .freemium-mode-selection > p {
     font-size: 18px;
     color: #374151;
     margin-bottom: 32px;
     font-weight: 500;
 }
 
-.mode-options {
+.pdf-builder-onboarding-modal .mode-options {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
     margin-bottom: 24px;
 }
 
-.mode-card {
+.pdf-builder-onboarding-modal .mode-card {
     background: #ffffff;
     border: 2px solid #e5e7eb;
     border-radius: 12px;
@@ -1798,23 +1798,23 @@ kbd {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.mode-card:hover {
+.pdf-builder-onboarding-modal .mode-card:hover {
     border-color: #3b82f6;
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
     transform: translateY(-2px);
 }
 
-.mode-card.selected {
+.pdf-builder-onboarding-modal .mode-card.selected {
     border-color: #3b82f6;
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
     box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
 }
 
-.mode-card.premium {
+.pdf-builder-onboarding-modal .mode-card.premium {
     position: relative;
 }
 
-.mode-card.premium .popular-badge {
+.pdf-builder-onboarding-modal .mode-card.premium .popular-badge {
     position: absolute;
     top: -12px;
     right: 20px;
@@ -1829,14 +1829,14 @@ kbd {
     box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
 }
 
-.mode-header {
+.pdf-builder-onboarding-modal .mode-header {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 16px;
 }
 
-.mode-icon {
+.pdf-builder-onboarding-modal .mode-icon {
     font-size: 24px;
     width: 48px;
     height: 48px;
@@ -1848,12 +1848,12 @@ kbd {
     flex-shrink: 0;
 }
 
-.mode-card.selected .mode-icon {
+.pdf-builder-onboarding-modal .mode-card.selected .mode-icon {
     background: linear-gradient(135deg, #3b82f6, #1d4ed8);
     color: #ffffff;
 }
 
-.mode-header h4 {
+.pdf-builder-onboarding-modal .mode-header h4 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
@@ -1861,21 +1861,21 @@ kbd {
     line-height: 1.2;
 }
 
-.mode-card.selected .mode-header h4 {
+.pdf-builder-onboarding-modal .mode-card.selected .mode-header h4 {
     color: #1e40af;
 }
 
-.mode-features {
+.pdf-builder-onboarding-modal .mode-features {
     margin-bottom: 20px;
 }
 
-.mode-features ul {
+.pdf-builder-onboarding-modal .mode-features ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.mode-features li {
+.pdf-builder-onboarding-modal .mode-features li {
     font-size: 14px;
     color: #4b5563;
     margin-bottom: 8px;
@@ -1885,11 +1885,11 @@ kbd {
     line-height: 1.4;
 }
 
-.mode-features li:last-child {
+.pdf-builder-onboarding-modal .mode-features li:last-child {
     margin-bottom: 0;
 }
 
-.mode-price {
+.pdf-builder-onboarding-modal .mode-price {
     display: flex;
     align-items: baseline;
     gap: 4px;
@@ -1897,19 +1897,19 @@ kbd {
     border-top: 1px solid #e5e7eb;
 }
 
-.mode-price .price {
+.pdf-builder-onboarding-modal .mode-price .price {
     font-size: 24px;
     font-weight: 700;
     color: #111827;
 }
 
-.mode-price .period {
+.pdf-builder-onboarding-modal .mode-price .period {
     font-size: 14px;
     color: #6b7280;
     font-weight: 500;
 }
 
-.freemium-notice {
+.pdf-builder-onboarding-modal .freemium-notice {
     background: #fef3c7 !important;
     border: 1px solid #f59e0b !important;
     border-left: 4px solid #f59e0b !important;
@@ -1919,31 +1919,31 @@ kbd {
     text-align: left !important;
 }
 
-.freemium-notice strong {
+.pdf-builder-onboarding-modal .freemium-notice strong {
     color: #92400e;
     font-weight: 600;
 }
 
 /* Responsive pour les cartes de mode */
 @media (max-width: 768px) {
-    .mode-options {
+    .pdf-builder-onboarding-modal .mode-options {
         grid-template-columns: 1fr;
         gap: 16px;
     }
 
-    .mode-card {
+    .pdf-builder-onboarding-modal .mode-card {
         padding: 20px;
     }
 
-    .mode-header h4 {
+    .pdf-builder-onboarding-modal .mode-header h4 {
         font-size: 16px;
     }
 
-    .mode-features li {
+    .pdf-builder-onboarding-modal .mode-features li {
         font-size: 13px;
     }
 
-    .mode-price .price {
+    .pdf-builder-onboarding-modal .mode-price .price {
         font-size: 20px;
     }
 }
@@ -2019,15 +2019,15 @@ kbd {
    STYLES POUR L'ÉTAPE ASSIGN TEMPLATE
    =========================================== */
 
-.assign-template-setup > div {
+.pdf-builder-onboarding-modal .assign-template-setup > div {
     margin-bottom: 24px;
 }
 
-.assign-template-setup > div:last-child {
+.pdf-builder-onboarding-modal .assign-template-setup > div:last-child {
     margin-bottom: 0;
 }
 
-.selected-template-preview {
+.pdf-builder-onboarding-modal .selected-template-preview {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     border: 2px solid #e2e8f0;
     border-radius: 12px;
@@ -2036,13 +2036,13 @@ kbd {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.template-header {
+.pdf-builder-onboarding-modal .template-header {
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
-.template-icon-large {
+.pdf-builder-onboarding-modal .template-icon-large {
     width: 64px;
     height: 64px;
     background: linear-gradient(135deg, #3b82f6, #1d4ed8);
@@ -2055,25 +2055,25 @@ kbd {
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
-.template-info h3 {
+.pdf-builder-onboarding-modal .template-info h3 {
     margin: 0 0 8px 0;
     font-size: 20px;
     font-weight: 600;
     color: #1e293b;
 }
 
-.template-info p {
+.pdf-builder-onboarding-modal .template-info p {
     margin: 0;
     color: #64748b;
     font-size: 14px;
     line-height: 1.5;
 }
 
-.template-customization {
+.pdf-builder-onboarding-modal .template-customization {
     margin-bottom: 32px;
 }
 
-.template-customization h4 {
+.pdf-builder-onboarding-modal .template-customization h4 {
     margin: 0 0 20px 0;
     font-size: 18px;
     font-weight: 600;
@@ -2083,25 +2083,25 @@ kbd {
     gap: 8px;
 }
 
-.customization-fields {
+.pdf-builder-onboarding-modal .customization-fields {
     display: grid;
     gap: 16px;
 }
 
-.field-group {
+.pdf-builder-onboarding-modal .field-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-.field-group label {
+.pdf-builder-onboarding-modal .field-group label {
     font-size: 14px;
     font-weight: 600;
     color: #374151;
 }
 
 .field-group input,
-.field-group textarea {
+.pdf-builder-onboarding-modal .field-group textarea {
     padding: 12px 16px;
     border: 2px solid #e5e7eb;
     border-radius: 8px;
@@ -2111,22 +2111,22 @@ kbd {
 }
 
 .field-group input:focus,
-.field-group textarea:focus {
+.pdf-builder-onboarding-modal .field-group textarea:focus {
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.field-group textarea {
+.pdf-builder-onboarding-modal .field-group textarea {
     resize: vertical;
     min-height: 60px;
 }
 
-.woocommerce-assignment {
+.pdf-builder-onboarding-modal .woocommerce-assignment {
     margin-bottom: 32px;
 }
 
-.woocommerce-assignment h4 {
+.pdf-builder-onboarding-modal .woocommerce-assignment h4 {
     margin: 0 0 12px 0;
     font-size: 18px;
     font-weight: 600;
@@ -2136,21 +2136,21 @@ kbd {
     gap: 8px;
 }
 
-.assignment-description {
+.pdf-builder-onboarding-modal .assignment-description {
     margin: 0 0 20px 0;
     color: #6b7280;
     font-size: 14px;
     line-height: 1.5;
 }
 
-.status-selection {
+.pdf-builder-onboarding-modal .status-selection {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
     margin-bottom: 20px;
 }
 
-.status-option {
+.pdf-builder-onboarding-modal .status-option {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -2163,67 +2163,67 @@ kbd {
     position: relative;
 }
 
-.status-option:hover {
+.pdf-builder-onboarding-modal .status-option:hover {
     border-color: #3b82f6;
     background: #eff6ff;
 }
 
-.status-option input[type="checkbox"] {
+.pdf-builder-onboarding-modal .status-option input[type="checkbox"] {
     width: 18px;
     height: 18px;
     accent-color: #3b82f6;
     cursor: pointer;
 }
 
-.status-option input[type="checkbox"]:checked + .status-badge {
+.pdf-builder-onboarding-modal .status-option input[type="checkbox"]:checked + .status-badge {
     background: linear-gradient(135deg, #10b981, #059669);
     color: #ffffff;
     transform: scale(1.05);
 }
 
-.status-badge.status-pending {
+.pdf-builder-onboarding-modal .status-badge.status-pending {
     background: #fef3c7;
     color: #92400e;
     border-color: #f59e0b;
 }
 
-.status-badge.status-processing {
+.pdf-builder-onboarding-modal .status-badge.status-processing {
     background: #dbeafe;
     color: #1e40af;
     border-color: #3b82f6;
 }
 
-.status-badge.status-on-hold {
+.pdf-builder-onboarding-modal .status-badge.status-on-hold {
     background: #fef3c7;
     color: #92400e;
     border-color: #f59e0b;
 }
 
-.status-badge.status-completed {
+.pdf-builder-onboarding-modal .status-badge.status-completed {
     background: #d1fae5;
     color: #065f46;
     border-color: #10b981;
 }
 
-.status-badge.status-cancelled {
+.pdf-builder-onboarding-modal .status-badge.status-cancelled {
     background: #fee2e2;
     color: #991b1b;
     border-color: #ef4444;
 }
 
-.status-badge.status-refunded {
+.pdf-builder-onboarding-modal .status-badge.status-refunded {
     background: #f3e8ff;
     color: #6b21a8;
     border-color: #8b5cf6;
 }
 
-.status-badge.status-failed {
+.pdf-builder-onboarding-modal .status-badge.status-failed {
     background: #fee2e2;
     color: #991b1b;
     border-color: #ef4444;
 }
 
-.assignment-notice {
+.pdf-builder-onboarding-modal .assignment-notice {
     display: flex;
     align-items: flex-start;
     gap: 12px;
@@ -2234,26 +2234,26 @@ kbd {
     margin-top: 16px;
 }
 
-.assignment-notice .notice-icon {
+.pdf-builder-onboarding-modal .assignment-notice .notice-icon {
     font-size: 20px;
     flex-shrink: 0;
 }
 
-.assignment-notice .notice-content {
+.pdf-builder-onboarding-modal .assignment-notice .notice-content {
     font-size: 14px;
     color: #1e40af;
     line-height: 1.5;
 }
 
-.assignment-notice .notice-content strong {
+.pdf-builder-onboarding-modal .assignment-notice .notice-content strong {
     color: #1d4ed8;
 }
 
-.template-actions {
+.pdf-builder-onboarding-modal .template-actions {
     margin-bottom: 32px;
 }
 
-.template-actions h4 {
+.pdf-builder-onboarding-modal .template-actions h4 {
     margin: 0 0 20px 0;
     font-size: 18px;
     font-weight: 600;
@@ -2263,13 +2263,13 @@ kbd {
     gap: 8px;
 }
 
-.action-options {
+.pdf-builder-onboarding-modal .action-options {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.action-option {
+.pdf-builder-onboarding-modal .action-option {
     display: flex;
     align-items: flex-start;
     gap: 12px;
@@ -2281,12 +2281,12 @@ kbd {
     transition: all 0.2s ease;
 }
 
-.action-option:hover {
+.pdf-builder-onboarding-modal .action-option:hover {
     border-color: #3b82f6;
     background: #eff6ff;
 }
 
-.action-option input[type="checkbox"] {
+.pdf-builder-onboarding-modal .action-option input[type="checkbox"] {
     width: 18px;
     height: 18px;
     accent-color: #3b82f6;
@@ -2294,19 +2294,19 @@ kbd {
     flex-shrink: 0;
 }
 
-.action-option input[type="checkbox"]:checked + .option-content {
+.pdf-builder-onboarding-modal .action-option input[type="checkbox"]:checked + .option-content {
     color: #1d4ed8;
 }
 
-.action-option input[type="checkbox"]:checked + .option-content::before {
+.pdf-builder-onboarding-modal .action-option input[type="checkbox"]:checked + .option-content::before {
     content: "";
 }
 
-.action-option .option-content {
+.pdf-builder-onboarding-modal .action-option .option-content {
     flex: 1;
 }
 
-.action-option .option-content strong {
+.pdf-builder-onboarding-modal .action-option .option-content strong {
     display: block;
     font-size: 14px;
     font-weight: 600;
@@ -2314,13 +2314,13 @@ kbd {
     margin-bottom: 4px;
 }
 
-.action-option .option-content span {
+.pdf-builder-onboarding-modal .action-option .option-content span {
     font-size: 13px;
     color: #6b7280;
     line-height: 1.4;
 }
 
-.setup-complete-notice {
+.pdf-builder-onboarding-modal .setup-complete-notice {
     display: flex;
     align-items: flex-start;
     gap: 12px;
@@ -2331,18 +2331,18 @@ kbd {
     border-left: 4px solid #22c55e;
 }
 
-.setup-complete-notice .notice-icon {
+.pdf-builder-onboarding-modal .setup-complete-notice .notice-icon {
     font-size: 24px;
     flex-shrink: 0;
 }
 
-.setup-complete-notice .notice-content {
+.pdf-builder-onboarding-modal .setup-complete-notice .notice-content {
     font-size: 14px;
     color: #166534;
     line-height: 1.5;
 }
 
-.setup-complete-notice .notice-content strong {
+.pdf-builder-onboarding-modal .setup-complete-notice .notice-content strong {
     color: #15803d;
     font-weight: 600;
 }
@@ -2504,7 +2504,7 @@ kbd {
 /* États désactivés pour l'étape assign template */
 .assign-template-setup input:disabled,
 .assign-template-setup textarea:disabled,
-.assign-template-setup input[type="checkbox"]:disabled {
+.pdf-builder-onboarding-modal .assign-template-setup input[type="checkbox"]:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     background: #f9fafb !important;
