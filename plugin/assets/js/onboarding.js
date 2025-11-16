@@ -1165,7 +1165,7 @@
             // Sauvegarder la sélection côté serveur
             this.saveTemplateSelection();
 
-            // Régénérer les boutons du footer pour refléter le changement d'état
+            // Mettre à jour les boutons du footer pour refléter la sélection
             this.updateFooterButtonsForCurrentStep();
         }
 
@@ -1601,20 +1601,24 @@
 
         updateFooterButtonsForCurrentStep() {
             // Régénérer les boutons du footer pour l'étape actuelle
-            // Cela est appelé après la sélection d'un template pour mettre à jour l'état du bouton
+            // Cela est nécessaire quand l'état change (par exemple, sélection de template)
             console.log('PDF Builder Onboarding: Updating footer buttons for current step', this.currentStep);
 
-            // Simuler les données de l'étape actuelle (devrait correspondre à ce qui vient du serveur)
-            const stepData = {
-                can_skip: this.currentStep !== 4, // Toutes les étapes sauf la dernière peuvent être ignorées
-                skip_text: this.currentStep === 2 ? 'Ignorer l\'étape' : 'Ignorer cette étape',
-                action: this.currentStep === 4 ? 'Terminer' : (this.currentStep === 2 ? 'Continuer' : 'Suivant'),
-                action_type: this.currentStep === 4 ? 'finish' : 'next',
-                requires_selection: this.currentStep === 2 // L'étape 2 nécessite une sélection
+            // Simuler les données de l'étape actuelle (on pourrait les récupérer du cache)
+            const stepData = this.getStepData(this.currentStep);
+
+            // Créer un objet data simulé basé sur les données de l'étape
+            const data = {
+                can_skip: stepData.can_skip || false,
+                skip_text: stepData.skip_text || 'Ignorer',
+                action: stepData.action_text,
+                action_type: stepData.action_type,
+                requires_selection: stepData.requires_selection || false
             };
 
+            // Régénérer les boutons
             const $footer = $('#pdf-builder-onboarding-modal .modal-footer');
-            const footerHtml = this.generateFooterButtons(this.currentStep, stepData);
+            const footerHtml = this.generateFooterButtons(this.currentStep, data);
             $footer.html(footerHtml);
 
             console.log('PDF Builder Onboarding: Footer buttons updated for step', this.currentStep);
@@ -1623,11 +1627,11 @@
         getStepData(step) {
             // Données des étapes (devrait correspondre au PHP)
             const steps = {
-                1: { action_text: 'Suivant', action_type: 'next', requires_selection: false },
-                2: { action_text: 'Continuer', action_type: 'next', requires_selection: true },
-                3: { action_text: 'Suivant', action_type: 'next', requires_selection: false },
-                4: { action_text: 'Suivant', action_type: 'next', requires_selection: false },
-                5: { action_text: 'Terminer', action_type: 'finish', requires_selection: false }
+                1: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' },
+                2: { action_text: 'Continuer', action_type: 'next', requires_selection: true, can_skip: true, skip_text: 'Ignorer l\'étape' },
+                3: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: true, skip_text: 'Ignorer cette étape' },
+                4: { action_text: 'Terminer', action_type: 'finish', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' },
+                5: { action_text: 'Terminer', action_type: 'finish', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' }
             };
             return steps[step];
         }
