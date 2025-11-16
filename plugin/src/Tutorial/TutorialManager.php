@@ -171,7 +171,10 @@ class TutorialManager
             <div class="tutorial-tooltip-footer">
                 <button class="tutorial-prev" disabled><?php _e('Précédent', 'pdf-builder-pro'); ?></button>
                 <span class="tutorial-progress">1 / 3</span>
-                <button class="tutorial-next"><?php _e('Suivant', 'pdf-builder-pro'); ?></button>
+                <div class="tutorial-footer-actions">
+                    <button class="tutorial-close tutorial-close-small" title="<?php _e('Fermer le tutoriel', 'pdf-builder-pro'); ?>">&times;</button>
+                    <button class="tutorial-next"><?php _e('Suivant', 'pdf-builder-pro'); ?></button>
+                </div>
             </div>
         </div>
         <?php
@@ -197,7 +200,10 @@ class TutorialManager
             </div>
             <div class="tutorial-tooltip-footer">
                 <button class="tutorial-skip"><?php _e('Passer le tutoriel', 'pdf-builder-pro'); ?></button>
-                <button class="tutorial-start"><?php _e('Commencer', 'pdf-builder-pro'); ?></button>
+                <div class="tutorial-footer-actions">
+                    <button class="tutorial-close tutorial-close-small" title="<?php _e('Fermer le tutoriel', 'pdf-builder-pro'); ?>">&times;</button>
+                    <button class="tutorial-start"><?php _e('Commencer', 'pdf-builder-pro'); ?></button>
+                </div>
             </div>
         </div>
         <?php
