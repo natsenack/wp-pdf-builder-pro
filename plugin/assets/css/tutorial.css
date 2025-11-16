@@ -1,0 +1,360 @@
+/* PDF Builder Pro - Tutorial System Styles */
+
+.tutorial-tooltip {
+    position: absolute;
+    background: #fff;
+    border: 2px solid #007cba;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    max-width: 320px;
+    font-size: 14px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.3s ease;
+}
+
+.tutorial-tooltip.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.tutorial-tooltip-header {
+    background: #007cba;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tutorial-tooltip-header h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.tutorial-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.tutorial-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.tutorial-tooltip-content {
+    padding: 16px;
+    line-height: 1.5;
+}
+
+.tutorial-tooltip-content p {
+    margin: 0 0 8px 0;
+}
+
+.tutorial-tooltip-content p:last-child {
+    margin-bottom: 0;
+}
+
+.tutorial-tooltip-footer {
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    border-radius: 0 0 6px 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tutorial-prev,
+.tutorial-next,
+.tutorial-skip,
+.tutorial-start {
+    padding: 6px 12px;
+    border: 1px solid #007cba;
+    background: #007cba;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.tutorial-prev:hover,
+.tutorial-next:hover,
+.tutorial-start:hover {
+    background: #005a87;
+    border-color: #005a87;
+}
+
+.tutorial-skip {
+    background: transparent;
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.tutorial-skip:hover {
+    background: #6c757d;
+    color: white;
+}
+
+.tutorial-prev:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tutorial-progress {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Welcome Wizard Styles */
+.pdf-builder-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100000;
+}
+
+.pdf-builder-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.pdf-builder-modal-content.welcome-wizard {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.wizard-header {
+    padding: 32px 32px 24px;
+    text-align: center;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.wizard-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.wizard-header p {
+    margin: 0;
+    font-size: 16px;
+    color: #6c757d;
+}
+
+.wizard-steps {
+    padding: 24px 32px;
+}
+
+.wizard-step {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+.wizard-step.active {
+    border-color: #007cba;
+    background: #f8f9ff;
+    opacity: 1;
+}
+
+.wizard-step .step-icon {
+    font-size: 32px;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.wizard-step h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.wizard-step p {
+    margin: 0;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.wizard-actions {
+    padding: 24px 32px 32px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.wizard-actions .button-primary,
+.wizard-actions .button-secondary {
+    flex: 1;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.wizard-actions .button-primary {
+    background: #007cba;
+    border: 1px solid #007cba;
+    color: white;
+}
+
+.wizard-actions .button-primary:hover {
+    background: #005a87;
+    border-color: #005a87;
+}
+
+.wizard-actions .button-secondary {
+    background: transparent;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+}
+
+.wizard-actions .button-secondary:hover {
+    background: #6c757d;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tutorial-tooltip {
+        max-width: 280px;
+        font-size: 13px;
+    }
+
+    .tutorial-tooltip-header {
+        padding: 10px 12px;
+    }
+
+    .tutorial-tooltip-content {
+        padding: 12px;
+    }
+
+    .tutorial-tooltip-footer {
+        padding: 10px 12px;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .tutorial-prev,
+    .tutorial-next,
+    .tutorial-skip,
+    .tutorial-start {
+        width: 100%;
+    }
+
+    .pdf-builder-modal-content.welcome-wizard {
+        width: 95%;
+        margin: 20px;
+    }
+
+    .wizard-header {
+        padding: 24px 20px 16px;
+    }
+
+    .wizard-steps {
+        padding: 16px 20px;
+    }
+
+    .wizard-actions {
+        padding: 16px 20px 24px;
+        flex-direction: column;
+    }
+}
+
+/* Animation pour l'apparition des tooltips */
+@keyframes tutorialFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.tutorial-tooltip.active {
+    animation: tutorialFadeIn 0.3s ease-out;
+}
+
+/* Styles pour les tooltips avec flèches */
+.tutorial-tooltip[data-position="top"]::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: #007cba;
+}
+
+.tutorial-tooltip[data-position="bottom"]::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-bottom-color: #007cba;
+}
+
+.tutorial-tooltip[data-position="left"]::after {
+    content: '';
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 8px solid transparent;
+    border-left-color: #007cba;
+}
+
+.tutorial-tooltip[data-position="right"]::after {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 8px solid transparent;
+    border-right-color: #007cba;
+}
