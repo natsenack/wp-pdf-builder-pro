@@ -16,7 +16,6 @@
             this.tooltips = {};
             this.stepCache = {}; // Cache pour les étapes chargées
             this.eventsBound = false; // Pour éviter la liaison multiple des événements
-            this.isDarkMode = this.detectDarkMode(); // Détection du mode sombre
             this.init();
         }
 
@@ -26,7 +25,6 @@
             this.initializeWizard();
             this.setupKeyboardNavigation();
             this.setupAutoSave();
-            this.setupDarkModeDetection(); // Détection du mode sombre
             this.trackAnalytics('onboarding_started');
         }
 
@@ -2020,53 +2018,6 @@
             });
         }
 
-        /**
-         * Détecte si le mode sombre est activé
-         * @returns {boolean} True si le mode sombre est détecté
-         */
-        detectDarkMode() {
-            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
-
-        /**
-         * Configure la détection des changements de mode sombre
-         */
-        setupDarkModeDetection() {
-            if (!window.matchMedia) {
-                console.warn('PDF Builder Onboarding: MediaQueryList not supported, dark mode detection disabled');
-                return;
-            }
-
-            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            
-            // Gestionnaire de changement
-            const handleChange = (e) => {
-                this.isDarkMode = e.matches;
-                console.log('PDF Builder Onboarding: Dark mode changed to', this.isDarkMode);
-                
-                // Appliquer les styles du mode sombre si nécessaire
-                this.updateDarkModeStyles();
-            };
-
-            // Écouter les changements
-            if (mediaQuery.addEventListener) {
-                mediaQuery.addEventListener('change', handleChange);
-            } else if (mediaQuery.addListener) {
-                // Fallback pour les navigateurs plus anciens
-                mediaQuery.addListener(handleChange);
-            }
-
-            console.log('PDF Builder Onboarding: Dark mode detection initialized, current:', this.isDarkMode);
-        }
-
-        /**
-         * Met à jour les styles selon le mode sombre
-         */
-        updateDarkModeStyles() {
-            // Les styles CSS gèrent automatiquement le mode sombre via @media (prefers-color-scheme: dark)
-            // Cette méthode est appelée pour la compatibilité mais ne fait rien
-            console.log('PDF Builder Onboarding: Dark mode styles updated (CSS handles automatically)');
-        }
     }
 
     // Initialiser quand le DOM est prêt

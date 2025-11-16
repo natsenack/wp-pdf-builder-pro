@@ -162,50 +162,5 @@
     outline-offset: 2px;
 }
 
-/* Mode sombre support */
-@media (prefers-color-scheme: dark) {
-    .pdf-builder-notification {
-        background: rgba(31, 41, 55, 0.95);
-        border-color: rgba(255, 255, 255, 0.1);
-        color: #f3f4f6;
-    }
-
-    .pdf-builder-notification-success {
-        background: #10b981;
-        color: #ffffff;
-        border-color: #10b981;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    }
-
-    .pdf-builder-notification-error {
-        background: #ef4444;
-        color: #ffffff;
-        border-color: #ef4444;
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-    }
-
-    .pdf-builder-notification-warning {
-        background: #f59e0b;
-        color: #ffffff;
-        border-color: #f59e0b;
-        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-    }
-
-    .pdf-builder-notification-info {
-        background: #3b82f6;
-        color: #ffffff;
-        border-color: #3b82f6;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
-
-    .pdf-builder-notification-close {
-        background: rgba(255, 255, 255, 0.1);
-    }
-
-    .pdf-builder-notification-close:hover {
-        background: rgba(255, 255, 255, 0.2);
-    }
-}
-
 
 
