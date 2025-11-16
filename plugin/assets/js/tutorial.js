@@ -222,11 +222,13 @@
                     </div>
                     <div class="tutorial-tooltip-content">
                         <p>${step.content}</p>
-                        ${step.target && step.target.trim() !== '' ? `
-                        <div class="tutorial-target-note">
-                            <small style="color: #666; font-style: italic;">
-                                ℹ️ Cet élément n'est pas disponible sur cette page
-                            </small>
+                        ${step.target && step.target.trim() !== '' && $(step.target).length === 0 ? `
+                        <div class="tutorial-redirect">
+                            <p style="margin: 10px 0; color: #007cba;">
+                                <a href="${this.getEditorUrl()}" style="color: #007cba; text-decoration: underline;">
+                                    📝 Accéder à l'éditeur PDF pour voir cet élément
+                                </a>
+                            </p>
                         </div>
                         ` : ''}
                     </div>
@@ -262,6 +264,10 @@
 
             $('body').append($tooltip);
             return $tooltip;
+        }
+
+        getEditorUrl() {
+            return window.pdfBuilderTutorial.ajaxUrl.replace('admin-ajax.php', 'admin.php?page=pdf-builder-react-editor');
         }
 
         positionTooltip($tooltip, step) {
