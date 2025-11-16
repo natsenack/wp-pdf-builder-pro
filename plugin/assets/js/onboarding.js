@@ -114,9 +114,12 @@
 
             // Initialiser l'état du wizard
             this.currentStep = forcedStep ? parseInt(forcedStep) : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.current_step || 1 : 1);
-            // Pour l'étape 2, on force selectedTemplate à null au départ pour s'assurer que le bouton est désactivé
-            this.selectedTemplate = (this.currentStep === 2) ? null : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_template || null : null);
+            // Pour l'étape 2, on force selectedMode à null au départ pour s'assurer que le bouton est désactivé
+            this.selectedMode = (this.currentStep === 2) ? null : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_mode || null : null);
+            // Pour l'étape 3, on force selectedTemplate à null au départ pour s'assurer que le bouton est désactivé
+            this.selectedTemplate = (this.currentStep === 3) ? null : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_template || null : null);
             console.log('PDF Builder Onboarding: Current step set to', this.currentStep);
+            console.log('PDF Builder Onboarding: Selected mode:', this.selectedMode);
             console.log('PDF Builder Onboarding: Selected template:', this.selectedTemplate);
 
             // S'assurer que tous les boutons sont dans un état cohérent
@@ -748,8 +751,12 @@
             const $modal = $('#pdf-builder-onboarding-modal');
             const $content = $modal.find('.modal-body .step-content');
 
-            // Pour l'étape 2, réinitialiser selectedTemplate pour s'assurer que le bouton est désactivé
+            // Pour l'étape 2, réinitialiser selectedMode pour s'assurer que le bouton est désactivé
             if (step === 2) {
+                this.selectedMode = null;
+            }
+            // Pour l'étape 3, réinitialiser selectedTemplate pour s'assurer que le bouton est désactivé
+            if (step === 3) {
                 this.selectedTemplate = null;
             }
 
@@ -1639,10 +1646,21 @@
             // Bouton principal (suivant/terminer)
             if (data.action) {
                 const buttonClass = 'button-primary';
-                const shouldDisable = (data.requires_selection && parseInt(step) === 2 && !this.selectedTemplate);
+                let shouldDisable = false;
+
+                if (data.requires_selection) {
+                    if (parseInt(step) === 2) {
+                        // Étape 2 : mode freemium - vérifier selectedMode
+                        shouldDisable = !this.selectedMode;
+                    } else if (parseInt(step) === 3) {
+                        // Étape 3 : template - vérifier selectedTemplate
+                        shouldDisable = !this.selectedTemplate;
+                    }
+                }
+
                 const isDisabled = shouldDisable ? 'disabled' : '';
 
-                console.log('PDF Builder Onboarding: Button logic - step:', step, 'parsed step:', parseInt(step), 'requires_selection:', data.requires_selection, 'selectedTemplate:', this.selectedTemplate, 'shouldDisable:', shouldDisable, 'isDisabled:', isDisabled);
+                console.log('PDF Builder Onboarding: Button logic - step:', step, 'parsed step:', parseInt(step), 'requires_selection:', data.requires_selection, 'selectedMode:', this.selectedMode, 'selectedTemplate:', this.selectedTemplate, 'shouldDisable:', shouldDisable, 'isDisabled:', isDisabled);
 
                 buttonsHtml += `
                     <button class="button ${buttonClass} complete-step"

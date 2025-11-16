@@ -104,6 +104,7 @@ class PDF_Builder_Onboarding_Manager {
             'nonce' => wp_create_nonce('pdf_builder_onboarding'),
             'current_step' => $this->get_current_step(),
             'selected_template' => $this->onboarding_options['selected_template'] ?? null,
+            'selected_mode' => $this->onboarding_options['selected_mode'] ?? null,
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
