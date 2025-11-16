@@ -578,7 +578,7 @@ class PDF_Builder_Onboarding_Manager {
             case 'completed':
                 // Récupérer les informations de configuration
                 $has_woocommerce = class_exists('WooCommerce');
-                $template_count = count($this->get_available_templates());
+                $template_count = count(glob(plugin_dir_path(dirname(__FILE__)) . '../templates/predefined/*.json'));
                 $current_user = wp_get_current_user();
 
                 return '
