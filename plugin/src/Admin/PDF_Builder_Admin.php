@@ -3580,7 +3580,11 @@ class PdfBuilderAdmin
             wp_verify_nonce($nonce, 'pdf_builder_performance_settings') ||
             wp_verify_nonce($nonce, 'pdf_builder_pdf_settings') ||
             wp_verify_nonce($nonce, 'pdf_builder_general_settings') ||
-            wp_verify_nonce($nonce, 'pdf_builder_developpeur_nonce')) {
+            wp_verify_nonce($nonce, 'pdf_builder_developpeur_nonce') ||
+            wp_verify_nonce($nonce, 'pdf_builder_license') ||
+            wp_verify_nonce($nonce, 'pdf_builder_roles') ||
+            wp_verify_nonce($nonce, 'pdf_builder_gdpr_settings') ||
+            wp_verify_nonce($nonce, 'pdf_builder_gdpr_security')) {
             $valid = true;
         }
 
