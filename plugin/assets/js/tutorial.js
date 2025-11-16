@@ -68,11 +68,62 @@
             });
         }
 
-        showWelcomeWizard() {
-            console.log('Tutorial: showWelcomeWizard called - opening modal');
-            // Le wizard est affiché par PHP, on l'active juste
-            $('#pdf-builder-welcome-wizard').fadeIn();
-            console.log('Tutorial: Modal should now be visible');
+        showTutorialMenu() {
+            console.log('Tutorial: showTutorialMenu called');
+            this.showTutorialSelectionModal();
+        }
+
+        showTutorialSelectionModal() {
+            const $modal = $(`
+                <div id="pdf-builder-tutorial-menu" class="pdf-builder-modal">
+                    <div class="pdf-builder-modal-backdrop"></div>
+                    <div class="pdf-builder-modal-content tutorial-menu-modal">
+                        <div class="tutorial-menu-header">
+                            <h2>🧭 Aide et Tutoriels</h2>
+                            <p>Choisissez un tutoriel pour découvrir PDF Builder Pro</p>
+                        </div>
+                        <div class="tutorial-menu-options">
+                            ${this.generateTutorialOptions()}
+                        </div>
+                        <div class="tutorial-menu-actions">
+                            <button class="button-secondary" id="close-tutorial-menu">Fermer</button>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            $('body').append($modal);
+            $modal.fadeIn();
+
+            // Bind events
+            $modal.find('.tutorial-option').on('click', (e) => {
+                const tutorialId = $(e.currentTarget).data('tutorial');
+                $modal.fadeOut(() => $modal.remove());
+                this.startTutorial(tutorialId);
+            });
+
+            $modal.find('#close-tutorial-menu').on('click', () => {
+                $modal.fadeOut(() => $modal.remove());
+            });
+        }
+
+        generateTutorialOptions() {
+            const tutorials = window.pdfBuilderTutorial.tutorials;
+            let options = '';
+
+            for (const [id, tutorial] of Object.entries(tutorials)) {
+                options += `
+                    <div class="tutorial-option" data-tutorial="${id}">
+                        <div class="tutorial-option-icon">📚</div>
+                        <div class="tutorial-option-content">
+                            <h3>${tutorial.title}</h3>
+                            <p>${tutorial.description}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return options;
         }
 
         startWelcomeWizard() {

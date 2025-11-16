@@ -70,7 +70,7 @@ class TutorialManager
             'title' => '<span class="ab-icon dashicons dashicons-editor-help"></span> ' . __('Aide PDF Builder', 'pdf-builder-pro'),
             'href' => '#',
             'meta' => [
-                'onclick' => 'window.pdfBuilderTutorialManager.showWelcomeWizard(); return false;',
+                'onclick' => 'window.pdfBuilderTutorialManager.showTutorialMenu(); return false;',
                 'title' => __('Relancer le tutoriel d\'introduction', 'pdf-builder-pro')
             ]
         ]);
@@ -111,7 +111,7 @@ class TutorialManager
             font-size: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
-        " onclick="window.pdfBuilderTutorialManager.showWelcomeWizard(); return false;" title="<?php _e('Ouvrir l\'aide et les tutoriels', 'pdf-builder-pro'); ?>">
+        " onclick="window.pdfBuilderTutorialManager.showTutorialMenu(); return false;" title="<?php _e('Ouvrir l\'aide et les tutoriels', 'pdf-builder-pro'); ?>">
             <span style="font-size: 24px;">❓</span>
         </div>
 
@@ -172,22 +172,22 @@ class TutorialManager
                 'description' => __('Découvrez comment créer vos premiers PDFs personnalisés', 'pdf-builder-pro'),
                 'steps' => [
                     [
-                        'target' => '.pdf-builder-editor',
-                        'title' => __('L\'éditeur PDF', 'pdf-builder-pro'),
-                        'content' => __('Ceci est votre éditeur PDF. Vous pouvez y ajouter du texte, des images et des éléments.', 'pdf-builder-pro'),
-                        'position' => 'bottom'
+                        'target' => '',
+                        'title' => __('Bienvenue !', 'pdf-builder-pro'),
+                        'content' => __('Bienvenue dans PDF Builder Pro ! Cet outil vous permet de créer des PDFs personnalisés pour WooCommerce de manière simple et intuitive.', 'pdf-builder-pro'),
+                        'position' => 'center'
                     ],
                     [
-                        'target' => '.element-palette',
-                        'title' => __('Palette d\'éléments', 'pdf-builder-pro'),
-                        'content' => __('Utilisez ces éléments pour construire votre PDF : texte, images, formes, etc.', 'pdf-builder-pro'),
-                        'position' => 'right'
+                        'target' => '',
+                        'title' => __('Fonctionnalités principales', 'pdf-builder-pro'),
+                        'content' => __('Créez des factures, devis, bons de commande et autres documents PDF. Personnalisez les templates avec votre branding.', 'pdf-builder-pro'),
+                        'position' => 'center'
                     ],
                     [
-                        'target' => '.preview-button',
-                        'title' => __('Aperçu', 'pdf-builder-pro'),
-                        'content' => __('Cliquez ici pour voir un aperçu de votre PDF avant de le générer.', 'pdf-builder-pro'),
-                        'position' => 'top'
+                        'target' => '',
+                        'title' => __('Commencer', 'pdf-builder-pro'),
+                        'content' => __('Rendez-vous dans l\'éditeur PDF pour créer votre premier template, ou explorez les paramètres pour configurer le plugin.', 'pdf-builder-pro'),
+                        'position' => 'center'
                     ]
                 ]
             ],

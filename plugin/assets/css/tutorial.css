@@ -541,3 +541,88 @@
 .tutorial-unavailable-close:hover {
     background: #005a87;
 }
+
+/* Tutorial Menu Modal */
+.tutorial-menu-modal {
+    max-width: 600px;
+    width: 90%;
+}
+
+.tutorial-menu-header {
+    text-align: center;
+    padding: 32px 32px 24px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tutorial-menu-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #007cba;
+}
+
+.tutorial-menu-header p {
+    margin: 0;
+    color: #666;
+}
+
+.tutorial-menu-options {
+    padding: 24px;
+}
+
+.tutorial-option {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tutorial-option:hover {
+    border-color: #007cba;
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 124, 186, 0.1);
+}
+
+.tutorial-option-icon {
+    font-size: 32px;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.tutorial-option-content h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.tutorial-option-content p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.tutorial-menu-actions {
+    padding: 0 32px 32px;
+    text-align: center;
+}
+
+#close-tutorial-menu {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#close-tutorial-menu:hover {
+    background: #5a6268;
+}
