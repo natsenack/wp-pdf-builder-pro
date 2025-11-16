@@ -1465,6 +1465,20 @@
 
             $('.progress-fill').css('width', progress + '%');
             $('.progress-text').text(`Étape ${this.currentStep} sur ${totalSteps}`);
+
+            // Mettre à jour les indicateurs d'étapes visuelles
+            $('.progress-step').each(function(index) {
+                const stepNumber = index + 1;
+                const $step = $(this);
+
+                $step.removeClass('active completed');
+
+                if (stepNumber < this.currentStep) {
+                    $step.addClass('completed');
+                } else if (stepNumber === this.currentStep) {
+                    $step.addClass('active');
+                }
+            }.bind(this));
         }
 
         skipOnboarding() {

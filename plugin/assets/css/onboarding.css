@@ -179,36 +179,104 @@
     margin: 0 0 16px 0;
 }
 
-/* Indicateur de progression */
+/* Indicateur de progression amélioré */
 .pdf-builder-onboarding-modal .progress-indicator {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     flex: 1;
     justify-content: center;
+    padding: 0 20px;
 }
 
 .pdf-builder-onboarding-modal .progress-bar {
     flex: 1;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 2px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
     overflow: hidden;
-    max-width: 200px;
+    max-width: 250px;
+    position: relative;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .pdf-builder-onboarding-modal .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-    border-radius: 2px;
-    transition: width 0.3s ease;
+    background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%);
+    border-radius: 4px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.pdf-builder-onboarding-modal .progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+    animation: progressShine 2s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 .pdf-builder-onboarding-modal .progress-text {
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: #1f2937;
     white-space: nowrap;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 6px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Indicateur d'étapes visuelles (points) */
+.pdf-builder-onboarding-modal .progress-steps {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 16px;
+}
+
+.pdf-builder-onboarding-modal .progress-step {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.pdf-builder-onboarding-modal .progress-step.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    transform: scale(1.2);
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+}
+
+.pdf-builder-onboarding-modal .progress-step.completed {
+    background: #10b981;
+    border-color: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+
+.pdf-builder-onboarding-modal .progress-step.completed::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 8px;
+    font-weight: bold;
 }
 
 /* États de chargement */
