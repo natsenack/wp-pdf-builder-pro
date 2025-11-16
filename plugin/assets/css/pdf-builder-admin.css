@@ -364,127 +364,163 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
 @media (prefers-color-scheme: dark) {
     /* Dashboard principal */
     .pdf-builder-dashboard {
-        color: #f9fafb;
+        color: #f9fafb !important;
     }
 
-    .dashboard-header h1 {
-        color: #f9fafb;
+    .pdf-builder-dashboard .dashboard-header h1 {
+        color: #f9fafb !important;
     }
 
-    .dashboard-subtitle {
-        color: #d1d5db;
+    .pdf-builder-dashboard .dashboard-subtitle {
+        color: #d1d5db !important;
     }
 
-    .dashboard-meta {
-        color: #9ca3af;
+    .pdf-builder-dashboard .dashboard-meta {
+        color: #9ca3af !important;
     }
 
     /* Cartes de statistiques */
-    .stat-card {
-        background: #374151;
-        border-color: #6b7280;
-        color: #f9fafb;
+    .pdf-builder-dashboard .stat-card {
+        background: #374151 !important;
+        border-color: #6b7280 !important;
+        color: #f9fafb !important;
     }
 
-    .stat-card:hover {
-        background: #4b5563;
-        border-color: #9ca3af;
+    .pdf-builder-dashboard .stat-card:hover {
+        background: #4b5563 !important;
+        border-color: #9ca3af !important;
     }
 
-    .stat-content .stat-label {
-        color: #d1d5db;
+    .pdf-builder-dashboard .stat-content .stat-label {
+        color: #d1d5db !important;
     }
 
     /* Cartes d'actions */
-    .action-card {
-        background: #374151;
-        border-color: #6b7280;
-        color: #f9fafb;
+    .pdf-builder-dashboard .action-card {
+        background: #374151 !important;
+        border-color: #6b7280 !important;
+        color: #f9fafb !important;
     }
 
-    .action-card:hover {
-        background: #4b5563;
-        border-color: #9ca3af;
+    .pdf-builder-dashboard .action-card:hover {
+        background: #4b5563 !important;
+        border-color: #9ca3af !important;
     }
 
-    .action-card h3 {
-        color: #f9fafb;
+    .pdf-builder-dashboard .action-card h3 {
+        color: #f9fafb !important;
     }
 
-    .action-card p {
-        color: #d1d5db;
+    .pdf-builder-dashboard .action-card p {
+        color: #d1d5db !important;
     }
 
     /* Guide de démarrage rapide */
-    .dashboard-guide {
-        background: #374151;
-        border-color: #6b7280;
-        color: #f9fafb;
+    .pdf-builder-dashboard .dashboard-guide {
+        background: #374151 !important;
+        border-color: #6b7280 !important;
+        color: #f9fafb !important;
+        border: 1px solid #6b7280 !important;
+        border-radius: 8px !important;
+        padding: 20px !important;
+        margin-bottom: 20px !important;
     }
 
-    .dashboard-guide h3 {
-        color: #f9fafb;
+    .pdf-builder-dashboard .dashboard-guide h3 {
+        color: #f9fafb !important;
+        margin-top: 0 !important;
+        margin-bottom: 15px !important;
     }
 
-    .step-content h4 {
-        color: #f9fafb;
+    .pdf-builder-dashboard .step-content h4 {
+        color: #f9fafb !important;
+        margin-bottom: 5px !important;
     }
 
-    .step-content p {
-        color: #d1d5db;
+    .pdf-builder-dashboard .step-content p {
+        color: #d1d5db !important;
+        margin-bottom: 5px !important;
     }
 
-    .step-content small {
-        color: #9ca3af;
+    .pdf-builder-dashboard .step-content small {
+        color: #9ca3af !important;
+        font-size: 12px !important;
+    }
+
+    .pdf-builder-dashboard .step-number {
+        background: #6366f1 !important;
+        color: white !important;
+        border-radius: 50% !important;
+        width: 24px !important;
+        height: 24px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-weight: bold !important;
+        margin-right: 10px !important;
+    }
+
+    .pdf-builder-dashboard .step {
+        display: flex !important;
+        align-items: flex-start !important;
+        margin-bottom: 15px !important;
+        padding: 10px !important;
+        background: #4b5563 !important;
+        border-radius: 6px !important;
+        border: 1px solid #6b7280 !important;
+    }
+
+    .pdf-builder-dashboard .guide-steps {
+        margin-top: 15px !important;
     }
 
     /* Section fonctionnalités */
-    .dashboard-features {
-        background: #374151;
-        border-color: #6b7280;
-        color: #f9fafb;
+    .pdf-builder-dashboard .dashboard-features {
+        background: #374151 !important;
+        border-color: #6b7280 !important;
+        color: #f9fafb !important;
     }
 
-    .dashboard-features h3 {
-        color: #f9fafb;
-        border-bottom-color: #3b82f6;
+    .pdf-builder-dashboard .dashboard-features h3 {
+        color: #f9fafb !important;
+        border-bottom-color: #3b82f6 !important;
     }
 
-    .feature-category {
-        background: #4b5563;
-        border-color: #6b7280;
+    .pdf-builder-dashboard .feature-category {
+        background: #4b5563 !important;
+        border-color: #6b7280 !important;
     }
 
-    .feature-category h4 {
-        color: #60a5fa;
-        border-bottom-color: #6b7280;
+    .pdf-builder-dashboard .feature-category h4 {
+        color: #60a5fa !important;
+        border-bottom-color: #6b7280 !important;
     }
 
-    .feature-category li {
-        color: #d1d5db;
+    .pdf-builder-dashboard .feature-category li {
+        color: #d1d5db !important;
     }
 
     /* Boutons */
-    .button.button-primary {
-        background: #3b82f6;
-        border-color: #3b82f6;
-        color: #ffffff;
+    .pdf-builder-dashboard .button.button-primary {
+        background: #3b82f6 !important;
+        border-color: #3b82f6 !important;
+        color: #ffffff !important;
     }
 
-    .button.button-primary:hover {
-        background: #2563eb;
-        border-color: #2563eb;
+    .pdf-builder-dashboard .button.button-primary:hover {
+        background: #2563eb !important;
+        border-color: #2563eb !important;
     }
 
-    .button.button-secondary {
-        background: #6b7280;
-        border-color: #6b7280;
-        color: #f9fafb;
+    .pdf-builder-dashboard .button.button-secondary {
+        background: #6b7280 !important;
+        border-color: #6b7280 !important;
+        color: #f9fafb !important;
     }
 
-    .button.button-secondary:hover {
-        background: #9ca3af;
-        border-color: #9ca3af;
+    .pdf-builder-dashboard .button.button-secondary:hover {
+        background: #9ca3af !important;
+        border-color: #9ca3af !important;
     }
 }
 
