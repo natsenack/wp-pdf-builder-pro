@@ -5284,6 +5284,7 @@
             // Gestionnaire de clic pour les onglets principaux (défini globalement pour removeEventListener)
             function mainTabClickHandler(e) {
                 e.preventDefault();
+                console.log('🖱️ Clic détecté sur onglet principal:', this.getAttribute('data-tab'));
 
                 const targetTab = this.getAttribute('data-tab');
 
@@ -5291,6 +5292,7 @@
                 const allTabs = document.querySelectorAll('.tab-content');
                 allTabs.forEach(tab => {
                     tab.classList.add('hidden-tab');
+                    console.log('📦 Masquage onglet:', tab.id);
                 });
 
                 // Désactiver tous les liens d'onglets
@@ -5302,12 +5304,14 @@
                 const targetTabContent = document.getElementById(targetTab);
                 if (targetTabContent) {
                     targetTabContent.classList.remove('hidden-tab');
+                    console.log('✅ Affichage onglet:', targetTab);
                 } else {
-                    console.error('❌ TAB NOT FOUND:', targetTab);
+                    console.error('❌ Onglet non trouvé:', targetTab);
                 }
 
                 // Activer le lien d'onglet
                 this.classList.add('nav-tab-active');
+                console.log('🎯 Onglet actif:', targetTab);
 
                 // Gérer la visibilité du bouton de sauvegarde global
                 const globalSaveBtn = document.getElementById('global-save-btn');
@@ -5358,6 +5362,21 @@
                     link.removeEventListener('click', mainTabClickHandler);
                     link.addEventListener('click', mainTabClickHandler);
                 });
+
+                // Vérifier s'il y a un paramètre tab dans l'URL et l'activer
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlTab = urlParams.get('tab');
+                if (urlTab) {
+                    const urlTabLink = document.querySelector(`.nav-tab[data-tab="${urlTab}"]`);
+                    if (urlTabLink) {
+                        console.log('🌐 Activation onglet depuis URL:', urlTab);
+                        urlTabLink.click();
+                        // Ne pas continuer avec la logique de localStorage
+                        mainTabsInitialized = true;
+                        console.log('✅ Onglets principaux initialisés avec succès (depuis URL)');
+                        return;
+                    }
+                }
 
                 // Restaurer l'onglet actif depuis localStorage
                 const savedTab = localStorage.getItem('pdf_builder_active_tab');
