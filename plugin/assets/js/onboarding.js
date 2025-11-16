@@ -540,6 +540,8 @@
 
         handleCompleteStep() {
             console.log('PDF Builder Onboarding: Handling complete step for step', this.currentStep);
+            console.log('PDF Builder Onboarding: Current step before AJAX:', this.currentStep);
+            console.log('PDF Builder Onboarding: Selected template:', this.selectedTemplate);
 
             // Désactiver le bouton pour éviter les clics multiples
             const $button = $('.complete-step');
@@ -551,6 +553,8 @@
             if (this.currentStep === 4) {
                 stepAction = 'finish';
             }
+
+            console.log('PDF Builder Onboarding: Sending AJAX with step:', this.currentStep, 'action:', stepAction);
 
             // Faire l'appel AJAX
             $.ajax({
@@ -566,6 +570,7 @@
                 },
                 success: (response) => {
                     console.log('PDF Builder Onboarding: Complete step success:', response);
+                    console.log('PDF Builder Onboarding: Response data:', response.data);
 
                     if (response.success) {
                         if (response.data.completed) {
