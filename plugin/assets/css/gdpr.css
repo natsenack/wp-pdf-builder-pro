@@ -45,6 +45,10 @@
     display: none;
 }
 
+.gdpr-tab-content.active {
+    display: block;
+}
+
 .gdpr-consent-item {
     background: #f9f9f9;
     border: 1px solid #e1e1e1;

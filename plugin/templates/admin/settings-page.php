@@ -5349,6 +5349,41 @@
             // Démarrer la navigation des onglets
             setupTabNavigation();
 
+            // Configuration des sous-onglets RGPD
+            function setupGdprTabNavigation() {
+                const gdprTabLinks = document.querySelectorAll('.gdpr-tab[data-tab]');
+                gdprTabLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+
+                        const targetTab = this.getAttribute('data-tab');
+
+                        // Masquer tous les contenus d'onglets RGPD
+                        const allGdprTabs = document.querySelectorAll('.gdpr-tab-content');
+                        allGdprTabs.forEach(tab => {
+                            tab.classList.remove('active');
+                        });
+
+                        // Désactiver tous les onglets RGPD
+                        document.querySelectorAll('.gdpr-tab').forEach(gdprTabLink => {
+                            gdprTabLink.classList.remove('active');
+                        });
+
+                        // Afficher l'onglet RGPD cible
+                        const targetGdprTabContent = document.getElementById(targetTab + '-tab');
+                        if (targetGdprTabContent) {
+                            targetGdprTabContent.classList.add('active');
+                        }
+
+                        // Activer l'onglet RGPD
+                        this.classList.add('active');
+                    });
+                });
+            }
+
+            // Démarrer la navigation des sous-onglets RGPD
+            setupGdprTabNavigation();
+
             // Gestion du bouton toggle password
             const togglePasswordBtn = document.getElementById('toggle_password');
             const passwordInput = document.getElementById('developer_password');
