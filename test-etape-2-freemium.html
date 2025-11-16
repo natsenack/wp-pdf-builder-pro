@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Étape 2 - Mode Freemium</title>
+    <link rel="stylesheet" href="plugin/assets/css/onboarding.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .test-container { max-width: 1000px; margin: 0 auto; }
+        .test-header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>Test Étape 2 - Mode Freemium</h1>
+            <p>Cette page teste le contenu et le style de l'étape freemium avec les nouvelles sections limitations et bénéfices.</p>
+        </div>
+
+        <div id="pdf-builder-onboarding-modal" class="pdf-builder-onboarding-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="progress-indicator">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 25%"></div>
+                        </div>
+                        <div class="progress-text">Étape 2 sur 6</div>
+                    </div>
+                    <button class="modal-close" data-action="skip-onboarding">
+                        <span class="dashicons dashicons-no"></span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="step-content">
+                        <h2>Choisissez votre mode de fonctionnement</h2>
+                        <p>Découvrez les différences entre la version gratuite et la version premium de PDF Builder Pro.</p>
+
+                        <div class="mode-selection">
+                            <div class="mode-card free-mode">
+                                <div class="mode-header">
+                                    <h3>Version Gratuite</h3>
+                                    <div class="mode-price">
+                                        <span class="price">0€</span>
+                                        <span class="period">/mois</span>
+                                    </div>
+                                </div>
+                                <div class="mode-features">
+                                    <div class="feature-item">
+                                        <span class="feature-icon">✓</span>
+                                        <span>1 modèle de PDF seulement</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">✓</span>
+                                        <span>Filigrane sur les PDFs</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">✓</span>
+                                        <span>Qualité 72 DPI</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">✓</span>
+                                        <span>Support communautaire</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mode-card premium-mode recommended">
+                                <div class="mode-badge">Recommandé</div>
+                                <div class="mode-header">
+                                    <h3>Version Premium</h3>
+                                    <div class="mode-price">
+                                        <span class="price">29€</span>
+                                        <span class="period">/mois</span>
+                                    </div>
+                                </div>
+                                <div class="mode-features">
+                                    <div class="feature-item">
+                                        <span class="feature-icon">✓</span>
+                                        <span>Modèles illimités</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">✓</span>
+                                        <span>Sans filigrane</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">✓</span>
+                                        <span>Qualité 300 DPI</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">✓</span>
+                                        <span>Support prioritaire</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">✓</span>
+                                        <span>Mises à jour automatiques</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mode-limitations">
+                            <div class="limitation-notice">
+                                <span class="limitation-icon">⚠️</span>
+                                <small>La version gratuite est limitée à 1 modèle et ajoute un filigrane sur tous vos PDFs.</small>
+                            </div>
+                        </div>
+
+                        <div class="mode-benefits">
+                            <div class="benefit-highlight">
+                                <span class="benefit-icon">🚀</span>
+                                <strong>La version premium offre une qualité professionnelle et un support dédié.</strong>
+                            </div>
+                        </div>
+
+                        <div class="freemium-notice">
+                            <strong>💡 Conseil :</strong> Commencez avec la version gratuite pour tester, puis passez en premium pour une utilisation professionnelle.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="button button-secondary" data-action="previous-step">
+                        Précédent
+                    </button>
+                    <button class="button button-primary" data-action="select-freemium-mode" data-mode="free">
+                        Version Gratuite
+                    </button>
+                    <button class="button button-primary recommended" data-action="select-freemium-mode" data-mode="premium">
+                        Version Premium
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Script simple pour tester les interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Test de l\'étape freemium chargé');
+
+            // Simuler la sélection de mode
+            const modeButtons = document.querySelectorAll('[data-action="select-freemium-mode"]');
+            modeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const mode = this.getAttribute('data-mode');
+                    console.log('Mode sélectionné:', mode);
+                    alert('Mode ' + mode + ' sélectionné !');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

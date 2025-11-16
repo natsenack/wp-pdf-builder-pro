@@ -298,25 +298,33 @@ class PDF_Builder_Onboarding_Manager {
                     <div class="freemium-mode-selection">
                         <p>' . __('Choisissez le mode d\'utilisation qui correspond à vos besoins :', 'pdf-builder-pro') . '</p>
                         <div class="mode-options">
-                            <div class="mode-card" data-mode="free" data-tooltip="Version gratuite avec fonctionnalités de base pour découvrir l\'outil">
+                            <div class="mode-card" data-mode="free" data-tooltip="Version gratuite parfaite pour découvrir et tester les fonctionnalités de base">
                                 <div class="mode-header">
                                     <span class="mode-icon">🆓</span>
                                     <h4>' . __('Version Gratuite', 'pdf-builder-pro') . '</h4>
                                 </div>
                                 <div class="mode-features">
                                     <ul>
-                                        <li>✅ ' . __('Jusqu\'à 5 templates PDF', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('Éditeur de base', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('1 template PDF inclus', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('15 variables dynamiques de base', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Export PDF (avec watermark)', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Éditeur de base fonctionnel', 'pdf-builder-pro') . '</li>
                                         <li>✅ ' . __('Support communautaire', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('Génération PDF basique', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Qualité 72 DPI', 'pdf-builder-pro') . '</li>
                                     </ul>
+                                </div>
+                                <div class="mode-limitations">
+                                    <div class="limitation-notice">
+                                        <span class="limitation-icon">⚠️</span>
+                                        <small>' . __('Limitations : 1 template, watermark sur PDFs, support de base', 'pdf-builder-pro') . '</small>
+                                    </div>
                                 </div>
                                 <div class="mode-price">
                                     <span class="price">0€</span>
                                     <span class="period">' . __('/ mois', 'pdf-builder-pro') . '</span>
                                 </div>
                             </div>
-                            <div class="mode-card premium" data-mode="premium" data-tooltip="Version complète avec toutes les fonctionnalités avancées">
+                            <div class="mode-card premium" data-mode="premium" data-tooltip="Version complète avec toutes les fonctionnalités avancées et support prioritaire">
                                 <div class="mode-header">
                                     <span class="mode-icon">⭐</span>
                                     <h4>' . __('Version Premium', 'pdf-builder-pro') . '</h4>
@@ -324,13 +332,23 @@ class PDF_Builder_Onboarding_Manager {
                                 </div>
                                 <div class="mode-features">
                                     <ul>
-                                        <li>✅ ' . __('Templates illimités', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('Éditeur avancé React', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('Support prioritaire', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('Variables dynamiques', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Templates PDF illimités', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Variables dynamiques avancées', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Exports haute qualité (300 DPI)', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Éditeur React professionnel', 'pdf-builder-pro') . '</li>
                                         <li>✅ ' . __('Intégration WooCommerce complète', 'pdf-builder-pro') . '</li>
-                                        <li>✅ ' . __('Exports avancés', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Support prioritaire 24/7', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Métriques et analytics détaillés', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Variables conditionnelles', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Exports PNG/JPG', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Pas de watermark', 'pdf-builder-pro') . '</li>
                                     </ul>
+                                </div>
+                                <div class="mode-benefits">
+                                    <div class="benefit-highlight">
+                                        <span class="benefit-icon">🚀</span>
+                                        <strong>' . __('Tout débloqué, aucune limitation !', 'pdf-builder-pro') . '</strong>
+                                    </div>
                                 </div>
                                 <div class="mode-price">
                                     <span class="price">29€</span>
