@@ -7,14 +7,48 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 5px; line-height: 1.4; width: 100%; box-sizing: border-box; max-width: 100%; }
         h1 { text-align: center; margin-bottom: 10px; }
-        h2 { border-bottom: 1px solid #ccc; padding-bottom: 3px; margin-top: 15px; }
-        .feature { margin: 8px 0; padding: 5px; border: 1px solid #ddd; }
-        .feature h3 { margin: 0 0 5px 0; }
-        .free { color: #c62828; }
-        .premium { color: #2e7d32; }
-        .impact { color: #e65100; }
-        .warning { background: #fff3cd; padding: 5px; margin-bottom: 10px; }
-        .stats { background: #f8f9fa; padding: 5px; text-align: center; margin-top: 10px; }
+
+        /* Styles des onglets */
+        .tab-container { margin: 15px 0; }
+        .tab-buttons { display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
+        .tab-button {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.2s;
+            border-radius: 4px 4px 0 0;
+        }
+        .tab-button:hover { background: #e9ecef; color: #333; }
+        .tab-button.active {
+            background: #fff;
+            color: #2e7d32;
+            border-bottom: 2px solid #2e7d32;
+            margin-bottom: -1px;
+        }
+
+        /* Contenu des onglets */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .feature { margin: 8px 0; padding: 5px; border: 1px solid #ddd; border-radius: 4px; }
+        .feature h3 { margin: 0 0 5px 0; font-size: 16px; }
+        .free { color: #c62828; font-weight: 500; }
+        .premium { color: #2e7d32; font-weight: 500; }
+        .impact { color: #e65100; font-style: italic; }
+
+        .warning { background: #fff3cd; padding: 5px; margin-bottom: 10px; border-radius: 4px; }
+        .stats { background: #f8f9fa; padding: 5px; text-align: center; margin-top: 10px; border-radius: 4px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tab-buttons { flex-direction: column; }
+            .tab-button { width: 100%; text-align: left; }
+        }
     </style>
 </head>
 <body>
@@ -24,307 +58,348 @@
         <strong>Document de travail - sera supprimé après utilisation</strong>
     </div>
 
-    <h2> Fonctionnalités de Génération et Performance</h2>
+    <div class="tab-container">
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="openTab('generation')">🎯 Génération & Performance</button>
+            <button class="tab-button" onclick="openTab('design')">🎨 Design & Personnalisation</button>
+            <button class="tab-button" onclick="openTab('data')">📊 Données & Contenu</button>
+            <button class="tab-button" onclick="openTab('integration')">🔗 Intégration & API</button>
+            <button class="tab-button" onclick="openTab('collaboration')">👥 Collaboration</button>
+            <button class="tab-button" onclick="openTab('security')">🔒 Sécurité</button>
+            <button class="tab-button" onclick="openTab('analytics')">📈 Analytics</button>
+            <button class="tab-button" onclick="openTab('support')">🛠️ Support</button>
+            <button class="tab-button" onclick="openTab('advanced')">🚀 Avancées</button>
+        </div>
 
-    <div class="feature">
-        <h3>1. Génération PDF Illimitée</h3>
-        <p><span class="free">Gratuit: 50 PDFs/mois maximum</span></p>
-        <p><span class="premium">Premium: Génération illimitée sans restriction mensuelle</span></p>
-        <p><span class="impact">Impact: Utile pour les sites à fort trafic ou e-commerce</span></p>
-    </div>
+        <!-- Onglet Génération & Performance -->
+        <div id="generation" class="tab-content active">
+            <div class="feature">
+                <h3>1. Génération PDF Illimitée</h3>
+                <p><span class="free">Gratuit: 50 PDFs/mois maximum</span></p>
+                <p><span class="premium">Premium: Génération illimitée sans restriction mensuelle</span></p>
+                <p><span class="impact">Impact: Utile pour les sites à fort trafic ou e-commerce</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>2. Qualité d'Impression Professionnelle</h3>
-        <p><span class="free">Gratuit: 72 DPI (qualité écran)</span></p>
-        <p><span class="premium">Premium: 300 DPI haute résolution</span></p>
-        <p><span class="impact">Impact: Documents prêts pour l'impression professionnelle</span></p>
-    </div>
+            <div class="feature">
+                <h3>2. Qualité d'Impression Professionnelle</h3>
+                <p><span class="free">Gratuit: 72 DPI (qualité écran)</span></p>
+                <p><span class="premium">Premium: 300 DPI haute résolution</span></p>
+                <p><span class="impact">Impact: Documents prêts pour l'impression professionnelle</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>3. Génération Multi-Format</h3>
-        <p><span class="free">Gratuit: PDF uniquement</span></p>
-        <p><span class="premium">Premium: PDF, PNG, JPG, SVG</span></p>
-        <p><span class="impact">Impact: Flexibilité pour différents usages (web, print, mobile)</span></p>
-    </div>
+            <div class="feature">
+                <h3>3. Génération Multi-Format</h3>
+                <p><span class="free">Gratuit: PDF uniquement</span></p>
+                <p><span class="premium">Premium: PDF, PNG, JPG, SVG</span></p>
+                <p><span class="impact">Impact: Flexibilité pour différents usages (web, print, mobile)</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>4. Génération en Masse (Bulk)</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Traitement par lot de centaines de PDFs</span></p>
-        <p><span class="impact">Impact: Automatisation pour gros volumes</span></p>
-    </div>
+            <div class="feature">
+                <h3>4. Génération en Masse (Bulk)</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Traitement par lot de centaines de PDFs</span></p>
+                <p><span class="impact">Impact: Automatisation pour gros volumes</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>5. Système de Cache Avancé</h3>
-        <p><span class="free">Gratuit: Cache basique</span></p>
-        <p><span class="premium">Premium: Cache intelligent avec préchargement</span></p>
-        <p><span class="impact">Impact: Performance 5x supérieure</span></p>
-    </div>
+            <div class="feature">
+                <h3>5. Système de Cache Avancé</h3>
+                <p><span class="free">Gratuit: Cache basique</span></p>
+                <p><span class="premium">Premium: Cache intelligent avec préchargement</span></p>
+                <p><span class="impact">Impact: Performance 5x supérieure</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>6. Génération Asynchrone</h3>
-        <p><span class="free">Gratuit: Synchrone (bloquant)</span></p>
-        <p><span class="premium">Premium: Background processing</span></p>
-        <p><span class="impact">Impact: Pas de timeout sur gros volumes</span></p>
-    </div>
+            <div class="feature">
+                <h3>6. Génération Asynchrone</h3>
+                <p><span class="free">Gratuit: Synchrone (bloquant)</span></p>
+                <p><span class="premium">Premium: Background processing</span></p>
+                <p><span class="impact">Impact: Pas de timeout sur gros volumes</span></p>
+            </div>
+        </div>
 
-    <h2>Personnalisation et Design</h2>
+        <!-- Onglet Design & Personnalisation -->
+        <div id="design" class="tab-content">
+            <div class="feature">
+                <h3>7. Templates Illimités</h3>
+                <p><span class="free">Gratuit: 1 template maximum</span></p>
+                <p><span class="premium">Premium: Templates illimités</span></p>
+                <p><span class="impact">Impact: Flexibilité totale pour différents besoins</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>7. Templates Illimités</h3>
-        <p><span class="free">Gratuit: 1 template maximum</span></p>
-        <p><span class="premium">Premium: Templates illimités</span></p>
-        <p><span class="impact">Impact: Flexibilité totale pour différents besoins</span></p>
-    </div>
+            <div class="feature">
+                <h3>8. Éléments Avancés</h3>
+                <p><span class="free">Gratuit: Texte, image, formes basiques</span></p>
+                <p><span class="premium">Premium: Codes-barres, QR codes, graphiques, tableaux dynamiques</span></p>
+                <p><span class="impact">Impact: Documents plus riches et professionnels</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>8. Éléments Avancés</h3>
-        <p><span class="free">Gratuit: Texte, image, formes basiques</span></p>
-        <p><span class="premium">Premium: Codes-barres, QR codes, graphiques, tableaux dynamiques</span></p>
-        <p><span class="impact">Impact: Documents plus riches et professionnels</span></p>
-    </div>
+            <div class="feature">
+                <h3>9. CSS Personnalisé Avancé</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Injection CSS complète + media queries</span></p>
+                <p><span class="impact">Impact: Contrôle total du design</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>9. CSS Personnalisé Avancé</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Injection CSS complète + media queries</span></p>
-        <p><span class="impact">Impact: Contrôle total du design</span></p>
-    </div>
+            <div class="feature">
+                <h3>10. Polices Personnalisées</h3>
+                <p><span class="free">Gratuit: Polices système uniquement</span></p>
+                <p><span class="premium">Premium: Upload et utilisation de polices personnalisées</span></p>
+                <p><span class="impact">Impact: Charte graphique respectée</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>10. Polices Personnalisées</h3>
-        <p><span class="free">Gratuit: Polices système uniquement</span></p>
-        <p><span class="premium">Premium: Upload et utilisation de polices personnalisées</span></p>
-        <p><span class="impact">Impact: Charte graphique respectée</span></p>
-    </div>
+            <div class="feature">
+                <h3>11. Thèmes et Skins</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Bibliothèque de thèmes prédéfinis</span></p>
+                <p><span class="impact">Impact: Changement d'apparence instantané</span></p>
+            </div>
+        </div>
 
-    <div class="feature">
-        <h3>11. Thèmes et Skins</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Bibliothèque de thèmes prédéfinis</span></p>
-        <p><span class="impact">Impact: Changement d'apparence instantané</span></p>
-    </div>
+        <!-- Onglet Données & Contenu -->
+        <div id="data" class="tab-content">
+            <div class="feature">
+                <h3>12. Variables WooCommerce Complètes</h3>
+                <p><span class="free">Gratuit: Variables basiques (nom, email, total)</span></p>
+                <p><span class="premium">Premium: Toutes les métadonnées (attributs, variations, taxes, etc.)</span></p>
+                <p><span class="impact">Impact: Documents ultra-personnalisés</span></p>
+            </div>
 
-    <h2>Contenu et Données</h2>
+            <div class="feature">
+                <h3>13. Intégration Données Externes</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: API pour données tierces (CRM, ERP)</span></p>
+                <p><span class="impact">Impact: Automatisation complète</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>12. Variables WooCommerce Complètes</h3>
-        <p><span class="free">Gratuit: Variables basiques (nom, email, total)</span></p>
-        <p><span class="premium">Premium: Toutes les métadonnées (attributs, variations, taxes, etc.)</span></p>
-        <p><span class="impact">Impact: Documents ultra-personnalisés</span></p>
-    </div>
+            <div class="feature">
+                <h3>14. Templates Conditionnels</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Logique if/then dans les templates</span></p>
+                <p><span class="impact">Impact: Contenu dynamique selon les données</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>13. Intégration Données Externes</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: API pour données tierces (CRM, ERP)</span></p>
-        <p><span class="impact">Impact: Automatisation complète</span></p>
-    </div>
+            <div class="feature">
+                <h3>15. Calculs et Formules</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Formules mathématiques dans les templates</span></p>
+                <p><span class="impact">Impact: Documents avec totaux automatiques</span></p>
+            </div>
+        </div>
 
-    <div class="feature">
-        <h3>14. Templates Conditionnels</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Logique if/then dans les templates</span></p>
-        <p><span class="impact">Impact: Contenu dynamique selon les données</span></p>
-    </div>
+        <!-- Onglet Intégration & API -->
+        <div id="integration" class="tab-content">
+            <div class="feature">
+                <h3>16. API REST Complète</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: API full REST avec webhooks</span></p>
+                <p><span class="impact">Impact: Intégration dans n'importe quel workflow</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>15. Calculs et Formules</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Formules mathématiques dans les templates</span></p>
-        <p><span class="impact">Impact: Documents avec totaux automatiques</span></p>
-    </div>
+            <div class="feature">
+                <h3>17. Intégrations Tierces</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Zapier, Make.com, webhooks personnalisés</span></p>
+                <p><span class="impact">Impact: Automatisation sans code</span></p>
+            </div>
 
-    <h2>Techniques et Intégration</h2>
+            <div class="feature">
+                <h3>18. Stockage Cloud</h3>
+                <p><span class="free">Gratuit: Stockage local uniquement</span></p>
+                <p><span class="premium">Premium: AWS S3, Google Drive, Dropbox</span></p>
+                <p><span class="impact">Impact: Sauvegarde et accès depuis partout</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>16. API REST Complète</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: API full REST avec webhooks</span></p>
-        <p><span class="impact">Impact: Intégration dans n'importe quel workflow</span></p>
-    </div>
+            <div class="feature">
+                <h3>19. Multi-Site/Network Support</h3>
+                <p><span class="free">Gratuit: Site unique</span></p>
+                <p><span class="premium">Premium: Support WordPress multisite</span></p>
+                <p><span class="impact">Impact: Gestion centralisée pour réseaux</span></p>
+            </div>
+        </div>
 
-    <div class="feature">
-        <h3>17. Intégrations Tierces</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Zapier, Make.com, webhooks personnalisés</span></p>
-        <p><span class="impact">Impact: Automatisation sans code</span></p>
-    </div>
+        <!-- Onglet Collaboration -->
+        <div id="collaboration" class="tab-content">
+            <div class="feature">
+                <h3>20. Multi-Utilisateurs</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Gestion des rôles et permissions</span></p>
+                <p><span class="impact">Impact: Travail d'équipe sur les templates</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>18. Stockage Cloud</h3>
-        <p><span class="free">Gratuit: Stockage local uniquement</span></p>
-        <p><span class="premium">Premium: AWS S3, Google Drive, Dropbox</span></p>
-        <p><span class="impact">Impact: Sauvegarde et accès depuis partout</span></p>
-    </div>
+            <div class="feature">
+                <h3>21. Historique des Versions</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Versioning complet avec rollback</span></p>
+                <p><span class="impact">Impact: Sécurité et traçabilité</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>19. Multi-Site/Network Support</h3>
-        <p><span class="free">Gratuit: Site unique</span></p>
-        <p><span class="premium">Premium: Support WordPress multisite</span></p>
-        <p><span class="impact">Impact: Gestion centralisée pour réseaux</span></p>
-    </div>
+            <div class="feature">
+                <h3>22. Commentaires et Annotations</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Système de commentaires sur les templates</span></p>
+                <p><span class="impact">Impact: Collaboration et feedback</span></p>
+            </div>
 
-    <h2>Collaboration et Gestion</h2>
+            <div class="feature">
+                <h3>23. Workflows d'Approbation</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Processus de validation multi-étapes</span></p>
+                <p><span class="impact">Impact: Contrôle qualité des documents</span></p>
+            </div>
+        </div>
 
-    <div class="feature">
-        <h3>20. Multi-Utilisateurs</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Gestion des rôles et permissions</span></p>
-        <p><span class="impact">Impact: Travail d'équipe sur les templates</span></p>
-    </div>
+        <!-- Onglet Sécurité -->
+        <div id="security" class="tab-content">
+            <div class="feature">
+                <h3>24. Protection par Mot de Passe</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: PDFs protégés par mot de passe</span></p>
+                <p><span class="impact">Impact: Documents confidentiels sécurisés</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>21. Historique des Versions</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Versioning complet avec rollback</span></p>
-        <p><span class="impact">Impact: Sécurité et traçabilité</span></p>
-    </div>
+            <div class="feature">
+                <h3>25. Chiffrement PDF</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Chiffrement AES 256-bit</span></p>
+                <p><span class="impact">Impact: Conformité RGPD et sécurité</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>22. Commentaires et Annotations</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Système de commentaires sur les templates</span></p>
-        <p><span class="impact">Impact: Collaboration et feedback</span></p>
-    </div>
+            <div class="feature">
+                <h3>26. Watermarking Dynamique</h3>
+                <p><span class="free">Gratuit: Watermark fixe "PDF Builder Pro"</span></p>
+                <p><span class="premium">Premium: Watermarks personnalisables et conditionnels</span></p>
+                <p><span class="impact">Impact: Branding et protection anti-contrefaçon</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>23. Workflows d'Approbation</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Processus de validation multi-étapes</span></p>
-        <p><span class="impact">Impact: Contrôle qualité des documents</span></p>
-    </div>
+            <div class="feature">
+                <h3>27. Audit Trail</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Historique complet des générations</span></p>
+                <p><span class="impact">Impact: Traçabilité légale</span></p>
+            </div>
+        </div>
 
-    <h2>Sécurité et Conformité</h2>
+        <!-- Onglet Analytics -->
+        <div id="analytics" class="tab-content">
+            <div class="feature">
+                <h3>28. Analytics Avancé</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Tableaux de bord détaillés</span></p>
+                <p><span class="impact">Impact: Métriques d'usage et optimisation</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>24. Protection par Mot de Passe</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: PDFs protégés par mot de passe</span></p>
-        <p><span class="impact">Impact: Documents confidentiels sécurisés</span></p>
-    </div>
+            <div class="feature">
+                <h3>29. Rapports Automatisés</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Rapports PDF d'activité mensuels</span></p>
+                <p><span class="impact">Impact: Suivi des performances</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>25. Chiffrement PDF</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Chiffrement AES 256-bit</span></p>
-        <p><span class="impact">Impact: Conformité RGPD et sécurité</span></p>
-    </div>
+            <div class="feature">
+                <h3>30. Alertes et Notifications</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Alertes sur erreurs ou seuils</span></p>
+                <p><span class="impact">Impact: Monitoring proactif</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>26. Watermarking Dynamique</h3>
-        <p><span class="free">Gratuit: Watermark fixe "PDF Builder Pro"</span></p>
-        <p><span class="premium">Premium: Watermarks personnalisables et conditionnels</span></p>
-        <p><span class="impact">Impact: Branding et protection anti-contrefaçon</span></p>
-    </div>
+            <div class="feature">
+                <h3>31. Métriques de Performance</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Temps de génération, taux de succès</span></p>
+                <p><span class="impact">Impact: Optimisation continue</span></p>
+            </div>
+        </div>
 
-    <div class="feature">
-        <h3>27. Audit Trail</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Historique complet des générations</span></p>
-        <p><span class="impact">Impact: Traçabilité légale</span></p>
-    </div>
+        <!-- Onglet Support -->
+        <div id="support" class="tab-content">
+            <div class="feature">
+                <h3>32. Support Prioritaire</h3>
+                <p><span class="free">Gratuit: Communauté uniquement</span></p>
+                <p><span class="premium">Premium: Support email prioritaire < 24h</span></p>
+                <p><span class="impact">Impact: Résolution rapide des problèmes</span></p>
+            </div>
 
-    <h2>Monitoring et Analytics</h2>
+            <div class="feature">
+                <h3>33. Mises à Jour Automatiques</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Updates transparentes + sécurité</span></p>
+                <p><span class="impact">Impact: Toujours à jour et sécurisé</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>28. Analytics Avancé</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Tableaux de bord détaillés</span></p>
-        <p><span class="impact">Impact: Métriques d'usage et optimisation</span></p>
-    </div>
+            <div class="feature">
+                <h3>34. Formation et Documentation</h3>
+                <p><span class="free">Gratuit: Documentation basique</span></p>
+                <p><span class="premium">Premium: Vidéos tutorielles, webinaires, support dédié</span></p>
+                <p><span class="impact">Impact: Adoption plus rapide</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>29. Rapports Automatisés</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Rapports PDF d'activité mensuels</span></p>
-        <p><span class="impact">Impact: Suivi des performances</span></p>
-    </div>
+            <div class="feature">
+                <h3>35. Migration Assistée</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Migration depuis autres solutions</span></p>
+                <p><span class="impact">Impact: Transition facile</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>30. Alertes et Notifications</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Alertes sur erreurs ou seuils</span></p>
-        <p><span class="impact">Impact: Monitoring proactif</span></p>
-    </div>
+            <div class="feature">
+                <h3>36. White-Label Complet</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Suppression totale du branding</span></p>
+                <p><span class="impact">Impact: Revente sous sa propre marque</span></p>
+            </div>
+        </div>
 
-    <div class="feature">
-        <h3>31. Métriques de Performance</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Temps de génération, taux de succès</span></p>
-        <p><span class="impact">Impact: Optimisation continue</span></p>
-    </div>
+        <!-- Onglet Avancées -->
+        <div id="advanced" class="tab-content">
+            <div class="feature">
+                <h3>37. IA et Automatisation</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Génération assistée par IA</span></p>
+                <p><span class="impact">Impact: Création accélérée</span></p>
+            </div>
 
-    <h2>Support et Maintenance</h2>
+            <div class="feature">
+                <h3>38. Templates Intelligents</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Templates adaptatifs selon le contenu</span></p>
+                <p><span class="impact">Impact: Optimisation automatique</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>32. Support Prioritaire</h3>
-        <p><span class="free">Gratuit: Communauté uniquement</span></p>
-        <p><span class="premium">Premium: Support email prioritaire < 24h</span></p>
-        <p><span class="impact">Impact: Résolution rapide des problèmes</span></p>
-    </div>
+            <div class="feature">
+                <h3>39. Optimisation SEO</h3>
+                <p><span class="free">Gratuit: Non disponible</span></p>
+                <p><span class="premium">Premium: Métadonnées PDF optimisées</span></p>
+                <p><span class="impact">Impact: Meilleur référencement</span></p>
+            </div>
 
-    <div class="feature">
-        <h3>33. Mises à Jour Automatiques</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Updates transparentes + sécurité</span></p>
-        <p><span class="impact">Impact: Toujours à jour et sécurisé</span></p>
-    </div>
-
-    <div class="feature">
-        <h3>34. Formation et Documentation</h3>
-        <p><span class="free">Gratuit: Documentation basique</span></p>
-        <p><span class="premium">Premium: Vidéos tutorielles, webinaires, support dédié</span></p>
-        <p><span class="impact">Impact: Adoption plus rapide</span></p>
-    </div>
-
-    <div class="feature">
-        <h3>35. Migration Assistée</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Migration depuis autres solutions</span></p>
-        <p><span class="impact">Impact: Transition facile</span></p>
-    </div>
-
-    <div class="feature">
-        <h3>36. White-Label Complet</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Suppression totale du branding</span></p>
-        <p><span class="impact">Impact: Revente sous sa propre marque</span></p>
-    </div>
-
-    <h2>Avancées et Futures</h2>
-
-    <div class="feature">
-        <h3>37. IA et Automatisation</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Génération assistée par IA</span></p>
-        <p><span class="impact">Impact: Création accélérée</span></p>
-    </div>
-
-    <div class="feature">
-        <h3>38. Templates Intelligents</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Templates adaptatifs selon le contenu</span></p>
-        <p><span class="impact">Impact: Optimisation automatique</span></p>
-    </div>
-
-    <div class="feature">
-        <h3>39. Optimisation SEO</h3>
-        <p><span class="free">Gratuit: Non disponible</span></p>
-        <p><span class="premium">Premium: Métadonnées PDF optimisées</span></p>
-        <p><span class="impact">Impact: Meilleur référencement</span></p>
-    </div>
-
-    <div class="feature">
-        <h3>40. Conformité Réglementaire</h3>
-        <p><span class="free">Gratuit: Basique</span></p>
-        <p><span class="premium">Premium: Conformité complète (RGPD, WCAG, etc.)</span></p>
-        <p><span class="impact">Impact: Usage en entreprise régulée</span></p>
+            <div class="feature">
+                <h3>40. Conformité Réglementaire</h3>
+                <p><span class="free">Gratuit: Basique</span></p>
+                <p><span class="premium">Premium: Conformité complète (RGPD, WCAG, etc.)</span></p>
+                <p><span class="impact">Impact: Usage en entreprise régulée</span></p>
+            </div>
+        </div>
     </div>
 
     <div class="stats">
         <h3>Total: 40 fonctionnalités premium identifiées</h3>
-        <p>9 catégories - Prêtes pour implémentation progressive</p>
+        <p>9 catégories organisées par onglets - Prêtes pour implémentation progressive</p>
     </div>
+
+    <script>
+        function openTab(tabName) {
+            // Masquer tous les contenus d'onglets
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Désactiver tous les boutons d'onglets
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            // Afficher l'onglet sélectionné
+            document.getElementById(tabName).classList.add('active');
+
+            // Activer le bouton correspondant
+            event.target.classList.add('active');
+        }
+    </script>
 </body>
 </html>
