@@ -1454,11 +1454,26 @@
             const allButtons = $modal.find('.complete-step');
             console.log('PDF Builder Onboarding: Found', allButtons.length, 'total buttons in modal');
 
+            // Lister tous les boutons avec leur chemin DOM
+            allButtons.each(function(index) {
+                const $btn = $(this);
+                const buttonStep = $btn.data('step');
+                const path = [];
+                let element = this;
+                while (element && element !== $modal[0]) {
+                    const tag = element.tagName.toLowerCase();
+                    const classes = element.className ? '.' + element.className.split(' ').join('.') : '';
+                    const id = element.id ? '#' + element.id : '';
+                    path.unshift(tag + id + classes);
+                    element = element.parentElement;
+                }
+                console.log(`PDF Builder Onboarding: Button ${index}: step=${buttonStep}, path=${path.join(' > ')}, visible=${$btn.is(':visible')}`);
+            });
+
             // Masquer tous les boutons qui ne correspondent pas à l'étape courante
             allButtons.each(function() {
                 const $btn = $(this);
                 const buttonStep = $btn.data('step');
-                console.log('PDF Builder Onboarding: Button step:', buttonStep, 'visible:', $btn.is(':visible'));
                 if (buttonStep !== this.currentStep) {
                     console.log('PDF Builder Onboarding: HIDING button from step', buttonStep);
                     $btn.hide();
