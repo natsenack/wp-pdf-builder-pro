@@ -1540,6 +1540,10 @@
 
         generateFooterButtons(step, data) {
             // Générer tous les boutons du footer pour une étape
+            console.log('PDF Builder Onboarding: generateFooterButtons called for step', step);
+            console.log('PDF Builder Onboarding: data received:', data);
+            console.log('PDF Builder Onboarding: this.selectedTemplate:', this.selectedTemplate);
+
             let buttonsHtml = '';
 
             // Bouton skip (si applicable)
@@ -1562,6 +1566,8 @@
                 const buttonClass = (data.requires_selection && step === 2) ? 'button-secondary' : 'button-primary';
                 const isDisabled = (data.requires_selection && step === 2 && !this.selectedTemplate) ? 'disabled' : '';
 
+                console.log('PDF Builder Onboarding: Button logic - step:', step, 'requires_selection:', data.requires_selection, 'selectedTemplate:', this.selectedTemplate, 'isDisabled:', isDisabled);
+
                 buttonsHtml += `
                     <button class="button ${buttonClass} complete-step"
                             data-step="${step}"
@@ -1572,6 +1578,7 @@
                 `;
             }
 
+            console.log('PDF Builder Onboarding: Generated footer HTML:', buttonsHtml.substring(0, 200) + '...');
             return buttonsHtml;
         }
 
@@ -1608,6 +1615,7 @@
             // Régénérer les boutons du footer pour l'étape actuelle
             // Cela est nécessaire quand l'état change (par exemple, sélection de template)
             console.log('PDF Builder Onboarding: Updating footer buttons for current step', this.currentStep);
+            console.log('PDF Builder Onboarding: Current selectedTemplate:', this.selectedTemplate);
 
             // Simuler les données de l'étape actuelle (on pourrait les récupérer du cache)
             const stepData = this.getStepData(this.currentStep);
@@ -1620,6 +1628,8 @@
                 action_type: stepData.action_type,
                 requires_selection: stepData.requires_selection || false
             };
+
+            console.log('PDF Builder Onboarding: Step data for update:', data);
 
             // Régénérer les boutons
             const $footer = $('#pdf-builder-onboarding-modal .modal-footer');
