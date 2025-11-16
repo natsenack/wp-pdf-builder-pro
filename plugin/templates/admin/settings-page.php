@@ -744,7 +744,7 @@
         </a>
     </div>
 
-        <div id="general" class="tab-content">
+        <div id="general" class="tab-content active">
             <form method="post" id="general-form" action="">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
                 <input type="hidden" name="submit" value="1">
@@ -5336,6 +5336,13 @@
                     if (savedTabLink) {
                         savedTabLink.click();
                     }
+                } else {
+                    // Par défaut, s'assurer que l'onglet général est visible
+                    const generalTab = document.getElementById('general');
+                    if (generalTab) {
+                        generalTab.classList.remove('hidden-tab');
+                        generalTab.classList.add('active');
+                    }
                 }
             }
 
@@ -6346,4 +6353,17 @@
                 jQuery('.floating-save-container').hide();
             }
     </script>
+    <style>
+        /* S'assurer que l'onglet général est toujours visible par défaut */
+        .tab-content.active {
+            display: block !important;
+        }
+        .tab-content:not(.active):not(.hidden-tab) {
+            display: none !important;
+        }
+        /* Correction pour l'onglet général spécifiquement */
+        #general.tab-content {
+            display: block !important;
+        }
+    </style>
 
