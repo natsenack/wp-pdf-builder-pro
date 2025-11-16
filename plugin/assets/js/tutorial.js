@@ -7,6 +7,7 @@
 
     class TutorialManager {
         constructor() {
+            console.log('TutorialManager: Constructor called');
             this.currentTutorial = null;
             this.currentStep = 0;
             this.tooltips = [];
@@ -14,6 +15,11 @@
         }
 
         init() {
+            console.log('TutorialManager: init called');
+            console.log('TutorialManager: window.pdfBuilderTutorial available:', typeof window.pdfBuilderTutorial !== 'undefined');
+            if (window.pdfBuilderTutorial) {
+                console.log('TutorialManager: tutorials data:', window.pdfBuilderTutorial.tutorials);
+            }
             this.bindEvents();
         }
 
@@ -366,6 +372,7 @@
     // Initialiser le système de tutoriels quand le DOM est prêt
     $(document).ready(() => {
         window.pdfBuilderTutorialManager = new TutorialManager();
+        console.log('TutorialManager: Instance created and assigned to window.pdfBuilderTutorialManager');
     });
 
 })(jQuery);
