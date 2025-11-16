@@ -5272,6 +5272,7 @@
     </script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 PDF Builder Settings JavaScript loaded');
 
             // Gestion de la navigation des onglets
