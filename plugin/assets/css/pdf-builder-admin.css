@@ -360,5 +360,132 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
   display: none !important;
 }
 
+/* Dark mode support pour le dashboard */
+@media (prefers-color-scheme: dark) {
+    /* Dashboard principal */
+    .pdf-builder-dashboard {
+        color: #f9fafb;
+    }
+
+    .dashboard-header h1 {
+        color: #f9fafb;
+    }
+
+    .dashboard-subtitle {
+        color: #d1d5db;
+    }
+
+    .dashboard-meta {
+        color: #9ca3af;
+    }
+
+    /* Cartes de statistiques */
+    .stat-card {
+        background: #374151;
+        border-color: #6b7280;
+        color: #f9fafb;
+    }
+
+    .stat-card:hover {
+        background: #4b5563;
+        border-color: #9ca3af;
+    }
+
+    .stat-content .stat-label {
+        color: #d1d5db;
+    }
+
+    /* Cartes d'actions */
+    .action-card {
+        background: #374151;
+        border-color: #6b7280;
+        color: #f9fafb;
+    }
+
+    .action-card:hover {
+        background: #4b5563;
+        border-color: #9ca3af;
+    }
+
+    .action-card h3 {
+        color: #f9fafb;
+    }
+
+    .action-card p {
+        color: #d1d5db;
+    }
+
+    /* Guide de démarrage rapide */
+    .dashboard-guide {
+        background: #374151;
+        border-color: #6b7280;
+        color: #f9fafb;
+    }
+
+    .dashboard-guide h3 {
+        color: #f9fafb;
+    }
+
+    .step-content h4 {
+        color: #f9fafb;
+    }
+
+    .step-content p {
+        color: #d1d5db;
+    }
+
+    .step-content small {
+        color: #9ca3af;
+    }
+
+    /* Section fonctionnalités */
+    .dashboard-features {
+        background: #374151;
+        border-color: #6b7280;
+        color: #f9fafb;
+    }
+
+    .dashboard-features h3 {
+        color: #f9fafb;
+        border-bottom-color: #3b82f6;
+    }
+
+    .feature-category {
+        background: #4b5563;
+        border-color: #6b7280;
+    }
+
+    .feature-category h4 {
+        color: #60a5fa;
+        border-bottom-color: #6b7280;
+    }
+
+    .feature-category li {
+        color: #d1d5db;
+    }
+
+    /* Boutons */
+    .button.button-primary {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: #ffffff;
+    }
+
+    .button.button-primary:hover {
+        background: #2563eb;
+        border-color: #2563eb;
+    }
+
+    .button.button-secondary {
+        background: #6b7280;
+        border-color: #6b7280;
+        color: #f9fafb;
+    }
+
+    .button.button-secondary:hover {
+        background: #9ca3af;
+        border-color: #9ca3af;
+    }
+}
 
 
