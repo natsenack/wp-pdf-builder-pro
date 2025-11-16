@@ -5280,6 +5280,7 @@
 
             // Configuration des onglets principaux
             let mainTabsInitialized = false; // Flag pour éviter les initialisations multiples
+            let gdprTabsInitialized = false; // Flag pour éviter les initialisations multiples des sous-onglets RGPD
 
             // Gestionnaire de clic pour les onglets principaux (défini globalement pour removeEventListener)
             function mainTabClickHandler(e) {
@@ -5432,7 +5433,6 @@
             setupTabNavigation();
 
             // Configuration des sous-onglets RGPD
-            let gdprTabsInitialized = false; // Flag pour éviter les initialisations multiples
 
             // Gestionnaire de clic pour les onglets RGPD (défini globalement pour removeEventListener)
             function gdprTabClickHandler(e) {
