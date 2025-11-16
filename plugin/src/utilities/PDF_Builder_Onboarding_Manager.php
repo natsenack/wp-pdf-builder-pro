@@ -305,12 +305,12 @@ class PDF_Builder_Onboarding_Manager {
                                 </div>
                                 <div class="mode-features">
                                     <ul>
-                                        <li>❌ ' . __('Templates PDF illimités', 'pdf-builder-pro') . '</li>
-                                        <li>❌ ' . __('Variables dynamiques avancées', 'pdf-builder-pro') . '</li>
-                                        <li>❌ ' . __('Export sans watermark', 'pdf-builder-pro') . '</li>
-                                        <li>❌ ' . __('Éditeur React professionnel', 'pdf-builder-pro') . '</li>
-                                        <li>❌ ' . __('Support prioritaire 24/7', 'pdf-builder-pro') . '</li>
-                                        <li>❌ ' . __('Exports haute qualité (300 DPI)', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('1 template PDF inclus', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('15 variables dynamiques de base', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Export PDF (avec watermark)', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Éditeur de base fonctionnel', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Support communautaire', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Qualité 72 DPI', 'pdf-builder-pro') . '</li>
                                     </ul>
                                 </div>
                                 <div class="mode-limitations">
@@ -354,6 +354,20 @@ class PDF_Builder_Onboarding_Manager {
                                     <span class="price">79€</span>
                                     <span class="period">' . __('à vie', 'pdf-builder-pro') . '</span>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="freemium-comparison" style="margin-top:24px;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+                            <h4 style="margin:0 0 12px 0;color:#374151;font-size:16px;">🚫 Non disponible dans la version gratuite :</h4>
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">
+                                <span style="color:#6b7280;font-size:14px;">• Templates PDF illimités</span>
+                                <span style="color:#6b7280;font-size:14px;">• Variables dynamiques avancées</span>
+                                <span style="color:#6b7280;font-size:14px;">• Export haute qualité (300 DPI)</span>
+                                <span style="color:#6b7280;font-size:14px;">• Éditeur React professionnel</span>
+                                <span style="color:#6b7280;font-size:14px;">• Intégration WooCommerce complète</span>
+                                <span style="color:#6b7280;font-size:14px;">• Support prioritaire 24/7</span>
+                                <span style="color:#6b7280;font-size:14px;">• Métriques et analytics</span>
+                                <span style="color:#6b7280;font-size:14px;">• Variables conditionnelles</span>
+                                <span style="color:#6b7280;font-size:14px;">• Exports PNG/JPG</span>
                             </div>
                         </div>
                         <div class="freemium-notice" style="margin-top:16px;padding:12px;background:#fef3c7;border-left:4px solid #f59e0b;border-radius:4px;">
