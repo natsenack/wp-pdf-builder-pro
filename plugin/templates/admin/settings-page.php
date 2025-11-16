@@ -5294,6 +5294,7 @@
                 allTabs.forEach(tab => {
                     tab.classList.add('hidden-tab');
                     tab.classList.remove('active');
+                    console.log('📦 Masquage onglet:', tab.id, '- Classes avant:', tab.className);
                 });
 
                 // Désactiver tous les liens d'onglets
