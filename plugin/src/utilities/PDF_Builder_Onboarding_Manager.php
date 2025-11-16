@@ -370,31 +370,31 @@ class PDF_Builder_Onboarding_Manager {
                                     <span id="selected-template-icon">📄</span>
                                 </div>
                                 <div class="template-info">
-                                    <h3 id="selected-template-title">' . __('Template sélectionné', 'pdf-builder-pro') . '</h3>
-                                    <p id="selected-template-description">' . __('Aucun template sélectionné', 'pdf-builder-pro') . '</p>
+                                    <h3 id="selected-template-title">Template sélectionné</h3>
+                                    <p id="selected-template-description">Aucun template sélectionné</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Personnalisation basique -->
                         <div class="template-customization">
-                            <h4>' . __('✨ Personnalisez votre template', 'pdf-builder-pro') . '</h4>
+                            <h4>✨ Personnalisez votre template</h4>
                             <div class="customization-fields">
                                 <div class="field-group">
-                                    <label for="template_custom_name">' . __('Nom du template', 'pdf-builder-pro') . '</label>
-                                    <input type="text" id="template_custom_name" placeholder="' . __('Ex: Facture Pro 2025', 'pdf-builder-pro') . '" maxlength="100">
+                                    <label for="template_custom_name">Nom du template</label>
+                                    <input type="text" id="template_custom_name" placeholder="Ex: Facture Pro 2025" maxlength="100">
                                 </div>
                                 <div class="field-group">
-                                    <label for="template_custom_description">' . __('Description (optionnel)', 'pdf-builder-pro') . '</label>
-                                    <textarea id="template_custom_description" placeholder="' . __('Décrivez l\'usage de ce template...', 'pdf-builder-pro') . '" maxlength="255" rows="2"></textarea>
+                                    <label for="template_custom_description">Description (optionnel)</label>
+                                    <textarea id="template_custom_description" placeholder="Décrivez l\'usage de ce template..." maxlength="255" rows="2"></textarea>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Assignation WooCommerce -->
                         <div class="woocommerce-assignment">
-                            <h4>' . __('🛒 Assignation WooCommerce', 'pdf-builder-pro') . '</h4>
-                            <p class="assignment-description">' . __('Sélectionnez les statuts de commande pour lesquels ce template sera automatiquement généré :', 'pdf-builder-pro') . '</p>
+                            <h4>🛒 Assignation WooCommerce</h4>
+                            <p class="assignment-description">Sélectionnez les statuts de commande pour lesquels ce template sera automatiquement généré :</p>
 
                             <div class="status-selection">
                                 ' . $status_options . '
@@ -403,34 +403,34 @@ class PDF_Builder_Onboarding_Manager {
                             <div class="assignment-notice">
                                 <div class="notice-icon">💡</div>
                                 <div class="notice-content">
-                                    <strong>' . __('Configuration automatique :', 'pdf-builder-pro') . '</strong> ' . __('Le template sera généré automatiquement pour les commandes atteignant ces statuts.', 'pdf-builder-pro') . '
+                                    <strong>Configuration automatique :</strong> Le template sera généré automatiquement pour les commandes atteignant ces statuts.
                                 </div>
                             </div>
                         </div>
 
                         <!-- Actions disponibles -->
                         <div class="template-actions">
-                            <h4>' . __('🎯 Actions disponibles', 'pdf-builder-pro') . '</h4>
+                            <h4>🎯 Actions disponibles</h4>
                             <div class="action-options">
                                 <label class="action-option">
                                     <input type="checkbox" name="template_actions" value="auto_generate" checked>
                                     <div class="option-content">
-                                        <strong>' . __('Génération automatique', 'pdf-builder-pro') . '</strong>
-                                        <span>' . __('Créer le PDF automatiquement lors des changements de statut', 'pdf-builder-pro') . '</span>
+                                        <strong>Génération automatique</strong>
+                                        <span>Créer le PDF automatiquement lors des changements de statut</span>
                                     </div>
                                 </label>
                                 <label class="action-option">
                                     <input type="checkbox" name="template_actions" value="email_attach" checked>
                                     <div class="option-content">
-                                        <strong>' . __('Pièce jointe email', 'pdf-builder-pro') . '</strong>
-                                        <span>' . __('Joindre automatiquement le PDF aux emails WooCommerce', 'pdf-builder-pro') . '</span>
+                                        <strong>Pièce jointe email</strong>
+                                        <span>Joindre automatiquement le PDF aux emails WooCommerce</span>
                                     </div>
                                 </label>
                                 <label class="action-option">
                                     <input type="checkbox" name="template_actions" value="download_link">
                                     <div class="option-content">
-                                        <strong>' . __('Lien de téléchargement', 'pdf-builder-pro') . '</strong>
-                                        <span>' . __('Ajouter un lien de téléchargement dans la commande client', 'pdf-builder-pro') . '</span>
+                                        <strong>Lien de téléchargement</strong>
+                                        <span>Ajouter un lien de téléchargement dans la commande client</span>
                                     </div>
                                 </label>
                             </div>
@@ -439,7 +439,7 @@ class PDF_Builder_Onboarding_Manager {
                         <div class="setup-complete-notice">
                             <div class="notice-icon">✅</div>
                             <div class="notice-content">
-                                <strong>' . __('Configuration terminée !', 'pdf-builder-pro') . '</strong> ' . __('Votre template est prêt à être utilisé. Vous pourrez le modifier à tout moment depuis l\'éditeur.', 'pdf-builder-pro') . '
+                                <strong>Configuration terminée !</strong> Votre template est prêt à être utilisé. Vous pourrez le modifier à tout moment depuis l\'éditeur.
                             </div>
                         </div>
                     </div>

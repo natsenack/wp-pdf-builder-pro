@@ -1937,9 +1937,12 @@ kbd {
    STYLES POUR L'ÉTAPE ASSIGN TEMPLATE
    =========================================== */
 
-.assign-template-setup {
-    max-width: 800px;
-    margin: 0 auto;
+.assign-template-setup > div {
+    margin-bottom: 24px;
+}
+
+.assign-template-setup > div:last-child {
+    margin-bottom: 0;
 }
 
 .selected-template-preview {
@@ -2084,10 +2087,10 @@ kbd {
 }
 
 .status-option input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+    width: 18px;
+    height: 18px;
+    accent-color: #3b82f6;
+    cursor: pointer;
 }
 
 .status-option input[type="checkbox"]:checked + .status-badge {
@@ -2096,17 +2099,46 @@ kbd {
     transform: scale(1.05);
 }
 
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background: #f3f4f6;
-    color: #6b7280;
-    transition: all 0.2s ease;
-    border: 1px solid #e5e7eb;
+.status-badge.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #f59e0b;
+}
+
+.status-badge.status-processing {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #3b82f6;
+}
+
+.status-badge.status-on-hold {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #f59e0b;
+}
+
+.status-badge.status-completed {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #10b981;
+}
+
+.status-badge.status-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #ef4444;
+}
+
+.status-badge.status-refunded {
+    background: #f3e8ff;
+    color: #6b21a8;
+    border-color: #8b5cf6;
+}
+
+.status-badge.status-failed {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #ef4444;
 }
 
 .assignment-notice {
@@ -2173,10 +2205,11 @@ kbd {
 }
 
 .action-option input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+    width: 18px;
+    height: 18px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
 .action-option input[type="checkbox"]:checked + .option-content {
@@ -2184,17 +2217,11 @@ kbd {
 }
 
 .action-option input[type="checkbox"]:checked + .option-content::before {
-    content: "☑️";
-    position: absolute;
-    left: 16px;
-    top: 16px;
-    font-size: 16px;
+    content: "";
 }
 
 .action-option .option-content {
     flex: 1;
-    position: relative;
-    padding-left: 24px;
 }
 
 .action-option .option-content strong {
@@ -2263,6 +2290,11 @@ kbd {
     }
 
     .action-option {
+        padding: 12px;
+    }
+
+    .assignment-notice,
+    .setup-complete-notice {
         padding: 12px;
     }
 }
