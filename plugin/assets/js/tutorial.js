@@ -49,6 +49,17 @@
                 e.preventDefault();
                 $(e.target).closest('.tutorial-tooltip').fadeOut();
             });
+
+            // Événements de navigation dans les tutoriels
+            $(document).on('click', '.tutorial-next', (e) => {
+                e.preventDefault();
+                this.nextStep();
+            });
+
+            $(document).on('click', '.tutorial-prev', (e) => {
+                e.preventDefault();
+                this.prevStep();
+            });
         }
 
         showWelcomeWizard() {
