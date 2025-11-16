@@ -985,6 +985,7 @@
     margin-bottom: 8px;
     opacity: 1;
     visibility: visible;
+    pointer-events: none;
 }
 
 .pdf-builder-onboarding-modal [data-tooltip]:hover::before {
@@ -998,6 +999,7 @@
     z-index: 10001;
     opacity: 1;
     visibility: visible;
+    pointer-events: none;
 }
 
 /* Animations */

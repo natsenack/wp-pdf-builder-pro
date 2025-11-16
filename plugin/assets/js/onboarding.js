@@ -515,17 +515,21 @@
         updateProgress() {
             // Mettre à jour l'indicateur de progression
             const $progressIndicator = $('.onboarding-progress-indicator');
+            const totalSteps = typeof pdfBuilderOnboarding !== 'undefined' && pdfBuilderOnboarding.total_steps 
+                ? pdfBuilderOnboarding.total_steps 
+                : 4;
+            
             if ($progressIndicator.length > 0) {
                 // Calculer le pourcentage de progression (étape actuelle / nombre total d'étapes)
-                const progressPercent = (this.currentStep / 4) * 100;
+                const progressPercent = (this.currentStep / totalSteps) * 100;
                 $progressIndicator.css('width', progressPercent + '%');
                 $progressIndicator.attr('aria-valuenow', this.currentStep);
-                $progressIndicator.attr('aria-valuemax', 4);
+                $progressIndicator.attr('aria-valuemax', totalSteps);
             }
             // Mettre à jour le texte de progression
             const $progressText = $('.onboarding-progress-text');
             if ($progressText.length > 0) {
-                $progressText.text(`Étape ${this.currentStep} sur 4`);
+                $progressText.text(`Étape ${this.currentStep} sur ${totalSteps}`);
             }
         }
 

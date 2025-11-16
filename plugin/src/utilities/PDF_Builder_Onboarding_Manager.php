@@ -664,9 +664,9 @@ class PDF_Builder_Onboarding_Manager {
 
                     <div class="progress-indicator">
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: <?php echo (($current_step / 4) * 100); ?>%"></div>
+                            <div class="progress-fill" style="width: <?php echo (($current_step / count($steps)) * 100); ?>%"></div>
                         </div>
-                        <div class="progress-text">Étape <?php echo $current_step; ?> sur 4</div>
+                        <div class="progress-text">Étape <?php echo $current_step; ?> sur <?php echo count($steps); ?></div>
                     </div>
 
                     <button class="modal-close" data-action="skip-onboarding" data-tooltip="Quitter l'assistant">
