@@ -263,10 +263,30 @@ class PDF_Builder_GDPR_Manager {
         // Récupérer les templates utilisateur
         global $wpdb;
         $templates = $wpdb->get_results($wpdb->prepare("
-            SELECT ID, post_title, post_modified
+            SELECT ID, post_title, post_modified, post_content
             FROM {$wpdb->posts}
             WHERE post_author = %d AND post_type = 'pdf_template'
         ", $user_id), ARRAY_A);
+
+        // Récupérer les métadonnées des templates
+        $template_meta = [];
+        foreach ($templates as $template) {
+            $meta = get_post_meta($template['ID']);
+            $template_meta[$template['ID']] = $meta;
+        }
+
+        // Récupérer les logs d'audit de l'utilisateur (anonymisés)
+        $table_audit = $wpdb->prefix . 'pdf_builder_audit_log';
+        $audit_logs = $wpdb->get_results($wpdb->prepare("
+            SELECT action, data_type, created_at
+            FROM {$table_audit}
+            WHERE user_id = %d
+            ORDER BY created_at DESC
+        ", $user_id), ARRAY_A);
+
+        // Récupérer les préférences utilisateur
+        $user_preferences = get_user_meta($user_id, 'pdf_builder_user_preferences', true);
+        $last_activity = get_user_meta($user_id, 'pdf_builder_last_activity', true);
 
         return [
             'user_info' => [
@@ -274,36 +294,88 @@ class PDF_Builder_GDPR_Manager {
                 'login' => $user->user_login,
                 'email' => $user->user_email,
                 'display_name' => $user->display_name,
-                'registered' => $user->user_registered
+                'registered' => $user->user_registered,
+                'roles' => $user->roles
             ],
             'consents' => $consent_data,
             'templates' => $templates,
-            'export_date' => current_time('mysql')
+            'template_metadata' => $template_meta,
+            'audit_logs' => $audit_logs,
+            'user_preferences' => $user_preferences,
+            'last_activity' => $last_activity,
+            'export_date' => current_time('mysql'),
+            'data_portability_notice' => 'Ces données sont fournies au format RGPD pour portabilité.'
         ];
     }
 
     /**
-     * Supprimer les données d'un utilisateur
+     * Obtenir le statut d'un consentement pour un utilisateur
+     */
+    public function get_user_consent_status($user_id, $consent_type) {
+        $consent_key = 'pdf_builder_consent_' . $consent_type;
+        $consent_data = get_user_meta($user_id, $consent_key, true);
+
+        return $consent_data ? $consent_data['granted'] : false;
+    }
+
+    /**
+     * Vérifier si un consentement est requis et accordé
+     */
+    public function is_consent_granted($user_id, $consent_type) {
+        // Si le consentement n'est pas requis globalement, considérer comme accordé
+        if (!($this->gdpr_options['consent_types'][$consent_type] ?? false)) {
+            return true;
+        }
+
+        return $this->get_user_consent_status($user_id, $consent_type);
+    }
+
+    /**
+     * Supprimer les données d'un utilisateur (RGPD - Droit à l'oubli)
      */
     private function delete_user_data($user_id) {
-        // Supprimer les consentements
+        global $wpdb;
+
+        // 1. Supprimer les consentements utilisateur
         foreach (['analytics', 'templates', 'marketing'] as $type) {
             $consent_key = 'pdf_builder_consent_' . $type;
             delete_user_meta($user_id, $consent_key);
         }
 
-        // Supprimer les templates utilisateur
-        global $wpdb;
+        // 2. Supprimer les templates créés par l'utilisateur
         $wpdb->delete($wpdb->posts, [
             'post_author' => $user_id,
             'post_type' => 'pdf_template'
         ]);
 
-        // Supprimer les métadonnées des templates
+        // 3. Supprimer toutes les métadonnées liées à l'utilisateur
         $wpdb->delete($wpdb->postmeta, [
             'meta_key' => '_pdf_template_author',
             'meta_value' => $user_id
         ]);
+
+        // 4. Supprimer les logs d'audit de cet utilisateur (RGPD compliance)
+        $table_audit = $wpdb->prefix . 'pdf_builder_audit_log';
+        $wpdb->delete($table_audit, ['user_id' => $user_id]);
+
+        // 5. Supprimer les données de sauvegarde utilisateur si elles existent
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups/' . $user_id;
+        if (is_dir($backup_dir)) {
+            $this->delete_directory_recursive($backup_dir);
+        }
+
+        // 6. Supprimer les fichiers temporaires de l'utilisateur
+        $temp_files = glob(WP_CONTENT_DIR . '/pdf-builder-temp/*' . $user_id . '*');
+        foreach ($temp_files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+
+        // 7. Supprimer les préférences utilisateur personnalisées
+        delete_user_meta($user_id, 'pdf_builder_user_preferences');
+        delete_user_meta($user_id, 'pdf_builder_last_activity');
+        delete_user_meta($user_id, 'pdf_builder_session_data');
     }
 
     /**
@@ -627,5 +699,26 @@ class PDF_Builder_GDPR_Manager {
 
         echo $csv_content;
         exit;
+    }
+
+    /**
+     * Supprimer récursivement un répertoire
+     */
+    private function delete_directory_recursive($dir) {
+        if (!is_dir($dir)) {
+            return false;
+        }
+
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
+            if (is_dir($path)) {
+                $this->delete_directory_recursive($path);
+            } else {
+                unlink($path);
+            }
+        }
+
+        return rmdir($dir);
     }
 }

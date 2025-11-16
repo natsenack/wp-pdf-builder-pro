@@ -4148,6 +4148,8 @@
                         <h3>Gestion des Consentements</h3>
                         <p>Configurez les types de consentements requis pour l'utilisation du plugin.</p>
 
+                        <!-- Configuration globale des consentements (Admin) -->
+                        <h4>Configuration des Types de Consentements</h4>
                         <form method="post" id="gdpr-consent-form">
                             <?php wp_nonce_field('pdf_builder_gdpr_settings', 'gdpr_nonce'); ?>
 
@@ -4189,6 +4191,43 @@
                                 <button type="submit" class="button button-primary">Sauvegarder les paramètres</button>
                             </p>
                         </form>
+
+                        <hr>
+
+                        <!-- Gestion des consentements personnels (Utilisateur actuel) -->
+                        <h4>Vos Consentements Personnels</h4>
+                        <p>Gérez vos consentements personnels concernant l'utilisation de vos données.</p>
+
+                        <div id="user-consents-container">
+                            <div class="gdpr-consent-item">
+                                <label>
+                                    <input type="checkbox" class="consent-toggle" data-consent-type="analytics"
+                                           <?php checked($this->get_user_consent_status(get_current_user_id(), 'analytics')); ?> />
+                                    <strong>Analytics et statistiques d'usage</strong>
+                                </label>
+                                <p class="description">Autoriser la collecte anonyme de statistiques d'utilisation pour améliorer le service.</p>
+                            </div>
+
+                            <div class="gdpr-consent-item">
+                                <label>
+                                    <input type="checkbox" class="consent-toggle" data-consent-type="templates"
+                                           <?php checked($this->get_user_consent_status(get_current_user_id(), 'templates')); ?> />
+                                    <strong>Sauvegarde des templates personnalisés</strong>
+                                </label>
+                                <p class="description">Autoriser la sauvegarde de vos templates personnalisés sur nos serveurs.</p>
+                            </div>
+
+                            <div class="gdpr-consent-item">
+                                <label>
+                                    <input type="checkbox" class="consent-toggle" data-consent-type="marketing"
+                                           <?php checked($this->get_user_consent_status(get_current_user_id(), 'marketing')); ?> />
+                                    <strong>Communications marketing</strong>
+                                </label>
+                                <p class="description">Recevoir des newsletters et offres commerciales par email.</p>
+                            </div>
+                        </div>
+
+                        <div id="consent-status-message" style="margin-top: 15px;"></div>
                     </div>
                 </div>
 
