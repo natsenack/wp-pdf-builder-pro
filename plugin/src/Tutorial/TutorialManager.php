@@ -36,8 +36,8 @@ class TutorialManager
         add_action('wp_ajax_pdf_builder_skip_tutorial', [$this, 'handleSkipTutorial']);
 
         // Hooks pour afficher les tooltips
-        add_action('pdf_builder_editor_loaded', [$this, 'addEditorTooltips']);
-        add_action('pdf_builder_settings_loaded', [$this, 'addSettingsTooltips']);
+        add_action('admin_footer', [$this, 'addEditorTooltips']);
+        add_action('admin_footer', [$this, 'addSettingsTooltips']);
 
         // Hook pour afficher le wizard de bienvenue sur les pages du plugin
         add_action('admin_footer', [$this, 'maybeShowWelcomeWizard']);
@@ -155,9 +155,21 @@ class TutorialManager
      */
     public function addEditorTooltips()
     {
-        if (!$this->shouldShowTutorial('editor_basics')) {
+        error_log('PDF Builder Tutorial: addEditorTooltips called');
+
+        // Vérifier si on est sur une page d'édition du plugin
+        $current_screen = get_current_screen();
+        if (!$current_screen || !in_array($current_screen->id, ['toplevel_page_pdf-builder', 'pdf-builder_page_pdf-builder-editor'])) {
+            error_log('PDF Builder Tutorial: Not on editor page, current screen: ' . ($current_screen ? $current_screen->id : 'null'));
             return;
         }
+
+        if (!$this->shouldShowTutorial('editor_basics')) {
+            error_log('PDF Builder Tutorial: Editor tutorial should not be shown');
+            return;
+        }
+
+        error_log('PDF Builder Tutorial: Creating editor tooltip HTML');
 
         ?>
         <div class="tutorial-tooltip" data-tutorial="editor_basics" data-step="0" style="display: none;">
@@ -185,9 +197,21 @@ class TutorialManager
      */
     public function addSettingsTooltips()
     {
-        if (!$this->shouldShowTutorial('settings_overview')) {
+        error_log('PDF Builder Tutorial: addSettingsTooltips called');
+
+        // Vérifier si on est sur une page de paramètres du plugin
+        $current_screen = get_current_screen();
+        if (!$current_screen || !in_array($current_screen->id, ['toplevel_page_pdf-builder', 'pdf-builder_page_pdf-builder-settings'])) {
+            error_log('PDF Builder Tutorial: Not on settings page, current screen: ' . ($current_screen ? $current_screen->id : 'null'));
             return;
         }
+
+        if (!$this->shouldShowTutorial('settings_overview')) {
+            error_log('PDF Builder Tutorial: Settings tutorial should not be shown');
+            return;
+        }
+
+        error_log('PDF Builder Tutorial: Creating settings tooltip HTML');
 
         ?>
         <div class="tutorial-tooltip" data-tutorial="settings_overview" data-step="0" style="display: none;">
@@ -214,6 +238,10 @@ class TutorialManager
      */
     private function shouldShowTutorial($tutorial_id)
     {
+        // DEBUG: Forcer l'affichage pour les tests
+        error_log('PDF Builder Tutorial: Checking if tutorial should show: ' . $tutorial_id);
+        return true;
+
         $user_id = get_current_user_id();
         $completed_tutorials = get_user_meta($user_id, 'pdf_builder_completed_tutorials', true);
         $skipped_tutorials = get_user_meta($user_id, 'pdf_builder_skipped_tutorials', true);

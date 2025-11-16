@@ -211,11 +211,14 @@
         }
 
         nextStep() {
+            console.log('Tutorial: nextStep called, current step:', this.currentStep);
             const tutorial = pdfBuilderTutorial.tutorials[this.currentTutorial];
             if (this.currentStep < tutorial.steps.length - 1) {
                 this.currentStep++;
+                console.log('Tutorial: Moving to step', this.currentStep);
                 this.showCurrentStep();
             } else {
+                console.log('Tutorial: Completing tutorial');
                 this.completeTutorial();
             }
         }
@@ -228,6 +231,7 @@
         }
 
         completeTutorial() {
+            console.log('Tutorial: completeTutorial called');
             this.closeTutorial();
             this.markTutorialAsCompleted(this.currentTutorial);
             this.showCompletionMessage();
