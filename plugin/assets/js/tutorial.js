@@ -15,60 +15,9 @@
 
         init() {
             this.bindEvents();
-            this.checkWelcomeWizard();
         }
 
         bindEvents() {
-            // Gestion des tooltips
-            $(document).on('click', '.tutorial-close', () => {
-                this.closeTutorial();
-            });
-
-            $(document).on('click', '.tutorial-next', () => {
-                this.nextStep();
-            });
-
-            $(document).on('click', '.tutorial-prev', () => {
-                this.prevStep();
-            });
-
-            $(document).on('click', '.tutorial-skip', () => {
-                this.skipTutorial();
-            });
-
-            $(document).on('click', '.tutorial-start', (e) => {
-                this.startTutorial($(e.target).closest('.tutorial-tooltip').data('tutorial'));
-            });
-
-            // Gestion du wizard de bienvenue
-            $(document).on('click', '#start-wizard', () => {
-                this.startWelcomeWizard();
-            });
-
-            $(document).on('click', '#skip-wizard', () => {
-                this.skipWelcomeWizard();
-            });
-
-            // Fermeture des modals en cliquant sur le backdrop
-            $(document).on('click', '.pdf-builder-modal-backdrop', (e) => {
-                if ($(e.target).hasClass('pdf-builder-modal-backdrop')) {
-                    this.closeModal();
-                }
-            });
-        }
-
-        checkWelcomeWizard() {
-            // Vérifier si l'utilisateur doit voir le wizard de bienvenue
-            if (this.shouldShowWelcomeWizard()) {
-                this.showWelcomeWizard();
-            }
-        }
-
-        shouldShowWelcomeWizard() {
-            // Vérifier si l'utilisateur a déjà vu le wizard
-            const completedTutorials = this.getCompletedTutorials();
-            return !completedTutorials.includes('welcome_wizard');
-        }
 
         showWelcomeWizard() {
             // Le wizard est affiché par PHP, on l'active juste

@@ -38,6 +38,9 @@ class TutorialManager
         // Hooks pour afficher les tooltips
         add_action('pdf_builder_editor_loaded', [$this, 'addEditorTooltips']);
         add_action('pdf_builder_settings_loaded', [$this, 'addSettingsTooltips']);
+
+        // Hook pour afficher le wizard de bienvenue sur les pages du plugin
+        add_action('admin_footer', [$this, 'maybeShowWelcomeWizard']);
     }
 
     /**
@@ -289,5 +292,27 @@ class TutorialManager
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * Vérifier et afficher le wizard si nécessaire
+     */
+    public function maybeShowWelcomeWizard()
+    {
+        // Vérifier si on est sur une page du plugin
+        $pdf_builder_pages = [
+            'pdf-builder-pro',
+            'pdf-builder-templates',
+            'pdf-builder-react-editor',
+            'pdf-builder-settings',
+            'pdf-builder-developer',
+            'pdf-builder-predefined-templates'
+        ];
+
+        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+
+        if (in_array($current_page, $pdf_builder_pages)) {
+            $this->showWelcomeWizard();
+        }
     }
 }
