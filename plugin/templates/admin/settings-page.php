@@ -5073,6 +5073,22 @@
                                     nonceName = 'pdf_builder_canvas_nonce';
                                 } else if (activeTab.id === 'templates') {
                                     nonceName = 'pdf_builder_templates_nonce';
+                                } else if (activeTab.id === 'rgpd') {
+                                    // Pour RGPD, déterminer le sous-onglet actif
+                                    const activeGdprTab = document.querySelector('.gdpr-tab.active');
+                                    if (activeGdprTab) {
+                                        const gdprTabId = activeGdprTab.getAttribute('data-tab');
+                                        if (gdprTabId === 'consent') {
+                                            nonceName = 'gdpr_nonce';
+                                        } else if (gdprTabId === 'security') {
+                                            nonceName = 'security_nonce';
+                                        } else {
+                                            // Pour rights et audit, utiliser un nonce par défaut ou chercher dans le formulaire
+                                            nonceName = 'gdpr_nonce'; // fallback
+                                        }
+                                    } else {
+                                        nonceName = 'gdpr_nonce'; // fallback
+                                    }
                                 }
                                 
                                 const nonceField = form.querySelector(`input[name="${nonceName}"]`);
@@ -5081,7 +5097,9 @@
                                     formData.delete(nonceName);
                                     formData.append('nonce', nonceField.value);
                                 } else {
-                                    console.warn('⚠️ Nonce field non trouvé:', nonceName);
+                                    // Pour certains onglets (comme RGPD sous-onglets), il n'y a pas de nonce
+                                    // Dans ce cas, on n'ajoute pas de nonce et on laisse le gestionnaire décider
+                                    console.log('ℹ️ Aucun nonce trouvé pour', nonceName, '- sauvegarde sans nonce');
                                 }
 
                                 // Faire la requête AJAX
