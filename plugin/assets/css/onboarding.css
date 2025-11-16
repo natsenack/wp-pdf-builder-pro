@@ -1523,6 +1523,23 @@ kbd {
         border-color: #9ca3af;
     }
 
+    .pdf-builder-onboarding-modal .btn-primary {
+        background: #60a5fa;
+        color: #ffffff;
+        border-color: #60a5fa;
+    }
+
+    .pdf-builder-onboarding-modal .btn-primary:hover {
+        background: #3b82f6;
+        border-color: #3b82f6;
+    }
+
+    .pdf-builder-onboarding-modal .btn-primary:disabled {
+        background: #9ca3af;
+        border-color: #9ca3af;
+        color: #6b7280;
+    }
+
     .pdf-builder-onboarding-modal .skip-link {
         color: #9ca3af;
     }
@@ -1930,6 +1947,73 @@ kbd {
 
     .mode-price .price {
         font-size: 20px;
+    }
+}
+
+/* Dark mode pour l'étape freemium mode */
+@media (prefers-color-scheme: dark) {
+    .freemium-mode-selection > p {
+        color: #d1d5db;
+    }
+
+    .mode-card {
+        background: #374151;
+        border-color: #6b7280;
+        color: #f9fafb;
+    }
+
+    .mode-card:hover {
+        border-color: #60a5fa;
+        box-shadow: 0 4px 12px rgba(96, 165, 250, 0.15);
+    }
+
+    .mode-card.selected {
+        border-color: #60a5fa;
+        background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%);
+        box-shadow: 0 4px 16px rgba(96, 165, 250, 0.2);
+    }
+
+    .mode-icon {
+        background: linear-gradient(135deg, #4b5563, #6b7280);
+    }
+
+    .mode-card.selected .mode-icon {
+        background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    }
+
+    .mode-header h4 {
+        color: #f9fafb;
+    }
+
+    .mode-card.selected .mode-header h4 {
+        color: #dbeafe;
+    }
+
+    .mode-features li {
+        color: #9ca3af;
+    }
+
+    .mode-price {
+        border-top-color: #6b7280;
+    }
+
+    .mode-price .price {
+        color: #f9fafb;
+    }
+
+    .mode-price .period {
+        color: #9ca3af;
+    }
+
+    .freemium-notice {
+        background: #451a03 !important;
+        border-color: #d97706 !important;
+        border-left-color: #d97706 !important;
+        color: #fed7aa !important;
+    }
+
+    .freemium-notice strong {
+        color: #fed7aa;
     }
 }
 

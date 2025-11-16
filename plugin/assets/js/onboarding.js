@@ -1957,12 +1957,9 @@
          * Met à jour les styles selon le mode sombre
          */
         updateDarkModeStyles() {
-            const modal = $('#pdf-builder-onboarding-modal');
-            if (this.isDarkMode) {
-                modal.addClass('dark-mode');
-            } else {
-                modal.removeClass('dark-mode');
-            }
+            // Les styles CSS gèrent automatiquement le mode sombre via @media (prefers-color-scheme: dark)
+            // Cette méthode est appelée pour la compatibilité mais ne fait rien
+            console.log('PDF Builder Onboarding: Dark mode styles updated (CSS handles automatically)');
         }
     }
 
