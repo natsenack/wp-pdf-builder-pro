@@ -1089,7 +1089,7 @@
                         .addClass('button button-secondary')
                         .attr('data-action', 'skip-step')
                         .text(skipText);
-                    $footer.prepend($secondaryButton);
+                    $footer.append($secondaryButton);
                 } else {
                     $secondaryButton.attr('data-action', 'skip-step').text(skipText);
                 }
@@ -1101,7 +1101,7 @@
                         .addClass('button button-secondary')
                         .attr('data-action', 'skip-onboarding')
                         .text(skipText);
-                    $footer.prepend($secondaryButton);
+                    $footer.append($secondaryButton);
                 } else {
                     $secondaryButton.attr('data-action', 'skip-onboarding').text(skipText);
                 }
