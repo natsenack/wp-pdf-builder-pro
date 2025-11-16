@@ -118,12 +118,6 @@ class PDF_Builder_Onboarding_Manager {
         $completed = $this->is_onboarding_completed();
         $skipped = $this->is_onboarding_skipped();
 
-        // TEMPORAIRE : Forcer l'affichage de l'onboarding pour debug
-        if (isset($_GET['force_onboarding'])) {
-            $completed = false;
-            $skipped = false;
-        }
-
         // Afficher le wizard seulement si ce n'est ni terminé ni ignoré
         if (!$completed && !$skipped) {
             add_action('admin_footer', [$this, 'render_onboarding_wizard']);
