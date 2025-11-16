@@ -1533,6 +1533,7 @@
                 }
             }.bind(this));
         }
+    }
 
     // Initialiser quand le DOM est prêt
     $(document).ready(() => {
