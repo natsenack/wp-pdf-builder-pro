@@ -1497,6 +1497,8 @@
             };
             return steps[step];
         }
+
+        hideInactiveStepButtons() {
             console.log('=== PDF Builder Onboarding: HIDING INACTIVE BUTTONS, current step:', this.currentStep, '===');
             const $modal = $('#pdf-builder-onboarding-modal');
             const allButtons = $modal.find('.complete-step');
@@ -1531,7 +1533,6 @@
                 }
             }.bind(this));
         }
-    }
 
     // Initialiser quand le DOM est prêt
     $(document).ready(() => {
