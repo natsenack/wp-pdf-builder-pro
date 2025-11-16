@@ -90,6 +90,20 @@
 
         startTutorial(tutorialId) {
             console.log('Tutorial: startTutorial called with id:', tutorialId);
+            const tutorial = window.pdfBuilderTutorial.tutorials[tutorialId];
+            if (!tutorial || !tutorial.steps) {
+                console.error('Tutorial: No tutorial data found for', tutorialId);
+                return;
+            }
+
+            // Vérifier si au moins une étape a une cible existante sur la page
+            const hasAvailableSteps = tutorial.steps.some(step => $(step.target).length > 0);
+            if (!hasAvailableSteps) {
+                console.log('Tutorial: No available steps on this page for tutorial', tutorialId);
+                this.showUnavailableMessage(tutorial);
+                return;
+            }
+
             this.currentTutorial = tutorialId;
             this.currentStep = 0;
             console.log('Tutorial: Set currentTutorial to:', this.currentTutorial);
@@ -329,6 +343,34 @@
             }, 100);
 
             $message.find('.tutorial-completion-close').on('click', () => {
+                $message.fadeOut(() => {
+                    $message.remove();
+                });
+            });
+        }
+
+        showUnavailableMessage(tutorial) {
+            console.log('Tutorial: Showing unavailable message for tutorial:', tutorial.title);
+            // Afficher un message d'indisponibilité
+            const $message = $(`
+                <div class="tutorial-unavailable-message">
+                    <div class="tutorial-unavailable-content">
+                        <span class="tutorial-unavailable-icon">ℹ️</span>
+                        <h3>Tutoriel non disponible</h3>
+                        <p>Ce tutoriel nécessite des éléments spécifiques qui ne sont pas présents sur cette page.</p>
+                        <p>Rendez-vous dans l'éditeur PDF pour découvrir le tutoriel interactif.</p>
+                        <button class="tutorial-unavailable-close">Fermer</button>
+                    </div>
+                </div>
+            `);
+
+            $('body').append($message);
+
+            setTimeout(() => {
+                $message.fadeIn();
+            }, 100);
+
+            $message.find('.tutorial-unavailable-close').on('click', () => {
                 $message.fadeOut(() => {
                     $message.remove();
                 });
