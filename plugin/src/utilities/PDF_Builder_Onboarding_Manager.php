@@ -576,33 +576,137 @@ class PDF_Builder_Onboarding_Manager {
                 }
 
             case 'completed':
+                // Récupérer les informations de configuration
+                $has_woocommerce = class_exists('WooCommerce');
+                $template_count = count($this->get_available_templates());
+                $current_user = wp_get_current_user();
+
                 return '
                     <div class="onboarding-completed">
-                        <div class="completion-summary">
-                            <div class="summary-item">
-                                <span class="summary-icon">🎯</span>
-                                <h4>' . __('Étape suivante', 'pdf-builder-pro') . '</h4>
-                                <p>' . __('Allez dans Templates PDF pour créer votre premier document', 'pdf-builder-pro') . '</p>
-                                <a href="' . admin_url('admin.php?page=pdf-builder-templates') . '" class="button button-primary">
-                                    ' . __('Voir les Templates', 'pdf-builder-pro') . '
-                                </a>
+                        <!-- Célébration -->
+                        <div class="celebration-header">
+                            <div class="celebration-icon">🎉</div>
+                            <h3>' . __('Félicitations !', 'pdf-builder-pro') . '</h3>
+                            <p class="celebration-subtitle">' . __('Votre PDF Builder Pro est maintenant configuré et prêt à l\'emploi', 'pdf-builder-pro') . '</p>
+                        </div>
+
+                        <!-- Résumé de la configuration -->
+                        <div class="configuration-summary">
+                            <h4>' . __('📋 Résumé de votre configuration', 'pdf-builder-pro') . '</h4>
+                            <div class="summary-grid">
+                                <div class="summary-card">
+                                    <div class="card-icon">📄</div>
+                                    <div class="card-content">
+                                        <h5>' . sprintf(__('%d Templates disponibles', 'pdf-builder-pro'), $template_count) . '</h5>
+                                        <p>' . __('Templates professionnels prêts à utiliser', 'pdf-builder-pro') . '</p>
+                                    </div>
+                                </div>
+                                <div class="summary-card ' . ($has_woocommerce ? 'active' : 'inactive') . '">
+                                    <div class="card-icon">' . ($has_woocommerce ? '🛒' : '❌') . '</div>
+                                    <div class="card-content">
+                                        <h5>' . ($has_woocommerce ? __('WooCommerce intégré', 'pdf-builder-pro') : __('WooCommerce non détecté', 'pdf-builder-pro')) . '</h5>
+                                        <p>' . ($has_woocommerce ? __('Vos PDFs seront automatiquement joints aux emails', 'pdf-builder-pro') : __('Installez WooCommerce pour une intégration automatique', 'pdf-builder-pro')) . '</p>
+                                    </div>
+                                </div>
+                                <div class="summary-card active">
+                                    <div class="card-icon">⚡</div>
+                                    <div class="card-content">
+                                        <h5>' . __('Éditeur React activé', 'pdf-builder-pro') . '</h5>
+                                        <p>' . __('Interface moderne et intuitive pour créer vos PDFs', 'pdf-builder-pro') . '</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="summary-item">
-                                <span class="summary-icon">📚</span>
-                                <h4>' . __('Documentation', 'pdf-builder-pro') . '</h4>
-                                <p>' . __('Consultez notre guide d\'utilisation complet', 'pdf-builder-pro') . '</p>
-                                <a href="' . admin_url('admin.php?page=pdf-builder-settings') . '" class="button button-secondary">
-                                    ' . __('Voir les Paramètres', 'pdf-builder-pro') . '
+                        </div>
+
+                        <!-- Actions rapides -->
+                        <div class="quick-actions">
+                            <h4>' . __('🚀 Commencez dès maintenant', 'pdf-builder-pro') . '</h4>
+                            <div class="actions-grid">
+                                <a href="' . admin_url('admin.php?page=pdf-builder-templates') . '" class="action-card primary">
+                                    <div class="action-icon">🎨</div>
+                                    <div class="action-content">
+                                        <h5>' . __('Créer un nouveau PDF', 'pdf-builder-pro') . '</h5>
+                                        <p>' . __('Utilisez l\'éditeur visuel pour concevoir votre document', 'pdf-builder-pro') . '</p>
+                                    </div>
+                                    <div class="action-arrow">→</div>
+                                </a>
+                                <a href="' . admin_url('admin.php?page=pdf-builder-settings') . '" class="action-card secondary">
+                                    <div class="action-icon">⚙️</div>
+                                    <div class="action-content">
+                                        <h5>' . __('Configurer les paramètres', 'pdf-builder-pro') . '</h5>
+                                        <p>' . __('Ajustez les options générales et les intégrations', 'pdf-builder-pro') . '</p>
+                                    </div>
+                                    <div class="action-arrow">→</div>
+                                </a>
+                                <a href="' . admin_url('edit.php?post_type=pdf_template') . '" class="action-card secondary">
+                                    <div class="action-icon">📁</div>
+                                    <div class="action-content">
+                                        <h5>' . __('Gérer les templates', 'pdf-builder-pro') . '</h5>
+                                        <p>' . __('Modifiez ou dupliquez vos templates existants', 'pdf-builder-pro') . '</p>
+                                    </div>
+                                    <div class="action-arrow">→</div>
                                 </a>
                             </div>
                         </div>
-                        <div class="completion-tips">
-                            <h5>💡 Conseils pour bien démarrer :</h5>
-                            <ul>
-                                <li>' . __('Utilisez l\'éditeur React pour une expérience optimale', 'pdf-builder-pro') . '</li>
-                                <li>' . __('Les templates prédéfinis vous feront gagner du temps', 'pdf-builder-pro') . '</li>
-                                <li>' . __('N\'hésitez pas à sauvegarder régulièrement votre travail', 'pdf-builder-pro') . '</li>
-                            </ul>
+
+                        <!-- Ressources et support -->
+                        <div class="resources-section">
+                            <h4>' . __('📚 Ressources et support', 'pdf-builder-pro') . '</h4>
+                            <div class="resources-grid">
+                                <div class="resource-item">
+                                    <div class="resource-icon">📖</div>
+                                    <div class="resource-content">
+                                        <h6>' . __('Documentation complète', 'pdf-builder-pro') . '</h6>
+                                        <p>' . __('Guides détaillés et tutoriels vidéo', 'pdf-builder-pro') . '</p>
+                                        <a href="#" class="resource-link">' . __('Consulter la doc', 'pdf-builder-pro') . ' →</a>
+                                    </div>
+                                </div>
+                                <div class="resource-item">
+                                    <div class="resource-icon">💬</div>
+                                    <div class="resource-content">
+                                        <h6>' . __('Support technique', 'pdf-builder-pro') . '</h6>
+                                        <p>' . __('Notre équipe est là pour vous aider', 'pdf-builder-pro') . '</p>
+                                        <a href="#" class="resource-link">' . __('Contacter le support', 'pdf-builder-pro') . ' →</a>
+                                    </div>
+                                </div>
+                                <div class="resource-item">
+                                    <div class="resource-icon">🎓</div>
+                                    <div class="resource-content">
+                                        <h6>' . __('Webinaires gratuits', 'pdf-builder-pro') . '</h6>
+                                        <p>' . __('Apprenez les meilleures pratiques', 'pdf-builder-pro') . '</p>
+                                        <a href="#" class="resource-link">' . __('Voir le planning', 'pdf-builder-pro') . ' →</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Feedback -->
+                        <div class="feedback-section">
+                            <div class="feedback-content">
+                                <div class="feedback-icon">👍</div>
+                                <div class="feedback-text">
+                                    <h5>' . __('Votre avis compte !', 'pdf-builder-pro') . '</h5>
+                                    <p>' . __('Aidez-nous à améliorer PDF Builder Pro en partageant votre expérience.', 'pdf-builder-pro') . '</p>
+                                    <div class="feedback-actions">
+                                        <button class="feedback-btn positive" onclick="this.innerHTML=\'Merci pour votre retour ! ⭐\'">
+                                            ' . __('J\'adore !', 'pdf-builder-pro') . '
+                                        </button>
+                                        <button class="feedback-btn suggestion" onclick="this.innerHTML=\'Suggestion notée ! 💡\'">
+                                            ' . __('Une suggestion ?', 'pdf-builder-pro') . '
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer avec bienvenue personnalisée -->
+                        <div class="welcome-footer">
+                            <p class="welcome-message">
+                                ' . sprintf(__('Bienvenue dans la communauté PDF Builder Pro, %s !', 'pdf-builder-pro'), $current_user->display_name) . '
+                            </p>
+                            <p class="welcome-tip">
+                                💡 ' . __('Astuce : Utilisez Ctrl+S (Cmd+S sur Mac) pour sauvegarder automatiquement vos modifications.', 'pdf-builder-pro') . '
+                            </p>
                         </div>
                     </div>
                 ';
