@@ -938,8 +938,6 @@
                             this.hideInactiveStepButtons();
                         }, 500);
                     } else {
-                        console.error('PDF Builder Onboarding: AJAX returned error:', response.data);
-
                         // Pour l'étape 2, si pas de template sélectionné, permettre de passer quand même
                         if (step === 2 && response.data?.message?.includes('template')) {
                             console.log('PDF Builder Onboarding: Step 2 - allowing to continue without template selection');
@@ -956,6 +954,8 @@
                                 this.loadStep(nextStep);
                             }, 500);
                         } else {
+                            console.error('PDF Builder Onboarding: AJAX returned error:', response.data);
+
                             // En cas d'erreur normale, réactiver tous les boutons
                             this.resetButtonStates();
                             $button.html(originalText);
