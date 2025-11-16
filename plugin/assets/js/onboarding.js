@@ -84,13 +84,14 @@
             });
 
             // Nouveaux événements pour l'UX améliorée
-            $(document).on('mouseenter', '[data-tooltip]', (e) => {
-                this.showTooltip($(e.currentTarget));
-            });
+            // Désactivé - on utilise maintenant les tooltips CSS uniquement
+            // $(document).on('mouseenter', '[data-tooltip]', (e) => {
+            //     this.showTooltip($(e.currentTarget));
+            // });
 
-            $(document).on('mouseleave', '[data-tooltip]', (e) => {
-                this.hideTooltip();
-            });
+            // $(document).on('mouseleave', '[data-tooltip]', (e) => {
+            //     this.hideTooltip();
+            // });
 
             $(document).on('click', '.onboarding-help-btn', (e) => {
                 this.showHelpModal();
