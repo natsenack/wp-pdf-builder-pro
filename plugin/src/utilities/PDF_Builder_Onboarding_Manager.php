@@ -58,6 +58,7 @@ class PDF_Builder_Onboarding_Manager {
         add_action('wp_ajax_pdf_builder_save_freemium_mode', [$this, 'ajax_save_freemium_mode']);
         add_action('wp_ajax_pdf_builder_update_onboarding_step', [$this, 'ajax_update_onboarding_step']);
         add_action('wp_ajax_pdf_builder_save_template_assignment', [$this, 'ajax_save_template_assignment']);
+        add_action('wp_ajax_pdf_builder_mark_onboarding_complete', [$this, 'ajax_mark_onboarding_complete']);
     }
 
     /**

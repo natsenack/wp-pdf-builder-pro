@@ -1250,7 +1250,15 @@
             $card.addClass('selected');
             this.selectedMode = modeId;
 
-            // Sauvegarder la sélection côté serveur
+            // Comportement spécial pour le mode premium
+            if (modeId === 'premium') {
+                console.log('PDF Builder Onboarding: Premium mode selected, completing onboarding and redirecting to license page');
+                // Sauvegarder la sélection et marquer l'onboarding comme terminé
+                this.saveFreemiumModeSelectionAndComplete();
+                return; // Arrêter l'exécution
+            }
+
+            // Sauvegarder la sélection côté serveur (pour le mode free)
             this.saveFreemiumModeSelection();
 
             // Mettre à jour les boutons du footer pour refléter la sélection
@@ -1564,6 +1572,58 @@
                 },
                 error: (xhr, status, error) => {
                     console.warn('Error saving freemium mode selection:', error);
+                }
+            });
+        }
+
+        saveFreemiumModeSelectionAndComplete() {
+            // Sauvegarder la sélection du mode freemium et marquer l'onboarding comme terminé
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_freemium_mode',
+                    selected_mode: this.selectedMode,
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (response.success) {
+                        console.log('PDF Builder Onboarding: Freemium mode saved, now marking onboarding as complete');
+                        // Marquer l'onboarding comme terminé
+                        $.ajax({
+                            url: pdfBuilderOnboarding.ajax_url,
+                            type: 'POST',
+                            data: {
+                                action: 'pdf_builder_mark_onboarding_complete',
+                                nonce: pdfBuilderOnboarding.nonce
+                            },
+                            success: (completeResponse) => {
+                                if (completeResponse.success) {
+                                    console.log('PDF Builder Onboarding: Onboarding marked as complete, redirecting to license page');
+                                    // Rediriger vers la page des paramètres de licence
+                                    window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                                } else {
+                                    console.warn('Failed to mark onboarding as complete:', completeResponse.data);
+                                    // Rediriger quand même
+                                    window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                                }
+                            },
+                            error: (xhr, status, error) => {
+                                console.warn('Error marking onboarding as complete:', error);
+                                // Rediriger quand même
+                                window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                            }
+                        });
+                    } else {
+                        console.warn('Failed to save freemium mode selection:', response.data);
+                        // Rediriger quand même
+                        window.location.href = 'admin.php?page=pdf-builder-settings#licence';
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.warn('Error saving freemium mode selection:', error);
+                    // Rediriger quand même
+                    window.location.href = 'admin.php?page=pdf-builder-settings#licence';
                 }
             });
         }
