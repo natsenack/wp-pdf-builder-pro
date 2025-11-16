@@ -36,46 +36,26 @@
             this.eventsBound = true;
 
             console.log('PDF Builder Onboarding: Binding events (first time only)');
-            // Événements des boutons principaux
+
+            // Bouton "Suivant" / "Terminer" - simplifié
             $(document).on('click', '.complete-step', (e) => {
+                e.preventDefault();
                 console.log('PDF Builder Onboarding: Complete step button clicked');
-                const $button = $(e.currentTarget);
-                const step = $button.data('step');
-                const actionType = $button.data('action-type');
-                const isDisabled = $button.prop('disabled');
-
-                console.log(`PDF Builder Onboarding: Button details - step: ${step}, actionType: ${actionType}, disabled: ${isDisabled}, currentStep: ${this.currentStep}`);
-
-                if (isDisabled) {
-                    console.log('PDF Builder Onboarding: Button is disabled, preventing action');
-                    e.preventDefault();
-                    return;
-                }
-
-                // Vérifier si le bouton appartient à l'étape courante
-                if (step !== this.currentStep) {
-                    console.log(`PDF Builder Onboarding: BLOCKING click from step ${step} button while at step ${this.currentStep}`);
-                    console.log('PDF Builder Onboarding: All buttons in modal:', $('#pdf-builder-onboarding-modal .complete-step').map(function() { return $(this).data('step'); }).get());
-                    e.preventDefault();
-                    return;
-                }
-
-                this.completeStep(step, actionType);
+                this.handleCompleteStep();
             });
-
-            // Masquer tous les boutons d'étapes qui ne sont pas l'étape courante
-            this.hideInactiveStepButtons();
 
             // Bouton pour ignorer l'étape courante
             $(document).on('click', '[data-action="skip-step"]', (e) => {
                 e.preventDefault();
-                this.skipCurrentStep();
+                console.log('PDF Builder Onboarding: Skip step button clicked');
+                this.handleSkipStep();
             });
 
             // Bouton pour ignorer complètement l'onboarding
             $(document).on('click', '[data-action="skip-onboarding"]', (e) => {
                 e.preventDefault();
-                this.skipOnboarding();
+                console.log('PDF Builder Onboarding: Skip onboarding button clicked');
+                this.handleSkipOnboarding();
             });
 
             // Bouton précédent
@@ -556,6 +536,124 @@
             }
         }
 
+        // NOUVELLES MÉTHODES SIMPLIFIÉES - Refaites depuis zéro
+
+        handleCompleteStep() {
+            console.log('PDF Builder Onboarding: Handling complete step for step', this.currentStep);
+
+            // Désactiver le bouton pour éviter les clics multiples
+            const $button = $('.complete-step');
+            const originalText = $button.text();
+            $button.prop('disabled', true).text('Chargement...');
+
+            // Préparer les données selon l'étape
+            let stepAction = 'next';
+            if (this.currentStep === 4) {
+                stepAction = 'finish';
+            }
+
+            // Faire l'appel AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_complete_onboarding_step',
+                    nonce: pdfBuilderOnboarding.nonce,
+                    step: this.currentStep,
+                    step_action: stepAction,
+                    selected_template: this.selectedTemplate,
+                    woocommerce_options: this.getWoocommerceOptions()
+                },
+                success: (response) => {
+                    console.log('PDF Builder Onboarding: Complete step success:', response);
+
+                    if (response.success) {
+                        if (response.data.completed) {
+                            // Onboarding terminé
+                            this.showCompletionMessage();
+                        } else if (response.data.redirect_to) {
+                            // Redirection (par exemple vers l'éditeur)
+                            window.location.href = response.data.redirect_to;
+                        } else {
+                            // Passer à l'étape suivante
+                            this.loadStep(response.data.next_step);
+                        }
+                    } else {
+                        // Erreur
+                        this.showError(response.data?.message || 'Erreur lors de la sauvegarde');
+                        $button.prop('disabled', false).text(originalText);
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error('PDF Builder Onboarding: Complete step error:', error);
+                    this.showError('Erreur de connexion');
+                    $button.prop('disabled', false).text(originalText);
+                }
+            });
+        }
+
+        handleSkipStep() {
+            console.log('PDF Builder Onboarding: Handling skip step for step', this.currentStep);
+
+            // Désactiver le bouton
+            const $button = $('[data-action="skip-step"]');
+            const originalText = $button.text();
+            $button.prop('disabled', true).text('Ignorer...');
+
+            // Logique selon l'étape
+            if (this.currentStep === 2) {
+                // Étape 2 : passer directement à l'étape 3
+                this.loadStep(3);
+            } else if (this.currentStep === 3) {
+                // Étape 3 : passer à l'étape 4
+                this.loadStep(4);
+            } else {
+                // Autres étapes : passer à la suivante
+                const nextStep = this.currentStep + 1;
+                if (nextStep <= 4) {
+                    this.loadStep(nextStep);
+                } else {
+                    this.showCompletionMessage();
+                }
+            }
+
+            // Réactiver le bouton après un court délai
+            setTimeout(() => {
+                $button.prop('disabled', false).text(originalText);
+            }, 1000);
+        }
+
+        handleSkipOnboarding() {
+            console.log('PDF Builder Onboarding: Handling skip onboarding');
+
+            if (confirm('Êtes-vous sûr de vouloir ignorer complètement l\'assistant de configuration ?')) {
+                // Désactiver le bouton
+                const $button = $('[data-action="skip-onboarding"]');
+                const originalText = $button.text();
+                $button.prop('disabled', true).text('Ignorer...');
+
+                // Appel AJAX pour marquer comme ignoré
+                $.ajax({
+                    url: pdfBuilderOnboarding.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_skip_onboarding',
+                        nonce: pdfBuilderOnboarding.nonce
+                    },
+                    success: (response) => {
+                        console.log('PDF Builder Onboarding: Skip onboarding success');
+                        this.hideModal();
+                        this.showNotification('Assistant de configuration ignoré', 'info');
+                    },
+                    error: (xhr, status, error) => {
+                        console.error('PDF Builder Onboarding: Skip onboarding error:', error);
+                        // Fallback : masquer quand même
+                        this.hideModal();
+                    }
+                });
+            }
+        }
+
         saveTemplateSelection() {
             // Sauvegarder la sélection du template via AJAX
             $.ajax({
@@ -675,7 +773,7 @@
             }
 
             // Masquer/désactiver tous les boutons qui ne correspondent pas à l'étape courante
-            this.hideInactiveStepButtons();
+            // this.hideInactiveStepButtons(); // COMMENTÉ - logique simplifiée
 
             // Mettre à jour l'étape courante
             this.currentStep = step;
@@ -950,7 +1048,7 @@
                                 this.loadStep(response.data.next_step);
                             }
                             // Masquer les boutons inactifs après chaque transition
-                            this.hideInactiveStepButtons();
+                            // this.hideInactiveStepButtons(); // COMMENTÉ - logique simplifiée
                         }, 500);
                     } else {
                         // Pour l'étape 2, si pas de template sélectionné, permettre de passer quand même
@@ -1137,6 +1235,8 @@
             }
         }
 
+        // ANCIENNE MÉTHODE - COMMENTÉE (remplacée par handleSkipStep)
+        /*
         skipCurrentStep() {
             // Gérer l'ignorance selon l'étape courante
             if (this.currentStep === 2) {
@@ -1162,6 +1262,7 @@
                 this.loadStep(nextStep);
             }
         }
+        */
 
         loadStepContent(step) {
             // Cette fonction serait appelée depuis PHP pour charger le contenu dynamique
