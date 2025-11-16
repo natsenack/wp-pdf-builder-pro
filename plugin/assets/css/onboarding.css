@@ -1647,19 +1647,38 @@ kbd {
 }
 
 /* Accessibilité */
-.pdf-builder-onboarding-modal .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
+    .pdf-builder-onboarding-modal .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
 
-.onboarding-loading {
+    .pdf-builder-onboarding-modal .auto-advance-notice {
+        background: rgba(59, 130, 246, 0.2);
+        border-color: rgba(96, 165, 250, 0.3);
+    }
+
+    .pdf-builder-onboarding-modal .auto-advance-notice em {
+        color: #cbd5e1;
+    }
+
+    .pdf-builder-onboarding-modal .progress-bar {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .pdf-builder-onboarding-modal .progress-fill {
+        background: linear-gradient(90deg, #60a5fa, #3b82f6);
+    }
+
+    .pdf-builder-onboarding-modal .progress-text {
+        color: #f1f5f9;
+    }.pdf-builder-onboarding-modal .onboarding-loading {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1668,7 +1687,7 @@ kbd {
     text-align: center;
 } 
 
-.auto-advance-notice {
+.pdf-builder-onboarding-modal .auto-advance-notice {
     margin-top: 20px;
     padding: 15px;
     background: rgba(59, 130, 246, 0.1);
@@ -1677,12 +1696,12 @@ kbd {
     text-align: center;
 }
 
-.auto-advance-notice em {
+.pdf-builder-onboarding-modal .auto-advance-notice em {
     color: #334155;
     font-style: italic;
 }
 
-.progress-indicator {
+.pdf-builder-onboarding-modal .progress-indicator {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -1691,7 +1710,7 @@ kbd {
     max-width: 200px;
 }
 
-.progress-bar {
+.pdf-builder-onboarding-modal .progress-bar {
     width: 100%;
     height: 4px;
     background: rgba(255, 255, 255, 0.2);
@@ -1699,14 +1718,14 @@ kbd {
     overflow: hidden;
 }
 
-.progress-fill {
+.pdf-builder-onboarding-modal .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, #3b82f6, #1d4ed8);
     border-radius: 2px;
     transition: width 0.3s ease;
 }
 
-.progress-text {
+.pdf-builder-onboarding-modal .progress-text {
     font-size: 12px;
     font-weight: 600;
     color: #e2e8f0;
@@ -2334,16 +2353,16 @@ kbd {
 
 @media (prefers-color-scheme: dark) {
     /* Aperçu du template sélectionné */
-    .selected-template-preview {
+    .pdf-builder-onboarding-modal .selected-template-preview {
         background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
         border-color: #6b7280;
     }
 
-    .template-info h3 {
+    .pdf-builder-onboarding-modal .template-info h3 {
         color: #f9fafb;
     }
 
-    .template-info p {
+    .pdf-builder-onboarding-modal .template-info p {
         color: #d1d5db;
     }
 
@@ -2493,9 +2512,9 @@ kbd {
 }
 
 @media (prefers-color-scheme: dark) {
-    .assign-template-setup input:disabled,
-    .assign-template-setup textarea:disabled,
-    .assign-template-setup input[type="checkbox"]:disabled {
+    .pdf-builder-onboarding-modal .assign-template-setup input:disabled,
+    .pdf-builder-onboarding-modal .assign-template-setup textarea:disabled,
+    .pdf-builder-onboarding-modal .assign-template-setup input[type="checkbox"]:disabled {
         background: #6b7280 !important;
         border-color: #9ca3af !important;
         color: #d1d5db !important;
