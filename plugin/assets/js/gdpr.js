@@ -16,6 +16,9 @@
         }
 
         bindEvents() {
+            // Gestion des onglets RGPD
+            $('.gdpr-tab').on('click', (e) => this.handleTabSwitch(e));
+
             // Gestion des formulaires
             $('#gdpr-consent-form').on('submit', (e) => this.handleConsentForm(e));
             $('#gdpr-security-form').on('submit', (e) => this.handleSecurityForm(e));
@@ -31,6 +34,22 @@
 
             // Gestion des consentements individuels
             $('.consent-toggle').on('change', (e) => this.handleConsentToggle(e));
+        }
+
+        handleTabSwitch(e) {
+            e.preventDefault();
+
+            const tab = $(e.currentTarget).data('tab');
+
+            // Retirer la classe active de tous les onglets
+            $('.gdpr-tab').removeClass('active');
+            // Ajouter la classe active à l'onglet cliqué
+            $(e.currentTarget).addClass('active');
+
+            // Masquer tous les contenus d'onglets
+            $('.gdpr-tab-content').removeClass('active');
+            // Afficher le contenu de l'onglet sélectionné
+            $('#' + tab + '-tab').addClass('active');
         }
 
         handleConsentForm(e) {
