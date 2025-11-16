@@ -761,16 +761,10 @@
             footerButtons.remove();
             console.log('FOOTER: Removed', footerButtons.length, 'existing footer buttons for step', step);
 
-            // Si la réponse contient des boutons pour le footer, les ajouter
-            if (data.footer_content) {
-                $footer.html(data.footer_content);
-                console.log('FOOTER: Added footer content from server for step', step);
-            } else {
-                // Sinon, créer un bouton par défaut pour l'étape courante
-                const buttonHtml = this.generateStepButton(step);
-                $footer.html(buttonHtml);
-                console.log('FOOTER: Generated default footer button for step', step, '- HTML:', buttonHtml.substring(0, 100) + '...');
-            }
+            // Générer tous les boutons nécessaires pour cette étape
+            const footerHtml = this.generateFooterButtons(step, data);
+            $footer.html(footerHtml);
+            console.log('FOOTER: Generated footer buttons for step', step);
 
             // Masquer/désactiver tous les boutons qui ne correspondent pas à l'étape courante
             // this.hideInactiveStepButtons(); // COMMENTÉ - logique simplifiée
@@ -1534,6 +1528,43 @@
                     ${buttonText}
                 </button>
             `;
+        }
+
+        generateFooterButtons(step, data) {
+            // Générer tous les boutons du footer pour une étape
+            let buttonsHtml = '';
+
+            // Bouton skip (si applicable)
+            if (data.can_skip) {
+                buttonsHtml += `
+                    <button class="button button-secondary" data-action="skip-step">
+                        ${data.skip_text || 'Ignorer'}
+                    </button>
+                `;
+            } else {
+                buttonsHtml += `
+                    <button class="button button-secondary" data-action="skip-onboarding">
+                        Ignorer l'assistant
+                    </button>
+                `;
+            }
+
+            // Bouton principal (suivant/terminer)
+            if (data.action) {
+                const buttonClass = (data.requires_selection && step === 2) ? 'button-secondary' : 'button-primary';
+                const isDisabled = (data.requires_selection && step === 2 && !this.selectedTemplate) ? 'disabled' : '';
+
+                buttonsHtml += `
+                    <button class="button ${buttonClass} complete-step"
+                            data-step="${step}"
+                            data-action-type="${data.action_type || 'next'}"
+                            ${isDisabled}>
+                        ${data.action}
+                    </button>
+                `;
+            }
+
+            return buttonsHtml;
         }
 
         getStepData(step) {
