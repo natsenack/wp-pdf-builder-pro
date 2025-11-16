@@ -10,6 +10,7 @@
         constructor() {
             this.currentStep = 1;
             this.selectedTemplate = null;
+            this.selectedMode = null;
             this.startTime = Date.now();
             this.interactions = [];
             this.tooltips = {};
@@ -68,6 +69,12 @@
             $(document).on('click', '.template-card', (e) => {
                 e.preventDefault();
                 this.selectTemplate($(e.currentTarget));
+            });
+
+            // Sélection du mode freemium
+            $(document).on('click', '.mode-card', (e) => {
+                e.preventDefault();
+                this.selectFreemiumMode($(e.currentTarget));
             });
 
             // Bouton pour sauter la configuration WooCommerce
@@ -785,6 +792,18 @@
 
             // Mettre à jour l'étape courante
             this.currentStep = step;
+
+            // Pour l'étape assign_template (4), mettre à jour l'affichage du template sélectionné
+            if (step === 4 && this.selectedTemplate) {
+                const templateNames = {
+                    'invoice': 'Facture',
+                    'quote': 'Devis',
+                    'blank': 'Template Vierge'
+                };
+                const templateName = templateNames[this.selectedTemplate] || this.selectedTemplate;
+                $('#selected-template-name').text(templateName);
+            }
+
             console.log('APPLYING STEP DATA FOR STEP', step, '- END');
         }
 
@@ -1192,6 +1211,22 @@
             this.updateFooterButtonsForCurrentStep();
         }
 
+        selectFreemiumMode($card) {
+            const modeId = $card.data('mode');
+            console.log('PDF Builder Onboarding: Freemium mode selected', modeId);
+
+            // Sélectionner le mode
+            $('.mode-card').removeClass('selected');
+            $card.addClass('selected');
+            this.selectedMode = modeId;
+
+            // Sauvegarder la sélection côté serveur
+            this.saveFreemiumModeSelection();
+
+            // Mettre à jour les boutons du footer pour refléter la sélection
+            this.updateFooterButtonsForCurrentStep();
+        }
+
         updateFooterButtons(stepData) {
             const $footer = $('.modal-footer');
 
@@ -1376,7 +1411,7 @@
         }
 
         updateProgress() {
-            const totalSteps = 4; // Mis à jour après suppression de l'étape 2
+            const totalSteps = 6; // Étapes d'onboarding : welcome, freemium, template, assign, woocommerce, completed
             const progress = (Math.min(this.currentStep, totalSteps) / totalSteps) * 100;
 
             $('.progress-fill').css('width', progress + '%');
@@ -1473,6 +1508,27 @@
                 },
                 error: (xhr, status, error) => {
                     console.warn('Error saving template selection:', error);
+                }
+            });
+        }
+
+        saveFreemiumModeSelection() {
+            // Sauvegarder la sélection du mode freemium via AJAX
+            $.ajax({
+                url: pdfBuilderOnboarding.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_freemium_mode',
+                    selected_mode: this.selectedMode,
+                    nonce: pdfBuilderOnboarding.nonce
+                },
+                success: (response) => {
+                    if (!response.success) {
+                        console.warn('Failed to save freemium mode selection:', response.data);
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.warn('Error saving freemium mode selection:', error);
                 }
             });
         }
@@ -1662,10 +1718,11 @@
             // Données des étapes (devrait correspondre au PHP)
             const steps = {
                 1: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' },
-                2: { action_text: 'Suivant', action_type: 'next', requires_selection: true, can_skip: true, skip_text: 'Ignorer l\'étape' },
-                3: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: true, skip_text: 'Ignorer cette étape' },
-                4: { action_text: 'Terminer', action_type: 'finish', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' },
-                5: { action_text: 'Terminer', action_type: 'finish', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' }
+                2: { action_text: 'Suivant', action_type: 'next', requires_selection: true, can_skip: false, skip_text: 'Ignorer l\'assistant' },
+                3: { action_text: 'Suivant', action_type: 'next', requires_selection: true, can_skip: true, skip_text: 'Ignorer l\'étape' },
+                4: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: true, skip_text: 'Configurer plus tard' },
+                5: { action_text: 'Suivant', action_type: 'next', requires_selection: false, can_skip: true, skip_text: 'Ignorer cette étape' },
+                6: { action_text: 'Terminer', action_type: 'finish', requires_selection: false, can_skip: false, skip_text: 'Ignorer l\'assistant' }
             };
             return steps[step];
         }

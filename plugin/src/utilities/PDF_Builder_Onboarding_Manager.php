@@ -156,6 +156,16 @@ class PDF_Builder_Onboarding_Manager {
                 'can_skip' => false // Ne peut pas être ignorée
             ],
             2 => [
+                'id' => 'freemium_mode',
+                'title' => __('Choisissez votre mode d\'utilisation', 'pdf-builder-pro'),
+                'description' => __('Sélectionnez la version qui correspond à vos besoins.', 'pdf-builder-pro'),
+                'content' => $this->get_step_content('freemium_mode'),
+                'action' => __('Suivant', 'pdf-builder-pro'),
+                'action_type' => 'next',
+                'can_skip' => false, // Ne peut pas être ignorée - choix important
+                'requires_selection' => true // Nécessite une sélection
+            ],
+            3 => [
                 'id' => 'first_template',
                 'title' => __('Choisissez votre template de départ', 'pdf-builder-pro'),
                 'description' => __('Sélectionnez un template professionnel pour commencer.', 'pdf-builder-pro'),
@@ -166,7 +176,18 @@ class PDF_Builder_Onboarding_Manager {
                 'skip_text' => __('Ignorer l\'étape', 'pdf-builder-pro'),
                 'requires_selection' => true // Nécessite une sélection avant activation du bouton principal
             ],
-            3 => [
+            4 => [
+                'id' => 'assign_template',
+                'title' => __('Configurez votre template', 'pdf-builder-pro'),
+                'description' => __('Assignez et personnalisez votre template sélectionné.', 'pdf-builder-pro'),
+                'content' => $this->get_step_content('assign_template'),
+                'action' => __('Suivant', 'pdf-builder-pro'),
+                'action_type' => 'next',
+                'can_skip' => true, // Peut être configuré plus tard
+                'skip_text' => __('Configurer plus tard', 'pdf-builder-pro'),
+                'requires_selection' => false // Pas de sélection obligatoire
+            ],
+            5 => [
                 'id' => 'woocommerce_setup',
                 'title' => __('Configuration WooCommerce', 'pdf-builder-pro'),
                 'description' => __('Intégrez vos PDFs dans vos commandes WooCommerce.', 'pdf-builder-pro'),
@@ -177,7 +198,7 @@ class PDF_Builder_Onboarding_Manager {
                 'skip_text' => __('Ignorer cette étape', 'pdf-builder-pro'),
                 'requires_selection' => false // Ne nécessite pas de sélection
             ],
-            4 => [
+            6 => [
                 'id' => 'completed',
                 'title' => __('Configuration terminée !', 'pdf-builder-pro'),
                 'description' => __('Votre PDF Builder Pro est prêt à être utilisé.', 'pdf-builder-pro'),
@@ -239,6 +260,57 @@ class PDF_Builder_Onboarding_Manager {
                 $content .= '</div>';
                 return $content;
 
+            case 'freemium_mode':
+                return '
+                    <div class="freemium-mode-selection">
+                        <p>' . __('Choisissez le mode d\'utilisation qui correspond à vos besoins :', 'pdf-builder-pro') . '</p>
+                        <div class="mode-options">
+                            <div class="mode-card" data-mode="free" data-tooltip="Version gratuite avec fonctionnalités de base pour découvrir l\'outil">
+                                <div class="mode-header">
+                                    <span class="mode-icon">🆓</span>
+                                    <h4>' . __('Version Gratuite', 'pdf-builder-pro') . '</h4>
+                                </div>
+                                <div class="mode-features">
+                                    <ul>
+                                        <li>✅ ' . __('Jusqu\'à 5 templates PDF', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Éditeur de base', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Support communautaire', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Génération PDF basique', 'pdf-builder-pro') . '</li>
+                                    </ul>
+                                </div>
+                                <div class="mode-price">
+                                    <span class="price">0€</span>
+                                    <span class="period">' . __('/ mois', 'pdf-builder-pro') . '</span>
+                                </div>
+                            </div>
+                            <div class="mode-card premium" data-mode="premium" data-tooltip="Version complète avec toutes les fonctionnalités avancées">
+                                <div class="mode-header">
+                                    <span class="mode-icon">⭐</span>
+                                    <h4>' . __('Version Premium', 'pdf-builder-pro') . '</h4>
+                                    <span class="popular-badge">' . __('Recommandé', 'pdf-builder-pro') . '</span>
+                                </div>
+                                <div class="mode-features">
+                                    <ul>
+                                        <li>✅ ' . __('Templates illimités', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Éditeur avancé React', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Support prioritaire', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Variables dynamiques', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Intégration WooCommerce complète', 'pdf-builder-pro') . '</li>
+                                        <li>✅ ' . __('Exports avancés', 'pdf-builder-pro') . '</li>
+                                    </ul>
+                                </div>
+                                <div class="mode-price">
+                                    <span class="price">29€</span>
+                                    <span class="period">' . __('/ mois', 'pdf-builder-pro') . '</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="freemium-notice" style="margin-top:16px;padding:12px;background:#fef3c7;border-left:4px solid #f59e0b;border-radius:4px;">
+                            <strong>💡 Note :</strong> Vous pourrez changer de version à tout moment depuis les paramètres du plugin.
+                        </div>
+                    </div>
+                ';
+
             case 'first_template':
                 return '
                     <div class="first-template-setup">
@@ -268,6 +340,49 @@ class PDF_Builder_Onboarding_Manager {
                         </div>
                         <div class="template-tip" style="margin-top:16px;padding:12px;background:#f0f9ff;border-left:4px solid #3b82f6;border-radius:4px;">
                             <strong>💡 Conseil :</strong> Vous pourrez personnaliser complètement ce template plus tard dans l\'éditeur.
+                        </div>
+                    </div>
+                ';
+
+            case 'assign_template':
+                return '
+                    <div class="assign-template-setup">
+                        <div class="selected-template-info" style="margin-bottom:20px;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+                            <h4 style="margin:0 0 8px 0;color:#1e293b;">📄 Template sélectionné</h4>
+                            <p style="margin:0;color:#64748b;font-size:14px;">
+                                ' . __('Vous avez choisi le template : <strong id="selected-template-name">Aucun</strong>', 'pdf-builder-pro') . '
+                            </p>
+                        </div>
+
+                        <div class="template-assignment">
+                            <h5>' . __('Comment souhaitez-vous utiliser ce template ?', 'pdf-builder-pro') . '</h5>
+                            <div class="assignment-options">
+                                <label class="assignment-option" data-tooltip="Créer un nouveau PDF basé sur ce template">
+                                    <input type="radio" name="template_usage" value="new_pdf" checked>
+                                    <div class="option-content">
+                                        <strong>🆕 ' . __('Créer un nouveau PDF', 'pdf-builder-pro') . '</strong>
+                                        <div class="option-details">' . __('Utiliser ce template comme base pour créer un nouveau document PDF personnalisé.', 'pdf-builder-pro') . '</div>
+                                    </div>
+                                </label>
+                                <label class="assignment-option" data-tooltip="Configurer ce template pour WooCommerce (factures, devis...)">
+                                    <input type="radio" name="template_usage" value="woocommerce">
+                                    <div class="option-content">
+                                        <strong>🛒 ' . __('Assigner à WooCommerce', 'pdf-builder-pro') . '</strong>
+                                        <div class="option-details">' . __('Configurer ce template pour générer automatiquement des factures ou devis WooCommerce.', 'pdf-builder-pro') . '</div>
+                                    </div>
+                                </label>
+                                <label class="assignment-option" data-tooltip="Sauvegarder ce template pour l\'utiliser plus tard">
+                                    <input type="radio" name="template_usage" value="save_only">
+                                    <div class="option-content">
+                                        <strong>💾 ' . __('Sauvegarder uniquement', 'pdf-builder-pro') . '</strong>
+                                        <div class="option-details">' . __('Enregistrer ce template dans votre bibliothèque pour l\'utiliser ultérieurement.', 'pdf-builder-pro') . '</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="template-config-tip" style="margin-top:16px;padding:12px;background:#f0f9ff;border-left:4px solid #3b82f6;border-radius:4px;">
+                            <strong>🔧 Configuration :</strong> Vous pourrez modifier ces paramètres à tout moment depuis la page des templates.
                         </div>
                     </div>
                 ';
