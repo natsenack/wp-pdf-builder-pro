@@ -738,7 +738,12 @@ class PDF_Builder_Onboarding_Manager {
         }
 
         $this->onboarding_options['steps_completed'][] = $step;
-        $this->onboarding_options['current_step'] = $step + 1;
+        
+        // Ne pas incrémenter pour l'étape 6 (dernière étape)
+        if ($step < 6) {
+            $this->onboarding_options['current_step'] = $step + 1;
+        }
+        
         $this->onboarding_options['last_activity'] = current_time('timestamp');
 
         // Nettoyer la redirection précédente
@@ -914,6 +919,9 @@ class PDF_Builder_Onboarding_Manager {
                 return null;
 
             case 5: // WooCommerce setup - toujours valide (optionnel)
+                return null;
+
+            case 6: // Completed - toujours valide
                 return null;
 
             default:

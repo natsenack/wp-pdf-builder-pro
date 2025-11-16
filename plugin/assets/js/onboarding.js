@@ -603,7 +603,13 @@
                     if (response.success) {
                         if (response.data.completed) {
                             // Onboarding terminé
-                            this.showCompletionMessage();
+                            if (response.data.redirect_to) {
+                                // Rediriger vers l'éditeur ou la page spécifiée
+                                window.location.href = response.data.redirect_to;
+                            } else {
+                                // Afficher le message de completion
+                                this.showCompletionMessage();
+                            }
                         } else if (response.data.redirect_to) {
                             // Redirection (par exemple vers l'éditeur)
                             window.location.href = response.data.redirect_to;
