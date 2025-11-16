@@ -1,3 +1,304 @@
+﻿
+/**
+ * Styles CSS pour le système d'onboarding de PDF Builder Pro
+ * Design classique avec les couleurs du plugin
+ */
+
+.pdf-builder-onboarding-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.pdf-builder-onboarding-modal .modal-content {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    max-width: 900px;
+    width: 95%;
+    min-height: 600px; /* Hauteur minimale fixe */
+    max-height: 90vh; /* Hauteur maximale */
+    position: relative;
+    transform: translateY(0);
+    transition: all 0.3s ease;
+    animation: modalSlideIn 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Contient le contenu */
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pdf-builder-onboarding-modal .modal-header {
+    padding: 24px 40px 20px;
+    border-bottom: 1px solid #e1e5e9;
+    background: #f8f9fa;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0; /* Ne rétrécit pas */
+    height: 80px; /* Hauteur fixe */
+}
+
+.pdf-builder-onboarding-modal .modal-close {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+}
+
+.pdf-builder-onboarding-modal .modal-close:hover {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.pdf-builder-onboarding-modal .modal-body {
+    flex: 1;
+    padding: 32px 40px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.pdf-builder-onboarding-modal .modal-footer {
+    padding: 24px 40px;
+    border-top: 1px solid #e1e5e9;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 16px;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    min-height: 44px;
+    outline: none;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-primary {
+    background: #3b82f6;
+    color: #ffffff;
+    border-color: #3b82f6;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-primary:hover:not(:disabled) {
+    background: #2563eb;
+    border-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-secondary {
+    background: #ffffff;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-secondary:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #111827;
+}
+
+/* Styles de base pour le contenu des étapes */
+.pdf-builder-onboarding-modal .step-content {
+    margin-bottom: 24px;
+}
+
+.pdf-builder-onboarding-modal .step-content h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 8px 0;
+    line-height: 1.2;
+}
+
+.pdf-builder-onboarding-modal .step-content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #374151;
+    margin: 24px 0 12px 0;
+    line-height: 1.3;
+}
+
+.pdf-builder-onboarding-modal .step-content p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #4b5563;
+    margin: 0 0 16px 0;
+}
+
+/* Indicateur de progression */
+.pdf-builder-onboarding-modal .progress-indicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    justify-content: center;
+}
+
+.pdf-builder-onboarding-modal .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+    max-width: 200px;
+}
+
+.pdf-builder-onboarding-modal .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.pdf-builder-onboarding-modal .progress-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    white-space: nowrap;
+}
+
+/* États de chargement */
+.pdf-builder-onboarding-modal .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.pdf-builder-onboarding-modal .loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Cartes et éléments interactifs */
+.pdf-builder-onboarding-modal .card {
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 16px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-builder-onboarding-modal .card:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    transform: translateY(-2px);
+}
+
+.pdf-builder-onboarding-modal .card.selected {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+}
+
+.pdf-builder-onboarding-modal .card h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 8px 0;
+}
+
+.pdf-builder-onboarding-modal .card p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pdf-builder-onboarding-modal .modal-content {
+        width: 98%;
+        min-height: 500px;
+        max-height: 95vh;
+    }
+
+    .pdf-builder-onboarding-modal .modal-header {
+        padding: 20px 24px 16px;
+        height: auto;
+    }
+
+    .pdf-builder-onboarding-modal .modal-body {
+        padding: 24px 24px;
+    }
+
+    .pdf-builder-onboarding-modal .modal-footer {
+        padding: 20px 24px;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .pdf-builder-onboarding-modal .modal-footer .button {
+        width: 100%;
+        justify-content: center;
+    }
+}
 
 
     .pdf-builder-onboarding-modal .modal-header {
@@ -52,5 +353,4 @@
         color: #d1fae5;
     }
 }
-
 
