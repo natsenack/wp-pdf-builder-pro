@@ -1438,23 +1438,27 @@
                     } else {
                         // En cas d'erreur, réactiver tous les boutons et afficher l'erreur
                         $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
-                        this.showError('Erreur lors du chargement de l\'étape');
-                        // Recharger la page en cas d'erreur pour revenir à un état stable
-                        setTimeout(() => window.location.reload(), 2000);
+                        this.showError('Erreur lors du chargement de l\'étape. Retour à l\'étape 1.');
+                        // Revenir à l'étape 1 au lieu de recharger la page
+                        setTimeout(() => this.loadStep(1), 2000);
                     }
                 },
                 error: (xhr, status, error) => {
                     // En cas d'erreur AJAX, réactiver tous les boutons
                     $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
-                    this.showError('Erreur de connexion lors du chargement de l\'étape');
-                    // Recharger la page en cas d'erreur pour revenir à un état stable
-                    setTimeout(() => window.location.reload(), 2000);
+                    this.showError('Erreur de connexion lors du chargement de l\'étape. Retour à l\'étape 1.');
+                    // Revenir à l'étape 1 au lieu de recharger la page
+                    setTimeout(() => this.loadStep(1), 2000);
                 }
             });
         }
 
         updateProgress() {
-            const totalSteps = 6; // Étapes d'onboarding : welcome, freemium, template, assign, woocommerce, completed
+            // Le nombre total d'étapes est maintenant dynamique selon les plugins installés
+            // On utilise une valeur par défaut de 6, mais elle sera ajustée si nécessaire
+            const totalSteps = typeof pdfBuilderOnboarding !== 'undefined' && pdfBuilderOnboarding.total_steps 
+                ? pdfBuilderOnboarding.total_steps 
+                : 6;
             const progress = (Math.min(this.currentStep, totalSteps) / totalSteps) * 100;
 
             $('.progress-fill').css('width', progress + '%');

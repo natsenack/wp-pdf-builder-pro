@@ -106,6 +106,7 @@ class PDF_Builder_Onboarding_Manager {
             'current_step' => $this->get_current_step(),
             'selected_template' => $this->onboarding_options['selected_template'] ?? null,
             'selected_mode' => $this->onboarding_options['selected_mode'] ?? null,
+            'total_steps' => count($this->get_onboarding_steps()),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
@@ -141,7 +142,19 @@ class PDF_Builder_Onboarding_Manager {
      * Obtenir l'étape actuelle
      */
     public function get_current_step() {
-        return $this->onboarding_options['current_step'];
+        $current_step = $this->onboarding_options['current_step'] ?? 1;
+        $all_steps = $this->get_onboarding_steps();
+        
+        // S'assurer que l'étape actuelle existe dans les étapes disponibles
+        if (!isset($all_steps[$current_step])) {
+            // Si l'étape n'existe pas, prendre la première étape disponible
+            $current_step = min(array_keys($all_steps));
+            // Mettre à jour les options pour éviter ce problème à l'avenir
+            $this->onboarding_options['current_step'] = $current_step;
+            $this->save_onboarding_options();
+        }
+        
+        return $current_step;
     }
 
     /**
@@ -772,56 +785,59 @@ class PDF_Builder_Onboarding_Manager {
         unset($this->onboarding_options['redirect_to']);
 
         // Actions spécifiques selon l'étape
-        switch ($step) {
-            case 2: // Freemium mode
-                error_log('PDF_Builder_Onboarding: Processing step 2 - Freemium mode');
-                if (!empty($_POST['selected_mode'])) {
-                    $this->onboarding_options['selected_mode'] = sanitize_text_field($_POST['selected_mode']);
-                    error_log('PDF_Builder_Onboarding: Freemium mode saved: ' . $this->onboarding_options['selected_mode']);
-                } else {
-                    error_log('PDF_Builder_Onboarding: No freemium mode selected for step 2');
-                }
-                break;
+        $all_steps = $this->get_onboarding_steps();
+        $current_step_data = $all_steps[$step] ?? null;
+        
+        if ($current_step_data) {
+            switch ($current_step_data['id']) {
+                case 'freemium_mode':
+                    error_log('PDF_Builder_Onboarding: Processing freemium mode step');
+                    if (!empty($_POST['selected_mode'])) {
+                        $this->onboarding_options['selected_mode'] = sanitize_text_field($_POST['selected_mode']);
+                        error_log('PDF_Builder_Onboarding: Freemium mode saved: ' . $this->onboarding_options['selected_mode']);
+                    } else {
+                        error_log('PDF_Builder_Onboarding: No freemium mode selected');
+                    }
+                    break;
 
-            case 3: // First template
-                error_log('PDF_Builder_Onboarding: Processing step 3 - Template selection');
-                if (!empty($_POST['selected_template'])) {
-                    error_log('PDF_Builder_Onboarding: Template selected for step 3');
-                    // Sauvegarder le template sélectionné
-                    $this->onboarding_options['selected_template'] = sanitize_text_field($_POST['selected_template']);
-                    // NE PAS rediriger vers l'éditeur - passer à l'étape 4
-                } else {
-                    error_log('PDF_Builder_Onboarding: No template selected for step 3');
-                }
-                break;
+                case 'first_template':
+                    error_log('PDF_Builder_Onboarding: Processing first template step');
+                    if (!empty($_POST['selected_template'])) {
+                        error_log('PDF_Builder_Onboarding: Template selected');
+                        $this->onboarding_options['selected_template'] = sanitize_text_field($_POST['selected_template']);
+                    } else {
+                        error_log('PDF_Builder_Onboarding: No template selected');
+                    }
+                    break;
 
-            case 4: // Assign template
-                error_log('PDF_Builder_Onboarding: Processing step 4 - Template assignment');
-                // Sauvegarder les préférences d'assignation si fournies
-                if (isset($_POST['template_usage'])) {
-                    $this->onboarding_options['template_usage'] = sanitize_text_field($_POST['template_usage']);
-                }
-                break;
+                case 'assign_template':
+                    error_log('PDF_Builder_Onboarding: Processing template assignment step');
+                    // Sauvegarder les préférences d'assignation si fournies
+                    if (isset($_POST['template_usage'])) {
+                        $this->onboarding_options['template_usage'] = sanitize_text_field($_POST['template_usage']);
+                    }
+                    break;
 
-            case 5: // WooCommerce setup
-                error_log('PDF_Builder_Onboarding: Processing step 5 - WooCommerce setup');
-                // Sauvegarder les préférences WooCommerce
-                if (isset($_POST['woocommerce_options'])) {
-                    update_option('pdf_builder_woocommerce_integration', $_POST['woocommerce_options']);
-                }
-                break;
+                case 'woocommerce_setup':
+                    error_log('PDF_Builder_Onboarding: Processing WooCommerce setup step');
+                    // Sauvegarder les préférences WooCommerce
+                    if (isset($_POST['woocommerce_options'])) {
+                        update_option('pdf_builder_woocommerce_integration', $_POST['woocommerce_options']);
+                    }
+                    break;
 
-            case 6: // Completed
-                error_log('PDF_Builder_Onboarding: Processing step 6 - completing onboarding');
-                $this->onboarding_options['completed'] = true;
-                $this->onboarding_options['completed_at'] = current_time('timestamp');
-                // Rediriger vers l'éditeur après completion de l'onboarding
-                $this->onboarding_options['redirect_to'] = admin_url('admin.php?page=pdf-builder-react-editor');
-                break;
+                case 'completed':
+                    error_log('PDF_Builder_Onboarding: Processing completion step');
+                    $this->onboarding_options['completed'] = true;
+                    $this->onboarding_options['completed_at'] = current_time('timestamp');
+                    // Rediriger vers l'éditeur après completion de l'onboarding
+                    $this->onboarding_options['redirect_to'] = admin_url('admin.php?page=pdf-builder-react-editor');
+                    break;
 
-            default:
-                error_log('PDF_Builder_Onboarding: Processing step ' . $step . ' (no special logic)');
-                break;
+                default:
+                    error_log('PDF_Builder_Onboarding: Processing step ' . $step . ' (' . $current_step_data['id'] . ') - no special logic');
+                    break;
+            }
         }
 
         $this->save_onboarding_options();
@@ -928,32 +944,34 @@ class PDF_Builder_Onboarding_Manager {
             return __('Étape inconnue.', 'pdf-builder-pro');
         }
 
-        switch ($step) {
-            case 1: // Welcome - toujours valide
+        $step_data = $all_steps[$step];
+
+        switch ($step_data['id']) {
+            case 'welcome': // Welcome - toujours valide
                 return null;
 
-            case 2: // Freemium mode - doit avoir sélectionné un mode
+            case 'freemium_mode': // Freemium mode - doit avoir sélectionné un mode
                 if (empty($_POST['selected_mode'])) {
                     return __('Veuillez sélectionner un mode d\'utilisation.', 'pdf-builder-pro');
                 }
                 return null;
 
-            case 3: // First template - doit avoir sélectionné un template
+            case 'first_template': // First template - doit avoir sélectionné un template
                 if (empty($_POST['selected_template'])) {
                     return __('Veuillez sélectionner un template.', 'pdf-builder-pro');
                 }
                 return null;
 
-            case 4: // Template assignment - toujours valide
+            case 'assign_template': // Template assignment - toujours valide
+                return null;
+
+            case 'woocommerce_setup': // WooCommerce setup - toujours valide (optionnel)
+                return null;
+
+            case 'completed': // Completed - toujours valide
                 return null;
 
             default:
-                // Pour les étapes WooCommerce (si elle existe) et terminaison
-                if (isset($all_steps[$step]) && $all_steps[$step]['id'] === 'woocommerce_setup') {
-                    return null; // Étape WooCommerce toujours valide
-                } elseif (isset($all_steps[$step]) && $all_steps[$step]['id'] === 'completed') {
-                    return null; // Étape terminaison toujours valide
-                }
                 return __('Étape inconnue.', 'pdf-builder-pro');
         }
     }
