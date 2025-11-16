@@ -92,27 +92,6 @@
 
         showCurrentStep() {
             console.log('Tutorial: showCurrentStep called, currentTutorial:', this.currentTutorial, 'currentStep:', this.currentStep);
-            const tutorial = pdfBuilderTutorial.tutorials[this.currentTutorial];
-            console.log('Tutorial: Found tutorial data:', tutorial);
-
-            if (!tutorial || !tutorial.steps) {
-                console.error('Tutorial: No tutorial data found for', this.currentTutorial);
-                return;
-            }
-
-            const step = tutorial.steps[this.currentStep];
-            console.log('Tutorial: Current step data:', step);
-
-            if (!step) {
-                console.error('Tutorial: No step data found for step', this.currentStep);
-                return;
-            }
-
-            this.showTooltip(step);
-        }
-
-        showCurrentStep() {
-            console.log('Tutorial: showCurrentStep called, currentTutorial:', this.currentTutorial, 'currentStep:', this.currentStep);
             const tutorial = window.pdfBuilderTutorial.tutorials[this.currentTutorial];
             console.log('Tutorial: Found tutorial data:', tutorial);
 
@@ -243,7 +222,7 @@
         }
 
         nextStep() {
-            const tutorial = pdfBuilderTutorial.tutorials[this.currentTutorial];
+            const tutorial = window.pdfBuilderTutorial.tutorials[this.currentTutorial];
             if (this.currentStep < tutorial.steps.length - 1) {
                 this.currentStep++;
                 this.showCurrentStep();
