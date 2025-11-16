@@ -107,7 +107,8 @@
 
             // Initialiser l'état du wizard
             this.currentStep = forcedStep ? parseInt(forcedStep) : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.current_step || 1 : 1);
-            this.selectedTemplate = typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_template || null : null;
+            // Pour l'étape 2, on force selectedTemplate à null au départ pour s'assurer que le bouton est désactivé
+            this.selectedTemplate = (this.currentStep === 2) ? null : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_template || null : null);
             console.log('PDF Builder Onboarding: Current step set to', this.currentStep);
             console.log('PDF Builder Onboarding: Selected template:', this.selectedTemplate);
 
@@ -1564,9 +1565,10 @@
             // Bouton principal (suivant/terminer)
             if (data.action) {
                 const buttonClass = (data.requires_selection && step === 2) ? 'button-secondary' : 'button-primary';
-                const isDisabled = (data.requires_selection && step === 2 && !this.selectedTemplate) ? 'disabled' : '';
+                const shouldDisable = (data.requires_selection && parseInt(step) === 2 && !this.selectedTemplate);
+                const isDisabled = shouldDisable ? 'disabled' : '';
 
-                console.log('PDF Builder Onboarding: Button logic - step:', step, 'requires_selection:', data.requires_selection, 'selectedTemplate:', this.selectedTemplate, 'isDisabled:', isDisabled);
+                console.log('PDF Builder Onboarding: Button logic - step:', step, 'parsed step:', parseInt(step), 'requires_selection:', data.requires_selection, 'selectedTemplate:', this.selectedTemplate, 'shouldDisable:', shouldDisable, 'isDisabled:', isDisabled);
 
                 buttonsHtml += `
                     <button class="button ${buttonClass} complete-step"
