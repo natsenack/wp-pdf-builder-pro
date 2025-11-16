@@ -640,6 +640,25 @@
             const allButtonsInModalAfter = $modal.find('.complete-step');
             console.log('PDF Builder Onboarding: All buttons in modal after replacement:', allButtonsInModalAfter.length);
 
+            // Gérer les boutons du footer qui persistent entre les étapes
+            const $footer = $modal.find('.modal-footer');
+            const footerButtons = $footer.find('.complete-step');
+
+            // Supprimer tous les boutons existants du footer
+            footerButtons.remove();
+            console.log('PDF Builder Onboarding: Removed', footerButtons.length, 'existing footer buttons');
+
+            // Si la réponse contient des boutons pour le footer, les ajouter
+            if (data.footer_content) {
+                $footer.html(data.footer_content);
+                console.log('PDF Builder Onboarding: Added footer content from server');
+            } else {
+                // Sinon, créer un bouton par défaut pour l'étape courante
+                const buttonHtml = this.generateStepButton(step);
+                $footer.html(buttonHtml);
+                console.log('PDF Builder Onboarding: Generated default footer button for step', step);
+            }
+
             // Masquer/désactiver tous les boutons qui ne correspondent pas à l'étape courante
             this.hideInactiveStepButtons();
 
@@ -1448,7 +1467,36 @@
             });
         }
 
-        hideInactiveStepButtons() {
+        generateStepButton(step) {
+            // Générer le bouton approprié pour l'étape courante
+            const stepData = this.getStepData(step);
+            if (!stepData) return '';
+
+            const buttonText = stepData.action_text || 'Continuer';
+            const buttonClass = stepData.requires_selection ? 'button-secondary' : 'button-primary';
+            const isDisabled = stepData.requires_selection && !this.selectedTemplate;
+
+            return `
+                <button class="button ${buttonClass} complete-step"
+                        data-step="${step}"
+                        data-action-type="${stepData.action_type || 'next'}"
+                        ${isDisabled ? 'disabled' : ''}>
+                    ${buttonText}
+                </button>
+            `;
+        }
+
+        getStepData(step) {
+            // Données des étapes (devrait correspondre au PHP)
+            const steps = {
+                1: { action_text: 'Suivant', action_type: 'next', requires_selection: false },
+                2: { action_text: 'Continuer', action_type: 'next', requires_selection: true },
+                3: { action_text: 'Suivant', action_type: 'next', requires_selection: false },
+                4: { action_text: 'Suivant', action_type: 'next', requires_selection: false },
+                5: { action_text: 'Terminer', action_type: 'finish', requires_selection: false }
+            };
+            return steps[step];
+        }
             console.log('=== PDF Builder Onboarding: HIDING INACTIVE BUTTONS, current step:', this.currentStep, '===');
             const $modal = $('#pdf-builder-onboarding-modal');
             const allButtons = $modal.find('.complete-step');
