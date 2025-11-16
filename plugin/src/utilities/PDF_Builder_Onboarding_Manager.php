@@ -187,7 +187,7 @@ class PDF_Builder_Onboarding_Manager {
                 'action_type' => 'next',
                 'can_skip' => true, // Peut être configuré plus tard
                 'skip_text' => __('Configurer plus tard', 'pdf-builder-pro'),
-                'requires_selection' => false // Pas de sélection obligatoire
+                'requires_selection' => true // Template doit être sélectionné pour continuer
             ],
             5 => [
                 'id' => 'woocommerce_setup',

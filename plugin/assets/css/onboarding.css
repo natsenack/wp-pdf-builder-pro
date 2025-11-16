@@ -2419,4 +2419,24 @@ kbd {
     }
 }
 
+/* États désactivés pour l'étape assign template */
+.assign-template-setup input:disabled,
+.assign-template-setup textarea:disabled,
+.assign-template-setup input[type="checkbox"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f9fafb !important;
+    border-color: #d1d5db !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    .assign-template-setup input:disabled,
+    .assign-template-setup textarea:disabled,
+    .assign-template-setup input[type="checkbox"]:disabled {
+        background: #6b7280 !important;
+        border-color: #9ca3af !important;
+        color: #d1d5db !important;
+    }
+}
+
 

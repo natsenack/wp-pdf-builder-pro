@@ -1674,6 +1674,9 @@
                     } else if (parseInt(step) === 3) {
                         // Étape 3 : template - vérifier selectedTemplate
                         shouldDisable = !this.selectedTemplate;
+                    } else if (parseInt(step) === 4) {
+                        // Étape 4 : assignation template - vérifier selectedTemplate
+                        shouldDisable = !this.selectedTemplate;
                     }
                 }
 
@@ -1805,11 +1808,20 @@
         updateTemplatePreview() {
             const templateId = this.selectedTemplate;
             if (!templateId) {
-                $('#selected-template-icon').text('📄');
-                $('#selected-template-title').text('Template sélectionné');
-                $('#selected-template-description').text('Aucun template sélectionné');
+                $('#selected-template-icon').text('⚠️');
+                $('#selected-template-title').text('Aucun template sélectionné');
+                $('#selected-template-description').text('Veuillez retourner à l\'étape précédente pour choisir un template.');
+
+                // Désactiver les champs de personnalisation
+                $('#template_custom_name, #template_custom_description').prop('disabled', true).val('');
+                $('input[name="assigned_statuses"], input[name="template_actions"]').prop('disabled', true).prop('checked', false);
+
                 return;
             }
+
+            // Réactiver les champs si un template est sélectionné
+            $('#template_custom_name, #template_custom_description').prop('disabled', false);
+            $('input[name="assigned_statuses"], input[name="template_actions"]').prop('disabled', false);
 
             const templateInfo = {
                 'invoice': {
@@ -1842,6 +1854,19 @@
         }
 
         saveTemplateAssignment() {
+            // Vérifier si un template est sélectionné
+            if (!this.selectedTemplate) {
+                console.warn('PDF Builder Onboarding: No template selected, cannot save assignment');
+                this.showNotification('Veuillez d\'abord sélectionner un template à l\'étape précédente.', 'error');
+
+                // Optionnel : rediriger vers l'étape 3 après un délai
+                setTimeout(() => {
+                    this.goToStep(3);
+                }, 2000);
+
+                return;
+            }
+
             const assignmentData = {
                 template_id: this.selectedTemplate,
                 custom_name: $('#template_custom_name').val().trim(),
