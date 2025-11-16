@@ -1530,8 +1530,8 @@
                                 <tr>
                                     <td><strong>Support technique</strong></td>
                                     <td style="text-align: center; color: #ffb900;">Communauté</td>
-                                    <td style="text-align: center; color: #46b450;">Prioritaire 24/7</td>
-                                    <td>Support par email/ticket avec SLA garanti</td>
+                                    <td style="text-align: center; color: #46b450;">Prioritaire</td>
+                                    <td>Support rapide par email avec réponse garantie sous 24h</td>
                                 </tr>
                             </tbody>
                         </table>
