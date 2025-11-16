@@ -5363,10 +5363,17 @@
                     link.addEventListener('click', mainTabClickHandler);
                 });
 
-                // Vérifier s'il y a un paramètre tab dans l'URL et l'activer
-                const urlParams = new URLSearchParams(window.location.search);
-                const urlTab = urlParams.get('tab');
+                // Vérifier s'il y a un paramètre tab dans l'URL et l'activer (méthode compatible)
+                function getUrlParameter(name) {
+                    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+                    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+                    const results = regex.exec(window.location.search);
+                    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+                }
+
+                const urlTab = getUrlParameter('tab');
                 if (urlTab) {
+                    console.log('🌐 Paramètre tab détecté dans URL:', urlTab);
                     const urlTabLink = document.querySelector(`.nav-tab[data-tab="${urlTab}"]`);
                     if (urlTabLink) {
                         console.log('🌐 Activation onglet depuis URL:', urlTab);
@@ -5375,6 +5382,8 @@
                         mainTabsInitialized = true;
                         console.log('✅ Onglets principaux initialisés avec succès (depuis URL)');
                         return;
+                    } else {
+                        console.log('⚠️ Onglet demandé dans URL non trouvé:', urlTab);
                     }
                 }
 
