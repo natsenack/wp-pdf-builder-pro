@@ -180,13 +180,13 @@ class TutorialManager
                     [
                         'target' => '',
                         'title' => __('Fonctionnalités principales', 'pdf-builder-pro'),
-                        'content' => __('Créez des factures, devis, bons de commande et autres documents PDF. Personnalisez les templates avec votre branding.', 'pdf-builder-pro'),
+                        'content' => __('Créez des factures, devis, bons de commande et autres documents PDF. Personnalisez les templates avec votre branding et automatisez la génération.', 'pdf-builder-pro'),
                         'position' => 'center'
                     ],
                     [
                         'target' => '',
-                        'title' => __('Commencer', 'pdf-builder-pro'),
-                        'content' => __('Rendez-vous dans l\'éditeur PDF pour créer votre premier template, ou explorez les paramètres pour configurer le plugin.', 'pdf-builder-pro'),
+                        'title' => __('Pour commencer', 'pdf-builder-pro'),
+                        'content' => __('➡️ <a href="' . admin_url('admin.php?page=pdf-builder-react-editor') . '" style="color: #007cba;">Allez dans l\'éditeur PDF</a> pour créer votre premier template<br>⚙️ <a href="' . admin_url('admin.php?page=pdf-builder-settings') . '" style="color: #007cba;">Configurez les paramètres</a> pour personnaliser le plugin', 'pdf-builder-pro'),
                         'position' => 'center'
                     ]
                 ]

@@ -86,7 +86,7 @@
             `);
 
             $('body').append($modal);
-            $modal.fadeIn();
+            $modal.show();
 
             // Bind events
             $modal.find('.tutorial-option').on('click', (e) => {
@@ -185,12 +185,12 @@
             }
 
             // Afficher le tooltip modal
-            $tooltip.addClass('active').show();
+            $tooltip.show();
         }
 
         createModalTooltip(step) {
             const $tooltip = $(`
-                <div class="tutorial-tooltip tutorial-tooltip-modal" data-tutorial="${this.currentTutorial}" data-step="${this.currentStep}">
+                <div class="tutorial-tooltip tutorial-tooltip-modal" data-tutorial="${this.currentTutorial}" data-step="${this.currentStep}" style="z-index: 9999999;">
                     <div class="tutorial-tooltip-header">
                         <h4>${step.title}</h4>
                         <button class="tutorial-close">&times;</button>
