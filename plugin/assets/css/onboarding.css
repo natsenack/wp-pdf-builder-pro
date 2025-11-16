@@ -1452,35 +1452,6 @@ kbd {
     }
 
     /* Cartes de templates générales en mode sombre */
-    .template-card {
-        background: #4b5563;
-        border-color: #6b7280;
-        color: #ffffff;
-    }
-
-    .template-card:hover {
-        border-color: #3b82f6;
-        background: #374151;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-    }
-
-    .template-card.selected {
-        border-color: #46b450;
-        background: #1d2327;
-    }
-
-    .template-card h4 {
-        color: #ffffff;
-    }
-
-    .template-card p {
-        color: #e2e8f0;
-    }
-
-    .pdf-builder-onboarding-modal .step-content p {
-        color: #e2e8f0;
-    }
-
     .pdf-builder-onboarding-modal .template-card {
         background: #4b5563;
         border-color: #6b7280;
@@ -1496,6 +1467,14 @@ kbd {
     .pdf-builder-onboarding-modal .template-card.selected {
         border-color: #46b450;
         background: #1d2327;
+    }
+
+    .pdf-builder-onboarding-modal .template-card h4 {
+        color: #ffffff;
+    }
+
+    .pdf-builder-onboarding-modal .template-card p {
+        color: #e2e8f0;
     }
 
     .pdf-builder-onboarding-modal .woocommerce-setup {
@@ -1952,67 +1931,67 @@ kbd {
 
 /* Dark mode pour l'étape freemium mode */
 @media (prefers-color-scheme: dark) {
-    .freemium-mode-selection > p {
+    .pdf-builder-onboarding-modal .freemium-mode-selection > p {
         color: #d1d5db;
     }
 
-    .mode-card {
+    .pdf-builder-onboarding-modal .mode-card {
         background: #374151;
         border-color: #6b7280;
         color: #f9fafb;
     }
 
-    .mode-card:hover {
+    .pdf-builder-onboarding-modal .mode-card:hover {
         border-color: #60a5fa;
         box-shadow: 0 4px 12px rgba(96, 165, 250, 0.15);
     }
 
-    .mode-card.selected {
+    .pdf-builder-onboarding-modal .mode-card.selected {
         border-color: #60a5fa;
         background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%);
         box-shadow: 0 4px 16px rgba(96, 165, 250, 0.2);
     }
 
-    .mode-icon {
+    .pdf-builder-onboarding-modal .mode-icon {
         background: linear-gradient(135deg, #4b5563, #6b7280);
     }
 
-    .mode-card.selected .mode-icon {
+    .pdf-builder-onboarding-modal .mode-card.selected .mode-icon {
         background: linear-gradient(135deg, #60a5fa, #3b82f6);
     }
 
-    .mode-header h4 {
+    .pdf-builder-onboarding-modal .mode-header h4 {
         color: #f9fafb;
     }
 
-    .mode-card.selected .mode-header h4 {
+    .pdf-builder-onboarding-modal .mode-card.selected .mode-header h4 {
         color: #dbeafe;
     }
 
-    .mode-features li {
+    .pdf-builder-onboarding-modal .mode-features li {
         color: #9ca3af;
     }
 
-    .mode-price {
+    .pdf-builder-onboarding-modal .mode-price {
         border-top-color: #6b7280;
     }
 
-    .mode-price .price {
+    .pdf-builder-onboarding-modal .mode-price .price {
         color: #f9fafb;
     }
 
-    .mode-price .period {
+    .pdf-builder-onboarding-modal .mode-price .period {
         color: #9ca3af;
     }
 
-    .freemium-notice {
+    .pdf-builder-onboarding-modal .freemium-notice {
         background: #451a03 !important;
         border-color: #d97706 !important;
         border-left-color: #d97706 !important;
         color: #fed7aa !important;
     }
 
-    .freemium-notice strong {
+    .pdf-builder-onboarding-modal .freemium-notice strong {
         color: #fed7aa;
     }
 }
@@ -2369,136 +2348,136 @@ kbd {
     }
 
     /* Personnalisation */
-    .template-customization h4,
-    .woocommerce-assignment h4,
-    .template-actions h4 {
+    .pdf-builder-onboarding-modal .template-customization h4,
+    .pdf-builder-onboarding-modal .woocommerce-assignment h4,
+    .pdf-builder-onboarding-modal .template-actions h4 {
         color: #f9fafb;
     }
 
-    .field-group label {
+    .pdf-builder-onboarding-modal .field-group label {
         color: #e5e7eb;
     }
 
-    .field-group input,
-    .field-group textarea {
+    .pdf-builder-onboarding-modal .field-group input,
+    .pdf-builder-onboarding-modal .field-group textarea {
         background: #374151;
         border-color: #6b7280;
         color: #f9fafb;
     }
 
-    .field-group input:focus,
-    .field-group textarea:focus {
+    .pdf-builder-onboarding-modal .field-group input:focus,
+    .pdf-builder-onboarding-modal .field-group textarea:focus {
         border-color: #60a5fa;
         box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
     }
 
-    .field-group input::placeholder,
-    .field-group textarea::placeholder {
+    .pdf-builder-onboarding-modal .field-group input::placeholder,
+    .pdf-builder-onboarding-modal .field-group textarea::placeholder {
         color: #9ca3af;
     }
 
     /* Assignation WooCommerce */
-    .assignment-description {
+    .pdf-builder-onboarding-modal .assignment-description {
         color: #d1d5db;
     }
 
-    .status-option {
+    .pdf-builder-onboarding-modal .status-option {
         background: #374151;
         border-color: #6b7280;
         color: #f9fafb;
     }
 
-    .status-option:hover {
+    .pdf-builder-onboarding-modal .status-option:hover {
         border-color: #60a5fa;
         background: #4b5563;
     }
 
-    .status-badge {
+    .pdf-builder-onboarding-modal .status-badge {
         background: #6b7280;
         color: #f9fafb;
         border-color: #9ca3af;
     }
 
-    .status-badge.status-pending {
+    .pdf-builder-onboarding-modal .status-badge.status-pending {
         background: #92400e;
         color: #fed7aa;
         border-color: #d97706;
     }
 
-    .status-badge.status-processing {
+    .pdf-builder-onboarding-modal .status-badge.status-processing {
         background: #1e40af;
         color: #bfdbfe;
         border-color: #3b82f6;
     }
 
-    .status-badge.status-on-hold {
+    .pdf-builder-onboarding-modal .status-badge.status-on-hold {
         background: #92400e;
         color: #fed7aa;
         border-color: #d97706;
     }
 
-    .status-badge.status-completed {
+    .pdf-builder-onboarding-modal .status-badge.status-completed {
         background: #065f46;
         color: #a7f3d0;
         border-color: #10b981;
     }
 
-    .status-badge.status-cancelled,
-    .status-badge.status-failed {
+    .pdf-builder-onboarding-modal .status-badge.status-cancelled,
+    .pdf-builder-onboarding-modal .status-badge.status-failed {
         background: #991b1b;
         color: #fecaca;
         border-color: #ef4444;
     }
 
-    .status-badge.status-refunded {
+    .pdf-builder-onboarding-modal .status-badge.status-refunded {
         background: #6b21a8;
         color: #d8b4fe;
         border-color: #8b5cf6;
     }
 
-    .assignment-notice {
+    .pdf-builder-onboarding-modal .assignment-notice {
         background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
         border-color: #3b82f6;
         color: #bfdbfe;
     }
 
-    .assignment-notice .notice-content strong {
+    .pdf-builder-onboarding-modal .assignment-notice .notice-content strong {
         color: #dbeafe;
     }
 
     /* Actions disponibles */
-    .action-option {
+    .pdf-builder-onboarding-modal .action-option {
         background: #374151;
         border-color: #6b7280;
         color: #f9fafb;
     }
 
-    .action-option:hover {
+    .pdf-builder-onboarding-modal .action-option:hover {
         border-color: #60a5fa;
         background: #4b5563;
     }
 
-    .action-option .option-content strong {
+    .pdf-builder-onboarding-modal .action-option .option-content strong {
         color: #f9fafb;
     }
 
-    .action-option .option-content span {
+    .pdf-builder-onboarding-modal .action-option .option-content span {
         color: #d1d5db;
     }
 
-    .action-option input[type="checkbox"]:checked + .option-content strong,
-    .action-option input[type="checkbox"]:checked + .option-content span {
+    .pdf-builder-onboarding-modal .action-option input[type="checkbox"]:checked + .option-content strong,
+    .pdf-builder-onboarding-modal .action-option input[type="checkbox"]:checked + .option-content span {
         color: #dbeafe;
     }
 
     /* Notice de completion */
-    .setup-complete-notice {
+    .pdf-builder-onboarding-modal .setup-complete-notice {
         background: linear-gradient(135deg, #14532d 0%, #166534 100%);
         border-color: #16a34a;
         color: #bbf7d0;
     }
 
-    .setup-complete-notice .notice-content strong {
+    .pdf-builder-onboarding-modal .setup-complete-notice .notice-content strong {
         color: #dcfce7;
     }
 }
