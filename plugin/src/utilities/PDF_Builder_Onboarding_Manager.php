@@ -55,6 +55,7 @@ class PDF_Builder_Onboarding_Manager {
         add_action('wp_ajax_pdf_builder_reset_onboarding', [$this, 'ajax_reset_onboarding']);
         add_action('wp_ajax_pdf_builder_load_onboarding_step', [$this, 'ajax_load_onboarding_step']);
         add_action('wp_ajax_pdf_builder_save_template_selection', [$this, 'ajax_save_template_selection']);
+        add_action('wp_ajax_pdf_builder_save_freemium_mode', [$this, 'ajax_save_freemium_mode']);
         add_action('wp_ajax_pdf_builder_update_onboarding_step', [$this, 'ajax_update_onboarding_step']);
         add_action('wp_ajax_pdf_builder_mark_onboarding_complete', [$this, 'ajax_mark_onboarding_complete']);
     }
@@ -688,8 +689,18 @@ class PDF_Builder_Onboarding_Manager {
 
         // Actions spécifiques selon l'étape
         switch ($step) {
-            case 2: // First template
-                error_log('PDF_Builder_Onboarding: Processing step 2');
+            case 2: // Freemium mode
+                error_log('PDF_Builder_Onboarding: Processing step 2 - Freemium mode');
+                if (!empty($_POST['selected_mode'])) {
+                    $this->onboarding_options['selected_mode'] = sanitize_text_field($_POST['selected_mode']);
+                    error_log('PDF_Builder_Onboarding: Freemium mode saved: ' . $this->onboarding_options['selected_mode']);
+                } else {
+                    error_log('PDF_Builder_Onboarding: No freemium mode selected for step 2');
+                }
+                break;
+
+            case 3: // First template
+                error_log('PDF_Builder_Onboarding: Processing step 3 - Template selection');
                 if (!empty($_POST['selected_template'])) {
                     error_log('PDF_Builder_Onboarding: Template selected, setting redirect to editor');
                     // Sauvegarder le template sélectionné
@@ -697,20 +708,28 @@ class PDF_Builder_Onboarding_Manager {
                     // Rediriger vers l'éditeur
                     $this->onboarding_options['redirect_to'] = admin_url('admin.php?page=pdf-builder-react-editor');
                 } else {
-                    error_log('PDF_Builder_Onboarding: No template selected for step 2');
+                    error_log('PDF_Builder_Onboarding: No template selected for step 3');
                 }
                 break;
 
-            case 3: // WooCommerce setup
-                error_log('PDF_Builder_Onboarding: Processing step 3');
+            case 4: // Assign template
+                error_log('PDF_Builder_Onboarding: Processing step 4 - Template assignment');
+                // Sauvegarder les préférences d'assignation si fournies
+                if (isset($_POST['template_usage'])) {
+                    $this->onboarding_options['template_usage'] = sanitize_text_field($_POST['template_usage']);
+                }
+                break;
+
+            case 5: // WooCommerce setup
+                error_log('PDF_Builder_Onboarding: Processing step 5 - WooCommerce setup');
                 // Sauvegarder les préférences WooCommerce
                 if (isset($_POST['woocommerce_options'])) {
                     update_option('pdf_builder_woocommerce_integration', $_POST['woocommerce_options']);
                 }
                 break;
 
-            case 4: // Completed
-                error_log('PDF_Builder_Onboarding: Processing step 4 - completing onboarding');
+            case 6: // Completed
+                error_log('PDF_Builder_Onboarding: Processing step 6 - completing onboarding');
                 $this->onboarding_options['completed'] = true;
                 $this->onboarding_options['completed_at'] = current_time('timestamp');
                 break;
@@ -746,6 +765,31 @@ class PDF_Builder_Onboarding_Manager {
         $selected_template = sanitize_text_field($_POST['selected_template'] ?? '');
 
         $this->onboarding_options['selected_template'] = $selected_template;
+        $this->onboarding_options['last_activity'] = current_time('timestamp');
+        $this->save_onboarding_options();
+
+        wp_send_json_success();
+    }
+
+    /**
+     * AJAX - Sauvegarder le mode freemium sélectionné
+     */
+    public function ajax_save_freemium_mode() {
+        check_ajax_referer('pdf_builder_onboarding', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+        }
+
+        $selected_mode = sanitize_text_field($_POST['selected_mode'] ?? '');
+
+        // Valider que le mode est valide
+        if (!in_array($selected_mode, ['free', 'premium'])) {
+            wp_send_json_error(__('Mode invalide', 'pdf-builder-pro'));
+            return;
+        }
+
+        $this->onboarding_options['selected_mode'] = $selected_mode;
         $this->onboarding_options['last_activity'] = current_time('timestamp');
         $this->save_onboarding_options();
 

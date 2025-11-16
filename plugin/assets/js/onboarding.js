@@ -558,7 +558,7 @@
 
             // Préparer les données selon l'étape
             let stepAction = 'next';
-            if (this.currentStep === 4) {
+            if (this.currentStep === 6) {
                 stepAction = 'finish';
             }
 
@@ -574,6 +574,7 @@
                     step: this.currentStep,
                     step_action: stepAction,
                     selected_template: this.selectedTemplate,
+                    selected_mode: this.selectedMode,
                     woocommerce_options: this.getWoocommerceOptions()
                 },
                 success: (response) => {
