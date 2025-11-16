@@ -5061,6 +5061,18 @@
                                     nonceName = 'pdf_builder_pdf_nonce';
                                 } else if (activeTab.id === 'developpeur') {
                                     nonceName = 'pdf_builder_developpeur_nonce';
+                                } else if (activeTab.id === 'licence') {
+                                    nonceName = 'pdf_builder_license_nonce';
+                                } else if (activeTab.id === 'securite') {
+                                    nonceName = 'pdf_builder_securite_nonce';
+                                } else if (activeTab.id === 'roles') {
+                                    nonceName = 'pdf_builder_roles_nonce';
+                                } else if (activeTab.id === 'notifications') {
+                                    nonceName = 'pdf_builder_notifications_nonce';
+                                } else if (activeTab.id === 'canvas') {
+                                    nonceName = 'pdf_builder_canvas_nonce';
+                                } else if (activeTab.id === 'templates') {
+                                    nonceName = 'pdf_builder_templates_nonce';
                                 }
                                 
                                 const nonceField = form.querySelector(`input[name="${nonceName}"]`);
