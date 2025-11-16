@@ -1528,6 +1528,30 @@
                                     <td>Mises à jour transparentes et corrections de sécurité</td>
                                 </tr>
                                 <tr>
+                                    <td><strong>CSS personnalisé</strong></td>
+                                    <td style="text-align: center; color: #dc3232;">✗</td>
+                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td>Injection de styles CSS avancés pour personnalisation complète</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Intégrations tierces</strong></td>
+                                    <td style="text-align: center; color: #dc3232;">✗</td>
+                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td>Zapier, webhooks, API externes pour automatisation</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Historique des versions</strong></td>
+                                    <td style="text-align: center; color: #dc3232;">✗</td>
+                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td>Suivi des modifications et possibilité de rollback</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Analytics & rapports</strong></td>
+                                    <td style="text-align: center; color: #dc3232;">✗</td>
+                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td>Statistiques d'usage, performances et métriques détaillées</td>
+                                </tr>
+                                <tr>
                                     <td><strong>Support technique</strong></td>
                                     <td style="text-align: center; color: #ffb900;">Communauté</td>
                                     <td style="text-align: center; color: #46b450;">Prioritaire</td>
