@@ -766,6 +766,9 @@
             $footer.html(footerHtml);
             console.log('FOOTER: Generated footer buttons for step', step);
 
+            // Gérer le bouton précédent dans le header
+            this.updatePreviousButton(step);
+
             // Masquer/désactiver tous les boutons qui ne correspondent pas à l'étape courante
             // this.hideInactiveStepButtons(); // COMMENTÉ - logique simplifiée
 
@@ -1215,6 +1218,8 @@
             }
         }
 
+        // ANCIENNE MÉTHODE - COMMENTÉE (remplacée par la méthode simple)
+        /*
         goToPreviousStep() {
             if (this.currentStep > 1) {
                 const $button = $('.button-previous');
@@ -1228,6 +1233,7 @@
                 this.loadStep(this.currentStep - 1);
             }
         }
+        */
 
         // ANCIENNE MÉTHODE - COMMENTÉE (remplacée par handleSkipStep)
         /*
@@ -1565,6 +1571,35 @@
             }
 
             return buttonsHtml;
+        }
+
+        updatePreviousButton(step) {
+            // Gérer la visibilité du bouton précédent selon l'étape
+            const $modal = $('#pdf-builder-onboarding-modal');
+            const $header = $modal.find('.modal-header');
+            const $prevButton = $header.find('.button-previous');
+
+            if (step > 1) {
+                if ($prevButton.length === 0) {
+                    // Créer le bouton précédent s'il n'existe pas
+                    $header.prepend(`
+                        <button class="button button-previous" data-tooltip="Étape précédente">
+                            <span class="dashicons dashicons-arrow-left-alt"></span>
+                        </button>
+                    `);
+                    console.log('HEADER: Created previous button for step', step);
+                } else {
+                    // S'assurer que le bouton est visible et activé
+                    $prevButton.show().prop('disabled', false);
+                    console.log('HEADER: Previous button is visible for step', step);
+                }
+            } else {
+                // Supprimer le bouton précédent pour la première étape
+                if ($prevButton.length > 0) {
+                    $prevButton.remove();
+                    console.log('HEADER: Removed previous button for step', step);
+                }
+            }
         }
 
         getStepData(step) {
