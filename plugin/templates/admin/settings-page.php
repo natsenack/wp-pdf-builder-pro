@@ -5305,6 +5305,7 @@
                 const targetTabContent = document.getElementById(targetTab);
                 if (targetTabContent) {
                     targetTabContent.classList.remove('hidden-tab');
+                    console.log('✅ Onglet affiché:', targetTab);
                 } else {
                     console.error('❌ Onglet non trouvé:', targetTab);
                 }
