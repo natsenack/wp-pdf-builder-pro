@@ -54,7 +54,8 @@
 
                 // Vérifier si le bouton appartient à l'étape courante
                 if (step !== this.currentStep) {
-                    console.log(`PDF Builder Onboarding: Button from step ${step} clicked but current step is ${this.currentStep}, ignoring`);
+                    console.log(`PDF Builder Onboarding: BLOCKING click from step ${step} button while at step ${this.currentStep}`);
+                    console.log('PDF Builder Onboarding: All buttons in modal:', $('#pdf-builder-onboarding-modal .complete-step').map(function() { return $(this).data('step'); }).get());
                     e.preventDefault();
                     return;
                 }
@@ -974,6 +975,8 @@
                                 // Charger l'étape suivante via AJAX au lieu de recharger la page
                                 this.loadStep(response.data.next_step);
                             }
+                            // Masquer les boutons inactifs après chaque transition
+                            this.hideInactiveStepButtons();
                         }, 500);
                     } else {
                         console.error('PDF Builder Onboarding: AJAX returned error:', response.data);
@@ -1446,18 +1449,21 @@
         }
 
         hideInactiveStepButtons() {
-            console.log('PDF Builder Onboarding: Hiding inactive step buttons, current step:', this.currentStep);
+            console.log('=== PDF Builder Onboarding: HIDING INACTIVE BUTTONS, current step:', this.currentStep, '===');
             const $modal = $('#pdf-builder-onboarding-modal');
+            const allButtons = $modal.find('.complete-step');
+            console.log('PDF Builder Onboarding: Found', allButtons.length, 'total buttons in modal');
 
             // Masquer tous les boutons qui ne correspondent pas à l'étape courante
-            $modal.find('.complete-step').each(function() {
+            allButtons.each(function() {
                 const $btn = $(this);
                 const buttonStep = $btn.data('step');
+                console.log('PDF Builder Onboarding: Button step:', buttonStep, 'visible:', $btn.is(':visible'));
                 if (buttonStep !== this.currentStep) {
-                    console.log('PDF Builder Onboarding: Hiding button from step', buttonStep);
+                    console.log('PDF Builder Onboarding: HIDING button from step', buttonStep);
                     $btn.hide();
                 } else {
-                    console.log('PDF Builder Onboarding: Showing button from step', buttonStep);
+                    console.log('PDF Builder Onboarding: SHOWING button from step', buttonStep);
                     $btn.show();
                 }
             }.bind(this));
