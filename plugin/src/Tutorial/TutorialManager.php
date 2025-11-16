@@ -95,8 +95,8 @@ class TutorialManager
         ?>
         <div id="pdf-builder-tutorial-button" style="
             position: fixed;
-            top: 20px;
-            left: 20px;
+            top: 120px;
+            right: 20px;
             z-index: 9999;
             background: #007cba;
             color: white;
