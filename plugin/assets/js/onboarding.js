@@ -939,10 +939,29 @@
                         }, 500);
                     } else {
                         console.error('PDF Builder Onboarding: AJAX returned error:', response.data);
-                        // En cas d'erreur, réactiver tous les boutons
-                        this.resetButtonStates();
-                        $button.html(originalText);
-                        this.showError(response.data?.message || 'Erreur lors de la sauvegarde');
+
+                        // Pour l'étape 2, si pas de template sélectionné, permettre de passer quand même
+                        if (step === 2 && response.data?.message?.includes('template')) {
+                            console.log('PDF Builder Onboarding: Step 2 - allowing to continue without template selection');
+                            // Simuler un succès et passer à l'étape suivante
+                            $button.html('<span class="dashicons dashicons-yes"></span> Étape ignorée');
+
+                            setTimeout(() => {
+                                if (response.data.next_step) {
+                                    // Mettre à jour l'étape côté client avant de charger la suivante
+                                    if (typeof pdfBuilderOnboarding !== 'undefined') {
+                                        pdfBuilderOnboarding.current_step = response.data.next_step;
+                                    }
+                                    // Charger l'étape suivante via AJAX
+                                    this.loadStep(response.data.next_step);
+                                }
+                            }, 500);
+                        } else {
+                            // En cas d'erreur normale, réactiver tous les boutons
+                            this.resetButtonStates();
+                            $button.html(originalText);
+                            this.showError(response.data?.message || 'Erreur lors de la sauvegarde');
+                        }
                     }
                 },
                 error: (xhr, status, error) => {
@@ -1389,7 +1408,8 @@
 
             const buttonText = stepData.action_text || 'Continuer';
             const buttonClass = stepData.requires_selection ? 'button-secondary' : 'button-primary';
-            const isDisabled = stepData.requires_selection && !this.selectedTemplate;
+            // Pour l'étape 2, permettre de continuer même sans sélection (optionnel)
+            const isDisabled = (step === 2) ? false : (stepData.requires_selection && !this.selectedTemplate);
 
             return `
                 <button class="button ${buttonClass} complete-step"
