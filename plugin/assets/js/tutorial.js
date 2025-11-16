@@ -70,9 +70,11 @@
         }
 
         startWelcomeWizard() {
+            console.log('Tutorial: startWelcomeWizard called');
             // Fermer le modal et commencer le tutoriel étape par étape
             this.closeModal();
-            this.startTutorial('welcome_wizard');
+            console.log('Tutorial: Starting tutorial "welcome"');
+            this.startTutorial('welcome');
         }
 
         skipWelcomeWizard() {
@@ -81,25 +83,53 @@
         }
 
         startTutorial(tutorialId) {
+            console.log('Tutorial: startTutorial called with id:', tutorialId);
             this.currentTutorial = tutorialId;
             this.currentStep = 0;
+            console.log('Tutorial: Set currentTutorial to:', this.currentTutorial);
             this.showCurrentStep();
         }
 
         showCurrentStep() {
-            const tutorial = window.pdfBuilderTutorial.tutorials[this.currentTutorial];
+            console.log('Tutorial: showCurrentStep called, currentTutorial:', this.currentTutorial, 'currentStep:', this.currentStep);
+            const tutorial = pdfBuilderTutorial.tutorials[this.currentTutorial];
+            console.log('Tutorial: Found tutorial data:', tutorial);
+
             if (!tutorial || !tutorial.steps) {
+                console.error('Tutorial: No tutorial data found for', this.currentTutorial);
                 return;
             }
 
             const step = tutorial.steps[this.currentStep];
+            console.log('Tutorial: Current step data:', step);
+
             if (!step) {
-                this.completeTutorial();
+                console.error('Tutorial: No step data found for step', this.currentStep);
                 return;
             }
 
             this.showTooltip(step);
-            this.updateNavigation();
+        }
+
+        showCurrentStep() {
+            console.log('Tutorial: showCurrentStep called, currentTutorial:', this.currentTutorial, 'currentStep:', this.currentStep);
+            const tutorial = window.pdfBuilderTutorial.tutorials[this.currentTutorial];
+            console.log('Tutorial: Found tutorial data:', tutorial);
+
+            if (!tutorial || !tutorial.steps) {
+                console.error('Tutorial: No tutorial data found for', this.currentTutorial);
+                return;
+            }
+
+            const step = tutorial.steps[this.currentStep];
+            console.log('Tutorial: Current step data:', step);
+
+            if (!step) {
+                console.error('Tutorial: No step data found for step', this.currentStep);
+                return;
+            }
+
+            this.showTooltip(step);
         }
 
         showTooltip(step) {
