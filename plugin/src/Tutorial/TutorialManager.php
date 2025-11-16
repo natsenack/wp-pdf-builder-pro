@@ -10,6 +10,11 @@ if (!defined('ABSPATH')) {
 /**
  * PDF Builder Tutorial Manager
  * Système de tutoriels intégré
+ *
+ * COMPOSANTS :
+ * - Wizard de bienvenue : Modal d'introduction (3 étapes)
+ * - Tooltips contextuels : Aide sur les éléments spécifiques
+ * - Bouton d'aide : Accès rapide dans la barre d'admin
  */
 class TutorialManager
 {
@@ -42,14 +47,8 @@ class TutorialManager
         // Hook pour afficher le wizard de bienvenue sur les pages du plugin
         add_action('admin_footer', [$this, 'maybeShowWelcomeWizard']);
 
-        // DEBUG: Ajouter un tooltip de test dans le footer
-        add_action('admin_footer', [$this, 'addTestTooltip']);
-
         // Ajouter le bouton d'aide dans la barre d'admin
         add_action('admin_bar_menu', [$this, 'addTutorialHelpButton'], 100);
-
-        // DEBUG: Ajouter un bouton de test pour forcer l'affichage d'un tooltip
-        add_action('admin_bar_menu', [$this, 'addTestTooltipButton'], 101);
     }
 
     /**
@@ -75,33 +74,14 @@ class TutorialManager
     }
 
     /**
-     * DEBUG: Ajouter un bouton de test pour afficher un tooltip
-     */
-    public function addTestTooltipButton($wp_admin_bar)
-    {
-        $wp_admin_bar->add_node([
-            'id' => 'pdf-builder-test-tooltip',
-            'title' => '<span class="ab-icon dashicons dashicons-testimonial"></span> Test Tooltip',
-            'href' => '#',
-            'meta' => [
-                'onclick' => 'window.pdfBuilderTutorialManager.showTestTooltip(); return false;',
-                'title' => 'Afficher un tooltip de test'
-            ]
-        ]);
-    }
-
-    /**
      * Charger les assets des tutoriels
      */
     public function enqueueTutorialAssets($hook)
     {
         // Charger seulement sur les pages du plugin
         if (strpos($hook, 'pdf-builder') === false && strpos($hook, 'woocommerce') === false) {
-            error_log('PDF Builder Tutorial: Not loading assets for hook: ' . $hook);
             return;
         }
-
-        error_log('PDF Builder Tutorial: Loading tutorial assets for hook: ' . $hook);
 
         wp_enqueue_style(
             'pdf-builder-tutorial',
@@ -124,8 +104,6 @@ class TutorialManager
             'currentUserId' => get_current_user_id(),
             'tutorials' => $this->getTutorialsData()
         ]);
-
-        error_log('PDF Builder Tutorial: Assets enqueued successfully for hook: ' . $hook);
     }
 
     /**
@@ -178,21 +156,15 @@ class TutorialManager
      */
     public function addEditorTooltips()
     {
-        error_log('PDF Builder Tutorial: addEditorTooltips called');
-
         // Vérifier si on est sur une page d'édition du plugin
         $current_screen = get_current_screen();
         if (!$current_screen || !in_array($current_screen->id, ['toplevel_page_pdf-builder', 'pdf-builder_page_pdf-builder-editor'])) {
-            error_log('PDF Builder Tutorial: Not on editor page, current screen: ' . ($current_screen ? $current_screen->id : 'null'));
             return;
         }
 
         if (!$this->shouldShowTutorial('editor_basics')) {
-            error_log('PDF Builder Tutorial: Editor tutorial should not be shown');
             return;
         }
-
-        error_log('PDF Builder Tutorial: Creating editor tooltip HTML');
 
         ?>
         <div class="tutorial-tooltip" data-tutorial="editor_basics" data-step="0" style="display: none;">
@@ -220,12 +192,9 @@ class TutorialManager
      */
     public function addSettingsTooltips()
     {
-        error_log('PDF Builder Tutorial: addSettingsTooltips called');
-
         // Vérifier si on est sur une page de paramètres du plugin
         $current_screen = get_current_screen();
         if (!$current_screen || !in_array($current_screen->id, ['toplevel_page_pdf-builder', 'pdf-builder_page_pdf-builder-settings'])) {
-            error_log('PDF Builder Tutorial: Not on settings page, current screen: ' . ($current_screen ? $current_screen->id : 'null'));
             return;
         }
 
@@ -293,10 +262,6 @@ class TutorialManager
      */
     private function shouldShowTutorial($tutorial_id)
     {
-        // DEBUG: Forcer l'affichage pour les tests
-        error_log('PDF Builder Tutorial: Checking if tutorial should show: ' . $tutorial_id);
-        return true;
-
         $user_id = get_current_user_id();
         $completed_tutorials = get_user_meta($user_id, 'pdf_builder_completed_tutorials', true);
         $skipped_tutorials = get_user_meta($user_id, 'pdf_builder_skipped_tutorials', true);
@@ -366,17 +331,6 @@ class TutorialManager
      */
     public function showWelcomeWizard()
     {
-        // DEBUG: Forcer l'affichage pour les tests
-        error_log('PDF Builder Tutorial: showWelcomeWizard called');
-
-        // Temporairement désactiver la vérification pour forcer l'affichage
-        // if (!$this->shouldShowTutorial('welcome_wizard')) {
-        //     error_log('PDF Builder Tutorial: User already saw wizard, skipping');
-        //     return;
-        // }
-
-        error_log('PDF Builder Tutorial: Displaying welcome wizard');
-
         ?>
         <div id="pdf-builder-welcome-wizard" class="pdf-builder-modal" style="display: block;">
             <div class="pdf-builder-modal-backdrop"></div>
@@ -424,27 +378,14 @@ class TutorialManager
      */
     public function maybeShowWelcomeWizard()
     {
-        // DEBUG: Forcer l'affichage pour les tests
-        error_log('PDF Builder Tutorial: maybeShowWelcomeWizard called');
+        // Afficher seulement pour les nouveaux utilisateurs (pas encore vu le wizard)
+        if (!$this->shouldShowTutorial('welcome_wizard')) {
+            return;
+        }
 
-        // Vérifier si on est sur une page du plugin
-        $pdf_builder_pages = [
-            'pdf-builder-pro',
-            'pdf-builder-templates',
-            'pdf-builder-react-editor',
-            'pdf-builder-settings',
-            'pdf-builder-developer',
-            'pdf-builder-predefined-templates'
-        ];
-
-        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-        error_log('PDF Builder Tutorial: Current page = ' . $current_page);
-
-        if (in_array($current_page, $pdf_builder_pages)) {
-            error_log('PDF Builder Tutorial: On PDF Builder page, showing wizard');
+        // Afficher sur les pages admin (pour les tests)
+        if (is_admin()) {
             $this->showWelcomeWizard();
-        } else {
-            error_log('PDF Builder Tutorial: Not on PDF Builder page');
         }
     }
 }
