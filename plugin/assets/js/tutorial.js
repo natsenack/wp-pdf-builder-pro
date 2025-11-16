@@ -7,7 +7,6 @@
 
     class TutorialManager {
         constructor() {
-            console.log('TutorialManager: Constructor called');
             this.currentTutorial = null;
             this.currentStep = 0;
             this.tooltips = [];
@@ -15,11 +14,6 @@
         }
 
         init() {
-            console.log('TutorialManager: init called');
-            console.log('TutorialManager: window.pdfBuilderTutorial available:', typeof window.pdfBuilderTutorial !== 'undefined');
-            if (window.pdfBuilderTutorial) {
-                console.log('TutorialManager: tutorials data:', window.pdfBuilderTutorial.tutorials);
-            }
             this.bindEvents();
         }
 
@@ -69,12 +63,10 @@
         }
 
         showTutorialMenu() {
-            console.log('Tutorial: showTutorialMenu called');
             this.showTutorialSelectionModal();
         }
 
         showTutorialSelectionModal() {
-            console.log('Tutorial: showTutorialSelectionModal called');
             const $modal = $(`
                 <div id="pdf-builder-tutorial-menu" class="pdf-builder-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999;">
                     <div class="pdf-builder-modal-backdrop" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); pointer-events: none;"></div>
@@ -93,35 +85,26 @@
                 </div>
             `);
 
-            console.log('Tutorial: Modal HTML created');
             $('body').append($modal);
-            console.log('Tutorial: Modal appended to body');
             $modal.fadeIn();
-            console.log('Tutorial: Modal faded in');
 
             // Bind events
             $modal.find('.tutorial-option').on('click', (e) => {
-                console.log('Tutorial: Tutorial option clicked');
                 const tutorialId = $(e.currentTarget).data('tutorial');
-                console.log('Tutorial: Starting tutorial:', tutorialId);
                 $modal.fadeOut(() => $modal.remove());
                 this.startTutorial(tutorialId);
             });
 
             $modal.find('#close-tutorial-menu').on('click', () => {
-                console.log('Tutorial: Close menu clicked');
                 $modal.fadeOut(() => $modal.remove());
             });
         }
 
         generateTutorialOptions() {
-            console.log('Tutorial: generateTutorialOptions called');
             const tutorials = window.pdfBuilderTutorial.tutorials;
-            console.log('Tutorial: tutorials object:', tutorials);
             let options = '';
 
             for (const [id, tutorial] of Object.entries(tutorials)) {
-                console.log('Tutorial: Processing tutorial:', id, tutorial);
                 options += `
                     <div class="tutorial-option" data-tutorial="${id}">
                         <div class="tutorial-option-icon">📚</div>
@@ -133,15 +116,12 @@
                 `;
             }
 
-            console.log('Tutorial: Generated options HTML:', options);
             return options;
         }
 
         startWelcomeWizard() {
-            console.log('Tutorial: startWelcomeWizard called');
             // Fermer le modal et commencer le tutoriel étape par étape
             this.closeModal();
-            console.log('Tutorial: Starting tutorial "welcome"');
             this.startTutorial('welcome');
         }
 
@@ -151,17 +131,13 @@
         }
 
         startTutorial(tutorialId) {
-            console.log('Tutorial: startTutorial called with id:', tutorialId);
             this.currentTutorial = tutorialId;
             this.currentStep = 0;
-            console.log('Tutorial: Set currentTutorial to:', this.currentTutorial);
             this.showCurrentStep();
         }
 
         showCurrentStep() {
-            console.log('Tutorial: showCurrentStep called, currentTutorial:', this.currentTutorial, 'currentStep:', this.currentStep);
             const tutorial = window.pdfBuilderTutorial.tutorials[this.currentTutorial];
-            console.log('Tutorial: Found tutorial data:', tutorial);
 
             if (!tutorial || !tutorial.steps) {
                 console.error('Tutorial: No tutorial data found for', this.currentTutorial);
@@ -169,7 +145,6 @@
             }
 
             const step = tutorial.steps[this.currentStep];
-            console.log('Tutorial: Current step data:', step);
 
             if (!step) {
                 console.error('Tutorial: No step data found for step', this.currentStep);
@@ -399,7 +374,7 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        console.log('Tutorial progress saved:', tutorialId);
+                        // Progress saved
                     }
                 },
                 error: (xhr, status, error) => {
@@ -415,7 +390,6 @@
         }
 
         showCompletionMessage() {
-            console.log('Tutorial: Showing completion message');
             // Afficher un message de félicitations
             const $message = $(`
                 <div class="tutorial-completion-message">
@@ -442,7 +416,6 @@
         }
 
         showUnavailableMessage(tutorial) {
-            console.log('Tutorial: Showing unavailable message for tutorial:', tutorial.title);
             // Afficher un message d'indisponibilité
             const $message = $(`
                 <div class="tutorial-unavailable-message">
@@ -514,7 +487,6 @@
     // Initialiser le système de tutoriels quand le DOM est prêt
     $(document).ready(() => {
         window.pdfBuilderTutorialManager = new TutorialManager();
-        console.log('TutorialManager: Instance created and assigned to window.pdfBuilderTutorialManager');
     });
 
 })(jQuery);
