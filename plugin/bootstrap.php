@@ -492,15 +492,7 @@ function pdf_builder_load_bootstrap()
         \WP_PDF_Builder_Pro\Managers\PdfBuilderBackupRestoreManager::getInstance();
     }
 
-    // INITIALISER LE GESTIONNAIRE DE TUTORIELS
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Tutorial/TutorialManager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Tutorial/TutorialManager.php';
-        // Initialiser l'instance
-        \WP_PDF_Builder_Pro\Tutorial\TutorialManager::getInstance()->init();
-        error_log('PDF Builder Tutorial: TutorialManager loaded and initialized');
-    } else {
-        error_log('PDF Builder Tutorial: TutorialManager.php not found at ' . PDF_BUILDER_PLUGIN_DIR . 'src/Tutorial/TutorialManager.php');
-    }
+    // INITIALISER LE GESTIONNAIRE DE TUTORIELS - SUPPRIMÉ
 
     // ENREGISTRER LES HANDLERS AJAX POUR LE CANVAS
     if (class_exists('WP_PDF_Builder_Pro\\Admin\\Canvas_AJAX_Handler')) {
