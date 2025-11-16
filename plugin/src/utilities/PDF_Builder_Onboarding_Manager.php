@@ -788,6 +788,8 @@ class PDF_Builder_Onboarding_Manager {
                 error_log('PDF_Builder_Onboarding: Processing step 6 - completing onboarding');
                 $this->onboarding_options['completed'] = true;
                 $this->onboarding_options['completed_at'] = current_time('timestamp');
+                // Rediriger vers l'éditeur après completion de l'onboarding
+                $this->onboarding_options['redirect_to'] = admin_url('admin.php?page=pdf-builder-react-editor');
                 break;
 
             default:
