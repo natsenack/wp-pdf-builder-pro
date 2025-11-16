@@ -1201,32 +1201,7 @@
                         }
 
                         // Mettre à jour les boutons du footer selon l'étape
-                        this.updateFooterButtons(response.data);
-
-                        // Appliquer la même logique que updateFooterButtons pour cohérence
-                        const shouldDisable = response.data.requires_selection === true;
-                        $('.complete-step').prop('disabled', shouldDisable);
-
-                        console.log(`PDF Builder Onboarding: Step ${step} loaded - requires_selection: ${response.data.requires_selection} - button disabled: ${shouldDisable}`);
-
-                        // Animation d'entrée pour le nouveau contenu
-                        $content.find('.onboarding-step-content').hide().fadeIn(300);
-
-                        // Gérer les étapes automatiques
-                        if (response.data.auto_advance) {
-                            setTimeout(() => {
-                                this.completeStep(step);
-                            }, response.data.auto_advance_delay || 3000);
-                        }
-
-                        // Tracker l'événement
-                        this.trackAnalytics('step_loaded', { step: step });
-
-                        // Réactiver tous les boutons après le chargement réussi
-                        $('.button-previous, .complete-step, [data-action="skip-onboarding"]').prop('disabled', false);
-
-                        // Remettre le HTML original du bouton précédent
-                        $('.button-previous').html('<span class="dashicons dashicons-arrow-left-alt"></span>');
+                        this.applyStepData(step, response.data);
 
                     } else {
                         // En cas d'erreur, réactiver tous les boutons et afficher l'erreur
