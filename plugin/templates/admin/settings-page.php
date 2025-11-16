@@ -738,6 +738,10 @@
             <span class="tab-icon">👨‍💻</span>
             <span class="tab-text">Développeur</span>
         </a>
+        <a href="#rgpd" class="nav-tab" data-tab="rgpd">
+            <span class="tab-icon">🔒</span>
+            <span class="tab-text">RGPD</span>
+        </a>
     </div>
 
         <div id="general" class="tab-content">
@@ -4124,6 +4128,182 @@
                 <button type="submit" name="submit_developpeur" class="button button-primary">Enregistrer les paramètres développeur</button>
             </p>
          </form>
+        </div>
+
+        <div id="rgpd" class="tab-content hidden-tab">
+            <h2>Conformité RGPD</h2>
+            <p style="color: #666;">Gestion de la conformité RGPD et protection des données personnelles.</p>
+
+            <div class="gdpr-tabs">
+                <div class="gdpr-tab active" data-tab="consent">Gestion Consentements</div>
+                <div class="gdpr-tab" data-tab="rights">Droits Utilisateur</div>
+                <div class="gdpr-tab" data-tab="audit">Audit & Traçabilité</div>
+                <div class="gdpr-tab" data-tab="security">Sécurité Données</div>
+            </div>
+
+            <div class="gdpr-content">
+                <!-- Onglet Gestion Consentements -->
+                <div class="gdpr-tab-content active" id="consent-tab">
+                    <div class="gdpr-section">
+                        <h3>Gestion des Consentements</h3>
+                        <p>Configurez les types de consentements requis pour l'utilisation du plugin.</p>
+
+                        <form method="post" id="gdpr-consent-form">
+                            <?php wp_nonce_field('pdf_builder_gdpr_settings', 'gdpr_nonce'); ?>
+
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row">Consentement obligatoire</th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="consent_required" value="1" <?php checked(get_option('pdf_builder_gdpr', [])['consent_required'] ?? true); ?> />
+                                            Exiger un consentement explicite avant utilisation
+                                        </label>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="row">Types de consentements</th>
+                                    <td>
+                                        <fieldset>
+                                            <label>
+                                                <input type="checkbox" name="consent_types[analytics]" value="1" <?php checked((get_option('pdf_builder_gdpr', [])['consent_types'] ?? [])['analytics'] ?? true); ?> />
+                                                Analytics et statistiques d'usage
+                                            </label><br>
+
+                                            <label>
+                                                <input type="checkbox" name="consent_types[templates]" value="1" <?php checked((get_option('pdf_builder_gdpr', [])['consent_types'] ?? [])['templates'] ?? true); ?> />
+                                                Sauvegarde des templates personnalisés
+                                            </label><br>
+
+                                            <label>
+                                                <input type="checkbox" name="consent_types[marketing]" value="1" <?php checked((get_option('pdf_builder_gdpr', [])['consent_types'] ?? [])['marketing'] ?? false); ?> />
+                                                Communications marketing (newsletters, offres)
+                                            </label>
+                                        </fieldset>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p class="submit">
+                                <button type="submit" class="button button-primary">Sauvegarder les paramètres</button>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Onglet Droits Utilisateur -->
+                <div class="gdpr-tab-content" id="rights-tab">
+                    <div class="gdpr-section">
+                        <h3>Droits RGPD de l'Utilisateur</h3>
+                        <p>Exercez vos droits concernant vos données personnelles.</p>
+
+                        <div class="gdpr-rights-grid">
+                            <div class="gdpr-right-card">
+                                <h4>Droit d'accès</h4>
+                                <p>Demandez une copie de toutes vos données personnelles.</p>
+                                <button class="button button-secondary" id="export-data-btn">Exporter mes données</button>
+                            </div>
+
+                            <div class="gdpr-right-card">
+                                <h4>Droit de rectification</h4>
+                                <p>Modifiez vos données personnelles si elles sont inexactes.</p>
+                                <a href="<?php echo admin_url('profile.php'); ?>" class="button button-secondary">Modifier mon profil</a>
+                            </div>
+
+                            <div class="gdpr-right-card">
+                                <h4>Droit à l'oubli</h4>
+                                <p>Demandez la suppression de toutes vos données.</p>
+                                <button class="button button-danger" id="delete-data-btn">Supprimer mes données</button>
+                            </div>
+
+                            <div class="gdpr-right-card">
+                                <h4>Portabilité des données</h4>
+                                <p>Demandez vos données dans un format structuré.</p>
+                                <button class="button button-secondary" id="portability-btn">Demander portabilité</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Audit & Traçabilité -->
+                <div class="gdpr-tab-content" id="audit-tab">
+                    <div class="gdpr-section">
+                        <h3>Audit & Traçabilité</h3>
+                        <p>Historique des opérations sur les données personnelles.</p>
+
+                        <div class="audit-controls">
+                            <button class="button button-secondary" id="refresh-audit">Actualiser</button>
+                            <button class="button button-secondary" id="export-audit">Exporter le journal</button>
+                        </div>
+
+                        <div class="audit-table-container">
+                            <table class="widefat fixed audit-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Utilisateur</th>
+                                        <th>Action</th>
+                                        <th>Données concernées</th>
+                                        <th>IP</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="5">Aucun journal d'audit disponible.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Sécurité Données -->
+                <div class="gdpr-tab-content" id="security-tab">
+                    <div class="gdpr-section">
+                        <h3>Sécurité des Données</h3>
+                        <p>Configuration de la sécurité et du chiffrement des données.</p>
+
+                        <form method="post" id="gdpr-security-form">
+                            <?php wp_nonce_field('pdf_builder_gdpr_security', 'security_nonce'); ?>
+
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row">Chiffrement activé</th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="encryption_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr', [])['encryption_enabled'] ?? true); ?> />
+                                            Chiffrer les données sensibles stockées
+                                        </label>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="row">Durée de rétention (jours)</th>
+                                    <td>
+                                        <input type="number" name="data_retention_days" min="1" max="9999" value="<?php echo esc_attr(get_option('pdf_builder_gdpr', [])['data_retention_days'] ?? 2555); ?>" />
+                                        <p class="description">Nombre de jours avant suppression automatique des données (conformément RGPD).</p>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="row">Audit activé</th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="audit_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr', [])['audit_enabled'] ?? true); ?> />
+                                            Enregistrer toutes les opérations sur les données personnelles
+                                        </label>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p class="submit">
+                                <button type="submit" class="button button-primary">Sauvegarder la sécurité</button>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Bouton de sauvegarde flottant global -->
