@@ -5374,16 +5374,24 @@
                 const urlTab = getUrlParameter('tab');
                 if (urlTab) {
                     console.log('🌐 Paramètre tab détecté dans URL:', urlTab);
-                    const urlTabLink = document.querySelector(`.nav-tab[data-tab="${urlTab}"]`);
+
+                    // Mapping pour les onglets (gdpr -> rgpd)
+                    let mappedTab = urlTab;
+                    if (urlTab === 'gdpr') {
+                        mappedTab = 'rgpd';
+                        console.log('🔄 Mapping gdpr -> rgpd');
+                    }
+
+                    const urlTabLink = document.querySelector(`.nav-tab[data-tab="${mappedTab}"]`);
                     if (urlTabLink) {
-                        console.log('🌐 Activation onglet depuis URL:', urlTab);
+                        console.log('🌐 Activation onglet depuis URL:', mappedTab);
                         urlTabLink.click();
                         // Ne pas continuer avec la logique de localStorage
                         mainTabsInitialized = true;
                         console.log('✅ Onglets principaux initialisés avec succès (depuis URL)');
                         return;
                     } else {
-                        console.log('⚠️ Onglet demandé dans URL non trouvé:', urlTab);
+                        console.log('⚠️ Onglet demandé dans URL non trouvé:', mappedTab);
                     }
                 }
 
