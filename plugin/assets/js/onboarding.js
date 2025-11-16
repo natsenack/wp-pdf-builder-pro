@@ -617,7 +617,7 @@
          * Appliquer les données d'une étape chargée
          */
         applyStepData(step, data) {
-            console.log('=== PDF Builder Onboarding: APPLYING STEP DATA FOR STEP', step, '===');
+            console.log('APPLYING STEP DATA FOR STEP', step, '- START');
             const $modal = $('#pdf-builder-onboarding-modal');
             const $content = $modal.find('.modal-body .step-content');
 
@@ -646,17 +646,17 @@
 
             // Supprimer tous les boutons existants du footer
             footerButtons.remove();
-            console.log('PDF Builder Onboarding: Removed', footerButtons.length, 'existing footer buttons');
+            console.log('FOOTER: Removed', footerButtons.length, 'existing footer buttons for step', step);
 
             // Si la réponse contient des boutons pour le footer, les ajouter
             if (data.footer_content) {
                 $footer.html(data.footer_content);
-                console.log('PDF Builder Onboarding: Added footer content from server');
+                console.log('FOOTER: Added footer content from server for step', step);
             } else {
                 // Sinon, créer un bouton par défaut pour l'étape courante
                 const buttonHtml = this.generateStepButton(step);
                 $footer.html(buttonHtml);
-                console.log('PDF Builder Onboarding: Generated default footer button for step', step);
+                console.log('FOOTER: Generated default footer button for step', step, '- HTML:', buttonHtml.substring(0, 100) + '...');
             }
 
             // Masquer/désactiver tous les boutons qui ne correspondent pas à l'étape courante
@@ -664,6 +664,8 @@
 
             // Mettre à jour l'étape courante
             this.currentStep = step;
+            console.log('APPLYING STEP DATA FOR STEP', step, '- END');
+        }
 
             // Mettre à jour la progression
             this.updateProgress();
