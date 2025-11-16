@@ -356,20 +356,6 @@ class PDF_Builder_Onboarding_Manager {
                                 </div>
                             </div>
                         </div>
-                        <div class="freemium-comparison" style="margin-top:24px;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
-                            <h4 style="margin:0 0 12px 0;color:#374151;font-size:16px;">🚫 Non disponible dans la version gratuite :</h4>
-                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">
-                                <span style="color:#6b7280;font-size:14px;">• Templates PDF illimités</span>
-                                <span style="color:#6b7280;font-size:14px;">• Variables dynamiques avancées</span>
-                                <span style="color:#6b7280;font-size:14px;">• Export haute qualité (300 DPI)</span>
-                                <span style="color:#6b7280;font-size:14px;">• Éditeur React professionnel</span>
-                                <span style="color:#6b7280;font-size:14px;">• Intégration WooCommerce complète</span>
-                                <span style="color:#6b7280;font-size:14px;">• Support prioritaire 24/7</span>
-                                <span style="color:#6b7280;font-size:14px;">• Métriques et analytics</span>
-                                <span style="color:#6b7280;font-size:14px;">• Variables conditionnelles</span>
-                                <span style="color:#6b7280;font-size:14px;">• Exports PNG/JPG</span>
-                            </div>
-                        </div>
                         <div class="freemium-notice" style="margin-top:16px;padding:12px;background:#fef3c7;border-left:4px solid #f59e0b;border-radius:4px;">
                             <strong>💡 Note :</strong> Vous pourrez changer de version à tout moment depuis les paramètres du plugin.
                         </div>

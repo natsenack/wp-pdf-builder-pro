@@ -1450,79 +1450,110 @@
 
                     <!-- Comparaison des fonctionnalités -->
                     <div style="margin-top: 40px;">
-                        <h3 style="color: #007cba; font-size: 22px; border-bottom: 3px solid #007cba; padding-bottom: 12px; margin-bottom: 25px;">Comparaison des Fonctionnalites</h3>
+                        <h3 style="color: #007cba; font-size: 22px; border-bottom: 3px solid #007cba; padding-bottom: 12px; margin-bottom: 25px;">Comparaison des Fonctionnalités</h3>
                         <table class="wp-list-table widefat fixed striped" style="margin-top: 15px; border-collapse: collapse; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                             <thead style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white;">
                                 <tr>
-                                    <th style="width: 40%; padding: 15px; font-weight: 700; text-align: left; border: none;">Fonctionnalite</th>
+                                    <th style="width: 35%; padding: 15px; font-weight: 700; text-align: left; border: none;">Fonctionnalité</th>
                                     <th style="width: 15%; text-align: center; padding: 15px; font-weight: 700; border: none;">Gratuit</th>
                                     <th style="width: 15%; text-align: center; padding: 15px; font-weight: 700; border: none;">Premium</th>
-                                    <th style="width: 30%; padding: 15px; font-weight: 700; text-align: left; border: none;">Description</th>
+                                    <th style="width: 35%; padding: 15px; font-weight: 700; text-align: left; border: none;">Détails</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><strong>Templates de base</strong></td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>4 templates prédéfinis</td>
+                                    <td><strong>Nombre de templates</strong></td>
+                                    <td style="text-align: center; color: #ffb900;">1 seul</td>
+                                    <td style="text-align: center; color: #46b450;">✓ Illimité</td>
+                                    <td>Templates prédéfinis et personnalisés</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Éléments standards</strong></td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Texte, image, ligne, rectangle</td>
+                                    <td><strong>Qualité d'impression</strong></td>
+                                    <td style="text-align: center; color: #ffb900;">72 DPI</td>
+                                    <td style="text-align: center; color: #46b450;">300 DPI</td>
+                                    <td>Résolution haute qualité pour impression</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Intégration WooCommerce</strong></td>
+                                    <td><strong>Filigrane</strong></td>
+                                    <td style="text-align: center; color: #dc3232;">✓ Présent</td>
+                                    <td style="text-align: center; color: #46b450;">✗ Supprimé</td>
+                                    <td>Marque d'eau "PDF Builder Pro" sur tous les PDFs</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Éléments de base</strong></td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Variables de commande</td>
+                                    <td>Texte, images, formes géométriques, lignes</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Éléments avancés</strong></td>
+                                    <td style="text-align: center; color: #dc3232;">✗</td>
+                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td>Codes-barres, QR codes, graphiques, tableaux dynamiques</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Variables WooCommerce</strong></td>
+                                    <td style="text-align: center; color: #46b450;">✓ Basique</td>
+                                    <td style="text-align: center; color: #46b450;">✓ Complet</td>
+                                    <td>Commandes, clients, produits, métadonnées</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Génération PDF</strong></td>
                                     <td style="text-align: center; color: #ffb900;">50/mois</td>
-                                    <td style="text-align: center; color: #46b450;">✓ Illimitée</td>
-                                    <td>Création de documents</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Templates avancés</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Bibliothèque complète</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Éléments premium</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Codes-barres, QR codes, graphiques</td>
+                                    <td style="text-align: center; color: #46b450;">Illimitée</td>
+                                    <td>Limite mensuelle de génération de documents</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Génération en masse</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Création multiple de documents</td>
+                                    <td>Création automatique de multiples PDFs</td>
                                 </tr>
                                 <tr>
                                     <td><strong>API développeur</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Accès complet à l'API REST</td>
+                                    <td>Accès complet à l'API REST pour intégrations</td>
                                 </tr>
                                 <tr>
                                     <td><strong>White-label</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Rebranding complet</td>
+                                    <td>Rebranding complet, suppression des mentions</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Support prioritaire</strong></td>
+                                    <td><strong>Mises à jour automatiques</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>24/7 avec SLA garanti</td>
+                                    <td>Mises à jour transparentes et corrections de sécurité</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Support technique</strong></td>
+                                    <td style="text-align: center; color: #ffb900;">Communauté</td>
+                                    <td style="text-align: center; color: #46b450;">Prioritaire 24/7</td>
+                                    <td>Support par email/ticket avec SLA garanti</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Formation & Documentation</strong></td>
+                                    <td style="text-align: center; color: #ffb900;">Basique</td>
+                                    <td style="text-align: center; color: #46b450;">Complète</td>
+                                    <td>Vidéos tutorielles, guides avancés, webinaires</td>
                                 </tr>
                             </tbody>
                         </table>
+
+                        <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 8px; padding: 20px; margin-top: 20px;">
+                            <h4 style="color: #8b4513; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px;">
+                                💡 <strong>Pourquoi passer en Premium ?</strong>
+                            </h4>
+                            <ul style="color: #8b4513; margin: 0; padding-left: 20px; line-height: 1.6;">
+                                <li><strong>Usage professionnel :</strong> Qualité 300 DPI sans filigrane pour vos documents clients</li>
+                                <li><strong>Productivité :</strong> Templates illimités et génération en masse pour gagner du temps</li>
+                                <li><strong>Évolutivité :</strong> API développeur pour intégrer dans vos workflows existants</li>
+                                <li><strong>Support dédié :</strong> Assistance prioritaire pour résoudre vos problèmes rapidement</li>
+                                <li><strong>Économique :</strong> 79€ à vie vs coûts récurrents d'autres solutions</li>
+                            </ul>
+                        </div>
                     </div>
 
                     <!-- Section Notifications par Email -->
