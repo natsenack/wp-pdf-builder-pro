@@ -1083,7 +1083,7 @@
             
             if (stepData.can_skip) {
                 // L'étape peut être ignorée - afficher le bouton skip-step
-                const skipText = stepData.skip_text || 'Ignorer l\'étape';
+                const skipText = (step === 2) ? 'Ignorer l\'assistant' : (stepData.skip_text || 'Ignorer l\'étape');
                 if ($secondaryButton.length === 0) {
                     $secondaryButton = $('<button>')
                         .addClass('button button-secondary')
