@@ -2,11 +2,16 @@
  * PDF Builder Pro - Tutorial System JavaScript
  */
 
+console.log('PDF Builder Tutorial: JavaScript file loaded');
+
 (function($) {
     'use strict';
 
+    console.log('PDF Builder Tutorial: jQuery ready, initializing TutorialManager');
+
     class TutorialManager {
         constructor() {
+            console.log('PDF Builder Tutorial: TutorialManager constructor called');
             this.currentTutorial = null;
             this.currentStep = 0;
             this.tooltips = [];
@@ -14,17 +19,22 @@
         }
 
         init() {
+            console.log('PDF Builder Tutorial: TutorialManager init called');
             this.bindEvents();
         }
 
         bindEvents() {
+            console.log('PDF Builder Tutorial: bindEvents called');
+
             // Événements pour le wizard de bienvenue
             $(document).on('click', '#start-wizard', (e) => {
+                console.log('PDF Builder Tutorial: start-wizard clicked');
                 e.preventDefault();
                 this.startWelcomeWizard();
             });
 
             $(document).on('click', '#skip-wizard', (e) => {
+                console.log('PDF Builder Tutorial: skip-wizard clicked');
                 e.preventDefault();
                 this.skipWelcomeWizard();
             });
@@ -71,6 +81,10 @@
         showTestTooltip() {
             console.log('Tutorial: showTestTooltip called');
 
+            // Initialiser un tutoriel de test
+            this.currentTutorial = 'test_tutorial';
+            this.currentStep = 0;
+
             // Créer un tooltip de test
             const testTooltip = `
                 <div class="tutorial-tooltip active" id="test-tooltip" style="position: fixed; top: 100px; left: 100px; z-index: 10000;">
@@ -80,9 +94,11 @@
                     </div>
                     <div class="tutorial-tooltip-content">
                         <p>Ceci est un tooltip de test. La croix devrait fonctionner.</p>
+                        <p>Étape actuelle: ${this.currentStep + 1}</p>
                     </div>
                     <div class="tutorial-tooltip-footer">
-                        <button class="tutorial-skip">Passer</button>
+                        <button class="tutorial-prev" disabled>Précédent</button>
+                        <span class="tutorial-progress">${this.currentStep + 1} / 3</span>
                         <div class="tutorial-footer-actions">
                             <button class="tutorial-close tutorial-close-small" title="Fermer">&times;</button>
                             <button class="tutorial-next">Suivant</button>
@@ -98,6 +114,25 @@
             } else {
                 $('#test-tooltip').fadeIn();
                 console.log('Tutorial: Test tooltip shown');
+            }
+        }
+
+        // DEBUG: Mettre à jour le tooltip de test
+        updateTestTooltip() {
+            const $tooltip = $('#test-tooltip');
+            $tooltip.find('.tutorial-tooltip-content p:nth-child(2)').text(`Étape actuelle: ${this.currentStep + 1}`);
+            $tooltip.find('.tutorial-progress').text(`${this.currentStep + 1} / 3`);
+
+            // Mettre à jour les boutons
+            const $prevBtn = $tooltip.find('.tutorial-prev');
+            const $nextBtn = $tooltip.find('.tutorial-next');
+
+            $prevBtn.prop('disabled', this.currentStep === 0);
+
+            if (this.currentStep === 2) {
+                $nextBtn.text('Terminer');
+            } else {
+                $nextBtn.text('Suivant');
             }
         }
 
@@ -246,6 +281,20 @@
 
         nextStep() {
             console.log('Tutorial: nextStep called, current step:', this.currentStep);
+
+            // Pour le tutoriel de test, simuler 3 étapes
+            if (this.currentTutorial === 'test_tutorial') {
+                if (this.currentStep < 2) {
+                    this.currentStep++;
+                    console.log('Tutorial: Moving to test step', this.currentStep);
+                    this.updateTestTooltip();
+                } else {
+                    console.log('Tutorial: Completing test tutorial');
+                    this.closeTutorial();
+                }
+                return;
+            }
+
             const tutorial = pdfBuilderTutorial.tutorials[this.currentTutorial];
             if (this.currentStep < tutorial.steps.length - 1) {
                 this.currentStep++;
@@ -258,6 +307,17 @@
         }
 
         prevStep() {
+            console.log('Tutorial: prevStep called, current step:', this.currentStep);
+
+            if (this.currentTutorial === 'test_tutorial') {
+                if (this.currentStep > 0) {
+                    this.currentStep--;
+                    console.log('Tutorial: Moving back to test step', this.currentStep);
+                    this.updateTestTooltip();
+                }
+                return;
+            }
+
             if (this.currentStep > 0) {
                 this.currentStep--;
                 this.showCurrentStep();
@@ -392,7 +452,9 @@
 
     // Initialiser le système de tutoriels quand le DOM est prêt
     $(document).ready(() => {
+        console.log('PDF Builder Tutorial: DOM ready, creating TutorialManager instance');
         window.pdfBuilderTutorialManager = new TutorialManager();
+        console.log('PDF Builder Tutorial: TutorialManager instance created');
     });
 
 })(jQuery);

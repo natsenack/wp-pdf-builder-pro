@@ -97,6 +97,7 @@ class TutorialManager
     {
         // Charger seulement sur les pages du plugin
         if (strpos($hook, 'pdf-builder') === false && strpos($hook, 'woocommerce') === false) {
+            error_log('PDF Builder Tutorial: Not loading assets for hook: ' . $hook);
             return;
         }
 
@@ -124,7 +125,7 @@ class TutorialManager
             'tutorials' => $this->getTutorialsData()
         ]);
 
-        error_log('PDF Builder Tutorial: Assets enqueued successfully');
+        error_log('PDF Builder Tutorial: Assets enqueued successfully for hook: ' . $hook);
     }
 
     /**
