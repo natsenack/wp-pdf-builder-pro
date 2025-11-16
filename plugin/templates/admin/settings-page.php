@@ -4866,7 +4866,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Variable globale pour le tracking des formulaires
             let setupFormTracking = null;
-            let trackingDisabled = false; // Flag pour désactiver temporairement le tracking
 
             // Gestion du bouton de sauvegarde global
             function setupGlobalSaveButton() {
@@ -4900,11 +4899,20 @@
                     setupFormTracking = () => {
                         const forms = document.querySelectorAll('form[id], form');
                         forms.forEach((form, formIndex) => {
-                            // Récupérer les valeurs initiales de tous les inputs
+                            // Ne tracker que les formulaires dans l'onglet actif
+                            const activeTab = document.querySelector('.tab-content:not(.hidden-tab)');
+                            if (!activeTab || !activeTab.contains(form)) {
+                                return; // Ignorer les formulaires dans les onglets cachés
+                            }
+
+                            // Récupérer les valeurs initiales de tous les inputs VISIBLE de ce formulaire
                             const initialState = {};
-                            const formInputs = form.querySelectorAll('input, select, textarea');
+                            const formInputs = form.querySelectorAll('input:not([type="hidden"]), select, textarea');
+                            const visibleInputs = Array.from(formInputs).filter(input => {
+                                return input.offsetParent !== null; // Vérifier si l'élément est visible
+                            });
                             
-                            formInputs.forEach(input => {
+                            visibleInputs.forEach(input => {
                                 if (input.type === 'checkbox' || input.type === 'radio') {
                                     initialState[input.name] = input.checked;
                                 } else {
@@ -4914,8 +4922,6 @@
                             // Debounce pour éviter trop d'appels
                             let debounceTimer = null;
                             const markAsModified = () => {
-                                if (trackingDisabled) return; // Ignorer si le tracking est désactivé
-                                
                                 clearTimeout(debounceTimer);
                                 debounceTimer = setTimeout(() => {
                                     hasUnsavedChanges = true;
@@ -4929,8 +4935,8 @@
                                 }, 300);
                             };
                             
-                            // Ajouter des listeners change à tous les inputs
-                            formInputs.forEach(input => {
+                            // Ajouter des listeners change à tous les inputs visibles
+                            visibleInputs.forEach(input => {
                                 input.addEventListener('change', function() {
                                     // Vérifier si une valeur a réellement changé
                                     const currentValue = (this.type === 'checkbox' || this.type === 'radio') ? this.checked : this.value;
@@ -5323,9 +5329,6 @@
                 e.preventDefault();
                 console.log('🖱️ Clic détecté sur onglet principal:', this.getAttribute('data-tab'));
 
-                // Désactiver le tracking des changements pendant le changement d'onglet
-                trackingDisabled = true;
-
                 const targetTab = this.getAttribute('data-tab');
 
                 // Masquer tous les onglets
@@ -5377,10 +5380,6 @@
                     if (typeof setupFormTracking === 'function') {
                         setupFormTracking();
                     }
-                    // Réactiver le tracking après un court délai
-                    setTimeout(() => {
-                        trackingDisabled = false;
-                    }, 100);
                 }, 200);
             }
 
