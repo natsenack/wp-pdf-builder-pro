@@ -5294,7 +5294,6 @@
                 allTabs.forEach(tab => {
                     tab.classList.add('hidden-tab');
                     tab.classList.remove('active');
-                    console.log('📦 Masquage onglet:', tab.id, '- Classes avant:', tab.className);
                 });
 
                 // Désactiver tous les liens d'onglets
@@ -5307,7 +5306,6 @@
                 if (targetTabContent) {
                     targetTabContent.classList.remove('hidden-tab');
                     targetTabContent.classList.add('active');
-                    console.log('🎯 Activation onglet:', targetTab, '- Classes après:', targetTabContent.className);
                 } else {
                     console.error('❌ Onglet non trouvé:', targetTab);
                 }
