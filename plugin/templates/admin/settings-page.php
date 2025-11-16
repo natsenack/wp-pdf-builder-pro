@@ -5273,9 +5273,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 PDF Builder Settings JavaScript loaded');
+            try {
+                console.log('🚀 PDF Builder Settings JavaScript loaded');
 
-            // Gestion de la navigation des onglets
+                // Gestion de la navigation des onglets
             function setupTabNavigation() {
                 // Initialiser la visibilité du bouton global selon l'onglet actif au chargement
                 const initialActiveTab = document.querySelector('.tab-content:not(.hidden-tab)');
@@ -6430,6 +6431,11 @@
             if (window.location.hash === '#sauvegarde' || jQuery('.nav-tab-active').data('tab') === 'sauvegarde') {
                 jQuery('.floating-save-container').hide();
             }
+            } catch (error) {
+                console.error('❌ Erreur JavaScript dans PDF Builder Settings:', error);
+                console.error('Stack trace:', error.stack);
+            }
+        });
     </script>
     <style>
         /* S'assurer que l'onglet général est toujours visible par défaut */
