@@ -5306,7 +5306,6 @@
                 if (targetTabContent) {
                     targetTabContent.classList.remove('hidden-tab');
                     targetTabContent.classList.add('active');
-                    console.log('✅ Onglet affiché:', targetTab, '- Classes:', targetTabContent.className);
                 } else {
                     console.error('❌ Onglet non trouvé:', targetTab);
                 }
