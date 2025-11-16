@@ -45,7 +45,7 @@ class TutorialManager
         add_action('admin_footer', [$this, 'addSettingsTooltips']);
 
         // Hook pour afficher le wizard de bienvenue sur les pages du plugin
-        add_action('admin_footer', [$this, 'maybeShowWelcomeWizard']);
+        add_action('admin_footer', [$this, 'renderWelcomeWizardHTML']);
 
         // Ajouter le bouton d'aide dans l'interface du plugin
         add_action('admin_notices', [$this, 'addTutorialButtonToInterface']);
@@ -387,7 +387,7 @@ class TutorialManager
     public function showWelcomeWizard()
     {
         ?>
-        <div id="pdf-builder-welcome-wizard" class="pdf-builder-modal" style="display: block;">
+        <div id="pdf-builder-welcome-wizard" class="pdf-builder-modal" style="display: none;">
             <div class="pdf-builder-modal-backdrop"></div>
             <div class="pdf-builder-modal-content welcome-wizard">
                 <div class="wizard-header">
@@ -426,6 +426,21 @@ class TutorialManager
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * Rendre le HTML du wizard de bienvenue (toujours disponible)
+     */
+    public function renderWelcomeWizardHTML()
+    {
+        // Afficher seulement sur les pages du plugin
+        $current_screen = get_current_screen();
+        if (!$current_screen || (strpos($current_screen->id, 'pdf-builder') === false && strpos($current_screen->id, 'woocommerce') === false)) {
+            return;
+        }
+
+        // Toujours rendre le HTML, même s'il n'est pas affiché automatiquement
+        $this->showWelcomeWizard();
     }
 
     /**

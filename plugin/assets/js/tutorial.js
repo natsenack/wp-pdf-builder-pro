@@ -63,8 +63,10 @@
         }
 
         showWelcomeWizard() {
+            console.log('Tutorial: showWelcomeWizard called - opening modal');
             // Le wizard est affiché par PHP, on l'active juste
             $('#pdf-builder-welcome-wizard').fadeIn();
+            console.log('Tutorial: Modal should now be visible');
         }
 
         startWelcomeWizard() {
