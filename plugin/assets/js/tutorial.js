@@ -114,6 +114,13 @@
                 return;
             }
 
+            // Vérifier si la cible existe sur la page
+            if ($(step.target).length === 0) {
+                console.log('Tutorial: Target', step.target, 'not found on page, skipping step', this.currentStep);
+                this.nextStep();
+                return;
+            }
+
             this.showTooltip(step);
         }
 
