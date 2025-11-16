@@ -4866,6 +4866,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Variable globale pour le tracking des formulaires
             let setupFormTracking = null;
+            let trackingDisabled = false; // Flag pour désactiver temporairement le tracking
 
             // Gestion du bouton de sauvegarde global
             function setupGlobalSaveButton() {
@@ -4913,6 +4914,8 @@
                             // Debounce pour éviter trop d'appels
                             let debounceTimer = null;
                             const markAsModified = () => {
+                                if (trackingDisabled) return; // Ignorer si le tracking est désactivé
+                                
                                 clearTimeout(debounceTimer);
                                 debounceTimer = setTimeout(() => {
                                     hasUnsavedChanges = true;
@@ -5320,6 +5323,9 @@
                 e.preventDefault();
                 console.log('🖱️ Clic détecté sur onglet principal:', this.getAttribute('data-tab'));
 
+                // Désactiver le tracking des changements pendant le changement d'onglet
+                trackingDisabled = true;
+
                 const targetTab = this.getAttribute('data-tab');
 
                 // Masquer tous les onglets
@@ -5371,7 +5377,11 @@
                     if (typeof setupFormTracking === 'function') {
                         setupFormTracking();
                     }
-                }, 100);
+                    // Réactiver le tracking après un court délai
+                    setTimeout(() => {
+                        trackingDisabled = false;
+                    }, 100);
+                }, 200);
             }
 
             // Gestion de la navigation des onglets
