@@ -568,6 +568,9 @@ class PDF_Builder_Onboarding_Manager {
         $this->onboarding_options['current_step'] = $step + 1;
         $this->onboarding_options['last_activity'] = current_time('timestamp');
 
+        // Nettoyer la redirection précédente
+        unset($this->onboarding_options['redirect_to']);
+
         // Actions spécifiques selon l'étape
         switch ($step) {
             case 2: // First template
