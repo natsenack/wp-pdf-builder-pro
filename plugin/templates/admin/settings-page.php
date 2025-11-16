@@ -5334,7 +5334,7 @@
                         localStorage.setItem('pdf_builder_active_tab', targetTab);
 
                         // Initialiser les sous-onglets RGPD si l'onglet RGPD est activé
-                        if (targetTab === 'rgpd') {
+                        if (targetTab === 'rgpd' && !gdprTabsInitialized) {
                             console.log('🎯 Onglet RGPD activé, initialisation des sous-onglets');
                             setTimeout(() => setupGdprTabNavigation(), 50);
                         }
@@ -5357,10 +5357,11 @@
                     }
                 }
 
-                // Initialiser les sous-onglets RGPD si l'onglet RGPD est actif
+                // Initialiser les sous-onglets RGPD si l'onglet RGPD est actif au chargement
                 setTimeout(() => {
                     const activeTab = document.querySelector('.nav-tab-active');
-                    if (activeTab && activeTab.getAttribute('data-tab') === 'rgpd') {
+                    if (activeTab && activeTab.getAttribute('data-tab') === 'rgpd' && !gdprTabsInitialized) {
+                        console.log('🔄 Onglet RGPD actif au chargement, initialisation des sous-onglets');
                         setupGdprTabNavigation();
                     }
                 }, 200);
@@ -5370,32 +5371,9 @@
             setupTabNavigation();
 
             // Configuration des sous-onglets RGPD
-            function setupGdprTabNavigation() {
-                console.log('🔧 Initialisation des sous-onglets RGPD');
+            let gdprTabsInitialized = false; // Flag pour éviter les initialisations multiples
 
-                // Vérifier si nous sommes dans l'onglet RGPD
-                const rgpdTab = document.getElementById('rgpd');
-                if (!rgpdTab || rgpdTab.classList.contains('hidden-tab')) {
-                    console.log('⏸️ Onglet RGPD masqué, annulation initialisation');
-                    return;
-                }
-
-                const gdprTabLinks = document.querySelectorAll('.gdpr-tab[data-tab]');
-                console.log('📋 Onglets RGPD trouvés:', gdprTabLinks.length);
-
-                if (gdprTabLinks.length === 0) {
-                    console.warn('⚠️ Aucun onglet RGPD trouvé dans le DOM');
-                    return;
-                }
-
-                gdprTabLinks.forEach(link => {
-                    // Éviter les doublons d'event listeners
-                    link.removeEventListener('click', gdprTabClickHandler);
-                    link.addEventListener('click', gdprTabClickHandler);
-                });
-            }
-
-            // Gestionnaire de clic séparé pour éviter les conflits
+            // Gestionnaire de clic pour les onglets RGPD (défini globalement pour removeEventListener)
             function gdprTabClickHandler(e) {
                 e.preventDefault();
                 console.log('🖱️ Clic sur onglet RGPD:', this.getAttribute('data-tab'));
@@ -5426,9 +5404,52 @@
                 this.classList.add('active');
             }
 
+            function setupGdprTabNavigation() {
+                // Éviter les initialisations multiples
+                if (gdprTabsInitialized) {
+                    console.log('ℹ️ Sous-onglets RGPD déjà initialisés, ignoré');
+                    return;
+                }
+
+                console.log('🔧 Initialisation des sous-onglets RGPD');
+
+                // Vérifier si nous sommes dans l'onglet RGPD
+                const rgpdTab = document.getElementById('rgpd');
+                if (!rgpdTab || rgpdTab.classList.contains('hidden-tab')) {
+                    console.log('⏸️ Onglet RGPD masqué, annulation initialisation');
+                    return;
+                }
+
+                const gdprTabLinks = document.querySelectorAll('.gdpr-tab[data-tab]');
+                console.log('📋 Onglets RGPD trouvés:', gdprTabLinks.length);
+
+                if (gdprTabLinks.length === 0) {
+                    console.warn('⚠️ Aucun onglet RGPD trouvé dans le DOM');
+                    return;
+                }
+
+                gdprTabLinks.forEach(link => {
+                    // Supprimer les anciens event listeners et en ajouter de nouveaux
+                    link.removeEventListener('click', gdprTabClickHandler);
+                    link.addEventListener('click', gdprTabClickHandler);
+                });
+
+                // Activer le premier onglet par défaut si aucun n'est actif
+                const activeGdprTab = document.querySelector('.gdpr-tab.active');
+                if (!activeGdprTab) {
+                    const firstGdprTab = document.querySelector('.gdpr-tab[data-tab]');
+                    if (firstGdprTab) {
+                        firstGdprTab.click();
+                    }
+                }
+
+                // Marquer comme initialisé
+                gdprTabsInitialized = true;
+                console.log('✅ Sous-onglets RGPD initialisés avec succès');
+            }
+
             // Démarrer la navigation des sous-onglets RGPD
-            // Appel initial au cas où l'onglet RGPD est déjà actif
-            setupGdprTabNavigation();
+            // Plus d'appel initial - sera appelé quand l'onglet RGPD sera activé
 
             // Gestion du bouton toggle password
             const togglePasswordBtn = document.getElementById('toggle_password');
