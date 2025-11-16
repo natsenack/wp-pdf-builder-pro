@@ -47,6 +47,9 @@ class TutorialManager
         // Hook pour afficher le wizard de bienvenue sur les pages du plugin
         add_action('admin_footer', [$this, 'maybeShowWelcomeWizard']);
 
+        // Ajouter le bouton d'aide dans l'interface du plugin
+        add_action('admin_notices', [$this, 'addTutorialButtonToInterface']);
+
         // Ajouter le bouton d'aide dans la barre d'admin
         add_action('admin_bar_menu', [$this, 'addTutorialHelpButton'], 100);
     }
@@ -71,6 +74,58 @@ class TutorialManager
                 'title' => __('Relancer le tutoriel d\'introduction', 'pdf-builder-pro')
             ]
         ]);
+    }
+
+    /**
+     * Ajouter le bouton d'aide dans l'interface du plugin
+     */
+    public function addTutorialButtonToInterface()
+    {
+        // Afficher seulement sur les pages du plugin
+        $current_screen = get_current_screen();
+        if (!$current_screen || (strpos($current_screen->id, 'pdf-builder') === false && strpos($current_screen->id, 'woocommerce') === false)) {
+            return;
+        }
+
+        // Vérifier si l'utilisateur a déjà vu le wizard (optionnel - on peut permettre de le rouvrir)
+        // if ($this->shouldShowTutorial('welcome_wizard')) {
+        //     return;
+        // }
+
+        ?>
+        <div id="pdf-builder-tutorial-button" style="
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 9999;
+            background: #007cba;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        " onclick="window.pdfBuilderTutorialManager.showWelcomeWizard(); return false;" title="<?php _e('Ouvrir l\'aide et les tutoriels', 'pdf-builder-pro'); ?>">
+            <span style="font-size: 24px;">❓</span>
+        </div>
+
+        <style>
+            #pdf-builder-tutorial-button:hover {
+                background: #005a87;
+                transform: scale(1.1);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            }
+            #pdf-builder-tutorial-button:active {
+                transform: scale(0.95);
+            }
+        </style>
+        <?php
     }
 
     /**
@@ -378,14 +433,8 @@ class TutorialManager
      */
     public function maybeShowWelcomeWizard()
     {
-        // Afficher seulement pour les nouveaux utilisateurs (pas encore vu le wizard)
-        if (!$this->shouldShowTutorial('welcome_wizard')) {
-            return;
-        }
-
-        // Afficher sur les pages admin (pour les tests)
-        if (is_admin()) {
-            $this->showWelcomeWizard();
-        }
+        // Plus d'affichage automatique - seulement via bouton manuel
+        // Le wizard sera déclenché par le bouton d'aide dans l'interface
+        return;
     }
 }
