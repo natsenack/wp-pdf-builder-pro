@@ -740,6 +740,11 @@
             const $modal = $('#pdf-builder-onboarding-modal');
             const $content = $modal.find('.modal-body .step-content');
 
+            // Pour l'étape 2, réinitialiser selectedTemplate pour s'assurer que le bouton est désactivé
+            if (step === 2) {
+                this.selectedTemplate = null;
+            }
+
             // Vérifier les boutons existants avant remplacement
             const existingButtons = $content.find('.complete-step');
             console.log('PDF Builder Onboarding: Existing buttons before replacement:', existingButtons.length);
