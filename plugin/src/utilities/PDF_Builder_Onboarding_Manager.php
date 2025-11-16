@@ -56,6 +56,7 @@ class PDF_Builder_Onboarding_Manager {
         add_action('wp_ajax_pdf_builder_load_onboarding_step', [$this, 'ajax_load_onboarding_step']);
         add_action('wp_ajax_pdf_builder_save_template_selection', [$this, 'ajax_save_template_selection']);
         add_action('wp_ajax_pdf_builder_update_onboarding_step', [$this, 'ajax_update_onboarding_step']);
+        add_action('wp_ajax_pdf_builder_mark_onboarding_complete', [$this, 'ajax_mark_onboarding_complete']);
     }
 
     /**
@@ -563,9 +564,9 @@ class PDF_Builder_Onboarding_Manager {
         // Actions spécifiques selon l'étape
         switch ($step) {
             case 2: // First template
-                if ($action === 'create_template') {
+                if (!empty($_POST['selected_template'])) {
                     // Sauvegarder le template sélectionné
-                    $this->onboarding_options['selected_template'] = sanitize_text_field($_POST['selected_template'] ?? '');
+                    $this->onboarding_options['selected_template'] = sanitize_text_field($_POST['selected_template']);
                     // Rediriger vers l'éditeur
                     $this->onboarding_options['redirect_to'] = admin_url('admin.php?page=pdf-builder-react-editor');
                 }
@@ -632,6 +633,23 @@ class PDF_Builder_Onboarding_Manager {
     }
 
     /**
+     * AJAX - Marquer l'onboarding comme terminé
+     */
+    public function ajax_mark_onboarding_complete() {
+        check_ajax_referer('pdf_builder_onboarding', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+        }
+
+        $this->onboarding_options['completed'] = true;
+        $this->onboarding_options['completed_at'] = current_time('timestamp');
+        $this->save_onboarding_options();
+
+        wp_send_json_success();
+    }
+
+    /**
      * Valider la completion d'une étape
      */
     private function validate_step_completion($step, $action) {
@@ -639,13 +657,9 @@ class PDF_Builder_Onboarding_Manager {
             case 1: // Welcome - toujours valide
                 return null;
 
-            case 2: // First template - doit avoir sélectionné un template
-                if ($action !== 'create_template') {
-                    return __('Veuillez sélectionner un template avant de continuer.', 'pdf-builder-pro');
-                }
-                if (empty($_POST['selected_template'])) {
-                    return __('Aucun template sélectionné.', 'pdf-builder-pro');
-                }
+            case 2: // First template - doit avoir sélectionné un template si fourni
+                // Pour l'étape 2, on permet de continuer même sans template sélectionné
+                // Le template peut être sélectionné plus tard
                 return null;
 
             case 3: // WooCommerce setup - toujours valide (optionnel)

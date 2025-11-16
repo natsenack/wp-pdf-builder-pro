@@ -269,8 +269,23 @@
         skipOnboarding() {
             // Sauter l'onboarding
             if (confirm('Êtes-vous sûr de vouloir sauter l\'assistant de configuration ? Vous pourrez le relancer plus tard depuis les paramètres.')) {
-                this.markOnboardingComplete();
-                this.hideModal();
+                // Marquer comme ignoré via AJAX
+                $.ajax({
+                    url: pdfBuilderOnboarding.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_skip_onboarding',
+                        nonce: pdfBuilderOnboarding.nonce
+                    },
+                    success: () => {
+                        this.hideModal();
+                        this.showNotification('Assistant de configuration ignoré. Vous pouvez le relancer depuis les paramètres.', 'info');
+                    },
+                    error: () => {
+                        // Fallback
+                        this.hideModal();
+                    }
+                });
             }
         }
 
@@ -460,7 +475,7 @@
         markOnboardingComplete() {
             // Marquer l'onboarding comme terminé via AJAX
             $.ajax({
-                url: pdfBuilderOnboarding.ajaxUrl,
+                url: pdfBuilderOnboarding.ajax_url,
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_mark_onboarding_complete',
@@ -544,7 +559,7 @@
         saveTemplateSelection() {
             // Sauvegarder la sélection du template via AJAX
             $.ajax({
-                url: pdfBuilderOnboarding.ajaxUrl,
+                url: pdfBuilderOnboarding.ajax_url,
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_save_template_selection',
@@ -591,7 +606,7 @@
             console.log('PDF Builder Onboarding: Loading step', stepNumber);
 
             $.ajax({
-                url: pdfBuilderOnboarding.ajaxUrl,
+                url: pdfBuilderOnboarding.ajax_url,
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_load_onboarding_step',
@@ -903,7 +918,7 @@
                     action: 'pdf_builder_complete_onboarding_step',
                     nonce: pdfBuilderOnboarding.nonce,
                     step: step,
-                    action_type: actionType,
+                    step_action: actionType,
                     selected_template: this.selectedTemplate,
                     woocommerce_options: this.getWoocommerceOptions()
                 },
@@ -1089,7 +1104,7 @@
                         .addClass('button button-secondary')
                         .attr('data-action', 'skip-step')
                         .text(skipText);
-                    $footer.append($secondaryButton);
+                    $footer.prepend($secondaryButton);
                 } else {
                     $secondaryButton.attr('data-action', 'skip-step').text(skipText);
                 }
@@ -1101,7 +1116,7 @@
                         .addClass('button button-secondary')
                         .attr('data-action', 'skip-onboarding')
                         .text(skipText);
-                    $footer.append($secondaryButton);
+                    $footer.prepend($secondaryButton);
                 } else {
                     $secondaryButton.attr('data-action', 'skip-onboarding').text(skipText);
                 }

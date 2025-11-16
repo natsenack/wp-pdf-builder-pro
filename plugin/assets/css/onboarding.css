@@ -206,7 +206,7 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 16px;
     flex-shrink: 0; /* Ne rétrécit pas, reste en bas */
 }
@@ -245,6 +245,11 @@
     border-color: #3b82f6;
     font-weight: 600;
     box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    order: 2;
+}
+
+.pdf-builder-onboarding-modal .modal-footer .button.button-secondary {
+    order: 1;
 }
 
 .pdf-builder-onboarding-modal .modal-footer .button.button-primary:hover:not(:disabled) {
