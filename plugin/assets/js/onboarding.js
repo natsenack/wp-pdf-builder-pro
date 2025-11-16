@@ -1168,10 +1168,22 @@
         }
 
         selectTemplate($card) {
-            console.log('PDF Builder Onboarding: Template selected', $card.data('template'));
-            $('.template-card').removeClass('selected');
-            $card.addClass('selected');
-            this.selectedTemplate = $card.data('template');
+            const templateId = $card.data('template');
+            console.log('PDF Builder Onboarding: Template clicked', templateId);
+
+            // Vérifier si ce template est déjà sélectionné
+            if (this.selectedTemplate === templateId) {
+                // Désélectionner le template
+                console.log('PDF Builder Onboarding: Template deselected', templateId);
+                $('.template-card').removeClass('selected');
+                this.selectedTemplate = null;
+            } else {
+                // Sélectionner le template
+                console.log('PDF Builder Onboarding: Template selected', templateId);
+                $('.template-card').removeClass('selected');
+                $card.addClass('selected');
+                this.selectedTemplate = templateId;
+            }
 
             // Sauvegarder la sélection côté serveur
             this.saveTemplateSelection();
