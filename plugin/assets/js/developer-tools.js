@@ -169,7 +169,7 @@
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_generate_test_license_key',
-                    nonce: pdfBuilderAjax.nonce
+                    nonce: $('#generate_license_key_nonce').val()
                 },
                 success: (response) => {
                     console.log('DEVELOPER TOOLS: Generate key response:', response);
@@ -200,11 +200,11 @@
             }
 
             $.ajax({
-                url: pdfBuilderGDPR.ajax_url,
+                url: pdfBuilderAjax.ajaxurl,
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_validate_test_license_key',
-                    nonce: pdfBuilderGDPR.nonce,
+                    nonce: $('#validate_license_key_nonce').val(),
                     key: keyToValidate
                 },
                 success: (response) => {
@@ -235,7 +235,7 @@
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_delete_test_license_key',
-                    nonce: pdfBuilderAjax.nonce
+                    nonce: $('#delete_license_key_nonce').val()
                 },
                 success: (response) => {
                     console.log('DEVELOPER TOOLS: Delete key response:', response);
@@ -268,7 +268,7 @@
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_cleanup_license',
-                    nonce: pdfBuilderAjax.nonce
+                    security: $('#cleanup_license_nonce').val()
                 },
                 success: (response) => {
                     console.log('DEVELOPER TOOLS: Cleanup license response:', response);
