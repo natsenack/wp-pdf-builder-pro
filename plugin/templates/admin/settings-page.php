@@ -268,10 +268,16 @@
                         break;
 
                     case 'systeme':
+                        // Debug: Afficher les données reçues
+                        error_log('=== SYSTEME SAVE - Données reçues ===');
+                        error_log(print_r($_POST, true));
+
                         // Traitement des paramètres de performance
                         $cache_enabled = isset($_POST['cache_enabled']) ? '1' : '0';
                         $cache_expiry = intval($_POST['cache_expiry']);
                         $max_cache_size = intval($_POST['max_cache_size']);
+
+                        error_log("Cache: enabled=$cache_enabled, expiry=$cache_expiry, max_size=$max_cache_size");
 
                         update_option('pdf_builder_cache_enabled', $cache_enabled);
                         update_option('pdf_builder_cache_expiry', $cache_expiry);
@@ -279,11 +285,13 @@
 
                         // Traitement des paramètres de maintenance
                         $auto_maintenance = isset($_POST['auto_maintenance']) ? '1' : '0';
+                        error_log("Auto maintenance: $auto_maintenance");
                         update_option('pdf_builder_auto_maintenance', $auto_maintenance);
 
                         // Traitement des paramètres de sauvegarde
                         $auto_backup = isset($_POST['auto_backup']) ? '1' : '0';
                         $backup_retention = intval($_POST['backup_retention']);
+                        error_log("Auto backup: $auto_backup, retention: $backup_retention");
 
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
@@ -4494,16 +4502,21 @@
 
                 // Pour l'onglet système, collecter toutes les données et les envoyer ensemble
                 if (currentTab === 'systeme') {
+                    console.log('=== TRAITEMENT ONGLET SYSTEME ===');
+
                     // Collecter les données de tous les formulaires de l'onglet système
                     const formData = new FormData();
 
-                    forms.each(function() {
+                    forms.each(function(index) {
                         const $form = $(this);
+                        console.log(`Formulaire ${index}:`, $form.find('input[name="current_tab"]').val());
+
                         const formDataTemp = new FormData(this);
 
                         // Ajouter les données de ce formulaire (sauf current_tab qui sera remplacé)
                         for (let [key, value] of formDataTemp.entries()) {
-                            if (key !== 'current_tab') { // Ne pas ajouter les current_tab individuels
+                            if (key !== 'current_tab') {
+                                console.log(`  Champ ${key} = ${value}`);
                                 formData.append(key, value);
                             }
                         }
@@ -4512,19 +4525,26 @@
                         $form.find('input[type="checkbox"]').each(function() {
                             const $checkbox = $(this);
                             const name = $checkbox.attr('name');
-                            if (name && !$checkbox.is(':checked')) {
+                            const isChecked = $checkbox.is(':checked');
+                            console.log(`  Checkbox ${name}: ${isChecked ? 'cochée' : 'non cochée'}`);
+                            if (name && !isChecked) {
+                                console.log(`  -> Ajout ${name} = 0`);
                                 formData.append(name, '0');
                             }
                         });
                     });
 
                     // S'assurer que developer_enabled est toujours envoyé
-                    formData.append('developer_enabled', $('#developer_enabled').is(':checked') ? '1' : '0');
+                    const devEnabled = $('#developer_enabled').is(':checked');
+                    console.log(`developer_enabled: ${devEnabled}`);
+                    formData.append('developer_enabled', devEnabled ? '1' : '0');
 
                     // Ajouter l'onglet actuel (toujours 'systeme' pour cet onglet)
                     formData.append('current_tab', currentTab);
                     formData.append('action', 'pdf_builder_save_settings');
                     formData.append('nonce', pdf_builder_ajax.nonce);
+
+                    console.log('=== ENVOI DONNEES SYSTEME ===');
 
                     // Envoyer via AJAX
                     $.ajax({
