@@ -1279,7 +1279,7 @@
                                 // ✅ Appel AJAX pour vider le cache
                                 var formData = new FormData();
                                 formData.append('action', 'pdf_builder_clear_cache');
-                                formData.append('security', '<?php echo wp_create_nonce('pdf_builder_clear_cache_performance'); ?>');
+                                formData.append('security', pdf_builder_ajax.nonce);
 
                                 fetch(pdf_builder_ajax.ajax_url, {
                                     method: 'POST',
@@ -1350,7 +1350,7 @@
                                 // Simuler un appel AJAX pour tester le cache
                                 var formData = new FormData();
                                 formData.append('action', 'pdf_builder_test_cache');
-                                formData.append('security', '<?php echo wp_create_nonce('pdf_builder_test_cache'); ?>');
+                                formData.append('security', pdf_builder_ajax.nonce);
                                 formData.append('test_key', testTransientKey);
                                 formData.append('test_value', testTransientValue);
 
@@ -2824,7 +2824,7 @@
 
                     const formData = new FormData();
                     formData.append('action', 'pdf_builder_generate_test_license_key');
-                    formData.append('security', '<?php echo wp_create_nonce('pdf_builder_generate_license_key'); ?>');
+                    formData.append('security', pdf_builder_ajax.nonce);
 
                     fetch(pdf_builder_ajax.ajax_url, {
                         method: 'POST',
@@ -2875,7 +2875,7 @@
 
                     const formData = new FormData();
                     formData.append('action', 'pdf_builder_delete_test_license_key');
-                    formData.append('security', '<?php echo wp_create_nonce('pdf_builder_delete_test_license_key'); ?>');
+                    formData.append('security', pdf_builder_ajax.nonce);
 
                     fetch(pdf_builder_ajax.ajax_url, {
                         method: 'POST',
