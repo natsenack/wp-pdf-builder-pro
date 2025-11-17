@@ -4695,6 +4695,7 @@
     <script>
         jQuery(document).ready(function($) {
             let currentTab = 'general';
+            let isLoadingBackups = false; // Flag pour éviter la fermeture automatique pendant le chargement
 
             // Fonction pour afficher/masquer le bouton flottant selon l'onglet actif
             function updateFloatingButtonVisibility() {
@@ -5070,6 +5071,7 @@
                     hasSauvegardesText: $results.html().includes('Sauvegardes disponibles')
                 });
 
+                isLoadingBackups = true; // Marquer le début du chargement
                 $btn.prop('disabled', true).text('⏳ Chargement...');
                 $results.html('<span style="color: #007cba;">⏳ Chargement de la liste des sauvegardes...</span>');
 
@@ -5170,6 +5172,7 @@
                     },
                     complete: function() {
                         $btn.prop('disabled', false).text('📋 Lister les sauvegardes');
+                        isLoadingBackups = false; // Marquer la fin du chargement
                     }
                 });
             });
@@ -5303,8 +5306,9 @@
 
                         if (response.success) {
                             console.log('[PDF Builder JS] Suppression réussie, affichage message de succès');
-                            // Afficher le message de succès avec un indicateur de rechargement
-                            $results.html('<span style="color: #28a745;">✅ Sauvegarde supprimée avec succès</span> <span style="color: #666;">⏳ Actualisation de la liste...</span>');
+                            // Garder le contenu existant et ajouter seulement le message de succès
+                            const currentHtml = $results.html();
+                            $results.html(currentHtml + '<br><span style="color: #28a745;">✅ Sauvegarde supprimée avec succès</span> <span style="color: #666;">⏳ Actualisation de la liste...</span>');
 
                             console.log('[PDF Builder JS] Message affiché, programmation du rechargement de liste dans 500ms');
 
@@ -5330,6 +5334,11 @@
 
             // Observer les changements du conteneur #backup-results pour diagnostiquer la fermeture automatique
             const backupResultsObserver = new MutationObserver(function(mutations) {
+                // Ignorer les changements pendant le chargement pour éviter le spam de logs
+                if (isLoadingBackups) {
+                    return;
+                }
+
                 mutations.forEach(function(mutation) {
                     if (mutation.type === 'childList' || mutation.type === 'characterData') {
                         const $results = $('#backup-results');
