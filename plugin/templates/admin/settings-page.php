@@ -4512,9 +4512,7 @@
                         $form.find('input[type="checkbox"]').each(function() {
                             const $checkbox = $(this);
                             const name = $checkbox.attr('name');
-                            console.log('Checkbox found:', name, 'checked:', $checkbox.is(':checked'));
                             if (name && !$checkbox.is(':checked')) {
-                                console.log('Adding unchecked checkbox:', name, '= 0');
                                 formData.append(name, '0');
                             }
                         });
