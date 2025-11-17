@@ -2016,6 +2016,15 @@
                     <input type="submit" name="submit_developer" class="button button-primary" value="💾 Sauvegarder Développeur">
                 </p>
             </form>
+
+            <!-- Bouton global d'enregistrement -->
+            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
+                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer les modifications</h3>
+                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer les paramètres développeur.</p>
+                <button type="button" id="save-all-developer" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                    🚀 Enregistrer
+                </button>
+            </div>
         </div>
     </div>
 
