@@ -3171,8 +3171,7 @@
                 </tr>
             </table>
 
-            <?php if (get_option('pdf_builder_developer_enabled', false)): ?>
-            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; <?php echo get_option('pdf_builder_developer_enabled', false) ? '' : 'display: none;'; ?>">
                 <h4 style="margin-top: 0; color: #495057;">🔧 Informations développeur</h4>
                 <p style="margin-bottom: 15px; color: #666;">Informations système et de débogage disponibles uniquement en mode développeur.</p>
 
@@ -3213,7 +3212,6 @@
                     </div>
                 </div>
             </div>
-            <?php endif; ?>
 
             <p class="submit" style="margin-top: 30px;">
                 <input type="submit" name="submit_developpeur" class="button button-primary" value="💾 Enregistrer les paramètres développeur" style="font-size: 16px; padding: 12px 24px; height: auto;" />
@@ -3274,10 +3272,6 @@
 
         .slider.round:before {
             border-radius: 50%;
-        }
-
-        #developer-info-section {
-            display: none;
         }
     </style>
 
