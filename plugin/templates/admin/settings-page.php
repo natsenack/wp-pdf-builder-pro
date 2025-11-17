@@ -3118,67 +3118,21 @@
         jQuery(document).ready(function($) {
             // Gestion de l'affichage de la section développeur
             function toggleDeveloperSection() {
-                var isEnabled = $('#developer_enabled').is(':checked');
                 var $devSection = $('#developer-info-section');
-                var $tabContent = $('#roles');
 
-                console.log('[DEV MODE TOGGLE] toggleDeveloperSection called');
-                console.log('[DEV MODE TOGGLE] isEnabled:', isEnabled);
-                console.log('[DEV MODE TOGGLE] devSection exists:', $devSection.length > 0);
-                console.log('[DEV MODE TOGGLE] devSection current display:', $devSection.css('display'));
-                console.log('[DEV MODE TOGGLE] devSection HTML content length:', $devSection.html().length);
-                console.log('[DEV MODE TOGGLE] devSection children count:', $devSection.children().length);
-                console.log('[DEV MODE TOGGLE] tabContent display:', $tabContent.css('display'));
-                console.log('[DEV MODE TOGGLE] tabContent visibility:', $tabContent.css('visibility'));
-                console.log('[DEV MODE TOGGLE] tabContent is visible:', $tabContent.is(':visible'));
-
-                if (isEnabled) {
-                    console.log('[DEV MODE TOGGLE] Showing developer section - calling show()');
-                    $devSection.show(0, function() {
-                        console.log('[DEV MODE TOGGLE] show completed, display:', $devSection.css('display'));
-                        console.log('[DEV MODE TOGGLE] devSection is visible after show:', $devSection.is(':visible'));
-                        console.log('[DEV MODE TOGGLE] devSection dimensions after show:', {
-                            width: $devSection.width(),
-                            height: $devSection.height(),
-                            outerWidth: $devSection.outerWidth(),
-                            outerHeight: $devSection.outerHeight()
-                        });
-                    });
+                if ($('#developer_enabled').is(':checked')) {
+                    $devSection.show();
                 } else {
-                    console.log('[DEV MODE TOGGLE] Hiding developer section - calling hide()');
-                    $devSection.hide(0, function() {
-                        console.log('[DEV MODE TOGGLE] hide completed, display:', $devSection.css('display'));
-                        console.log('[DEV MODE TOGGLE] devSection is visible after hide:', $devSection.is(':visible'));
-                    });
+                    $devSection.hide();
                 }
             }
 
             // Vérifier l'état initial au chargement
-            console.log('[DEV MODE TOGGLE] Initializing...');
             toggleDeveloperSection();
 
             // Écouter les changements sur le toggle développeur
             $('#developer_enabled').on('change', function() {
-                console.log('[DEV MODE TOGGLE] Toggle changed, new state:', $(this).is(':checked'));
-                // Utiliser CSS direct au lieu de JavaScript pour forcer l'affichage
-                if ($(this).is(':checked')) {
-                    $('#developer-info-section').css({
-                        'display': 'block !important',
-                        'visibility': 'visible !important',
-                        'opacity': '1 !important',
-                        'position': 'relative !important',
-                        'z-index': '9999 !important'
-                    });
-                    console.log('[DEV MODE TOGGLE] Applied CSS display:block !important to section');
-
-                    // Test ultime : injecter du HTML visible directement dans le body
-                    $('body').append('<div id="test-visible-element" style="position: fixed; top: 100px; left: 100px; background: red; color: white; padding: 20px; z-index: 10000; font-size: 24px; border: 5px solid yellow;">🚨 TEST ULTIME - SI VOUS VOYEZ CECI, LE JS FONCTIONNE !</div>');
-                    console.log('[DEV MODE TOGGLE] Injected test element into body');
-                } else {
-                    $('#developer-info-section').css('display', 'none');
-                    $('#test-visible-element').remove();
-                    console.log('[DEV MODE TOGGLE] Applied CSS display:none to section and removed test element');
-                }
+                toggleDeveloperSection();
             });
         });
     </script>
@@ -3208,15 +3162,47 @@
                 </tr>
             </table>
 
-            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; <?php echo get_option('pdf_builder_developer_enabled', false) ? '' : 'display: none;'; ?> border: 2px solid red !important; background: yellow !important;">
+            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; <?php echo get_option('pdf_builder_developer_enabled', false) ? '' : 'display: none;'; ?>">
                 <h4 style="margin-top: 0; color: #495057;">🔧 Informations développeur</h4>
                 <p style="margin-bottom: 15px; color: #666;">Informations système et de débogage disponibles uniquement en mode développeur.</p>
 
-                <!-- CONTENU DE TEST POUR DEBUG -->
-                <div style="background: red; color: white; padding: 10px; margin: 10px 0; font-weight: bold;">
-                    🚨 CONTENU DE TEST - SI VOUS VOYEZ CECI, LA SECTION FONCTIONNE !
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
+                        <h5 style="margin-top: 0; color: #495057;">📊 État du système</h5>
+                        <div style="font-size: 13px; color: #666;">
+                            <strong>PHP Version :</strong> <?php echo PHP_VERSION; ?><br>
+                            <strong>WordPress Version :</strong> <?php echo get_bloginfo('version'); ?><br>
+                            <strong>Mode Debug WP :</strong> <?php echo WP_DEBUG ? 'Activé' : 'Désactivé'; ?><br>
+                            <strong>Mémoire limite :</strong> <?php echo ini_get('memory_limit'); ?><br>
+                        </div>
+                    </div>
+
+                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
+                        <h5 style="margin-top: 0; color: #495057;">🔍 Informations plugin</h5>
+                        <div style="font-size: 13px; color: #666;">
+                            <strong>Version plugin :</strong> <?php echo get_option('pdf_builder_version', 'N/A'); ?><br>
+                            <strong>Base de données :</strong> <?php echo get_option('pdf_builder_db_version', 'N/A'); ?><br>
+                            <strong>Cache activé :</strong> <?php echo get_option('pdf_builder_cache_enabled', false) ? 'Oui' : 'Non'; ?><br>
+                            <strong>Logs activés :</strong> <?php echo get_option('pdf_builder_enable_logging', true) ? 'Oui' : 'Non'; ?><br>
+                        </div>
+                    </div>
                 </div>
-                <!-- FIN CONTENU DE TEST -->
+
+                <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
+                    <h5 style="margin-top: 0; color: #495057;">⚙️ Actions développeur</h5>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button type="button" class="button button-secondary" onclick="console.log('Debug info:', wp.plugins.pdf_builder || 'Plugin data not available'); alert('Informations de débogage affichées dans la console');">
+                            📋 Afficher debug info
+                        </button>
+                        <button type="button" class="button button-secondary" onclick="if(confirm('Vider le cache ?')) { localStorage.clear(); sessionStorage.clear(); alert('Cache vidé'); }">
+                            🗑️ Vider cache navigateur
+                        </button>
+                        <button type="button" class="button button-secondary" onclick="window.open('<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=diagnostic'); ?>', '_blank');">
+                            🔍 Ouvrir diagnostics
+                        </button>
+                    </div>
+                </div>
+            </div>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
                     <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
