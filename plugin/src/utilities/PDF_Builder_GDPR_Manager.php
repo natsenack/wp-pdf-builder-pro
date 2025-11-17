@@ -61,7 +61,7 @@ class PDF_Builder_GDPR_Manager {
 
         // Hooks pour les données utilisateur
         add_action('wp_ajax_pdf_builder_request_data_portability', [$this, 'ajax_request_data_portability']);
-        add_action('wp_ajax_pdf_builder_get_consent_status', [$this, 'ajax_get_consent_status'], 1); // Priorité élevée
+        add_action('wp_ajax_pdf_builder_get_consent_status', [$this, 'ajax_get_consent_status']);
         add_action('wp_ajax_pdf_builder_save_gdpr_settings', [$this, 'ajax_save_gdpr_settings']);
         add_action('wp_ajax_pdf_builder_save_gdpr_security', [$this, 'ajax_save_gdpr_security']);
         add_action('wp_ajax_pdf_builder_refresh_audit_log', [$this, 'ajax_refresh_audit_log']);
@@ -642,9 +642,7 @@ class PDF_Builder_GDPR_Manager {
      * AJAX - Obtenir le statut des consentements
      */
     public function ajax_get_consent_status() {
-        error_log('GDPR: ajax_get_consent_status called');
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
-        error_log('GDPR: nonce verified');
 
         $user_id = get_current_user_id();
         $consents = [];
@@ -655,15 +653,6 @@ class PDF_Builder_GDPR_Manager {
                 'timestamp' => null,
                 'encrypted' => $this->gdpr_options['encryption_enabled']
             ];
-        }
-
-        error_log('GDPR: sending response with headers');
-        // Forcer les headers pour éviter l'interception
-        if (!headers_sent()) {
-            header('Content-Type: application/json; charset=UTF-8');
-            header('Cache-Control: no-cache, must-revalidate');
-            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-            header('X-PDF-Builder-Response: consent-status');
         }
 
         wp_send_json_success(['consents' => $consents]);
