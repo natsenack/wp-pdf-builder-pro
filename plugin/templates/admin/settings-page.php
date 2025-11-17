@@ -3134,6 +3134,36 @@
             $('#developer_enabled').on('change', function() {
                 toggleDeveloperSection();
             });
+
+            // Debug CSS pour diagnostiquer le problème de visibilité
+            $('#developer_enabled').on('change', function() {
+                setTimeout(function() {
+                    var $section = $('#developer-info-section');
+                    if ($(this).is(':checked')) {
+                        console.log('=== DEBUG CSS SECTION DÉVELOPPEUR ===');
+                        console.log('Display:', $section.css('display'));
+                        console.log('Visibility:', $section.css('visibility'));
+                        console.log('Opacity:', $section.css('opacity'));
+                        console.log('Position:', $section.css('position'));
+                        console.log('Z-index:', $section.css('z-index'));
+                        console.log('Width:', $section.width(), 'Height:', $section.height());
+                        console.log('Offset:', $section.offset());
+                        console.log('Is visible:', $section.is(':visible'));
+
+                        // Vérifier les parents
+                        var $parents = $section.parents();
+                        console.log('Parents avec overflow ou position:');
+                        $parents.each(function() {
+                            var $p = $(this);
+                            var overflow = $p.css('overflow');
+                            var position = $p.css('position');
+                            if (overflow !== 'visible' || position === 'relative' || position === 'absolute') {
+                                console.log('  ' + this.tagName + '.' + this.className + ' - overflow:' + overflow + ', position:' + position);
+                            }
+                        });
+                    }
+                }, 100);
+            });
         });
     </script>
 
