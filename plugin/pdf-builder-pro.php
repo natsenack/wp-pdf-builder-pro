@@ -587,6 +587,23 @@ function pdf_builder_save_settings_ajax() {
             }
             $saved_count++;
             break;
+
+        case 'systeme':
+            // Sauvegarder les paramètres système (performance + maintenance + sauvegarde)
+            $settings = array(
+                'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
+                'cache_expiry' => intval($_POST['cache_expiry']),
+                'max_cache_size' => intval($_POST['max_cache_size']),
+                'auto_maintenance' => isset($_POST['auto_maintenance']) ? '1' : '0',
+                'auto_backup' => isset($_POST['auto_backup']) ? '1' : '0',
+                'backup_retention' => intval($_POST['backup_retention']),
+            );
+
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
+            }
+            $saved_count++;
+            break;
     }
 
     if ($saved_count > 0) {
