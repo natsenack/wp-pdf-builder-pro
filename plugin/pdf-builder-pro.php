@@ -941,12 +941,7 @@ function pdf_builder_delete_backup_ajax() {
     // Décoder le base64 si nécessaire (jQuery peut encoder automatiquement certains caractères)
     if (base64_encode(base64_decode($filename, true)) === $filename) {
         $filename = base64_decode($filename);
-        error_log('[PDF Builder PHP] Filename était encodé en base64, décodé: ' . $filename);
     }
-
-    error_log('[PDF Builder PHP] Suppression sauvegarde - Filename reçu: ' . $_POST['filename']);
-    error_log('[PDF Builder PHP] Suppression sauvegarde - Filename après décodage base64: ' . $filename);
-    error_log('[PDF Builder PHP] Suppression sauvegarde - Filename après sanitize: ' . sanitize_file_name($filename));
 
     if (empty($filename)) {
         wp_send_json_error('Nom de fichier manquant');

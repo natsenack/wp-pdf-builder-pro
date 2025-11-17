@@ -2340,32 +2340,64 @@
 
                 <!-- Section Sauvegarde -->
                 <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                    <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">💾 Sauvegarde</h3>
+                    <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">
+                        <span style="display: inline-flex; align-items: center; gap: 10px;">
+                            💾 Gestion des Sauvegardes
+                            <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                        </span>
+                    </h3>
+
+                    <!-- Informations sur les sauvegardes -->
+                    <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: #495057; font-size: 14px;">ℹ️ Informations</h4>
+                        <ul style="margin: 0; padding-left: 20px; color: #6c757d; font-size: 13px;">
+                            <li>Les sauvegardes contiennent tous vos paramètres PDF Builder</li>
+                            <li>Les sauvegardes automatiques sont créées quotidiennement</li>
+                            <li>Les anciennes sauvegardes sont supprimées automatiquement selon la rétention configurée</li>
+                        </ul>
+                    </div>
 
                     <table class="form-table">
                         <tr>
-                            <th scope="row">Sauvegardes disponibles</th>
+                            <th scope="row" style="width: 200px;">Actions de sauvegarde</th>
                             <td>
-                                <button type="button" id="create-backup-btn" class="button button-primary" style="margin-right: 10px;">📦 Créer une sauvegarde</button>
-                                <button type="button" id="list-backups-btn" class="button button-secondary">📋 Lister les sauvegardes</button>
-                                <div id="backup-results" style="margin-top: 10px;"></div>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                                    <button type="button" id="create-backup-btn" class="button button-primary" style="display: inline-flex; align-items: center; gap: 5px;">
+                                        <span>📦</span> Créer une sauvegarde
+                                    </button>
+                                    <button type="button" id="list-backups-btn" class="button button-secondary" style="display: inline-flex; align-items: center; gap: 5px;">
+                                        <span>📋</span> Lister les sauvegardes
+                                    </button>
+                                </div>
+                                <div id="backup-results" style="margin-top: 15px; min-height: 30px;"></div>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="systeme_auto_backup">Sauvegarde automatique</label></th>
+                            <th scope="row">
+                                <label for="systeme_auto_backup" style="display: flex; align-items: center; gap: 8px;">
+                                    <span>🔄</span> Sauvegarde automatique
+                                </label>
+                            </th>
                             <td>
-                                <label class="switch">
+                                <label class="switch" style="margin-right: 15px;">
                                     <input type="checkbox" id="systeme_auto_backup" name="systeme_auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
-                                <p class="description">Crée automatiquement des sauvegardes quotidiennes</p>
+                                <span style="color: #6c757d; font-size: 13px;">Active la création automatique de sauvegardes quotidiennes</span>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="systeme_backup_retention">Rétention des sauvegardes (jours)</label></th>
+                            <th scope="row">
+                                <label for="systeme_backup_retention" style="display: flex; align-items: center; gap: 8px;">
+                                    <span>🗂️</span> Rétention des sauvegardes
+                                </label>
+                            </th>
                             <td>
-                                <input type="number" id="systeme_backup_retention" name="systeme_backup_retention" value="<?php echo esc_attr(get_option('pdf_builder_backup_retention', 30)); ?>" min="1" max="365">
-                                <p class="description">Nombre de jours avant suppression automatique des anciennes sauvegardes</p>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="number" id="systeme_backup_retention" name="systeme_backup_retention" value="<?php echo esc_attr(get_option('pdf_builder_backup_retention', 30)); ?>" min="1" max="365" style="width: 80px;">
+                                    <span>jours</span>
+                                </div>
+                                <p class="description" style="margin-top: 5px;">Nombre de jours avant suppression automatique des anciennes sauvegardes (1-365 jours)</p>
                             </td>
                         </tr>
                     </table>
@@ -4924,14 +4956,12 @@
             
             // Bouton "Créer une sauvegarde"
             $('#create-backup-btn').on('click', function() {
-                console.log('[PDF Builder JS] Bouton "Créer une sauvegarde" cliqué');
                 const $btn = $(this);
                 const $results = $('#backup-results');
 
                 $btn.prop('disabled', true).text('⏳ Création...');
                 $results.html('<span style="color: #007cba;">⏳ Création de la sauvegarde en cours...</span>');
 
-                console.log('[PDF Builder JS] Envoi requête AJAX pour créer la sauvegarde');
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
@@ -4940,7 +4970,6 @@
                         nonce: pdf_builder_ajax.nonce
                     },
                     success: function(response) {
-                        console.log('[PDF Builder JS] Réponse reçue pour création sauvegarde:', response);
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Sauvegarde créée avec succès</span>');
                         } else {
@@ -4958,14 +4987,12 @@
                 });
             });            // Bouton "Lister les sauvegardes"
             $('#list-backups-btn').on('click', function() {
-                console.log('[PDF Builder JS] Bouton "Lister les sauvegardes" cliqué');
                 const $btn = $(this);
                 const $results = $('#backup-results');
 
                 $btn.prop('disabled', true).text('⏳ Chargement...');
                 $results.html('<span style="color: #007cba;">⏳ Chargement de la liste des sauvegardes...</span>');
 
-                console.log('[PDF Builder JS] Envoi requête AJAX pour lister les sauvegardes');
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
@@ -4974,25 +5001,51 @@
                         nonce: pdf_builder_ajax.nonce
                     },
                     success: function(response) {
-                        console.log('[PDF Builder JS] Réponse reçue pour liste sauvegardes:', response);
                         if (response.success) {
-                            let html = '<div style="margin-top: 10px;"><strong>📋 Sauvegardes disponibles:</strong><br>';
-                            if (response.data && response.data.backups && response.data.backups.length > 0) {
+                            let html = '<div style="margin-top: 15px;">';
+                            html += '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 10px; background: #e9ecef; border-radius: 6px;">';
+                            html += '<h4 style="margin: 0; color: #495057; display: flex; align-items: center; gap: 8px;">';
+                            html += '<span>📋</span> Sauvegardes disponibles (' + response.data.backups.length + ')';
+                            html += '</h4>';
+                            html += '<small style="color: #6c757d;">Triées par date (plus récent en premier)</small>';
+                            html += '</div>';
+
+                            if (response.data.backups.length > 0) {
                                 response.data.backups.forEach(function(backup) {
-                                    html += '<div class="backup-item" style="display: flex; align-items: center; justify-content: space-between; padding: 8px; margin: 4px 0; background: #f8f9fa; border-radius: 4px; border: 1px solid #dee2e6;">';
-                                    html += '<div style="flex: 1;">';
-                                    html += '<strong>' + backup.filename_raw + '</strong><br>';
-                                    html += '<small style="color: #6c757d;">' + backup.size_human + ' • ' + backup.modified_human + '</small>';
+                                    const isAuto = backup.type === 'automatic';
+                                    const badgeColor = isAuto ? '#17a2b8' : '#28a745';
+                                    const badgeText = isAuto ? 'AUTO' : 'MANUEL';
+
+                                    html += '<div class="backup-item" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin: 8px 0; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; transition: all 0.2s ease;">';
+                                    html += '<div style="flex: 1; display: flex; align-items: center; gap: 15px;">';
+                                    html += '<div style="font-size: 24px;">' + (isAuto ? '🔄' : '📦') + '</div>';
+                                    html += '<div>';
+                                    html += '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">';
+                                    html += '<strong style="color: #495057; font-size: 14px;">' + backup.filename_raw + '</strong>';
+                                    html += '<span style="background: ' + badgeColor + '; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">' + badgeText + '</span>';
+                                    html += '</div>';
+                                    html += '<div style="color: #6c757d; font-size: 12px;">';
+                                    html += '<span>📏 ' + backup.size_human + '</span> • ';
+                                    html += '<span>📅 ' + backup.modified_human + '</span>';
+                                    html += '</div>';
+                                    html += '</div>';
                                     html += '</div>';
                                     html += '<div style="display: flex; gap: 8px;">';
-                                    html += '<button type="button" class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="background: #28a745; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer;">🔄 Restaurer</button>';
-                                    html += '<a href="' + window.location.href.split('?')[0] + '?action=pdf_builder_download_backup&filename=' + encodeURIComponent(backup.filename) + '&nonce=' + pdf_builder_ajax.nonce + '" target="_blank" class="button button-small" style="background: #007cba; color: white; text-decoration: none; padding: 4px 8px; border-radius: 3px; display: inline-block;">📥 Télécharger</a>';
-                                    html += '<button type="button" class="button button-small delete-backup-btn" data-filename="' + backup.filename + '" style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer;">🗑️ Supprimer</button>';
+                                    html += '<button type="button" class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px;" title="Restaurer cette sauvegarde">';
+                                    html += '<span>🔄</span> Restaurer</button>';
+                                    html += '<a href="' + window.location.href.split('?')[0] + '?action=pdf_builder_download_backup&filename=' + encodeURIComponent(backup.filename) + '&nonce=' + pdf_builder_ajax.nonce + '" target="_blank" class="button button-small" style="background: #007cba; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; font-size: 12px;" title="Télécharger cette sauvegarde">';
+                                    html += '<span>📥</span> Télécharger</a>';
+                                    html += '<button type="button" class="button button-small delete-backup-btn" data-filename="' + backup.filename + '" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px;" title="Supprimer cette sauvegarde">';
+                                    html += '<span>🗑️</span> Supprimer</button>';
                                     html += '</div>';
                                     html += '</div>';
                                 });
                             } else {
-                                html += '<div style="padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; color: #856404;">Aucune sauvegarde trouvée.</div>';
+                                html += '<div style="text-align: center; padding: 40px; color: #6c757d;">';
+                                html += '<div style="font-size: 48px; margin-bottom: 15px;">📂</div>';
+                                html += '<p>Aucune sauvegarde trouvée.</p>';
+                                html += '<p style="font-size: 14px;">Créez votre première sauvegarde pour sécuriser vos paramètres.</p>';
+                                html += '</div>';
                             }
                             html += '</div>';
                             $results.html('<span style="color: #28a745;">✅ Liste chargée</span>' + html);
@@ -5005,7 +5058,6 @@
                         $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors du chargement de la liste</span>');
                     },
                     complete: function() {
-                        console.log('[PDF Builder JS] Requête liste sauvegardes terminée');
                         $btn.prop('disabled', false).text('📋 Lister les sauvegardes');
                     }
                 });
@@ -5015,10 +5067,6 @@
             $(document).on('click', '.restore-backup-btn', function() {
                 const filename = $(this).data('filename');
                 const filenameRaw = $(this).closest('.backup-item').find('strong').text() || filename;
-
-                console.log('[PDF Builder JS] Bouton restaurer cliqué');
-                console.log('[PDF Builder JS] Filename:', filename);
-                console.log('[PDF Builder JS] pdf_builder_ajax disponible:', typeof pdf_builder_ajax !== 'undefined');
 
                 if (!filename) {
                     alert('Erreur: nom de fichier manquant');
@@ -5045,7 +5093,6 @@
                         filename: filename
                     },
                     success: function(response) {
-                        console.log('[PDF Builder JS] Réponse reçue pour restauration sauvegarde:', response);
                         if (response.success) {
                             // Afficher le message de succès et recharger la liste
                             $results.html('<span style="color: #28a745;">✅ Sauvegarde restaurée avec succès !</span> <span style="color: #666;">⏳ Actualisation de la liste...</span>');
@@ -5083,7 +5130,6 @@
                 console.log('[PDF Builder JS] Filename (attr):', filenameAttr);
                 console.log('[PDF Builder JS] FilenameRaw:', filenameRaw);
                 console.log('[PDF Builder JS] Sont-ils égaux ?', filename === filenameAttr);
-                console.log('[PDF Builder JS] pdf_builder_ajax disponible:', typeof pdf_builder_ajax !== 'undefined');
 
                 if (!filename) {
                     alert('Erreur: nom de fichier manquant');
@@ -5103,7 +5149,6 @@
 
                 $btn.prop('disabled', true).text('⏳ Suppression...');
 
-                console.log('[PDF Builder JS] Envoi requête AJAX pour supprimer la sauvegarde');
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
@@ -5113,7 +5158,6 @@
                         filename: filename
                     },
                     success: function(response) {
-                        console.log('[PDF Builder JS] Réponse reçue pour suppression sauvegarde:', response);
                         if (response.success) {
                             // Afficher le message de succès avec un indicateur de rechargement
                             $results.html('<span style="color: #28a745;">✅ Sauvegarde supprimée avec succès</span> <span style="color: #666;">⏳ Actualisation de la liste...</span>');
