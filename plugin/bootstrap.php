@@ -512,10 +512,10 @@ function pdf_builder_load_bootstrap()
 
     // INITIALISER LE GESTIONNAIRE RGPD
     error_log('Checking for PDF_Builder_GDPR_Manager class...');
-    if (class_exists('PDF_Builder_GDPR_Manager')) {
+    if (class_exists('PDF_Builder_Pro\PDF_Builder_GDPR_Manager')) {
         error_log('PDF_Builder_GDPR_Manager class exists');
         try {
-            $instance = PDF_Builder_GDPR_Manager::get_instance();
+            \PDF_Builder_Pro\PDF_Builder_GDPR_Manager::get_instance();
             error_log('PDF_Builder_GDPR_Manager initialized successfully');
         } catch (Exception $e) {
             error_log('Error initializing PDF_Builder_GDPR_Manager: ' . $e->getMessage());
