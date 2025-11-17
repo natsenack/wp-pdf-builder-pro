@@ -2094,7 +2094,6 @@
                 </p>
             </form>
         </div>
-    </div>
 
     <style>
         /* Styles pour les interrupteurs */
@@ -2287,3 +2286,4 @@
             });
         });
     </script>
+</div>
