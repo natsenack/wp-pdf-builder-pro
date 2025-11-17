@@ -3128,11 +3128,15 @@
             // Gestion de l'affichage de la section développeur
             function toggleDeveloperSection() {
                 var $devSection = $('#developer-info-section');
+                var $tabContent = $('#roles');
 
-                if ($('#developer_enabled').is(':checked')) {
-                    $devSection.addClass('developer-visible');
-                } else {
-                    $devSection.removeClass('developer-visible');
+                // Ne faire fonctionner le toggle que si l'onglet développeur est actif
+                if ($tabContent.hasClass('active') && !$tabContent.hasClass('hidden-tab')) {
+                    if ($('#developer_enabled').is(':checked')) {
+                        $devSection.addClass('developer-visible');
+                    } else {
+                        $devSection.removeClass('developer-visible');
+                    }
                 }
             }
 
@@ -3144,35 +3148,28 @@
                 toggleDeveloperSection();
             });
 
+            // Réappliquer le toggle quand on change d'onglet
+            $('.nav-tab').on('click', function() {
+                setTimeout(function() {
+                    toggleDeveloperSection();
+                }, 100);
+            });
+
             // Debug CSS pour diagnostiquer le problème de visibilité
             $('#developer_enabled').on('change', function() {
                 setTimeout(function() {
                     var $section = $('#developer-info-section');
+                    var $tab = $('#roles');
                     if ($(this).is(':checked')) {
-                        console.log('=== DEBUG CSS SECTION DÉVELOPPEUR ===');
-                        console.log('Display:', $section.css('display'));
-                        console.log('Visibility:', $section.css('visibility'));
-                        console.log('Opacity:', $section.css('opacity'));
-                        console.log('Position:', $section.css('position'));
-                        console.log('Z-index:', $section.css('z-index'));
-                        console.log('Width:', $section.width(), 'Height:', $section.height());
-                        console.log('Offset:', $section.offset());
-                        console.log('Is visible:', $section.is(':visible'));
-                        console.log('Has class developer-visible:', $section.hasClass('developer-visible'));
-
-                        // Vérifier les parents
-                        var $parents = $section.parents();
-                        console.log('Parents avec overflow ou position:');
-                        $parents.each(function() {
-                            var $p = $(this);
-                            var overflow = $p.css('overflow');
-                            var position = $p.css('position');
-                            if (overflow !== 'visible' || position === 'relative' || position === 'absolute') {
-                                console.log('  ' + this.tagName + '.' + this.className + ' - overflow:' + overflow + ', position:' + position);
-                            }
-                        });
+                        console.log('=== DEBUG TOGGLE DÉVELOPPEUR ===');
+                        console.log('Tab is active:', $tab.hasClass('active'));
+                        console.log('Tab is hidden:', $tab.hasClass('hidden-tab'));
+                        console.log('Tab display:', $tab.css('display'));
+                        console.log('Section has class developer-visible:', $section.hasClass('developer-visible'));
+                        console.log('Section display:', $section.css('display'));
+                        console.log('Section is visible:', $section.is(':visible'));
                     }
-                }, 100);
+                }, 200);
             });
         });
     </script>
