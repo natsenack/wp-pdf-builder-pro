@@ -607,12 +607,6 @@ function pdf_builder_save_settings_ajax() {
             }
             $saved_count++;
             break;
-
-            foreach ($settings as $key => $value) {
-                update_option('pdf_builder_' . $key, $value);
-            }
-            $saved_count++;
-            break;
     }
 
     if ($saved_count > 0) {
