@@ -216,6 +216,20 @@ function pdf_builder_debug_ajax_actions() {
         ];
         
         error_log('=== PDF BUILDER AJAX DEBUG ===');
+        
+        // Vérifier si la classe GDPR est chargée
+        if (class_exists('PDF_Builder_GDPR_Manager')) {
+            error_log('PDF_Builder_GDPR_Manager class: LOADED');
+            $instance = PDF_Builder_GDPR_Manager::get_instance();
+            if ($instance) {
+                error_log('PDF_Builder_GDPR_Manager instance: EXISTS');
+            } else {
+                error_log('PDF_Builder_GDPR_Manager instance: NULL');
+            }
+        } else {
+            error_log('PDF_Builder_GDPR_Manager class: NOT LOADED');
+        }
+        
         foreach ($ajax_actions as $action) {
             if (isset($wp_filter[$action])) {
                 error_log("Action $action: " . count($wp_filter[$action]) . " handlers");
