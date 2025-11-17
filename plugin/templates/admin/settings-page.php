@@ -268,22 +268,10 @@
                         break;
 
                     case 'systeme':
-                        // Debug temporaire pour les toggles
-                        error_log('=== SYSTEME SAVE DEBUG ===');
-                        error_log('$_POST data: ' . print_r($_POST, true));
-                        error_log('cache_enabled isset: ' . (isset($_POST['cache_enabled']) ? 'YES' : 'NO'));
-                        error_log('cache_enabled value: ' . (isset($_POST['cache_enabled']) ? $_POST['cache_enabled'] : 'NOT_SET'));
-                        error_log('auto_maintenance isset: ' . (isset($_POST['auto_maintenance']) ? 'YES' : 'NO'));
-                        error_log('auto_maintenance value: ' . (isset($_POST['auto_maintenance']) ? $_POST['auto_maintenance'] : 'NOT_SET'));
-                        error_log('auto_backup isset: ' . (isset($_POST['auto_backup']) ? 'YES' : 'NO'));
-                        error_log('auto_backup value: ' . (isset($_POST['auto_backup']) ? $_POST['auto_backup'] : 'NOT_SET'));
-
                         // Traitement des paramètres de performance
                         $cache_enabled = isset($_POST['cache_enabled']) ? '1' : '0';
                         $cache_expiry = intval($_POST['cache_expiry']);
                         $max_cache_size = intval($_POST['max_cache_size']);
-
-                        error_log("FINAL VALUES - Cache: enabled=$cache_enabled, expiry=$cache_expiry, max_size=$max_cache_size");
 
                         update_option('pdf_builder_cache_enabled', $cache_enabled);
                         update_option('pdf_builder_cache_expiry', $cache_expiry);
@@ -291,13 +279,11 @@
 
                         // Traitement des paramètres de maintenance
                         $auto_maintenance = isset($_POST['auto_maintenance']) ? '1' : '0';
-                        error_log("FINAL VALUES - Auto maintenance: $auto_maintenance");
                         update_option('pdf_builder_auto_maintenance', $auto_maintenance);
 
                         // Traitement des paramètres de sauvegarde
                         $auto_backup = isset($_POST['auto_backup']) ? '1' : '0';
                         $backup_retention = intval($_POST['backup_retention']);
-                        error_log("FINAL VALUES - Auto backup: $auto_backup, retention: $backup_retention");
 
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
@@ -2143,19 +2129,8 @@
                         <tr>
                             <th scope="row"><label for="systeme_cache_enabled">Cache activé</label></th>
                             <td>
-                                <?php
-                                // Debug temporaire pour les toggles
-                                $cache_enabled_value = get_option('pdf_builder_cache_enabled', '1');
-                                $auto_maintenance_value = get_option('pdf_builder_auto_maintenance', '0');
-                                $auto_backup_value = get_option('pdf_builder_auto_backup', '0');
-
-                                error_log('=== SYSTEME DISPLAY DEBUG ===');
-                                error_log("cache_enabled from DB: '$cache_enabled_value'");
-                                error_log("auto_maintenance from DB: '$auto_maintenance_value'");
-                                error_log("auto_backup from DB: '$auto_backup_value'");
-                                ?>
                                 <label class="switch">
-                                    <input type="checkbox" id="systeme_cache_enabled" name="cache_enabled" value="1" <?php checked($cache_enabled_value, '1'); ?>>
+                                    <input type="checkbox" id="systeme_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', '1'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Active le système de cache pour améliorer les performances</p>
@@ -2201,7 +2176,7 @@
                             <th scope="row"><label for="auto_maintenance">Maintenance automatique</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="auto_maintenance" name="auto_maintenance" value="1" <?php checked($auto_maintenance_value, '1'); ?>>
+                                    <input type="checkbox" id="auto_maintenance" name="auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Active la maintenance automatique hebdomadaire</p>
@@ -2232,7 +2207,7 @@
                             <th scope="row"><label for="auto_backup">Sauvegarde automatique</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="auto_backup" name="auto_backup" value="1" <?php checked($auto_backup_value, '1'); ?>>
+                                    <input type="checkbox" id="auto_backup" name="auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Crée automatiquement des sauvegardes quotidiennes</p>
@@ -4867,6 +4842,19 @@
                 } else {
                     alert('Test de notification d\'information réussi !');
                 }
+            });
+
+            // Test temporaire pour vérifier l'état des toggles système au chargement
+            console.log('=== TOGGLE STATE CHECK ===');
+            console.log('Cache enabled checkbox checked:', $('#systeme_cache_enabled').is(':checked'));
+            console.log('Auto maintenance checkbox checked:', $('#auto_maintenance').is(':checked'));
+            console.log('Auto backup checkbox checked:', $('#auto_backup').is(':checked'));
+
+            // Test de changement d'état des toggles
+            $('#systeme_cache_enabled, #auto_maintenance, #auto_backup').on('change', function() {
+                var checkboxId = $(this).attr('id');
+                var isChecked = $(this).is(':checked');
+                console.log('Toggle changed:', checkboxId, 'is now:', isChecked ? 'checked' : 'unchecked');
             });
         });
     </script>
