@@ -3121,9 +3121,10 @@
                 var $devSection = $('#developer-info-section');
 
                 if ($('#developer_enabled').is(':checked')) {
-                    $devSection.show();
+                    // Utiliser CSS direct pour éviter les problèmes de jQuery
+                    $devSection.css('display', 'block');
                 } else {
-                    $devSection.hide();
+                    $devSection.css('display', 'none');
                 }
             }
 
