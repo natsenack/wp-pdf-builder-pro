@@ -3116,35 +3116,29 @@
 
     <script>
         jQuery(document).ready(function($) {
-            // Gestion de l'affichage de la section développeur
-            function toggleDeveloperSection() {
-                var $devSection = $('#developer-info-section');
-                var $tabContent = $('#roles');
+            console.log('=== PDF BUILDER DEBUG === Toggle script loaded');
 
-                // Ne faire fonctionner le toggle que si l'onglet développeur est actif
-                if ($tabContent.hasClass('active') && !$tabContent.hasClass('hidden-tab')) {
-                    if ($('#developer_enabled').is(':checked')) {
-                        $devSection.show();
-                    } else {
-                        $devSection.hide();
-                    }
-                }
-            }
-
-            // Vérifier l'état initial au chargement
-            toggleDeveloperSection();
-
-            // Écouter les changements sur le toggle développeur
+            // Toggle simple et direct
             $('#developer_enabled').on('change', function() {
-                toggleDeveloperSection();
+                console.log('Toggle changed:', $(this).is(':checked'));
+
+                if ($(this).is(':checked')) {
+                    $('#developer-info-section').show();
+                    console.log('Section shown');
+                } else {
+                    $('#developer-info-section').hide();
+                    console.log('Section hidden');
+                }
             });
 
-            // Réappliquer le toggle quand on change d'onglet
-            $('.nav-tab').on('click', function() {
-                setTimeout(function() {
-                    toggleDeveloperSection();
-                }, 100);
-            });
+            // État initial
+            if ($('#developer_enabled').is(':checked')) {
+                $('#developer-info-section').show();
+                console.log('Initial state: shown');
+            } else {
+                $('#developer-info-section').hide();
+                console.log('Initial state: hidden');
+            }
         });
     </script>
 
@@ -3173,7 +3167,7 @@
                 </tr>
             </table>
 
-            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; <?php echo (!isset($_GET['tab']) || $_GET['tab'] !== 'developpeur' || !get_option('pdf_builder_developer_enabled', false)) ? 'display: none;' : ''; ?>">
+            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; display: none;">
                 <h4 style="margin-top: 0; color: #495057;">🔧 Informations développeur</h4>
                 <p style="margin-bottom: 15px; color: #666;">Informations système et de débogage disponibles uniquement en mode développeur.</p>
 
