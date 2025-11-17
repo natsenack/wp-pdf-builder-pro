@@ -3131,28 +3131,22 @@
                 console.log('[DEV MODE TOGGLE] tabContent is visible:', $tabContent.is(':visible'));
 
                 if (isEnabled) {
-                    console.log('[DEV MODE TOGGLE] Showing developer section - calling slideDown');
-                    $devSection.slideDown(300, function() {
-                        console.log('[DEV MODE TOGGLE] slideDown animation completed, display:', $devSection.css('display'));
-                        console.log('[DEV MODE TOGGLE] devSection is visible after animation:', $devSection.is(':visible'));
-                        console.log('[DEV MODE TOGGLE] devSection dimensions:', {
+                    console.log('[DEV MODE TOGGLE] Showing developer section - calling show()');
+                    $devSection.show(0, function() {
+                        console.log('[DEV MODE TOGGLE] show completed, display:', $devSection.css('display'));
+                        console.log('[DEV MODE TOGGLE] devSection is visible after show:', $devSection.is(':visible'));
+                        console.log('[DEV MODE TOGGLE] devSection dimensions after show:', {
                             width: $devSection.width(),
                             height: $devSection.height(),
                             outerWidth: $devSection.outerWidth(),
                             outerHeight: $devSection.outerHeight()
                         });
-                        console.log('[DEV MODE TOGGLE] devSection position:', $devSection.position());
-                        console.log('[DEV MODE TOGGLE] devSection offset:', $devSection.offset());
-                        console.log('[DEV MODE TOGGLE] parent dimensions:', {
-                            width: $devSection.parent().width(),
-                            height: $devSection.parent().height()
-                        });
                     });
                 } else {
-                    console.log('[DEV MODE TOGGLE] Hiding developer section - calling slideUp');
-                    $devSection.slideUp(300, function() {
-                        console.log('[DEV MODE TOGGLE] slideUp animation completed, display:', $devSection.css('display'));
-                        console.log('[DEV MODE TOGGLE] devSection is visible after animation:', $devSection.is(':visible'));
+                    console.log('[DEV MODE TOGGLE] Hiding developer section - calling hide()');
+                    $devSection.hide(0, function() {
+                        console.log('[DEV MODE TOGGLE] hide completed, display:', $devSection.css('display'));
+                        console.log('[DEV MODE TOGGLE] devSection is visible after hide:', $devSection.is(':visible'));
                     });
                 }
             }
