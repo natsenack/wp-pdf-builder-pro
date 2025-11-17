@@ -58,6 +58,7 @@ var pdfBuilderWizard = {
         console.log('PDF Builder Wizard: Testing AJAX...');
         console.log('PDF Builder Wizard: ajax_url =', typeof pdfBuilderWizardData !== 'undefined' ? pdfBuilderWizardData.ajax_url : 'undefined');
         console.log('PDF Builder Wizard: global ajaxurl =', typeof ajaxurl !== 'undefined' ? ajaxurl : 'undefined');
+        console.log('PDF Builder Wizard: pdf_builder_ajax =', typeof pdf_builder_ajax !== 'undefined' ? pdf_builder_ajax : 'undefined');
         console.log('PDF Builder Wizard: nonce =', typeof pdfBuilderWizardData !== 'undefined' ? pdfBuilderWizardData.nonce : 'undefined');
         
         var ajaxData = {
@@ -70,7 +71,7 @@ var pdfBuilderWizard = {
         }
         
         jQuery.ajax({
-            url: ajaxurl, // Utiliser l'URL AJAX standard de WordPress
+            url: typeof pdf_builder_ajax !== 'undefined' ? pdf_builder_ajax.ajax_url : ajaxurl, // Utiliser l'URL AJAX localisée ou fallback
             type: 'POST',
             data: ajaxData,
             success: function(response) {
@@ -190,7 +191,7 @@ var pdfBuilderWizard = {
         console.log('PDF Builder Wizard: Sending data:', data);
 
         return jQuery.ajax({
-            url: ajaxurl,
+            url: typeof pdf_builder_ajax !== 'undefined' ? pdf_builder_ajax.ajax_url : ajaxurl,
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
@@ -203,7 +204,7 @@ var pdfBuilderWizard = {
 
     createTemplate: function() {
         return jQuery.ajax({
-            url: ajaxurl,
+            url: typeof pdf_builder_ajax !== 'undefined' ? pdf_builder_ajax.ajax_url : ajaxurl,
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
@@ -215,7 +216,7 @@ var pdfBuilderWizard = {
 
     completeSetup: function() {
         return jQuery.ajax({
-            url: ajaxurl,
+            url: typeof pdf_builder_ajax !== 'undefined' ? pdf_builder_ajax.ajax_url : ajaxurl,
             type: 'POST',
             data: {
                 action: 'pdf_builder_wizard_step',
