@@ -591,11 +591,11 @@ function pdf_builder_save_settings_ajax() {
         case 'systeme':
             // Sauvegarder les paramètres système (performance + maintenance + sauvegarde)
             $settings = array(
-                'cache_enabled' => isset($_POST['systeme_cache_enabled']) ? '1' : '0',
+                'cache_enabled' => $_POST['systeme_cache_enabled'] ?? '0',
                 'cache_expiry' => intval($_POST['systeme_cache_expiry'] ?? 24),
                 'max_cache_size' => intval($_POST['systeme_max_cache_size'] ?? 100),
-                'auto_maintenance' => isset($_POST['systeme_auto_maintenance']) ? '1' : '0',
-                'auto_backup' => isset($_POST['systeme_auto_backup']) ? '1' : '0',
+                'auto_maintenance' => $_POST['systeme_auto_maintenance'] ?? '0',
+                'auto_backup' => $_POST['systeme_auto_backup'] ?? '0',
                 'backup_retention' => intval($_POST['systeme_backup_retention'] ?? 30),
             );
 
