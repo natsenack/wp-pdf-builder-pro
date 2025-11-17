@@ -195,6 +195,9 @@ function pdf_builder_register_ajax_handlers() {
     // Preview images
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
+
+    // Settings save
+    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax');
 }
 
 /**
@@ -383,6 +386,203 @@ function pdf_builder_handle_pdf_downloads()
                 pdf_builder_load_bootstrap();
             }
         }
+    }
+}
+
+/**
+ * Handler AJAX pour sauvegarder les paramètres
+ */
+function pdf_builder_save_settings_ajax() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    $current_tab = sanitize_text_field($_POST['current_tab']);
+    $saved_count = 0;
+
+    // Traiter selon l'onglet
+    switch ($current_tab) {
+        case 'performance':
+            if (isset($_POST['pdf_builder_performance_nonce']) &&
+                wp_verify_nonce($_POST['pdf_builder_performance_nonce'], 'pdf_builder_performance')) {
+                // Sauvegarder les paramètres performance
+                $settings = array(
+                    'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
+                    'cache_expiry' => intval($_POST['cache_expiry']),
+                    'compression_enabled' => isset($_POST['compression_enabled']) ? '1' : '0',
+                    'lazy_loading' => isset($_POST['lazy_loading']) ? '1' : '0',
+                    'preload_resources' => isset($_POST['preload_resources']) ? '1' : '0',
+                );
+
+                foreach ($settings as $key => $value) {
+                    update_option('pdf_builder_' . $key, $value);
+                }
+                $saved_count++;
+            }
+            break;
+
+        case 'maintenance':
+            if (isset($_POST['pdf_builder_maintenance_nonce']) &&
+                wp_verify_nonce($_POST['pdf_builder_maintenance_nonce'], 'pdf_builder_maintenance')) {
+                // Sauvegarder les paramètres maintenance
+                $settings = array(
+                    'auto_cleanup' => isset($_POST['auto_cleanup']) ? '1' : '0',
+                    'cleanup_interval' => sanitize_text_field($_POST['cleanup_interval']),
+                    'log_retention' => intval($_POST['log_retention']),
+                    'backup_enabled' => isset($_POST['backup_enabled']) ? '1' : '0',
+                );
+
+                foreach ($settings as $key => $value) {
+                    update_option('pdf_builder_' . $key, $value);
+                }
+                $saved_count++;
+            }
+            break;
+
+        case 'sauvegarde':
+            if (isset($_POST['pdf_builder_backup_nonce']) &&
+                wp_verify_nonce($_POST['pdf_builder_backup_nonce'], 'pdf_builder_backup')) {
+                // Sauvegarder les paramètres sauvegarde
+                $settings = array(
+                    'auto_backup' => isset($_POST['auto_backup']) ? '1' : '0',
+                    'backup_frequency' => sanitize_text_field($_POST['backup_frequency']),
+                    'backup_retention' => intval($_POST['backup_retention']),
+                    'cloud_backup' => isset($_POST['cloud_backup']) ? '1' : '0',
+                );
+
+                foreach ($settings as $key => $value) {
+                    update_option('pdf_builder_' . $key, $value);
+                }
+                $saved_count++;
+            }
+            break;
+
+        case 'acces':
+            if (isset($_POST['pdf_builder_roles_nonce']) &&
+                wp_verify_nonce($_POST['pdf_builder_roles_nonce'], 'pdf_builder_roles')) {
+                // Sauvegarder les rôles
+                $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) ? $_POST['pdf_builder_allowed_roles'] : array();
+                update_option('pdf_builder_allowed_roles', $allowed_roles);
+                $saved_count++;
+            }
+            break;
+
+        case 'securite':
+            if (isset($_POST['pdf_builder_securite_nonce']) &&
+                wp_verify_nonce($_POST['pdf_builder_securite_nonce'], 'pdf_builder_securite')) {
+                // Sauvegarder les paramètres sécurité
+                $settings = array(
+                    'ip_filtering' => isset($_POST['ip_filtering']) ? '1' : '0',
+                    'rate_limiting' => isset($_POST['rate_limiting']) ? '1' : '0',
+                    'encryption' => isset($_POST['encryption']) ? '1' : '0',
+                    'audit_log' => isset($_POST['audit_log']) ? '1' : '0',
+                );
+
+                foreach ($settings as $key => $value) {
+                    update_option('pdf_builder_' . $key, $value);
+                }
+                $saved_count++;
+            }
+
+            if (isset($_POST['pdf_builder_rgpd_nonce']) &&
+                wp_verify_nonce($_POST['pdf_builder_rgpd_nonce'], 'pdf_builder_rgpd')) {
+                // Sauvegarder les paramètres RGPD
+                $settings = array(
+                    'gdpr_enabled' => isset($_POST['gdpr_enabled']) ? '1' : '0',
+                    'gdpr_data_retention' => intval($_POST['gdpr_data_retention']),
+                    'gdpr_export_enabled' => isset($_POST['gdpr_export_enabled']) ? '1' : '0',
+                    'gdpr_consent_required' => isset($_POST['gdpr_consent_required']) ? '1' : '0',
+                );
+
+                foreach ($settings as $key => $value) {
+                    update_option('pdf_builder_' . $key, $value);
+                }
+                $saved_count++;
+            }
+            break;
+
+        case 'pdf':
+            if (isset($_POST['pdf_builder_pdf_nonce']) &&
+                wp_verify_nonce($_POST['pdf_builder_pdf_nonce'], 'pdf_builder_pdf')) {
+                // Sauvegarder les paramètres PDF
+                $settings = array(
+                    'pdf_quality' => sanitize_text_field($_POST['pdf_quality']),
+                    'pdf_format' => sanitize_text_field($_POST['pdf_format']),
+                    'pdf_compression' => isset($_POST['pdf_compression']) ? '1' : '0',
+                    'pdf_metadata' => isset($_POST['pdf_metadata']) ? '1' : '0',
+                );
+
+                foreach ($settings as $key => $value) {
+                    update_option('pdf_builder_' . $key, $value);
+                }
+                $saved_count++;
+            }
+            break;
+
+        case 'contenu':
+            if (isset($_POST['pdf_builder_canvas_nonce']) &&
+                wp_verify_nonce($_POST['pdf_builder_canvas_nonce'], 'pdf_builder_canvas')) {
+                // Sauvegarder les paramètres canvas
+                $settings = array(
+                    'canvas_max_size' => intval($_POST['canvas_max_size']),
+                    'canvas_dpi' => intval($_POST['canvas_dpi']),
+                    'canvas_format' => sanitize_text_field($_POST['canvas_format']),
+                    'canvas_quality' => intval($_POST['canvas_quality']),
+                );
+
+                foreach ($settings as $key => $value) {
+                    update_option('pdf_builder_' . $key, $value);
+                }
+                $saved_count++;
+            }
+
+            if (isset($_POST['pdf_builder_templates_nonce']) &&
+                wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_templates')) {
+                // Sauvegarder les paramètres templates
+                $settings = array(
+                    'template_library' => isset($_POST['template_library']) ? '1' : '0',
+                    'custom_templates' => isset($_POST['custom_templates']) ? '1' : '0',
+                    'template_sharing' => isset($_POST['template_sharing']) ? '1' : '0',
+                );
+
+                foreach ($settings as $key => $value) {
+                    update_option('pdf_builder_' . $key, $value);
+                }
+                $saved_count++;
+            }
+            break;
+
+        case 'developpeur':
+            if (isset($_POST['pdf_builder_developer_nonce']) &&
+                wp_verify_nonce($_POST['pdf_builder_developer_nonce'], 'pdf_builder_developer')) {
+                // Sauvegarder les paramètres développeur
+                $settings = array(
+                    'debug_mode' => isset($_POST['debug_mode']) ? '1' : '0',
+                    'dev_tools' => isset($_POST['dev_tools']) ? '1' : '0',
+                    'api_logging' => isset($_POST['api_logging']) ? '1' : '0',
+                    'performance_monitoring' => isset($_POST['performance_monitoring']) ? '1' : '0',
+                );
+
+                foreach ($settings as $key => $value) {
+                    update_option('pdf_builder_' . $key, $value);
+                }
+                $saved_count++;
+            }
+            break;
+    }
+
+    if ($saved_count > 0) {
+        wp_send_json_success('Paramètres sauvegardés avec succès');
+    } else {
+        wp_send_json_error('Aucun paramètre sauvegardé');
     }
 }
 

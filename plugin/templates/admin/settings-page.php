@@ -9,6 +9,12 @@
         exit('Direct access forbidden');
     }
 
+    // Localize AJAX URL for JavaScript
+    wp_localize_script('jquery', 'pdf_builder_ajax', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_save_settings')
+    ));
+
     // Function to send AJAX response
     function send_ajax_response($success, $message = '', $data = [])
     {
@@ -2248,86 +2254,72 @@
                     floatingSaveBtn.querySelector('.save-text').textContent = 'Sauvegarde...';
                     floatingSaveBtn.querySelector('.save-icon').textContent = '⏳';
 
-                    // Créer un feedback visuel
-                    let feedbackDiv = floatingSaveBtn.querySelector('.save-feedback');
-                    if (!feedbackDiv) {
-                        feedbackDiv = document.createElement('div');
-                        feedbackDiv.className = 'save-feedback';
-                        floatingSaveBtn.appendChild(feedbackDiv);
-                    }
-
-                    // Compter les formulaires soumis
-                    let submittedForms = 0;
-                    const totalForms = forms.length;
+                    // Collecter toutes les données des formulaires
+                    const formData = new FormData();
+                    formData.append('action', 'pdf_builder_save_settings');
+                    formData.append('nonce', pdf_builder_ajax.nonce);
+                    formData.append('current_tab', activeTabId);
 
                     forms.forEach(form => {
-                        // Créer un élément temporaire pour soumettre le formulaire
-                        const tempForm = document.createElement('form');
-                        tempForm.method = form.method || 'post';
-                        tempForm.action = form.action || '';
-                        tempForm.style.display = 'none';
-                        tempForm.target = '_blank'; // Ouvrir dans un nouvel onglet pour éviter de quitter la page
-
-                        // Copier tous les champs du formulaire original
-                        const inputs = form.querySelectorAll('input, select, textarea, button');
+                        // Copier tous les champs du formulaire
+                        const inputs = form.querySelectorAll('input, select, textarea');
                         inputs.forEach(input => {
-                            if (input.type !== 'submit' && input.type !== 'button') { // Ne pas copier les boutons
-                                const clone = input.cloneNode(true);
-                                tempForm.appendChild(clone);
+                            if (input.name && input.type !== 'submit' && input.type !== 'button') {
+                                if (input.type === 'checkbox') {
+                                    formData.append(input.name, input.checked ? '1' : '0');
+                                } else if (input.type === 'radio') {
+                                    if (input.checked) {
+                                        formData.append(input.name, input.value);
+                                    }
+                                } else {
+                                    formData.append(input.name, input.value);
+                                }
                             }
                         });
+                    });
 
-                        // Ajouter au body et soumettre
-                        document.body.appendChild(tempForm);
+                    // Envoyer via AJAX
+                    fetch(pdf_builder_ajax.ajax_url, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        floatingSaveBtn.classList.remove('saving');
 
-                        // Utiliser une requête AJAX au lieu de soumettre directement
-                        const formData = new FormData(tempForm);
+                        if (data.success) {
+                            floatingSaveBtn.classList.add('saved');
+                            floatingSaveBtn.querySelector('.save-text').textContent = 'Enregistré !';
+                            floatingSaveBtn.querySelector('.save-icon').textContent = '✅';
+                            showSaveFeedback('Paramètres enregistrés avec succès !', 'success');
+                        } else {
+                            floatingSaveBtn.querySelector('.save-text').textContent = 'Erreur';
+                            floatingSaveBtn.querySelector('.save-icon').textContent = '❌';
+                            showSaveFeedback(data.data || 'Erreur lors de la sauvegarde', 'error');
+                        }
 
-                        fetch(form.action || window.location.href, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => {
-                            submittedForms++;
-                            document.body.removeChild(tempForm);
+                        // Revenir à l'état normal après 3 secondes
+                        setTimeout(function() {
+                            floatingSaveBtn.classList.remove('saved');
+                            floatingSaveBtn.querySelector('.save-text').textContent = 'Enregistrer';
+                            floatingSaveBtn.querySelector('.save-icon').textContent = '💾';
+                        }, 3000);
+                    })
+                    .catch(error => {
+                        console.error('Erreur AJAX:', error);
+                        floatingSaveBtn.classList.remove('saving');
+                        floatingSaveBtn.querySelector('.save-text').textContent = 'Erreur';
+                        floatingSaveBtn.querySelector('.save-icon').textContent = '❌';
+                        showSaveFeedback('Erreur de connexion', 'error');
 
-                            // Quand tous les formulaires sont soumis
-                            if (submittedForms === totalForms) {
-                                floatingSaveBtn.classList.remove('saving');
-                                floatingSaveBtn.classList.add('saved');
-                                floatingSaveBtn.querySelector('.save-text').textContent = 'Enregistré !';
-                                floatingSaveBtn.querySelector('.save-icon').textContent = '✅';
-
-                                showSaveFeedback('Paramètres enregistrés avec succès !', 'success');
-
-                                // Revenir à l'état normal après 3 secondes
-                                setTimeout(function() {
-                                    floatingSaveBtn.classList.remove('saved');
-                                    floatingSaveBtn.querySelector('.save-text').textContent = 'Enregistrer';
-                                    floatingSaveBtn.querySelector('.save-icon').textContent = '💾';
-                                }, 3000);
-                            }
-                        })
-                        .catch(error => {
-                            submittedForms++;
-                            document.body.removeChild(tempForm);
-
-                            console.error('Erreur lors de la sauvegarde:', error);
-
-                            if (submittedForms === totalForms) {
-                                floatingSaveBtn.classList.remove('saving');
-                                floatingSaveBtn.querySelector('.save-text').textContent = 'Erreur';
-                                floatingSaveBtn.querySelector('.save-icon').textContent = '❌';
-
-                                showSaveFeedback('Erreur lors de la sauvegarde', 'error');
-
-                                // Revenir à l'état normal après 3 secondes
-                                setTimeout(function() {
-                                    floatingSaveBtn.querySelector('.save-text').textContent = 'Enregistrer';
-                                    floatingSaveBtn.querySelector('.save-icon').textContent = '💾';
-                                }, 3000);
-                            }
-                        });
+                        // Revenir à l'état normal après 3 secondes
+                        setTimeout(function() {
+                            floatingSaveBtn.querySelector('.save-text').textContent = 'Enregistrer';
+                            floatingSaveBtn.querySelector('.save-icon').textContent = '💾';
+                        }, 3000);
                     });
                 });
             }
