@@ -2906,7 +2906,7 @@
                         </div>
                         <p class="description">Génère une clé de test aléatoire pour valider le système de licence</p>
                         <span id="license_key_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
-                        <input type="hidden" id="generate_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_generate_license_key'); ?>" />
+                        <input type="hidden" id="generate_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_generate_test_license_key'); ?>" />
                         <input type="hidden" id="delete_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_delete_test_license_key'); ?>" />
                         <input type="hidden" id="validate_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_validate_test_license_key'); ?>" />
                     </td>

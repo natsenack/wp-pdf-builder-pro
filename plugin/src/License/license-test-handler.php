@@ -143,7 +143,7 @@ class LicenseTestHandler
         error_log('LICENSE TEST: handleGenerateTestKey called');
 
         // Vérifier la nonce
-        if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_generate_license_key')) {
+        if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_generate_test_license_key')) {
             error_log('LICENSE TEST: Generate key - Nonce verification failed');
             wp_send_json_error([
                 'message' => 'Erreur de sécurité: nonce invalide'
