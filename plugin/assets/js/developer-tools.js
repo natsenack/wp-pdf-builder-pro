@@ -59,13 +59,29 @@
                 });
             }
 
+            // Use the correct AJAX variable based on what's available
+            var ajaxData = {
+                action: 'pdf_builder_toggle_license_test_mode'
+            };
+
+            var ajaxUrl, ajaxNonce;
+            if (typeof pdfBuilderAjax !== 'undefined') {
+                ajaxUrl = pdfBuilderAjax.ajaxurl;
+                ajaxNonce = pdfBuilderAjax.nonce;
+                ajaxData.nonce = ajaxNonce;
+            } else if (typeof pdf_builder_ajax !== 'undefined') {
+                ajaxUrl = pdf_builder_ajax.ajax_url;
+                ajaxData.security = pdf_builder_ajax.nonce;
+            } else {
+                console.error('LICENSE TEST JS: No AJAX configuration found');
+                this.showError('Configuration AJAX manquante');
+                return;
+            }
+
             $.ajax({
-                url: pdfBuilderAjax.ajaxurl,
+                url: ajaxUrl,
                 type: 'POST',
-                data: {
-                    action: 'pdf_builder_toggle_license_test_mode',
-                    nonce: pdfBuilderAjax.nonce
-                },
+                data: ajaxData,
                 success: (response) => {
                     console.log('LICENSE TEST JS: Success response:', response);
                     if (response.success) {
@@ -271,10 +287,12 @@
 
     // Initialize when document is ready
     $(document).ready(() => {
-        // Only initialize if we're on a developer page or if pdfBuilderAjax is available
+        // Only initialize if we're on a developer page or if AJAX variables are available
         if (typeof pdfBuilderAjax !== 'undefined' ||
+            typeof pdf_builder_ajax !== 'undefined' ||
             window.location.href.indexOf('pdf-builder-developer') !== -1 ||
-            window.location.href.indexOf('developer') !== -1) {
+            window.location.href.indexOf('developer') !== -1 ||
+            window.location.href.indexOf('pdf-builder-settings') !== -1) {
             new PDFBuilderDeveloper();
         }
     });
