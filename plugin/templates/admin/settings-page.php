@@ -929,10 +929,10 @@
 
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><label for="cache_enabled">Cache activé</label></th>
+                            <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
+                                    <input type="checkbox" id="general_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Améliore les performances en mettant en cache les données</p>
@@ -1088,11 +1088,11 @@
                     }
 
                     // Vérifier l'état initial du cache
-                    var cacheEnabled = $('#cache_enabled').is(':checked');
+                    var cacheEnabled = $('#general_cache_enabled').is(':checked');
                     toggleCacheElements(cacheEnabled);
 
                     // Gérer le changement d'état du cache
-                    $('#cache_enabled').on('change', function() {
+                    $('#general_cache_enabled').on('change', function() {
                         var isEnabled = $(this).is(':checked');
                         toggleCacheElements(isEnabled);
                     });
@@ -1105,7 +1105,7 @@
                 <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">🏢 Informations Entreprise</h3>
 
                 <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
+                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_company_nonce'); ?>
                     <input type="hidden" name="current_tab" value="general">
                     <!-- Le bouton submit est supprimé car on utilise le système AJAX global -->
 
@@ -1322,14 +1322,14 @@
                 <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">📄 Configuration PDF</h3>
 
                 <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
+                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_pdf_nonce'); ?>
                     <input type="hidden" name="current_tab" value="general">
 
                   <table class="form-table">
                     <tr>
-                        <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
+                        <th scope="row"><label for="general_pdf_quality">Qualité PDF</label></th>
                         <td>
-                            <select id="pdf_quality" name="pdf_quality">
+                            <select id="general_pdf_quality" name="pdf_quality">
                                 <option value="low" <?php selected($pdf_quality, 'low'); ?>>Faible (fichiers plus petits)</option>
                                 <option value="medium" <?php selected($pdf_quality, 'medium'); ?>>Moyen</option>
                                 <option value="high" <?php selected($pdf_quality, 'high'); ?>>Élevée (meilleure qualité)</option>
@@ -2111,15 +2111,15 @@
                 <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">🚀 Performance</h3>
 
                 <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_performance', 'pdf_builder_performance_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="performance">
+                    <?php wp_nonce_field('pdf_builder_performance', 'pdf_builder_systeme_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="systeme">
 
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><label for="cache_enabled">Cache activé</label></th>
+                            <th scope="row"><label for="systeme_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', true)); ?>>
+                                    <input type="checkbox" id="systeme_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', true)); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Active le système de cache pour améliorer les performances</p>
