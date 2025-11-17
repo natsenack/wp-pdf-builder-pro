@@ -642,34 +642,20 @@ class PDF_Builder_GDPR_Manager {
      * AJAX - Obtenir le statut des consentements
      */
     public function ajax_get_consent_status() {
-        try {
-            check_ajax_referer('pdf_builder_gdpr', 'nonce');
+        check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
-            $user_id = get_current_user_id();
-            error_log('GDPR Debug: User ID = ' . $user_id);
-            error_log('GDPR Debug: GDPR options = ' . json_encode($this->gdpr_options));
+        $user_id = get_current_user_id();
+        $consents = [];
 
-            $consents = [];
-
-            foreach (['analytics', 'templates', 'marketing'] as $type) {
-                $status = $this->get_user_consent_status($user_id, $type);
-                error_log('GDPR Debug: Consent ' . $type . ' = ' . ($status ? 'true' : 'false'));
-                $consents[$type] = [
-                    'granted' => $status,
-                    'timestamp' => null,
-                    'encrypted' => $this->gdpr_options['encryption_enabled']
-                ];
-            }
-
-            error_log('GDPR Debug: Sending success response');
-            // Test avec wp_die au lieu de wp_send_json_success
-            wp_die(json_encode(['success' => true, 'data' => ['consents' => $consents]]), '', ['response' => 200]);
-            error_log('GDPR Debug: Response sent, should not reach here');
-        } catch (Exception $e) {
-            error_log('GDPR Debug: Exception caught: ' . $e->getMessage());
-            error_log('GDPR Debug: Stack trace: ' . $e->getTraceAsString());
-            wp_send_json_error('Exception: ' . $e->getMessage());
+        foreach (['analytics', 'templates', 'marketing'] as $type) {
+            $consents[$type] = [
+                'granted' => $this->get_user_consent_status($user_id, $type),
+                'timestamp' => null,
+                'encrypted' => $this->gdpr_options['encryption_enabled']
+            ];
         }
+
+        wp_die(json_encode(['success' => true, 'data' => ['consents' => $consents]]), '', ['response' => 200]);
     }
 
     /**

@@ -275,22 +275,6 @@
         }
 
         loadConsentStatus() {
-            console.log('=== DEBUG: Testing AJAX actions ===');
-            $.ajax({
-                url: pdfBuilderGDPR.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'pdf_builder_debug_ajax',
-                    nonce: pdfBuilderGDPR.nonce
-                },
-                success: (response) => {
-                    console.log('DEBUG AJAX Response:', response);
-                },
-                error: (xhr, status, error) => {
-                    console.log('DEBUG AJAX Error:', xhr.status, error);
-                }
-            });
-            
             $.ajax({
                 url: pdfBuilderGDPR.ajax_url,
                 type: 'POST',

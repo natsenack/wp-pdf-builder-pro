@@ -223,36 +223,6 @@ function pdf_builder_handle_admin_post_ajax() {
 }
 
 /**
- * Debug AJAX - vérifier si les actions existent
- */
-add_action('wp_ajax_pdf_builder_debug_ajax', 'pdf_builder_debug_ajax_handler');
-function pdf_builder_debug_ajax_handler() {
-    global $wp_filter;
-    
-    $actions_to_check = [
-        'wp_ajax_pdf_builder_get_consent_status',
-        'wp_ajax_pdf_builder_export_user_data', 
-        'wp_ajax_pdf_builder_delete_user_data'
-    ];
-    
-    $result = [];
-    foreach ($actions_to_check as $action) {
-        $result[$action] = isset($wp_filter[$action]) ? 'REGISTERED' : 'NOT REGISTERED';
-        if (isset($wp_filter[$action])) {
-            $count = 0;
-            if (isset($wp_filter[$action]->callbacks)) {
-                foreach ($wp_filter[$action]->callbacks as $priority => $handlers) {
-                    $count += count($handlers);
-                }
-            }
-            $result[$action] .= " ($count handlers)";
-        }
-    }
-    
-    wp_send_json_success($result);
-}
-
-/**
  * Initialiser le plugin
  */
 function pdf_builder_init()
