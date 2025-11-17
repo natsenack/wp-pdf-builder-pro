@@ -642,20 +642,32 @@ class PDF_Builder_GDPR_Manager {
      * AJAX - Obtenir le statut des consentements
      */
     public function ajax_get_consent_status() {
-        check_ajax_referer('pdf_builder_gdpr', 'nonce');
+        try {
+            check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
-        $user_id = get_current_user_id();
-        $consents = [];
+            $user_id = get_current_user_id();
+            error_log('GDPR Debug: User ID = ' . $user_id);
+            error_log('GDPR Debug: GDPR options = ' . json_encode($this->gdpr_options));
 
-        foreach (['analytics', 'templates', 'marketing'] as $type) {
-            $consents[$type] = [
-                'granted' => $this->get_user_consent_status($user_id, $type),
-                'timestamp' => null,
-                'encrypted' => $this->gdpr_options['encryption_enabled']
-            ];
+            $consents = [];
+
+            foreach (['analytics', 'templates', 'marketing'] as $type) {
+                $status = $this->get_user_consent_status($user_id, $type);
+                error_log('GDPR Debug: Consent ' . $type . ' = ' . ($status ? 'true' : 'false'));
+                $consents[$type] = [
+                    'granted' => $status,
+                    'timestamp' => null,
+                    'encrypted' => $this->gdpr_options['encryption_enabled']
+                ];
+            }
+
+            error_log('GDPR Debug: Sending success response');
+            wp_send_json_success(['consents' => $consents]);
+        } catch (Exception $e) {
+            error_log('GDPR Debug: Exception caught: ' . $e->getMessage());
+            error_log('GDPR Debug: Stack trace: ' . $e->getTraceAsString());
+            wp_send_json_error('Exception: ' . $e->getMessage());
         }
-
-        wp_send_json_success(['consents' => $consents]);
     }
 
     /**
