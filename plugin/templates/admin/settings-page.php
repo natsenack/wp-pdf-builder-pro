@@ -757,7 +757,7 @@
             <span class="tab-icon">🎨</span>
             <span class="tab-text">Contenu & Design</span>
         </a>
-        <a href="#roles" class="nav-tab" data-tab="roles">
+        <a href="#developpeur" class="nav-tab" data-tab="developpeur">
             <span class="tab-icon">👨‍💻</span>
             <span class="tab-text">Développeur</span>
         </a>
@@ -2662,7 +2662,7 @@
                 </form>
             </div>
         </div>
-        <div id="roles" class="tab-content hidden-tab">
+        <div id="developpeur" class="tab-content hidden-tab">
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
@@ -3161,7 +3161,7 @@
                 console.log('Toggle changed:', $(this).is(':checked'));
 
                 // Vérifier si l'onglet développeur est visible
-                var $tab = $('#roles');
+                var $tab = $('#developpeur');
                 var tabVisible = $tab.is(':visible') && !$tab.hasClass('hidden-tab');
                 console.log('Tab visible:', tabVisible, 'has hidden-tab:', $tab.hasClass('hidden-tab'));
 
@@ -3199,7 +3199,7 @@
             });
 
             // État initial - seulement si l'onglet est visible
-            var $tab = $('#roles');
+            var $tab = $('#developpeur');
             var tabVisible = $tab.is(':visible') && !$tab.hasClass('hidden-tab');
             console.log('Initial tab visible:', tabVisible);
 
@@ -3274,7 +3274,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Gestion des toggles dans l'onglet développeur
-            const toggles = document.querySelectorAll('#roles .toggle-switch input[type="checkbox"]');
+            const toggles = document.querySelectorAll('#developpeur .toggle-switch input[type="checkbox"]');
             toggles.forEach(function(toggle) {
                 toggle.addEventListener('change', function() {
                     const label = this.parentElement.nextElementSibling;
