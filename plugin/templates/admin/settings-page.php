@@ -1001,6 +1001,9 @@
                                         value="<?php echo esc_attr($settings['company_phone_manual'] ?? ''); ?>"
                                         placeholder="+33 1 23 45 67 89" />
                                     <p class="description">Téléphone de l'entreprise</p>
+                                    <?php if (defined('WP_DEBUG') && WP_DEBUG): ?>
+                                    <p class="description" style="color: red;">DEBUG: Valeur PHP = "<?php echo esc_attr($settings['company_phone_manual'] ?? 'NOT_SET'); ?>"</p>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <tr>
@@ -3172,8 +3175,16 @@
                 setTimeout(updateFloatingButtonVisibility, 100);
             });
 
-            // Vérifier l'onglet actif au chargement
-            updateFloatingButtonVisibility();
+                // Vérifier l'onglet actif au chargement
+                updateFloatingButtonVisibility();
+
+                // DEBUG: Vérifier les valeurs des champs entreprise après chargement
+                console.log('🔍 [DEBUG PAGE LOAD] Vérification des valeurs dans les champs HTML:');
+                console.log('   Téléphone:', $('#company_phone_manual').val());
+                console.log('   SIRET:', $('#company_siret').val());
+                console.log('   TVA:', $('#company_vat').val());
+                console.log('   RCS:', $('#company_rcs').val());
+                console.log('   Capital:', $('#company_capital').val());
 
             // Gestionnaire pour le bouton flottant
             $('.floating-save-btn').on('click', function() {
