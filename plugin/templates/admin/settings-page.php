@@ -755,74 +755,78 @@
     </div>
 
         <div id="general" class="tab-content active">
-            <form method="post" id="general-form" action="">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
-                <input type="hidden" name="submit" value="1">
+            <h2>🏠 Paramètres Généraux</h2>
 
-                <h2>Paramètres Généraux</h2>
-                <p style="color: #666;">Paramètres de base pour la génération PDF. Pour le cache et la sécurité, voir les onglets Performance et Sécurité.</p>
-                <h3 class="section-title">📋 Cache</h3>
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="cache_enabled">Cache activé</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked($settings['cache_enabled'] ?? false); ?> />
-                                    <span class="toggle-slider"></span>
+            <!-- Section Cache et Performance -->
+            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">📋 Cache & Performance</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="general">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="cache_enabled">Cache activé</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked($settings['cache_enabled'] ?? false); ?>>
+                                    <span class="slider round"></span>
                                 </label>
-                                <span class="toggle-label">Activer le cache</span>
-                            </div>
-                            <div class="toggle-description">Améliore les performances en mettant en cache les données</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
-                        <td>
-                            <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval($settings['cache_ttl'] ?? 3600); ?>" min="0" max="86400" />
-                            <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Test du système</th>
-                        <td>
-                            <button type="button" id="test-cache-btn" class="button button-secondary" style="background-color: #6c757d; border-color: #6c757d; color: white; font-weight: bold; padding: 10px 15px;">
-                                🧪 Tester l'intégration du cache
-                            </button>
-                            <span id="cache-test-results" style="margin-left: 10px;"></span>
-                            <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; color: #155724;"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Vider le cache</th>
-                        <td>
-                            <button type="button" id="clear-cache-general-btn" class="button button-secondary" style="background-color: #dc3232; border-color: #dc3232; color: white; font-weight: bold; padding: 10px 15px;">
-                                🗑️ Vider tout le cache
-                            </button>
-                            <span id="clear-cache-general-results" style="margin-left: 10px;"></span>
-                            <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
-                        </td>
-                    </tr>
-                </table>
+                                <p class="description">Améliore les performances en mettant en cache les données</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
+                            <td>
+                                <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval($settings['cache_ttl'] ?? 3600); ?>" min="0" max="86400" />
+                                <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Test du système</th>
+                            <td>
+                                <button type="button" id="test-cache-btn" class="button button-secondary" style="background-color: #6c757d; border-color: #6c757d; color: white; font-weight: bold; padding: 10px 15px;">
+                                    🧪 Tester l'intégration du cache
+                                </button>
+                                <span id="cache-test-results" style="margin-left: 10px;"></span>
+                                <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; color: #155724;"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Vider le cache</th>
+                            <td>
+                                <button type="button" id="clear-cache-general-btn" class="button button-secondary" style="background-color: #dc3232; border-color: #dc3232; color: white; font-weight: bold; padding: 10px 15px;">
+                                    🗑️ Vider tout le cache
+                                </button>
+                                <span id="clear-cache-general-results" style="margin-left: 10px;"></span>
+                                <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
 
-                <h3 class="section-title">🏢 Informations Entreprise</h3>
+            <!-- Section Informations Entreprise -->
+            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">🏢 Informations Entreprise</h3>
 
-                <div style="padding: 20px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; margin-bottom: 20px;">
-                <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
-                <div style="background: white; padding: 15px; -webkit-border-radius: 6px; -moz-border-radius: 6px; -ms-border-radius: 6px; -o-border-radius: 6px; border-radius: 6px; margin-bottom: 20px;">
-                    <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
-                    <p style="margin: 5px 0;"><strong>Adresse complète :</strong> <?php
-                    $address = get_option('woocommerce_store_address', '');
-                    $city = get_option('woocommerce_store_city', '');
-                    $postcode = get_option('woocommerce_store_postcode', '');
-                    $country = get_option('woocommerce_default_country', '');
-                    $full_address = array_filter([$address, $city, $postcode, $country]);
-                    echo esc_html(implode(', ', $full_address) ?: '<em>Non défini</em>');
-                    ?></p>
-                    <p style="margin: 5px 0;"><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
-                    <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
-                    ℹ️ Ces informations sont automatiquement récupérées depuis les paramètres WooCommerce (WooCommerce > Réglages > Général).
-                    </p>
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                        <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
+                        <p style="margin: 5px 0;"><strong>Adresse complète :</strong> <?php
+                        $address = get_option('woocommerce_store_address', '');
+                        $city = get_option('woocommerce_store_city', '');
+                        $postcode = get_option('woocommerce_store_postcode', '');
+                        $country = get_option('woocommerce_default_country', '');
+                        $full_address = array_filter([$address, $city, $postcode, $country]);
+                        echo esc_html(implode(', ', $full_address) ?: '<em>Non défini</em>');
+                        ?></p>
+                        <p style="margin: 5px 0;"><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
+                        <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                        ℹ️ Ces informations sont automatiquement récupérées depuis les paramètres WooCommerce (WooCommerce > Réglages > Général).
+                        </p>
                     </div>
 
                     <h4 style="color: #dc3545;">📝 Informations à saisir manuellement</h4>
@@ -830,7 +834,7 @@
                     Ces informations ne sont pas disponibles dans WooCommerce et doivent être saisies manuellement :
                     </p>
 
-                    <table class="form-table" style="background: white; padding: 15px; -webkit-border-radius: 6px; -moz-border-radius: 6px; -ms-border-radius: 6px; -o-border-radius: 6px; border-radius: 6px;">
+                    <table class="form-table">
                         <tr>
                             <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
                             <td>
@@ -878,8 +882,12 @@
                         </tr>
                     </table>
                 </div>
+            </div>
 
-                <h3 class="section-title">📄 Paramètres PDF</h3>
+            <!-- Section Paramètres PDF -->
+            <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">📄 Configuration PDF</h3>
+
                 <table class="form-table">
                     <tr>
                         <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
@@ -912,9 +920,8 @@
                         </td>
                     </tr>
                 </table>
-
-            </form>
-</div>
+            </div>
+        </div>
 
 
         <div id="licence" class="tab-content hidden-tab">
