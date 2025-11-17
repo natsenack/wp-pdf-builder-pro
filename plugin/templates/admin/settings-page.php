@@ -2751,15 +2751,6 @@
             border-radius: 50%;
         }
 
-        /* Style pour la section développeur visible */
-        #developer-info-section.developer-visible {
-            display: block !important;
-        }
-
-        #developer-info-section:not(.developer-visible) {
-            display: none !important;
-        }
-
         /* Styles pour les onglets */
         .nav-tab-wrapper {
             border-bottom: 1px solid #ccc;
@@ -3130,9 +3121,12 @@
                 var $devSection = $('#developer-info-section');
 
                 if ($('#developer_enabled').is(':checked')) {
-                    $devSection.addClass('developer-visible');
+                    // Forcer l'affichage avec style inline
+                    $devSection[0].style.display = 'block';
+                    $devSection[0].style.visibility = 'visible';
+                    $devSection[0].style.opacity = '1';
                 } else {
-                    $devSection.removeClass('developer-visible');
+                    $devSection[0].style.display = 'none';
                 }
             }
 
@@ -3149,30 +3143,15 @@
                 setTimeout(function() {
                     var $section = $('#developer-info-section');
                     if ($(this).is(':checked')) {
-                        console.log('=== DEBUG CSS SECTION DÉVELOPPEUR ===');
+                        console.log('=== DEBUG SECTION DÉVELOPPEUR ===');
                         console.log('Display:', $section.css('display'));
                         console.log('Visibility:', $section.css('visibility'));
                         console.log('Opacity:', $section.css('opacity'));
-                        console.log('Position:', $section.css('position'));
-                        console.log('Z-index:', $section.css('z-index'));
                         console.log('Width:', $section.width(), 'Height:', $section.height());
-                        console.log('Offset:', $section.offset());
                         console.log('Is visible:', $section.is(':visible'));
-                        console.log('Has class developer-visible:', $section.hasClass('developer-visible'));
-
-                        // Vérifier les parents
-                        var $parents = $section.parents();
-                        console.log('Parents avec overflow ou position:');
-                        $parents.each(function() {
-                            var $p = $(this);
-                            var overflow = $p.css('overflow');
-                            var position = $p.css('position');
-                            if (overflow !== 'visible' || position === 'relative' || position === 'absolute') {
-                                console.log('  ' + this.tagName + '.' + this.className + ' - overflow:' + overflow + ', position:' + position);
-                            }
-                        });
+                        console.log('Computed style display:', window.getComputedStyle($section[0]).display);
                     }
-                }, 100);
+                }, 200);
             });
         });
     </script>
@@ -3202,7 +3181,7 @@
                 </tr>
             </table>
 
-            <div id="developer-info-section" class="<?php echo get_option('pdf_builder_developer_enabled', false) ? 'developer-visible' : ''; ?>" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
                 <h4 style="margin-top: 0; color: #495057;">🔧 Informations développeur</h4>
                 <p style="margin-bottom: 15px; color: #666;">Informations système et de débogage disponibles uniquement en mode développeur.</p>
 
@@ -3461,68 +3440,6 @@
         });
     </script>
 
-    <!-- Bouton flottant d'enregistrement global -->
-    <div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: none;">
-        <button type="button" class="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
-            <span class="save-icon">💾</span>
-            <span class="save-text">Enregistrer</span>
-        </button>
-        <div class="floating-tooltip" style="position: absolute; bottom: 70px; right: 0; background: #333; color: white; padding: 8px 12px; border-radius: 6px; font-size: 14px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-            Enregistrer tous les paramètres de cet onglet
-        </div>
-    </div>
-
-    <style>
-        /* Styles pour le bouton flottant */
-        .floating-save-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-        }
-
-        .floating-save-btn.saving {
-            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
-            animation: pulse 1.5s infinite;
-        }
-
-        .floating-save-btn.saved {
-            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
-        }
-
-        .floating-save-btn.error {
-            background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
-        }
-
-        .floating-tooltip {
-            opacity: 0;
-        }
-
-        .floating-save-btn:hover + .floating-tooltip,
-        .floating-tooltip:hover {
-            opacity: 1;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* Responsive design pour mobile */
-        @media (max-width: 768px) {
-            #floating-save-button {
-                bottom: 15px;
-                right: 15px;
-            }
-
-            .floating-save-btn {
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-
-            .floating-tooltip {
-                display: none; /* Masquer le tooltip sur mobile */
-            }
-        }
     </style>
 
     <script>
@@ -3544,99 +3461,7 @@
             });
 
             // Vérifier l'onglet actif au chargement
-            updateFloatingButtonVisibility();            // Gestionnaire pour le bouton flottant
-            $('.floating-save-btn').on('click', function() {
-                const $btn = $(this);
-                const $icon = $btn.find('.save-icon');
-                const $text = $btn.find('.save-text');
-
-                // État de sauvegarde
-                $btn.removeClass('saved error').addClass('saving');
-                $icon.text('⏳');
-                $text.text('Sauvegarde...');
-
-                // Trouver tous les formulaires dans l'onglet actif
-                const activeTabContent = $('.tab-content:not(.hidden-tab)');
-                const forms = activeTabContent.find('form');
-
-                if (forms.length === 0) {
-                    // Pas de formulaires trouvés
-                    $btn.removeClass('saving').addClass('error');
-                    $icon.text('❌');
-                    $text.text('Erreur');
-                    setTimeout(() => {
-                        $btn.removeClass('error');
-                        $icon.text('💾');
-                        $text.text('Enregistrer');
-                    }, 3000);
-                    return;
-                }
-
-                // Collecter les données de tous les formulaires
-                const formData = new FormData();
-
-                forms.each(function() {
-                    const $form = $(this);
-                    const formDataTemp = new FormData(this);
-
-                    // Ajouter les données de ce formulaire
-                    for (let [key, value] of formDataTemp.entries()) {
-                        formData.append(key, value);
-                    }
-                });
-
-                // Ajouter l'onglet actuel
-                formData.append('current_tab', currentTab);
-                formData.append('action', 'pdf_builder_save_settings');
-                formData.append('nonce', pdf_builder_ajax.nonce);
-
-                // Envoyer via AJAX
-                $.ajax({
-                    url: pdf_builder_ajax.ajax_url,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        if (response.success) {
-                            // Succès
-                            $btn.removeClass('saving').addClass('saved');
-                            $icon.text('✅');
-                            $text.text('Enregistré !');
-
-                            // Revenir à l'état normal après 3 secondes
-                            setTimeout(() => {
-                                $btn.removeClass('saved');
-                                $icon.text('💾');
-                                $text.text('Enregistrer');
-                            }, 3000);
-                        } else {
-                            // Erreur
-                            $btn.removeClass('saving').addClass('error');
-                            $icon.text('❌');
-                            $text.text('Erreur');
-
-                            setTimeout(() => {
-                                $btn.removeClass('error');
-                                $icon.text('💾');
-                                $text.text('Enregistrer');
-                            }, 3000);
-                        }
-                    },
-                    error: function() {
-                        // Erreur AJAX
-                        $btn.removeClass('saving').addClass('error');
-                        $icon.text('❌');
-                        $text.text('Erreur');
-
-                        setTimeout(() => {
-                            $btn.removeClass('error');
-                            $icon.text('💾');
-                            $text.text('Enregistrer');
-                        }, 3000);
-                    }
-                });
-            });
+            updateFloatingButtonVisibility();
         });
     </script>
 
