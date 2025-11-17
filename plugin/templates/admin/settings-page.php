@@ -2826,7 +2826,7 @@
                     formData.append('action', 'pdf_builder_generate_test_license_key');
                     formData.append('security', '<?php echo wp_create_nonce('pdf_builder_generate_license_key'); ?>');
 
-                    fetch(ajaxurl, {
+                    fetch(pdf_builder_ajax.ajax_url, {
                         method: 'POST',
                         body: formData
                     })
@@ -2877,7 +2877,7 @@
                     formData.append('action', 'pdf_builder_delete_test_license_key');
                     formData.append('security', '<?php echo wp_create_nonce('pdf_builder_delete_test_license_key'); ?>');
 
-                    fetch(ajaxurl, {
+                    fetch(pdf_builder_ajax.ajax_url, {
                         method: 'POST',
                         body: formData
                     })
