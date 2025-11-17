@@ -5067,11 +5067,14 @@
             // Bouton "Supprimer une sauvegarde"
             $(document).on('click', '.delete-backup-btn', function() {
                 const filename = $(this).data('filename');
+                const filenameAttr = $(this).attr('data-filename');
                 const filenameRaw = $(this).closest('.backup-item').find('strong').text() || filename;
 
                 console.log('[PDF Builder JS] Bouton supprimer cliqué');
-                console.log('[PDF Builder JS] Filename:', filename);
+                console.log('[PDF Builder JS] Filename (data):', filename);
+                console.log('[PDF Builder JS] Filename (attr):', filenameAttr);
                 console.log('[PDF Builder JS] FilenameRaw:', filenameRaw);
+                console.log('[PDF Builder JS] Sont-ils égaux ?', filename === filenameAttr);
                 console.log('[PDF Builder JS] pdf_builder_ajax disponible:', typeof pdf_builder_ajax !== 'undefined');
 
                 if (!filename) {

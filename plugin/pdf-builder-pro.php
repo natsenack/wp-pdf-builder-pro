@@ -933,6 +933,9 @@ function pdf_builder_delete_backup_ajax() {
 
     $filename = sanitize_file_name($_POST['filename']);
 
+    error_log('[PDF Builder PHP] Suppression sauvegarde - Filename reçu: ' . $_POST['filename']);
+    error_log('[PDF Builder PHP] Suppression sauvegarde - Filename après sanitize: ' . $filename);
+
     if (empty($filename)) {
         wp_send_json_error('Nom de fichier manquant');
         return;
