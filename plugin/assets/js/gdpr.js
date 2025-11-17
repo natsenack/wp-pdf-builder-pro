@@ -283,9 +283,17 @@
                     nonce: pdfBuilderGDPR.nonce
                 },
                 success: (response) => {
+                    console.log('GDPR: Consent status loaded successfully', response);
                     if (response.success) {
                         this.updateConsentUI(response.data.consents);
                     }
+                },
+                error: (xhr, status, error) => {
+                    console.error('GDPR: Consent status loading failed', {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText
+                    });
                 }
             });
         }

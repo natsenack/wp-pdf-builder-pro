@@ -257,6 +257,11 @@ function pdf_builder_load_core()
         }
     }
 
+    // Charger le gestionnaire de test de licence
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php';
+    }
+
     // Charger les classes Core essentielles
     $core_classes = array(
         'PDF_Builder_Security_Validator.php',

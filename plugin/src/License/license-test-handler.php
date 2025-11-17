@@ -195,14 +195,14 @@ class LicenseTestHandler
             }
 
             // Vérifier que le mode test est activé
-            if (!$this->is_test_mode_enabled()) {
+            if (!$this->isTestModeEnabled()) {
                 wp_send_json_error([
                     'message' => 'Mode test désactivé'
                 ]);
             }
 
             // Récupérer la clé de test sauvegardée
-            $saved_test_key = $this->get_test_key();
+            $saved_test_key = $this->getTestKey();
             if (empty($saved_test_key)) {
                 wp_send_json_error([
                     'message' => 'Aucune clé de test générée'
