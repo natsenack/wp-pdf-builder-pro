@@ -3124,13 +3124,18 @@
                 console.log('[DEV MODE TOGGLE] toggleDeveloperSection called');
                 console.log('[DEV MODE TOGGLE] isEnabled:', isEnabled);
                 console.log('[DEV MODE TOGGLE] devSection exists:', $devSection.length > 0);
+                console.log('[DEV MODE TOGGLE] devSection current display:', $devSection.css('display'));
 
                 if (isEnabled) {
-                    console.log('[DEV MODE TOGGLE] Showing developer section');
-                    $devSection.slideDown(300);
+                    console.log('[DEV MODE TOGGLE] Showing developer section - calling slideDown');
+                    $devSection.slideDown(300, function() {
+                        console.log('[DEV MODE TOGGLE] slideDown animation completed, display:', $devSection.css('display'));
+                    });
                 } else {
-                    console.log('[DEV MODE TOGGLE] Hiding developer section');
-                    $devSection.slideUp(300);
+                    console.log('[DEV MODE TOGGLE] Hiding developer section - calling slideUp');
+                    $devSection.slideUp(300, function() {
+                        console.log('[DEV MODE TOGGLE] slideUp animation completed, display:', $devSection.css('display'));
+                    });
                 }
             }
 
