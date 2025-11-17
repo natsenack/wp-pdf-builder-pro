@@ -1322,7 +1322,7 @@
                 <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">📄 Configuration PDF</h3>
 
                 <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_pdf_nonce'); ?>
+                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_pdf_nonce'); ?>
                     <input type="hidden" name="current_tab" value="general">
 
                   <table class="form-table">
