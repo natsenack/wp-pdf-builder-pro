@@ -571,6 +571,36 @@
             $settings = get_option('pdf_builder_settings', []);
         }
     }
+
+    // Gestionnaire pour la sauvegarde des paramètres de sauvegarde
+    if (isset($_POST['submit_backup']) && isset($_POST['pdf_builder_backup_nonce'])) {
+
+        if (wp_verify_nonce($_POST['pdf_builder_backup_nonce'], 'pdf_builder_backup')) {
+            $backup_settings = [
+                'auto_backup' => isset($_POST['auto_backup']) ? 1 : 0,
+                'backup_retention' => intval($_POST['backup_retention'] ?? 30),
+            ];
+            update_option('pdf_builder_backup_settings', $backup_settings);
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de sauvegarde enregistrés avec succès.</p></div>';
+        } else {
+            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
+        }
+    }
+
+    // Gestionnaire pour la sauvegarde des paramètres RGPD
+    if (isset($_POST['submit_rgpd']) && isset($_POST['pdf_builder_rgpd_nonce'])) {
+
+        if (wp_verify_nonce($_POST['pdf_builder_rgpd_nonce'], 'pdf_builder_rgpd')) {
+            $rgpd_settings = [
+                'gdpr_consent_required' => isset($_POST['gdpr_consent_required']) ? 1 : 0,
+                'data_retention_days' => intval($_POST['data_retention_days'] ?? 2555),
+            ];
+            update_option('pdf_builder_rgpd_settings', $rgpd_settings);
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres RGPD enregistrés avec succès.</p></div>';
+        } else {
+            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
+        }
+    }
 ?>
 <script>
     // Script de définition des paramètres canvas - exécuté très tôt
@@ -694,53 +724,29 @@
             <span class="tab-icon">⚙️</span>
             <span class="tab-text">Général</span>
         </a>
-        <a href="#licence" class="nav-tab" data-tab="licence">
-            <span class="tab-icon">🔑</span>
-            <span class="tab-text">Licence</span>
+        <a href="#systeme" class="nav-tab" data-tab="systeme">
+            <span class="tab-icon">🔧</span>
+            <span class="tab-text">Système</span>
         </a>
-        <a href="#performance" class="nav-tab" data-tab="performance">
-            <span class="tab-icon">🚀</span>
-            <span class="tab-text">Performance</span>
-        </a>
-        <a href="#pdf" class="nav-tab" data-tab="pdf">
-            <span class="tab-icon">📄</span>
-            <span class="tab-text">PDF</span>
+        <a href="#acces" class="nav-tab" data-tab="acces">
+            <span class="tab-icon">🔐</span>
+            <span class="tab-text">Accès & Licences</span>
         </a>
         <a href="#securite" class="nav-tab" data-tab="securite">
             <span class="tab-icon">🔒</span>
-            <span class="tab-text">Sécurité</span>
+            <span class="tab-text">Sécurité & Conformité</span>
+        </a>
+        <a href="#pdf" class="nav-tab" data-tab="pdf">
+            <span class="tab-icon">📄</span>
+            <span class="tab-text">Configuration PDF</span>
+        </a>
+        <a href="#contenu" class="nav-tab" data-tab="contenu">
+            <span class="tab-icon">🎨</span>
+            <span class="tab-text">Contenu & Design</span>
         </a>
         <a href="#roles" class="nav-tab" data-tab="roles">
-            <span class="tab-icon">👥</span>
-            <span class="tab-text">Rôles</span>
-        </a>
-        <a href="#notifications" class="nav-tab" data-tab="notifications">
-            <span class="tab-icon">🔔</span>
-            <span class="tab-text">Notifications</span>
-        </a>
-        <a href="#canvas" class="nav-tab" data-tab="canvas">
-            <span class="tab-icon">🎨</span>
-            <span class="tab-text">Canvas</span>
-        </a>
-        <a href="#templates" class="nav-tab" data-tab="templates">
-            <span class="tab-icon">📋</span>
-            <span class="tab-text">Templates</span>
-        </a>
-        <a href="#maintenance" class="nav-tab" data-tab="maintenance">
-            <span class="tab-icon">🔧</span>
-            <span class="tab-text">Maintenance</span>
-        </a>
-        <a href="#sauvegarde" class="nav-tab" data-tab="sauvegarde">
-            <span class="tab-icon">💾</span>
-            <span class="tab-text">Sauvegarde</span>
-        </a>
-        <a href="#developpeur" class="nav-tab" data-tab="developpeur">
             <span class="tab-icon">👨‍💻</span>
             <span class="tab-text">Développeur</span>
-        </a>
-        <a href="#rgpd" class="nav-tab" data-tab="rgpd">
-            <span class="tab-icon">🔒</span>
-            <span class="tab-text">RGPD</span>
         </a>
     </div>
 
@@ -904,12 +910,12 @@
                 </table>
 
             </form>
-        </div>
 
-        <div id="licence" class="tab-content hidden-tab">
+            <!-- Section Licence -->
+            <h3 class="section-title">🔐 Gestion de la Licence</h3>
             <form method="post" id="licence-form" action="">
                 <input type="hidden" name="current_tab" value="licence">
-                    <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h2>
+                    <h4 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h4>
 
                 <?php
                     $license_status = get_option('pdf_builder_license_status', 'free');
@@ -985,7 +991,7 @@
 
                     <!-- Statut de la licence -->
                 <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 30px; margin-bottom: 30px; -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                        <h3 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">📊 Statut de la Licence</h3>
+                        <h4 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">📊 Statut de la Licence</h4>
 
                         <div style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
                             <!-- Carte Statut Principal -->
@@ -1018,319 +1024,102 @@
                             <?php if ($is_premium && $license_expires) :
                                 ?>
                             <div style="border: 3px solid #17a2b8; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); -webkit-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -moz-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -ms-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -o-box-shadow: 0 4px 6px rgba(23,162,184,0.2); box-shadow: 0 4px 6px rgba(23,162,184,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <div style="font-size: 13px; color: #0c5460; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Expire le</div>
-                                <div style="font-size: 26px; font-weight: 900; color: #0c5460; margin-bottom: 8px;">
+                                <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Expiration</div>
+                                <div style="font-size: 20px; font-weight: 700; color: #0066cc; margin-bottom: 8px;">
                                     <?php echo date('d/m/Y', strtotime($license_expires)); ?>
                                 </div>
-                                <div style="font-size: 12px; color: #0c5460; font-style: italic;">
+                                <div style="font-size: 12px; color: #666; font-style: italic;">
                                     <?php
                                     $now = new DateTime();
                                     $expires = new DateTime($license_expires);
                                     $diff = $now->diff($expires);
                                     if ($diff->invert) {
-                                        echo '❌ Expiré il y a ' . $diff->days . ' jours';
+                                        echo '❌ Expiré il y a ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
                                     } else {
-                                        echo '✓ Valide pendant ' . $diff->days . ' jours';
+                                        echo '✓ Valide pendant ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
                                     }
                                     ?>
                                 </div>
                             </div>
                                 <?php
                             endif; ?>
-                        </div>
 
-                    <?php
-                        // Bannière d'alerte si expiration dans moins de 30 jours
-                        if ($is_premium && !empty($license_expires)) {
-                            $now = new DateTime();
-                            $expires = new DateTime($license_expires);
-                            $diff = $now->diff($expires);
-
-                            if (!$diff->invert && $diff->days <= 30 && $diff->days > 0) {
+                            <!-- Carte Informations Licence -->
+                            <?php if ($is_premium && $license_activated_at) :
                                 ?>
-                                <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border: 2px solid #ffc107; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin-top: 20px; -webkit-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -moz-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -ms-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -o-box-shadow: 0 3px 8px rgba(255,193,7,0.2); box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
-                                    <div style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; -webkit-gap: 15px; -moz-gap: 15px; gap: 15px;">
-                                        <div style="font-size: 32px; flex-shrink: 0;">⏰</div>
-                                        <div>
-                                            <strong style="font-size: 16px; color: #856404; display: block; margin-bottom: 4px;">Votre licence expire bientôt</strong>
-                                            <p style="margin: 0; color: #856404; font-size: 14px; line-height: 1.5;">
-                                                Votre licence Premium expire dans <strong><?php echo $diff->days; ?> jour<?php echo $diff->days > 1 ? 's' : ''; ?></strong> (le <?php echo date('d/m/Y', strtotime($license_expires)); ?>).
-                                                Renouvelez dès maintenant pour continuer à bénéficier de toutes les fonctionnalités premium.
-                                            </p>
-                                        </div>
-                                    </div>
+                            <div style="border: 3px solid #6f42c1; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #e6dffc 0%, #f3f0ff 100%); -webkit-box-shadow: 0 4px 6px rgba(111,66,193,0.2); -moz-box-shadow: 0 4px 6px rgba(111,66,193,0.2); -ms-box-shadow: 0 4px 6px rgba(111,66,193,0.2); -o-box-shadow: 0 4px 6px rgba(111,66,193,0.2); box-shadow: 0 4px 6px rgba(111,66,193,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
+                                <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Activée le</div>
+                                <div style="font-size: 18px; font-weight: 700; color: #6f42c1; margin-bottom: 8px;">
+                                    <?php echo date('d/m/Y', strtotime($license_activated_at)); ?>
                                 </div>
-                                <?php
-                            }
-                        }
-                        ?>
-
-                        <!-- Détails de la clé -->
-                        <?php if ($is_premium || !empty($test_key)) :
-                            ?>
-                        <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border-left: 5px solid #007bff; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin-top: 25px; -webkit-box-shadow: 0 2px 4px rgba(0,123,255,0.1); -moz-box-shadow: 0 2px 4px rgba(0,123,255,0.1); -ms-box-shadow: 0 2px 4px rgba(0,123,255,0.1); -o-box-shadow: 0 2px 4px rgba(0,123,255,0.1); box-shadow: 0 2px 4px rgba(0,123,255,0.1);">
-                            <div style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-pack: justify; -webkit-justify-content: space-between; -moz-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 15px;">
-                                <h4 style="margin: 0; color: #004085; font-size: 16px;">🔐 Détails de la Clé</h4>
-                                <?php if ($is_premium) :
-                                    ?>
-                                <button type="button" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 8px 16px !important; font-size: 13px !important;"
-                                        onclick="showDeactivateModal()">
-                                    Désactiver
-                                </button>
-                                    <?php
-                                endif; ?>
+                                <div style="font-size: 12px; color: #666; font-style: italic;">
+                                    <?php echo date('H:i', strtotime($license_activated_at)); ?>
+                                </div>
                             </div>
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <tr style="border-bottom: 1px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Site actuel :</td>
-                                    <td style="padding: 8px 0;">
-                                        <code style="background: #f0f0f0; padding: 4px 8px; -webkit-border-radius: 3px; -moz-border-radius: 3px; -ms-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px; border: 1px solid #ddd; color: #007bff;">
-                                            <?php echo esc_html(home_url()); ?>
-                                        </code>
-                                    </td>
-                                </tr>
-
-                                <?php if ($is_premium && $license_key) :
-                                    ?>
-                                <tr style="border-bottom: 2px solid #cce5ff;">
-                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Clé Premium :</td>
-                                    <td style="padding: 8px 0; font-family: monospace;">
-                                        <code style="background: #fff; padding: 4px 8px; -webkit-border-radius: 3px; -moz-border-radius: 3px; -ms-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px; border: 1px solid #ddd;">
-                                            <?php
-                                            $key = $license_key;
-                                            $visible_start = substr($key, 0, 6);
-                                            $visible_end = substr($key, -6);
-                                            echo $visible_start . '••••••••••••••••' . $visible_end;
-                                            ?>
-                                        </code>
-                                        <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>'); PDF_Builder_Notification_Manager.show_toast('Clé copiée !', 'success');">📋 Copier</span>
-                                    </td>
-                                </tr>
-                                    <?php
-                                endif; ?>
-
-                                <?php if (!empty($test_key)) :
-                                    ?>
-                                <tr style="border-bottom: 1px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Clé de Test :</td>
-                                    <td style="padding: 8px 0; font-family: monospace;">
-                                        <code style="background: #fff3cd; padding: 4px 8px; -webkit-border-radius: 3px; -moz-border-radius: 3px; -ms-border-radius: 3px; -o-border-radius: 3px; border-radius: 3px; border: 1px solid #ffc107;">
-                                            <?php
-                                            $test = $test_key;
-                                            echo substr($test, 0, 6) . '••••••••••••••••' . substr($test, -6);
-                                            ?>
-                                        </code>
-                                        <span style="margin-left: 10px; color: #666; font-size: 12px;"> (Mode Développement)</span>
-                                    </td>
-                                </tr>
-                                    <?php if (!empty($test_key_expires)) :
-                                        ?>
-                                <tr style="border-bottom: 1px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Expire le :</td>
-                                    <td style="padding: 8px 0;">
-                                        <div style="margin-bottom: 4px;">
-                                            <strong><?php echo date('d/m/Y', strtotime($test_key_expires)); ?></strong>
-                                        </div>
-                                        <div style="font-size: 12px; color: #666;">
-                                            <?php
-                                            $now = new DateTime();
-                                            $expires = new DateTime($test_key_expires);
-                                            $diff = $now->diff($expires);
-                                            if ($diff->invert) {
-                                                echo '❌ Expiré il y a ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
-                                            } else {
-                                                echo '✓ Valide pendant ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
-                                            }
-                                            ?>
-                                        </div>
-                                    </td>
-                                </tr>
-                                        <?php
-                                    endif; ?>
-                                    <?php
-                                endif; ?>
-
-                                <!-- Section de test des notifications -->
-                                <tr style="border-bottom: 2px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Test Notifications :</td>
-                                    <td style="padding: 8px 0;">
-                                        <button type="button" id="test-notifications-success" class="button button-small" style="margin-right: 5px; background: #28a745; color: white; border: none;">✅ Test Succès</button>
-                                        <button type="button" id="test-notifications-error" class="button button-small" style="margin-right: 5px; background: #dc3545; color: white; border: none;">❌ Test Erreur</button>
-                                        <button type="button" id="test-notifications-warning" class="button button-small" style="margin-right: 5px; background: #ffc107; color: black; border: none;">⚠️ Test Avertissement</button>
-                                        <button type="button" id="test-notifications-info" class="button button-small" style="background: #17a2b8; color: white; border: none;">ℹ️ Test Info</button>
-                                    </td>
-                                </tr>
-
-                                <?php if ($is_premium && $license_activated_at) :
-                                    ?>
-                                <tr style="border-bottom: 1px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500;">Activée le :</td>
-                                    <td style="padding: 8px 0;">
-                                        <?php echo date('d/m/Y à H:i', strtotime($license_activated_at)); ?>
-                                    </td>
-                                </tr>
-                                    <?php
-                                endif; ?>
-
-                                <tr>
-                                    <td style="padding: 8px 0; font-weight: 500;">Statut :</td>
-                                    <td style="padding: 8px 0;">
-                                        <?php
-                                        if (!empty($test_key)) {
-                                            echo '<span style="background: #ffc107; color: #000; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">🧪 MODE TEST</span>';
-                                        } elseif ($is_premium) {
-                                            echo '<span style="background: #28a745; color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">✅ ACTIVE</span>';
-                                        } else {
-                                            echo '<span style="background: #6c757d; color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">○ GRATUIT</span>';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-
-                                <?php if ($is_premium && !empty($license_expires)) :
-                                    ?>
-                                <tr style="border-bottom: 1px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500;">Expire le :</td>
-                                    <td style="padding: 8px 0;">
-                                        <div style="margin-bottom: 4px;">
-                                            <strong><?php echo date('d/m/Y', strtotime($license_expires)); ?></strong>
-                                        </div>
-                                        <div style="font-size: 12px; color: #666;">
-                                            <?php
-                                            $now = new DateTime();
-                                            $expires = new DateTime($license_expires);
-                                            $diff = $now->diff($expires);
-                                            if ($diff->invert) {
-                                                echo '❌ Expiré il y a ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
-                                            } else {
-                                                echo '✓ Valide pendant ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
-                                            }
-                                            ?>
-                                        </div>
-                                    </td>
-                                </tr>
-                                    <?php
-                                endif; ?>
-                            </table>
+                                <?php
+                            endif; ?>
                         </div>
-                            <?php
-                        endif; ?>
                 </div>
 
                     <!-- Activation/Désactivation - Mode DEMO ou Gestion TEST -->
-                    <?php if (!$is_premium) :
-                        ?>
-                    <!-- Mode DÉMO : Pas de licence -->
-                    <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
-                        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
-                            <div style="font-size: 50px;">🧪</div>
-                            <div>
-                                <h3 style="margin: 0 0 8px 0; color: #856404; font-size: 26px; font-weight: 700;">Mode DÉMO - Clés de Test Uniquement</h3>
-                                <p style="margin: 0; color: #856404; font-size: 15px; line-height: 1.5;">La validation des clés premium n'est pas encore active. Utilisez le mode TEST pour explorer les fonctionnalités.</p>
+                <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #e5e5e5; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 30px; margin-bottom: 30px; -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <h4 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔑 Gestion de la Licence</h4>
+
+                        <div style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
+                            <!-- Section Activation Licence -->
+                            <div style="border: 2px solid #28a745; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; background: linear-gradient(135deg, #d4edda 0%, #e8f5e9 100%);">
+                                <h4 style="margin-top: 0; color: #155724; font-size: 18px;">✅ Activation de Licence</h4>
+                                <p style="margin: 10px 0; color: #155724;">Entrez votre clé de licence premium pour activer toutes les fonctionnalités.</p>
+
+                                <form method="post" style="margin-top: 15px;">
+                                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
+                                    <input type="hidden" name="activate_license" value="1">
+
+                                    <div style="margin-bottom: 15px;">
+                                        <label for="license_key_input" style="display: block; font-weight: 600; margin-bottom: 5px; color: #155724;">Clé de Licence</label>
+                                        <input type="text" id="license_key_input" name="license_key" value="<?php echo esc_attr($license_key); ?>"
+                                               style="width: 100%; padding: 8px 12px; border: 2px solid #28a745; border-radius: 4px; font-family: monospace; font-size: 14px;"
+                                               placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" />
+                                    </div>
+
+                                    <button type="submit" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%;">
+                                        🔓 Activer la Licence
+                                    </button>
+                                </form>
                             </div>
-                        </div>
 
-                        <div style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 20px; margin-bottom: 20px; color: #856404; font-size: 14px; line-height: 1.6;">
-                            <strong>✓ Comment tester :</strong>
-                            <ol style="margin: 10px 0 0 0; padding-left: 20px;">
-                                <li>Allez à l'onglet <strong>Développeur</strong></li>
-                                <li>Cliquez sur <strong>🔑 Générer une clé de test</strong></li>
-                                <li>La clé TEST s'activera automatiquement</li>
-                                <li>Toutes les fonctionnalités premium seront disponibles</li>
-                            </ol>
-                        </div>
+                            <!-- Section Désactivation -->
+                            <div style="border: 2px solid #dc3545; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; background: linear-gradient(135deg, #f8d7da 0%, #fce4e6 100%);">
+                                <h4 style="margin-top: 0; color: #721c24; font-size: 18px;">❌ Désactivation</h4>
+                                <p style="margin: 10px 0; color: #721c24;">Désactivez complètement la licence actuelle.</p>
 
-                        <div style="background: rgba(220, 53, 69, 0.1); border-left: 4px solid #dc3545; border-radius: 6px; padding: 15px; color: #721c24; font-size: 13px;">
-                            <strong>⚠️ Note importante :</strong> Les clés premium réelles seront validées une fois le système de licence en production.
-                        </div>
-                    </div>
-                        <?php
-                    elseif ($is_test_mode) :
-                        ?>
-                    <!-- Mode TEST : Gestion de la clé de test -->
-                    <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
-                        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
-                            <div style="font-size: 50px;">🧪</div>
-                            <div>
-                                <h3 style="margin: 0 0 8px 0; color: #856404; font-size: 26px; font-weight: 700;">Gestion de la Clé de Test</h3>
-                                <p style="margin: 0; color: #856404;">Vous testez actuellement avec une clé TEST. Toutes les fonctionnalités premium sont disponibles.</p>
-                            </div>
-                        </div>
-
-                        <div style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 15px; margin-bottom: 20px; color: #856404; font-size: 13px;">
-                            <strong>ℹ️ Mode Test Actif :</strong> Vous pouvez désactiver cette clé à tout moment depuis la section "Détails de la Clé" ci-dessus, ou générer une nouvelle clé de test depuis l'onglet Développeur.
-                        </div>
-                    </div>
-                        <?php
-                    else :
-                        ?>
-                    <!-- Mode PREMIUM : Gestion de la licence premium -->
-                    <div style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(40,167,69,0.2);">
-                        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
-                            <div style="font-size: 50px;">🔐</div>
-                            <div>
-                                <h3 style="margin: 0 0 8px 0; color: #155724; font-size: 26px; font-weight: 700;">Gestion de la Licence Premium</h3>
-                                <p style="margin: 0; color: #155724;">Votre licence premium est active et valide. Vous pouvez gerer votre licence ci-dessous.</p>
-                            </div>
-                        </div>
-
-                        <!-- Avertissements et informations -->
-                        <div style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); border: none; border-radius: 8px; padding: 20px; margin-bottom: 20px; color: #fff; box-shadow: 0 3px 8px rgba(255,193,7,0.3);">
-                            <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Savoir :</strong>
-                            <ul style="margin: 12px 0 0 0; padding-left: 20px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                                <li style="margin: 6px 0;">Votre licence reste <strong>active pendant un an</strong> a partir de son activation</li>
-                                <li style="margin: 6px 0;">Meme apres desactivation, la licence reste valide jusqu'a son expiration</li>
-                                <li style="margin: 6px 0;"><strong>Desactivez</strong> pour utiliser la meme cle sur un autre site WordPress</li>
-                                <li style="margin: 6px 0;">Une cle ne peut etre active que sur <strong>un seul site a la fois</strong></li>
-                            </ul>
-                        </div>
-
-                        <form method="post">
-                            <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
-                            <p class="submit" style="margin-top: 20px;">
-                                <button type="submit" name="deactivate_license" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 10px 20px !important; display: block !important; visibility: visible !important; opacity: 1 !important;"
-                                        onclick="return confirm('Etes-vous sur de vouloir desactiver cette licence ? Vous pourrez la reactiver ou l\'utiliser sur un autre site.');">
-                                    Desactiver la Licence
+                                <button type="button" id="deactivate-license-btn" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px;">
+                                    🔒 Désactiver
                                 </button>
-                            </p>
-                        </form>
+                            </div>
+                        </div>
 
-                        <div style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); border: none; border-radius: 8px; padding: 22px; margin-top: 20px; color: #fff; box-shadow: 0 3px 8px rgba(23,162,184,0.25);">
-                            <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Conseil :</strong>
-                            <p style="margin: 12px 0 0 0; line-height: 1.6; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">La desactivation permet de reutiliser votre cle sur un autre site, mais ne supprime pas votre acces ici jusqu'a l'expiration de la licence.</p>
+                        <!-- Modal de confirmation désactivation -->
+                        <div id="deactivate_modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+                            <div style="background: white; margin: 15% auto; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; -webkit-box-shadow: 0 4px 20px rgba(0,0,0,0.3); -moz-box-shadow: 0 4px 20px rgba(0,0,0,0.3); -ms-box-shadow: 0 4px 20px rgba(0,0,0,0.3); -o-box-shadow: 0 4px 20px rgba(0,0,0,0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                                <h3 style="margin-top: 0; color: #dc3545;">⚠️ Confirmation de Désactivation</h3>
+                                <p style="margin: 20px 0; color: #666;">Êtes-vous sûr de vouloir désactiver cette licence ? Toutes les fonctionnalités premium seront perdues.</p>
+
+                                <form method="post" id="deactivate_form">
+                                    <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
+                                    <input type="hidden" name="deactivate_license" value="1">
+                                    <div style="display: flex; gap: 12px; margin-top: 30px;">
+                                        <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
+                                            Annuler
+                                        </button>
+                                        <button type="submit" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                                            Désactiver
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-
-                        <?php
-                    endif; ?>
-
-                    <?php if ($is_premium) : ?>
-                    <!-- Modal de confirmation pour désactivation -->
-                    <div id="deactivate_modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
-                        <div style="background: white; border-radius: 12px; padding: 40px; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center;">
-                            <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
-                            <h2 style="margin: 0 0 15px 0; color: #333; font-size: 24px;">Désactiver la Licence</h2>
-                            <p style="margin: 0 0 20px 0; color: #666; line-height: 1.6;">Êtes-vous sûr de vouloir désactiver cette licence ?</p>
-                            <ul style="text-align: left; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; list-style: none;">
-                                <li style="margin: 8px 0;">✓ Vous pouvez la réactiver plus tard</li>
-                                <li style="margin: 8px 0;">✓ Vous pourrez l'utiliser sur un autre site</li>
-                                <li style="margin: 8px 0;">✓ La licence restera valide jusqu'à son expiration</li>
-                            </ul>
-                            <form method="post" id="deactivate_form_modal" style="display: inline;">
-                                <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
-                                <input type="hidden" name="deactivate_license" value="1">
-                                <div style="display: flex; gap: 12px; margin-top: 30px;">
-                                    <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
-                                        Annuler
-                                    </button>
-                                    <button type="submit" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
-                                        Désactiver
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <?php endif; ?>
 
                 <script>
                     function showDeactivateModal() {
@@ -1418,195 +1207,35 @@
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
                             <!-- Site actuel -->
                             <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
-                                <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Site actuel</div>
-                                <code style="background: rgba(255,255,255,0.2); padding: 6px 10px; border-radius: 4px; font-family: monospace; color: #fff; display: block; word-break: break-all; font-size: 12px;"><?php echo esc_html(home_url()); ?></code>
-                            </div>
-
-                            <!-- Plan actif -->
-                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
-                                <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Plan actif</div>
-                                <span style="background: rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius:  4px; font-weight: bold; font-size: 13px; display: inline-block;"><?php echo !empty($test_key) ? '🧪 Mode Test' : ($is_premium ? '⭐ Premium' : '○ Gratuit'); ?></span>
+                                <strong>Site actuel :</strong><br>
+                                <code style="color: #fff; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 3px;"><?php echo esc_html(get_site_url()); ?></code>
                             </div>
 
                             <!-- Version du plugin -->
                             <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
-                                <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Version du plugin</div>
-                                <div style="font-size: 14px; font-weight: bold;"><?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'N/A'; ?></div>
+                                <strong>Version :</strong><br>
+                                <code style="color: #fff; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 3px;"><?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : '1.0.0'; ?></code>
                             </div>
 
-                            <?php if ($is_premium) :
-                                ?>
-                            <!-- Support Premium -->
+                            <!-- Support -->
                             <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
-                                <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Support</div>
-                                <a href="https://pdfbuilderpro.com/support" target="_blank" style="color: #fff; text-decoration: underline; font-weight: 600; font-size: 13px;">Contact Support Premium →</a>
+                                <strong>Support :</strong><br>
+                                <a href="mailto:support@pdf-builder-pro.com" style="color: #fff; text-decoration: underline;">support@pdf-builder-pro.com</a>
                             </div>
 
                             <!-- Documentation -->
                             <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
-                                <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Documentation</div>
-                                <a href="https://pdfbuilderpro.com/docs" target="_blank" style="color: #fff; text-decoration: underline; font-weight: 600; font-size: 13px;">Lire la Documentation →</a>
+                                <strong>Documentation :</strong><br>
+                                <a href="https://docs.pdf-builder-pro.com" target="_blank" style="color: #fff; text-decoration: underline;">docs.pdf-builder-pro.com</a>
                             </div>
-                                <?php
-                            endif; ?>
-                        </div>
-                    </div>
-
-                    <!-- Comparaison des fonctionnalités -->
-                    <div style="margin-top: 40px;">
-                        <h3 style="color: #007cba; font-size: 22px; border-bottom: 3px solid #007cba; padding-bottom: 12px; margin-bottom: 25px;">Comparaison des Fonctionnalités</h3>
-                        <table class="wp-list-table widefat fixed striped" style="margin-top: 15px; border-collapse: collapse; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                            <thead style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white;">
-                                <tr>
-                                    <th style="width: 35%; padding: 15px; font-weight: 700; text-align: left; border: none;">Fonctionnalité</th>
-                                    <th style="width: 15%; text-align: center; padding: 15px; font-weight: 700; border: none;">Gratuit</th>
-                                    <th style="width: 15%; text-align: center; padding: 15px; font-weight: 700; border: none;">Premium</th>
-                                    <th style="width: 35%; padding: 15px; font-weight: 700; text-align: left; border: none;">Détails</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Nombre de templates</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">1 seul</td>
-                                    <td style="text-align: center; color: #46b450;">✓ Illimité</td>
-                                    <td>Templates prédéfinis et personnalisés</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Qualité d'impression</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">72 DPI</td>
-                                    <td style="text-align: center; color: #46b450;">300 DPI</td>
-                                    <td>Résolution haute qualité pour impression</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Filigrane</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✓ Présent</td>
-                                    <td style="text-align: center; color: #46b450;">✗ Supprimé</td>
-                                    <td>Marque d'eau "PDF Builder Pro" sur tous les PDFs</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Éléments de base</strong></td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Texte, images, formes géométriques, lignes</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Éléments avancés</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Codes-barres, QR codes, graphiques, tableaux dynamiques</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Variables WooCommerce</strong></td>
-                                    <td style="text-align: center; color: #46b450;">✓ Basique</td>
-                                    <td style="text-align: center; color: #46b450;">✓ Complet</td>
-                                    <td>Commandes, clients, produits, métadonnées</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Génération PDF</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">50/mois</td>
-                                    <td style="text-align: center; color: #46b450;">Illimitée</td>
-                                    <td>Limite mensuelle de génération de documents</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Génération en masse</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Création automatique de multiples PDFs</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>API développeur</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Accès complet à l'API REST pour intégrations</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>White-label</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Rebranding complet, suppression des mentions</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Mises à jour automatiques</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Mises à jour transparentes et corrections de sécurité</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Formats d'export</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">PDF uniquement</td>
-                                    <td style="text-align: center; color: #46b450;">PDF, PNG, JPG</td>
-                                    <td>Export multi-formats pour différents usages</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Fiabilité de génération</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">Générateur unique</td>
-                                    <td style="text-align: center; color: #46b450;">3 générateurs redondants</td>
-                                    <td>Fallback automatique en cas d'erreur</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>API REST</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>API complète pour intégrations et automatisations</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Templates prédéfinis</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">1 template de base</td>
-                                    <td style="text-align: center; color: #46b450;">4 templates professionnels</td>
-                                    <td>Factures, devis, bons de commande prêts à l'emploi</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>CSS personnalisé</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Injection de styles CSS avancés pour personnalisation complète</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Intégrations tierces</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Zapier, webhooks, API externes pour automatisation</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Historique des versions</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Suivi des modifications et possibilité de rollback</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Analytics & rapports</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td>Statistiques d'usage, performances et métriques détaillées</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Support technique</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">Communauté</td>
-                                    <td style="text-align: center; color: #46b450;">Prioritaire</td>
-                                    <td>Support rapide par email avec réponse garantie sous 24h</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 8px; padding: 20px; margin-top: 20px;">
-                            <h4 style="color: #8b4513; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px;">
-                                💡 <strong>Pourquoi passer en Premium ?</strong>
-                            </h4>
-                            <ul style="color: #8b4513; margin: 0; padding-left: 20px; line-height: 1.6;">
-                                <li><strong>Usage professionnel :</strong> Qualité 300 DPI sans filigrane pour vos documents clients</li>
-                                <li><strong>Productivité :</strong> Templates illimités et génération en masse pour gagner du temps</li>
-                                <li><strong>Évolutivité :</strong> API développeur pour intégrer dans vos workflows existants</li>
-                                <li><strong>Support dédié :</strong> Assistance prioritaire pour résoudre vos problèmes rapidement</li>
-                                <li><strong>Économique :</strong> 79€ à vie vs coûts récurrents d'autres solutions</li>
-                            </ul>
                         </div>
                     </div>
 
                     <!-- Section Notifications par Email -->
                     <div style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: none; border-radius: 12px; padding: 30px; margin-top: 30px; color: #343a40; box-shadow: 0 4px 12px rgba(0,102,204,0.15);">
-                        <h3 style="margin-top: 0; color: #003d7a; font-size: 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
+                        <h4 style="margin-top: 0; color: #003d7a; font-size: 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
                             📧 Notifications par Email
-                        </h3>
+                        </h4>
 
                         <p style="color: #003d7a; margin: 0 0 25px 0; line-height: 1.6; font-size: 14px;">
                             Recevez une notification par email quand votre licence expire bientôt. C'est une excellente façon de ne jamais oublier de renouveler votre licence.
@@ -1618,383 +1247,43 @@
 
                             <!-- Toggle Notifications -->
                             <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
-                                <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: 600; color: #003d7a;">
-                                    <input type="checkbox" name="enable_expiration_notifications" value="1" <?php checked($enable_expiration_notifications, 1); ?> style="width: 20px; height: 20px; cursor: pointer; margin-top: 2px; accent-color: #0066cc; flex-shrink: 0;">
-                                    <span style="line-height: 1.4;">
-                                        Activer les notifications d'expiration<br>
-                                        <span style="font-weight: 400; color: #666; font-size: 12px; display: block; margin-top: 6px;">
-                                            ✓ 30 jours avant l'expiration<br>
-                                            ✓ 7 jours avant l'expiration
-                                        </span>
-                                    </span>
-                                </label>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div class="toggle-container">
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="enable_expiration_notifications" name="enable_expiration_notifications" value="1"
+                                                   <?php checked($enable_expiration_notifications); ?> />
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label for="enable_expiration_notifications" style="font-weight: 600; color: #003d7a; cursor: pointer;">Notifications d'expiration</label>
+                                        <div class="toggle-description" style="color: #666; font-size: 13px; margin-top: 2px;">Active les notifications par email pour les événements de licence</div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Email Input -->
+                            <!-- Email administrateur -->
                             <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
-                                <label for="notification_email" style="display: block; font-weight: 600; color: #003d7a; margin-bottom: 10px; font-size: 14px;">
-                                    Email pour les notifications :
-                                </label>
-                                <input type="email" name="notification_email" id="notification_email" value="<?php echo esc_attr($notification_email); ?>"
-                                    placeholder="admin@example.com"
-                                    style="width: 100%; padding: 10px 12px; border: 2px solid #0066cc; border-radius: 6px; font-size: 13px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05);"
-                                    onfocus="this.style.borderColor='#003d7a'; this.style.boxShadow='0 0 0 3px rgba(0,102,204,0.1)';"
-                                    onblur="this.style.borderColor='#0066cc'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)';">
+                                <label for="notification_email" style="display: block; font-weight: 600; margin-bottom: 8px; color: #003d7a;">Email Administrateur</label>
+                                <input type="email" id="notification_email" name="notification_email" value="<?php echo esc_attr($notification_email); ?>"
+                                       class="regular-text" autocomplete="email" style="width: 100%; padding: 8px 12px; border: 2px solid #0066cc; border-radius: 4px;" />
                                 <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">
                                     Défaut : adresse administrateur du site
                                 </p>
                             </div>
 
+                        </form>
+                    </div>
+
             </div>
             </form>
-        </div>
 
-        <div id="performance" class="tab-content hidden-tab">
-         <form method="post" id="performance-form" action="">
-                <?php wp_nonce_field('pdf_builder_performance_settings', 'pdf_builder_performance_nonce'); ?>
-                <input type="hidden" name="current_tab" value="performance">
-                <input type="hidden" name="submit_performance" value="1">
-                <h3 class="section-title">Paramètres de Performance</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="auto_save_enabled">Sauvegarde Auto</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <input type="hidden" name="auto_save_enabled" value="0" />
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="auto_save_enabled" name="auto_save_enabled" value="1"
-                                       <?php checked($canvas_settings['auto_save_enabled'] ?? false); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Sauvegarde automatique</span>
-                        </div>
-                        <div class="toggle-description">Sauvegarde automatique pendant l'édition</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="auto_save_interval">Intervalle Auto-save (secondes)</label></th>
-                    <td>
-                        <input type="number" id="auto_save_interval" name="auto_save_interval" value="<?php echo intval($canvas_settings['auto_save_interval'] ?? 30); ?>"
-                               min="10" max="300" step="10" <?php echo (!($canvas_settings['auto_save_enabled'] ?? false)) ? 'disabled' : ''; ?> />
-                        <p class="description">Intervalle entre chaque sauvegarde automatique</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="compress_images">Compresser les Images</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="compress_images" name="compress_images" value="1"
-                                       <?php checked($settings['compress_images'] ?? false); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Compression d'images</span>
-                        </div>
-                        <div class="toggle-description">Compresse les images pour réduire la taille des PDFs</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="image_quality">Qualité des Images (%)</label></th>
-                    <td>
-                        <input type="range" id="image_quality" name="image_quality" value="<?php echo intval($settings['image_quality'] ?? 85); ?>"
-                               min="30" max="100" step="5" style="width: 300px;" oninput="document.getElementById('image_quality_value').textContent = this.value + '%';" />
-                        <span id="image_quality_value" style="margin-left: 10px; font-weight: bold;">
-                            <?php echo intval($settings['image_quality'] ?? 85); ?>%
-                        </span>
-                        <p class="description">Plus faible = fichiers plus petits mais moins de détails</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="optimize_for_web">Optimiser pour le Web</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="optimize_for_web" name="optimize_for_web" value="1"
-                                       <?php checked($settings['optimize_for_web'] ?? false); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Optimisation web</span>
-                        </div>
-                        <div class="toggle-description">Réduit la taille du fichier pour une meilleure distribution web</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="enable_hardware_acceleration">Accélération Matérielle</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="enable_hardware_acceleration" name="enable_hardware_acceleration" value="1"
-                                       <?php checked($settings['enable_hardware_acceleration'] ?? false); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">GPU activé</span>
-                        </div>
-                        <div class="toggle-description">Utilise les ressources GPU si disponibles</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="limit_fps">Limiter les FPS</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="limit_fps" name="limit_fps" value="1"
-                                       <?php checked($settings['limit_fps'] ?? false); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Limitation FPS</span>
-                        </div>
-                        <div class="toggle-description">Limite le rendu pour économiser les ressources</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="max_fps">FPS Maximum</label></th>
-                    <td>
-                        <input type="number" id="max_fps" name="max_fps" value="<?php echo intval($settings['max_fps'] ?? 60); ?>"
-                               min="15" max="240" <?php echo !($settings['limit_fps'] ?? false) ? 'disabled' : ''; ?> />
-                        <p class="description">Images par seconde maximales (15-240 FPS)</p> 
-                    </td>
-                </tr>
-            </table>
-
-            <!-- Section Nettoyage -->
-            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">
-                <h3 class="section-title">Nettoyage & Maintenance</h3>
-                <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
-
-                <button type="button" id="clear-cache-btn" class="button button-secondary">
-                    🗑️ Vider le Cache
-                </button>
-
-                <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px;">
-                    <p style="margin: 0;"><strong>💡 Conseil :</strong> Videz le cache si vous rencontrez des problèmes de génération PDF ou si les changements n'apparaissent pas.</p>
-                </div>
-            </div>
-
-            <p class="submit">
-                <button type="submit" name="submit_performance" class="button button-primary" id="performance-submit-btn">Enregistrer les paramètres de performance</button>
-            </p>
-         </form>
-        </div>
-
-        <div id="pdf" class="tab-content hidden-tab">
-            <form method="post" id="pdf-form" action="">
-                <?php wp_nonce_field('pdf_builder_pdf_settings', 'pdf_builder_pdf_nonce'); ?>
-                <input type="hidden" name="current_tab" value="pdf">
-                <input type="hidden" name="submit_pdf" value="1">
-                <h2>Paramètres PDF</h2>
-
-            <h3 class="section-title">Qualité & Export</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="export_quality">Qualité d'Export</label></th>
-                    <td>
-                        <select id="export_quality" name="export_quality">
-                            <option value="screen" <?php selected($settings['export_quality'] ?? 'print', 'screen'); ?>>Écran (72 DPI)</option>
-                            <option value="print" <?php selected($settings['export_quality'] ?? 'print', 'print'); ?>>Impression (300 DPI)</option>
-                            <option value="prepress" <?php selected($settings['export_quality'] ?? 'print', 'prepress'); ?>>Pré-presse (600 DPI)</option>
-                        </select>
-                        <p class="description">Définit la résolution de sortie du PDF</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="export_format">Format d'Export</label></th>
-                    <td>
-                        <select id="export_format" name="export_format">
-                            <option value="pdf" <?php selected($settings['export_format'] ?? 'pdf', 'pdf'); ?>>PDF</option>
-                            <option value="png" <?php selected($settings['export_format'] ?? 'pdf', 'png'); ?>>PNG</option>
-                            <option value="jpg" <?php selected($settings['export_format'] ?? 'pdf', 'jpg'); ?>>JPEG</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
-
-            <h3 class="section-title">Métadonnées & Contenu</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="pdf_author">Auteur du PDF</label></th>
-                    <td>
-                        <input type="text" id="pdf_author" name="pdf_author" value="<?php echo esc_attr($settings['pdf_author'] ?? get_bloginfo('name')); ?>"
-                               class="regular-text" />
-                        <p class="description">Sera inclus dans les propriétés du PDF</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="pdf_subject">Sujet du PDF</label></th>
-                    <td>
-                        <input type="text" id="pdf_subject" name="pdf_subject" value="<?php echo esc_attr($settings['pdf_subject'] ?? ''); ?>"
-                               class="regular-text" placeholder="Ex: Facture, Devis, etc." />
-                        <p class="description">Sujet dans les propriétés du PDF</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="include_metadata">Inclure les Métadonnées</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="include_metadata" name="include_metadata" value="1"
-                                       <?php checked($settings['include_metadata'] ?? false); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Métadonnées PDF</span>
-                        </div>
-                        <div class="toggle-description">Ajoute les données de titre, auteur, date, etc.</div>
-                    </td>
-                </tr>
-            </table>
-
-            <h3 class="section-title">Optimisation & Compression</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="embed_fonts">Intégrer les Polices</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="embed_fonts" name="embed_fonts" value="1"
-                                       <?php checked($settings['embed_fonts'] ?? false); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Polices intégrées</span>
-                        </div>
-                        <div class="toggle-description">Inclut les polices personnalisées dans le PDF (fichiers plus gros)</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="auto_crop">Recadrage Automatique</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="auto_crop" name="auto_crop" value="1"
-                                       <?php checked($settings['auto_crop'] ?? false); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Recadrage auto</span>
-                        </div>
-                        <div class="toggle-description">Supprime les marges blanches automatiquement</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="max_image_size">Taille Max des Images (px)</label></th>
-                    <td>
-                        <input type="number" id="max_image_size" name="max_image_size" value="<?php echo intval($settings['max_image_size'] ?? 2048); ?>"
-                               min="512" max="8192" step="256" />
-                        <p class="description">Les images plus grandes seront redimensionnées</p>
-                    </td>
-                </tr>
-            </table>
-
-            <!-- Aide & Conseils -->
-            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">
-                <h3>💡 Conseils d'Optimisation</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li><strong>Pour impression :</strong> Utilisez la qualité "Haute" + Pré-presse + Polices intégrées</li>
-                    <li><strong>Pour web :</strong> Utilisez la qualité "Moyenne" + Écran + Compression images</li>
-                    <li><strong>Pour email :</strong> Utilisez la qualité "Basse" + Optimiser pour le web + Recadrage auto</li>
-                </ul>
-            </div>
-
-            <p class="submit">
-                <button type="submit" name="submit_pdf" class="button button-primary">Enregistrer les paramètres PDF</button>
-            </p>
-            </form>
-        </div>
-
-        <div id="securite" class="tab-content hidden-tab">
-            <h2>Paramètres de Sécurité</h2>
-            <p style="color: #666;">Configurations de sécurité et limites système. Pour le debug et logging, voir l'onglet Développeur.</p>
-
-         <form method="post" id="securite-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_securite_nonce'); ?>
-                <input type="hidden" name="submit_security" value="1">
-
-            <h3 class="section-title">⚙️ Limites & Protections Système</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="max_template_size">Taille Max Template (octets)</label></th>
-                    <td>
-                        <input type="number" id="max_template_size" name="max_template_size"
-                               value="<?php echo intval($settings['max_template_size'] ?? 52428800); ?>" min="1048576" step="1048576" />
-                        <p class="description">Maximum: ~<?php echo number_format(intval($settings['max_template_size'] ?? 52428800) / 1048576); ?> MB (défaut: 50 MB)</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="max_execution_time">Temps Max d'Exécution (secondes)</label></th>
-                    <td>
-                        <input type="number" id="max_execution_time" name="max_execution_time"
-                               value="<?php echo intval($settings['max_execution_time'] ?? 300); ?>" min="1" max="3600"/>
-                        <p class="description">Temps avant timeout pour la génération PDF (défaut: 300 secondes)</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="memory_limit">Limite Mémoire</label></th>
-                    <td>
-                        <input type="text" id="memory_limit" name="memory_limit"
-                               value="<?php echo esc_attr($settings['memory_limit'] ?? '256M'); ?>"
-                               placeholder="256M" />
-                        <p class="description">Format: 256M, 512M, 1G. Doit être ≥ taille max template (défaut: 256M)</p>
-                    </td>
-                </tr>
-            </table>
-
-            <h3 class="section-title">🔐 Protections</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label>Nonces WordPress</label></th>
-                    <td>
-                        <p style="margin: 0;">✓ Les nonces expirent après <strong>24 heures</strong> pour plus de sécurité</p>
-                        <p style="margin: 0; margin-top: 10px;">✓ Tous les formulaires sont protégés par des nonces WordPress</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label>Rate Limiting</label></th>
-                    <td>
-                        <p style="margin: 0;">✓ Le rate limiting est automatiquement activé pour prévenir les abus</p>
-                        <p style="margin: 0; margin-top: 10px;">Limite: <strong>100 requêtes par minute</strong> par IP</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label>Permissions</label></th>
-                    <td>
-                        <p style="margin: 0;">✓ Accès à PDF Builder Pro limité aux rôles autorisés</p>
-                        <p style="margin: 0; margin-top: 10px;">Voir l'onglet "Rôles" pour configurer les accès</p>
-                    </td>
-                </tr>
-            </table>
-
-            <!-- Section Sécurité avancée -->
-            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-top: 30px;">
-                <h3>🔒 Sécurité Avancée</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li>✓ Sanitization de toutes les entrées utilisateur</li>
-                    <li>✓ Validation des fichiers uploadés</li>
-                    <li>✓ Protection XSS et CSRF</li>
-                    <li>✓ Permissions WordPress vérifiées</li>
-                    <li>✓ Logs sécurisés des actions critiques</li>
-                </ul>
-            </div>
-
-            <!-- Conseils de sécurité -->
-            <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin-top: 20px;">
-                <h3 style="margin-top: 0; color: #856404;">💡 Conseils Sécurité</h3>
-                <ul style="margin: 0; padding-left: 20px; color: #856404;">
-                    <li><strong>Production :</strong> Désactivez le mode debug et mettez "Error" en log level</li>
-                    <li><strong>Memory limit :</strong> Doit être suffisant pour vos plus gros PDFs</li>
-                    <li><strong>Mises à jour :</strong> Gardez WordPress et les plugins à jour</li>
-                    <li><strong>Sauvegardes :</strong> Effectuez des sauvegardes régulières</li>
-                </ul>
-            </div>
-
-            <p class="submit">
-                <button type="submit" name="submit_security" class="button button-primary">Enregistrer les paramètres de sécurité</button>
-            </p>
-         </form>
-        </div>
-
-        <div id="roles" class="tab-content hidden-tab">
-            <h2>Gestion des Rôles et Permissions</h2>
+            <!-- Section Rôles et Permissions -->
+            <h3 class="section-title">👥 Gestion des Rôles et Permissions</h3>
 
             <!-- Message de confirmation que l'onglet est chargé -->
             <div style="margin-bottom: 20px; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
-                ✅ Onglet Rôles chargé - Bouton de sauvegarde visible ci-dessous
+                ✅ Section Rôles chargée - Bouton de sauvegarde visible ci-dessous
             </div>
 
             <?php
@@ -2226,1481 +1515,540 @@
                     .toggle-slider:hover {
                         box-shadow: 0 0 8px rgba(34, 113, 177, 0.3);
                     }
-
-                    input:checked + .toggle-slider:hover {
-                        box-shadow: 0 0 8px rgba(34, 113, 177, 0.5);
-                    }
-
-                    /* Styles pour les notifications de sauvegarde */
-                    .backup-notification {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        padding: 8px 12px;
-                        margin-bottom: 8px;
-                        border-radius: 6px;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                        font-size: 13px;
-                        font-weight: 500;
-                        max-width: 350px;
-                        backdrop-filter: blur(10px);
-                        border: 1px solid rgba(255,255,255,0.2);
-                    }
-
-                    .backup-notification-success {
-                        background: linear-gradient(135deg, #d4edda, #c3e6cb);
-                        color: #155724;
-                        border-color: #c3e6cb;
-                    }
-
-                    .backup-notification-error {
-                        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-                        color: #721c24;
-                        border-color: #f5c6cb;
-                    }
-
-                    .backup-notification-icon {
-                        font-size: 14px;
-                        flex-shrink: 0;
-                    }
-
-                    .backup-notification-message {
-                        flex: 1;
-                        line-height: 1.4;
-                    }
-
-                    .backup-notification-close {
-                        cursor: pointer;
-                        font-size: 16px;
-                        font-weight: bold;
-                        opacity: 0.7;
-                        transition: opacity 0.2s;
-                        flex-shrink: 0;
-                        margin-left: 4px;
-                    }
-
-                    .backup-notification-close:hover {
-                        opacity: 1;
-                    }
                 </style>
 
-                <!-- Bouton de sauvegarde en bas aussi -->
-                <div style="margin-top: 30px; padding: 15px; background: #e7f3ff; border: 1px solid #b3d7ff; border-radius: 8px;">
-                    <p class="submit" style="margin: 0;">
-                        <button type="submit" name="submit_roles" class="button button-primary" style="font-size: 14px; padding: 8px 16px;">
-                            💾 Sauvegarder les Rôles (Bas de page)
-                        </button>
-                        <span class="description" style="margin-left: 15px; color: #0056b3;">
-                            Cliquez ici pour enregistrer vos modifications
-                        </span>
-                    </p>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const roleToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
+                        const selectedCount = document.getElementById('selected-count');
+                        const selectAllBtn = document.getElementById('select-all-roles');
+                        const selectCommonBtn = document.getElementById('select-common-roles');
+                        const selectNoneBtn = document.getElementById('select-none-roles');
+
+                        // Fonction pour mettre à jour le compteur
+                        function updateSelectedCount() {
+                            const checkedBoxes = document.querySelectorAll('.toggle-switch input[type="checkbox"]:checked');
+                            if (selectedCount) {
+                                selectedCount.textContent = checkedBoxes.length;
+
+                            }
+                        }
+
+                        // Bouton Sélectionner Tout
+                        if (selectAllBtn) {
+                            selectAllBtn.addEventListener('click', function() {
+                                const togglesLength = roleToggles.length;
+                                for (let i = 0; i < togglesLength; i++) {
+                                    const checkbox = roleToggles[i];
+                                    if (!checkbox.disabled) {
+                                        checkbox.checked = true;
+                                    }
+                                }
+                                // Différer la mise à jour du compteur pour éviter les violations de performance
+                                requestAnimationFrame(updateSelectedCount);
+                            });
+                        }
+
+                        // Bouton Rôles Courants
+                        if (selectCommonBtn) {
+                            selectCommonBtn.addEventListener('click', function() {
+                                const commonRoles = ['administrator', 'editor', 'shop_manager'];
+                                const togglesLength = roleToggles.length;
+                                for (let i = 0; i < togglesLength; i++) {
+                                    const checkbox = roleToggles[i];
+                                    const isCommon = commonRoles.includes(checkbox.value);
+                                    if (!checkbox.disabled) {
+                                        checkbox.checked = isCommon;
+                                    }
+                                }
+                                // Différer la mise à jour du compteur pour éviter les violations de performance
+                                requestAnimationFrame(updateSelectedCount);
+                            });
+                        }
+
+                        // Bouton Désélectionner Tout
+                        if (selectNoneBtn) {
+                            selectNoneBtn.addEventListener('click', function() {
+                                const togglesLength = roleToggles.length;
+                                for (let i = 0; i < togglesLength; i++) {
+                                    const checkbox = roleToggles[i];
+                                    if (!checkbox.disabled) {
+                                        checkbox.checked = false;
+                                    }
+                                }
+                                // Différer la mise à jour du compteur pour éviter les violations de performance
+                                requestAnimationFrame(updateSelectedCount);
+                            });
+                        }
+
+                        // Mettre à jour le compteur quand un toggle change (avec debounce pour éviter les appels trop fréquents)
+                        let updateTimeout;
+                        roleToggles.forEach(function(checkbox) {
+                            checkbox.addEventListener('change', function() {
+                                // Debounce les appels pour éviter les appels trop fréquents
+                                clearTimeout(updateTimeout);
+                                updateTimeout = setTimeout(updateSelectedCount, 10);
+                            });
+                        });
+
+                        // Initialiser le compteur
+                        updateSelectedCount();
+
+                    });
+                </script>
+
+                <!-- Permissions incluses -->
+                <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
+                    <h4 style="margin-top: 0; color: #003d66;">🔐 Permissions Incluses</h4>
+                    <p style="margin: 10px 0; color: #003d66;">Les rôles sélectionnés auront accès à :</p>
+                    <ul style="margin: 0; padding-left: 20px; color: #003d66;">
+                        <li>✅ Création, édition et suppression de templates PDF</li>
+                        <li>✅ Génération et téléchargement de PDF</li>
+                        <li>✅ Accès aux paramètres et configuration</li>
+                        <li>✅ Prévisualisation avant génération</li>
+                        <li>✅ Gestion des commandes WooCommerce (si applicable)</li>
+                    </ul>
+                </div>
+
+                <!-- Avertissement important -->
+                <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 20px;">
+                    <h4 style="margin-top: 0; color: #856404;">⚠️ Informations Importantes</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #856404;">
+                        <li>Les rôles non sélectionnés n'auront aucun accès à PDF Builder Pro</li>
+                        <li>Le rôle "Administrator" a toujours accès complet, indépendamment</li>
+                        <li>Minimum requis : au moins un rôle sélectionné</li>
+                    </ul>
                 </div>
 
             </form>
-
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Empêcher l'interférence AJAX avec le formulaire des rôles
-                    const rolesForm = document.querySelector('#roles form');
-                    if (rolesForm) {
-                        // Log pour déboguer
-
-
-                        rolesForm.addEventListener('submit', function(e) {
-
-
-                            // Laisser le formulaire se soumettre normalement (POST)
-
-                        });
-
-                        // Empêcher tout autre event listener AJAX
-                        rolesForm.addEventListener('click', function(e) {
-                            if (e.target.type === 'submit') {
-
-                            }
-                        }, true); // useCapture = true
-                    } else {
-                        console.error('❌ Roles form not found!');
-                    }
-
-                    const roleToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
-                    const selectedCount = document.getElementById('selected-count');
-                    const selectAllBtn = document.getElementById('select-all-roles');
-                    const selectCommonBtn = document.getElementById('select-common-roles');
-                    const selectNoneBtn = document.getElementById('select-none-roles');
-
-                    // Fonction pour mettre à jour le compteur
-                    function updateSelectedCount() {
-                        const checkedBoxes = document.querySelectorAll('.toggle-switch input[type="checkbox"]:checked');
-                        if (selectedCount) {
-                            selectedCount.textContent = checkedBoxes.length;
-
-                        }
-                    }
-
-                    // Bouton Sélectionner Tout
-                    if (selectAllBtn) {
-                        selectAllBtn.addEventListener('click', function() {
-                            const togglesLength = roleToggles.length;
-                            for (let i = 0; i < togglesLength; i++) {
-                                const checkbox = roleToggles[i];
-                                if (!checkbox.disabled) {
-                                    checkbox.checked = true;
-                                }
-                            }
-                            // Différer la mise à jour du compteur pour éviter les violations de performance
-                            requestAnimationFrame(updateSelectedCount);
-                        });
-                    }
-
-                    // Bouton Rôles Courants
-                    if (selectCommonBtn) {
-                        selectCommonBtn.addEventListener('click', function() {
-                            const commonRoles = ['administrator', 'editor', 'shop_manager'];
-                            const togglesLength = roleToggles.length;
-                            for (let i = 0; i < togglesLength; i++) {
-                                const checkbox = roleToggles[i];
-                                const isCommon = commonRoles.includes(checkbox.value);
-                                if (!checkbox.disabled) {
-                                    checkbox.checked = isCommon;
-                                }
-                            }
-                            // Différer la mise à jour du compteur pour éviter les violations de performance
-                            requestAnimationFrame(updateSelectedCount);
-                        });
-                    }
-
-                    // Bouton Désélectionner Tout
-                    if (selectNoneBtn) {
-                        selectNoneBtn.addEventListener('click', function() {
-                            const togglesLength = roleToggles.length;
-                            for (let i = 0; i < togglesLength; i++) {
-                                const checkbox = roleToggles[i];
-                                if (!checkbox.disabled) {
-                                    checkbox.checked = false;
-                                }
-                            }
-                            // Différer la mise à jour du compteur pour éviter les violations de performance
-                            requestAnimationFrame(updateSelectedCount);
-                        });
-                    }
-
-                    // Mettre à jour le compteur quand un toggle change (avec debounce pour éviter les appels trop fréquents)
-                    let updateTimeout;
-                    roleToggles.forEach(function(checkbox) {
-                        checkbox.addEventListener('change', function() {
-                            // Debounce les appels pour éviter les violations de performance
-                            clearTimeout(updateTimeout);
-                            updateTimeout = setTimeout(updateSelectedCount, 10);
-                        });
-                    });
-
-                    // Initialiser le compteur
-                    updateSelectedCount();
-
-                });
-            </script>
-
-            <!-- Permissions incluses -->
-            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
-                <h3 style="margin-top: 0; color: #003d66;">🔐 Permissions Incluses</h3>
-                <p style="margin: 10px 0; color: #003d66;">Les rôles sélectionnés auront accès à :</p>
-                <ul style="margin: 0; padding-left: 20px; color: #003d66;">
-                    <li>✅ Création, édition et suppression de templates PDF</li>
-                    <li>✅ Génération et téléchargement de PDF</li>
-                    <li>✅ Accès aux paramètres et configuration</li>
-                    <li>✅ Prévisualisation avant génération</li>
-                    <li>✅ Gestion des commandes WooCommerce (si applicable)</li>
-                </ul>
-            </div>
-
-            <!-- Avertissement important -->
-            <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 20px;">margin-top: 20px;">
-                <h3 style="margin-top: 0; color: #856404;">⚠️ Informations Importantes</h3>
-                <ul style="margin: 0; padding-left: 20px; color: #856404;">
-                    <li>Les rôles non sélectionnés n'auront aucun accès à PDF Builder Pro</li>
-                    <li>Le rôle "Administrator" a toujours accès complet, indépendamment</li>
-                    <li>Minimum requis : au moins un rôle sélectionné</li>
-                </ul>
-            </div>
-
-            <!-- Conseils d'utilisation -->
-            <div style="background: #f0f0f0; border-left: 4px solid #666; border-radius: 4px; padding: 20px; margin-top: 20px;">
-                <h3 style="margin-top: 0;">💡 Conseils d'Utilisation</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li><strong>Basique :</strong> Sélectionnez "Administrator" et "Editor"</li>
-                    <li><strong>WooCommerce :</strong> Ajoutez "Shop Manager"</li>
-                    <li><strong>Multi-utilisateurs :</strong> Utilisez "Rôles Courants" pour configuration rapide</li>
-                    <li><strong>Sécurité :</strong> Limitez l'accès aux rôles les moins permissifs nécessaires</li>
-                </ul>
-            </div>
-
-            <!-- Tableau de référence des rôles -->
-            <div style="margin-top: 30px;">
-                <h3>📋 Référence des Rôles WordPress</h3>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th style="width: 20%;">Rôle</th>
-                            <th style="width: 50%;">Description</th>
-                            <th style="width: 30%; text-align: center;">Recommandé</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Administrator</strong></td>
-                            <td>Accès complet à toutes les fonctionnalités WordPress et PDF Builder Pro</td>
-                            <td style="text-align: center; color: #46b450;">✓ Oui</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Editor</strong></td>
-                            <td>Peut publier et gérer tous les articles, y compris les PDFs</td>
-                            <td style="text-align: center; color: #46b450;">✓ Oui</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Author</strong></td>
-                            <td>Peut publier ses propres articles avec générateur PDF</td>
-                            <td style="text-align: center;">○ Optionnel</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Contributor</strong></td>
-                            <td>Peut soumettre des brouillons mais n'a accès qu'à la prévisualisation</td>
-                            <td style="text-align: center;">○ Optionnel</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Shop Manager</strong></td>
-                            <td>Gestionnaire WooCommerce, accès aux factures et devis PDF</td>
-                            <td style="text-align: center; color: #46b450;">✓ Pour boutiques</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Customer</strong></td>
-                            <td>Client WooCommerce, accès à ses commandes</td>
-                            <td style="text-align: center; color: #dc3232;">✗ Non</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </div>
 
-        <div id="notifications" class="tab-content hidden-tab">
-            <h2>Paramètres de Notifications</h2>
+        <div id="systeme" class="tab-content hidden-tab">
+            <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
-            <form method="post" id="notifications-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_notifications_nonce'); ?>
-                <input type="hidden" name="submit_notifications" value="1">
+            <!-- Section Performance -->
+            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">🚀 Performance</h3>
 
-            <?php
-            // Traitement de la sauvegarde des notifications
-            if (isset($_POST['submit_notifications']) && isset($_POST['pdf_builder_notifications_nonce'])) {
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_performance', 'pdf_builder_performance_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="performance">
 
-                if (wp_verify_nonce($_POST['pdf_builder_notifications_nonce'], 'pdf_builder_settings')) {
-                    $notification_settings = [
-                        'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
-                        'admin_email' => sanitize_email($_POST['admin_email'] ?? get_option('admin_email')),
-                        'notification_log_level' => sanitize_text_field($_POST['notification_log_level'] ?? 'error'),
-                        'notification_on_generation' => isset($_POST['notification_on_generation']),
-                        'notification_on_error' => isset($_POST['notification_on_error']),
-                        'notification_on_deletion' => isset($_POST['notification_on_deletion']),
-                    ];
-                    foreach ($notification_settings as $key => $value) {
-                        update_option('pdf_builder_' . $key, $value);
-                    }
-
-                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de notifications sauvegardés.</p></div>';
-                }
-            }
-
-            $email_notifications = get_option('pdf_builder_email_notifications_enabled', false);
-            $admin_email = get_option('pdf_builder_admin_email', get_option('admin_email'));
-            $notification_level = get_option('pdf_builder_notification_log_level', 'error');
-            ?>
-
-            <h3 class="section-title">Notifications par Email</h3>
-
-            <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="email_notifications_enabled">Notifications Email</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="email_notifications_enabled" name="email_notifications_enabled" value="1"
-                                           <?php checked($email_notifications); ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Notifications email</span>
-                            </div>
-                            <div class="toggle-description">Active les notifications par email pour les erreurs et événements importants</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="admin_email">Email Administrateur</label></th>
-                        <td>
-                            <input type="email" id="admin_email" name="admin_email" value="<?php echo esc_attr($admin_email); ?>"
-                                   class="regular-text" autocomplete="email" />
-                            <p class="description">Adresse email pour recevoir les notifications système</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="notification_log_level">Niveau de Notification</label></th>
-                        <td>
-                            <select id="notification_log_level" name="notification_log_level">
-                                <option value="error" <?php selected($notification_level, 'error'); ?>>Erreurs uniquement</option>
-                                <option value="warning" <?php selected($notification_level, 'warning'); ?>>Erreurs et avertissements</option>
-                                <option value="info" <?php selected($notification_level, 'info'); ?>>Tous les événements importants</option>
-                            </select>
-                            <p class="description">Détermine quels événements déclencheront une notification email</p>
-                        </td>
-                    </tr>
-            </table>
-
-                <h3 class="section-title">Événements de Notification</h3>
-
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="notification_on_generation">Génération PDF</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="notification_on_generation" name="notification_on_generation" value="1"
-                                           <?php checked(get_option('pdf_builder_notification_on_generation')); ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Génération réussie</span>
-                            </div>
-                            <div class="toggle-description">Notifier à chaque génération de PDF réussie</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="notification_on_error">Erreurs</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="notification_on_error" name="notification_on_error" value="1"
-                                           <?php checked(get_option('pdf_builder_notification_on_error')); ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Erreurs de génération</span>
-                            </div>
-                            <div class="toggle-description">Notifier en cas d'erreur lors de la génération</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="notification_on_deletion">Suppression</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="notification_on_deletion" name="notification_on_deletion" value="1"
-                                           <?php checked(get_option('pdf_builder_notification_on_deletion')); ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Suppression templates</span>
-                            </div>
-                            <div class="toggle-description">Notifier lors de la suppression de templates</div>
-                        </td>
-                    </tr>
-                </table>
-
-                <h3 class="section-title">Configuration SMTP</h3>
-                <p class="description" style="margin-bottom: 15px;">Configurez un serveur SMTP pour l'envoi des notifications par email</p>
-
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="smtp_enabled">Activer SMTP</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="smtp_enabled" name="smtp_enabled" value="1"
-                                           <?php checked(get_option('pdf_builder_smtp_enabled')); ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Utiliser SMTP</span>
-                            </div>
-                            <div class="toggle-description">Active l'envoi d'emails via serveur SMTP au lieu de la fonction mail() par défaut</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="smtp_host">Serveur SMTP</label></th>
-                        <td>
-                            <input type="text" id="smtp_host" name="smtp_host"
-                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_host', 'smtp.gmail.com')); ?>"
-                                   class="regular-text" placeholder="smtp.gmail.com" />
-                            <p class="description">Adresse du serveur SMTP (ex: smtp.gmail.com, smtp.mailgun.org)</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="smtp_port">Port SMTP</label></th>
-                        <td>
-                            <input type="number" id="smtp_port" name="smtp_port"
-                                   value="<?php echo intval(get_option('pdf_builder_smtp_port', 587)); ?>"
-                                   min="1" max="65535" class="small-text" />
-                            <p class="description">Port du serveur SMTP (587 pour TLS, 465 pour SSL, 25 pour non-chiffré)</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="smtp_encryption">Chiffrement</label></th>
-                        <td>
-                            <select id="smtp_encryption" name="smtp_encryption">
-                                <option value="tls" <?php selected(get_option('pdf_builder_smtp_encryption', 'tls'), 'tls'); ?>>TLS</option>
-                                <option value="ssl" <?php selected(get_option('pdf_builder_smtp_encryption', 'tls'), 'ssl'); ?>>SSL</option>
-                                <option value="none" <?php selected(get_option('pdf_builder_smtp_encryption', 'tls'), 'none'); ?>>Aucun</option>
-                            </select>
-                            <p class="description">Type de chiffrement pour la connexion SMTP</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="smtp_auth">Authentification</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="smtp_auth" name="smtp_auth" value="1"
-                                           <?php checked(get_option('pdf_builder_smtp_auth', true)); ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Authentification requise</span>
-                            </div>
-                            <div class="toggle-description">La plupart des serveurs SMTP nécessitent une authentification</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="smtp_username">Nom d'utilisateur</label></th>
-                        <td>
-                            <input type="text" id="smtp_username" name="smtp_username"
-                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_username')); ?>"
-                                   class="regular-text" placeholder="votre-email@gmail.com" autocomplete="username" />
-                            <p class="description">Nom d'utilisateur pour l'authentification SMTP</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="smtp_password">Mot de passe</label></th>
-                        <td>
-                            <input type="password" id="smtp_password" name="smtp_password"
-                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_password')); ?>"
-                                   class="regular-text" placeholder="••••••••" autocomplete="current-password" />
-                            <p class="description">Mot de passe pour l'authentification SMTP</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="smtp_from_email">Email expéditeur</label></th>
-                        <td>
-                            <input type="email" id="smtp_from_email" name="smtp_from_email"
-                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_from_email', get_option('admin_email'))); ?>"
-                                   class="regular-text" autocomplete="email" />
-                            <p class="description">Adresse email utilisée comme expéditeur (From)</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="smtp_from_name">Nom expéditeur</label></th>
-                        <td>
-                            <input type="text" id="smtp_from_name" name="smtp_from_name"
-                                   value="<?php echo esc_attr(get_option('pdf_builder_smtp_from_name', get_bloginfo('name'))); ?>"
-                                   class="regular-text" autocomplete="name" />
-                            <p class="description">Nom affiché comme expéditeur</p>
-                        </td>
-                    </tr>
-                </table>
-
-                <p class="submit">
-                    <button type="button" id="test-smtp-connection" class="button button-secondary">
-                        🔗 Tester la Connexion SMTP
-                    </button>
-                    <button type="button" id="test-notifications" class="button button-secondary">
-                        🧪 Tester les Notifications
-                    </button>
-                </p>
-
-            <!-- Informations sur les notifications -->
-            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
-                <h3 style="margin-top: 0; color: #003d66;">📧 Informations sur les Notifications</h3>
-                <ul style="margin: 0; padding-left: 20px; color: #003d66;">
-                    <li><strong>Email actuel :</strong> <?php echo esc_html($admin_email); ?></li>
-                    <li>Les notifications sont envoyées aux administrateurs autorisés</li>
-                    <li>Les emails peuvent être personnalisés via des filtres WordPress</li>
-                    <li>Les logs de notification sont conservés pendant 30 jours</li>
-                </ul>
-            </div>
-
-            <!-- Exemples de notifications -->
-            <div style="background: #f8f9fa; border-left: 4px solid #666; border-radius: 4px; padding: 20px; margin-top:20px;">
-                <h3 style="margin-top: 0;">💡 Exemples de Notifications</h3>
-                <p><strong>Erreur :</strong> "PDF generation failed for order #1234: Memory limit exceeded"</p>
-                <p><strong>Avertissement :</strong> "Large template detected: file size 45MB, consider optimizing"</p>
-                <p><strong>Info :</strong> "Successfully generated 150 PDFs in batch process (12.5s)"</p>
-            </div>
-
-            <!-- Tableau des types de notifications -->
-            <div style="margin-top: 30px;">
-                <h3>📋 Types de Notifications</h3>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
+                    <table class="form-table">
                         <tr>
-                            <th style="width: 25%;">Type</th>
-                            <th style="width: 35%;">Description</th>
-                            <th style="width: 20%; text-align: center;">Niveau</th>
-                            <th style="width: 20%; text-align: center;">Activé</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Génération Réussie</strong></td>
-                            <td>Un PDF a été généré avec succès</td>
-                            <td style="text-align: center;">Info</td>
-                            <td style="text-align: center;">
-                                <input type="checkbox" disabled <?php checked(get_option('pdf_builder_notification_on_generation')); ?> />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Erreur</strong></td>
-                            <td>Une erreur s'est produite lors de la génération</td>
-                            <td style="text-align: center; color: #dc3232;">Erreur</td>
-                            <td style="text-align: center;">
-                                <input type="checkbox" disabled <?php checked(get_option('pdf_builder_notification_on_error')); ?> />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Avertissement</strong></td>
-                            <td>Dépassement de limite de ressources</td>
-                            <td style="text-align: center; color: #ffb900;">Avertissement</td>
-                            <td style="text-align: center;">
-                                <input type="checkbox" disabled checked />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Suppression</strong></td>
-                            <td>Un template a été supprimé</td>
-                            <td style="text-align: center;">Info</td>
-                            <td style="text-align: center;">
-                                <input type="checkbox" disabled <?php checked(get_option('pdf_builder_notification_on_deletion')); ?> />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Maintenance</strong></td>
-                            <td>Mises à jour et maintenance du système</td>
-                            <td style="text-align: center;">Info</td>
-                            <td style="text-align: center;">
-                                <input type="checkbox" disabled checked />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Activation License</strong></td>
-                            <td>Licence activée ou expirée</td>
-                            <td style="text-align: center;">Info</td>
-                            <td style="text-align: center;">
-                                <input type="checkbox" disabled checked />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <p class="submit">
-                <button type="submit" name="submit_notifications" class="button button-primary">Enregistrer les paramètres de notifications</button>
-            </p>
-
-            <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const emailNotificationsToggle = document.getElementById('email_notifications_enabled');
-                const dependentToggles = [
-                    'notification_on_generation',
-                    'notification_on_error',
-                    'notification_on_deletion',
-                    'smtp_enabled',
-                    'smtp_auth'
-                ];
-                const dependentFields = [
-                    'admin_email',
-                    'notification_log_level',
-                    'smtp_host',
-                    'smtp_port',
-                    'smtp_encryption',
-                    'smtp_username',
-                    'smtp_password',
-                    'smtp_from_email',
-                    'smtp_from_name'
-                ];
-
-                function updateDependentControls() {
-                    const isEnabled = emailNotificationsToggle.checked;
-
-                    // Désactiver/activer les toggles dépendants
-                    dependentToggles.forEach(function(toggleId) {
-                        const toggle = document.getElementById(toggleId);
-                        if (toggle) {
-                            toggle.disabled = !isEnabled;
-                            if (!isEnabled) {
-                                toggle.checked = false;
-                            }
-                        }
-                    });
-
-                    // Désactiver/activer les champs de texte dépendants
-                    dependentFields.forEach(function(fieldId) {
-                        const field = document.getElementById(fieldId);
-                        if (field) {
-                            field.disabled = !isEnabled;
-                        }
-                    });
-
-                    // Désactiver/activer les boutons de test
-                    const testButtons = ['test-smtp-connection', 'test-notifications'];
-                    testButtons.forEach(function(buttonId) {
-                        const button = document.getElementById(buttonId);
-                        if (button) {
-                            button.disabled = !isEnabled;
-                        }
-                    });
-                }
-
-                // Appliquer l'état initial
-                updateDependentControls();
-
-                // Écouter les changements
-                emailNotificationsToggle.addEventListener('change', updateDependentControls);
-            });
-            </script>
-            </form>
-        </div>
-
-        <div id="canvas" class="tab-content hidden-tab">
-            <h2>Paramètres Canvas</h2>
-
-         <form method="post" id="canvas-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_canvas_nonce'); ?>
-                <input type="hidden" name="submit_canvas" value="1">
-
-            <?php
-            // Récupérer les paramètres canvas depuis les options WordPress
-            $canvas_settings = get_option('pdf_builder_canvas_settings', []);
-          // Définir les valeurs par défaut pour éviter les erreurs "Undefined array key"
-            $canvas_settings = array_merge([
-                'default_canvas_format' => 'A4',
-                'default_canvas_orientation' => 'portrait',
-                'default_canvas_unit' => 'px',
-                'default_orientation' => 'portrait',
-                'canvas_background_color' => '#ffffff',
-                'canvas_show_transparency' => false,
-                'container_background_color' => '#f8f9fa',
-                'container_show_transparency' => false,
-                'margin_top' => 28,
-                'margin_right' => 28,
-                'margin_bottom' => 10,
-                'margin_left' => 10,
-                'show_margins' => false,
-                'show_grid' => false,
-                'grid_size' => 10,
-                'grid_color' => '#e0e0e0',
-                'snap_to_grid' => false,
-                'snap_to_elements' => false,
-                'snap_tolerance' => 5,
-                'show_guides' => false,
-                'default_zoom' => 100,
-                'zoom_step' => 25,
-                'min_zoom' => 10,
-                'max_zoom' => 500,
-                'zoom_with_wheel' => false,
-                'pan_with_mouse' => false,
-                'show_resize_handles' => false,
-                'handle_size' => 8,
-                'handle_color' => '#007cba',
-                'enable_rotation' => false,
-                'rotation_step' => 15,
-                'multi_select' => false,
-                'copy_paste_enabled' => false,
-                'export_quality' => 'print',
-                'export_format' => 'pdf',
-                'compress_images' => true,
-                'image_quality' => 85,
-                'max_image_size' => 2048,
-                'include_metadata' => true,
-                'pdf_author' => 'PDF Builder Pro',
-                'pdf_subject' => '',
-                'auto_crop' => false,
-                'embed_fonts' => true,
-                'optimize_for_web' => true,
-                'enable_hardware_acceleration' => true,
-                'limit_fps' => true,
-                'max_fps' => 60,
-                'auto_save_enabled' => true,
-                'auto_save_interval' => 30,
-                'auto_save_versions' => 10,
-                'undo_levels' => 50,
-                'redo_levels' => 50,
-                'enable_keyboard_shortcuts' => true,
-                'debug_mode' => false,
-                'show_fps' => false
-            ], $canvas_settings);
-            ?>
-
-            <h3 class="section-title">Dimensions par Défaut</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="default_canvas_format">Format Canvas par défaut</label></th>
-                    <td>
-                        <select id="default_canvas_format" name="default_canvas_format">
-                            <option value="A6" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A6'); ?>>A6</option>
-                            <option value="A5" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A5'); ?>>A5</option>
-                            <option value="A4" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A4'); ?>>A4</option>
-                            <option value="A3" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A3'); ?>>A3</option>
-                            <option value="A2" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A2'); ?>>A2</option>
-                            <option value="A1" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A1'); ?>>A1</option>
-                            <option value="A0" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'A0'); ?>>A0</option>
-                            <option value="Letter" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'Letter'); ?>>Letter</option>
-                            <option value="Legal" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'Legal'); ?>>Legal</option>
-                            <option value="Tabloid" <?php selected($canvas_settings['default_canvas_format'] ?? 'A4', 'Tabloid'); ?>>Tabloid</option>
-                        </select>
-                        <p class="description">Format par défaut du canvas</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="default_canvas_orientation">Orientation Canvas par défaut</label></th>
-                    <td>
-                        <select id="default_canvas_orientation" name="default_canvas_orientation">
-                            <option value="portrait" <?php selected($canvas_settings['default_canvas_orientation'] ?? 'portrait', 'portrait'); ?>>Portrait</option>
-                            <option value="landscape" <?php selected($canvas_settings['default_canvas_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
-                        </select>
-                        <p class="description">Orientation par défaut du canvas</p>
-                    </td>
-                </tr>
-            </table>
-
-            <h3 class="section-title">Fond & Couleurs</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="canvas_background_color">Couleur Fond Canvas</label></th>
-                    <td>
-                        <input type="color" id="canvas_background_color" name="canvas_background_color"
-                               value="<?php echo esc_attr($canvas_settings['canvas_background_color'] ?? '#ffffff'); ?>" />
-                        <p class="description">Couleur de fond du canvas</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="container_background_color">Couleur Fond Conteneur</label></th>
-                    <td>
-                        <input type="color" id="container_background_color" name="container_background_color"
-                               value="<?php echo esc_attr($canvas_settings['container_background_color'] ?? '#f8f9fa'); ?>" />
-                        <p class="description">Couleur de fond autour du canvas</p>
-                    </td>
-                </tr>
-            </table>
-
-            <h3 class="section-title">Marges</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="show_margins">Activer les marges</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <input type="hidden" name="show_margins" value="0" />
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="show_margins" name="show_margins" value="1"
-                                       <?php checked($canvas_settings['show_margins']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Marges activées</span>
-                        </div>
-                        <div class="toggle-description">Active/désactive l'affichage des lignes de marge dans l'éditeur</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label>Marges (mm)</label></th>
-                    <td>
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                            <div>
-                                <label for="margin_top" class="margin-label">Haut :</label>
-                                <input type="number" id="margin_top" name="margin_top" class="margin-input"
-                                       value="<?php echo intval($canvas_settings['margin_top'] ?? 28); ?>" min="0" />
-                            </div>
-                            <div>
-                                <label for="margin_right" class="margin-label">Droite :</label>
-                                <input type="number" id="margin_right" name="margin_right" class="margin-input"
-                                       value="<?php echo intval($canvas_settings['margin_right'] ?? 28); ?>" min="0" />
-                            </div>
-                            <div>
-                                <label for="margin_bottom" class="margin-label">Bas :</label>
-                                <input type="number" id="margin_bottom" name="margin_bottom" class="margin-input"
-                                       value="<?php echo intval($canvas_settings['margin_bottom'] ?? 10); ?>" min="0" />
-                            </div>
-                            <div>
-                                <label for="margin_left" class="margin-label">Gauche :</label>
-                                <input type="number" id="margin_left" name="margin_left" class="margin-input"
-                                       value="<?php echo intval($canvas_settings['margin_left'] ?? 10); ?>" min="0" />
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-
-            <h3 class="section-title">Grille & Aimants</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="show_grid">Activer la grille</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <input type="hidden" name="show_grid" value="0" />
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="show_grid" name="show_grid" value="1"
-                                       <?php checked($canvas_settings['show_grid']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Grille activée</span>
-                        </div>
-                        <div class="toggle-description">Active/désactive l'affichage de la grille dans l'éditeur</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="grid_size" <?php if (!$canvas_settings['show_grid']) {
-                        echo 'style="color: #999;"';
-                                                           } ?>>Taille Grille (px)</label></th>
-                    <td>
-                        <input type="number" id="grid_size" name="grid_size"
-                               value="<?php echo intval($canvas_settings['grid_size'] ?? 10); ?>" min="5" max="100"
-                               <?php if (!$canvas_settings['show_grid']) {
-                                    echo 'disabled style="background-color: #f0f0f0; color: #999;"';
-                               } ?> />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="grid_color" <?php if (!$canvas_settings['show_grid']) {
-                        echo 'style="color: #999;"';
-                                                            } ?>>Couleur Grille</label></th>
-                    <td>
-                        <input type="color" id="grid_color" name="grid_color"
-                               value="<?php echo esc_attr($canvas_settings['grid_color'] ?? '#e0e0e0'); ?>"
-                               <?php if (!$canvas_settings['show_grid']) {
-                                    echo 'disabled style="opacity: 0.6;"';
-                               } ?> />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="snap_to_grid">Activer magnétisme grille</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <input type="hidden" name="snap_to_grid" value="0" />
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="snap_to_grid" name="snap_to_grid" value="1"
-                                       <?php checked($canvas_settings['snap_to_grid']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Magnétisme grille activé</span>
-                        </div>
-                        <div class="toggle-description">Active/désactive l'accrochage automatique des éléments à la grille dans l'éditeur</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="snap_to_elements">Activer magnétisme éléments</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <input type="hidden" name="snap_to_elements" value="0" />
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="snap_to_elements" name="snap_to_elements" value="1"
-                                       <?php checked($canvas_settings['snap_to_elements']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Magnétisme éléments activé</span>
-                        </div>
-                        <div class="toggle-description">Active/désactive l'accrochage automatique des éléments entre eux dans l'éditeur</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="snap_tolerance">Tolérance Aimantation (px)</label></th>
-                    <td>
-                        <input type="number" id="snap_tolerance" name="snap_tolerance"
-                               value="<?php echo intval($canvas_settings['snap_tolerance'] ?? 5); ?>" min="1" max="50" />
-                        <p class="description">Distance avant accrochage magnétique</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="show_guides">Activer les guides</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <input type="hidden" name="show_guides" value="0" />
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="show_guides" name="show_guides" value="1"
-                                       <?php checked($canvas_settings['show_guides']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Guides activés</span>
-                        </div>
-                        <div class="toggle-description">Active/désactive l'affichage des guides de positionnement dans l'éditeur</div>
-                    </td>
-                </tr>
-            </table>
-
-            <h3 class="section-title">Zoom & Navigation</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="default_zoom">Zoom par Défaut (%)</label></th>
-                    <td>
-                        <input type="number" id="default_zoom" name="default_zoom"
-                               value="<?php echo intval($canvas_settings['default_zoom'] ?? 100); ?>" min="10" max="500" />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="zoom_step">Pas du Zoom (%)</label></th>
-                    <td>
-                        <input type="number" id="zoom_step" name="zoom_step"
-                               value="<?php echo intval($canvas_settings['zoom_step'] ?? 25); ?>" min="5" max="100" />
-                        <p class="description">Incrément lors du zoom avant/arrière</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="min_zoom">Zoom Minimum (%)</label></th>
-                    <td>
-                        <input type="number" id="min_zoom" name="min_zoom"
-                               value="<?php echo intval($canvas_settings['min_zoom'] ?? 10); ?>" min="1" max="100" />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="max_zoom">Zoom Maximum (%)</label></th>
-                    <td>
-                        <input type="number" id="max_zoom" name="max_zoom"
-                               value="<?php echo intval($canvas_settings['max_zoom'] ?? 500); ?>" min="100" max="2000" />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="zoom_with_wheel">Activer zoom molette</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <input type="hidden" name="zoom_with_wheel" value="0" />
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="zoom_with_wheel" name="zoom_with_wheel" value="1"
-                                       <?php checked($canvas_settings['zoom_with_wheel']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Zoom molette activé</span>
-                        </div>
-                        <div class="toggle-description">Active/désactive le zoom avec la molette de la souris dans l'éditeur</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="pan_with_mouse">Activer panoramique souris</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <input type="hidden" name="pan_with_mouse" value="0" />
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="pan_with_mouse" name="pan_with_mouse" value="1"
-                                       <?php checked($canvas_settings['pan_with_mouse']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Panoramique souris activé</span>
-                        </div>
-                        <div class="toggle-description">Active/désactive le déplacement du canvas en glissant avec la souris dans l'éditeur</div>
-                    </td>
-                </tr>
-            </table>
-
-            <h3 class="section-title">Sélection & Manipulation</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="show_resize_handles">Activer les poignées</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <input type="hidden" name="show_resize_handles" value="0" />
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="show_resize_handles" name="show_resize_handles" value="1"
-                                       <?php checked($canvas_settings['show_resize_handles']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Poignées activées</span>
-                        </div>
-                        <div class="toggle-description">Active/désactive l'affichage des poignées de redimensionnement dans l'éditeur</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="handle_size">Taille Poignée (px)</label></th>
-                    <td>
-                        <input type="number" id="handle_size" name="handle_size"
-                               value="<?php echo intval($canvas_settings['handle_size'] ?? 8); ?>" min="4" max="20" />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="enable_rotation">Rotation d'Éléments</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <input type="hidden" name="enable_rotation" value="0" />
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="enable_rotation" name="enable_rotation" value="1"
-                                       <?php checked($canvas_settings['enable_rotation']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Rotation activée</span>
-                        </div>
-                        <div class="toggle-description">Permet la rotation des éléments</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="rotation_step">Pas Rotation (degrés)</label></th>
-                    <td>
-                        <input type="number" id="rotation_step" name="rotation_step"
-                               value="<?php echo intval($canvas_settings['rotation_step'] ?? 15); ?>" min="1" max="90" />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="multi_select">Activer sélection multiple</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="multi_select" name="multi_select" value="1"
-                                       <?php checked($canvas_settings['multi_select']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Sélection multiple activée</span>
-                        </div>
-                        <div class="toggle-description">Active/désactive la possibilité de sélectionner plusieurs éléments dans l'éditeur</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="copy_paste_enabled">Activer copier/coller</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="copy_paste_enabled" name="copy_paste_enabled" value="1"
-                                       <?php checked($canvas_settings['copy_paste_enabled']); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Copier/coller activé</span>
-                        </div>
-                        <div class="toggle-description">Active/désactive les raccourcis Ctrl+C / Ctrl+V dans l'éditeur</div>
-                    </td>
-                </tr>
-            </table>
-
-            <h3 class="section-title">Undo/Redo & Auto-save</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="undo_levels">Niveaux Undo</label></th>
-                    <td>
-                        <input type="number" id="undo_levels" name="undo_levels"
-                               value="<?php echo intval($canvas_settings['undo_levels'] ?? 50); ?>" min="1" max="500" />
-                        <p class="description">Nombre d'actions à mémoriser pour annuler</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="redo_levels">Niveaux Redo</label></th>
-                    <td>
-                        <input type="number" id="redo_levels" name="redo_levels"
-                               value="<?php echo intval($canvas_settings['redo_levels'] ?? 50); ?>" min="1" max="500" />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="auto_save_versions">Versions Auto-save</label></th>
-                    <td>
-                        <input type="number" id="auto_save_versions" name="auto_save_versions"
-                               value="<?php echo intval($canvas_settings['auto_save_versions'] ?? 10); ?>" min="1" max="100" />
-                        <p class="description">Nombre de versions à conserver</p>
-                    </td>
-                </tr>
-            </table>
-
-            <!-- Conseils Canvas -->
-            <div style="background: #f8f9fa; border-left: 4px solid #666; border-radius: 4px; padding: 20px; margin-top: 30px;">
-                <h3 style="margin-top: 0;">💡 Conseils Canvas</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li><strong>Performance :</strong> Réduisez la taille grille et les niveaux undo sur machines lentes</li>
-                    <li><strong>Précision :</strong> Activez le magnétisme pour alignement automatique</li>
-                    <li><strong>Navigation :</strong> Activez zoom molette et panoramique pour meilleure ergonomie</li>
-                    <li><strong>Sécurité :</strong> Les versions auto-save permettent de récupérer en cas de crash</li>
-                </ul>
-            </div>
-
-            <p class="submit">
-                <button type="submit" name="submit_canvas" class="button button-primary">Enregistrer les paramètres Canvas</button>
-            </p>
-         </form>
-        </div>
-
-        <div id="templates" class="tab-content hidden-tab">
-            <style>
-                #templates #global-save-btn { display: none !important; }
-            </style>
-            <h2>Assignation des Templates</h2>
-
-            <p style="margin-bottom: 20px;">Assignez automatiquement des templates aux différents statuts de commande WooCommerce.</p>
-
-            <?php
-            // Traitement de la sauvegarde
-            if (isset($_POST['submit_templates']) && isset($_POST['pdf_builder_templates_nonce'])) {
-
-                if (wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_templates')) {
-                    $template_mappings = [];
-                    if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
-                        foreach ($_POST['order_status_templates'] as $status => $template_id) {
-                            $template_id = intval($template_id);
-                            if ($template_id > 0) {
-                                            $template_mappings[sanitize_text_field($status)] = $template_id;
-                            }
-                        }
-                    }
-                    update_option('pdf_builder_order_status_templates', $template_mappings);
-                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Templates assignés avec succès.</p></div>';
-                }
-            }
-
-            // Récupérer les statuts de commande WooCommerce
-            $order_statuses = [];
-            if (function_exists('wc_get_order_statuses')) {
-                $order_statuses = wc_get_order_statuses();
-            } else {
-            // Fallback : statuts standards
-                $order_statuses = [
-                    'wc-pending' => 'En attente',
-                    'wc-processing' => 'En cours',
-                    'wc-on-hold' => 'En attente de paiement',
-                    'wc-completed' => 'Terminée',
-                    'wc-cancelled' => 'Annulée',
-                    'wc-refunded' => 'Remboursée',
-                    'wc-failed' => 'Échec du paiement'
-                ];
-            }
-
-            // Récupérer les mappings actuels
-            $current_mappings = get_option('pdf_builder_order_status_templates', []);
-         // Récupérer les templates disponibles
-            $templates = get_posts([
-                'post_type' => 'pdf_template',
-                'posts_per_page' => -1,
-                'orderby' => 'title',
-                'order' => 'ASC'
-            ]);
-            ?>
-
-            <form method="post" id="templates-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_templates_nonce'); ?>
-                <input type="hidden" name="submit_templates" value="1">
-
-                <h3 class="section-title">Mappage des Statuts aux Templates</h3>
-
-                <table class="form-table">
-                    <?php foreach ($order_statuses as $status_key => $status_name) :
-                        $display_status = str_replace('wc-', '', $status_key);
-                        $selected_template = isset($current_mappings[$status_key]) ? $current_mappings[$status_key] : '';
-                        ?>
-                        <tr>
-                            <th scope="row">
-                                <label for="template_<?php echo esc_attr($display_status); ?>">
-                                    <strong><?php echo esc_html($status_name); ?></strong><br>
-                                    <code style="color: #666;"><?php echo esc_html($display_status); ?></code>
-                                </label>
-                            </th>
+                            <th scope="row"><label for="cache_enabled">Cache activé</label></th>
                             <td>
-                                <select name="order_status_templates[<?php echo esc_attr($status_key); ?>]"
-                                        id="template_<?php echo esc_attr($display_status); ?>" class="regular-text">
-                                    <option value="">-- Utiliser le template par défaut --</option>
-                                    <?php foreach ($templates as $template) :
-                                        ?>
-                                        <option value="<?php echo intval($template->ID); ?>"
-                                                <?php selected($selected_template, $template->ID); ?>>
-                                            <?php echo esc_html($template->post_title ?: '(Sans titre)'); ?>
-                                        </option>
-                                        <?php
-                                    endforeach; ?>
-                                </select>
-                                <p class="description">
-                                    Template automatique pour les commandes avec ce statut
-                                </p>
+                                <label class="switch">
+                                    <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', true)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Active le système de cache pour améliorer les performances</p>
                             </td>
                         </tr>
-                        <?php
-                    endforeach; ?>
-                </table>
-
-                <p class="submit">
-                    <button type="submit" name="submit_templates" class="button button-primary">
-                        Sauvegarder les Assignations
-                    </button>
-                </p>
-            </form>
-
-            <!-- Info WooCommerce -->
-            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
-                <h3 style="margin-top: 0; color: #003d66;">📦 Intégration WooCommerce</h3>
-                <ul style="margin: 0; padding-left: 20px; color: #003d66;">
-                    <li><strong>Statuts disponibles :</strong> <?php echo count($order_statuses); ?> statuts détectés</li>
-                    <li><strong>Templates disponibles :</strong> <?php echo count($templates); ?> templates</li>
-                    <li>Chaque statut de commande peut avoir son propre template</li>
-                    <li>Les commandes utiliseront automatiquement le template assigné à leur statut</li>
-                    <li>Laissez vide pour utiliser le template par défaut</li>
-                </ul>
-            </div>
-
-            <!-- Tableau récapitulatif -->
-            <div style="margin-top: 30px;">
-                <h3>📋 Vue d'ensemble des Assignations</h3>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
                         <tr>
-                            <th style="width: 30%;">Statut</th>
-                            <th style="width: 50%;">Template Assigné</th>
-                            <th style="width: 20%; text-align: center;">Type</th>
+                            <th scope="row"><label for="cache_expiry">Expiration du cache (heures)</label></th>
+                            <td>
+                                <input type="number" id="cache_expiry" name="cache_expiry" value="<?php echo esc_attr(get_option('pdf_builder_cache_expiry', 24)); ?>" min="1" max="168">
+                                <p class="description">Durée avant expiration automatique du cache</p>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($order_statuses as $status_key => $status_name) :
-                            $template_id = isset($current_mappings[$status_key]) ? $current_mappings[$status_key] : false;
-                            $template_name = $template_id ? get_the_title($template_id) : '(Défaut)';
-                            $template_type = $template_id ? 'Personnalisé' : 'Défaut';
-                            ?>
-                            <tr>
-                                <td><strong><?php echo esc_html($status_name); ?></strong></td>
-                                <td><?php echo esc_html($template_name); ?></td>
-                                <td style="text-align: center;">
-                                    <span style="display: inline-block; padding: 3px 10px; border-radius: 3px; background: <?php echo $template_id ? '#d4edda' : '#e9ecef'; ?>; color: <?php echo $template_id ? '#155724' : '#666'; ?>;">
-                                        <?php echo $template_type; ?>
-                                    </span>
-                                </td>
-                            </tr>
-                            <?php
-                        endforeach; ?>
-                    </tbody>
-                </table>
+                        <tr>
+                            <th scope="row"><label for="max_cache_size">Taille max du cache (Mo)</label></th>
+                            <td>
+                                <input type="number" id="max_cache_size" name="max_cache_size" value="<?php echo esc_attr(get_option('pdf_builder_max_cache_size', 100)); ?>" min="10" max="1000">
+                                <p class="description">Taille maximale du cache avant nettoyage automatique</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_performance" class="button button-primary" value="💾 Sauvegarder Performance">
+                    </p>
+                </form>
             </div>
 
-            <!-- Conseils d'utilisation -->
-            <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 20px;">
-                <h3 style="margin-top: 0; color: #856404;">💡 Conseils d'Utilisation</h3>
-                <ul style="margin: 0; padding-left: 20px; color: #856404;">
-                    <li><strong>Factures :</strong> Assignez un template "Facture" au statut "Terminée"</li>
-                    <li><strong>Confirmations :</strong> Utilisez un template "Confirmation" pour le statut "En attente"</li>
-                    <li><strong>Avis d'expédition :</strong> Assignez au statut "En cours"</li>
-                    <li><strong>Avoirs :</strong> Créez un template "Avoir" pour les remboursements</li>
-                    <li>Les templates peuvent inclure des variables dynamiques (numéro de commande, client, articles, etc.)</li>
-                </ul>
+            <!-- Section Maintenance -->
+            <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">🔧 Maintenance</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_maintenance', 'pdf_builder_maintenance_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="maintenance">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row">Actions de maintenance</th>
+                            <td>
+                                <button type="button" id="clear-cache-btn" class="button button-secondary" style="margin-right: 10px;">🗑️ Vider le cache</button>
+                                <button type="button" id="optimize-db-btn" class="button button-secondary" style="margin-right: 10px;">🗃️ Optimiser la base</button>
+                                <button type="button" id="repair-db-btn" class="button button-secondary">🔧 Réparer la base</button>
+                                <div id="maintenance-results" style="margin-top: 10px;"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="auto_maintenance">Maintenance automatique</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="auto_maintenance" name="auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', false)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Active la maintenance automatique hebdomadaire</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_maintenance" class="button button-primary" value="💾 Sauvegarder Maintenance">
+                    </p>
+                </form>
             </div>
-        </div>
 
-        <div id="maintenance" class="tab-content hidden-tab">
-            <h2>Actions de Maintenance</h2>
+            <!-- Section Sauvegarde -->
+            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">💾 Sauvegarde</h3>
 
-            <h3 class="section-title">🧹 Nettoyage des Données</h3>
-            <p>Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.</p>
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_backup', 'pdf_builder_backup_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="sauvegarde">
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                <form method="post" style="display: inline;">
-                    <?php wp_nonce_field('pdf_builder_clear_cache_maintenance', 'pdf_builder_clear_cache_nonce_maintenance'); ?>
-                    <button type="submit" name="clear_cache" class="button button-secondary" style="width: 100%;">
-                        🗑️ Vider le Cache
-                    </button>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row">Sauvegardes disponibles</th>
+                            <td>
+                                <button type="button" id="create-backup-btn" class="button button-primary" style="margin-right: 10px;">📦 Créer une sauvegarde</button>
+                                <button type="button" id="list-backups-btn" class="button button-secondary">📋 Lister les sauvegardes</button>
+                                <div id="backup-results" style="margin-top: 10px;"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="auto_backup">Sauvegarde automatique</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="auto_backup" name="auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', false)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Crée automatiquement des sauvegardes quotidiennes</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="backup_retention">Rétention des sauvegardes (jours)</label></th>
+                            <td>
+                                <input type="number" id="backup_retention" name="backup_retention" value="<?php echo esc_attr(get_option('pdf_builder_backup_retention', 30)); ?>" min="1" max="365">
+                                <p class="description">Nombre de jours avant suppression automatique des anciennes sauvegardes</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_backup" class="button button-primary" value="💾 Sauvegarder Configuration">
+                    </p>
                 </form>
 
-                <button type="button" id="remove-temp-files-btn" class="button button-secondary" style="width: 100%;">
-                    📁 Supprimer Fichiers Temp
-                </button>
-
-                <button type="button" id="optimize-db-btn" class="button button-secondary" style="width: 100%;">
-                    ⚡ Optimiser BD
-                </button>
-            </div>
-
-            <h3 class="section-title">🔧 Réparation & Réinitialisation</h3>
-            <p>Réparez les templates corrompus et les paramètres invalides.</p>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                <button type="button" id="repair-templates-btn" class="button button-secondary" style="width: 100%;">
-                    ✅ Réparer Templates
-                </button>
-
-                <button type="button" id="reset-settings-btn" class="button button-warning" style="width: 100%;">
-                    ⚠️ Réinitialiser Paramètres
-                </button>
-
-                <button type="button" id="check-integrity-btn" class="button button-secondary" style="width: 100%;">
-                    🔍 Vérifier Intégrité
-                </button>
-            </div>
-
-            <h3 class="section-title">📊 Informations Système</h3>
-            <table class="form-table">
-                <tr>
-                    <th scope="row">Version du Plugin</th>
-                    <td>
-                        <code><?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : '1.0.0'; ?></code>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Statut WordPress</th>
-                    <td>
-                        <span style="color: #46b450;">✓ WordPress <?php echo get_bloginfo('version'); ?></span>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Mémoire Disponible</th>
-                    <td>
-                        <?php
-                        $memory_limit = ini_get('memory_limit');
-                        $color = (intval($memory_limit) >= 256) ? '#46b450' : '#ffb900';
-                        ?>
-                        <span style="color: <?php echo $color; ?>;"><?php echo esc_html($memory_limit); ?></span>
-                        <p class="description">Minimum recommandé: 256MB</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Temps Max Exécution</th>
-                    <td>
-                        <?php
-                        $max_exec = ini_get('max_execution_time');
-                        $color = ($max_exec >= 300) ? '#46b450' : '#ffb900';
-                        ?>
-                        <span style="color: <?php echo $color; ?>;"><?php echo esc_html($max_exec); ?>s</span>
-                        <p class="description">Minimum recommandé: 300s</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">WooCommerce</th>
-                    <td>
-                        <?php
-                        if (class_exists('WooCommerce')) {
-                            echo '<span style="color: #46b450;">✓ Installé</span>';
-                        } else {
-                            echo '<span style="color: #666;">○ Non détecté</span>';
-                        }
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Nombre de Templates</th>
-                    <td>
-                        <?php
-                        $template_count = count(get_posts([
-                            'post_type' => 'pdf_template',
-                            'posts_per_page' => -1
-                        ]));
-                        echo intval($template_count);
-                        ?>
-                    </td>
-                </tr>
-            </table>
-
-            <!-- Avertissements de maintenance -->
-            <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 30px;">
-                <h3 style="margin-top: 0; color: #856404;">⚠️ Avant la Maintenance</h3>
-                <ul style="margin: 0; padding-left: 20px; color: #856404;">
-                    <li>✓ Faites toujours une <strong>sauvegarde</strong> avant les opérations de maintenance</li>
-                    <li>✓ Testez en mode de débogage d'abord</li>
-                    <li>✓ Vérifiez les logs après l'opération</li>
-                    <li>✓ N'utilisez pas "Réinitialiser" sans raison importante</li>
-                </ul>
-            </div>
-
-            <!-- Conseils performance -->
-            <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 20px;">
-                <h3 style="margin-top: 0; color: #003d66;">💡 Conseils Performance</h3>
-                <ul style="margin: 0; padding-left: 20px; color: #003d66;">
-                    <li>Videz régulièrement le cache (hebdomadaire en production)</li>
-                    <li>Supprimez les fichiers temporaires tous les mois</li>
-                    <li>Vérifiez l'intégrité du système mensuellement</li>
-                    <li>Consultez les logs en cas de problème</li>
-                    <li>Maintenez WordPress à jour</li>
-                </ul>
-            </div>
-        </div>
-
-        <div id="sauvegarde" class="tab-content hidden-tab">
-            <h2><?php _e('Sauvegarde & Restauration', 'pdf-builder-pro'); ?></h2>
-            <p style="color: #666;"><?php _e('Créez des sauvegardes de vos templates et restaurez-les en cas de besoin.', 'pdf-builder-pro'); ?></p>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
-
-                <!-- Créer une sauvegarde -->
-                <div class="backup-section" style="background: #f8f9fa; padding: 25px; border-radius: 8px; border: 1px solid #e9ecef;">
-                    <h3 style="margin-top: 0; color: #495057;">💾 <?php _e('Créer une sauvegarde', 'pdf-builder-pro'); ?></h3>
-
-                    <form id="backup-form" method="post">
-                        <?php wp_nonce_field('pdf_builder_backup', 'backup_nonce'); ?>
-
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">
-                                <input type="checkbox" id="backup_compress" checked>
-                                <?php _e('Compresser la sauvegarde (ZIP)', 'pdf-builder-pro'); ?>
-                            </label>
-                            <small style="color: #6c757d;"><?php _e('Réduit la taille du fichier de sauvegarde', 'pdf-builder-pro'); ?></small>
-                        </div>
-
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">
-                                <input type="checkbox" id="backup_exclude_settings" checked>
-                                <?php _e('Exclure les paramètres', 'pdf-builder-pro'); ?>
-                            </label>
-                            <small style="color: #6c757d;"><?php _e('Ne sauvegarde pas les paramètres du plugin', 'pdf-builder-pro'); ?></small>
-                        </div>
-
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">
-                                <input type="checkbox" id="backup_exclude_user_data" checked>
-                                <?php _e('Exclure les données utilisateur', 'pdf-builder-pro'); ?>
-                            </label>
-                            <small style="color: #6c757d;"><?php _e('Ne sauvegarde pas les métadonnées utilisateur', 'pdf-builder-pro'); ?></small>
-                        </div>
-
-                        <button type="button" id="create-backup-btn" class="button button-primary" style="padding: 10px 20px;">
-                            💾 <?php _e('Créer la sauvegarde', 'pdf-builder-pro'); ?>
-                        </button>
-
-                        <div id="backup-progress" style="display: none; margin-top: 15px;">
-                            <div class="progress-bar" style="width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden;">
-                                <div class="progress-fill" style="height: 100%; background: #007cba; width: 0%; transition: width 0.3s ease;"></div>
-                            </div>
-                            <p style="margin: 10px 0 0 0; color: #666;"><?php _e('Création de la sauvegarde en cours...', 'pdf-builder-pro'); ?></p>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Restaurer une sauvegarde -->
-                <div class="restore-section" style="background: #fff3cd; padding: 25px; border-radius: 8px; border: 1px solid #ffeaa7;">
-                    <h3 style="margin-top: 0; color: #856404;">🔄 <?php _e('Restaurer une sauvegarde', 'pdf-builder-pro'); ?></h3>
-                    <p style="color: #856404; margin-bottom: 20px;">⚠️ <?php _e('Attention : Cette action est irréversible. Assurez-vous d\'avoir une sauvegarde.', 'pdf-builder-pro'); ?></p>
-
-                    <form id="restore-form" method="post" enctype="multipart/form-data">
-                        <?php wp_nonce_field('pdf_builder_backup', 'restore_nonce'); ?>
-
-                        <div style="margin-bottom: 20px;">
-                            <label for="backup_file" style="display: block; margin-bottom: 8px; font-weight: 500;">
-                                <?php _e('Fichier de sauvegarde', 'pdf-builder-pro'); ?>
-                            </label>
-                            <input type="file" id="backup_file" name="backup_file" accept=".json,.zip" required
-                                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                            <small style="color: #6c757d;"><?php _e('Formats acceptés : .json, .zip', 'pdf-builder-pro'); ?></small>
-                        </div>
-
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 8px; font-weight: 500;">
-                                <input type="checkbox" id="restore_overwrite">
-                                <?php _e('Écraser les templates existants', 'pdf-builder-pro'); ?>
-                            </label>
-                            <small style="color: #6c757d;"><?php _e('Remplace les templates ayant le même nom', 'pdf-builder-pro'); ?></small>
-                        </div>
-
-                        <button type="button" id="restore-backup-btn" class="button button-secondary" style="padding: 10px 20px; background: #856404; border-color: #856404; color: #ffffff; font-weight: 500;">
-                            🔄 <?php _e('Restaurer la sauvegarde', 'pdf-builder-pro'); ?>
-                        </button>
-
-                        <div id="restore-progress" style="display: none; margin-top: 15px;">
-                            <div class="progress-bar" style="width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden;">
-                                <div class="progress-fill" style="height: 100%; background: #856404; width: 0%; transition: width 0.3s ease;"></div>
-                            </div>
-                            <p style="margin: 10px 0 0 0; color: #856404;"><?php _e('Restauration en cours...', 'pdf-builder-pro'); ?></p>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Liste des sauvegardes existantes -->
-            <div class="backups-list" style="margin-top: 40px;">
-                <h3><?php _e('Sauvegardes existantes', 'pdf-builder-pro'); ?></h3>
-
-                <div id="backups-container">
-                    <div style="text-align: center; padding: 40px; color: #666;">
-                        <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
-                        <p><?php _e('Chargement des sauvegardes...', 'pdf-builder-pro'); ?></p>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <button type="button" id="refresh-backups-btn" class="button button-secondary">
-                        🔄 <?php _e('Actualiser la liste', 'pdf-builder-pro'); ?>
+                <!-- Bouton global d'enregistrement -->
+                <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
+                    <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Système en une seule fois.</p>
+                    <button type="button" id="save-all-systeme" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                        🚀 Enregistrer tout
                     </button>
                 </div>
             </div>
         </div>
 
-        <div id="developpeur" class="tab-content hidden-tab">
+        <div id="acces" class="tab-content hidden-tab">
+            <h2>🔐 Accès & Licences</h2>
+
+            <!-- Section Licence -->
+            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #6c757d; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #6c757d; padding-bottom: 10px;">🔑 Gestion de la Licence</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="licence">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="license_key">Clé de licence</label></th>
+                            <td>
+                                <input type="text" id="license_key" name="license_key" value="<?php echo esc_attr(get_option('pdf_builder_license_key', '')); ?>" class="regular-text">
+                                <p class="description">Entrez votre clé de licence premium</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Actions</th>
+                            <td>
+                                <button type="submit" name="activate_license" class="button button-primary" style="margin-right: 10px;">✅ Activer</button>
+                                <button type="submit" name="deactivate_license" class="button button-secondary">❌ Désactiver</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+
+            <!-- Section Rôles -->
+            <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); border: 2px solid #007bff; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 10px;">👥 Gestion des Rôles</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_roles', 'pdf_builder_roles_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="roles">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row">Rôles autorisés</th>
+                            <td>
+                                <?php
+                                $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
+                                $wp_roles = wp_roles();
+                                foreach ($wp_roles->roles as $role_key => $role) {
+                                    $checked = in_array($role_key, $allowed_roles) ? 'checked' : '';
+                                    echo '<label style="display: block; margin: 5px 0;"><input type="checkbox" name="pdf_builder_allowed_roles[]" value="' . esc_attr($role_key) . '" ' . $checked . '> ' . esc_html($role['name']) . '</label>';
+                                }
+                                ?>
+                                <p class="description">Sélectionnez les rôles WordPress autorisés à utiliser le générateur PDF</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_roles" class="button button-primary" value="💾 Sauvegarder Rôles">
+                    </p>
+                </form>
+
+                <!-- Bouton global d'enregistrement -->
+                <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
+                    <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Accès & Licences en une seule fois.</p>
+                    <button type="button" id="save-all-acces" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                        🚀 Enregistrer tout
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="securite" class="tab-content hidden-tab">
+            <h2>🔒 Sécurité & Conformité</h2>
+
+            <!-- Section Sécurité -->
+            <div style="background: linear-gradient(135deg, #f8d7da 0%, #fce4e6 100%); border: 2px solid #dc3545; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #721c24; margin-top: 0; border-bottom: 2px solid #dc3545; padding-bottom: 10px;">🛡️ Sécurité</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_securite', 'pdf_builder_securite_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="securite">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="security_level">Niveau de sécurité</label></th>
+                            <td>
+                                <select id="security_level" name="security_level">
+                                    <option value="low" <?php selected(get_option('pdf_builder_security_level', 'medium'), 'low'); ?>>Faible</option>
+                                    <option value="medium" <?php selected(get_option('pdf_builder_security_level', 'medium'), 'medium'); ?>>Moyen</option>
+                                    <option value="high" <?php selected(get_option('pdf_builder_security_level', 'medium'), 'high'); ?>>Élevé</option>
+                                </select>
+                                <p class="description">Niveau de sécurité pour la génération de PDF</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="enable_logging">Journalisation activée</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="enable_logging" name="enable_logging" value="1" <?php checked(get_option('pdf_builder_enable_logging', true)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Active la journalisation des actions pour audit</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_securite" class="button button-primary" value="💾 Sauvegarder Sécurité">
+                    </p>
+                </form>
+            </div>
+
+            <!-- Section RGPD -->
+            <div style="background: linear-gradient(135deg, #d4edda 0%, #e8f5e8 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">📋 Gestion RGPD</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_rgpd', 'pdf_builder_rgpd_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="rgpd">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="gdpr_consent_required">Consentement RGPD requis</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="gdpr_consent_required" name="gdpr_consent_required" value="1" <?php checked(get_option('pdf_builder_gdpr_consent_required', true)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Exiger le consentement RGPD avant génération de PDF</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gdpr_data_retention">Rétention des données (jours)</label></th>
+                            <td>
+                                <input type="number" id="gdpr_data_retention" name="gdpr_data_retention" value="<?php echo esc_attr(get_option('pdf_builder_gdpr_data_retention', 365)); ?>" min="30" max="3650">
+                                <p class="description">Nombre de jours avant suppression automatique des données utilisateur</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gdpr_export_enabled">Export des données utilisateur</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="gdpr_export_enabled" name="gdpr_export_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr_export_enabled', true)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Permettre aux utilisateurs d'exporter leurs données</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_rgpd" class="button button-primary" value="💾 Sauvegarder RGPD">
+                    </p>
+                </form>
+            </div>
+
+            <!-- Bouton global d'enregistrement -->
+            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
+                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
+                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Sécurité & Conformité en une seule fois.</p>
+                <button type="button" id="save-all-securite" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                    🚀 Enregistrer tout
+                </button>
+            </div>
+        </div>
+        <div id="pdf" class="tab-content hidden-tab">
+            <h2>📄 Configuration PDF</h2>
+
+            <form method="post" action="">
+                <?php wp_nonce_field('pdf_builder_pdf', 'pdf_builder_pdf_nonce'); ?>
+                <input type="hidden" name="current_tab" value="pdf">
+
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
+                        <td>
+                            <select id="pdf_quality" name="pdf_quality">
+                                <option value="low" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'low'); ?>>Faible</option>
+                                <option value="medium" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'medium'); ?>>Moyen</option>
+                                <option value="high" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'high'); ?>>Élevé</option>
+                            </select>
+                            <p class="description">Qualité de génération des PDF</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="pdf_page_size">Taille de page</label></th>
+                        <td>
+                            <select id="pdf_page_size" name="pdf_page_size">
+                                <option value="A4" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'A4'); ?>>A4</option>
+                                <option value="A3" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'A3'); ?>>A3</option>
+                                <option value="Letter" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'Letter'); ?>>Letter</option>
+                            </select>
+                            <p class="description">Format de page pour les PDF</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <p class="submit">
+                    <input type="submit" name="submit_pdf" class="button button-primary" value="💾 Sauvegarder PDF">
+                </p>
+            </form>
+
+            <!-- Bouton global d'enregistrement -->
+            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
+                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
+                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Configuration PDF en une seule fois.</p>
+                <button type="button" id="save-all-pdf" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                    🚀 Enregistrer tout
+                </button>
+            </div>
+        </div>
+
+        <div id="contenu" class="tab-content hidden-tab">
+            <h2>🎨 Contenu & Design</h2>
+
+            <!-- Section Canvas -->
+            <div style="background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%); border: 2px solid #6c757d; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #6c757d; padding-bottom: 10px;">🖼️ Canvas</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_canvas', 'pdf_builder_canvas_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="canvas">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_width">Largeur canvas (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_width" name="canvas_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_width', 800)); ?>" min="400" max="2000">
+                                <p class="description">Largeur par défaut du canvas de conception</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_height">Hauteur canvas (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_height" name="canvas_height" value="<?php echo esc_attr(get_option('pdf_builder_canvas_height', 600)); ?>" min="300" max="2000">
+                                <p class="description">Hauteur par défaut du canvas de conception</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_canvas" class="button button-primary" value="💾 Sauvegarder Canvas">
+                    </p>
+                </form>
+            </div>
+
+            <!-- Section Templates -->
+            <div style="background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); border: 2px solid #17a2b8; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #0c5460; margin-top: 0; border-bottom: 2px solid #17a2b8; padding-bottom: 10px;">📋 Templates</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_templates', 'pdf_builder_templates_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="templates">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="default_template">Template par défaut</label></th>
+                            <td>
+                                <select id="default_template" name="default_template">
+                                    <option value="blank" <?php selected(get_option('pdf_builder_default_template', 'blank'), 'blank'); ?>>Page blanche</option>
+                                    <option value="invoice" <?php selected(get_option('pdf_builder_default_template', 'blank'), 'invoice'); ?>>Facture</option>
+                                    <option value="quote" <?php selected(get_option('pdf_builder_default_template', 'blank'), 'quote'); ?>>Devis</option>
+                                </select>
+                                <p class="description">Template utilisé par défaut pour nouveaux documents</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="template_library_enabled">Bibliothèque de templates</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="template_library_enabled" name="template_library_enabled" value="1" <?php checked(get_option('pdf_builder_template_library_enabled', true)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Active la bibliothèque de templates prédéfinis</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_templates" class="button button-primary" value="💾 Sauvegarder Templates">
+                    </p>
+                </form>
+
+                <!-- Bouton global d'enregistrement -->
+                <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
+                    <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Contenu & Design en une seule fois.</p>
+                    <button type="button" id="save-all-contenu" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                        🚀 Enregistrer tout
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="roles" class="tab-content hidden-tab">
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
@@ -3708,887 +2056,46 @@
                 <p><strong>ℹ️ Rappel Onboarding :</strong> L'onboarding est actuellement désactivé en mode développement (WP_DEBUG=true). Il sera automatiquement activé en production (WP_DEBUG=false). Pensez à le tester avant le déploiement final.</p>
             </div>
 
-         <form method="post" id="developpeur-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
-                <input type="hidden" name="submit_developpeur" value="1">
+            <form method="post" action="">
+                <?php wp_nonce_field('pdf_builder_developer', 'pdf_builder_developer_nonce'); ?>
+                <input type="hidden" name="current_tab" value="developpeur">
 
-                <h3 class="section-title">🔐 Contrôle d'Accès</h3>
-
-             <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="developer_enabled">Mode Développeur</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="developer_enabled">Mode développeur</label></th>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php checked(get_option('pdf_builder_developer_enabled', false)); ?>>
+                                <span class="slider round"></span>
                             </label>
-                            <span class="toggle-label">Activer le mode développeur</span>
-                        </div>
-                        <div class="toggle-description">Active le mode développeur avec logs détaillés</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="developer_password">Mot de Passe Dev</label></th>
-                    <td>
-                        <!-- Champ username caché pour l'accessibilité -->
-                        <input type="text" autocomplete="username" style="display: none;" />
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="password" id="developer_password" name="developer_password"
-                                   placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
-                                   style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
-                                   value="<?php echo esc_attr($settings['developer_password'] ?? ''); ?>" />
-                            <button type="button" id="toggle_password" class="button button-secondary" style="padding: 8px 12px; height: auto;">
-                                👁️ Afficher
-                            </button>
-                        </div>
-                        <p class="description">Protège les outils développeur avec un mot de passe (optionnel)</p>
-                        <?php if (!empty($settings['developer_password'])) :
-                            ?>
-                        <p class="description" style="color: #28a745;">✓ Mot de passe configuré et sauvegardé</p>
-                            <?php
-                        endif; ?>
-                    </td>
-                </tr>
-             </table>
-
-            <div id="dev-license-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <h3 class="section-title">🔐 Test de Licence</h3>
-
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="license_test_mode">Mode Test Licence</label></th>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <button type="button" id="toggle_license_test_mode_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
-                                🎚️ Basculer Mode Test
-                            </button>
-                            <span id="license_test_mode_status" style="font-weight: bold; padding: 8px 12px; border-radius: 4px; <?php echo $license_test_mode ? 'background: #d4edda; color: #155724;' : 'background: #f8d7da; color: #721c24;'; ?>">
-                                <?php echo $license_test_mode ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif'; ?>
-                            </span>
-                        </div>
-                        <p class="description">Basculer le mode test pour développer et tester sans serveur de licence en production</p>
-                        <input type="checkbox" id="license_test_mode" name="license_test_mode" value="1" <?php echo $license_test_mode ? 'checked' : ''; ?> style="display: none;" />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label>Clé de Test</label></th>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="text" id="license_test_key" readonly style="width: 350px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa;" placeholder="Générer une clé..." value="<?php echo esc_attr($license_test_key); ?>" />
-                            <button type="button" id="generate_license_key_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
-                                🔑 Générer
-                            </button>
-                            <button type="button" id="copy_license_key_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
-                                📋 Copier
-                            </button>
-                            <?php if ($license_test_key) :
-                                ?>
-                            <button type="button" id="delete_license_key_btn" class="button button-link-delete" style="padding: 8px 12px; height: auto;">
-                                🗑️ Supprimer
-                            </button>
-                                <?php
-                            endif; ?>
-                        </div>
-                        <p class="description">Génère une clé de test aléatoire pour valider le système de licence</p>
-                        <span id="license_key_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label>Nettoyage Complet</label></th>
-                    <td>
-                        <button type="button" id="cleanup_license_btn" class="button button-link-delete" style="padding: 10px 15px; height: auto; font-weight: bold;">
-                            🧹 Nettoyer complètement la licence
-                        </button>
-                        <p class="description">Supprime tous les paramètres de licence et réinitialise à l'état libre. Utile pour les tests.</p>
-                        <span id="cleanup_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
-                        <input type="hidden" id="cleanup_license_nonce" value="<?php echo wp_create_nonce('pdf_builder_cleanup_license'); ?>" />
-                    </td>
-                </tr>
-            </table>
-            </div>
-
-            <div id="dev-debug-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <h3 class="section-title">🔍 Paramètres de Debug</h3>
-
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="debug_php_errors">Errors PHP</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="debug_php_errors" name="debug_php_errors" value="1" <?php echo isset($settings['debug_php_errors']) && $settings['debug_php_errors'] ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Debug PHP</span>
-                        </div>
-                        <div class="toggle-description">Affiche les erreurs/warnings PHP du plugin</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="debug_javascript">Debug JavaScript</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="debug_javascript" name="debug_javascript" value="1" <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Debug JS</span>
-                        </div>
-                        <div class="toggle-description">Active les logs détaillés en console (emojis: 🚀 start, ✅ success, ❌ error, ⚠️ warn)</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="debug_javascript_verbose">Logs Verbeux JS</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="debug_javascript_verbose" name="debug_javascript_verbose" value="1" <?php echo isset($settings['debug_javascript_verbose']) && $settings['debug_javascript_verbose'] ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Logs détaillés</span>
-                        </div>
-                        <div class="toggle-description">Active les logs détaillés (rendu, interactions, etc.). À désactiver en production.</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="debug_ajax">Debug AJAX</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="debug_ajax" name="debug_ajax" value="1" <?php echo isset($settings['debug_ajax']) && $settings['debug_ajax'] ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Debug AJAX</span>
-                        </div>
-                        <div class="toggle-description">Enregistre toutes les requêtes AJAX avec requête/réponse</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="debug_performance">Métriques Performance</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="debug_performance" name="debug_performance" value="1" <?php echo isset($settings['debug_performance']) && $settings['debug_performance'] ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Debug perf.</span>
-                        </div>
-                        <div class="toggle-description">Affiche le temps d'exécution et l'utilisation mémoire des opérations</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="debug_database">Requêtes BD</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="debug_database" name="debug_database" value="1" <?php echo isset($settings['debug_database']) && $settings['debug_database'] ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Debug DB</span>
-                        </div>
-                        <div class="toggle-description">Enregistre les requêtes SQL exécutées par le plugin</div>
-                    </td>
-                </tr>
-            </table>
-            </div>
-
-            <div id="dev-logs-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <h3 class="section-title">Fichiers Logs</h3>
-
-            <table class="form-table">
-                <tr>
-                  <th scope="row"><label for="log_level">Niveau de Log</label></th>
-                    <td>
-                        <select id="log_level" name="log_level" style="width: 200px;">
-                            <option value="0" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 0) ? 'selected' : ''; ?>>Aucun log</option>
-                            <option value="1" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 1) ? 'selected' : ''; ?>>Erreurs uniquement</option>
-                            <option value="2" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 2) ? 'selected' : ''; ?>>Erreurs + Avertissements</option>
-                            <option value="3" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 3) ? 'selected' : ''; ?>>Info complète</option>
-                            <option value="4" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 4) ? 'selected' : ''; ?>>Détails (Développement)</option>
-                        </select>
-                        <p class="description">0=Aucun, 1=Erreurs, 2=Warn, 3=Info, 4=Détails</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="log_file_size">Taille Max Log</label></th>
-                    <td>
-                        <input type="number" id="log_file_size" name="log_file_size" value="<?php echo isset($settings['log_file_size']) ? intval($settings['log_file_size']) : '10'; ?>" min="1" max="100" /> MB
-                        <p class="description">Rotation automatique quand le log dépasse cette taille</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="log_retention">Retention Logs</label></th>
-                    <td>
-                        <input type="number" id="log_retention" name="log_retention" value="<?php echo isset($settings['log_retention']) ? intval($settings['log_retention']) : '30'; ?>" min="1" max="365" /> jours
-                        <p class="description">Supprime automatiquement les logs plus vieux que ce délai</p>
-                    </td>
-                </tr>
-            </table>
-            </div>
-
-            <div id="dev-optimizations-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <h3 class="section-title">Optimisations Avancées</h3>
-
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="force_https">Forcer HTTPS API</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="force_https" name="force_https" value="1" <?php echo isset($settings['force_https']) && $settings['force_https'] ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">HTTPS forcé</span>
-                        </div>
-                        <div class="toggle-description">Force les appels API externes en HTTPS (sécurité renforcée)</div>
-                    </td>
-                </tr>
-            </table>
-            </div>
-
-            <div id="dev-logs-viewer-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <h3 class="section-title">Visualiseur de Logs Temps Réel</h3>
-
-            <div style="margin-bottom: 15px;">
-                <button type="button" id="refresh_logs_btn" class="button button-secondary">🔄 Actualiser Logs</button>
-                <button type="button" id="clear_logs_btn" class="button button-secondary" style="margin-left: 10px;">🗑️ Vider Logs</button>
-                <select id="log_filter" style="margin-left: 10px;">
-                    <option value="all">Tous les logs</option>
-                    <option value="error">Erreurs uniquement</option>
-                    <option value="warning">Avertissements</option>
-                    <option value="info">Info</option>
-                    <option value="debug">Debug</option>
-                </select>
-            </div>
-
-            <div id="logs_container" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; line-height: 1.4;">
-                <div id="logs_content" style="white-space: pre-wrap;">
-                    <!-- Logs will be loaded here -->
-                    <em style="color: #666;">Cliquez sur "Actualiser Logs" pour charger les logs récents...</em>
-                </div>
-            </div>
-            </div>
-
-            <div id="dev-tools-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <h3 class="section-title">Outils de Développement</h3>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <button type="button" id="reload_cache_btn" class="button button-secondary">
-                    🔄 Recharger Cache
-                </button>
-                <button type="button" id="clear_temp_btn" class="button button-secondary">
-                    🗑️ Vider Temp
-                </button>
-                <button type="button" id="test_routes_btn" class="button button-secondary">
-                    🛣️ Tester Routes
-                </button>
-                <button type="button" id="export_diagnostic_btn" class="button button-secondary">
-                    � Exporter Diagnostic
-                </button>
-                <button type="button" id="view_logs_btn" class="button button-secondary">
-                    📋 Voir Logs
-                </button>
-                <button type="button" id="system_info_btn" class="button button-secondary">
-                    ℹ️ Info Système
-                </button>
-            </div>
-            </div>
-
-            <div id="dev-shortcuts-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <h3 class="section-title">Raccourcis Clavier Développeur</h3>
-
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th style="width: 30%;">Raccourci</th>
-                        <th style="width: 70%;">Action</th>
+                            <p class="description">Active les fonctionnalités de développement avancées</p>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd></td>
-                        <td>Basculer le mode debug JavaScript</td>
-                    </tr>
-                    <tr>
-                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd></td>
-                        <td>Ouvrir la console développeur du navigateur</td>
-                    </tr>
-                    <tr>
-                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd></td>
-                        <td>Recharger la page (hard refresh)</td>
-                    </tr>
-                    <tr>
-                        <td><kbd>F12</kbd></td>
-                        <td>Ouvrir les outils développeur</td>
-                    </tr>
-                    <tr>
-                        <td><kbd>Ctrl</kbd> + <kbd>U</kbd></td>
-                        <td>Voir le code source de la page</td>
-                    </tr>
-                    <tr>
-                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd></td>
-                        <td>Inspecter l'élément sous le curseur</td>
-                    </tr>
-                </tbody>
-            </table>
-            </div>
+                </table>
 
-            <div id="dev-console-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <h3 class="section-title">Console Code</h3>
-
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="test_code">Code Test</label></th>
-                    <td>
-                        <textarea id="test_code" style="width: 100%; height: 150px; font-family: monospace; padding: 10px;"></textarea>
-                        <p class="description">Zone d'essai pour du code JavaScript (exécution côté client)</p>
-                        <div style="margin-top: 10px;">
-                            <button type="button" id="execute_code_btn" class="button button-secondary">▶️ Exécuter Code JS</button>
-                            <button type="button" id="clear_console_btn" class="button button-secondary" style="margin-left: 10px;">🗑️ Vider Console</button>
-                            <span id="code_result" style="margin-left: 20px; font-weight: bold;"></span>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-            </div>
-
-            <div id="dev-hooks-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <!-- Tableau de références des hooks disponibles -->
-            <h3 class="section-title">Hooks Disponibles</h3>
-
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th style="width: 25%;">Hook</th>
-                        <th style="width: 50%;">Description</th>
-                        <th style="width: 25%;">Typage</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>pdf_builder_before_generate</code></td>
-                        <td>Avant la génération PDF</td>
-                        <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
-                    </tr>
-                    <tr>
-                        <td><code>pdf_builder_after_generate</code></td>
-                        <td>Après la génération PDF réussie</td>
-                        <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
-                    </tr>
-                    <tr>
-                        <td><code>pdf_builder_template_data</code></td>
-                        <td>Filtre les données de template</td>
-                        <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
-                    </tr>
-                    <tr>
-                        <td><code>pdf_builder_element_render</code></td>
-                        <td>Rendu d'un élément du canvas</td>
-                        <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
-                    </tr>
-                    <tr>
-                        <td><code>pdf_builder_security_check</code></td>
-                        <td>Vérifications de sécurité personnalisées</td>
-                        <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
-                    </tr>
-                    <tr>
-                        <td><code>pdf_builder_before_save</code></td>
-                        <td>Avant sauvegarde des paramètres</td>
-                        <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
-                    </tr>
-                </tbody>
-            </table>
-            </div>
-
-            <!-- Avertissement production -->
-            <div style="background: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 20px; margin-top: 30px;">
-                <h3 style="margin-top: 0; color: #c62828;">🚨 Avertissement Production</h3>
-                <ul style="margin: 0; padding-left: 20px; color: #c62828;">
-                    <li>❌ Ne jamais laisser le mode développeur ACTIVÉ en production</li>
-                    <li>❌ Ne jamais afficher les logs détaillés aux utilisateurs</li>
-                    <li>❌ Désactivez le profiling et les hooks de debug après débogage</li>
-                    <li>❌ N'exécutez pas de code arbitraire en production</li>
-                    <li>✓ Utilisez des mots de passe forts pour protéger les outils dev</li>
-                </ul>
-            </div>
-
-            <!-- Conseils développement -->
-            <div style="background: #f3e5f5; border-left: 4px solid #7b1fa2; border-radius: 4px; padding: 20px; margin-top: 20px;">
-                <h3 style="margin-top: 0; color: #4a148c;">💻 Conseils Développement</h3>
-                <ul style="margin: 0; padding-left: 20px; color: #4a148c;">
-                    <li>Activez Debug JavaScript pour déboguer les interactions client</li>
-                    <li>Utilisez Debug AJAX pour vérifier les requêtes serveur</li>
-                    <li>Consultez Debug Performance pour optimiser les opérations lentes</li>
-                    <li>Lisez les logs détaillés (niveau 4) pour comprendre le flux</li>
-                    <li>Testez avec les différents niveaux de log</li>
-                </ul>
-            </div>
-
-            <p class="submit">
-                <button type="submit" name="submit_developpeur" class="button button-primary">Enregistrer les paramètres développeur</button>
-            </p>
-         </form>
+                <p class="submit">
+                    <input type="submit" name="submit_developer" class="button button-primary" value="💾 Sauvegarder Développeur">
+                </p>
+            </form>
         </div>
-
-        <div id="rgpd" class="tab-content hidden-tab">
-            <h2>Conformité RGPD</h2>
-            <p style="color: #666;">Gestion de la conformité RGPD et protection des données personnelles.</p>
-
-            <div class="gdpr-tabs">
-                <div class="gdpr-tab active" data-tab="consent">Gestion Consentements</div>
-                <div class="gdpr-tab" data-tab="rights">Droits Utilisateur</div>
-                <div class="gdpr-tab" data-tab="audit">Audit & Traçabilité</div>
-                <div class="gdpr-tab" data-tab="security">Sécurité Données</div>
-            </div>
-
-            <div class="gdpr-content">
-                <?php $gdpr_manager = PDF_Builder_GDPR_Manager::get_instance(); ?>
-
-                <!-- Onglet Gestion Consentements -->
-                <div class="gdpr-tab-content active" id="consent-tab">
-                    <div class="gdpr-section">
-                        <h3>Gestion des Consentements</h3>
-                        <p>Configurez les types de consentements requis pour l'utilisation du plugin.</p>
-
-                        <!-- Configuration globale des consentements (Admin) -->
-                        <h4>Configuration des Types de Consentements</h4>
-                        <form method="post" id="gdpr-consent-form">
-                            <?php wp_nonce_field('pdf_builder_gdpr_settings', 'gdpr_nonce'); ?>
-
-                            <table class="form-table">
-                                <tr>
-                                    <th scope="row">Consentement obligatoire</th>
-                                    <td>
-                                        <label>
-                                            <input type="checkbox" name="consent_required" value="1" <?php checked(get_option('pdf_builder_gdpr', [])['consent_required'] ?? true); ?> />
-                                            Exiger un consentement explicite avant utilisation
-                                        </label>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <th scope="row">Types de consentements</th>
-                                    <td>
-                                        <fieldset>
-                                            <label>
-                                                <input type="checkbox" name="consent_types[analytics]" value="1" <?php checked((get_option('pdf_builder_gdpr', [])['consent_types'] ?? [])['analytics'] ?? true); ?> />
-                                                Analytics et statistiques d'usage
-                                            </label><br>
-
-                                            <label>
-                                                <input type="checkbox" name="consent_types[templates]" value="1" <?php checked((get_option('pdf_builder_gdpr', [])['consent_types'] ?? [])['templates'] ?? true); ?> />
-                                                Sauvegarde des templates personnalisés
-                                            </label><br>
-
-                                            <label>
-                                                <input type="checkbox" name="consent_types[marketing]" value="1" <?php checked((get_option('pdf_builder_gdpr', [])['consent_types'] ?? [])['marketing'] ?? false); ?> />
-                                                Communications marketing (newsletters, offres)
-                                            </label>
-                                        </fieldset>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <p class="submit">
-                                <button type="submit" class="button button-primary">Sauvegarder les paramètres</button>
-                            </p>
-                        </form>
-
-                        <hr>
-
-                        <!-- Gestion des consentements personnels (Utilisateur actuel) -->
-                        <h4>Vos Consentements Personnels</h4>
-                        <p>Gérez vos consentements personnels concernant l'utilisation de vos données.</p>
-
-                        <div id="user-consents-container">
-                            <div class="gdpr-consent-item">
-                                <label>
-                                    <input type="checkbox" class="consent-toggle" data-consent-type="analytics"
-                                           <?php checked($gdpr_manager->get_user_consent_status(get_current_user_id(), 'analytics')); ?> />
-                                    <strong>Analytics et statistiques d'usage</strong>
-                                </label>
-                                <p class="description">Autoriser la collecte anonyme de statistiques d'utilisation pour améliorer le service.</p>
-                            </div>
-
-                            <div class="gdpr-consent-item">
-                                <label>
-                                    <input type="checkbox" class="consent-toggle" data-consent-type="templates"
-                                           <?php checked($gdpr_manager->get_user_consent_status(get_current_user_id(), 'templates')); ?> />
-                                    <strong>Sauvegarde des templates personnalisés</strong>
-                                </label>
-                                <p class="description">Autoriser la sauvegarde de vos templates personnalisés sur nos serveurs.</p>
-                            </div>
-
-                            <div class="gdpr-consent-item">
-                                <label>
-                                    <input type="checkbox" class="consent-toggle" data-consent-type="marketing"
-                                           <?php checked($gdpr_manager->get_user_consent_status(get_current_user_id(), 'marketing')); ?> />
-                                    <strong>Communications marketing</strong>
-                                </label>
-                                <p class="description">Recevoir des newsletters et offres commerciales par email.</p>
-                            </div>
-                        </div>
-
-                        <div id="consent-status-message" style="margin-top: 15px;"></div>
-                    </div>
-                </div>
-
-                <!-- Onglet Droits Utilisateur -->
-                <div class="gdpr-tab-content" id="rights-tab">
-                    <div class="gdpr-section">
-                        <h3>Droits RGPD de l'Utilisateur</h3>
-                        <p>Exercez vos droits concernant vos données personnelles.</p>
-
-                        <div class="gdpr-rights-grid">
-                            <div class="gdpr-right-card">
-                                <h4>Droit d'accès</h4>
-                                <p>Demandez une copie de toutes vos données personnelles.</p>
-                                <button class="button button-secondary" id="export-data-btn">Exporter mes données</button>
-                            </div>
-
-                            <div class="gdpr-right-card">
-                                <h4>Droit de rectification</h4>
-                                <p>Modifiez vos données personnelles si elles sont inexactes.</p>
-                                <a href="<?php echo admin_url('profile.php'); ?>" class="button button-secondary">Modifier mon profil</a>
-                            </div>
-
-                            <div class="gdpr-right-card">
-                                <h4>Droit à l'oubli</h4>
-                                <p>Demandez la suppression de toutes vos données.</p>
-                                <button class="button button-danger" id="delete-data-btn">Supprimer mes données</button>
-                            </div>
-
-                            <div class="gdpr-right-card">
-                                <h4>Portabilité des données</h4>
-                                <p>Demandez vos données dans un format structuré.</p>
-                                <button class="button button-secondary" id="portability-btn">Demander portabilité</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Onglet Audit & Traçabilité -->
-                <div class="gdpr-tab-content" id="audit-tab">
-                    <div class="gdpr-section">
-                        <h3>Audit & Traçabilité</h3>
-                        <p>Historique des opérations sur les données personnelles.</p>
-
-                        <div class="audit-controls">
-                            <button class="button button-secondary" id="refresh-audit">Actualiser</button>
-                            <button class="button button-secondary" id="export-audit">Exporter le journal</button>
-                        </div>
-
-                        <div class="audit-table-container">
-                            <table class="widefat fixed audit-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Utilisateur</th>
-                                        <th>Action</th>
-                                        <th>Données concernées</th>
-                                        <th>IP</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="5">Aucun journal d'audit disponible.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Onglet Sécurité Données -->
-                <div class="gdpr-tab-content" id="security-tab">
-                    <div class="gdpr-section">
-                        <h3>Sécurité des Données</h3>
-                        <p>Configuration de la sécurité et du chiffrement des données.</p>
-
-                        <?php
-                        $gdpr_manager = PDF_Builder_GDPR_Manager::get_instance();
-                        $encryption_available = $gdpr_manager->is_encryption_available();
-                        ?>
-
-                        <?php if (!$encryption_available): ?>
-                        <div class="notice notice-warning">
-                            <p><strong>⚠️ Chiffrement non disponible :</strong> L'extension OpenSSL n'est pas activée sur ce serveur. Le chiffrement des données sensibles ne peut pas être utilisé.</p>
-                        </div>
-                        <?php endif; ?>
-
-                        <form method="post" id="gdpr-security-form">
-                            <?php wp_nonce_field('pdf_builder_gdpr_security', 'security_nonce'); ?>
-
-                            <table class="form-table">
-                                <tr>
-                                    <th scope="row">Chiffrement activé</th>
-                                    <td>
-                                        <label>
-                                            <input type="checkbox" name="encryption_enabled" value="1"
-                                                   <?php checked(get_option('pdf_builder_gdpr', [])['encryption_enabled'] ?? true); ?>
-                                                   <?php disabled(!$encryption_available); ?> />
-                                            Chiffrer les données sensibles stockées
-                                        </label>
-                                        <?php if ($encryption_available): ?>
-                                            <p class="description">✅ Chiffrement AES-256 disponible et sécurisé</p>
-                                        <?php else: ?>
-                                            <p class="description">❌ OpenSSL requis pour le chiffrement</p>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <th scope="row">Durée de rétention (jours)</th>
-                                    <td>
-                                        <input type="number" name="data_retention_days" min="1" max="9999"
-                                               value="<?php echo esc_attr(get_option('pdf_builder_gdpr', [])['data_retention_days'] ?? 2555); ?>" />
-                                        <p class="description">Nombre de jours avant suppression automatique des données (conformément RGPD). Valeur actuelle : <?php echo esc_attr(get_option('pdf_builder_gdpr', [])['data_retention_days'] ?? 2555); ?> jours (<?php echo round((get_option('pdf_builder_gdpr', [])['data_retention_days'] ?? 2555) / 365, 1); ?> ans)</p>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <th scope="row">Audit activé</th>
-                                    <td>
-                                        <label>
-                                            <input type="checkbox" name="audit_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr', [])['audit_enabled'] ?? true); ?> />
-                                            Enregistrer toutes les opérations sur les données personnelles
-                                        </label>
-                                        <p class="description">Active la journalisation complète des accès aux données personnelles pour audit et conformité.</p>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <th scope="row">État de sécurité</th>
-                                    <td>
-                                        <div class="security-status">
-                                            <?php
-                                            $security_score = 0;
-                                            $security_checks = [];
-
-                                            if ($encryption_available && (get_option('pdf_builder_gdpr', [])['encryption_enabled'] ?? true)) {
-                                                $security_score += 40;
-                                                $security_checks[] = '✅ Chiffrement AES-256 activé';
-                                            } else {
-                                                $security_checks[] = '❌ Chiffrement désactivé';
-                                            }
-
-                                            if ((get_option('pdf_builder_gdpr', [])['audit_enabled'] ?? true)) {
-                                                $security_score += 30;
-                                                $security_checks[] = '✅ Audit et traçabilité activés';
-                                            } else {
-                                                $security_checks[] = '❌ Audit désactivé';
-                                            }
-
-                                            $retention_days = get_option('pdf_builder_gdpr', [])['data_retention_days'] ?? 2555;
-                                            if ($retention_days <= 2555) { // 7 ans max RGPD
-                                                $security_score += 30;
-                                                $security_checks[] = '✅ Rétention conforme RGPD';
-                                            } else {
-                                                $security_checks[] = '⚠️ Durée de rétention excessive';
-                                            }
-
-                                            echo '<strong>Score de sécurité : ' . $security_score . '/100</strong><br>';
-                                            foreach ($security_checks as $check) {
-                                                echo $check . '<br>';
-                                            }
-                                            ?>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <p class="submit">
-                                <button type="submit" class="button button-primary">Sauvegarder la sécurité</button>
-                            </p>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bouton de sauvegarde flottant global -->
-        <div class="floating-save-container">
-            <button type="button" id="global-save-btn" class="floating-save-btn">
-                💾 Enregistrer
-            </button>
-            <div class="save-status" id="save-status"></div>
-        </div>
-
-</div>
-    <style>
-            /* Configuration des notifications Toastr */
-            .toast-top-right {
-                position: fixed;
-                top: 20px !important;
-                right: 20px !important;
-                z-index: 99999 !important;
-            }
-
-            .toast {
-                animation: slideInRight 0.3s ease-out !important;
-            }
-
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(420px);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-    </style>
-
-    <script>
-        // Attendre que Toastr soit disponible puis attacher les événements
-        document.addEventListener('DOMContentLoaded', function() {
-            // Fonction pour attendre Toastr
-            function setupToastrNotifications() {
-                if (typeof toastr === 'undefined') {
-                    setTimeout(setupToastrNotifications, 100);
-                    return;
-                }
-                // Bouton Test du cache
-                const testCacheBtn = document.getElementById('test-cache-btn');
-                if (testCacheBtn) {
-                    testCacheBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('Test du cache en cours...', 'info');
-                        setTimeout(() => {
-                            PDF_Builder_Notification_Manager.show_toast('Cache fonctionne correctement !', 'success');
-                        }, 1500);
-                    });
-                }
-
-                // Bouton Vider le cache
-                const clearCacheBtn = document.getElementById('clear-cache-general-btn');
-                if (clearCacheBtn) {
-                    clearCacheBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('Vidage du cache en cours...', 'warning');
-                        setTimeout(() => {
-                            PDF_Builder_Notification_Manager.show_toast('Cache vidé avec succès !', 'success');
-                        }, 1500);
-                    });
-                }
-
-                // Boutons de test des notifications
-                const testSuccessBtn = document.getElementById('test-notifications-success');
-                if (testSuccessBtn) {
-                    testSuccessBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                            PDF_Builder_Notification_Manager.show_toast('Test de notification de succès réussi !', 'success');
-                        } else {
-                            alert('PDF_Builder_Notification_Manager is not available');
-                        }
-                    });
-                }
-
-                const testErrorBtn = document.getElementById('test-notifications-error');
-                if (testErrorBtn) {
-                    testErrorBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                            PDF_Builder_Notification_Manager.show_toast('Test de notification d\'erreur réussi !', 'error');
-                        } else {
-                            alert('PDF_Builder_Notification_Manager is not available');
-                        }
-                    });
-                }
-
-                const testWarningBtn = document.getElementById('test-notifications-warning');
-                if (testWarningBtn) {
-                    testWarningBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('⚠️ Test de notification d\'avertissement réussi !', 'warning');
-                    });
-                }
-
-                const testInfoBtn = document.getElementById('test-notifications-info');
-                if (testInfoBtn) {
-                    console.log('🔍 Test button found: test-notifications-info');
-                    testInfoBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('🔍 Test info button clicked');
-                        PDF_Builder_Notification_Manager.show_toast('ℹ️ Test de notification d\'information réussi !', 'info');
-                    });
-                } else {
-                    console.log('🔍 Test button NOT found: test-notifications-info');
-                }
-
-                // Détecte la soumission du formulaire - EMPÊCHE LE RELOAD
-                const settingsForm = document.getElementById('global-settings-form');
-                if (settingsForm) {
-                    settingsForm.addEventListener('submit', function(e) {
-                        e.preventDefault(); // ✅ Empêche le rechargement de la page
-                        // Afficher la notification de sauvegarde
-                        PDF_Builder_Notification_Manager.show_toast('Enregistrement des paramètres en cours...', 'info');
-
-                        // Récupérer les données du formulaire
-                        const formData = new FormData(settingsForm);
-
-                        // Envoyer en AJAX
-                        fetch(settingsForm.action || window.location.href, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => {
-                            PDF_Builder_Notification_Manager.show_toast('Paramètres enregistrés avec succès !', 'success');
-                        })
-                        .catch(error => {
-                            console.error('❌ Error submitting form:', error);
-                            PDF_Builder_Notification_Manager.show_toast('Erreur lors de l\'enregistrement', 'error');
-                        });
-                    });
-                }
-
-                // Bouton Enregistrer
-                const submitBtn = document.getElementById('general-submit-btn');
-                if (submitBtn) {
-                    submitBtn.addEventListener('click', function(e) {
-                        e.preventDefault(); // ✅ Empêche le rechargement
-                        // Déclencher la soumission du formulaire
-                        const settingsForm = document.getElementById('global-settings-form');
-                        if (settingsForm) {
-                            settingsForm.dispatchEvent(new Event('submit'));
-                        }
-                    });
-                }
-            }
-
-            setupToastrNotifications();
-        });
-    </script>
-
+    </div>
 
     <style>
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.1);
-                opacity: 0.8;
-            }
-        }
-
-        .toggle-switch {
+        /* Styles pour les interrupteurs */
+        .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 24px;
+            width: 60px;
+            height: 34px;
         }
 
-        .toggle-switch input {
+        .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
 
-        .toggle-slider {
+        .slider {
             position: absolute;
             cursor: pointer;
             top: 0;
@@ -4597,1987 +2104,171 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
-            border-radius: 24px;
         }
 
-        .toggle-slider:before {
+        .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
             background-color: white;
             transition: .4s;
-            border-radius: 50%;
         }
 
-        input:checked + .toggle-slider {
-            background-color: #2196F3;
+        input:checked + .slider {
+            background-color: #007cba;
         }
 
-        input:checked + .toggle-slider:before {
+        input:focus + .slider {
+            box-shadow: 0 0 1px #007cba;
+        }
+
+        input:checked + .slider:before {
             transform: translateX(26px);
         }
 
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .slider.round {
+            border-radius: 34px;
         }
 
-        .toggle-label {
-            font-weight: 500;
-            color: #333;
+        .slider.round:before {
+            border-radius: 50%;
         }
 
-        .toggle-description {
-            font-size: 12px;
-            color: #666;
-            margin: 0;
-            padding-left: 60px;
+        /* Styles pour les onglets */
+        .nav-tab-wrapper {
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 20px;
         }
 
-        .toggle-switch input:disabled ~ .toggle-slider {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .toggle-switch input:disabled ~ .toggle-label {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Inputs désactivés */
-        input[type="number"]:disabled,
-        input[type="text"]:disabled,
-        input[type="email"]:disabled,
-        select:disabled,
-        textarea:disabled {
-            background-color: #f5f5f5 !important;
-            color: #999 !important;
-            cursor: not-allowed !important;
-            border-color: #ddd !important;
-        }
-
-        /* Bouton de sauvegarde flottant */
-        .floating-save-container {
-            position: fixed;
-            bottom: 40px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 10px;
-        }
-
-        .floating-save-btn {
-            background: linear-gradient(135deg, #007cba 0%, #005a87 100%) !important;
-            border: none !important;
-            border-radius: 50px !important;
-            padding: 12px 24px !important;
-            color: white !important;
-            font-weight: 600 !important;
-            font-size: 14px !important;
-            cursor: pointer !important;
-            box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3) !important;
-            transition: none !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 8px !important;
-            min-width: 140px !important;
-            height: 44px !important;
-            line-height: 1 !important;
-            user-select: none !important;
-            -webkit-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-            -webkit-appearance: none !important;
-            appearance: none !important;
-            position: relative !important;
-            top: 0 !important;
-            left: 0 !important;
-        }
-
-        .floating-save-btn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #005a87 0%, #004466 100%) !important;
-        }
-
-        .floating-save-btn:disabled {
-            background: linear-gradient(135deg, #cccccc 0%, #999999 100%) !important;
-            cursor: not-allowed !important;
-            opacity: 0.6 !important;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .floating-save-btn:active:not(:disabled) {
-            background: linear-gradient(135deg, #004466 0%, #003344 100%) !important;
-        }
-
-        .floating-save-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .save-status {
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
+        .nav-tab {
+            border: 1px solid #ccc;
+            border-bottom: none;
+            background: #f1f1f1;
+            color: #555;
             padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            white-space: nowrap;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 4px;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
         }
 
-        .save-status.show {
-            opacity: 1;
+        .nav-tab-active {
+            background: #fff;
+            color: #000;
+            border-bottom: 1px solid #fff;
+            margin-bottom: -1px;
         }
 
-        .save-status.success {
-            background: rgba(0, 128, 0, 0.9);
-        }
-
-        .save-status.error {
-            background: rgba(220, 53, 69, 0.9);
-        }
-
-        /* Masquer les boutons individuels des onglets */
-        .tab-content .submit {
+        .tab-content {
             display: none;
         }
 
-        /* Exception pour les onglets qui utilisent des formulaires POST séparés */
-        #roles .submit,
-        #notifications .submit {
+        .tab-content.active {
             display: block;
         }
 
-        /* Exception pour le bouton de test dans l'onglet notifications */
-        #notifications #test-notifications,
-        #notifications #test-smtp-connection {
-            display: inline-block !important;
-        }
-
-        /* Cacher le bouton global flottant dans les onglets avec boutons individuels */
-        #roles #global-save-btn {
-            display: none !important;
-        }
-
-        /* Style pour les sections h3 */
-        .section-title {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            border-left: 4px solid #007cba;
-            border-radius: 8px;
-            padding: 15px 20px !important;
-            margin: 30px 0 20px 0 !important;
-            font-size: 18px !important;
-            font-weight: 600 !important;
-            color: #003d66 !important;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            border-bottom: none !important;
-        }
-
-        /* Classe pour masquer les onglets non actifs */
         .hidden-tab {
-            display: none;
-        }
-    </style>
-
-    <?php
-        // Définir les paramètres canvas pour JavaScript
-        $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
-    ?>
-    <script>
-        // Définir ajaxurl si pas déjà défini
-        if (typeof ajaxurl === 'undefined') {
-            ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
-        }
-    </script>
-    <script>
-        // Script de définition des paramètres canvas - exécuté très tôt
-
-        // Définir pdfBuilderCanvasSettings globalement avant tout autre script
-        window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
-            'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
-            'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
-            'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
-            'default_orientation' => $canvas_settings_js['default_orientation'] ?? 'portrait',
-            'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',
-            'canvas_show_transparency' => $canvas_settings_js['canvas_show_transparency'] ?? false,
-            'container_background_color' => $canvas_settings_js['container_background_color'] ?? '#f8f9fa',
-            'container_show_transparency' => $canvas_settings_js['container_show_transparency'] ?? false,
-            'margin_top' => $canvas_settings_js['margin_top'] ?? 28,
-            'margin_right' => $canvas_settings_js['margin_right'] ?? 28,
-            'margin_bottom' => $canvas_settings_js['margin_bottom'] ?? 10,
-            'margin_left' => $canvas_settings_js['margin_left'] ?? 10,
-            'show_margins' => $canvas_settings_js['show_margins'] ?? false,
-            'show_grid' => $canvas_settings_js['show_grid'] ?? false,
-            'grid_size' => $canvas_settings_js['grid_size'] ?? 10,
-            'grid_color' => $canvas_settings_js['grid_color'] ?? '#e0e0e0',
-            'snap_to_grid' => $canvas_settings_js['snap_to_grid'] ?? false,
-            'snap_to_elements' => $canvas_settings_js['snap_to_elements'] ?? false,
-            'snap_tolerance' => $canvas_settings_js['snap_tolerance'] ?? 5,
-            'show_guides' => $canvas_settings_js['show_guides'] ?? false,
-            'default_zoom' => $canvas_settings_js['default_zoom'] ?? 100,
-            'zoom_step' => $canvas_settings_js['zoom_step'] ?? 25,
-            'min_zoom' => $canvas_settings_js['min_zoom'] ?? 10,
-            'max_zoom' => $canvas_settings_js['max_zoom'] ?? 500,
-            'zoom_with_wheel' => $canvas_settings_js['zoom_with_wheel'] ?? false,
-            'pan_with_mouse' => $canvas_settings_js['pan_with_mouse'] ?? false,
-            'show_resize_handles' => $canvas_settings_js['show_resize_handles'] ?? false,
-            'handle_size' => $canvas_settings_js['handle_size'] ?? 8,
-            'handle_color' => $canvas_settings_js['handle_color'] ?? '#007cba',
-            'enable_rotation' => $canvas_settings_js['enable_rotation'] ?? false,
-            'rotation_step' => $canvas_settings_js['rotation_step'] ?? 15,
-            'multi_select' => $canvas_settings_js['multi_select'] ?? false,
-            'copy_paste_enabled' => $canvas_settings_js['copy_paste_enabled'] ?? false,
-            'export_quality' => $canvas_settings_js['export_quality'] ?? 'print',
-            'export_format' => $canvas_settings_js['export_format'] ?? 'pdf',
-            'compress_images' => $canvas_settings_js['compress_images'] ?? true,
-            'image_quality' => $canvas_settings_js['image_quality'] ?? 85,
-            'max_image_size' => $canvas_settings_js['max_image_size'] ?? 2048,
-            'include_metadata' => $canvas_settings_js['include_metadata'] ?? true,
-            'pdf_author' => $canvas_settings_js['pdf_author'] ?? 'PDF Builder Pro',
-            'pdf_subject' => $canvas_settings_js['pdf_subject'] ?? '',
-            'auto_crop' => $canvas_settings_js['auto_crop'] ?? false,
-            'embed_fonts' => $canvas_settings_js['embed_fonts'] ?? true,
-            'optimize_for_web' => $canvas_settings_js['optimize_for_web'] ?? true,
-            'enable_hardware_acceleration' => $canvas_settings_js['enable_hardware_acceleration'] ?? true,
-            'limit_fps' => $canvas_settings_js['limit_fps'] ?? true,
-            'max_fps' => $canvas_settings_js['max_fps'] ?? 60,
-            'auto_save_enabled' => $canvas_settings_js['auto_save_enabled'] ?? false,
-            'auto_save_interval' => $canvas_settings_js['auto_save_interval'] ?? 30,
-            'auto_save_versions' => $canvas_settings_js['auto_save_versions'] ?? 10,
-            'undo_levels' => $canvas_settings_js['undo_levels'] ?? 50,
-            'redo_levels' => $canvas_settings_js['redo_levels'] ?? 50,
-            'enable_keyboard_shortcuts' => $canvas_settings_js['enable_keyboard_shortcuts'] ?? true,
-            'debug_mode' => $canvas_settings_js['debug_mode'] ?? false,
-            'show_fps' => $canvas_settings_js['show_fps'] ?? false
-        ]); ?>;
-    // NOTE: getDimensionsFromFormat function already defined above (line ~503), no need to duplicate it here
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Variable globale pour le tracking des formulaires
-            let setupFormTracking = null;
-
-            // Gestion du bouton de sauvegarde global
-            function setupGlobalSaveButton() {
-                const globalSaveBtn = document.getElementById('global-save-btn');
-                const saveStatus = document.getElementById('save-status');
-                if (globalSaveBtn) {
-                    // Bloquer le mouvement du bouton
-                    globalSaveBtn.addEventListener('mousedown', function(e) {
-                        // Sauvegarder la position initiale
-                        const rect = globalSaveBtn.getBoundingClientRect();
-                        const startX = rect.left;
-                        const startY = rect.top;
-                        
-                        // Forcer la position pendant le clic
-                        globalSaveBtn.style.position = 'fixed !important';
-                        globalSaveBtn.style.left = startX + 'px !important';
-                        globalSaveBtn.style.top = startY + 'px !important';
-                        
-                        setTimeout(() => {
-                            globalSaveBtn.style.position = '';
-                            globalSaveBtn.style.left = '';
-                            globalSaveBtn.style.top = '';
-                        }, 100);
-                    });
-
-                    // ===== INITIALISER LE BOUTON COMME DÉSACTIVÉ =====
-                    globalSaveBtn.disabled = true;
-                    let hasUnsavedChanges = false;
-
-                    // ===== TRACKER LES MODIFICATIONS DES FORMULAIRES (AMÉLIORÉ) =====
-                    setupFormTracking = () => {
-                        const forms = document.querySelectorAll('form[id], form');
-                        forms.forEach((form, formIndex) => {
-                            // Ne tracker que les formulaires dans l'onglet actif
-                            const activeTab = document.querySelector('.tab-content:not(.hidden-tab)');
-                            if (!activeTab || !activeTab.contains(form)) {
-                                return; // Ignorer les formulaires dans les onglets cachés
-                            }
-
-                            // Récupérer les valeurs initiales de tous les inputs VISIBLE de ce formulaire
-                            const initialState = {};
-                            const formInputs = form.querySelectorAll('input:not([type="hidden"]), select, textarea');
-                            const visibleInputs = Array.from(formInputs).filter(input => {
-                                return input.offsetParent !== null; // Vérifier si l'élément est visible
-                            });
-                            
-                            visibleInputs.forEach(input => {
-                                if (input.type === 'checkbox' || input.type === 'radio') {
-                                    initialState[input.name] = input.checked;
-                                } else {
-                                    initialState[input.name] = input.value;
-                                }
-                            });
-                            // Debounce pour éviter trop d'appels
-                            let debounceTimer = null;
-                            const markAsModified = () => {
-                                clearTimeout(debounceTimer);
-                                debounceTimer = setTimeout(() => {
-                                    hasUnsavedChanges = true;
-                                    globalSaveBtn.disabled = false;
-                                    
-                                    // Ajouter un badge visuel au bouton
-                                    if (!globalSaveBtn.dataset.hasModifications) {
-                                        globalSaveBtn.dataset.hasModifications = 'true';
-                                        globalSaveBtn.setAttribute('title', '✏️ Modifications non sauvegardées');
-                                    }
-                                }, 300);
-                            };
-                            
-                            // Ajouter des listeners change à tous les inputs visibles
-                            visibleInputs.forEach(input => {
-                                input.addEventListener('change', function() {
-                                    // Vérifier si une valeur a réellement changé
-                                    const currentValue = (this.type === 'checkbox' || this.type === 'radio') ? this.checked : this.value;
-                                    const hasChanged = initialState[this.name] !== currentValue;
-                                    
-                                    if (hasChanged) {
-                                        markAsModified();
-                                    }
-                                });
-                                
-                                // Ajouter listeners input pour les champs texte (en temps réel avec debounce)
-                                if (input.type === 'text' || input.type === 'email' || input.type === 'number' || input.tagName === 'TEXTAREA') {
-                                    input.addEventListener('input', function() {
-                                        const currentValue = this.value;
-                                        const hasChanged = initialState[this.name] !== currentValue;
-                                        if (hasChanged) {
-                                            markAsModified();
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                    };
-                    
-                    // Appliquer le tracking
-                    setupFormTracking();
-                    
-                    // ===== GESTION DU CHAMP AUTO-SAVE INTERVAL =====
-                    const autoSaveEnabledCheckbox = document.getElementById('auto_save_enabled');
-                    const autoSaveIntervalInput = document.getElementById('auto_save_interval');
-                    
-                    if (autoSaveEnabledCheckbox && autoSaveIntervalInput) {
-                        // Fonction pour mettre à jour l'état du champ interval
-                        const updateAutoSaveIntervalState = () => {
-                            if (autoSaveEnabledCheckbox.checked) {
-                                autoSaveIntervalInput.disabled = false;
-                                autoSaveIntervalInput.style.opacity = '1';
-                                autoSaveIntervalInput.style.cursor = 'auto';
-                            } else {
-                                autoSaveIntervalInput.disabled = true;
-                                autoSaveIntervalInput.style.opacity = '0.6';
-                                autoSaveIntervalInput.style.cursor = 'not-allowed';
-                            }
-                        };
-                        
-                        // Appliquer l'état initial
-                        updateAutoSaveIntervalState();
-                        
-                        // Ajouter un listener au checkbox pour mettre à jour l'état en temps réel
-                        autoSaveEnabledCheckbox.addEventListener('change', updateAutoSaveIntervalState);
-                    }
-                    
-                    // ===== GESTION DU CHAMP FPS MAXIMUM =====
-                    const limitFpsCheckbox = document.getElementById('limit_fps');
-                    const maxFpsInput = document.getElementById('max_fps');
-                    
-                    if (limitFpsCheckbox && maxFpsInput) {
-                        // Fonction pour mettre à jour l'état du champ max_fps
-                        const updateMaxFpsState = () => {
-                            if (limitFpsCheckbox.checked) {
-                                maxFpsInput.disabled = false;
-                                maxFpsInput.style.opacity = '1';
-                                maxFpsInput.style.cursor = 'auto';
-                            } else {
-                                maxFpsInput.disabled = true;
-                                maxFpsInput.style.opacity = '0.6';
-                                maxFpsInput.style.cursor = 'not-allowed';
-                            }
-                        };
-                        
-                        // Appliquer l'état initial
-                        updateMaxFpsState();
-                        
-                        // Ajouter un listener au checkbox pour mettre à jour l'état en temps réel
-                        limitFpsCheckbox.addEventListener('change', updateMaxFpsState);
-                    }
-                    
-                    // ===== AVERTISSEMENT AVANT DE QUITTER =====
-                    window.addEventListener('beforeunload', function(e) {
-                        if (hasUnsavedChanges && !globalSaveBtn.disabled) {
-                            e.preventDefault();
-                            e.returnValue = '⚠️ Vous avez des modifications non sauvegardées. Êtes-vous sûr de vouloir quitter ?';
-                            return e.returnValue;
-                        }
-                    });
-
-                    globalSaveBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-
-                        // Trouver l'onglet actif (celui qui n'a pas la classe hidden-tab)
-                        const activeTab = document.querySelector('.tab-content:not(.hidden-tab)') ||
-                                        document.querySelector('.tab-content.active');
-
-                        if (activeTab) {
-                            // Trouver le formulaire dans l'onglet actif
-                            let form = activeTab.querySelector('form');
-
-                            // Si pas de formulaire direct, utiliser le formulaire global (fallback)
-                            if (!form) {
-                                form = document.getElementById('global-settings-form');
-                            }
-
-                            if (form) {
-                                // Afficher notification via système unifié
-                                PDF_Builder_Notification_Manager.show_toast('Sauvegarde en cours...', 'info');
-
-                                // Créer FormData à partir du formulaire
-                                const formData = new FormData(form);
-
-                                // Optimiser l'ajout des checkboxes non cochées - utiliser une approche plus efficace
-                                const allCheckboxes = form.querySelectorAll('input[type="checkbox"]');
-                                const checkboxesLength = allCheckboxes.length;
-
-                                // Utiliser une boucle for classique pour de meilleures performances
-                                for (let i = 0; i < checkboxesLength; i++) {
-                                    const checkbox = allCheckboxes[i];
-                                    if (!formData.has(checkbox.name)) {
-                                        // Checkbox non cochée, l'ajouter avec valeur '0'
-                                        formData.append(checkbox.name, '0');
-                                    }
-                                }
-                                
-                                // Utiliser toujours le gestionnaire générique pdf_builder_save_settings_page
-                                // qui accepte tous les paramètres indépendamment de l'onglet
-                                formData.append('action', 'pdf_builder_save_settings_page');
-                                
-                                // Récupérer le nonce du formulaire
-                                // Essayer d'abord le nonce spécifique, puis fallback au nonce générique
-                                let nonceName = 'pdf_builder_settings_nonce';
-                                
-                                if (activeTab.id === 'performance' || activeTab.id === 'maintenance') {
-                                    nonceName = 'pdf_builder_performance_nonce';
-                                } else if (activeTab.id === 'pdf') {
-                                    nonceName = 'pdf_builder_pdf_nonce';
-                                } else if (activeTab.id === 'developpeur') {
-                                    nonceName = 'pdf_builder_developpeur_nonce';
-                                } else if (activeTab.id === 'licence') {
-                                    nonceName = 'pdf_builder_license_nonce';
-                                } else if (activeTab.id === 'securite') {
-                                    nonceName = 'pdf_builder_securite_nonce';
-                                } else if (activeTab.id === 'roles') {
-                                    nonceName = 'pdf_builder_roles_nonce';
-                                } else if (activeTab.id === 'notifications') {
-                                    nonceName = 'pdf_builder_notifications_nonce';
-                                } else if (activeTab.id === 'canvas') {
-                                    nonceName = 'pdf_builder_canvas_nonce';
-                                } else if (activeTab.id === 'templates') {
-                                    nonceName = 'pdf_builder_templates_nonce';
-                                } else if (activeTab.id === 'rgpd') {
-                                    // Pour RGPD, déterminer le sous-onglet actif
-                                    const activeGdprTab = document.querySelector('.gdpr-tab.active');
-                                    if (activeGdprTab) {
-                                        const gdprTabId = activeGdprTab.getAttribute('data-tab');
-                                        if (gdprTabId === 'consent') {
-                                            nonceName = 'gdpr_nonce';
-                                        } else if (gdprTabId === 'security') {
-                                            nonceName = 'security_nonce';
-                                        } else {
-                                            // Pour rights et audit, utiliser un nonce par défaut ou chercher dans le formulaire
-                                            nonceName = 'gdpr_nonce'; // fallback
-                                        }
-                                    } else {
-                                        nonceName = 'gdpr_nonce'; // fallback
-                                    }
-                                }
-                                
-                                const nonceField = form.querySelector(`input[name="${nonceName}"]`);
-                                if (nonceField) {
-                                    // Renommer le champ du nonce à 'nonce' pour le gestionnaire AJAX
-                                    formData.delete(nonceName);
-                                    formData.append('nonce', nonceField.value);
-                                } else {
-                                    // Pour certains onglets (comme RGPD sous-onglets), il n'y a pas de nonce
-                                    // Dans ce cas, on n'ajoute pas de nonce et on laisse le gestionnaire décider
-                                    console.log('ℹ️ Aucun nonce trouvé pour', nonceName, '- sauvegarde sans nonce');
-                                }
-
-                                // Faire la requête AJAX
-                                fetch(ajaxurl, {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then(response => {
-                                    // Toujours récupérer le texte pour pouvoir l'afficher en cas d'erreur
-                                    return response.text().then(text => ({
-                                        status: response.status,
-                                        ok: response.ok,
-                                        contentType: response.headers.get('content-type'),
-                                        body: text
-                                    }));
-                                })
-                                .then(({status, ok, contentType, body}) => {
-                                    // Vérifier si c'est du JSON valide
-                                    if (!contentType || !contentType.includes('application/json')) {
-                                        throw new Error(`Réponse non-JSON du serveur (Status: ${status}). Contenu: ${body.substring(0, 500)}`);
-                                    }
-
-                                    if (!ok) {
-                                        throw new Error(`Erreur HTTP ${status}: ${body.substring(0, 500)}`);
-                                    }
-
-                                    // Parser le JSON
-                                    try {
-                                        return JSON.parse(body);
-                                    } catch (e) {
-                                        throw new Error(`Erreur JSON invalid: ${e.message}. Contenu: ${body.substring(0, 500)}`);
-                                    }
-                                })
-                                .then(data => {
-                                    if (data.success) {
-                                        PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
-
-                                        // ===== RÉINITIALISER L'ÉTAT APRÈS SAUVEGARDE =====
-                                        hasUnsavedChanges = false;
-
-                                        // Différer les opérations non critiques pour éviter les violations de performance
-                                        requestAnimationFrame(() => {
-                                            // Réactualiser l'état initial de tous les inputs pour tracker les futures modifications
-                                            setupFormTracking();
-
-                                            // Réinitialiser le bouton Enregistrer comme désactivé
-                                            globalSaveBtn.disabled = true;
-                                            globalSaveBtn.dataset.hasModifications = 'false';
-                                            globalSaveBtn.removeAttribute('title');
-                                        });
-                                    } else {
-                                        PDF_Builder_Notification_Manager.show_toast('Erreur: ' + (data.message || 'Erreur inconnue'), 'error');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('❌ AJAX Error:', error);
-                                    PDF_Builder_Notification_Manager.show_toast(' ' + error.message, 'error');
-                                });
-                            } else {
-                                console.error('❌ No form found in active tab:', activeTab.id);
-                                PDF_Builder_Notification_Manager.show_toast('Aucun formulaire trouvé', 'error');
-                            }
-                        } else {
-                            console.error('❌ No active tab found');
-                            PDF_Builder_Notification_Manager.show_toast('Aucun onglet actif', 'error');
-                        }
-                    });
-                }
-
-                // Gestion du bouton Vider le Cache
-                const clearCacheBtn = document.getElementById('clear-cache-btn');
-                if (clearCacheBtn) {
-                    clearCacheBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-
-                        if (confirm('Êtes-vous sûr de vouloir vider le cache ? Cette action est irréversible.')) {
-                            // Afficher le statut
-                            if (saveStatus) {
-                                saveStatus.textContent = '🗑️ Vidage du cache...';
-                                saveStatus.style.color = '#007cba';
-                            }
-
-                            // Faire une requête AJAX pour vider le cache
-                            const formData = new FormData();
-                            formData.append('action', 'pdf_builder_clear_cache');
-                            formData.append('security', '<?php echo esc_js(wp_create_nonce("pdf_builder_clear_cache_performance")); ?>');
-
-                            fetch(ajaxurl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    if (saveStatus) {
-                                        saveStatus.textContent = '✅ Cache vidé avec succès';
-                                        saveStatus.style.color = '#46b450';
-                                    }
-                                    setTimeout(() => {
-                                        if (saveStatus) saveStatus.classList.add('show');
-                                    }, 100);
-                                    setTimeout(() => {
-                                        if (saveStatus) {
-                                            saveStatus.classList.remove('show');
-                                            saveStatus.textContent = '';
-                                        }
-                                    }, 3000);
-                                } else {
-                                    if (saveStatus) {
-                                        saveStatus.textContent = '❌ Erreur lors du vidage du cache';
-                                        saveStatus.style.color = '#dc3232';
-                                    }
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Erreur AJAX:', error);
-                                if (saveStatus) {
-                                    saveStatus.textContent = '❌ Erreur de connexion';
-                                    saveStatus.style.color = '#dc3232';
-                                }
-                            });
-                        }
-                    });
-                }
-
-                // Fonction helper pour les requêtes AJAX de maintenance (non-bloquante)
-                const sendMaintenanceAjax = (action, nonce) => {
-                    const formData = new FormData();
-                    formData.append('action', action);
-                    formData.append('nonce', nonce);
-                    
-                    fetch(ajaxurl, { method: 'POST', body: formData })
-                        .then(r => r.json())
-                        .then(data => {
-                            if (data.success) {
-                                PDF_Builder_Notification_Manager.show_toast(' ' + data.message, 'success');
-                                if (action === 'pdf_builder_reset_settings') {
-                                    setTimeout(() => location.reload(), 2000);
-                                }
-                            } else {
-                                PDF_Builder_Notification_Manager.show_toast(' ' + data.message, 'error');
-                            }
-                        })
-                        .catch(error => {
-                            PDF_Builder_Notification_Manager.show_toast('Erreur: ' + error.message, 'error');
-                        });
-                };
-
-                // ===== BOUTON SUPPRIMER FICHIERS TEMP =====
-                const removeTempFilesBtn = document.getElementById('remove-temp-files-btn');
-                if (removeTempFilesBtn) {
-                    removeTempFilesBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('📁 Suppression...', 'info');
-                        sendMaintenanceAjax('pdf_builder_remove_temp_files', '<?php echo esc_js(wp_create_nonce("pdf_builder_remove_temp")); ?>');
-                    });
-                }                // ===== BOUTON OPTIMISER BD =====
-                const optimizeDbBtn = document.getElementById('optimize-db-btn');
-                if (optimizeDbBtn) {
-                    optimizeDbBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('⚡ Optimisation...', 'info');
-                        sendMaintenanceAjax('pdf_builder_optimize_db', '<?php echo esc_js(wp_create_nonce("pdf_builder_optimize_db")); ?>');
-                    });
-                }
-
-                // ===== BOUTON RÉPARER TEMPLATES =====
-                const repairTemplatesBtn = document.getElementById('repair-templates-btn');
-                if (repairTemplatesBtn) {
-                    repairTemplatesBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('Réparation...', 'info');
-                        sendMaintenanceAjax('pdf_builder_repair_templates', '<?php echo esc_js(wp_create_nonce("pdf_builder_repair_templates")); ?>');
-                    });
-                }
-
-                // ===== BOUTON RÉINITIALISER PARAMÈTRES =====
-                const resetSettingsBtn = document.getElementById('reset-settings-btn');
-                if (resetSettingsBtn) {
-                    resetSettingsBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        if (!confirm('⚠️ ATTENTION: Réinitialiser tous les paramètres ? Cette action est IRRÉVERSIBLE !')) return;
-                        PDF_Builder_Notification_Manager.show_toast('⚠️ Réinitialisation...', 'warning');
-                        sendMaintenanceAjax('pdf_builder_reset_settings', '<?php echo esc_js(wp_create_nonce("pdf_builder_reset_settings")); ?>');
-                    });
-                }
-
-                // ===== BOUTON VÉRIFIER INTÉGRITÉ =====
-                const checkIntegrityBtn = document.getElementById('check-integrity-btn');
-                if (checkIntegrityBtn) {
-                    checkIntegrityBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        PDF_Builder_Notification_Manager.show_toast('Vérification...', 'info');
-                        sendMaintenanceAjax('pdf_builder_check_integrity', '<?php echo esc_js(wp_create_nonce("pdf_builder_check_integrity")); ?>');
-                    });
-                }
-            }
-
-            // Démarrer la gestion du bouton global
-            setupGlobalSaveButton();
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                console.log('🚀 PDF Builder Settings JavaScript loaded');
-
-            // Configuration des onglets principaux
-            let mainTabsInitialized = false; // Flag pour éviter les initialisations multiples
-            let gdprTabsInitialized = false; // Flag pour éviter les initialisations multiples des sous-onglets RGPD
-
-            // Gestionnaire de clic pour les onglets principaux (défini globalement pour removeEventListener)
-            function mainTabClickHandler(e) {
-                e.preventDefault();
-                console.log('🖱️ Clic détecté sur onglet principal:', this.getAttribute('data-tab'));
-
-                const targetTab = this.getAttribute('data-tab');
-
-                // Masquer tous les onglets
-                const allTabs = document.querySelectorAll('.tab-content');
-                allTabs.forEach(tab => {
-                    tab.classList.add('hidden-tab');
-                    tab.classList.remove('active');
-                });
-
-                // Désactiver tous les liens d'onglets
-                document.querySelectorAll('.nav-tab').forEach(tabLink => {
-                    tabLink.classList.remove('nav-tab-active');
-                });
-
-                // Afficher l'onglet cible
-                const targetTabContent = document.getElementById(targetTab);
-                if (targetTabContent) {
-                    targetTabContent.classList.remove('hidden-tab');
-                    targetTabContent.classList.add('active');
-                } else {
-                    console.error('❌ Onglet non trouvé:', targetTab);
-                }
-
-                // Activer le lien d'onglet
-                this.classList.add('nav-tab-active');
-                console.log('🎯 Onglet actif:', targetTab);
-
-                // Gérer la visibilité du bouton de sauvegarde global
-                const globalSaveBtn = document.getElementById('global-save-btn');
-                if (globalSaveBtn) {
-                    if (targetTab === 'maintenance') {
-                        globalSaveBtn.style.display = 'none';
-                    } else {
-                        globalSaveBtn.style.display = '';
-                    }
-                }
-
-                // Sauvegarder l'onglet actif dans localStorage
-                localStorage.setItem('pdf_builder_active_tab', targetTab);
-
-                // Initialiser les sous-onglets RGPD si l'onglet RGPD est activé
-                if (targetTab === 'rgpd' && !gdprTabsInitialized) {
-                    console.log('🎯 Onglet RGPD activé, initialisation des sous-onglets');
-                    setTimeout(() => setupGdprTabNavigation(), 50);
-                }
-
-                // Réinitialiser le tracking des changements pour le nouveau formulaire
-                setTimeout(() => {
-                    if (typeof setupFormTracking === 'function') {
-                        setupFormTracking();
-                    }
-                }, 200);
-            }
-
-            // Gestion de la navigation des onglets
-            function setupTabNavigation() {
-                // Éviter les initialisations multiples
-                if (mainTabsInitialized) {
-                    console.log('ℹ️ Onglets principaux déjà initialisés, ignoré');
-                    return;
-                }
-
-                console.log('🔧 Initialisation des onglets principaux');
-
-                // Initialiser la visibilité du bouton global selon l'onglet actif au chargement
-                const initialActiveTab = document.querySelector('.tab-content:not(.hidden-tab)');
-                const globalSaveBtn = document.getElementById('global-save-btn');
-                if (globalSaveBtn && initialActiveTab) {
-                    if (initialActiveTab.id === 'maintenance') {
-                        globalSaveBtn.style.display = 'none';
-                    } else {
-                        globalSaveBtn.style.display = '';
-                    }
-                }
-
-                const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
-                console.log('📋 Onglets principaux trouvés:', tabLinks.length);
-
-                tabLinks.forEach(link => {
-                    // Supprimer les anciens event listeners et en ajouter de nouveaux
-                    link.removeEventListener('click', mainTabClickHandler);
-                    link.addEventListener('click', mainTabClickHandler);
-                });
-
-                // Vérifier s'il y a un paramètre tab dans l'URL et l'activer (méthode compatible)
-                function getUrlParameter(name) {
-                    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-                    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-                    const results = regex.exec(window.location.search);
-                    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-                }
-
-                const urlTab = getUrlParameter('tab');
-                if (urlTab) {
-                    console.log('🌐 Paramètre tab détecté dans URL:', urlTab);
-
-                    // Mapping pour les onglets (gdpr -> rgpd)
-                    let mappedTab = urlTab;
-                    if (urlTab === 'gdpr') {
-                        mappedTab = 'rgpd';
-                        console.log('🔄 Mapping gdpr -> rgpd');
-                    }
-
-                    const urlTabLink = document.querySelector(`.nav-tab[data-tab="${mappedTab}"]`);
-                    if (urlTabLink) {
-                        console.log('🌐 Activation onglet depuis URL:', mappedTab);
-                        urlTabLink.click();
-                        // Ne pas continuer avec la logique de localStorage
-                        mainTabsInitialized = true;
-                        console.log('✅ Onglets principaux initialisés avec succès (depuis URL)');
-                        return;
-                    } else {
-                        console.log('⚠️ Onglet demandé dans URL non trouvé:', mappedTab);
-                    }
-                }
-
-                // Restaurer l'onglet actif depuis localStorage
-                const savedTab = localStorage.getItem('pdf_builder_active_tab');
-                if (savedTab) {
-                    const savedTabLink = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
-                    if (savedTabLink) {
-                        console.log('🔄 Restauration onglet depuis localStorage:', savedTab);
-                        savedTabLink.click();
-                    }
-                } else {
-                    // Par défaut, s'assurer que l'onglet général est visible et actif
-                    const generalTab = document.getElementById('general');
-                    const generalTabLink = document.querySelector('.nav-tab[data-tab="general"]');
-                    if (generalTab && generalTabLink) {
-                        generalTab.classList.remove('hidden-tab');
-                        generalTab.classList.add('active');
-                        generalTabLink.classList.add('nav-tab-active');
-                        console.log('🏠 Onglet général activé par défaut');
-                    }
-                }
-
-                // Initialiser les sous-onglets RGPD si l'onglet RGPD est actif au chargement
-                setTimeout(() => {
-                    const activeTab = document.querySelector('.nav-tab-active');
-                    if (activeTab && activeTab.getAttribute('data-tab') === 'rgpd' && !gdprTabsInitialized) {
-                        console.log('🔄 Onglet RGPD actif au chargement, initialisation des sous-onglets');
-                        setupGdprTabNavigation();
-                    }
-                }, 200);
-
-                // Marquer comme initialisé
-                mainTabsInitialized = true;
-                console.log('✅ Onglets principaux initialisés avec succès');
-            }
-
-            // Démarrer la navigation des onglets
-            setupTabNavigation();
-
-            // Configuration des sous-onglets RGPD
-
-            // Gestionnaire de clic pour les onglets RGPD (défini globalement pour removeEventListener)
-            function gdprTabClickHandler(e) {
-                e.preventDefault();
-                console.log('🖱️ Clic sur onglet RGPD:', this.getAttribute('data-tab'));
-
-                const targetTab = this.getAttribute('data-tab');
-
-                // Masquer tous les contenus d'onglets RGPD
-                const allGdprTabs = document.querySelectorAll('.gdpr-tab-content');
-                allGdprTabs.forEach(tab => {
-                    tab.classList.remove('active');
-                });
-
-                // Désactiver tous les onglets RGPD
-                document.querySelectorAll('.gdpr-tab').forEach(gdprTabLink => {
-                    gdprTabLink.classList.remove('active');
-                });
-
-                // Afficher l'onglet RGPD cible
-                const targetGdprTabContent = document.getElementById(targetTab + '-tab');
-                if (targetGdprTabContent) {
-                    targetGdprTabContent.classList.add('active');
-                    console.log('✅ Onglet RGPD activé:', targetTab);
-                } else {
-                    console.error('❌ Contenu onglet RGPD non trouvé:', targetTab + '-tab');
-                }
-
-                // Activer l'onglet RGPD
-                this.classList.add('active');
-            }
-
-            function setupGdprTabNavigation() {
-                // Éviter les initialisations multiples
-                if (gdprTabsInitialized) {
-                    console.log('ℹ️ Sous-onglets RGPD déjà initialisés, ignoré');
-                    return;
-                }
-
-                console.log('🔧 Initialisation des sous-onglets RGPD');
-
-                // Vérifier si nous sommes dans l'onglet RGPD
-                const rgpdTab = document.getElementById('rgpd');
-                if (!rgpdTab || rgpdTab.classList.contains('hidden-tab')) {
-                    console.log('⏸️ Onglet RGPD masqué, annulation initialisation');
-                    return;
-                }
-
-                const gdprTabLinks = document.querySelectorAll('.gdpr-tab[data-tab]');
-                console.log('📋 Onglets RGPD trouvés:', gdprTabLinks.length);
-
-                if (gdprTabLinks.length === 0) {
-                    console.warn('⚠️ Aucun onglet RGPD trouvé dans le DOM');
-                    return;
-                }
-
-                gdprTabLinks.forEach(link => {
-                    // Supprimer les anciens event listeners et en ajouter de nouveaux
-                    link.removeEventListener('click', gdprTabClickHandler);
-                    link.addEventListener('click', gdprTabClickHandler);
-                });
-
-                // Activer le premier onglet par défaut si aucun n'est actif
-                const activeGdprTab = document.querySelector('.gdpr-tab.active');
-                if (!activeGdprTab) {
-                    const firstGdprTab = document.querySelector('.gdpr-tab[data-tab]');
-                    if (firstGdprTab) {
-                        firstGdprTab.click();
-                    }
-                }
-
-                // Marquer comme initialisé
-                gdprTabsInitialized = true;
-                console.log('✅ Sous-onglets RGPD initialisés avec succès');
-            }
-
-            // Démarrer la navigation des sous-onglets RGPD
-            // Plus d'appel initial - sera appelé quand l'onglet RGPD sera activé
-
-            // Gestion du bouton toggle password
-            const togglePasswordBtn = document.getElementById('toggle_password');
-            const passwordInput = document.getElementById('developer_password');
-
-            if (togglePasswordBtn && passwordInput) {
-                togglePasswordBtn.addEventListener('click', function() {
-                    if (passwordInput.type === 'password') {
-                        passwordInput.type = 'text';
-                        this.innerHTML = '🙈 Masquer';
-                    } else {
-                        passwordInput.type = 'password';
-                        this.innerHTML = '👁️ Afficher';
-                    }
-                });
-            }
-
-            // Gestion du générateur de clé de licence
-            const generateLicenseKeyBtn = document.getElementById('generate_license_key_btn');
-            const copyLicenseKeyBtn = document.getElementById('copy_license_key_btn');
-            const licenseTestKeyInput = document.getElementById('license_test_key');
-            const licenseKeyStatus = document.getElementById('license_key_status');
-
-            if (generateLicenseKeyBtn) {
-                generateLicenseKeyBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const $btn = jQuery(this);
-                    $btn.prop('disabled', true);
-                    $btn.html('⏳ Génération...');
-
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'pdf_builder_generate_test_license_key',
-                            nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_generate_license_key')); ?>'
-                        },
-                        success: function(response) {
-                            if (response.success && response.data.key) {
-                                licenseTestKeyInput.value = response.data.key;
-                                licenseKeyStatus.innerHTML = '<span style="color: #28a745;">✅ Clé générée avec succès!</span>';
-                                $btn.html('🔑 Régénérer');
-                                $btn.prop('disabled', false);
-                            } else {
-                                const errorMsg = response.data && response.data.message ? response.data.message : 'Impossible de générer la clé';
-                                licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
-                                $btn.html('🔑 Générer');
-                                $btn.prop('disabled', false);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('❌ AJAX error:', error);
-                            let errorMsg = error;
-                            if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                                errorMsg = xhr.responseJSON.data.message;
-                            }
-                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
-                            $btn.html('🔑 Générer');
-                            $btn.prop('disabled', false);
-                        }
-                    });
-                });
-            }
-
-            if (copyLicenseKeyBtn) {
-                copyLicenseKeyBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (licenseTestKeyInput.value) {
-                        navigator.clipboard.writeText(licenseTestKeyInput.value).then(function() {
-                            licenseKeyStatus.innerHTML = '<span style="color: #007cba;">📋 Clé copiée !</span>';
-                            setTimeout(function() {
-                                licenseKeyStatus.innerHTML = '';
-                            }, 3000);
-                        }).catch(function(err) {
-                            console.error('❌ Copy failed:', err);
-                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Impossible de copier</span>';
-                        });
-                    } else {
-                        licenseKeyStatus.innerHTML = '<span style="color: #d32f2f;">❌ Aucune clé à copier</span>';
-                    }
-                });
-            }
-
-            // Gestion de la suppression de la clé de test
-            const deleteLicenseKeyBtn = document.getElementById('delete_license_key_btn');
-
-            if (deleteLicenseKeyBtn) {
-                deleteLicenseKeyBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer la clé de test ? Cette action est irréversible.')) {
-                        return;
-                    }
-                    const $btn = jQuery(this);
-                    $btn.prop('disabled', true);
-                    $btn.html('⏳ Suppression...');
-
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'pdf_builder_delete_test_license_key',
-                            nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_delete_test_license_key')); ?>'
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                licenseTestKeyInput.value = '';
-                                licenseKeyStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ Clé supprimée avec succès !</span>';
-
-                                // Masquer le bouton de suppression
-                                $btn.hide();
-
-                                setTimeout(function() {
-                                    licenseKeyStatus.innerHTML = '';
-                                }, 3000);
-                            } else {
-                                const errorMsg = response.data && response.data.message ? response.data.message : 'Impossible de supprimer la clé';
-                                console.error('❌ Delete failed:', errorMsg);
-                                licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
-                                $btn.html('🗑️ Supprimer');
-                                $btn.prop('disabled', false);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('❌ AJAX error:', error);
-                            let errorMsg = error;
-                            if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                                errorMsg = xhr.responseJSON.data.message;
-                            }
-                            licenseKeyStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
-                            $btn.html('🗑️ Supprimer');
-                            $btn.prop('disabled', false);
-                        }
-                    });
-                });
-            }
-
-            // Gestion du basculement du mode test de licence
-            const toggleTestModeBtn = document.getElementById('toggle_license_test_mode_btn');
-            const testModeStatus = document.getElementById('license_test_mode_status');
-            const testModeCheckbox = document.getElementById('license_test_mode');
-
-            if (toggleTestModeBtn) {
-                toggleTestModeBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const $btn = jQuery(this);
-                    $btn.prop('disabled', true);
-                    $btn.html('⏳ Basculement...');
-
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'pdf_builder_toggle_test_mode',
-                            nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_toggle_test_mode')); ?>'
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                const enabled = response.data.enabled;
-
-                                // Mettre à jour le statut
-                                if (enabled) {
-                                    testModeStatus.innerHTML = '✅ MODE TEST ACTIF';
-                                    testModeStatus.style.background = '#d4edda';
-                                    testModeStatus.style.color = '#155724';
-                                } else {
-                                    testModeStatus.innerHTML = '❌ Mode test inactif';
-                                    testModeStatus.style.background = '#f8d7da';
-                                    testModeStatus.style.color = '#721c24';
-                                }
-
-                                // Mettre à jour le checkbox caché
-                                if (testModeCheckbox) {
-                                    testModeCheckbox.checked = enabled;
-                                }
-
-                                $btn.html('🎚️ Basculer Mode Test');
-                                $btn.prop('disabled', false);
-                            } else {
-                                const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du basculement';
-                                console.error('❌ Toggle failed:', errorMsg);
-                                PDF_Builder_Notification_Manager.show_toast('⚠️ Erreur: ' + errorMsg, 'error');
-                                $btn.html('🎚️ Basculer Mode Test');
-                                $btn.prop('disabled', false);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('❌ AJAX error:', error);
-                            let errorMsg = error;
-                            if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                                errorMsg = xhr.responseJSON.data.message;
-                            }
-                            PDF_Builder_Notification_Manager.show_toast('⚠️ Erreur AJAX: ' + errorMsg, 'error');
-                            $btn.html('🎚️ Basculer Mode Test');
-                            $btn.prop('disabled', false);
-                        }
-                    });
-                });
-            }
-
-            // Gestion du nettoyage complet de la licence
-            const cleanupBtn = document.getElementById('cleanup_license_btn');
-            if (cleanupBtn) {
-                cleanupBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    // Confirmation avant de nettoyer
-                    if (!confirm('⚠️ Êtes-vous sûr ? Cela supprimera TOUS les paramètres de licence.\nLa licence sera réinitialisée à l\'état libre.')) {
-                        return;
-                    }
-                    const $btn = jQuery(this);
-                    const cleanupStatus = document.getElementById('cleanup_status');
-                    const cleanupNonce = document.getElementById('cleanup_license_nonce');
-                    $btn.prop('disabled', true);
-                    $btn.html('⏳ Nettoyage...');
-                    cleanupStatus.innerHTML = '';
-
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'pdf_builder_cleanup_license',
-                            nonce: cleanupNonce ? cleanupNonce.value : ''
-                        },
-                        success: function(response) {
-                            $btn.html('🧹 Nettoyer complètement la licence');
-                            $btn.prop('disabled', false);
-
-                            if (response.success) {
-                                cleanupStatus.innerHTML = '<span style="color: #155724; background: #d4edda; padding: 8px 12px; border-radius: 4px; display: inline-block;">✅ ' + response.data.message + '</span>';
-
-                                // Recharger la page après 2 secondes pour voir les changements
-                                setTimeout(function() {
-                                    location.reload();
-                                }, 2000);
-                            } else {
-                                const errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du nettoyage';
-                                console.error('❌ Cleanup failed:', errorMsg);
-                                cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur: ' + errorMsg + '</span>';
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('❌ AJAX error:', error);
-                            let errorMsg = error;
-                            if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                                errorMsg = xhr.responseJSON.data.message;
-                            }
-                            PDF_Builder_Notification_Manager.show_toast('⚠️ Erreur AJAX: ' + errorMsg, 'error');
-                            cleanupStatus.innerHTML = '<span style="color: #d32f2f; background: #f8d7da; padding: 8px 12px; border-radius: 4px; display: inline-block;">⚠️ Erreur AJAX: ' + errorMsg + '</span>';
-                            $btn.html('🧹 Nettoyer complètement la licence');
-                            $btn.prop('disabled', false);
-                        }
-                    });
-                });
-            }
-
-                    // Gestion du test du système de cache
-            jQuery(document).ready(function($) {
-                const $btn = $("#test-cache-btn");
-                const $results = $("#cache-test-results");
-                const $output = $("#cache-test-output");
-
-                $btn.on("click", function(e) {
-                    e.preventDefault();
-                    $btn.prop("disabled", true).html("🔄 Test en cours...");
-                    if ($results.length) $results.html('<span style="color: #007cba;">Test en cours...</span>');
-                    if ($output.length) $output.hide();
-
-                    $.ajax({
-                        url: ajaxurl,
-                        type: "POST",
-                        dataType: "json",
-                        data: {
-                            action: "pdf_builder_simple_test"
-                        },
-                        timeout: 30000,
-                        success: function(response) {
-                            $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
-
-                            if (response.success) {
-                                if ($results.length) $results.html('<span style="color: #28a745;">✓ Test réussi</span>');
-                                if ($output.length) $output.html(response.data).show();
-                            } else {
-                                if ($results.length) $results.html('<span style="color: #dc3545;">✗ Test échoué</span>');
-                                if ($output.length) $output.html('<p>Erreur: ' + (response.data || 'Réponse invalide') + '</p>').show();
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("❌ AJAX error:", status, error);
-                            $btn.prop("disabled", false).html("🧪 Tester l'intégration du cache");
-
-                            if ($results.length) $results.html('<span style="color: #dc3545;">✗ Erreur HTTP ' + xhr.status + '</span>');
-                            if ($output.length) $output.html('<p>Erreur: ' + error + '</p>').show();
-                        }
-                    });
-                });
-            });
-
-            // ===== GESTION DES BOUTONS DE TEST SMTP ET NOTIFICATIONS =====
-            jQuery(document).ready(function($) {
-                // Test SMTP Connection
-                const $testSmtpBtn = $("#test-smtp-connection");
-                if ($testSmtpBtn.length) {
-                    $testSmtpBtn.on("click", function(e) {
-                        e.preventDefault();
-                        const originalText = $testSmtpBtn.html();
-                        $testSmtpBtn.prop("disabled", true).html("🔄 Test en cours...");
-
-                        $.ajax({
-                            url: ajaxurl,
-                            type: "POST",
-                            dataType: "json",
-                            data: {
-                                action: "pdf_builder_test_smtp_connection",
-                                nonce: "<?php echo esc_js(wp_create_nonce('pdf_builder_settings')); ?>"
-                            },
-                            timeout: 15000,
-                            success: function(response) {
-                                $testSmtpBtn.prop("disabled", false).html(originalText);
-
-                                if (response.success) {
-                                    PDF_Builder_Notification_Manager.show_toast("Connexion SMTP réussie! " + (response.data.message || "La connexion au serveur SMTP fonctionne correctement."), 'success');
-                                } else {
-                                    PDF_Builder_Notification_Manager.show_toast("Erreur de connexion SMTP: " + (response.data.message || "Impossible de se connecter au serveur SMTP."), 'error');
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("❌ SMTP Test AJAX error:", status, error);
-                                $testSmtpBtn.prop("disabled", false).html(originalText);
-                                PDF_Builder_Notification_Manager.show_toast("⚠️ Erreur lors du test SMTP: " + error, 'error');
-                            }
-                        });
-                    });
-                }
-
-                // Test Notifications
-                const $testNotifBtn = $("#test-notifications");
-                if ($testNotifBtn.length) {
-                    $testNotifBtn.on("click", function(e) {
-                        e.preventDefault();
-                        const originalText = $testNotifBtn.html();
-                        $testNotifBtn.prop("disabled", true).html("🔄 Envoi en cours...");
-
-                        $.ajax({
-                            url: ajaxurl,
-                            type: "POST",
-                            dataType: "json",
-                            data: {
-                                action: "pdf_builder_test_notifications",
-                                nonce: "<?php echo esc_js(wp_create_nonce('pdf_builder_settings')); ?>"
-                            },
-                            timeout: 15000,
-                            success: function(response) {
-                                $testNotifBtn.prop("disabled", false).html(originalText);
-
-                                if (response.success) {
-                                    PDF_Builder_Notification_Manager.show_toast("Email de test envoyé! " + (response.data.message || "Vérifiez votre boîte mail pour confirmer la réception."), 'success');
-                                } else {
-                                    PDF_Builder_Notification_Manager.show_toast("Erreur lors de l'envoi: " + (response.data.message || "Impossible d'envoyer l'email de test."), 'error');
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("❌ Notification Test AJAX error:", status, error);
-                                $testNotifBtn.prop("disabled", false).html(originalText);
-                                PDF_Builder_Notification_Manager.show_toast("⚠️ Erreur lors du test de notification: " + error, 'error');
-                            }
-                        });
-                    });
-                }
-            });
-
-            // Gestion dynamique des champs grille
-            jQuery('#show_grid').on('change', function() {
-                var isChecked = jQuery(this).is(':checked');
-                var $gridSizeInput = jQuery('#grid_size');
-                var $gridColorInput = jQuery('#grid_color');
-                var $gridSizeLabel = jQuery('label[for="grid_size"]');
-                var $gridColorLabel = jQuery('label[for="grid_color"]');
-
-                if (isChecked) {
-                    $gridSizeInput.prop('disabled', false).css({'background-color': '', 'color': ''});
-                    $gridColorInput.prop('disabled', false).css('opacity', '');
-                    $gridSizeLabel.css('color', '');
-                    $gridColorLabel.css('color', '');
-                } else {
-                    $gridSizeInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
-                    $gridColorInput.prop('disabled', true).css('opacity', '0.6');
-                    $gridSizeLabel.css('color', '#999');
-                    $gridColorLabel.css('color', '#999');
-                }
-            });
-
-            // Gestion dynamique des champs cache
-            jQuery('#cache_enabled').on('change', function() {
-                var isChecked = jQuery(this).is(':checked');
-                var $cacheTtlInput = jQuery('#cache_ttl');
-                var $cacheTtlLabel = jQuery('label[for="cache_ttl"]');
-
-                if (isChecked) {
-                    $cacheTtlInput.prop('disabled', false).css({'background-color': '', 'color': ''});
-                    $cacheTtlLabel.css('color', '');
-                } else {
-                    $cacheTtlInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
-                    $cacheTtlLabel.css('color', '#999');
-                }
-            });
-
-            // Initialiser l'état des champs cache au chargement
-            jQuery(document).ready(function() {
-                var cacheEnabled = jQuery('#cache_enabled').is(':checked');
-                var $cacheTtlInput = jQuery('#cache_ttl');
-                var $cacheTtlLabel = jQuery('label[for="cache_ttl"]');
-
-                if (!cacheEnabled) {
-                    $cacheTtlInput.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
-                    $cacheTtlLabel.css('color', '#999');
-                }
-            });
-
-            // Fonction pour mettre à jour l'état des marges
-            function updateMarginsState() {
-                var isChecked = jQuery('#show_margins').is(':checked');
-                var $marginInputs = jQuery('.margin-input');
-                var $marginLabels = jQuery('.margin-label');
-
-                if (isChecked) {
-                    $marginInputs.prop('disabled', false).css({'background-color': '', 'color': ''});
-                    $marginLabels.css('color', '');
-                } else {
-                    $marginInputs.prop('disabled', true).css({'background-color': '#f0f0f0', 'color': '#999'});
-                    $marginLabels.css('color', '#999');
-                }
-            }
-
-            // Gestion dynamique des champs marges - event listener
-            jQuery('#show_margins').on('change', function() {
-                updateMarginsState();
-            });
-
-            // Initialiser l'état des champs marges au chargement
-            jQuery(document).ready(function() {
-                setTimeout(updateMarginsState, 100);
-            });
-
-            // Également initialiser après un délai pour être sûr que les éléments sont chargés
-            window.addEventListener('load', function() {
-                updateMarginsState();
-            });
-
-            // Synchronisation automatique des paramètres PDF avec les paramètres Canvas
-            jQuery('#default_canvas_format, #default_canvas_orientation').on('change', function() {
-                var canvasFormat = jQuery('#default_canvas_format').val();
-                var canvasOrientation = jQuery('#default_canvas_orientation').val();
-
-                // Synchroniser le format PDF avec le format Canvas (seulement si c'est un format standard)
-                var standardFormats = ['A4', 'A3', 'Letter', 'Legal'];
-                if (standardFormats.includes(canvasFormat)) {
-                    jQuery('#default_format').val(canvasFormat);
-                }
-
-                // Synchroniser l'orientation PDF avec l'orientation Canvas
-                jQuery('#default_orientation').val(canvasOrientation);
-            });
-
-            // Émettre un événement personnalisé quand les paramètres Canvas sont sauvegardés
-            document.addEventListener('submit', function(e) {
-                if (e.target && e.target.querySelector('[name="submit_canvas"]')) {
-                    // Ajouter un délai pour permettre à WordPress de traiter la soumission
-                    setTimeout(function() {
-                        // Déclencher l'événement personnalisé pour notifier React
-                        window.dispatchEvent(new Event('pdfBuilderCanvasSettingsUpdated'));
-                    }, 500);
-                }
-            });
-
-            // ============================================================
-            // Gestion du Mode Développeur - Affiche/cache les sections
-            // ============================================================
-            jQuery(document).ready(function() {
-                const developerCheckbox = jQuery('#developer_enabled');
-                const licenseSectionDiv = jQuery('#dev-license-section');
-                const debugSectionDiv = jQuery('#dev-debug-section');
-                const logsSectionDiv = jQuery('#dev-logs-section');
-                const logsViewerSectionDiv = jQuery('#dev-logs-viewer-section');
-                const toolsSectionDiv = jQuery('#dev-tools-section');
-                const shortcutsSectionDiv = jQuery('#dev-shortcuts-section');
-                const consoleSectionDiv = jQuery('#dev-console-section');
-                const hooksSectionDiv = jQuery('#dev-hooks-section');
-                const optimizationsSectionDiv = jQuery('#dev-optimizations-section');
-                const developerPasswordField = jQuery('#developer_password');
-                const developerPasswordToggle = jQuery('#toggle_password');
-
-                // Fonction pour mettre à jour la visibilité
-                function updateDeveloperSectionsVisibility() {
-                    const isDeveloperEnabled = developerCheckbox.is(':checked');
-                    const displayStyle = isDeveloperEnabled ? 'block' : 'none';
-
-                    licenseSectionDiv.fadeToggle(200, function() {
-                        jQuery(this).css('display', displayStyle);
-                    });
-                    debugSectionDiv.fadeToggle(200, function() {
-                        jQuery(this).css('display', displayStyle);
-                    });
-                    logsSectionDiv.fadeToggle(200, function() {
-                        jQuery(this).css('display', displayStyle);
-                    });
-                    logsViewerSectionDiv.fadeToggle(200, function() {
-                        jQuery(this).css('display', displayStyle);
-                    });
-                    toolsSectionDiv.fadeToggle(200, function() {
-                        jQuery(this).css('display', displayStyle);
-                    });
-                    shortcutsSectionDiv.fadeToggle(200, function() {
-                        jQuery(this).css('display', displayStyle);
-                    });
-                    consoleSectionDiv.fadeToggle(200, function() {
-                        jQuery(this).css('display', displayStyle);
-                    });
-                    hooksSectionDiv.fadeToggle(200, function() {
-                        jQuery(this).css('display', displayStyle);
-                    });
-                    optimizationsSectionDiv.fadeToggle(200, function() {
-                        jQuery(this).css('display', displayStyle);
-                    });
-
-                    // Griser/dégriser le champ mot de passe développeur
-                    if (isDeveloperEnabled) {
-                        developerPasswordField.prop('disabled', false).css('opacity', '1');
-                        developerPasswordToggle.prop('disabled', false).css('opacity', '1');
-                    } else {
-                        developerPasswordField.prop('disabled', true).css('opacity', '0.5');
-                        developerPasswordToggle.prop('disabled', true).css('opacity', '0.5');
-                    }
-                }
-
-                // Ajouter l'event listener au checkbox
-                developerCheckbox.on('change', function() {
-                    updateDeveloperSectionsVisibility();
-                });
-
-                // Initialiser l'état au chargement de la page
-                updateDeveloperSectionsVisibility();
-            });
-
-            // ===========================================
-            // JAVASCRIPT POUR LA SAUVEGARDE/RESTAURATION
-            // ===========================================
-
-            // Fonction pour afficher les notifications
-            // ✅ Remplacement par le système de notification unifié
-            function showBackupNotification(message, type = 'success') {
-                // Utiliser le système de notification unifié
-                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                    PDF_Builder_Notification_Manager.show_toast(message, type);
-                } else {
-                    // Fallback vers toastr si le système unifié n'est pas disponible
-                    if (typeof toastr !== 'undefined') {
-                        if (type === 'success') {
-                            toastr.success(message);
-                        } else if (type === 'error') {
-                            toastr.error(message);
-                        } else if (type === 'warning') {
-                            toastr.warning(message);
-                        } else {
-                            toastr.info(message);
-                        }
-                    }
-                }
-            }
-
-            // Créer une sauvegarde
-            jQuery('#create-backup-btn').on('click', function() {
-                const button = jQuery(this);
-                const progress = jQuery('#backup-progress');
-                const progressFill = progress.find('.progress-fill');
-                const originalText = button.html();
-
-                // Désactiver le bouton
-                button.prop('disabled', true).html('<?php _e('Création en cours...', 'pdf-builder-pro'); ?>');
-
-                // Afficher la progression
-                progress.show();
-                progressFill.css('width', '30%');
-
-                const formData = new FormData();
-                formData.append('action', 'pdf_builder_create_backup');
-                formData.append('nonce', jQuery('#backup_nonce').val());
-                formData.append('compress', jQuery('#backup_compress').is(':checked') ? '1' : '0');
-                formData.append('exclude_settings', jQuery('#backup_exclude_settings').is(':checked') ? '1' : '0');
-                formData.append('exclude_user_data', jQuery('#backup_exclude_user_data').is(':checked') ? '1' : '0');
-
-                jQuery.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        progressFill.css('width', '100%');
-
-                        setTimeout(function() {
-                            progress.hide();
-                            progressFill.css('width', '0%');
-
-                            if (response.success) {
-                                showBackupNotification(
-                                    '<?php _e('Sauvegarde créée avec succès !', 'pdf-builder-pro'); ?><br>' +
-                                    '<?php _e('Fichier :', 'pdf-builder-pro'); ?> ' + response.data.filename + '<br>' +
-                                    '<?php _e('Taille :', 'pdf-builder-pro'); ?> ' + response.data.size_human,
-                                    'success'
-                                );
-
-                                // Actualiser la liste des sauvegardes
-                                loadBackupsList();
-                            } else {
-                                showBackupNotification(response.data.message || '<?php _e('Erreur lors de la création de la sauvegarde.', 'pdf-builder-pro'); ?>', 'error');
-                            }
-
-                            // Réactiver le bouton
-                            button.prop('disabled', false).html(originalText);
-                        }, 1000);
-                    },
-                    error: function() {
-                        progress.hide();
-                        progressFill.css('width', '0%');
-                        showBackupNotification('<?php _e('Erreur AJAX lors de la création de la sauvegarde.', 'pdf-builder-pro'); ?>', 'error');
-                        button.prop('disabled', false).html(originalText);
-                    }
-                });
-            });
-
-            // Restaurer une sauvegarde
-            jQuery('#restore-backup-btn').on('click', function() {
-                const button = jQuery(this);
-                const progress = jQuery('#restore-progress');
-                const progressFill = progress.find('.progress-fill');
-                const originalText = button.html();
-                const fileInput = jQuery('#backup_file');
-
-                if (!fileInput[0].files[0]) {
-                    showBackupNotification('<?php _e('Veuillez sélectionner un fichier de sauvegarde.', 'pdf-builder-pro'); ?>', 'error');
-                    return;
-                }
-
-                // Confirmation
-                if (!confirm('<?php _e('Êtes-vous sûr de vouloir restaurer cette sauvegarde ? Cette action peut écraser des données existantes.', 'pdf-builder-pro'); ?>')) {
-                    return;
-                }
-
-                // Désactiver le bouton
-                button.prop('disabled', true).html('<?php _e('Restauration en cours...', 'pdf-builder-pro'); ?>');
-
-                // Afficher la progression
-                progress.show();
-                progressFill.css('width', '20%');
-
-                const formData = new FormData();
-                formData.append('action', 'pdf_builder_import_templates');
-                formData.append('nonce', jQuery('#restore_nonce').val());
-                formData.append('backup_file', fileInput[0].files[0]);
-                formData.append('overwrite', jQuery('#restore_overwrite').is(':checked') ? '1' : '0');
-
-                jQuery.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        progressFill.css('width', '100%');
-
-                        setTimeout(function() {
-                            progress.hide();
-                            progressFill.css('width', '0%');
-
-                            if (response.success) {
-                                let message = '<?php _e('Restauration terminée avec succès !', 'pdf-builder-pro'); ?>';
-                                if (response.data.results && response.data.results.templates) {
-                                    const results = response.data.results.templates;
-                                    message += '<br><?php _e('Templates :', 'pdf-builder-pro'); ?> ' +
-                                              results.imported + ' <?php _e('importés', 'pdf-builder-pro'); ?>, ' +
-                                              results.skipped + ' <?php _e('ignorés', 'pdf-builder-pro'); ?>';
-                                }
-
-                                showBackupNotification(message, 'success');
-
-                                // Vider le champ fichier
-                                fileInput.val('');
-
-                                // Recharger la page après un délai pour voir les changements
-                                setTimeout(function() {
-                                    location.reload();
-                                }, 2000);
-                            } else {
-                                showBackupNotification(response.data.message || '<?php _e('Erreur lors de la restauration.', 'pdf-builder-pro'); ?>', 'error');
-                            }
-
-                            // Réactiver le bouton
-                            button.prop('disabled', false).html(originalText);
-                        }, 1000);
-                    },
-                    error: function() {
-                        progress.hide();
-                        progressFill.css('width', '0%');
-                        showBackupNotification('<?php _e('Erreur AJAX lors de la restauration.', 'pdf-builder-pro'); ?>', 'error');
-                        button.prop('disabled', false).html(originalText);
-                    }
-                });
-            });
-
-            // Charger la liste des sauvegardes
-            function loadBackupsList() {
-                // Defer all DOM manipulation and AJAX
-                setTimeout(function() {
-                    const container = jQuery('#backups-container');
-
-                    // Show loading
-                    container.html('<div style="text-align: center; padding: 40px; color: #666;"><div style="font-size: 24px; margin-bottom: 15px;">⏳</div><p><?php _e('Chargement des sauvegardes...', 'pdf-builder-pro'); ?></p></div>');
-
-                    // Defer AJAX call
-                    setTimeout(function() {
-                        jQuery.ajax({
-                            url: ajaxurl,
-                            type: 'POST',
-                            data: {
-                                action: 'pdf_builder_list_backups',
-                                nonce: jQuery('#backup_nonce').val()
-                            },
-                    success: function(response) {
-                        if (response.success && response.data.backups.length > 0) {
-                            let htmlParts = [
-                                '<div class="backups-table" style="background: white; border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden;">',
-                                '<table class="wp-list-table widefat fixed striped" style="margin: 0; border: none;">',
-                                '<thead><tr>',
-                                '<th style="padding: 12px;"><?php _e('Nom du fichier', 'pdf-builder-pro'); ?></th>',
-                                '<th style="padding: 12px;"><?php _e('Taille', 'pdf-builder-pro'); ?></th>',
-                                '<th style="padding: 12px;"><?php _e('Date', 'pdf-builder-pro'); ?></th>',
-                                '<th style="padding: 12px;"><?php _e('Actions', 'pdf-builder-pro'); ?></th>',
-                                '</tr></thead><tbody>'
-                            ];
-
-                            response.data.backups.forEach(function(backup) {
-                                const decodedFilename = atob(backup.filename); // Decode base64
-                                htmlParts.push(
-                                    '<tr>',
-                                    '<td style="padding: 12px;"><strong>' + decodedFilename + '</strong></td>',
-                                    '<td style="padding: 12px;">' + backup.size_human + '</td>',
-                                    '<td style="padding: 12px;">' + backup.modified_human + '</td>',
-                                    '<td style="padding: 12px;">',
-                                    '<button class="button button-small restore-backup-btn" value="' + decodedFilename + '" style="margin-right: 5px;">🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?></button>',
-                                    '<button class="button button-small download-backup-btn" value="' + decodedFilename + '" style="margin-right: 5px;">📥 <?php _e('Télécharger', 'pdf-builder-pro'); ?></button>',
-                                    '<button class="button button-small button-link-delete delete-backup-btn" value="' + decodedFilename + '">🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?></button>',
-                                    '</td>',
-                                    '</tr>'
-                                );
-                            });
-
-                            htmlParts.push('</tbody></table></div>');
-                            container.html(htmlParts.join(''));
-
-                            // Attacher les événements
-                            attachBackupEvents();
-                        } else {
-                            container.html(`
-                                <div style="text-align: center; padding: 60px 40px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px dashed #dee2e6; border-radius: 12px; margin: 20px 0;">
-                                    <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.7;">📦</div>
-                                    <h3 style="color: #495057; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
-                                        <?php _e('Aucune sauvegarde trouvée', 'pdf-builder-pro'); ?>
-                                    </h3>
-                                    <p style="color: #6c757d; margin: 0 0 25px 0; font-size: 14px; line-height: 1.5;">
-                                        <?php _e('Vous n\'avez pas encore créé de sauvegarde. Créez votre première sauvegarde pour protéger vos templates.', 'pdf-builder-pro'); ?>
-                                    </p>
-                                    <button type="button" id="create-first-backup-btn" class="button button-primary" style="padding: 12px 24px; font-size: 14px; font-weight: 500; background: #007cba; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s ease;">
-                                        <span style="margin-right: 8px;">💾</span>
-                                        <?php _e('Créer ma première sauvegarde', 'pdf-builder-pro'); ?>
-                                    </button>
-                                    <div style="margin-top: 15px;">
-                                        <small style="color: #adb5bd; font-size: 12px;">
-                                            <?php _e('Recommandé : sauvegardez régulièrement vos templates importants', 'pdf-builder-pro'); ?>
-                                        </small>
-                                    </div>
-                                </div>
-                            `);
-                        }
-                    },
-                    error: function() {
-                        container.html('<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 48px; margin-bottom: 15px;">❌</div><p><?php _e('Erreur lors du chargement des sauvegardes.', 'pdf-builder-pro'); ?></p></div>');
-                    }
-                });
-                    }, 0); // Close inner setTimeout
-                }, 0); // Close outer setTimeout
-            }
-
-            // Attacher les événements pour les boutons de sauvegarde
-            function attachBackupEvents() {
-                // Restaurer une sauvegarde spécifique
-                jQuery('.restore-backup-btn').off('click').on('click', function() {
-                    const filename = jQuery(this).val();
-                    const $button = jQuery(this);
-
-                    if (confirm('<?php _e('Êtes-vous sûr de vouloir restaurer cette sauvegarde ? Cette action peut écraser des données existantes.', 'pdf-builder-pro'); ?>')) {
-                        // Désactiver le bouton et montrer l'indicateur de chargement
-                        $button.prop('disabled', true).html('⏳ <?php _e('Restauration...', 'pdf-builder-pro'); ?>');
-
-                        // Simuler la restauration en utilisant le filename
-                        jQuery.ajax({
-                            url: ajaxurl,
-                            type: 'POST',
-                            data: {
-                                action: 'pdf_builder_restore_backup',
-                                nonce: jQuery('#backup_nonce').val(),
-                                filename: filename,
-                                overwrite: '1'
-                            },
-                            success: function(response) {
-                                // Réactiver le bouton
-                                $button.prop('disabled', false).html('🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?>');
-
-                                if (response.success) {
-                                    // Construire un message détaillé sur ce qui a été restauré
-                                    let message = '<?php _e('Restauration terminée avec succès !', 'pdf-builder-pro'); ?>';
-                                    if (response.data && response.data.results) {
-                                        const results = response.data.results;
-                                        let details = [];
-                                        if (results.templates && results.templates.imported > 0) {
-                                            details.push(results.templates.imported + ' <?php _e('templates restaurés', 'pdf-builder-pro'); ?>');
-                                        }
-                                        if (results.settings && results.settings.updated > 0) {
-                                            details.push(results.settings.updated + ' <?php _e('paramètres restaurés', 'pdf-builder-pro'); ?>');
-                                        }
-                                        if (results.user_data) {
-                                            details.push('<?php _e('données utilisateur restaurées', 'pdf-builder-pro'); ?>');
-                                        }
-                                        if (details.length > 0) {
-                                            message += ' (' + details.join(', ') + ')';
-                                        }
-                                    }
-
-                                    showBackupNotification(message, 'success');
-                                    setTimeout(function() {
-                                        location.reload();
-                                    }, 3000); // Augmenter le délai pour laisser le temps de lire le message
-                                } else {
-                                    showBackupNotification(response.data.message || '<?php _e('Erreur lors de la restauration.', 'pdf-builder-pro'); ?>', 'error');
-                                }
-                            },
-                            error: function() {
-                                // Réactiver le bouton en cas d'erreur
-                                $button.prop('disabled', false).html('🔄 <?php _e('Restaurer', 'pdf-builder-pro'); ?>');
-                                showBackupNotification('<?php _e('Erreur AJAX lors de la restauration.', 'pdf-builder-pro'); ?>', 'error');
-                            }
-                        });
-                    }
-                });
-
-                // Supprimer une sauvegarde
-                jQuery(document).off('click', '.delete-backup-btn').on('click', '.delete-backup-btn', function() {
-                    const filename = jQuery(this).val();
-
-                    if (confirm('<?php _e('Êtes-vous sûr de vouloir supprimer cette sauvegarde ? Cette action est irréversible.', 'pdf-builder-pro'); ?>')) {
-                        jQuery.ajax({
-                            url: ajaxurl,
-                            type: 'POST',
-                            data: {
-                                action: 'pdf_builder_delete_backup',
-                                nonce: jQuery('#backup_nonce').val(),
-                                filename: filename
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    showBackupNotification('<?php _e('Sauvegarde supprimée avec succès.', 'pdf-builder-pro'); ?>', 'success');
-                                    loadBackupsList(); // Recharger la liste
-                                } else {
-                                    showBackupNotification(response.data.message || '<?php _e('Erreur lors de la suppression.', 'pdf-builder-pro'); ?>', 'error');
-                                }
-                            },
-                            error: function() {
-                                showBackupNotification('<?php _e('Erreur AJAX lors de la suppression.', 'pdf-builder-pro'); ?>', 'error');
-                            }
-                        });
-                    }
-                });
-
-                // Télécharger une sauvegarde
-                jQuery(document).off('click', '.download-backup-btn').on('click', '.download-backup-btn', function() {
-                    const filename = jQuery(this).val();
-
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        data: {
-                            action: 'pdf_builder_download_backup',
-                            nonce: jQuery('#backup_nonce').val(),
-                            filename: filename
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                // Créer un lien temporaire et déclencher le téléchargement
-                                const link = document.createElement('a');
-                                link.href = response.data.download_url;
-                                link.download = response.data.filename;
-                                link.style.display = 'none';
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-
-                                showBackupNotification('<?php _e('Téléchargement démarré.', 'pdf-builder-pro'); ?>', 'success');
-                            } else {
-                                showBackupNotification(response.data.message || '<?php _e('Erreur lors du téléchargement.', 'pdf-builder-pro'); ?>', 'error');
-                            }
-                        },
-                        error: function() {
-                            showBackupNotification('<?php _e('Erreur AJAX lors du téléchargement.', 'pdf-builder-pro'); ?>', 'error');
-                        }
-                    });
-                });
-            }
-
-            // Actualiser la liste des sauvegardes
-            jQuery('#refresh-backups-btn').on('click', function() {
-                loadBackupsList();
-            });
-
-            // Observer pour détecter quand l'onglet sauvegarde devient visible
-            jQuery(document).ready(function() {
-                const backupTab = jQuery('#sauvegarde');
-                if (backupTab.length) {
-                    const observer = new MutationObserver(function(mutations) {
-                        mutations.forEach(function(mutation) {
-                            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                                const isVisible = !backupTab.hasClass('hidden-tab');
-                                const isActive = jQuery('a[data-tab="sauvegarde"]').hasClass('nav-tab-active');
-                                if (isVisible && isActive && !backupTab.data('backups-loaded')) {
-                                    backupTab.data('backups-loaded', true);
-                                    // Use postMessage to break execution chain
-                                    window.postMessage('pdf-builder-load-backups-observer', '*');
-                                }
-                            }
-                        });
-                    });
-                    observer.observe(backupTab[0], {
-                        attributes: true,
-                        attributeFilter: ['class']
-                    });
-
-                    // Charger immédiatement si déjà visible
-                    if (!backupTab.hasClass('hidden-tab') && jQuery('a[data-tab="sauvegarde"]').hasClass('nav-tab-active')) {
-                        backupTab.data('backups-loaded', true);
-                        setTimeout(function() {
-                            loadBackupsList();
-                        }, 0);
-                    }
-
-                    // Masquer le bouton "Enregistrer" global dans l'onglet sauvegarde via MutationObserver
-                    const saveContainer = jQuery('.floating-save-container');
-                    if (saveContainer.length) {
-                        const saveObserver = new MutationObserver(function(mutations) {
-                            mutations.forEach(function(mutation) {
-                                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                                    const isVisible = !backupTab.hasClass('hidden-tab');
-                                    if (isVisible) {
-                                        saveContainer.hide();
-                                    } else {
-                                        saveContainer.show();
-                                    }
-                                }
-                            });
-                        });
-                        saveObserver.observe(backupTab[0], {
-                            attributes: true,
-                            attributeFilter: ['class']
-                        });
-
-                        // Masquer initialement si sur l'onglet sauvegarde
-                        if (!backupTab.hasClass('hidden-tab')) {
-                            saveContainer.hide();
-                        }
-                    }
-                }
-            });
-
-            // Listen for the message to load backups
-            window.addEventListener('message', function(event) {
-                if (event.data === 'pdf-builder-load-backups-observer') {
-                    setTimeout(function() {
-                        loadBackupsList();
-                    }, 0);
-                }
-            });
-
-            // Gestionnaire pour le bouton "Créer ma première sauvegarde"
-            jQuery(document).on('click', '#create-first-backup-btn', function() {
-                // Simuler un clic sur le bouton principal de création de sauvegarde
-                jQuery('#create-backup-btn').trigger('click');
-            });
-
-            // Masquer initialement si on est sur l'onglet sauvegarde au chargement
-            if (window.location.hash === '#sauvegarde' || jQuery('.nav-tab-active').data('tab') === 'sauvegarde') {
-                jQuery('.floating-save-container').hide();
-            }
-            } catch (error) {
-                console.error('❌ Erreur JavaScript dans PDF Builder Settings:', error);
-                console.error('Stack trace:', error.stack);
-            }
-        });
-    </script>
-    <style>
-        /* S'assurer que l'onglet général est toujours visible par défaut */
-        .tab-content.active {
-            display: block !important;
-        }
-        .tab-content:not(.active):not(.hidden-tab) {
             display: none !important;
         }
     </style>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestionnaire de navigation par onglets
+            const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Retirer la classe active de tous les onglets
+                    tabLinks.forEach(tabLink => {
+                        tabLink.classList.remove('nav-tab-active');
+                    });
+
+                    // Ajouter la classe active à l'onglet cliqué
+                    this.classList.add('nav-tab-active');
+
+                    // Masquer tous les contenus d'onglets
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        content.classList.add('hidden-tab');
+                    });
+
+                    // Afficher le contenu de l'onglet sélectionné
+                    const targetTab = this.getAttribute('data-tab');
+                    const targetContent = document.getElementById(targetTab);
+                    if (targetContent) {
+                        targetContent.classList.remove('hidden-tab');
+                        targetContent.classList.add('active');
+                    }
+
+                    // Sauvegarder l'onglet actif dans le localStorage
+                    localStorage.setItem('pdf_builder_active_tab', targetTab);
+                });
+            });
+
+            // Restaurer l'onglet actif depuis le localStorage
+            const savedTab = localStorage.getItem('pdf_builder_active_tab');
+            if (savedTab) {
+                const savedTabLink = document.querySelector(`.nav-tab[data-tab="${savedTab}"]`);
+                if (savedTabLink) {
+                    savedTabLink.click();
+                }
+            }
+
+            // Activer l'onglet général par défaut si aucun onglet n'est actif
+            const activeTab = document.querySelector('.nav-tab-active');
+            if (!activeTab) {
+                const generalTabLink = document.querySelector('.nav-tab[data-tab="general"]');
+                if (generalTabLink) {
+                    generalTabLink.click();
+                }
+            }
+
+            // Gestionnaire pour le bouton global d'enregistrement
+            const saveAllButtons = document.querySelectorAll('[id^="save-all-"]');
+            saveAllButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Trouver l'onglet actif
+                    const activeTabContent = document.querySelector('.tab-content.active');
+                    if (!activeTabContent) return;
+
+                    // Collecter tous les formulaires dans l'onglet actif
+                    const forms = activeTabContent.querySelectorAll('form');
+                    
+                    // Soumettre chaque formulaire
+                    forms.forEach(form => {
+                        // Créer un élément temporaire pour soumettre le formulaire
+                        const tempForm = document.createElement('form');
+                        tempForm.method = form.method;
+                        tempForm.action = form.action;
+                        tempForm.style.display = 'none';
+                        
+                        // Copier tous les champs du formulaire original
+                        const inputs = form.querySelectorAll('input, select, textarea');
+                        inputs.forEach(input => {
+                            const clone = input.cloneNode(true);
+                            tempForm.appendChild(clone);
+                        });
+                        
+                        // Ajouter au body et soumettre
+                        document.body.appendChild(tempForm);
+                        tempForm.submit();
+                        
+                        // Nettoyer
+                        document.body.removeChild(tempForm);
+                    });
+                    
+                    // Afficher un message de confirmation
+                    alert('✅ Toutes les modifications ont été enregistrées !');
+                });
+            });
+        });
+    </script>
+</div>
