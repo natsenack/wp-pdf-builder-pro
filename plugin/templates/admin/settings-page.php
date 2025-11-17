@@ -228,6 +228,14 @@
     $settings['pdf_quality'] = get_option('pdf_builder_pdf_quality', 'high');
     $settings['default_format'] = get_option('pdf_builder_default_format', 'A4');
     $settings['default_orientation'] = get_option('pdf_builder_default_orientation', 'portrait');
+
+    // DEBUG: Log des valeurs chargées au démarrage de la page
+    error_log('[DEBUG PAGE LOAD] Valeurs chargées depuis la DB:');
+    error_log('  company_phone_manual: ' . ($settings['company_phone_manual'] ?? 'NOT_SET'));
+    error_log('  company_siret: ' . ($settings['company_siret'] ?? 'NOT_SET'));
+    error_log('  company_vat: ' . ($settings['company_vat'] ?? 'NOT_SET'));
+    error_log('  company_rcs: ' . ($settings['company_rcs'] ?? 'NOT_SET'));
+    error_log('  company_capital: ' . ($settings['company_capital'] ?? 'NOT_SET'));
     // Log ALL POST data at the beginning
     if (!empty($_POST)) {
         error_log('ALL POST data received: ' . print_r($_POST, true));
@@ -3259,6 +3267,12 @@
                             $btn.removeClass('saving').addClass('saved');
                             $icon.text('✅');
                             $text.text('Enregistré !');
+
+                            // Recharger la page après 2 secondes pour voir les nouvelles valeurs
+                            setTimeout(() => {
+                                console.log('🔄 [DEBUG] Rechargement de la page pour vérifier les valeurs sauvegardées...');
+                                location.reload();
+                            }, 2000);
 
                             // Revenir à l'état normal après 3 secondes
                             setTimeout(() => {
