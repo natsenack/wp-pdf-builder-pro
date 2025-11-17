@@ -3235,9 +3235,6 @@
                 </ul>
             </div>
 
-            <p class="submit">
-                <button type="submit" name="submit_developpeur" class="button button-primary">Enregistrer les paramètres développeur</button>
-            </p>
          </form>
         </div>
 </div>
