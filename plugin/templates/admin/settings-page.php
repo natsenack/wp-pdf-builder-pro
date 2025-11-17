@@ -2218,7 +2218,7 @@
                             <td>
                                 <button type="button" id="clear-cache-btn" class="button button-secondary" style="margin-right: 10px;">🗑️ Vider le cache</button>
                                 <button type="button" id="optimize-db-btn" class="button button-secondary" style="margin-right: 10px;">🗃️ Optimiser la base</button>
-                                <button type="button" id="repair-db-btn" class="button button-secondary">🔧 Réparer la base</button>
+                                <button type="button" id="repair-templates-btn" class="button button-secondary">🔧 Réparer les templates</button>
                                 <div id="maintenance-results" style="margin-top: 10px;"></div>
                             </td>
                         </tr>
@@ -4806,13 +4806,13 @@
                 });
             });
 
-            // Bouton "Réparer la base"
-            $('#repair-db-btn').on('click', function() {
+            // Bouton "Réparer les templates"
+            $('#repair-templates-btn').on('click', function() {
                 const $btn = $(this);
                 const $results = $('#maintenance-results');
                 
                 $btn.prop('disabled', true).text('⏳ Réparation...');
-                $results.html('<span style="color: #007cba;">⏳ Réparation de la base de données en cours...</span>');
+                $results.html('<span style="color: #007cba;">⏳ Réparation des templates en cours...</span>');
                 
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
@@ -4832,7 +4832,7 @@
                         $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors de la réparation</span>');
                     },
                     complete: function() {
-                        $btn.prop('disabled', false).text('🔧 Réparer la base');
+                        $btn.prop('disabled', false).text('🔧 Réparer les templates');
                     }
                 });
             });
