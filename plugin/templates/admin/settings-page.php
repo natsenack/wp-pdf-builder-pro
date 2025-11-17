@@ -914,7 +914,7 @@
                 </table>
 
             </form>
-
+</div>
             <!-- Section Licence -->
             <h3 class="section-title">🔐 Gestion de la Licence</h3>
             <form method="post" id="licence-form" action="">
@@ -1123,7 +1123,7 @@
                                 </form>
                             </div>
                         </div>
-                    </div>
+                </div>
 
                 <script>
                     function showDeactivateModal() {
@@ -1279,11 +1279,184 @@
                         </form>
                     </div>
 
-            </div>
+            
             </form>
+        </div>
 
-            <!-- Section Rôles et Permissions -->
-            <h3 class="section-title">👥 Gestion des Rôles et Permissions</h3>
+        <div id="licence" class="tab-content hidden-tab">
+            <h2>🔑 Gestion de la Licence</h2>
+
+            <!-- Section Licence -->
+            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #6c757d; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #6c757d; padding-bottom: 10px;">🔑 Gestion de la Licence</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="licence">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="license_key">Clé de licence</label></th>
+                            <td>
+                                <input type="text" id="license_key" name="license_key" value="<?php echo esc_attr(get_option('pdf_builder_license_key', '')); ?>" class="regular-text">
+                                <p class="description">Entrez votre clé de licence premium</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Actions</th>
+                            <td>
+                                <button type="submit" name="activate_license" class="button button-primary" style="margin-right: 10px;">✅ Activer</button>
+                                <button type="submit" name="deactivate_license" class="button button-secondary">❌ Désactiver</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+
+            <!-- Bouton global d'enregistrement -->
+            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
+                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer les modifications</h3>
+                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer les paramètres de licence.</p>
+                <button type="button" id="save-all-licence" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                    🚀 Enregistrer
+                </button>
+            </div>
+        </div>
+
+        <div id="systeme" class="tab-content hidden-tab">
+            <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
+
+            <!-- Section Performance -->
+            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">🚀 Performance</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_performance', 'pdf_builder_performance_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="performance">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="cache_enabled">Cache activé</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', true)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Active le système de cache pour améliorer les performances</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_expiry">Expiration du cache (heures)</label></th>
+                            <td>
+                                <input type="number" id="cache_expiry" name="cache_expiry" value="<?php echo esc_attr(get_option('pdf_builder_cache_expiry', 24)); ?>" min="1" max="168">
+                                <p class="description">Durée avant expiration automatique du cache</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="max_cache_size">Taille max du cache (Mo)</label></th>
+                            <td>
+                                <input type="number" id="max_cache_size" name="max_cache_size" value="<?php echo esc_attr(get_option('pdf_builder_max_cache_size', 100)); ?>" min="10" max="1000">
+                                <p class="description">Taille maximale du cache avant nettoyage automatique</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_performance" class="button button-primary" value="💾 Sauvegarder Performance">
+                    </p>
+                </form>
+            </div>
+
+            <!-- Section Maintenance -->
+            <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">🔧 Maintenance</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_maintenance', 'pdf_builder_maintenance_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="maintenance">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row">Actions de maintenance</th>
+                            <td>
+                                <button type="button" id="clear-cache-btn" class="button button-secondary" style="margin-right: 10px;">🗑️ Vider le cache</button>
+                                <button type="button" id="optimize-db-btn" class="button button-secondary" style="margin-right: 10px;">🗃️ Optimiser la base</button>
+                                <button type="button" id="repair-db-btn" class="button button-secondary">🔧 Réparer la base</button>
+                                <div id="maintenance-results" style="margin-top: 10px;"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="auto_maintenance">Maintenance automatique</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="auto_maintenance" name="auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', false)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Active la maintenance automatique hebdomadaire</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_maintenance" class="button button-primary" value="💾 Sauvegarder Maintenance">
+                    </p>
+                </form>
+            </div>
+
+            <!-- Section Sauvegarde -->
+            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">💾 Sauvegarde</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_backup', 'pdf_builder_backup_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="sauvegarde">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row">Sauvegardes disponibles</th>
+                            <td>
+                                <button type="button" id="create-backup-btn" class="button button-primary" style="margin-right: 10px;">📦 Créer une sauvegarde</button>
+                                <button type="button" id="list-backups-btn" class="button button-secondary">📋 Lister les sauvegardes</button>
+                                <div id="backup-results" style="margin-top: 10px;"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="auto_backup">Sauvegarde automatique</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="auto_backup" name="auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', false)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Crée automatiquement des sauvegardes quotidiennes</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="backup_retention">Rétention des sauvegardes (jours)</label></th>
+                            <td>
+                                <input type="number" id="backup_retention" name="backup_retention" value="<?php echo esc_attr(get_option('pdf_builder_backup_retention', 30)); ?>" min="1" max="365">
+                                <p class="description">Nombre de jours avant suppression automatique des anciennes sauvegardes</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p class="submit">
+                        <input type="submit" name="submit_backup" class="button button-primary" value="💾 Sauvegarder Configuration">
+                    </p>
+                </form>
+
+                <!-- Bouton global d'enregistrement -->
+                <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
+                    <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Système en une seule fois.</p>
+                    <button type="button" id="save-all-systeme" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                        🚀 Enregistrer tout
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="acces" class="tab-content hidden-tab">
+            <h2>👥 Gestion des Rôles et Permissions</h2>
 
             <!-- Message de confirmation que l'onglet est chargé -->
             <div style="margin-bottom: 20px; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
@@ -1625,222 +1798,6 @@
                 </div>
 
             </form>
-        </div>
-
-        <div id="licence" class="tab-content hidden-tab">
-            <h2>🔑 Gestion de la Licence</h2>
-
-            <!-- Section Licence -->
-            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #6c757d; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #6c757d; padding-bottom: 10px;">🔑 Gestion de la Licence</h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="licence">
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="license_key">Clé de licence</label></th>
-                            <td>
-                                <input type="text" id="license_key" name="license_key" value="<?php echo esc_attr(get_option('pdf_builder_license_key', '')); ?>" class="regular-text">
-                                <p class="description">Entrez votre clé de licence premium</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Actions</th>
-                            <td>
-                                <button type="submit" name="activate_license" class="button button-primary" style="margin-right: 10px;">✅ Activer</button>
-                                <button type="submit" name="deactivate_license" class="button button-secondary">❌ Désactiver</button>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-
-            <!-- Bouton global d'enregistrement -->
-            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer les modifications</h3>
-                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer les paramètres de licence.</p>
-                <button type="button" id="save-all-licence" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                    🚀 Enregistrer
-                </button>
-            </div>
-        </div>
-
-        <div id="systeme" class="tab-content hidden-tab">
-            <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
-
-            <!-- Section Performance -->
-            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">🚀 Performance</h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_performance', 'pdf_builder_performance_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="performance">
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="cache_enabled">Cache activé</label></th>
-                            <td>
-                                <label class="switch">
-                                    <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', true)); ?>>
-                                    <span class="slider round"></span>
-                                </label>
-                                <p class="description">Active le système de cache pour améliorer les performances</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="cache_expiry">Expiration du cache (heures)</label></th>
-                            <td>
-                                <input type="number" id="cache_expiry" name="cache_expiry" value="<?php echo esc_attr(get_option('pdf_builder_cache_expiry', 24)); ?>" min="1" max="168">
-                                <p class="description">Durée avant expiration automatique du cache</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="max_cache_size">Taille max du cache (Mo)</label></th>
-                            <td>
-                                <input type="number" id="max_cache_size" name="max_cache_size" value="<?php echo esc_attr(get_option('pdf_builder_max_cache_size', 100)); ?>" min="10" max="1000">
-                                <p class="description">Taille maximale du cache avant nettoyage automatique</p>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_performance" class="button button-primary" value="💾 Sauvegarder Performance">
-                    </p>
-                </form>
-            </div>
-
-            <!-- Section Maintenance -->
-            <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">🔧 Maintenance</h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_maintenance', 'pdf_builder_maintenance_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="maintenance">
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row">Actions de maintenance</th>
-                            <td>
-                                <button type="button" id="clear-cache-btn" class="button button-secondary" style="margin-right: 10px;">🗑️ Vider le cache</button>
-                                <button type="button" id="optimize-db-btn" class="button button-secondary" style="margin-right: 10px;">🗃️ Optimiser la base</button>
-                                <button type="button" id="repair-db-btn" class="button button-secondary">🔧 Réparer la base</button>
-                                <div id="maintenance-results" style="margin-top: 10px;"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="auto_maintenance">Maintenance automatique</label></th>
-                            <td>
-                                <label class="switch">
-                                    <input type="checkbox" id="auto_maintenance" name="auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', false)); ?>>
-                                    <span class="slider round"></span>
-                                </label>
-                                <p class="description">Active la maintenance automatique hebdomadaire</p>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_maintenance" class="button button-primary" value="💾 Sauvegarder Maintenance">
-                    </p>
-                </form>
-            </div>
-
-            <!-- Section Sauvegarde -->
-            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">💾 Sauvegarde</h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_backup', 'pdf_builder_backup_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="sauvegarde">
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row">Sauvegardes disponibles</th>
-                            <td>
-                                <button type="button" id="create-backup-btn" class="button button-primary" style="margin-right: 10px;">📦 Créer une sauvegarde</button>
-                                <button type="button" id="list-backups-btn" class="button button-secondary">📋 Lister les sauvegardes</button>
-                                <div id="backup-results" style="margin-top: 10px;"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="auto_backup">Sauvegarde automatique</label></th>
-                            <td>
-                                <label class="switch">
-                                    <input type="checkbox" id="auto_backup" name="auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', false)); ?>>
-                                    <span class="slider round"></span>
-                                </label>
-                                <p class="description">Crée automatiquement des sauvegardes quotidiennes</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="backup_retention">Rétention des sauvegardes (jours)</label></th>
-                            <td>
-                                <input type="number" id="backup_retention" name="backup_retention" value="<?php echo esc_attr(get_option('pdf_builder_backup_retention', 30)); ?>" min="1" max="365">
-                                <p class="description">Nombre de jours avant suppression automatique des anciennes sauvegardes</p>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_backup" class="button button-primary" value="💾 Sauvegarder Configuration">
-                    </p>
-                </form>
-
-                <!-- Bouton global d'enregistrement -->
-                <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-                    <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
-                    <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Système en une seule fois.</p>
-                    <button type="button" id="save-all-systeme" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                        🚀 Enregistrer tout
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div id="acces" class="tab-content hidden-tab">
-            <h2>👥 Gestion des Rôles</h2>
-
-            <!-- Section Rôles -->
-            <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); border: 2px solid #007bff; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 10px;">👥 Gestion des Rôles</h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_roles', 'pdf_builder_roles_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="roles">
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row">Rôles autorisés</th>
-                            <td>
-                                <?php
-                                $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
-                                $wp_roles = wp_roles();
-                                foreach ($wp_roles->roles as $role_key => $role) {
-                                    $checked = in_array($role_key, $allowed_roles) ? 'checked' : '';
-                                    echo '<label style="display: block; margin: 5px 0;"><input type="checkbox" name="pdf_builder_allowed_roles[]" value="' . esc_attr($role_key) . '" ' . $checked . '> ' . esc_html($role['name']) . '</label>';
-                                }
-                                ?>
-                                <p class="description">Sélectionnez les rôles WordPress autorisés à utiliser le générateur PDF</p>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_roles" class="button button-primary" value="💾 Sauvegarder Rôles">
-                    </p>
-                </form>
-
-                <!-- Bouton global d'enregistrement -->
-                <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-                    <h3 style="margin-top: 0; color: #333;">💾 Enregistrer les modifications</h3>
-                    <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer les paramètres des rôles.</p>
-                    <button type="button" id="save-all-acces" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                        🚀 Enregistrer
-                    </button>
-                </div>
-            </div>
         </div>
         <div id="securite" class="tab-content hidden-tab">
             <h2>🔒 Sécurité & Conformité</h2>
