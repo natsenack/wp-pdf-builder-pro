@@ -229,13 +229,12 @@
     $settings['default_format'] = get_option('pdf_builder_default_format', 'A4');
     $settings['default_orientation'] = get_option('pdf_builder_default_orientation', 'portrait');
 
-    // DEBUG: Log des valeurs chargées au démarrage de la page
-    error_log('[DEBUG PAGE LOAD] Valeurs chargées depuis la DB:');
-    error_log('  company_phone_manual: ' . ($settings['company_phone_manual'] ?? 'NOT_SET'));
-    error_log('  company_siret: ' . ($settings['company_siret'] ?? 'NOT_SET'));
-    error_log('  company_vat: ' . ($settings['company_vat'] ?? 'NOT_SET'));
-    error_log('  company_rcs: ' . ($settings['company_rcs'] ?? 'NOT_SET'));
-    error_log('  company_capital: ' . ($settings['company_capital'] ?? 'NOT_SET'));
+    // Vérifier que les valeurs sont bien définies
+    $company_phone_manual = $settings['company_phone_manual'] ?? '';
+    $company_siret = $settings['company_siret'] ?? '';
+    $company_vat = $settings['company_vat'] ?? '';
+    $company_rcs = $settings['company_rcs'] ?? '';
+    $company_capital = $settings['company_capital'] ?? '';
     // Log ALL POST data at the beginning
     if (!empty($_POST)) {
         error_log('ALL POST data received: ' . print_r($_POST, true));
@@ -998,19 +997,16 @@
                                 <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
                                 <td>
                                     <input type="text" id="company_phone_manual" name="company_phone_manual"
-                                        value="<?php echo esc_attr($settings['company_phone_manual'] ?? ''); ?>"
+                                        value="<?php echo esc_attr($company_phone_manual); ?>"
                                         placeholder="+33 1 23 45 67 89" />
                                     <p class="description">Téléphone de l'entreprise</p>
-                                    <?php if (defined('WP_DEBUG') && WP_DEBUG): ?>
-                                    <p class="description" style="color: red;">DEBUG: Valeur PHP = "<?php echo esc_attr($settings['company_phone_manual'] ?? 'NOT_SET'); ?>"</p>
-                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="company_siret">Numéro SIRET</label></th>
                                 <td>
                                     <input type="text" id="company_siret" name="company_siret"
-                                        value="<?php echo esc_attr($settings['company_siret'] ?? ''); ?>"
+                                        value="<?php echo esc_attr($company_siret); ?>"
                                         placeholder="123 456 789 00012" />
                                     <p class="description">Numéro SIRET de l'entreprise</p>
                                 </td>
@@ -1019,7 +1015,7 @@
                                 <th scope="row"><label for="company_vat">Numéro TVA</label></th>
                                 <td>
                                     <input type="text" id="company_vat" name="company_vat"
-                                        value="<?php echo esc_attr($settings['company_vat'] ?? ''); ?>"
+                                        value="<?php echo esc_attr($company_vat); ?>"
                                         placeholder="FR 12 345 678 901" />
                                     <p class="description">Numéro de TVA intracommunautaire</p>
                                 </td>
@@ -1028,7 +1024,7 @@
                                 <th scope="row"><label for="company_rcs">RCS</label></th>
                                 <td>
                                     <input type="text" id="company_rcs" name="company_rcs"
-                                        value="<?php echo esc_attr($settings['company_rcs'] ?? ''); ?>"
+                                        value="<?php echo esc_attr($company_rcs); ?>"
                                         placeholder="Lyon B 123 456 789" />
                                     <p class="description">Numéro RCS (Registre du Commerce et des Sociétés)</p>
                                 </td>
@@ -1037,7 +1033,7 @@
                                 <th scope="row"><label for="company_capital">Capital social</label></th>
                                 <td>
                                     <input type="text" id="company_capital" name="company_capital"
-                                        value="<?php echo esc_attr($settings['company_capital'] ?? ''); ?>"
+                                        value="<?php echo esc_attr($company_capital); ?>"
                                         placeholder="10 000 €" />
                                     <p class="description">Montant du capital social de l'entreprise</p>
                                 </td>
@@ -3175,18 +3171,8 @@
                 setTimeout(updateFloatingButtonVisibility, 100);
             });
 
-                // Vérifier l'onglet actif au chargement
-                updateFloatingButtonVisibility();
-
-                // DEBUG: Vérifier les valeurs des champs entreprise après chargement
-                console.log('🔍 [DEBUG PAGE LOAD] Vérification des valeurs dans les champs HTML:');
-                console.log('   Téléphone:', $('#company_phone_manual').val());
-                console.log('   SIRET:', $('#company_siret').val());
-                console.log('   TVA:', $('#company_vat').val());
-                console.log('   RCS:', $('#company_rcs').val());
-                console.log('   Capital:', $('#company_capital').val());
-
-            // Gestionnaire pour le bouton flottant
+            // Vérifier l'onglet actif au chargement
+            updateFloatingButtonVisibility();            // Gestionnaire pour le bouton flottant
             $('.floating-save-btn').on('click', function() {
                 const $btn = $(this);
                 const $icon = $btn.find('.save-icon');
@@ -3217,40 +3203,15 @@
                 // Collecter les données de tous les formulaires
                 const formData = new FormData();
 
-                console.log('🔍 [DEBUG] Recherche des formulaires dans l\'onglet actif:', currentTab);
-                console.log('🔍 [DEBUG] Nombre de formulaires trouvés:', forms.length);
-
-                forms.each(function(index) {
+                forms.each(function() {
                     const $form = $(this);
                     const formDataTemp = new FormData(this);
 
-                    console.log('🔍 [DEBUG] Formulaire #' + (index + 1) + ':', $form.attr('id') || 'sans-id');
-
-                    // Vérifier si c'est le formulaire des informations entreprise
-                    if ($form.find('#company_phone_manual').length > 0) {
-                        console.log('🏢 [DEBUG] Formulaire Informations Entreprise trouvé !');
-                        console.log('🏢 [DEBUG] Valeurs des champs entreprise:');
-                        console.log('   - Téléphone:', $('#company_phone_manual').val());
-                        console.log('   - SIRET:', $('#company_siret').val());
-                        console.log('   - TVA:', $('#company_vat').val());
-                        console.log('   - RCS:', $('#company_rcs').val());
-                        console.log('   - Capital:', $('#company_capital').val());
-                    }
-
                     // Ajouter les données de ce formulaire
-                    let fieldCount = 0;
                     for (let [key, value] of formDataTemp.entries()) {
                         formData.append(key, value);
-                        fieldCount++;
-                        console.log('📝 [DEBUG] Champ ajouté:', key, '=', value);
                     }
-                    console.log('📊 [DEBUG] Nombre de champs dans ce formulaire:', fieldCount);
                 });
-
-                console.log('📤 [DEBUG] Données finales à envoyer:');
-                for (let [key, value] of formData.entries()) {
-                    console.log('   ', key, '=', value);
-                }
 
                 // Ajouter l'onglet actuel
                 formData.append('current_tab', currentTab);
@@ -3258,11 +3219,6 @@
                 formData.append('nonce', pdf_builder_ajax.nonce);
 
                 // Envoyer via AJAX
-                console.log('🚀 [DEBUG] Envoi de la requête AJAX...');
-                console.log('🚀 [DEBUG] URL:', pdf_builder_ajax.ajax_url);
-                console.log('🚀 [DEBUG] Action:', 'pdf_builder_save_settings');
-                console.log('🚀 [DEBUG] Nonce:', pdf_builder_ajax.nonce);
-
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
@@ -3270,20 +3226,11 @@
                     processData: false,
                     contentType: false,
                     success: function(response) {
-                        console.log('✅ [DEBUG] Réponse AJAX reçue:', response);
-
                         if (response.success) {
-                            console.log('✅ [DEBUG] Sauvegarde réussie !');
                             // Succès
                             $btn.removeClass('saving').addClass('saved');
                             $icon.text('✅');
                             $text.text('Enregistré !');
-
-                            // Recharger la page après 2 secondes pour voir les nouvelles valeurs
-                            setTimeout(() => {
-                                console.log('🔄 [DEBUG] Rechargement de la page pour vérifier les valeurs sauvegardées...');
-                                location.reload();
-                            }, 2000);
 
                             // Revenir à l'état normal après 3 secondes
                             setTimeout(() => {
@@ -3292,7 +3239,6 @@
                                 $text.text('Enregistrer');
                             }, 3000);
                         } else {
-                            console.log('❌ [DEBUG] Erreur dans la réponse:', response.message || 'Erreur inconnue');
                             // Erreur
                             $btn.removeClass('saving').addClass('error');
                             $icon.text('❌');
@@ -3305,13 +3251,7 @@
                             }, 3000);
                         }
                     },
-                    error: function(xhr, status, error) {
-                        console.log('❌ [DEBUG] Erreur AJAX:', {
-                            status: xhr.status,
-                            statusText: xhr.statusText,
-                            responseText: xhr.responseText,
-                            error: error
-                        });
+                    error: function() {
                         // Erreur AJAX
                         $btn.removeClass('saving').addClass('error');
                         $icon.text('❌');
