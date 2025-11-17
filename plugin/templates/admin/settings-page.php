@@ -235,6 +235,11 @@
     $company_vat = $settings['company_vat'] ?? '';
     $company_rcs = $settings['company_rcs'] ?? '';
     $company_capital = $settings['company_capital'] ?? '';
+
+    // Variables pour la configuration PDF
+    $pdf_quality = $settings['pdf_quality'] ?? 'high';
+    $default_format = $settings['default_format'] ?? 'A4';
+    $default_orientation = $settings['default_orientation'] ?? 'portrait';
     // Log ALL POST data at the beginning
     if (!empty($_POST)) {
         error_log('ALL POST data received: ' . print_r($_POST, true));
@@ -1162,9 +1167,9 @@
                         <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
                         <td>
                             <select id="pdf_quality" name="pdf_quality">
-                                <option value="low" <?php selected($settings['pdf_quality'] ?? 'high', 'low'); ?>>Faible (fichiers plus petits)</option>
-                                <option value="medium" <?php selected($settings['pdf_quality'] ?? 'high', 'medium'); ?>>Moyen</option>
-                                <option value="high" <?php selected($settings['pdf_quality'] ?? 'high', 'high'); ?>>Élevée (meilleure qualité)</option>
+                                <option value="low" <?php selected($pdf_quality, 'low'); ?>>Faible (fichiers plus petits)</option>
+                                <option value="medium" <?php selected($pdf_quality, 'medium'); ?>>Moyen</option>
+                                <option value="high" <?php selected($pdf_quality, 'high'); ?>>Élevée (meilleure qualité)</option>
                             </select>
                         </td>
                     </tr>
@@ -1172,10 +1177,10 @@
                         <th scope="row"><label for="default_format">Format PDF par défaut</label></th>
                         <td>
                             <select id="default_format" name="default_format">
-                                <option value="A4" <?php selected($settings['default_format'] ?? 'A4', 'A4'); ?>>A4</option>
-                                <option value="A3" <?php selected($settings['default_format'] ?? 'A4', 'A3'); ?>>A3</option>
-                                <option value="Letter" <?php selected($settings['default_format'] ?? 'A4', 'Letter'); ?>>Letter</option>
-                                <option value="Legal" <?php selected($settings['default_format'] ?? 'A4', 'Legal'); ?>>Legal</option>
+                                <option value="A4" <?php selected($default_format, 'A4'); ?>>A4</option>
+                                <option value="A3" <?php selected($default_format, 'A3'); ?>>A3</option>
+                                <option value="Letter" <?php selected($default_format, 'Letter'); ?>>Letter</option>
+                                <option value="Legal" <?php selected($default_format, 'Legal'); ?>>Legal</option>
                             </select>
                         </td>
                     </tr>
@@ -1183,8 +1188,8 @@
                         <th scope="row"><label for="default_orientation">Orientation par défaut</label></th>
                         <td>
                             <select id="default_orientation" name="default_orientation">
-                                <option value="portrait" <?php selected($settings['default_orientation'] ?? 'portrait', 'portrait'); ?>>Portrait</option>
-                                <option value="landscape" <?php selected($settings['default_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
+                                <option value="portrait" <?php selected($default_orientation, 'portrait'); ?>>Portrait</option>
+                                <option value="landscape" <?php selected($default_orientation, 'landscape'); ?>>Paysage</option>
                             </select>
                         </td>
                     </tr>
