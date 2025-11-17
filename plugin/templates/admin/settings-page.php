@@ -3121,18 +3121,26 @@
                 var isEnabled = $('#developer_enabled').is(':checked');
                 var $devSection = $('#developer-info-section');
 
+                console.log('[DEV MODE TOGGLE] toggleDeveloperSection called');
+                console.log('[DEV MODE TOGGLE] isEnabled:', isEnabled);
+                console.log('[DEV MODE TOGGLE] devSection exists:', $devSection.length > 0);
+
                 if (isEnabled) {
+                    console.log('[DEV MODE TOGGLE] Showing developer section');
                     $devSection.slideDown(300);
                 } else {
+                    console.log('[DEV MODE TOGGLE] Hiding developer section');
                     $devSection.slideUp(300);
                 }
             }
 
             // Vérifier l'état initial au chargement
+            console.log('[DEV MODE TOGGLE] Initializing...');
             toggleDeveloperSection();
 
             // Écouter les changements sur le toggle développeur
             $('#developer_enabled').on('change', function() {
+                console.log('[DEV MODE TOGGLE] Toggle changed, new state:', $(this).is(':checked'));
                 toggleDeveloperSection();
             });
         });
