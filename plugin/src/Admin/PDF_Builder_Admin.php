@@ -1249,8 +1249,33 @@ class PdfBuilderAdmin
         wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param, true);
         wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param, true);
 
-        // Charger les outils développeur
+        // Charger les outils développeur de manière asynchrone pour éviter les blocages
         wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
+
+        // Add async loading to avoid blocking
+        wp_add_inline_script('pdf-builder-developer-tools', '
+            // Load developer tools asynchronously to prevent blocking
+            if (typeof pdfBuilderAjax !== "undefined" ||
+                typeof pdf_builder_ajax !== "undefined" ||
+                window.location.href.indexOf("pdf-builder-developer") !== -1 ||
+                window.location.href.indexOf("developer") !== -1 ||
+                window.location.href.indexOf("pdf-builder-settings") !== -1) {
+
+                // Use a very long delay to ensure page is fully loaded
+                setTimeout(function() {
+                    // Check if jQuery is available and initialize
+                    if (typeof jQuery !== "undefined" && jQuery.fn && typeof PDFBuilderDeveloper !== "undefined") {
+                        jQuery(document).ready(function($) {
+                            $(window).on("load", function() {
+                                setTimeout(function() {
+                                    new PDFBuilderDeveloper();
+                                }, 1000); // 1 second delay after window load
+                            });
+                        });
+                    }
+                }, 2000); // 2 second initial delay
+            }
+        ');
 
         // Localize pdfBuilderAjax for API Preview scripts
         wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [

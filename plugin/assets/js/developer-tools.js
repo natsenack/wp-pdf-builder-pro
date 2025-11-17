@@ -309,28 +309,29 @@
     }
 
     // Initialize when document is ready
-    $(document).ready(() => {
-        // Only initialize if we're on a developer page or if AJAX variables are available
-        if (typeof pdfBuilderAjax !== 'undefined' ||
-            typeof pdf_builder_ajax !== 'undefined' ||
-            window.location.href.indexOf('pdf-builder-developer') !== -1 ||
-            window.location.href.indexOf('developer') !== -1 ||
-            window.location.href.indexOf('pdf-builder-settings') !== -1) {
-            // Use window load event for even better performance (fires after all assets loaded)
-            $(window).on('load', () => {
-                // Use requestIdleCallback for better performance, fallback to setTimeout with longer delay
-                if (typeof requestIdleCallback !== 'undefined') {
-                    requestIdleCallback(() => {
-                        new PDFBuilderDeveloper();
-                    }, { timeout: 5000 }); // Timeout after 5 seconds if no idle time
-                } else {
-                    // Use longer delay to avoid blocking during page load
-                    setTimeout(() => {
-                        new PDFBuilderDeveloper();
-                    }, 500);
-                }
-            });
-        }
-    });
+    // NOTE: Initialization is now handled by inline script in PHP with proper timing
+    // $(document).ready(() => {
+    //     // Only initialize if we're on a developer page or if AJAX variables are available
+    //     if (typeof pdfBuilderAjax !== 'undefined' ||
+    //         typeof pdf_builder_ajax !== 'undefined' ||
+    //         window.location.href.indexOf('pdf-builder-developer') !== -1 ||
+    //         window.location.href.indexOf('developer') !== -1 ||
+    //         window.location.href.indexOf('pdf-builder-settings') !== -1) {
+    //         // Use window load event for even better performance (fires after all assets loaded)
+    //         $(window).on('load', () => {
+    //             // Use requestIdleCallback for better performance, fallback to setTimeout with longer delay
+    //             if (typeof requestIdleCallback !== 'undefined') {
+    //                 requestIdleCallback(() => {
+    //                     new PDFBuilderDeveloper();
+    //                 }, { timeout: 5000 }); // Timeout after 5 seconds if no idle time
+    //             } else {
+    //                 // Use longer delay to avoid blocking during page load
+    //                 setTimeout(() => {
+    //                     new PDFBuilderDeveloper();
+    //                 }, 500);
+    //             }
+    //         });
+    //     }
+    // });
 
 })(jQuery);
