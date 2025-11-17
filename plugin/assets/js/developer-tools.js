@@ -73,10 +73,14 @@
                 ajaxUrl = pdf_builder_ajax.ajax_url;
                 // Try to get the specific nonce first, fallback to general nonce
                 var specificNonce = $('#toggle_license_test_mode_nonce').val();
+                console.log('LICENSE TEST JS: Specific nonce element:', $('#toggle_license_test_mode_nonce'));
+                console.log('LICENSE TEST JS: Specific nonce value:', specificNonce);
                 if (specificNonce) {
                     ajaxData.nonce = specificNonce;
+                    console.log('LICENSE TEST JS: Using specific nonce');
                 } else {
                     ajaxData.security = pdf_builder_ajax.nonce;
+                    console.log('LICENSE TEST JS: Using fallback nonce');
                 }
             } else {
                 console.error('LICENSE TEST JS: No AJAX configuration found');
