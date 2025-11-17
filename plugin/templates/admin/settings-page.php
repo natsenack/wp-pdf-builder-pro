@@ -3132,6 +3132,24 @@
                         $('#developer-info-section').show();
                         console.log('Section shown - display:', $('#developer-info-section').css('display'));
                         console.log('Section visible:', $('#developer-info-section').is(':visible'));
+
+                        // Inspecter les propriétés CSS problématiques
+                        var $section = $('#developer-info-section');
+                        console.log('CSS Properties:');
+                        console.log('- visibility:', $section.css('visibility'));
+                        console.log('- opacity:', $section.css('opacity'));
+                        console.log('- position:', $section.css('position'));
+                        console.log('- z-index:', $section.css('z-index'));
+                        console.log('- width:', $section.width(), 'height:', $section.height());
+
+                        // Vérifier les parents
+                        console.log('Parent containers:');
+                        $section.parents().each(function(index) {
+                            if (index < 5) { // Limiter aux 5 premiers parents
+                                var $parent = $(this);
+                                console.log('  ' + this.tagName + '.' + (this.className || 'no-class') + ' - display:' + $parent.css('display') + ' visibility:' + $parent.css('visibility') + ' overflow:' + $parent.css('overflow'));
+                            }
+                        });
                     } else {
                         $('#developer-info-section').hide();
                         console.log('Section hidden - display:', $('#developer-info-section').css('display'));
