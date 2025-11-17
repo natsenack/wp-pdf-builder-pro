@@ -406,33 +406,15 @@
     // - submit_security now uses pdf_builder_securite_nonce
     // - submit_canvas now uses pdf_builder_canvas_nonce
 
-    if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur_nonce'])) {
-        if (wp_verify_nonce($_POST['pdf_builder_developpeur_nonce'], 'pdf_builder_settings')) {
-            $dev_settings = [
-                'developer_enabled' => isset($_POST['developer_enabled']),
-                'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
-                'debug_php_errors' => isset($_POST['debug_php_errors']),
-                'debug_javascript' => isset($_POST['debug_javascript']),
-                'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']),
-                'debug_ajax' => isset($_POST['debug_ajax']),
-                'debug_performance' => isset($_POST['debug_performance']),
-                'debug_database' => isset($_POST['debug_database']),
-                'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
-                'log_file_size' => intval($_POST['log_file_size'] ?? 10),
-                'log_retention' => intval($_POST['log_retention'] ?? 30),
-                'force_https' => isset($_POST['force_https']),
-                'license_test_mode' => isset($_POST['license_test_mode']),
-            ];
-
-            $result = update_option('pdf_builder_settings', array_merge($settings, $dev_settings));
-        // Sauvegarder aussi l'état du mode test dans une option séparée pour le handler de licence
-            update_option('pdf_builder_license_test_mode_enabled', isset($_POST['license_test_mode']));
+    if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developer_nonce'])) {
+        if (wp_verify_nonce($_POST['pdf_builder_developer_nonce'], 'pdf_builder_developer')) {
+            // Enregistrer les paramètres développeur
+            update_option('pdf_builder_developer_enabled', isset($_POST['developer_enabled']));
+            update_option('pdf_builder_debug_logging', isset($_POST['debug_logging']));
+            update_option('pdf_builder_license_test_mode_enabled', isset($_POST['test_mode']));
 
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
-            $settings = get_option('pdf_builder_settings', []);
-
         } else {
-
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
         }
     }
@@ -3218,6 +3200,10 @@
                     </div>
                 </div>
             </div>
+
+            <p class="submit" style="margin-top: 30px;">
+                <input type="submit" name="submit_developpeur" class="button button-primary" value="💾 Enregistrer les paramètres développeur" style="font-size: 16px; padding: 12px 24px; height: auto;" />
+            </p>
         </form>
     </div>
 
