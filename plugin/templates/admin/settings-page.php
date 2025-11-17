@@ -1186,7 +1186,11 @@
             <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
                 <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">📄 Configuration PDF</h3>
 
-                <table class="form-table">
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="general">
+
+                    <table class="form-table">
                     <tr>
                         <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
                         <td>
@@ -1218,6 +1222,7 @@
                         </td>
                     </tr>
                 </table>
+                </form>
             </div>
         </div>
 
