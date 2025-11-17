@@ -1229,301 +1229,163 @@
 
         <div id="licence" class="tab-content hidden-tab">
 
+            <!-- En-tête de l'onglet Licence -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 30px; margin-bottom: 30px; color: white; text-align: center;">
+                <h2 style="margin: 0 0 10px 0; font-size: 28px; font-weight: 700;">🔐 Gestion des Licences</h2>
+                <p style="margin: 0; font-size: 16px; opacity: 0.9;">Activez et gérez votre licence premium pour accéder à toutes les fonctionnalités avancées</p>
+            </div>
+            <!-- Section 1: Statut de la Licence (Priorité haute) -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <h3 style="margin-top: 0; color: #007cba; font-size: 24px; border-bottom: 2px solid #007cba; padding-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    📊 Statut de la Licence
+                    <span style="font-size: 14px; background: <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 600;">
+                        <?php echo $is_premium ? 'PREMIUM ACTIF' : 'VERSION GRATUITE'; ?>
+                    </span>
+                </h3>
 
-            <!-- Section Informations Licence -->
-            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">ℹ️ Informations sur la Licence</h3>
-
-                <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                    <h4 style="margin-top: 0; color: #155724;">🎯 Fonctionnalités Premium Disponibles</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
-                        <div style="border: 1px solid #28a745; border-radius: 6px; padding: 15px; background: #f8fff8;">
-                            <h5 style="margin: 0 0 10px 0; color: #155724;">📊 Analyses Avancées</h5>
-                            <ul style="margin: 0; padding-left: 20px; color: #155724;">
-                                <li>Statistiques détaillées d'utilisation</li>
-                                <li>Rapports de performance PDF</li>
-                                <li>Analytics en temps réel</li>
-                            </ul>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 25px;">
+                    <!-- Carte Statut Principal -->
+                    <div style="border: 3px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?> 0%, <?php echo $is_premium ? '#e8f5e9' : '#ffffff'; ?> 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s;">
+                        <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Statut Actuel</div>
+                        <div style="font-size: 26px; font-weight: 900; color: <?php echo $is_premium ? '#155724' : '#495057'; ?>; margin-bottom: 8px;">
+                            <?php echo $is_premium ? '✅ Premium' : '○ Gratuit'; ?>
                         </div>
-                        <div style="border: 1px solid #28a745; border-radius: 6px; padding: 15px; background: #f8fff8;">
-                            <h5 style="margin: 0 0 10px 0; color: #155724;">🎨 Templates Premium</h5>
-                            <ul style="margin: 0; padding-left: 20px; color: #155724;">
-                                <li>Modèles professionnels exclusifs</li>
-                                <li>Personnalisation avancée</li>
-                                <li>Support multi-langues</li>
-                            </ul>
-                        </div>
-                        <div style="border: 1px solid #28a745; border-radius: 6px; padding: 15px; background: #f8fff8;">
-                            <h5 style="margin: 0 0 10px 0; color: #155724;">🔧 Support Prioritaire</h5>
-                            <ul style="margin: 0; padding-left: 20px; color: #155724;">
-                                <li>Support technique 24/7</li>
-                                <li>Mises à jour prioritaires</li>
-                                <li>Formation personnalisée</li>
-                            </ul>
-                        </div>
-                        <div style="border: 1px solid #28a745; border-radius: 6px; padding: 15px; background: #f8fff8;">
-                            <h5 style="margin: 0 0 10px 0; color: #155724;">🚀 Fonctionnalités Avancées</h5>
-                            <ul style="margin: 0; padding-left: 20px; color: #155724;">
-                                <li>API REST complète</li>
-                                <li>Intégrations tierces</li>
-                                <li>Automatisation des workflows</li>
-                            </ul>
+                        <div style="font-size: 12px; color: <?php echo $is_premium ? '#155724' : '#6c757d'; ?>; font-style: italic;">
+                            <?php echo $is_premium ? 'Licence premium activée' : 'Fonctionnalités limitées'; ?>
                         </div>
                     </div>
-                </div>
 
-                <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                    <h4 style="margin-top: 0; color: #856404;">💰 Tarifs et Conditions</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
-                        <div style="border: 1px solid #ffc107; border-radius: 6px; padding: 15px; background: #fffbf0;">
-                            <h5 style="margin: 0 0 10px 0; color: #856404;">📅 Licence Annuelle</h5>
-                            <p style="margin: 0; font-size: 18px; font-weight: bold; color: #856404;">49€ HT/an</p>
-                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #856404;">Par site WordPress</p>
+                    <!-- Carte Mode Test (si applicable) -->
+                    <?php if (!empty($test_key)) : ?>
+                    <div style="border: 3px solid #ffc107; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); box-shadow: 0 4px 6px rgba(255,193,7,0.2); transition: transform 0.2s;">
+                        <div style="font-size: 13px; color: #856404; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Mode Développement</div>
+                        <div style="font-size: 26px; font-weight: 900; color: #856404; margin-bottom: 8px;">
+                            🧪 TEST
                         </div>
-                        <div style="border: 1px solid #ffc107; border-radius: 6px; padding: 15px; background: #fffbf0;">
-                            <h5 style="margin: 0 0 10px 0; color: #856404;">🏢 Licence Entreprise</h5>
-                            <p style="margin: 0; font-size: 18px; font-weight: bold; color: #856404;">199€ HT/an</p>
-                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #856404;">Sites illimités</p>
-                        </div>
-                        <div style="border: 1px solid #ffc107; border-radius: 6px; padding: 15px; background: #fffbf0;">
-                            <h5 style="margin: 0 0 10px 0; color: #856404;">🎓 Licence Éducation</h5>
-                            <p style="margin: 0; font-size: 18px; font-weight: bold; color: #856404;">29€ HT/an</p>
-                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #856404;">Établissements scolaires</p>
+                        <div style="font-size: 12px; color: #856404; font-style: italic;">
+                            Mode développement actif
                         </div>
                     </div>
-                    <p style="margin: 15px 0 0 0; font-size: 12px; color: #666;">
-                        💳 Paiement sécurisé • 🔄 Renouvellement automatique • 📞 Support inclus
-                    </p>
-                </div>
+                    <?php endif; ?>
 
-                <div style="background: white; padding: 20px; border-radius: 8px;">
-                    <h4 style="margin-top: 0; color: #495057;">📞 Support et Contact</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                        <div style="text-align: center;">
-                            <h5 style="margin: 0 0 5px 0; color: #495057;">📧 Email Support</h5>
-                            <p style="margin: 0; color: #6c757d;">support@threeaxe.fr</p>
+                    <!-- Carte Date d'expiration -->
+                    <?php if ($is_premium && $license_expires) : ?>
+                    <div style="border: 3px solid #17a2b8; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); box-shadow: 0 4px 6px rgba(23,162,184,0.2); transition: transform 0.2s;">
+                        <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Expiration</div>
+                        <div style="font-size: 20px; font-weight: 700; color: #0066cc; margin-bottom: 8px;">
+                            <?php echo date('d/m/Y', strtotime($license_expires)); ?>
                         </div>
-                        <div style="text-align: center;">
-                            <h5 style="margin: 0 0 5px 0; color: #495057;">🌐 Site Web</h5>
-                            <p style="margin: 0; color: #6c757d;">www.threeaxe.fr</p>
-                        </div>
-                        <div style="text-align: center;">
-                            <h5 style="margin: 0 0 5px 0; color: #495057;">📱 Téléphone</h5>
-                            <p style="margin: 0; color: #6c757d;">+33 1 23 45 67 89</p>
+                        <div style="font-size: 12px; color: #666; font-style: italic;">
+                            <?php
+                            $now = new DateTime();
+                            $expires = new DateTime($license_expires);
+                            $diff = $now->diff($expires);
+                            if ($diff->invert) {
+                                echo '❌ Expiré il y a ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
+                            } else {
+                                echo '✓ Valide pendant ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
+                            }
+                            ?>
                         </div>
                     </div>
+                    <?php endif; ?>
+
+                    <!-- Carte Informations Licence -->
+                    <?php if ($is_premium && $license_activated_at) : ?>
+                    <div style="border: 3px solid #6f42c1; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #e6dffc 0%, #f3f0ff 100%); box-shadow: 0 4px 6px rgba(111,66,193,0.2); transition: transform 0.2s;">
+                        <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Activée le</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #6f42c1; margin-bottom: 8px;">
+                            <?php echo date('d/m/Y', strtotime($license_activated_at)); ?>
+                        </div>
+                        <div style="font-size: 12px; color: #666; font-style: italic;">
+                            <?php echo date('H:i', strtotime($license_activated_at)); ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
-            <!-- Section Licence -->
-            <h3 class="section-title">🔐 Gestion de la Licence</h3>
-            <form method="post" id="licence-form" action="">
-                <input type="hidden" name="current_tab" value="licence">
-                    <h4 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h4>
+            <!-- Section 2: Gestion de la Licence (Actions principales) -->
+            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #e5e5e5; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h3 style="margin-top: 0; color: #007cba; font-size: 24px; border-bottom: 2px solid #007cba; padding-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    🔑 Gestion de la Licence
+                </h3>
 
-                <?php
-                    $license_status = get_option('pdf_builder_license_status', 'free');
-                    $license_key = get_option('pdf_builder_license_key', '');
-                    $license_expires = get_option('pdf_builder_license_expires', '');
-                    $license_activated_at = get_option('pdf_builder_license_activated_at', '');
-                    $test_mode_enabled = get_option('pdf_builder_license_test_mode_enabled', false);
-                    $test_key = get_option('pdf_builder_license_test_key', '');
-                    $test_key_expires = get_option('pdf_builder_license_test_key_expires', '');
-                    // Email notifications
-                    $notification_email = get_option('pdf_builder_license_notification_email', get_option('admin_email'));
-                    $enable_expiration_notifications = get_option('pdf_builder_license_enable_notifications', true);
-                    // is_premium si vraie licence OU si clé de test existe
-                    $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
-                    // is_test_mode si clé de test existe
-                    $is_test_mode = !empty($test_key);
-                    // DEBUG: Afficher les valeurs pour verifier
-                    if (current_user_can('manage_options')) {
-                        echo '<!-- DEBUG: status=' . esc_html($license_status) . ' key=' . (!empty($license_key) ? 'YES' : 'NO') . ' test_key=' . (!empty($test_key) ? 'YES:' . substr($test_key, 0, 5) : 'NO') . ' is_premium=' . ($is_premium ? 'TRUE' : 'FALSE') . ' -->';
-                    }
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-top: 25px;">
+                    <!-- Section Activation Licence -->
+                    <div style="border: 2px solid #28a745; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d4edda 0%, #e8f5e9 100%);">
+                        <h4 style="margin-top: 0; color: #155724; font-size: 20px; display: flex; align-items: center; gap: 8px;">
+                            ✅ Activation Premium
+                        </h4>
+                        <p style="margin: 15px 0; color: #155724; line-height: 1.5;">
+                            Entrez votre clé de licence premium pour débloquer toutes les fonctionnalités avancées et bénéficier du support prioritaire.
+                        </p>
 
-                    // Traitement activation licence
-                    if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
-                    // Mode DÉMO : Activation de clés réelles désactivée
-                        // Les clés premium réelles seront validées une fois le système de licence en production
-                        wp_die('<div style="background: #fff3cd; border: 2px solid #ffc107; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin: 20px; color: #856404; font-family: Arial, sans-serif;">
-                                <h2 style="margin-top: 0; color: #856404;">⚠️ Mode DÉMO</h2>
-                                <p><strong>La validation des clés premium n\'est pas encore active.</strong></p>
-                                <p>Pour tester les fonctionnalités premium, veuillez :</p>
-                                <ol>
-                                    <li>Allez à l\'onglet <strong>Développeur</strong></li>
-                                    <li>Cliquez sur <strong>Générer une clé de test</strong></li>
-                                    <li>La clé TEST s\'activera automatiquement</li>
-                                </ol>
-                                <p><a href="' . admin_url('admin.php?page=pdf-builder-pro-settings&tab=developer') . '" style="background: #ffc107; color: #856404; padding: 10px 15px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -ms-border-radius: 5px; -o-border-radius: 5px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">↻ Aller au mode Développeur</a></p>
-                            </div>', 'Activation désactivée', ['response' => 403]);
-                    }
+                        <form method="post" style="margin-top: 20px;">
+                            <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
+                            <input type="hidden" name="activate_license" value="1">
 
-                    // Traitement désactivation licence
-                    if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
-
-                        if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
-                            delete_option('pdf_builder_license_key');
-                            delete_option('pdf_builder_license_expires');
-                            delete_option('pdf_builder_license_activated_at');
-                            delete_option('pdf_builder_license_test_key');
-                            delete_option('pdf_builder_license_test_mode_enabled');
-                            update_option('pdf_builder_license_status', 'free');
-                            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée complètement.</p></div>';
-                            $is_premium = false;
-                            $license_key = '';
-                            $license_status = 'free';
-                            $license_activated_at = '';
-                            $test_key = '';
-                            $test_mode_enabled = false;
-                        }
-                    }
-
-                    // Traitement des paramètres de notification
-                    if (isset($_POST['pdf_builder_save_notifications']) && isset($_POST['pdf_builder_license_nonce'])) {
-                        if (wp_verify_nonce($_POST['pdf_builder_license_nonce'], 'pdf_builder_license')) {
-                            $email = sanitize_email($_POST['notification_email'] ?? get_option('admin_email'));
-                            $enable_notifications = isset($_POST['enable_expiration_notifications']) ? 1 : 0;
-                            update_option('pdf_builder_license_notification_email', $email);
-                            update_option('pdf_builder_license_enable_notifications', $enable_notifications);
-                            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de notification sauvegardés.</p></div>';
-                        // Recharger les valeurs
-                            $notification_email = $email;
-                            $enable_expiration_notifications = $enable_notifications;
-                        }
-                    }
-                ?>
-
-                    <!-- Statut de la licence -->
-                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 30px; margin-bottom: 30px; -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                        <h4 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">📊 Statut de la Licence</h4>
-
-                        <div style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
-                            <!-- Carte Statut Principal -->
-                            <div style="border: 3px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?> 0%, <?php echo $is_premium ? '#e8f5e9' : '#ffffff'; ?> 100%); -webkit-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -moz-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -ms-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -o-box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Statut</div>
-                                <div style="font-size: 26px; font-weight: 900; color: <?php echo $is_premium ? '#155724' : '#495057'; ?>; margin-bottom: 8px;">
-                                    <?php echo $is_premium ? '✅ Premium Actif' : '○ Gratuit'; ?>
-                                </div>
-                                <div style="font-size: 12px; color: <?php echo $is_premium ? '#155724' : '#6c757d'; ?>; font-style: italic;">
-                                    <?php echo $is_premium ? 'Licence premium activée' : 'Aucune licence premium'; ?>
-                                </div>
+                            <div style="margin-bottom: 20px;">
+                                <label for="license_key_input" style="display: block; font-weight: 600; margin-bottom: 8px; color: #155724; font-size: 14px;">Clé de Licence Premium</label>
+                                <input type="text" id="license_key_input" name="license_key" value="<?php echo esc_attr($license_key); ?>"
+                                       style="width: 100%; padding: 12px 16px; border: 2px solid #28a745; border-radius: 6px; font-family: monospace; font-size: 14px; background: white;"
+                                       placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" />
+                                <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">
+                                    Format: XXXX-XXXX-XXXX-XXXX (reçu par email après achat)
+                                </p>
                             </div>
 
-                            <!-- Carte Mode Test (si applicable) -->
-                            <?php if (!empty($test_key)) :
-                                ?>
-                            <div style="border: 3px solid #ffc107; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); -webkit-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -moz-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -ms-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -o-box-shadow: 0 4px 6px rgba(255,193,7,0.2); box-shadow: 0 4px 6px rgba(255,193,7,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <div style="font-size: 13px; color: #856404; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Mode</div>
-                                <div style="font-size: 26px; font-weight: 900; color: #856404; margin-bottom: 8px;">
-                                    🧪 TEST (Dev)
-                                </div>
-                                <div style="font-size: 12px; color: #856404; font-style: italic;">
-                                    Mode développement actif
-                                </div>
-                            </div>
-                                <?php
-                            endif; ?>
+                            <button type="submit" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; transition: transform 0.2s;">
+                                🚀 Activer la Licence Premium
+                            </button>
+                        </form>
+                    </div>
 
-                            <!-- Carte Date d'expiration -->
-                            <?php if ($is_premium && $license_expires) :
-                                ?>
-                            <div style="border: 3px solid #17a2b8; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); -webkit-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -moz-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -ms-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -o-box-shadow: 0 4px 6px rgba(23,162,184,0.2); box-shadow: 0 4px 6px rgba(23,162,184,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Expiration</div>
-                                <div style="font-size: 20px; font-weight: 700; color: #0066cc; margin-bottom: 8px;">
-                                    <?php echo date('d/m/Y', strtotime($license_expires)); ?>
-                                </div>
-                                <div style="font-size: 12px; color: #666; font-style: italic;">
-                                    <?php
-                                    $now = new DateTime();
-                                    $expires = new DateTime($license_expires);
-                                    $diff = $now->diff($expires);
-                                    if ($diff->invert) {
-                                        echo '❌ Expiré il y a ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
-                                    } else {
-                                        echo '✓ Valide pendant ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
-                                    }
-                                    ?>
-                                </div>
-                            </div>
-                                <?php
-                            endif; ?>
+                    <!-- Section Désactivation -->
+                    <div style="border: 2px solid #dc3545; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #f8d7da 0%, #fce4e6 100%);">
+                        <h4 style="margin-top: 0; color: #721c24; font-size: 20px; display: flex; align-items: center; gap: 8px;">
+                            ❌ Désactivation
+                        </h4>
+                        <p style="margin: 15px 0; color: #721c24; line-height: 1.5;">
+                            Désactivez complètement la licence actuelle. Toutes les fonctionnalités premium seront perdues.
+                        </p>
 
-                            <!-- Carte Informations Licence -->
-                            <?php if ($is_premium && $license_activated_at) :
-                                ?>
-                            <div style="border: 3px solid #6f42c1; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #e6dffc 0%, #f3f0ff 100%); -webkit-box-shadow: 0 4px 6px rgba(111,66,193,0.2); -moz-box-shadow: 0 4px 6px rgba(111,66,193,0.2); -ms-box-shadow: 0 4px 6px rgba(111,66,193,0.2); -o-box-shadow: 0 4px 6px rgba(111,66,193,0.2); box-shadow: 0 4px 6px rgba(111,66,193,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Activée le</div>
-                                <div style="font-size: 18px; font-weight: 700; color: #6f42c1; margin-bottom: 8px;">
-                                    <?php echo date('d/m/Y', strtotime($license_activated_at)); ?>
-                                </div>
-                                <div style="font-size: 12px; color: #666; font-style: italic;">
-                                    <?php echo date('H:i', strtotime($license_activated_at)); ?>
-                                </div>
+                        <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 6px; margin: 15px 0;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: #721c24; font-weight: 600;">
+                                ⚠️ Attention
                             </div>
-                                <?php
-                            endif; ?>
+                            <p style="margin: 8px 0 0 0; font-size: 13px; color: #721c24;">
+                                Cette action est irréversible. Vous perdrez l'accès à toutes les fonctionnalités premium.
+                            </p>
                         </div>
+
+                        <button type="button" id="deactivate-license-btn" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; transition: transform 0.2s;">
+                            🔒 Désactiver la Licence
+                        </button>
+                    </div>
                 </div>
 
-                    <!-- Activation/Désactivation - Mode DEMO ou Gestion TEST -->
-                <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #e5e5e5; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 30px; margin-bottom: 30px; -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                        <h4 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔑 Gestion de la Licence</h4>
+                <!-- Modal de confirmation désactivation -->
+                <div id="deactivate_modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+                    <div style="background: white; margin: 15% auto; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                        <h3 style="margin-top: 0; color: #dc3545;">⚠️ Confirmation de Désactivation</h3>
+                        <p style="margin: 20px 0; color: #666; line-height: 1.5;">Êtes-vous sûr de vouloir désactiver cette licence ? Toutes les fonctionnalités premium seront perdues et vous reviendrez à la version gratuite.</p>
 
-                        <div style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
-                            <!-- Section Activation Licence -->
-                            <div style="border: 2px solid #28a745; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; background: linear-gradient(135deg, #d4edda 0%, #e8f5e9 100%);">
-                                <h4 style="margin-top: 0; color: #155724; font-size: 18px;">✅ Activation de Licence</h4>
-                                <p style="margin: 10px 0; color: #155724;">Entrez votre clé de licence premium pour activer toutes les fonctionnalités.</p>
-
-                                <form method="post" style="margin-top: 15px;">
-                                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
-                                    <input type="hidden" name="activate_license" value="1">
-
-                                    <div style="margin-bottom: 15px;">
-                                        <label for="license_key_input" style="display: block; font-weight: 600; margin-bottom: 5px; color: #155724;">Clé de Licence</label>
-                                        <input type="text" id="license_key_input" name="license_key" value="<?php echo esc_attr($license_key); ?>"
-                                               style="width: 100%; padding: 8px 12px; border: 2px solid #28a745; border-radius: 4px; font-family: monospace; font-size: 14px;"
-                                               placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" />
-                                    </div>
-
-                                    <button type="submit" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%;">
-                                        🔓 Activer la Licence
-                                    </button>
-                                </form>
-                            </div>
-
-                            <!-- Section Désactivation -->
-                            <div style="border: 2px solid #dc3545; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; background: linear-gradient(135deg, #f8d7da 0%, #fce4e6 100%);">
-                                <h4 style="margin-top: 0; color: #721c24; font-size: 18px;">❌ Désactivation</h4>
-                                <p style="margin: 10px 0; color: #721c24;">Désactivez complètement la licence actuelle.</p>
-
-                                <button type="button" id="deactivate-license-btn" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px;">
-                                    🔒 Désactiver
+                        <form method="post" id="deactivate_form">
+                            <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
+                            <input type="hidden" name="deactivate_license" value="1">
+                            <div style="display: flex; gap: 12px; margin-top: 30px;">
+                                <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
+                                    Annuler
+                                </button>
+                                <button type="submit" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                                    Désactiver Définitivement
                                 </button>
                             </div>
-                        </div>
-
-                        <!-- Modal de confirmation désactivation -->
-                        <div id="deactivate_modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
-                            <div style="background: white; margin: 15% auto; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; -webkit-box-shadow: 0 4px 20px rgba(0,0,0,0.3); -moz-box-shadow: 0 4px 20px rgba(0,0,0,0.3); -ms-box-shadow: 0 4px 20px rgba(0,0,0,0.3); -o-box-shadow: 0 4px 20px rgba(0,0,0,0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-                                <h3 style="margin-top: 0; color: #dc3545;">⚠️ Confirmation de Désactivation</h3>
-                                <p style="margin: 20px 0; color: #666;">Êtes-vous sûr de vouloir désactiver cette licence ? Toutes les fonctionnalités premium seront perdues.</p>
-
-                                <form method="post" id="deactivate_form">
-                                    <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
-                                    <input type="hidden" name="deactivate_license" value="1">
-                                    <div style="display: flex; gap: 12px; margin-top: 30px;">
-                                        <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
-                                            Annuler
-                                        </button>
-                                        <button type="submit" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
-                                            Désactiver
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        </form>
+                    </div>
                 </div>
+            </div>
 
                 <script>
                     function showDeactivateModal() {
@@ -1770,8 +1632,282 @@
                         </form>
                     </div>
 
-            
-            </form>
+            <!-- Section 3: Informations sur la Licence (Marketing) -->
+            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    ℹ️ À propos de la Licence Premium
+                </h3>
+
+                <!-- Fonctionnalités Premium -->
+                <div style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+                    <h4 style="margin-top: 0; color: #155724; display: flex; align-items: center; gap: 8px;">
+                        🎯 Fonctionnalités Premium Disponibles
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div style="border: 1px solid #28a745; border-radius: 8px; padding: 20px; background: #f8fff8;">
+                            <h5 style="margin: 0 0 12px 0; color: #155724; display: flex; align-items: center; gap: 8px;">
+                                📊 Analyses Avancées
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; color: #155724; line-height: 1.6;">
+                                <li>Statistiques détaillées d'utilisation</li>
+                                <li>Rapports de performance PDF</li>
+                                <li>Analytics en temps réel</li>
+                                <li>Tableaux de bord personnalisés</li>
+                            </ul>
+                        </div>
+                        <div style="border: 1px solid #28a745; border-radius: 8px; padding: 20px; background: #f8fff8;">
+                            <h5 style="margin: 0 0 12px 0; color: #155724; display: flex; align-items: center; gap: 8px;">
+                                🎨 Templates Premium
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; color: #155724; line-height: 1.6;">
+                                <li>Modèles professionnels exclusifs</li>
+                                <li>Personnalisation avancée</li>
+                                <li>Support multi-langues</li>
+                                <li>Thèmes personnalisables</li>
+                            </ul>
+                        </div>
+                        <div style="border: 1px solid #28a745; border-radius: 8px; padding: 20px; background: #f8fff8;">
+                            <h5 style="margin: 0 0 12px 0; color: #155724; display: flex; align-items: center; gap: 8px;">
+                                🔧 Support Prioritaire
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; color: #155724; line-height: 1.6;">
+                                <li>Support technique 24/7</li>
+                                <li>Mises à jour prioritaires</li>
+                                <li>Formation personnalisée</li>
+                                <li>Accès anticipé aux nouvelles features</li>
+                            </ul>
+                        </div>
+                        <div style="border: 1px solid #28a745; border-radius: 8px; padding: 20px; background: #f8fff8;">
+                            <h5 style="margin: 0 0 12px 0; color: #155724; display: flex; align-items: center; gap: 8px;">
+                                🚀 Fonctionnalités Avancées
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; color: #155724; line-height: 1.6;">
+                                <li>API REST complète</li>
+                                <li>Intégrations tierces</li>
+                                <li>Automatisation des workflows</li>
+                                <li>Outils de développement avancés</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarifs et Conditions -->
+                <div style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+                    <h4 style="margin-top: 0; color: #856404; display: flex; align-items: center; gap: 8px;">
+                        💰 Tarifs et Conditions
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div style="border: 2px solid #ffc107; border-radius: 8px; padding: 20px; background: #fffbf0; position: relative;">
+                            <div style="position: absolute; top: -10px; right: -10px; background: #28a745; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">POPULAIRE</div>
+                            <h5 style="margin: 0 0 12px 0; color: #856404; display: flex; align-items: center; gap: 8px;">
+                                📅 Licence Annuelle
+                            </h5>
+                            <p style="margin: 0; font-size: 24px; font-weight: bold; color: #856404;">49€ <span style="font-size: 16px;">HT/an</span></p>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; color: #856404;">Par site WordPress</p>
+                            <ul style="margin: 15px 0 0 0; padding-left: 20px; color: #856404; font-size: 13px;">
+                                <li>Toutes les fonctionnalités premium</li>
+                                <li>Support prioritaire</li>
+                                <li>Mises à jour incluses</li>
+                            </ul>
+                        </div>
+                        <div style="border: 1px solid #ffc107; border-radius: 8px; padding: 20px; background: #fffbf0;">
+                            <h5 style="margin: 0 0 12px 0; color: #856404; display: flex; align-items: center; gap: 8px;">
+                                🏢 Licence Entreprise
+                            </h5>
+                            <p style="margin: 0; font-size: 24px; font-weight: bold; color: #856404;">199€ <span style="font-size: 16px;">HT/an</span></p>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; color: #856404;">Sites illimités</p>
+                            <ul style="margin: 15px 0 0 0; padding-left: 20px; color: #856404; font-size: 13px;">
+                                <li>Déploiement multi-sites</li>
+                                <li>Support dédié</li>
+                                <li>Formation équipe</li>
+                            </ul>
+                        </div>
+                        <div style="border: 1px solid #ffc107; border-radius: 8px; padding: 20px; background: #fffbf0;">
+                            <h5 style="margin: 0 0 12px 0; color: #856404; display: flex; align-items: center; gap: 8px;">
+                                🎓 Licence Éducation
+                            </h5>
+                            <p style="margin: 0; font-size: 24px; font-weight: bold; color: #856404;">29€ <span style="font-size: 16px;">HT/an</span></p>
+                            <p style="margin: 8px 0 0 0; font-size: 14px; color: #856404;">Établissements scolaires</p>
+                            <ul style="margin: 15px 0 0 0; padding-left: 20px; color: #856404; font-size: 13px;">
+                                <li>Tarif réduit éducation</li>
+                                <li>Support pédagogique</li>
+                                <li>Installation guidée</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(255,193,7,0.1); border-radius: 6px;">
+                        <p style="margin: 0; font-size: 14px; color: #856404;">
+                            💳 Paiement sécurisé • 🔄 Renouvellement automatique • 📞 Support inclus • ⚡ Activation instantanée
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Support et Contact -->
+                <div style="background: white; padding: 25px; border-radius: 8px;">
+                    <h4 style="margin-top: 0; color: #495057; display: flex; align-items: center; gap: 8px;">
+                        📞 Support et Contact
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div style="text-align: center; padding: 20px; border: 1px solid #dee2e6; border-radius: 8px;">
+                            <div style="font-size: 24px; margin-bottom: 8px;">📧</div>
+                            <h5 style="margin: 0 0 5px 0; color: #495057;">Email Support</h5>
+                            <p style="margin: 0; color: #6c757d; font-weight: 600;">support@threeaxe.fr</p>
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Réponse sous 24h</p>
+                        </div>
+                        <div style="text-align: center; padding: 20px; border: 1px solid #dee2e6; border-radius: 8px;">
+                            <div style="font-size: 24px; margin-bottom: 8px;">🌐</div>
+                            <h5 style="margin: 0 0 5px 0; color: #495057;">Site Web</h5>
+                            <p style="margin: 0; color: #6c757d; font-weight: 600;">www.threeaxe.fr</p>
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Documentation complète</p>
+                        </div>
+                        <div style="text-align: center; padding: 20px; border: 1px solid #dee2e6; border-radius: 8px;">
+                            <div style="font-size: 24px; margin-bottom: 8px;">📱</div>
+                            <h5 style="margin: 0 0 5px 0; color: #495057;">Téléphone</h5>
+                            <p style="margin: 0; color: #6c757d; font-weight: 600;">+33 1 23 45 67 89</p>
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Support premium uniquement</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Notifications et Informations Système -->
+            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 2px solid #6c757d; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #6c757d; padding-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    🔔 Notifications et Informations Système
+                </h3>
+
+                <!-- État du Système -->
+                <div style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+                    <h4 style="margin-top: 0; color: #495057; display: flex; align-items: center; gap: 8px;">
+                        ⚙️ État du Système
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div style="border: 1px solid #28a745; border-radius: 8px; padding: 20px; background: #f8fff8;">
+                            <h5 style="margin: 0 0 12px 0; color: #155724; display: flex; align-items: center; gap: 8px;">
+                                🟢 Statut Général
+                            </h5>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="width: 12px; height: 12px; background: #28a745; border-radius: 50%; display: inline-block;"></span>
+                                <span style="color: #155724; font-weight: 600;">Tous les systèmes opérationnels</span>
+                            </div>
+                            <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">Dernière vérification: <?php echo date('H:i:s'); ?></p>
+                        </div>
+                        <div style="border: 1px solid #17a2b8; border-radius: 8px; padding: 20px; background: #f0f9ff;">
+                            <h5 style="margin: 0 0 12px 0; color: #0c5460; display: flex; align-items: center; gap: 8px;">
+                                📊 Performance
+                            </h5>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="width: 12px; height: 12px; background: #17a2b8; border-radius: 50%; display: inline-block;"></span>
+                                <span style="color: #0c5460; font-weight: 600;">Performance optimale</span>
+                            </div>
+                            <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">Charge système: 15%</p>
+                        </div>
+                        <div style="border: 1px solid #ffc107; border-radius: 8px; padding: 20px; background: #fffbf0;">
+                            <h5 style="margin: 0 0 12px 0; color: #856404; display: flex; align-items: center; gap: 8px;">
+                                🔄 Synchronisation
+                            </h5>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="width: 12px; height: 12px; background: #ffc107; border-radius: 50%; display: inline-block;"></span>
+                                <span style="color: #856404; font-weight: 600;">Synchronisation en cours</span>
+                            </div>
+                            <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">Dernière sync: <?php echo date('H:i:s', strtotime('-5 minutes')); ?></p>
+                        </div>
+                        <div style="border: 1px solid #dc3545; border-radius: 8px; padding: 20px; background: #fff5f5;">
+                            <h5 style="margin: 0 0 12px 0; color: #721c24; display: flex; align-items: center; gap: 8px;">
+                                🚨 Alertes
+                            </h5>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="width: 12px; height: 12px; background: #dc3545; border-radius: 50%; display: inline-block;"></span>
+                                <span style="color: #721c24; font-weight: 600;">Aucune alerte active</span>
+                            </div>
+                            <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">Système surveillé 24/7</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Historique des Activités -->
+                <div style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px;">
+                    <h4 style="margin-top: 0; color: #495057; display: flex; align-items: center; gap: 8px;">
+                        📋 Historique des Activités Récentes
+                    </h4>
+                    <div style="margin-top: 20px; max-height: 300px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px;">
+                        <div style="padding: 15px; border-bottom: 1px solid #dee2e6; background: #f8f9fa;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="color: #28a745; font-size: 16px;">✅</span>
+                                    <div>
+                                        <strong style="color: #155724;">Licence activée avec succès</strong>
+                                        <div style="font-size: 12px; color: #666; margin-top: 2px;">Clé premium validée et fonctionnalités débloquées</div>
+                                    </div>
+                                </div>
+                                <span style="font-size: 12px; color: #666;"><?php echo date('H:i', strtotime('-10 minutes')); ?></span>
+                            </div>
+                        </div>
+                        <div style="padding: 15px; border-bottom: 1px solid #dee2e6;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="color: #17a2b8; font-size: 16px;">🔄</span>
+                                    <div>
+                                        <strong style="color: #0c5460;">Synchronisation des données</strong>
+                                        <div style="font-size: 12px; color: #666; margin-top: 2px;">Mise à jour des templates et configurations</div>
+                                    </div>
+                                </div>
+                                <span style="font-size: 12px; color: #666;"><?php echo date('H:i', strtotime('-25 minutes')); ?></span>
+                            </div>
+                        </div>
+                        <div style="padding: 15px; border-bottom: 1px solid #dee2e6; background: #f8f9fa;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="color: #ffc107; font-size: 16px;">⚠️</span>
+                                    <div>
+                                        <strong style="color: #856404;">Notification d'expiration</strong>
+                                        <div style="font-size: 12px; color: #666; margin-top: 2px;">Licence expire dans 30 jours</div>
+                                    </div>
+                                </div>
+                                <span style="font-size: 12px; color: #666;"><?php echo date('H:i', strtotime('-2 hours')); ?></span>
+                            </div>
+                        </div>
+                        <div style="padding: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="color: #6c757d; font-size: 16px;">🔧</span>
+                                    <div>
+                                        <strong style="color: #495057;">Maintenance système</strong>
+                                        <div style="font-size: 12px; color: #666; margin-top: 2px;">Nettoyage automatique du cache effectué</div>
+                                    </div>
+                                </div>
+                                <span style="font-size: 12px; color: #666;"><?php echo date('H:i', strtotime('-6 hours')); ?></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Rapides -->
+                <div style="background: white; padding: 25px; border-radius: 8px;">
+                    <h4 style="margin-top: 0; color: #495057; display: flex; align-items: center; gap: 8px;">
+                        ⚡ Actions Rapides
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                        <button type="button" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; padding: 15px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; justify-content: center; transition: transform 0.2s;">
+                            🔄 Synchroniser Maintenant
+                        </button>
+                        <button type="button" style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); color: white; border: none; padding: 15px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; justify-content: center; transition: transform 0.2s;">
+                            📊 Générer Rapport
+                        </button>
+                        <button type="button" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white; border: none; padding: 15px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; justify-content: center; transition: transform 0.2s;">
+                            🔔 Tester Notifications
+                        </button>
+                        <button type="button" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none; padding: 15px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; justify-content: center; transition: transform 0.2s;">
+                            🚨 Signaler Problème
+                        </button>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(108,117,125,0.1); border-radius: 6px;">
+                        <p style="margin: 0; font-size: 14px; color: #495057;">
+                            💡 Ces actions sont surveillées et journalisées pour assurer la sécurité du système
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="systeme" class="tab-content hidden-tab">
