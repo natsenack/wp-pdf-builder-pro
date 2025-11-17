@@ -3198,15 +3198,40 @@
                 // Collecter les données de tous les formulaires
                 const formData = new FormData();
 
-                forms.each(function() {
+                console.log('🔍 [DEBUG] Recherche des formulaires dans l\'onglet actif:', currentTab);
+                console.log('🔍 [DEBUG] Nombre de formulaires trouvés:', forms.length);
+
+                forms.each(function(index) {
                     const $form = $(this);
                     const formDataTemp = new FormData(this);
 
+                    console.log('🔍 [DEBUG] Formulaire #' + (index + 1) + ':', $form.attr('id') || 'sans-id');
+
+                    // Vérifier si c'est le formulaire des informations entreprise
+                    if ($form.find('#company_phone_manual').length > 0) {
+                        console.log('🏢 [DEBUG] Formulaire Informations Entreprise trouvé !');
+                        console.log('🏢 [DEBUG] Valeurs des champs entreprise:');
+                        console.log('   - Téléphone:', $('#company_phone_manual').val());
+                        console.log('   - SIRET:', $('#company_siret').val());
+                        console.log('   - TVA:', $('#company_vat').val());
+                        console.log('   - RCS:', $('#company_rcs').val());
+                        console.log('   - Capital:', $('#company_capital').val());
+                    }
+
                     // Ajouter les données de ce formulaire
+                    let fieldCount = 0;
                     for (let [key, value] of formDataTemp.entries()) {
                         formData.append(key, value);
+                        fieldCount++;
+                        console.log('📝 [DEBUG] Champ ajouté:', key, '=', value);
                     }
+                    console.log('📊 [DEBUG] Nombre de champs dans ce formulaire:', fieldCount);
                 });
+
+                console.log('📤 [DEBUG] Données finales à envoyer:');
+                for (let [key, value] of formData.entries()) {
+                    console.log('   ', key, '=', value);
+                }
 
                 // Ajouter l'onglet actuel
                 formData.append('current_tab', currentTab);
@@ -3214,6 +3239,11 @@
                 formData.append('nonce', pdf_builder_ajax.nonce);
 
                 // Envoyer via AJAX
+                console.log('🚀 [DEBUG] Envoi de la requête AJAX...');
+                console.log('🚀 [DEBUG] URL:', pdf_builder_ajax.ajax_url);
+                console.log('🚀 [DEBUG] Action:', 'pdf_builder_save_settings');
+                console.log('🚀 [DEBUG] Nonce:', pdf_builder_ajax.nonce);
+
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
@@ -3221,7 +3251,10 @@
                     processData: false,
                     contentType: false,
                     success: function(response) {
+                        console.log('✅ [DEBUG] Réponse AJAX reçue:', response);
+
                         if (response.success) {
+                            console.log('✅ [DEBUG] Sauvegarde réussie !');
                             // Succès
                             $btn.removeClass('saving').addClass('saved');
                             $icon.text('✅');
@@ -3234,6 +3267,7 @@
                                 $text.text('Enregistrer');
                             }, 3000);
                         } else {
+                            console.log('❌ [DEBUG] Erreur dans la réponse:', response.message || 'Erreur inconnue');
                             // Erreur
                             $btn.removeClass('saving').addClass('error');
                             $icon.text('❌');
@@ -3246,7 +3280,13 @@
                             }, 3000);
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
+                        console.log('❌ [DEBUG] Erreur AJAX:', {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            responseText: xhr.responseText,
+                            error: error
+                        });
                         // Erreur AJAX
                         $btn.removeClass('saving').addClass('error');
                         $icon.text('❌');
