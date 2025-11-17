@@ -25,18 +25,30 @@
 
     // Handle AJAX clear cache request BEFORE the early exit
     if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_clear_cache') {
+        error_log('[PDF Builder] === ACTION: VIDER LE CACHE ===');
+        error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
+        error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['security'], 'pdf_builder_clear_cache_performance') ? 'OUI' : 'NON'));
+
         if (wp_verify_nonce($_POST['security'], 'pdf_builder_clear_cache_performance')) {
             // Clear transients and cache
+            error_log('[PDF Builder] Suppression des transients...');
             delete_transient('pdf_builder_cache');
             delete_transient('pdf_builder_templates');
             delete_transient('pdf_builder_elements');
+
             // Clear WP object cache if available
             if (function_exists('wp_cache_flush')) {
+                error_log('[PDF Builder] Vidage du cache objet WP...');
                 wp_cache_flush();
+                error_log('[PDF Builder] Cache objet WP vidé');
+            } else {
+                error_log('[PDF Builder] Fonction wp_cache_flush non disponible');
             }
 
+            error_log('[PDF Builder] === CACHE VIDÉ AVEC SUCCÈS ===');
             send_ajax_response(true, 'Cache vidé avec succès.');
         } else {
+            error_log('[PDF Builder] === ERREUR: NONCE INVALIDE ===');
             send_ajax_response(false, 'Erreur de sécurité.');
         }
     }
@@ -67,26 +79,44 @@
 
         // Optimize database
         elseif ($action === 'pdf_builder_optimize_db') {
+            error_log('[PDF Builder] === ACTION: OPTIMISER LA BASE DE DONNÉES ===');
+            error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
+            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_optimize_db') ? 'OUI' : 'NON'));
+
             if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_optimize_db')) {
                 global $wpdb;
+                error_log('[PDF Builder] Recherche des tables PDF Builder...');
                 $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder%'", ARRAY_N);
+                error_log('[PDF Builder] Tables trouvées: ' . count($tables));
+
                 $optimized = 0;
                 foreach ($tables as $table) {
+                    error_log('[PDF Builder] Optimisation de la table: ' . $table[0]);
                     $wpdb->query("OPTIMIZE TABLE {$table[0]}");
                     $optimized++;
                 }
+                error_log('[PDF Builder] Tables optimisées: ' . $optimized);
+                error_log('[PDF Builder] === OPTIMISATION TERMINÉE ===');
                 send_ajax_response(true, "Tables optimisées: $optimized table(s)");
             } else {
+                error_log('[PDF Builder] === ERREUR: NONCE INVALIDE ===');
                 send_ajax_response(false, 'Erreur de sécurité.');
             }
         }
 
         // Repair templates
         elseif ($action === 'pdf_builder_repair_templates') {
+            error_log('[PDF Builder] === ACTION: RÉPARER LES TEMPLATES ===');
+            error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
+            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_repair_templates') ? 'OUI' : 'NON'));
+
             if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_repair_templates')) {
                 // Repair templates logic (implement as needed)
+                error_log('[PDF Builder] Logique de réparation des templates à implémenter');
+                error_log('[PDF Builder] === RÉPARATION TERMINÉE ===');
                 send_ajax_response(true, 'Templates réparés avec succès');
             } else {
+                error_log('[PDF Builder] === ERREUR: NONCE INVALIDE ===');
                 send_ajax_response(false, 'Erreur de sécurité.');
             }
         }
@@ -184,58 +214,93 @@
 
         // Create backup
         elseif ($action === 'pdf_builder_create_backup') {
+            error_log('[PDF Builder] === ACTION: CRÉER UNE SAUVEGARDE ===');
+            error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
+            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings') ? 'OUI' : 'NON'));
+
             if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
                 // Create backup logic
                 $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+                error_log('[PDF Builder] Répertoire de sauvegarde: ' . $backup_dir);
+
                 if (!file_exists($backup_dir)) {
+                    error_log('[PDF Builder] Création du répertoire de sauvegarde...');
                     wp_mkdir_p($backup_dir);
+                    error_log('[PDF Builder] Répertoire créé: ' . (file_exists($backup_dir) ? 'OUI' : 'NON'));
                 }
 
                 $timestamp = date('Y-m-d_H-i-s');
                 $backup_file = $backup_dir . '/pdf-builder-backup-' . $timestamp . '.zip';
+                error_log('[PDF Builder] Fichier de sauvegarde: ' . $backup_file);
 
                 // Simple backup creation (you may want to implement more comprehensive backup)
                 $zip = new ZipArchive();
+                error_log('[PDF Builder] Ouverture de l\'archive ZIP...');
                 if ($zip->open($backup_file, ZipArchive::CREATE) === TRUE) {
+                    error_log('[PDF Builder] Archive ZIP créée, ajout des fichiers...');
                     // Add plugin files
                     $plugin_dir = plugin_dir_path(__FILE__) . '../';
+                    error_log('[PDF Builder] Répertoire du plugin: ' . $plugin_dir);
+
                     $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($plugin_dir));
+                    $file_count = 0;
                     foreach ($files as $file) {
                         if (!$file->isDir()) {
                             $filePath = $file->getRealPath();
                             $relativePath = substr($filePath, strlen($plugin_dir));
                             $zip->addFile($filePath, $relativePath);
+                            $file_count++;
                         }
                     }
                     $zip->close();
+                    error_log('[PDF Builder] Fichiers ajoutés à l\'archive: ' . $file_count);
+                    error_log('[PDF Builder] Taille de l\'archive: ' . filesize($backup_file) . ' octets');
+                    error_log('[PDF Builder] === SAUVEGARDE CRÉÉE AVEC SUCCÈS ===');
                     send_ajax_response(true, 'Sauvegarde créée avec succès: ' . basename($backup_file));
                 } else {
+                    error_log('[PDF Builder] === ERREUR: IMPOSSIBLE DE CRÉER L\'ARCHIVE ZIP ===');
                     send_ajax_response(false, 'Erreur lors de la création de la sauvegarde');
                 }
             } else {
+                error_log('[PDF Builder] === ERREUR: NONCE INVALIDE ===');
                 send_ajax_response(false, 'Erreur de sécurité.');
             }
         }
 
         // List backups
         elseif ($action === 'pdf_builder_list_backups') {
+            error_log('[PDF Builder] === ACTION: LISTER LES SAUVEGARDES ===');
+            error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
+            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings') ? 'OUI' : 'NON'));
+
             if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
                 $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+                error_log('[PDF Builder] Répertoire de sauvegarde: ' . $backup_dir);
                 $backups = [];
 
                 if (file_exists($backup_dir)) {
+                    error_log('[PDF Builder] Répertoire existe, recherche des fichiers...');
                     $files = glob($backup_dir . '/pdf-builder-backup-*.zip');
+                    error_log('[PDF Builder] Fichiers trouvés: ' . count($files));
+
                     foreach ($files as $file) {
-                        $backups[] = [
+                        $backup_info = [
                             'name' => basename($file),
                             'size' => size_format(filesize($file)),
                             'date' => date('Y-m-d H:i:s', filemtime($file))
                         ];
+                        $backups[] = $backup_info;
+                        error_log('[PDF Builder] Sauvegarde: ' . $backup_info['name'] . ' (' . $backup_info['size'] . ', ' . $backup_info['date'] . ')');
                     }
+                } else {
+                    error_log('[PDF Builder] Répertoire de sauvegarde n\'existe pas');
                 }
 
+                error_log('[PDF Builder] Total sauvegardes listées: ' . count($backups));
+                error_log('[PDF Builder] === LISTE DES SAUVEGARDES TERMINÉE ===');
                 send_ajax_response(true, 'Liste des sauvegardes récupérée', ['backups' => $backups]);
             } else {
+                error_log('[PDF Builder] === ERREUR: NONCE INVALIDE ===');
                 send_ajax_response(false, 'Erreur de sécurité.');
             }
         }
@@ -326,10 +391,16 @@
                         break;
 
                     case 'systeme':
+                        // LOG: Début du traitement de l'onglet système
+                        error_log('[PDF Builder] === TRAITEMENT ONGLET SYSTEME ===');
+                        error_log('[PDF Builder] Données POST reçues: ' . print_r($_POST, true));
+
                         // Traitement des paramètres de performance
                         $cache_enabled = (isset($_POST['cache_enabled']) && $_POST['cache_enabled'] === '1') ? '1' : '0';
                         $cache_expiry = intval($_POST['cache_expiry']);
                         $max_cache_size = intval($_POST['max_cache_size']);
+
+                        error_log('[PDF Builder] Performance - Cache activé: ' . $cache_enabled . ', Expiration: ' . $cache_expiry . 'h, Taille max: ' . $max_cache_size . 'Mo');
 
                         update_option('pdf_builder_cache_enabled', $cache_enabled);
                         update_option('pdf_builder_cache_expiry', $cache_expiry);
@@ -337,14 +408,28 @@
 
                         // Traitement des paramètres de maintenance
                         $auto_maintenance = (isset($_POST['auto_maintenance']) && $_POST['auto_maintenance'] === '1') ? '1' : '0';
+                        error_log('[PDF Builder] Maintenance - Auto maintenance: ' . $auto_maintenance);
+
                         update_option('pdf_builder_auto_maintenance', $auto_maintenance);
 
                         // Traitement des paramètres de sauvegarde
                         $auto_backup = (isset($_POST['auto_backup']) && $_POST['auto_backup'] === '1') ? '1' : '0';
                         $backup_retention = intval($_POST['backup_retention']);
 
+                        error_log('[PDF Builder] Sauvegarde - Auto backup: ' . $auto_backup . ', Rétention: ' . $backup_retention . ' jours');
+
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
+
+                        // LOG: Valeurs finales sauvegardées
+                        error_log('[PDF Builder] Valeurs sauvegardées:');
+                        error_log('[PDF Builder] - Cache activé: ' . get_option('pdf_builder_cache_enabled', 'N/A'));
+                        error_log('[PDF Builder] - Cache expiry: ' . get_option('pdf_builder_cache_expiry', 'N/A'));
+                        error_log('[PDF Builder] - Max cache size: ' . get_option('pdf_builder_max_cache_size', 'N/A'));
+                        error_log('[PDF Builder] - Auto maintenance: ' . get_option('pdf_builder_auto_maintenance', 'N/A'));
+                        error_log('[PDF Builder] - Auto backup: ' . get_option('pdf_builder_auto_backup', 'N/A'));
+                        error_log('[PDF Builder] - Backup retention: ' . get_option('pdf_builder_backup_retention', 'N/A'));
+                        error_log('[PDF Builder] === FIN TRAITEMENT ONGLET SYSTEME ===');
 
                         send_ajax_response(true, 'Paramètres système enregistrés avec succès.');
                         break;
@@ -4749,12 +4834,14 @@
             
             // Bouton "Vider le cache"
             $('#clear-cache-btn').on('click', function() {
+                console.log('[PDF Builder JS] Bouton "Vider le cache" cliqué');
                 const $btn = $(this);
                 const $results = $('#maintenance-results');
-                
+
                 $btn.prop('disabled', true).text('⏳ Vidage en cours...');
                 $results.html('<span style="color: #007cba;">⏳ Vidage du cache en cours...</span>');
-                
+
+                console.log('[PDF Builder JS] Envoi requête AJAX pour vider le cache');
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
@@ -4763,16 +4850,19 @@
                         security: pdf_builder_ajax.nonce
                     },
                     success: function(response) {
+                        console.log('[PDF Builder JS] Réponse reçue pour vidage cache:', response);
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Cache vidé avec succès</span>');
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
+                        console.error('[PDF Builder JS] Erreur AJAX vidage cache:', xhr, status, error);
                         $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors du vidage du cache</span>');
                     },
                     complete: function() {
+                        console.log('[PDF Builder JS] Requête vidage cache terminée');
                         $btn.prop('disabled', false).text('🗑️ Vider le cache');
                     }
                 });
@@ -4844,12 +4934,14 @@
             
             // Bouton "Créer une sauvegarde"
             $('#create-backup-btn').on('click', function() {
+                console.log('[PDF Builder JS] Bouton "Créer une sauvegarde" cliqué');
                 const $btn = $(this);
                 const $results = $('#backup-results');
-                
+
                 $btn.prop('disabled', true).text('⏳ Création...');
                 $results.html('<span style="color: #007cba;">⏳ Création de la sauvegarde en cours...</span>');
-                
+
+                console.log('[PDF Builder JS] Envoi requête AJAX pour créer la sauvegarde');
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
@@ -4858,16 +4950,19 @@
                         nonce: pdf_builder_ajax.nonce
                     },
                     success: function(response) {
+                        console.log('[PDF Builder JS] Réponse reçue pour création sauvegarde:', response);
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Sauvegarde créée avec succès</span>');
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
+                        console.error('[PDF Builder JS] Erreur AJAX création sauvegarde:', xhr, status, error);
                         $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors de la création de la sauvegarde</span>');
                     },
                     complete: function() {
+                        console.log('[PDF Builder JS] Requête création sauvegarde terminée');
                         $btn.prop('disabled', false).text('📦 Créer une sauvegarde');
                     }
                 });
@@ -4875,12 +4970,14 @@
 
             // Bouton "Lister les sauvegardes"
             $('#list-backups-btn').on('click', function() {
+                console.log('[PDF Builder JS] Bouton "Lister les sauvegardes" cliqué');
                 const $btn = $(this);
                 const $results = $('#backup-results');
-                
+
                 $btn.prop('disabled', true).text('⏳ Chargement...');
                 $results.html('<span style="color: #007cba;">⏳ Chargement de la liste des sauvegardes...</span>');
-                
+
+                console.log('[PDF Builder JS] Envoi requête AJAX pour lister les sauvegardes');
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
@@ -4889,6 +4986,7 @@
                         nonce: pdf_builder_ajax.nonce
                     },
                     success: function(response) {
+                        console.log('[PDF Builder JS] Réponse reçue pour liste sauvegardes:', response);
                         if (response.success) {
                             let html = '<div style="margin-top: 10px;"><strong>📋 Sauvegardes disponibles:</strong><br>';
                             if (response.data && response.data.backups && response.data.backups.length > 0) {
@@ -4904,10 +5002,12 @@
                             $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
+                        console.error('[PDF Builder JS] Erreur AJAX liste sauvegardes:', xhr, status, error);
                         $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors du chargement de la liste</span>');
                     },
                     complete: function() {
+                        console.log('[PDF Builder JS] Requête liste sauvegardes terminée');
                         $btn.prop('disabled', false).text('📋 Lister les sauvegardes');
                     }
                 });
