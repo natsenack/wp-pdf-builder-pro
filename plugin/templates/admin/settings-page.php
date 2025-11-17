@@ -268,10 +268,19 @@
                         break;
 
                     case 'systeme':
+                        // Debug temporaire
+                        error_log('=== SYSTEME SAVE DEBUG ===');
+                        error_log('Raw $_POST: ' . print_r($_POST, true));
+                        error_log('cache_enabled isset: ' . (isset($_POST['cache_enabled']) ? 'YES' : 'NO') . ', value: ' . (isset($_POST['cache_enabled']) ? $_POST['cache_enabled'] : 'NOT_SET'));
+                        error_log('auto_maintenance isset: ' . (isset($_POST['auto_maintenance']) ? 'YES' : 'NO') . ', value: ' . (isset($_POST['auto_maintenance']) ? $_POST['auto_maintenance'] : 'NOT_SET'));
+                        error_log('auto_backup isset: ' . (isset($_POST['auto_backup']) ? 'YES' : 'NO') . ', value: ' . (isset($_POST['auto_backup']) ? $_POST['auto_backup'] : 'NOT_SET'));
+
                         // Traitement des paramètres de performance
                         $cache_enabled = (isset($_POST['cache_enabled']) && $_POST['cache_enabled'] === '1') ? '1' : '0';
                         $cache_expiry = intval($_POST['cache_expiry']);
                         $max_cache_size = intval($_POST['max_cache_size']);
+
+                        error_log("FINAL: cache_enabled = '$cache_enabled'");
 
                         update_option('pdf_builder_cache_enabled', $cache_enabled);
                         update_option('pdf_builder_cache_expiry', $cache_expiry);
@@ -279,11 +288,13 @@
 
                         // Traitement des paramètres de maintenance
                         $auto_maintenance = (isset($_POST['auto_maintenance']) && $_POST['auto_maintenance'] === '1') ? '1' : '0';
+                        error_log("FINAL: auto_maintenance = '$auto_maintenance'");
                         update_option('pdf_builder_auto_maintenance', $auto_maintenance);
 
                         // Traitement des paramètres de sauvegarde
                         $auto_backup = (isset($_POST['auto_backup']) && $_POST['auto_backup'] === '1') ? '1' : '0';
                         $backup_retention = intval($_POST['backup_retention']);
+                        error_log("FINAL: auto_backup = '$auto_backup'");
 
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
@@ -2130,7 +2141,11 @@
                             <th scope="row"><label for="systeme_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="systeme_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', '1'), '1'); ?>>
+                                    <input type="checkbox" id="systeme_cache_enabled" name="cache_enabled" value="1" <?php
+                                        $cache_val = get_option('pdf_builder_cache_enabled', '1');
+                                        error_log('DISPLAY: cache_enabled from DB = ' . var_export($cache_val, true));
+                                        checked($cache_val, '1');
+                                    ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Active le système de cache pour améliorer les performances</p>
@@ -2176,7 +2191,11 @@
                             <th scope="row"><label for="auto_maintenance">Maintenance automatique</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="auto_maintenance" name="auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
+                                    <input type="checkbox" id="auto_maintenance" name="auto_maintenance" value="1" <?php
+                                        $maint_val = get_option('pdf_builder_auto_maintenance', '0');
+                                        error_log('DISPLAY: auto_maintenance from DB = ' . var_export($maint_val, true));
+                                        checked($maint_val, '1');
+                                    ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Active la maintenance automatique hebdomadaire</p>
@@ -2207,7 +2226,11 @@
                             <th scope="row"><label for="auto_backup">Sauvegarde automatique</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="auto_backup" name="auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
+                                    <input type="checkbox" id="auto_backup" name="auto_backup" value="1" <?php
+                                        $backup_val = get_option('pdf_builder_auto_backup', '0');
+                                        error_log('DISPLAY: auto_backup from DB = ' . var_export($backup_val, true));
+                                        checked($backup_val, '1');
+                                    ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Crée automatiquement des sauvegardes quotidiennes</p>
