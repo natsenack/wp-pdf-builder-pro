@@ -413,6 +413,13 @@
             update_option('pdf_builder_debug_logging', isset($_POST['debug_logging']));
             update_option('pdf_builder_license_test_mode_enabled', isset($_POST['test_mode']));
 
+            // Options avancées (uniquement si le mode développeur est activé)
+            if (isset($_POST['developer_enabled'])) {
+                update_option('pdf_builder_debug_level', sanitize_text_field($_POST['debug_level'] ?? 'error'));
+                update_option('pdf_builder_performance_monitoring', isset($_POST['performance_monitoring']));
+                update_option('pdf_builder_api_debugging', isset($_POST['api_debugging']));
+            }
+
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
         } else {
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
@@ -3114,6 +3121,30 @@
         });
     </script>
 
+    <script>
+        jQuery(document).ready(function($) {
+            // Gestion de l'affichage des options avancées développeur
+            function toggleDeveloperOptions() {
+                var isEnabled = $('#developer_enabled').is(':checked');
+                var $advancedOptions = $('#developer-advanced-options');
+
+                if (isEnabled) {
+                    $advancedOptions.slideDown(300);
+                } else {
+                    $advancedOptions.slideUp(300);
+                }
+            }
+
+            // Vérifier l'état initial au chargement
+            toggleDeveloperOptions();
+
+            // Écouter les changements sur le toggle développeur
+            $('#developer_enabled').on('change', function() {
+                toggleDeveloperOptions();
+            });
+        });
+    </script>
+
     <div id="roles" class="tab-content hidden-tab">
         <h2>👨‍💻 Paramètres Développeur</h2>
         <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
@@ -3168,6 +3199,54 @@
                 </tr>
             </table>
 
+            <?php if (get_option('pdf_builder_developer_enabled', false)): ?>
+            <div id="developer-advanced-options" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+                <h4 style="margin-top: 0; color: #495057;">🔧 Options Avancées de Développement</h4>
+                <p style="margin-bottom: 15px; color: #666;">Ces options sont disponibles uniquement en mode développeur.</p>
+
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="debug_level">Niveau de débogage</label></th>
+                        <td>
+                            <select id="debug_level" name="debug_level" style="min-width: 200px;">
+                                <option value="error" <?php selected(get_option('pdf_builder_debug_level', 'error'), 'error'); ?>>Erreur uniquement</option>
+                                <option value="warning" <?php selected(get_option('pdf_builder_debug_level', 'error'), 'warning'); ?>>Avertissement +</option>
+                                <option value="info" <?php selected(get_option('pdf_builder_debug_level', 'error'), 'info'); ?>>Info +</option>
+                                <option value="debug" <?php selected(get_option('pdf_builder_debug_level', 'error'), 'debug'); ?>>Debug complet</option>
+                            </select>
+                            <p class="description">Détermine le niveau de détail des logs de débogage</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="performance_monitoring">Monitoring des performances</label></th>
+                        <td>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="performance_monitoring" name="performance_monitoring" value="1" <?php checked(get_option('pdf_builder_performance_monitoring', false)); ?> />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Activer le monitoring des performances</span>
+                            </div>
+                            <p class="description">Surveille les temps d'exécution et l'utilisation des ressources</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="api_debugging">Débogage API</label></th>
+                        <td>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="api_debugging" name="api_debugging" value="1" <?php checked(get_option('pdf_builder_api_debugging', false)); ?> />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Activer le débogage des appels API</span>
+                            </div>
+                            <p class="description">Log tous les appels API entrants et sortants</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <?php endif; ?>
+
             <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
                 <h4 style="margin-top: 0; color: #495057;">🔑 Gestion des Clés de Test</h4>
                 <p style="margin-bottom: 15px; color: #666;">Générez et gérez des clés de licence de test pour le développement.</p>
@@ -3208,6 +3287,10 @@
     </div>
 
     <style>
+        #developer-advanced-options {
+            display: none;
+        }
+
         .toggle-container {
             display: flex;
             align-items: center;
