@@ -200,6 +200,10 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax');
     add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_test_cache_ajax');
     add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_ajax');
+    add_action('wp_ajax_pdf_builder_create_backup', 'pdf_builder_create_backup_ajax');
+    add_action('wp_ajax_pdf_builder_list_backups', 'pdf_builder_list_backups_ajax');
+    add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_restore_backup_ajax');
+    add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_delete_backup_ajax');
 }
 
 /**
@@ -713,5 +717,237 @@ function pdf_builder_clear_cache_ajax() {
     wp_send_json_success(array(
         'message' => 'Cache vidé avec succès'
     ));
+}
+
+/**
+ * AJAX handler pour créer une sauvegarde
+ */
+function pdf_builder_create_backup_ajax() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        // Créer le dossier de sauvegarde s'il n'existe pas
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+        if (!file_exists($backup_dir)) {
+            if (!wp_mkdir_p($backup_dir)) {
+                wp_send_json_error('Impossible de créer le dossier de sauvegarde');
+                return;
+            }
+        }
+
+        // Récupérer toutes les options du plugin
+        global $wpdb;
+        $options = $wpdb->get_results(
+            $wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s", 'pdf_builder_%'),
+            ARRAY_A
+        );
+
+        // Créer le nom du fichier de sauvegarde
+        $timestamp = date('Y-m-d_H-i-s');
+        $filename = 'pdf_builder_backup_' . $timestamp . '.json';
+        $filepath = $backup_dir . '/' . $filename;
+
+        // Préparer les données de sauvegarde
+        $backup_data = array(
+            'version' => '1.0',
+            'timestamp' => time(),
+            'date' => date('Y-m-d H:i:s'),
+            'options' => array()
+        );
+
+        foreach ($options as $option) {
+            $backup_data['options'][$option['option_name']] = maybe_unserialize($option['option_value']);
+        }
+
+        // Écrire le fichier de sauvegarde
+        if (file_put_contents($filepath, json_encode($backup_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
+            wp_send_json_success(array(
+                'message' => 'Sauvegarde créée avec succès',
+                'filename' => $filename
+            ));
+        } else {
+            wp_send_json_error('Erreur lors de l\'écriture du fichier de sauvegarde');
+        }
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la création de la sauvegarde: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler pour lister les sauvegardes
+ */
+function pdf_builder_list_backups_ajax() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+        $backups = array();
+
+        if (file_exists($backup_dir) && is_dir($backup_dir)) {
+            $files = glob($backup_dir . '/pdf_builder_backup_*.json');
+
+            foreach ($files as $file) {
+                $filename = basename($file);
+                $fileinfo = pathinfo($filename);
+
+                // Extraire la date du nom du fichier
+                $date_str = str_replace('pdf_builder_backup_', '', $fileinfo['filename']);
+                $date_str = str_replace('_', ' ', $date_str);
+                $date_str = str_replace('-', '-', $date_str);
+
+                $timestamp = strtotime($date_str);
+
+                $backups[] = array(
+                    'filename' => $filename,
+                    'filename_raw' => 'Sauvegarde du ' . date('d/m/Y à H:i', $timestamp),
+                    'size' => filesize($file),
+                    'size_human' => size_format(filesize($file)),
+                    'modified' => $timestamp,
+                    'modified_human' => date('d/m/Y H:i', $timestamp)
+                );
+            }
+
+            // Trier par date décroissante (plus récent en premier)
+            usort($backups, function($a, $b) {
+                return $b['modified'] - $a['modified'];
+            });
+        }
+
+        wp_send_json_success(array(
+            'backups' => $backups
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la récupération de la liste: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler pour restaurer une sauvegarde
+ */
+function pdf_builder_restore_backup_ajax() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    $filename = sanitize_file_name($_POST['filename']);
+
+    if (empty($filename)) {
+        wp_send_json_error('Nom de fichier manquant');
+        return;
+    }
+
+    try {
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+        $filepath = $backup_dir . '/' . $filename;
+
+        if (!file_exists($filepath)) {
+            wp_send_json_error('Fichier de sauvegarde introuvable');
+            return;
+        }
+
+        // Lire le fichier de sauvegarde
+        $backup_content = file_get_contents($filepath);
+        $backup_data = json_decode($backup_content, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error('Erreur lors de la lecture du fichier de sauvegarde');
+            return;
+        }
+
+        if (!isset($backup_data['options']) || !is_array($backup_data['options'])) {
+            wp_send_json_error('Format de sauvegarde invalide');
+            return;
+        }
+
+        // Restaurer les options
+        $restored_count = 0;
+        foreach ($backup_data['options'] as $option_name => $option_value) {
+            update_option($option_name, $option_value);
+            $restored_count++;
+        }
+
+        wp_send_json_success(array(
+            'message' => 'Sauvegarde restaurée avec succès',
+            'restored_count' => $restored_count
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la restauration: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler pour supprimer une sauvegarde
+ */
+function pdf_builder_delete_backup_ajax() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    $filename = sanitize_file_name($_POST['filename']);
+
+    if (empty($filename)) {
+        wp_send_json_error('Nom de fichier manquant');
+        return;
+    }
+
+    try {
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+        $filepath = $backup_dir . '/' . $filename;
+
+        if (!file_exists($filepath)) {
+            wp_send_json_error('Fichier de sauvegarde introuvable');
+            return;
+        }
+
+        if (unlink($filepath)) {
+            wp_send_json_success(array(
+                'message' => 'Sauvegarde supprimée avec succès'
+            ));
+        } else {
+            wp_send_json_error('Erreur lors de la suppression du fichier');
+        }
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
+    }
 }
 
