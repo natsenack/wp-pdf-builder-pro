@@ -316,7 +316,16 @@
             window.location.href.indexOf('pdf-builder-developer') !== -1 ||
             window.location.href.indexOf('developer') !== -1 ||
             window.location.href.indexOf('pdf-builder-settings') !== -1) {
-            new PDFBuilderDeveloper();
+            // Use requestIdleCallback for better performance, fallback to setTimeout
+            if (typeof requestIdleCallback !== 'undefined') {
+                requestIdleCallback(() => {
+                    new PDFBuilderDeveloper();
+                });
+            } else {
+                setTimeout(() => {
+                    new PDFBuilderDeveloper();
+                }, 100);
+            }
         }
     });
 
