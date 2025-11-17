@@ -1138,8 +1138,12 @@ class PdfBuilderAdmin
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
+        // Enregistrer et charger le script pour la page des paramètres
+        wp_register_script('pdf-builder-settings', '', array('jquery'), '1.0.0', true);
+        wp_enqueue_script('pdf-builder-settings');
+
         // Localize AJAX for settings page
-        wp_localize_script('jquery', 'pdf_builder_ajax', array(
+        wp_localize_script('pdf-builder-settings', 'pdf_builder_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_save_settings')
         ));
