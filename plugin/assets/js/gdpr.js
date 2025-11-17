@@ -372,7 +372,7 @@
                 url: pdfBuilderGDPR.ajax_url,
                 type: 'POST',
                 data: {
-                    action: 'pdf_builder_toggle_test_mode',
+                    action: 'pdf_builder_toggle_license_test_mode',
                     nonce: pdfBuilderGDPR.nonce
                 },
                 success: (response) => {

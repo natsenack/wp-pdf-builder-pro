@@ -62,7 +62,9 @@ class LicenseTestHandler
         // AJAX handler pour basculer le mode test
         add_action('wp_ajax_pdf_builder_toggle_test_mode', [$this, 'handleToggleTestMode']);
         add_action('wp_ajax_nopriv_pdf_builder_toggle_test_mode', [$this, 'handleToggleTestMode']);
-        error_log('LICENSE TEST: Toggle test mode hooks registered');
+        add_action('wp_ajax_pdf_builder_toggle_license_test_mode', [$this, 'handleToggleTestMode']);
+        add_action('wp_ajax_nopriv_pdf_builder_toggle_license_test_mode', [$this, 'handleToggleTestMode']);
+        error_log('LICENSE TEST: Toggle test mode hooks registered (both variants)');
 
         // AJAX handler pour supprimer la clé de test
         add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handleDeleteTestKey']);
