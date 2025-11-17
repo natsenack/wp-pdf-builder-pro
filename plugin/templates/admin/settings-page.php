@@ -1230,6 +1230,91 @@
         <div id="licence" class="tab-content hidden-tab">
 
 
+            <!-- Section Informations Licence -->
+            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">ℹ️ Informations sur la Licence</h3>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="margin-top: 0; color: #155724;">🎯 Fonctionnalités Premium Disponibles</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="border: 1px solid #28a745; border-radius: 6px; padding: 15px; background: #f8fff8;">
+                            <h5 style="margin: 0 0 10px 0; color: #155724;">📊 Analyses Avancées</h5>
+                            <ul style="margin: 0; padding-left: 20px; color: #155724;">
+                                <li>Statistiques détaillées d'utilisation</li>
+                                <li>Rapports de performance PDF</li>
+                                <li>Analytics en temps réel</li>
+                            </ul>
+                        </div>
+                        <div style="border: 1px solid #28a745; border-radius: 6px; padding: 15px; background: #f8fff8;">
+                            <h5 style="margin: 0 0 10px 0; color: #155724;">🎨 Templates Premium</h5>
+                            <ul style="margin: 0; padding-left: 20px; color: #155724;">
+                                <li>Modèles professionnels exclusifs</li>
+                                <li>Personnalisation avancée</li>
+                                <li>Support multi-langues</li>
+                            </ul>
+                        </div>
+                        <div style="border: 1px solid #28a745; border-radius: 6px; padding: 15px; background: #f8fff8;">
+                            <h5 style="margin: 0 0 10px 0; color: #155724;">🔧 Support Prioritaire</h5>
+                            <ul style="margin: 0; padding-left: 20px; color: #155724;">
+                                <li>Support technique 24/7</li>
+                                <li>Mises à jour prioritaires</li>
+                                <li>Formation personnalisée</li>
+                            </ul>
+                        </div>
+                        <div style="border: 1px solid #28a745; border-radius: 6px; padding: 15px; background: #f8fff8;">
+                            <h5 style="margin: 0 0 10px 0; color: #155724;">🚀 Fonctionnalités Avancées</h5>
+                            <ul style="margin: 0; padding-left: 20px; color: #155724;">
+                                <li>API REST complète</li>
+                                <li>Intégrations tierces</li>
+                                <li>Automatisation des workflows</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="margin-top: 0; color: #856404;">💰 Tarifs et Conditions</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="border: 1px solid #ffc107; border-radius: 6px; padding: 15px; background: #fffbf0;">
+                            <h5 style="margin: 0 0 10px 0; color: #856404;">📅 Licence Annuelle</h5>
+                            <p style="margin: 0; font-size: 18px; font-weight: bold; color: #856404;">49€ HT/an</p>
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #856404;">Par site WordPress</p>
+                        </div>
+                        <div style="border: 1px solid #ffc107; border-radius: 6px; padding: 15px; background: #fffbf0;">
+                            <h5 style="margin: 0 0 10px 0; color: #856404;">🏢 Licence Entreprise</h5>
+                            <p style="margin: 0; font-size: 18px; font-weight: bold; color: #856404;">199€ HT/an</p>
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #856404;">Sites illimités</p>
+                        </div>
+                        <div style="border: 1px solid #ffc107; border-radius: 6px; padding: 15px; background: #fffbf0;">
+                            <h5 style="margin: 0 0 10px 0; color: #856404;">🎓 Licence Éducation</h5>
+                            <p style="margin: 0; font-size: 18px; font-weight: bold; color: #856404;">29€ HT/an</p>
+                            <p style="margin: 5px 0 0 0; font-size: 12px; color: #856404;">Établissements scolaires</p>
+                        </div>
+                    </div>
+                    <p style="margin: 15px 0 0 0; font-size: 12px; color: #666;">
+                        💳 Paiement sécurisé • 🔄 Renouvellement automatique • 📞 Support inclus
+                    </p>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px;">
+                    <h4 style="margin-top: 0; color: #495057;">📞 Support et Contact</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="text-align: center;">
+                            <h5 style="margin: 0 0 5px 0; color: #495057;">📧 Email Support</h5>
+                            <p style="margin: 0; color: #6c757d;">support@threeaxe.fr</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <h5 style="margin: 0 0 5px 0; color: #495057;">🌐 Site Web</h5>
+                            <p style="margin: 0; color: #6c757d;">www.threeaxe.fr</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <h5 style="margin: 0 0 5px 0; color: #495057;">📱 Téléphone</h5>
+                            <p style="margin: 0; color: #6c757d;">+33 1 23 45 67 89</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Section Licence -->
             <h3 class="section-title">🔐 Gestion de la Licence</h3>
             <form method="post" id="licence-form" action="">
