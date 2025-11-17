@@ -4525,6 +4525,12 @@
                     formData.append('action', 'pdf_builder_save_settings');
                     formData.append('nonce', pdf_builder_ajax.nonce);
 
+                    // Debug: Afficher les données envoyées
+                    console.log('=== SYSTEME SAVE DATA DEBUG ===');
+                    for (let [key, value] of formData.entries()) {
+                        console.log(key + ': ' + value);
+                    }
+
                     // Envoyer via AJAX
                     $.ajax({
                         url: pdf_builder_ajax.ajax_url,
@@ -4855,14 +4861,6 @@
                 var checkboxId = $(this).attr('id');
                 var isChecked = $(this).is(':checked');
                 console.log('Toggle changed:', checkboxId, 'is now:', isChecked ? 'checked' : 'unchecked');
-            });
-
-            // Test de soumission du formulaire système
-            $('#systeme-settings-form').on('submit', function(e) {
-                console.log('=== FORM SUBMIT DEBUG ===');
-                console.log('Cache enabled:', $('#systeme_cache_enabled').is(':checked') ? '1' : '0');
-                console.log('Auto maintenance:', $('#auto_maintenance').is(':checked') ? '1' : '0');
-                console.log('Auto backup:', $('#auto_backup').is(':checked') ? '1' : '0');
             });
         });
     </script>
