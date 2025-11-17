@@ -2695,6 +2695,8 @@
                         </div>
 
                         <div id="gdpr-user-actions-result" style="margin-top: 15px; display: none;"></div>
+                        <input type="hidden" id="export_user_data_nonce" value="<?php echo wp_create_nonce('pdf_builder_gdpr'); ?>" />
+                        <input type="hidden" id="delete_user_data_nonce" value="<?php echo wp_create_nonce('pdf_builder_gdpr'); ?>" />
                     </div>
 
                     <!-- Section Logs d'Audit -->
@@ -3586,7 +3588,7 @@
                     type: 'POST',
                     data: {
                         action: 'pdf_builder_export_user_data',
-                        nonce: pdf_builder_ajax.nonce
+                        nonce: $('#export_user_data_nonce').val()
                     },
                     success: function(response) {
                         if (response.success) {
@@ -3637,7 +3639,7 @@
                     type: 'POST',
                     data: {
                         action: 'pdf_builder_delete_user_data',
-                        nonce: pdf_builder_ajax.nonce
+                        nonce: $('#delete_user_data_nonce').val()
                     },
                     success: function(response) {
                         if (response.success) {
@@ -3679,7 +3681,7 @@
                     type: 'POST',
                     data: {
                         action: 'pdf_builder_get_consent_status',
-                        nonce: pdf_builder_ajax.nonce
+                        nonce: $('#export_user_data_nonce').val()
                     },
                     success: function(response) {
                         if (response.success) {
@@ -3731,7 +3733,7 @@
                     type: 'POST',
                     data: {
                         action: 'pdf_builder_refresh_audit_log',
-                        nonce: pdf_builder_ajax.nonce
+                        nonce: $('#export_user_data_nonce').val()
                     },
                     success: function(response) {
                         if (response.success) {
@@ -3764,7 +3766,7 @@
                     type: 'POST',
                     data: {
                         action: 'pdf_builder_export_audit_log',
-                        nonce: pdf_builder_ajax.nonce
+                        nonce: $('#export_user_data_nonce').val()
                     },
                     success: function(response) {
                         if (response.success) {
