@@ -275,6 +275,7 @@
         }
 
         loadConsentStatus() {
+            console.log('GDPR: Starting loadConsentStatus');
             $.ajax({
                 url: pdfBuilderGDPR.ajax_url,
                 type: 'POST',
@@ -283,9 +284,18 @@
                     nonce: pdfBuilderGDPR.nonce
                 },
                 success: (response) => {
+                    console.log('GDPR: AJAX success', response);
                     if (response.success) {
                         this.updateConsentUI(response.data.consents);
                     }
+                },
+                error: (xhr, status, error) => {
+                    console.error('GDPR: AJAX error', {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText,
+                        error: error
+                    });
                 }
             });
         }
