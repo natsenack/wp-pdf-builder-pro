@@ -3884,7 +3884,7 @@
                     var formData = new FormData();
                     formData.append('action', 'pdf_builder_toggle_license_test_mode');
                     formData.append('license_test_mode', $checkbox.is(':checked') ? '1' : '0');
-                    formData.append('security', '<?php echo wp_create_nonce("pdf_builder_toggle_license_test_mode"); ?>');
+                    formData.append('nonce', '<?php echo wp_create_nonce("pdf_builder_toggle_test_mode"); ?>');
 
                     $.ajax({
                         url: pdf_builder_ajax.ajax_url,
