@@ -2751,15 +2751,6 @@
             border-radius: 50%;
         }
 
-        /* Style pour la section développeur visible */
-        #developer-info-section.developer-visible {
-            display: block !important;
-        }
-
-        #developer-info-section:not(.developer-visible) {
-            display: none !important;
-        }
-
         /* Styles pour les onglets */
         .nav-tab-wrapper {
             border-bottom: 1px solid #ccc;
@@ -3133,9 +3124,9 @@
                 // Ne faire fonctionner le toggle que si l'onglet développeur est actif
                 if ($tabContent.hasClass('active') && !$tabContent.hasClass('hidden-tab')) {
                     if ($('#developer_enabled').is(':checked')) {
-                        $devSection.addClass('developer-visible');
+                        $devSection.show();
                     } else {
-                        $devSection.removeClass('developer-visible');
+                        $devSection.hide();
                     }
                 }
             }
@@ -3153,23 +3144,6 @@
                 setTimeout(function() {
                     toggleDeveloperSection();
                 }, 100);
-            });
-
-            // Debug CSS pour diagnostiquer le problème de visibilité
-            $('#developer_enabled').on('change', function() {
-                setTimeout(function() {
-                    var $section = $('#developer-info-section');
-                    var $tab = $('#roles');
-                    if ($(this).is(':checked')) {
-                        console.log('=== DEBUG TOGGLE DÉVELOPPEUR ===');
-                        console.log('Tab is active:', $tab.hasClass('active'));
-                        console.log('Tab is hidden:', $tab.hasClass('hidden-tab'));
-                        console.log('Tab display:', $tab.css('display'));
-                        console.log('Section has class developer-visible:', $section.hasClass('developer-visible'));
-                        console.log('Section display:', $section.css('display'));
-                        console.log('Section is visible:', $section.is(':visible'));
-                    }
-                }, 200);
             });
         });
     </script>
@@ -3199,7 +3173,7 @@
                 </tr>
             </table>
 
-            <div id="developer-info-section" class="<?php echo get_option('pdf_builder_developer_enabled', false) ? 'developer-visible' : ''; ?>" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; <?php echo (!isset($_GET['tab']) || $_GET['tab'] !== 'developpeur' || !get_option('pdf_builder_developer_enabled', false)) ? 'display: none;' : ''; ?>">
                 <h4 style="margin-top: 0; color: #495057;">🔧 Informations développeur</h4>
                 <p style="margin-bottom: 15px; color: #666;">Informations système et de débogage disponibles uniquement en mode développeur.</p>
 
