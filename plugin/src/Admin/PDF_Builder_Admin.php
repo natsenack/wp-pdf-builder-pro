@@ -1249,6 +1249,9 @@ class PdfBuilderAdmin
         wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param, true);
         wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param, true);
 
+        // Charger les outils développeur
+        wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
+
         // Localize pdfBuilderAjax for API Preview scripts
         wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
