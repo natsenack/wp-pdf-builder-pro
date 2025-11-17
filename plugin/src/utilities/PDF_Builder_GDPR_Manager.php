@@ -663,6 +663,7 @@ class PDF_Builder_GDPR_Manager {
 
             error_log('GDPR Debug: Sending success response');
             wp_send_json_success(['consents' => $consents]);
+            error_log('GDPR Debug: Response sent, should not reach here');
         } catch (Exception $e) {
             error_log('GDPR Debug: Exception caught: ' . $e->getMessage());
             error_log('GDPR Debug: Stack trace: ' . $e->getTraceAsString());
