@@ -4618,54 +4618,6 @@
                     });
                 }
 
-                // Envoyer via AJAX
-                $.ajax({
-                    url: pdf_builder_ajax.ajax_url,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        if (response.success) {
-                            // Succès
-                            $btn.removeClass('saving').addClass('saved');
-                            $icon.text('✅');
-                            $text.text('Enregistré !');
-
-                            // Revenir à l'état normal après 3 secondes
-                            setTimeout(() => {
-                                $btn.removeClass('saved');
-                                $icon.text('💾');
-                                $text.text('Enregistrer');
-                            }, 3000);
-                        } else {
-                            // Erreur
-                            $btn.removeClass('saving').addClass('error');
-                            $icon.text('❌');
-                            $text.text('Erreur');
-
-                            setTimeout(() => {
-                                $btn.removeClass('error');
-                                $icon.text('💾');
-                                $text.text('Enregistrer');
-                            }, 3000);
-                        }
-                    },
-                    error: function() {
-                        // Erreur AJAX
-                        $btn.removeClass('saving').addClass('error');
-                        $icon.text('❌');
-                        $text.text('Erreur');
-
-                        setTimeout(() => {
-                            $btn.removeClass('error');
-                            $icon.text('💾');
-                            $text.text('Enregistrer');
-                        }, 3000);
-                    }
-                });
-            });
-
             // Gestionnaires pour les tests de notifications
             $('#test-notifications-success').on('click', function() {
                 if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
