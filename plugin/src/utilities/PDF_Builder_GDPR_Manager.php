@@ -662,7 +662,8 @@ class PDF_Builder_GDPR_Manager {
             }
 
             error_log('GDPR Debug: Sending success response');
-            wp_send_json_success(['consents' => $consents]);
+            // Test avec wp_die au lieu de wp_send_json_success
+            wp_die(json_encode(['success' => true, 'data' => ['consents' => $consents]]), '', ['response' => 200]);
             error_log('GDPR Debug: Response sent, should not reach here');
         } catch (Exception $e) {
             error_log('GDPR Debug: Exception caught: ' . $e->getMessage());
