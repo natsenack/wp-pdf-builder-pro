@@ -65,27 +65,40 @@
             };
 
             var ajaxUrl, ajaxNonce;
-            if (typeof pdfBuilderAjax !== 'undefined') {
-                ajaxUrl = pdfBuilderAjax.ajaxurl;
-                ajaxNonce = pdfBuilderAjax.nonce;
-                ajaxData.nonce = ajaxNonce;
-            } else if (typeof pdf_builder_ajax !== 'undefined') {
-                ajaxUrl = pdf_builder_ajax.ajax_url;
-                // Try to get the specific nonce first, fallback to general nonce
-                var specificNonce = $('#toggle_license_test_mode_nonce').val();
-                console.log('LICENSE TEST JS: Specific nonce element:', $('#toggle_license_test_mode_nonce'));
-                console.log('LICENSE TEST JS: Specific nonce value:', specificNonce);
-                if (specificNonce) {
-                    ajaxData.nonce = specificNonce;
-                    console.log('LICENSE TEST JS: Using specific nonce');
+            // Always try to get the specific nonce for license operations first
+            var specificNonce = $('#toggle_license_test_mode_nonce').val();
+            console.log('LICENSE TEST JS: Specific nonce element:', $('#toggle_license_test_mode_nonce'));
+            console.log('LICENSE TEST JS: Specific nonce value:', specificNonce);
+
+            if (specificNonce) {
+                // Use specific nonce with the appropriate AJAX URL
+                if (typeof pdfBuilderAjax !== 'undefined') {
+                    ajaxUrl = pdfBuilderAjax.ajaxurl;
+                } else if (typeof pdf_builder_ajax !== 'undefined') {
+                    ajaxUrl = pdf_builder_ajax.ajax_url;
                 } else {
-                    ajaxData.security = pdf_builder_ajax.nonce;
-                    console.log('LICENSE TEST JS: Using fallback nonce');
+                    console.error('LICENSE TEST JS: No AJAX configuration found');
+                    this.showError('Configuration AJAX manquante');
+                    return;
                 }
+                ajaxData.nonce = specificNonce;
+                console.log('LICENSE TEST JS: Using specific nonce for license operation');
             } else {
-                console.error('LICENSE TEST JS: No AJAX configuration found');
-                this.showError('Configuration AJAX manquante');
-                return;
+                // Fallback to general AJAX configuration
+                if (typeof pdfBuilderAjax !== 'undefined') {
+                    ajaxUrl = pdfBuilderAjax.ajaxurl;
+                    ajaxNonce = pdfBuilderAjax.nonce;
+                    ajaxData.nonce = ajaxNonce;
+                    console.log('LICENSE TEST JS: Using pdfBuilderAjax fallback');
+                } else if (typeof pdf_builder_ajax !== 'undefined') {
+                    ajaxUrl = pdf_builder_ajax.ajax_url;
+                    ajaxData.security = pdf_builder_ajax.nonce;
+                    console.log('LICENSE TEST JS: Using pdf_builder_ajax fallback');
+                } else {
+                    console.error('LICENSE TEST JS: No AJAX configuration found');
+                    this.showError('Configuration AJAX manquante');
+                    return;
+                }
             }
 
             $.ajax({
