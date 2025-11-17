@@ -1207,8 +1207,6 @@
                 </form>
             </div>
         </div>
-
-
         <div id="licence" class="tab-content hidden-tab">
             <form method="post" id="licence-form" action="">
                 <input type="hidden" name="current_tab" value="licence">
@@ -1952,7 +1950,6 @@
                     </section>
             </form>
         </div>
-
         <div id="systeme" class="tab-content hidden-tab">
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
@@ -2063,7 +2060,6 @@
                 </form>
             </div>
         </div>
-
         <div id="acces" class="tab-content hidden-tab">
             <h2>👥 Gestion des Rôles et Permissions</h2>
 
@@ -3174,111 +3170,6 @@
             }
         });
     </script>
-
-    <div id="roles" class="tab-content hidden-tab">
-        <h2>Paramètres Développeur</h2>
-        <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
-
-        <div class="notice notice-info" style="margin-bottom: 20px;">
-            <p><strong>ℹ️ Rappel Onboarding :</strong> L'onboarding est actuellement désactivé en mode développement (WP_DEBUG=true). Il sera automatiquement activé en production (WP_DEBUG=false). Pensez à le tester avant le déploiement final.</p>
-        </div>
-
-        <form method="post" action="">
-            <?php wp_nonce_field('pdf_builder_developer', 'pdf_builder_developer_nonce'); ?>
-            <input type="hidden" name="current_tab" value="developpeur">
-
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="developer_enabled">Mode développeur</label></th>
-                    <td>
-                        <label class="switch">
-                            <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php checked(get_option('pdf_builder_developer_enabled', false)); ?>>
-                            <span class="slider round"></span>
-                        </label>
-                        <p class="description">Active les fonctionnalités de développement avancées</p>
-                    </td>
-                </tr>
-            </table>
-
-            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; display: none;">
-                <h4 style="margin-top: 0; color: #495057;">🔧 Informations développeur</h4>
-                <p style="margin-bottom: 15px; color: #666;">Informations système et de débogage disponibles uniquement en mode développeur.</p>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
-                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                        <h5 style="margin-top: 0; color: #495057;">📊 État du système</h5>
-                        <div style="font-size: 13px; color: #666;">
-                            <strong>PHP Version :</strong> <?php echo PHP_VERSION; ?><br>
-                            <strong>WordPress Version :</strong> <?php echo get_bloginfo('version'); ?><br>
-                            <strong>Mode Debug WP :</strong> <?php echo WP_DEBUG ? 'Activé' : 'Désactivé'; ?><br>
-                            <strong>Mémoire limite :</strong> <?php echo ini_get('memory_limit'); ?><br>
-                        </div>
-                    </div>
-
-                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                        <h5 style="margin-top: 0; color: #495057;">🔍 Informations plugin</h5>
-                        <div style="font-size: 13px; color: #666;">
-                            <strong>Version plugin :</strong> <?php echo get_option('pdf_builder_version', 'N/A'); ?><br>
-                            <strong>Base de données :</strong> <?php echo get_option('pdf_builder_db_version', 'N/A'); ?><br>
-                            <strong>Cache activé :</strong> <?php echo get_option('pdf_builder_cache_enabled', false) ? 'Oui' : 'Non'; ?><br>
-                            <strong>Logs activés :</strong> <?php echo get_option('pdf_builder_enable_logging', true) ? 'Oui' : 'Non'; ?><br>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                    <h5 style="margin-top: 0; color: #495057;">⚙️ Actions développeur</h5>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button type="button" class="button button-secondary" onclick="console.log('Debug info:', wp.plugins.pdf_builder || 'Plugin data not available'); alert('Informations de débogage affichées dans la console');">
-                            📋 Afficher debug info
-                        </button>
-                        <button type="button" class="button button-secondary" onclick="if(confirm('Vider le cache ?')) { localStorage.clear(); sessionStorage.clear(); alert('Cache vidé'); }">
-                            🗑️ Vider cache navigateur
-                        </button>
-                        <button type="button" class="button button-secondary" onclick="window.open('<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=diagnostic'); ?>', '_blank');">
-                            🔍 Ouvrir diagnostics
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
-                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                        <h5 style="margin-top: 0; color: #495057;">📊 État du système</h5>
-                        <div style="font-size: 13px; color: #666;">
-                            <strong>PHP Version :</strong> <?php echo PHP_VERSION; ?><br>
-                            <strong>WordPress Version :</strong> <?php echo get_bloginfo('version'); ?><br>
-                            <strong>Mode Debug WP :</strong> <?php echo WP_DEBUG ? 'Activé' : 'Désactivé'; ?><br>
-                            <strong>Mémoire limite :</strong> <?php echo ini_get('memory_limit'); ?><br>
-                        </div>
-                    </div>
-
-                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                        <h5 style="margin-top: 0; color: #495057;">🔍 Informations plugin</h5>
-                        <div style="font-size: 13px; color: #666;">
-                            <strong>Version plugin :</strong> <?php echo get_option('pdf_builder_version', 'N/A'); ?><br>
-                            <strong>Base de données :</strong> <?php echo get_option('pdf_builder_db_version', 'N/A'); ?><br>
-                            <strong>Cache activé :</strong> <?php echo get_option('pdf_builder_cache_enabled', false) ? 'Oui' : 'Non'; ?><br>
-                            <strong>Logs activés :</strong> <?php echo get_option('pdf_builder_enable_logging', true) ? 'Oui' : 'Non'; ?><br>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                    <h5 style="margin-top: 0; color: #495057;">⚙️ Actions développeur</h5>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button type="button" class="button button-secondary" onclick="console.log('Debug info:', wp.plugins.pdf_builder || 'Plugin data not available'); alert('Informations de débogage affichées dans la console');">
-                            📋 Afficher debug info
-                        </button>
-                        <button type="button" class="button button-secondary" onclick="if(confirm('Vider le cache ?')) { localStorage.clear(); sessionStorage.clear(); alert('Cache vidé'); }">
-                            🗑️ Vider cache navigateur
-                        </button>
-                        <button type="button" class="button button-secondary" onclick="window.open('<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=diagnostic'); ?>', '_blank');">
-                            🔍 Ouvrir diagnostics
-                        </button>
-                    </div>
-                </div>
-            </div>
 
     <style>
         /* Styles pour les interrupteurs */
