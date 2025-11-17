@@ -3898,7 +3898,7 @@
 
                 var formData = new FormData();
                 formData.append('action', 'pdf_builder_generate_test_license_key');
-                formData.append('security', '<?php echo wp_create_nonce("pdf_builder_generate_test_license_key"); ?>');
+                formData.append('security', pdf_builder_ajax.nonce);
 
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
@@ -3951,7 +3951,7 @@
 
                 var formData = new FormData();
                 formData.append('action', 'pdf_builder_delete_test_license_key');
-                formData.append('security', '<?php echo wp_create_nonce("pdf_builder_delete_test_license_key"); ?>');
+                formData.append('security', pdf_builder_ajax.nonce);
 
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
