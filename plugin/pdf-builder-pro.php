@@ -204,6 +204,8 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_list_backups', 'pdf_builder_list_backups_ajax');
     add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_restore_backup_ajax');
     add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_delete_backup_ajax');
+    add_action('pdf_builder_daily_backup', 'pdf_builder_execute_daily_backup');
+    add_action('pdf_builder_cleanup_old_backups', 'pdf_builder_cleanup_old_backups');
 }
 
 /**
@@ -263,6 +265,9 @@ function pdf_builder_init()
 
     // Enregistrer les handlers AJAX au hook init
     add_action('init', 'pdf_builder_register_ajax_handlers');
+    
+    // Initialiser les sauvegardes automatiques
+    add_action('init', 'pdf_builder_init_auto_backup');
     
     // Vérifier les mises à jour de schéma de base de données
     add_action('admin_init', 'pdf_builder_check_database_updates');
@@ -813,19 +818,21 @@ function pdf_builder_list_backups_ajax() {
                 $fileinfo = pathinfo($filename);
 
                 // Extraire la date du nom du fichier
-                $date_str = str_replace('pdf_builder_backup_', '', $fileinfo['filename']);
+                $date_str = str_replace(array('pdf_builder_backup_', 'pdf_builder_auto_backup_'), '', $fileinfo['filename']);
                 $date_str = str_replace('_', ' ', $date_str);
                 $date_str = str_replace('-', '-', $date_str);
 
                 $timestamp = strtotime($date_str);
+                $is_auto_backup = strpos($filename, 'pdf_builder_auto_backup_') === 0;
 
                 $backups[] = array(
                     'filename' => $filename,
-                    'filename_raw' => 'Sauvegarde du ' . wp_date('d/m/Y à H:i', $timestamp),
+                    'filename_raw' => ($is_auto_backup ? '🔄 ' : '📦 ') . 'Sauvegarde du ' . wp_date('d/m/Y à H:i', $timestamp) . ($is_auto_backup ? ' (auto)' : ''),
                     'size' => filesize($file),
                     'size_human' => size_format(filesize($file)),
                     'modified' => $timestamp,
-                    'modified_human' => wp_date('d/m/Y H:i', $timestamp)
+                    'modified_human' => wp_date('d/m/Y H:i', $timestamp),
+                    'type' => $is_auto_backup ? 'automatic' : 'manual'
                 );
             }
 
@@ -949,6 +956,120 @@ function pdf_builder_delete_backup_ajax() {
 
     } catch (Exception $e) {
         wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Initialiser les sauvegardes automatiques
+ */
+function pdf_builder_init_auto_backup() {
+    // Vérifier si les sauvegardes automatiques sont activées
+    $auto_backup_enabled = get_option('pdf_builder_auto_backup', '0');
+
+    if ($auto_backup_enabled === '1') {
+        // Programmer la sauvegarde automatique quotidienne
+        if (!wp_next_scheduled('pdf_builder_daily_backup')) {
+            wp_schedule_event(strtotime('tomorrow 02:00:00'), 'daily', 'pdf_builder_daily_backup');
+        }
+    } else {
+        // Désactiver la sauvegarde automatique si elle était programmée
+        $timestamp = wp_next_scheduled('pdf_builder_daily_backup');
+        if ($timestamp) {
+            wp_unschedule_event($timestamp, 'pdf_builder_daily_backup');
+        }
+    }
+
+    // Programmer le nettoyage automatique des anciennes sauvegardes
+    if (!wp_next_scheduled('pdf_builder_cleanup_old_backups')) {
+        wp_schedule_event(strtotime('tomorrow 03:00:00'), 'daily', 'pdf_builder_cleanup_old_backups');
+    }
+}
+
+/**
+ * Exécuter la sauvegarde automatique quotidienne
+ */
+function pdf_builder_execute_daily_backup() {
+    try {
+        // Créer le dossier de sauvegarde s'il n'existe pas
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+        if (!file_exists($backup_dir)) {
+            if (!wp_mkdir_p($backup_dir)) {
+                error_log('[PDF Builder] Impossible de créer le dossier de sauvegarde automatique');
+                return;
+            }
+        }
+
+        // Récupérer toutes les options du plugin
+        global $wpdb;
+        $options = $wpdb->get_results(
+            $wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s", 'pdf_builder_%'),
+            ARRAY_A
+        );
+
+        // Créer le nom du fichier de sauvegarde avec timezone
+        $timestamp = current_time('timestamp');
+        $filename = 'pdf_builder_auto_backup_' . wp_date('Y-m-d_H-i-s', $timestamp) . '.json';
+        $filepath = $backup_dir . '/' . $filename;
+
+        // Préparer les données de sauvegarde
+        $backup_data = array(
+            'version' => '1.0',
+            'timestamp' => $timestamp,
+            'date' => wp_date('Y-m-d H:i:s', $timestamp),
+            'timezone' => wp_timezone_string(),
+            'type' => 'automatic',
+            'options' => array()
+        );
+
+        foreach ($options as $option) {
+            $backup_data['options'][$option['option_name']] = maybe_unserialize($option['option_value']);
+        }
+
+        // Écrire le fichier de sauvegarde
+        if (file_put_contents($filepath, json_encode($backup_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
+            error_log('[PDF Builder] Sauvegarde automatique créée: ' . $filename);
+        } else {
+            error_log('[PDF Builder] Erreur lors de l\'écriture de la sauvegarde automatique');
+        }
+
+    } catch (Exception $e) {
+        error_log('[PDF Builder] Erreur sauvegarde automatique: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Nettoyer les anciennes sauvegardes automatiquement
+ */
+function pdf_builder_cleanup_old_backups() {
+    try {
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+        $retention_days = intval(get_option('pdf_builder_backup_retention', 30));
+
+        if (!file_exists($backup_dir) || !is_dir($backup_dir)) {
+            return;
+        }
+
+        $files = glob($backup_dir . '/pdf_builder_backup_*.json');
+        $now = current_time('timestamp');
+        $deleted_count = 0;
+
+        foreach ($files as $file) {
+            $file_timestamp = filemtime($file);
+            $age_days = ($now - $file_timestamp) / (60 * 60 * 24);
+
+            if ($age_days > $retention_days) {
+                if (unlink($file)) {
+                    $deleted_count++;
+                }
+            }
+        }
+
+        if ($deleted_count > 0) {
+            error_log('[PDF Builder] Nettoyage automatique: ' . $deleted_count . ' sauvegardes supprimées');
+        }
+
+    } catch (Exception $e) {
+        error_log('[PDF Builder] Erreur nettoyage automatique: ' . $e->getMessage());
     }
 }
 
