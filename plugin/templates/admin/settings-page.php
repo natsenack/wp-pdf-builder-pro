@@ -1305,12 +1305,12 @@
                 ?>
 
                     <!-- Statut de la licence -->
-                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 30px; margin-bottom: 30px; -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <section style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 30px; margin-bottom: 30px; -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                         <h3 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">📊 Statut de la Licence</h3>
 
                         <div style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
                             <!-- Carte Statut Principal -->
-                            <div style="border: 3px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?> 0%, <?php echo $is_premium ? '#e8f5e9' : '#ffffff'; ?> 100%); -webkit-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -moz-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -ms-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -o-box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
+                            <article style="border: 3px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?> 0%, <?php echo $is_premium ? '#e8f5e9' : '#ffffff'; ?> 100%); -webkit-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -moz-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -ms-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -o-box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
                                 <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Statut</div>
                                 <div style="font-size: 26px; font-weight: 900; color: <?php echo $is_premium ? '#155724' : '#495057'; ?>; margin-bottom: 8px;">
                                     <?php echo $is_premium ? '✅ Premium Actif' : '○ Gratuit'; ?>
@@ -1318,12 +1318,12 @@
                                 <div style="font-size: 12px; color: <?php echo $is_premium ? '#155724' : '#6c757d'; ?>; font-style: italic;">
                                     <?php echo $is_premium ? 'Licence premium activée' : 'Aucune licence premium'; ?>
                                 </div>
-                            </div>
+                            </article>
 
                             <!-- Carte Mode Test (si applicable) -->
                             <?php if (!empty($test_key)) :
                                 ?>
-                            <div style="border: 3px solid #ffc107; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); -webkit-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -moz-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -ms-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -o-box-shadow: 0 4px 6px rgba(255,193,7,0.2); box-shadow: 0 4px 6px rgba(255,193,7,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
+                            <article style="border: 3px solid #ffc107; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); -webkit-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -moz-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -ms-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -o-box-shadow: 0 4px 6px rgba(255,193,7,0.2); box-shadow: 0 4px 6px rgba(255,193,7,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
                                 <div style="font-size: 13px; color: #856404; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Mode</div>
                                 <div style="font-size: 26px; font-weight: 900; color: #856404; margin-bottom: 8px;">
                                     🧪 TEST (Dev)
@@ -1331,14 +1331,14 @@
                                 <div style="font-size: 12px; color: #856404; font-style: italic;">
                                     Mode développement actif
                                 </div>
-                            </div>
+                            </article>
                                 <?php
                             endif; ?>
 
                             <!-- Carte Date d'expiration -->
                             <?php if ($is_premium && $license_expires) :
                                 ?>
-                            <div style="border: 3px solid #17a2b8; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); -webkit-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -moz-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -ms-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -o-box-shadow: 0 4px 6px rgba(23,162,184,0.2); box-shadow: 0 4px 6px rgba(23,162,184,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
+                            <article style="border: 3px solid #17a2b8; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); -webkit-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -moz-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -ms-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -o-box-shadow: 0 4px 6px rgba(23,162,184,0.2); box-shadow: 0 4px 6px rgba(23,162,184,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
                                 <div style="font-size: 13px; color: #0c5460; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Expire le</div>
                                 <div style="font-size: 26px; font-weight: 900; color: #0c5460; margin-bottom: 8px;">
                                     <?php echo date('d/m/Y', strtotime($license_expires)); ?>
@@ -1355,7 +1355,7 @@
                                     }
                                     ?>
                                 </div>
-                            </div>
+                            </article>
                                 <?php
                             endif; ?>
                         </div>
@@ -1536,13 +1536,13 @@
                         </div>
                             <?php
                         endif; ?>
-                </div>
+                </section>
 
                     <!-- Activation/Désactivation - Mode DEMO ou Gestion TEST -->
                     <?php if (!$is_premium) :
                         ?>
                     <!-- Mode DÉMO : Pas de licence -->
-                    <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
+                    <section style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                             <div style="font-size: 50px;">🧪</div>
                             <div>
@@ -1564,12 +1564,12 @@
                         <div style="background: rgba(220, 53, 69, 0.1); border-left: 4px solid #dc3545; border-radius: 6px; padding: 15px; color: #721c24; font-size: 13px;">
                             <strong>⚠️ Note importante :</strong> Les clés premium réelles seront validées une fois le système de licence en production.
                         </div>
-                    </div>
+                    </section>
                         <?php
                     elseif ($is_test_mode) :
                         ?>
                     <!-- Mode TEST : Gestion de la clé de test -->
-                    <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
+                    <section style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                             <div style="font-size: 50px;">🧪</div>
                             <div>
@@ -1581,12 +1581,12 @@
                         <div style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 15px; margin-bottom: 20px; color: #856404; font-size: 13px;">
                             <strong>ℹ️ Mode Test Actif :</strong> Vous pouvez désactiver cette clé à tout moment depuis la section "Détails de la Clé" ci-dessus, ou générer une nouvelle clé de test depuis l'onglet Développeur.
                         </div>
-                    </div>
+                    </section>
                         <?php
                     else :
                         ?>
                     <!-- Mode PREMIUM : Gestion de la licence premium -->
-                    <div style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(40,167,69,0.2);">
+                    <section style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(40,167,69,0.2);">
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                             <div style="font-size: 50px;">🔐</div>
                             <div>
@@ -1620,7 +1620,7 @@
                             <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Conseil :</strong>
                             <p style="margin: 12px 0 0 0; line-height: 1.6; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">La desactivation permet de reutiliser votre cle sur un autre site, mais ne supprime pas votre acces ici jusqu'a l'expiration de la licence.</p>
                         </div>
-                    </div>
+                    </section>
 
                         <?php
                     endif; ?>
@@ -1734,7 +1734,7 @@
                 </script>
 
                     <!-- Informations utiles -->
-                    <div style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); border: none; border-radius: 12px; padding: 30px; margin-bottom: 30px; color: #fff; box-shadow: 0 4px 12px rgba(23,162,184,0.3);">
+                    <aside style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); border: none; border-radius: 12px; padding: 30px; margin-bottom: 30px; color: #fff; box-shadow: 0 4px 12px rgba(23,162,184,0.3);">
                         <h4 style="margin: 0 0 20px 0; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">Informations Utiles</h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
                             <!-- Site actuel -->
@@ -1771,10 +1771,10 @@
                                 <?php
                             endif; ?>
                         </div>
-                    </div>
+                    </aside>
 
                     <!-- Comparaison des fonctionnalités -->
-                    <div style="margin-top: 40px;">
+                    <section style="margin-top: 40px;">
                         <h3 style="color: #007cba; font-size: 22px; border-bottom: 3px solid #007cba; padding-bottom: 12px; margin-bottom: 25px;">Comparaison des Fonctionnalités</h3>
                         <table class="wp-list-table widefat fixed striped" style="margin-top: 15px; border-collapse: collapse; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                             <thead style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white;">
@@ -1921,10 +1921,10 @@
                                 <li><strong>Économique :</strong> 79€ à vie vs coûts récurrents d'autres solutions</li>
                             </ul>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- Section Notifications par Email -->
-                    <div style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: none; border-radius: 12px; padding: 30px; margin-top: 30px; color: #343a40; box-shadow: 0 4px 12px rgba(0,102,204,0.15);">
+                    <section style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: none; border-radius: 12px; padding: 30px; margin-top: 30px; color: #343a40; box-shadow: 0 4px 12px rgba(0,102,204,0.15);">
                         <h3 style="margin-top: 0; color: #003d7a; font-size: 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
                             📧 Notifications par Email
                         </h3>
@@ -1967,7 +1967,7 @@
                             </div>
 
                         </form>
-                    </div>
+                    </section>
             </form>
         </div>
 
