@@ -4617,6 +4617,7 @@
                         }
                     });
                 }
+            });
 
             // Gestionnaires pour les tests de notifications
             $('#test-notifications-success').on('click', function() {
