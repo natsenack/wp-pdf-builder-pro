@@ -3120,21 +3120,27 @@
             function toggleDeveloperSection() {
                 var isEnabled = $('#developer_enabled').is(':checked');
                 var $devSection = $('#developer-info-section');
+                var $tabContent = $('#roles');
 
                 console.log('[DEV MODE TOGGLE] toggleDeveloperSection called');
                 console.log('[DEV MODE TOGGLE] isEnabled:', isEnabled);
                 console.log('[DEV MODE TOGGLE] devSection exists:', $devSection.length > 0);
                 console.log('[DEV MODE TOGGLE] devSection current display:', $devSection.css('display'));
+                console.log('[DEV MODE TOGGLE] tabContent display:', $tabContent.css('display'));
+                console.log('[DEV MODE TOGGLE] tabContent visibility:', $tabContent.css('visibility'));
+                console.log('[DEV MODE TOGGLE] tabContent is visible:', $tabContent.is(':visible'));
 
                 if (isEnabled) {
                     console.log('[DEV MODE TOGGLE] Showing developer section - calling slideDown');
                     $devSection.slideDown(300, function() {
                         console.log('[DEV MODE TOGGLE] slideDown animation completed, display:', $devSection.css('display'));
+                        console.log('[DEV MODE TOGGLE] devSection is visible after animation:', $devSection.is(':visible'));
                     });
                 } else {
                     console.log('[DEV MODE TOGGLE] Hiding developer section - calling slideUp');
                     $devSection.slideUp(300, function() {
                         console.log('[DEV MODE TOGGLE] slideUp animation completed, display:', $devSection.css('display'));
+                        console.log('[DEV MODE TOGGLE] devSection is visible after animation:', $devSection.is(':visible'));
                     });
                 }
             }
@@ -3176,7 +3182,7 @@
                 </tr>
             </table>
 
-            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; <?php echo get_option('pdf_builder_developer_enabled', false) ? '' : 'display: none;'; ?>">
+            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; <?php echo get_option('pdf_builder_developer_enabled', false) ? '' : 'display: none;'; ?> border: 2px solid red !important; background: yellow !important;">
                 <h4 style="margin-top: 0; color: #495057;">🔧 Informations développeur</h4>
                 <p style="margin-bottom: 15px; color: #666;">Informations système et de débogage disponibles uniquement en mode développeur.</p>
 
