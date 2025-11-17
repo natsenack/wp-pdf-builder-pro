@@ -203,6 +203,38 @@ function pdf_builder_register_ajax_handlers() {
 }
 
 /**
+ * Debug: Vérifier les actions AJAX enregistrées
+ */
+function pdf_builder_debug_ajax_actions() {
+    if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('manage_options')) {
+        global $wp_filter;
+        
+        $ajax_actions = [
+            'wp_ajax_pdf_builder_get_consent_status',
+            'wp_ajax_pdf_builder_export_user_data', 
+            'wp_ajax_pdf_builder_delete_user_data'
+        ];
+        
+        error_log('=== PDF BUILDER AJAX DEBUG ===');
+        foreach ($ajax_actions as $action) {
+            if (isset($wp_filter[$action])) {
+                error_log("Action $action: " . count($wp_filter[$action]) . " handlers");
+                foreach ($wp_filter[$action] as $priority => $handlers) {
+                    foreach ($handlers as $handler) {
+                        $function = is_array($handler['function']) ? get_class($handler['function'][0]) . '::' . $handler['function'][1] : $handler['function'];
+                        error_log("  Priority $priority: $function");
+                    }
+                }
+            } else {
+                error_log("Action $action: NOT REGISTERED");
+            }
+        }
+        error_log('=== END AJAX DEBUG ===');
+    }
+}
+add_action('wp_loaded', 'pdf_builder_debug_ajax_actions');
+
+/**
  * Handler pour admin_post AJAX (fallback)
  */
 function pdf_builder_handle_admin_post_ajax() {
