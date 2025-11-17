@@ -938,9 +938,6 @@
                 </script>
             </div>
 
-                </script>
-            </div>
-
             <!-- Section Informations Entreprise -->
             <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
                 <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">🏢 Informations Entreprise</h3>
