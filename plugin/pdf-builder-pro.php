@@ -256,9 +256,13 @@ function pdf_builder_debug_ajax_actions() {
         }
         
         foreach ($ajax_actions as $action) {
-            if (isset($wp_filter[$action])) {
-                error_log("Action $action: " . count($wp_filter[$action]) . " handlers");
-                foreach ($wp_filter[$action] as $priority => $handlers) {
+            if (isset($wp_filter[$action]) && isset($wp_filter[$action]->callbacks)) {
+                $total_handlers = 0;
+                foreach ($wp_filter[$action]->callbacks as $priority => $handlers) {
+                    $total_handlers += count($handlers);
+                }
+                error_log("Action $action: $total_handlers handlers");
+                foreach ($wp_filter[$action]->callbacks as $priority => $handlers) {
                     foreach ($handlers as $handler) {
                         $function = is_array($handler['function']) ? get_class($handler['function'][0]) . '::' . $handler['function'][1] : $handler['function'];
                         error_log("  Priority $priority: $function");
