@@ -2863,7 +2863,7 @@
                 </tr>
              </table>
 
-            <div id="dev-license-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-license-section">
             <h3 class="section-title">🔐 Test de Licence</h3>
 
             <table class="form-table">
