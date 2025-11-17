@@ -9,12 +9,6 @@
         exit('Direct access forbidden');
     }
 
-    // Localize AJAX URL for JavaScript
-    wp_localize_script('jquery', 'pdf_builder_ajax', array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('pdf_builder_save_settings')
-    ));
-
     // Function to send AJAX response
     function send_ajax_response($success, $message = '', $data = [])
     {
