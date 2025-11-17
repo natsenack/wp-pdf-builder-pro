@@ -642,7 +642,9 @@ class PDF_Builder_GDPR_Manager {
      * AJAX - Obtenir le statut des consentements
      */
     public function ajax_get_consent_status() {
+        error_log('GDPR: ajax_get_consent_status called');
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
+        error_log('GDPR: nonce verified');
 
         $user_id = get_current_user_id();
         $consents = [];
@@ -655,6 +657,7 @@ class PDF_Builder_GDPR_Manager {
             ];
         }
 
+        error_log('GDPR: sending response');
         wp_die(json_encode(['success' => true, 'data' => ['consents' => $consents]]), '', ['response' => 200]);
     }
 
