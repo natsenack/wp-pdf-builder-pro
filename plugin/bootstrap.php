@@ -511,15 +511,24 @@ function pdf_builder_load_bootstrap()
     }
 
     // INITIALISER LE GESTIONNAIRE RGPD
+    error_log('Checking for PDF_Builder_GDPR_Manager class...');
     if (class_exists('PDF_Builder_GDPR_Manager')) {
+        error_log('PDF_Builder_GDPR_Manager class exists');
         try {
-            PDF_Builder_GDPR_Manager::get_instance();
+            $instance = PDF_Builder_GDPR_Manager::get_instance();
             error_log('PDF_Builder_GDPR_Manager initialized successfully');
         } catch (Exception $e) {
             error_log('Error initializing PDF_Builder_GDPR_Manager: ' . $e->getMessage());
+            error_log('Stack trace: ' . $e->getTraceAsString());
         }
     } else {
         error_log('PDF_Builder_GDPR_Manager class not found');
+        // Lister toutes les classes déclarées
+        $declared_classes = get_declared_classes();
+        $gdpr_classes = array_filter($declared_classes, function($class) {
+            return strpos($class, 'GDPR') !== false;
+        });
+        error_log('GDPR-related classes found: ' . implode(', ', $gdpr_classes));
     }
 
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
