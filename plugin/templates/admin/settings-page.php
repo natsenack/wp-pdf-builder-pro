@@ -1021,8 +1021,8 @@
                                 <td>
                                     <input type="text" id="company_vat" name="company_vat"
                                         value="<?php echo esc_attr($company_vat); ?>"
-                                        placeholder="FR 12 345 678 901" />
-                                    <p class="description">Numéro de TVA intracommunautaire</p>
+                                        placeholder="FR12345678901, DE123456789, BE0123456789" />
+                                    <p class="description">Numéro de TVA intracommunautaire (format européen : 2 lettres pays + 8-12 caractères)</p>
                                 </td>
                             </tr>
                             <tr>
@@ -1081,13 +1081,15 @@
                             }
                         }
 
-                        // Validation du numéro TVA (format FR + 11 chiffres)
+                        // Validation du numéro TVA (format européen flexible)
                         var vat = $('#company_vat').val().trim();
                         if (vat !== '') {
-                            var vatPattern = /^FR\s?\d{11}$/i;
-                            if (!vatPattern.test(vat)) {
+                            // Regex pour les formats TVA européens courants
+                            // Format général: 2 lettres pays + chiffres/lettres (8-12 caractères)
+                            var vatPattern = /^[A-Z]{2}[A-Z0-9]{8,12}$/i;
+                            if (!vatPattern.test(vat.replace(/\s/g, ''))) {
                                 isValid = false;
-                                errors.push('Le numéro TVA doit être au format FR suivi de 11 chiffres.');
+                                errors.push('Le numéro TVA doit être au format européen valide (ex: FR12345678901, DE123456789, BE0123456789).');
                                 $('#company_vat').addClass('error');
                             } else {
                                 $('#company_vat').removeClass('error');
@@ -1127,8 +1129,9 @@
                     // Validation en temps réel pour la TVA
                     $('#company_vat').on('input', function() {
                         var vat = $(this).val().trim();
-                        var vatPattern = /^FR\s?\d{11}$/i;
-                        if (vat !== '' && !vatPattern.test(vat)) {
+                        // Regex pour les formats TVA européens courants
+                        var vatPattern = /^[A-Z]{2}[A-Z0-9]{8,12}$/i;
+                        if (vat !== '' && !vatPattern.test(vat.replace(/\s/g, ''))) {
                             $(this).addClass('error');
                         } else {
                             $(this).removeClass('error');
