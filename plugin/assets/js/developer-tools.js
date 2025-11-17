@@ -316,16 +316,20 @@
             window.location.href.indexOf('pdf-builder-developer') !== -1 ||
             window.location.href.indexOf('developer') !== -1 ||
             window.location.href.indexOf('pdf-builder-settings') !== -1) {
-            // Use requestIdleCallback for better performance, fallback to setTimeout
-            if (typeof requestIdleCallback !== 'undefined') {
-                requestIdleCallback(() => {
-                    new PDFBuilderDeveloper();
-                });
-            } else {
-                setTimeout(() => {
-                    new PDFBuilderDeveloper();
-                }, 100);
-            }
+            // Use window load event for even better performance (fires after all assets loaded)
+            $(window).on('load', () => {
+                // Use requestIdleCallback for better performance, fallback to setTimeout with longer delay
+                if (typeof requestIdleCallback !== 'undefined') {
+                    requestIdleCallback(() => {
+                        new PDFBuilderDeveloper();
+                    }, { timeout: 5000 }); // Timeout after 5 seconds if no idle time
+                } else {
+                    // Use longer delay to avoid blocking during page load
+                    setTimeout(() => {
+                        new PDFBuilderDeveloper();
+                    }, 500);
+                }
+            });
         }
     });
 
