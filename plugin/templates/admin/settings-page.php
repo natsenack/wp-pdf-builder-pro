@@ -943,7 +943,7 @@
                 <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">🏢 Informations Entreprise</h3>
 
                 <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
+                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
                     <input type="hidden" name="current_tab" value="general">
 
                     <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -1018,6 +1018,116 @@
                         </table>
                     </div>
                 </form>
+
+                <script>
+                jQuery(document).ready(function($) {
+                    // Fonction de validation des champs entreprise
+                    function validateCompanyFields() {
+                        var isValid = true;
+                        var errors = [];
+
+                        // Validation du téléphone (maximum 10 chiffres)
+                        var phone = $('#company_phone_manual').val().trim();
+                        if (phone !== '') {
+                            // Supprimer tous les caractères non numériques
+                            var phoneNumbers = phone.replace(/\D/g, '');
+                            if (phoneNumbers.length > 10) {
+                                isValid = false;
+                                errors.push('Le numéro de téléphone ne peut pas dépasser 10 chiffres.');
+                                $('#company_phone_manual').addClass('error');
+                            } else {
+                                $('#company_phone_manual').removeClass('error');
+                            }
+                        }
+
+                        // Validation du SIRET (14 chiffres)
+                        var siret = $('#company_siret').val().trim();
+                        if (siret !== '') {
+                            var siretNumbers = siret.replace(/\D/g, '');
+                            if (siretNumbers.length !== 14) {
+                                isValid = false;
+                                errors.push('Le numéro SIRET doit contenir exactement 14 chiffres.');
+                                $('#company_siret').addClass('error');
+                            } else {
+                                $('#company_siret').removeClass('error');
+                            }
+                        }
+
+                        // Validation du numéro TVA (format FR + 11 chiffres)
+                        var vat = $('#company_vat').val().trim();
+                        if (vat !== '') {
+                            var vatPattern = /^FR\s?\d{11}$/i;
+                            if (!vatPattern.test(vat)) {
+                                isValid = false;
+                                errors.push('Le numéro TVA doit être au format FR suivi de 11 chiffres.');
+                                $('#company_vat').addClass('error');
+                            } else {
+                                $('#company_vat').removeClass('error');
+                            }
+                        }
+
+                        // Afficher les erreurs si il y en a
+                        if (!isValid) {
+                            alert('Erreurs de validation :\n\n' + errors.join('\n'));
+                        }
+
+                        return isValid;
+                    }
+
+                    // Validation en temps réel pour le téléphone
+                    $('#company_phone_manual').on('input', function() {
+                        var phone = $(this).val().trim();
+                        var phoneNumbers = phone.replace(/\D/g, '');
+                        if (phoneNumbers.length > 10) {
+                            $(this).addClass('error');
+                        } else {
+                            $(this).removeClass('error');
+                        }
+                    });
+
+                    // Validation en temps réel pour le SIRET
+                    $('#company_siret').on('input', function() {
+                        var siret = $(this).val().trim();
+                        var siretNumbers = siret.replace(/\D/g, '');
+                        if (siretNumbers.length !== 14 && siretNumbers.length > 0) {
+                            $(this).addClass('error');
+                        } else {
+                            $(this).removeClass('error');
+                        }
+                    });
+
+                    // Validation en temps réel pour la TVA
+                    $('#company_vat').on('input', function() {
+                        var vat = $(this).val().trim();
+                        var vatPattern = /^FR\s?\d{11}$/i;
+                        if (vat !== '' && !vatPattern.test(vat)) {
+                            $(this).addClass('error');
+                        } else {
+                            $(this).removeClass('error');
+                        }
+                    });
+
+                    // Validation avant soumission du formulaire
+                    $('form[action*="admin.php?page=pdf-builder-settings"]').on('submit', function(e) {
+                        if (!validateCompanyFields()) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+                });
+                </script>
+
+                <style>
+                .form-table input.error {
+                    border-color: #dc3545 !important;
+                    box-shadow: 0 0 0 1px #dc3545 !important;
+                    background-color: #fff5f5 !important;
+                }
+                .form-table input.error:focus {
+                    border-color: #dc3545 !important;
+                    box-shadow: 0 0 0 1px #dc3545, 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+                }
+                </style>
             </div>
 
             <!-- Section Paramètres PDF -->
