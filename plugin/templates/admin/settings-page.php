@@ -2858,6 +2858,7 @@
                 // Ajouter l'onglet actuel
                 formData.append('current_tab', currentTab);
                 formData.append('action', 'pdf_builder_save_settings');
+                formData.append('nonce', pdf_builder_ajax.nonce);
 
                 // Envoyer via AJAX
                 $.ajax({
