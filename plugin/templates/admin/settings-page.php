@@ -182,6 +182,64 @@
             }
         }
 
+        // Create backup
+        elseif ($action === 'pdf_builder_create_backup') {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+                // Create backup logic
+                $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+                if (!file_exists($backup_dir)) {
+                    wp_mkdir_p($backup_dir);
+                }
+
+                $timestamp = date('Y-m-d_H-i-s');
+                $backup_file = $backup_dir . '/pdf-builder-backup-' . $timestamp . '.zip';
+
+                // Simple backup creation (you may want to implement more comprehensive backup)
+                $zip = new ZipArchive();
+                if ($zip->open($backup_file, ZipArchive::CREATE) === TRUE) {
+                    // Add plugin files
+                    $plugin_dir = plugin_dir_path(__FILE__) . '../';
+                    $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($plugin_dir));
+                    foreach ($files as $file) {
+                        if (!$file->isDir()) {
+                            $filePath = $file->getRealPath();
+                            $relativePath = substr($filePath, strlen($plugin_dir));
+                            $zip->addFile($filePath, $relativePath);
+                        }
+                    }
+                    $zip->close();
+                    send_ajax_response(true, 'Sauvegarde créée avec succès: ' . basename($backup_file));
+                } else {
+                    send_ajax_response(false, 'Erreur lors de la création de la sauvegarde');
+                }
+            } else {
+                send_ajax_response(false, 'Erreur de sécurité.');
+            }
+        }
+
+        // List backups
+        elseif ($action === 'pdf_builder_list_backups') {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+                $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+                $backups = [];
+
+                if (file_exists($backup_dir)) {
+                    $files = glob($backup_dir . '/pdf-builder-backup-*.zip');
+                    foreach ($files as $file) {
+                        $backups[] = [
+                            'name' => basename($file),
+                            'size' => size_format(filesize($file)),
+                            'date' => date('Y-m-d H:i:s', filemtime($file))
+                        ];
+                    }
+                }
+
+                send_ajax_response(true, 'Liste des sauvegardes récupérée', ['backups' => $backups]);
+            } else {
+                send_ajax_response(false, 'Erreur de sécurité.');
+            }
+        }
+
         // Save settings via floating button
         elseif ($action === 'pdf_builder_save_settings') {
             if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
