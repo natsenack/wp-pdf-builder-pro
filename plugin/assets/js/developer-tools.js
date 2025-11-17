@@ -316,12 +316,10 @@
             window.location.href.indexOf('pdf-builder-developer') !== -1 ||
             window.location.href.indexOf('developer') !== -1 ||
             window.location.href.indexOf('pdf-builder-settings') !== -1) {
-            // Use window load event for even better performance (fires after all assets loaded)
-            $(window).on('load', () => {
-                setTimeout(() => {
-                    new PDFBuilderDeveloper();
-                }, 500);
-            });
+            // Use a longer delay to avoid performance violations
+            setTimeout(() => {
+                new PDFBuilderDeveloper();
+            }, 2000); // Increased from 500ms to 2000ms
         }
     });
 
