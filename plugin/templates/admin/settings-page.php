@@ -4542,33 +4542,33 @@
             // Gestionnaires pour les tests de notifications
             $('#test-notifications-success').on('click', function() {
                 if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                    PDF_Builder_Notification_Manager.show_toast('✅ Test de notification de succès réussi !', 'success');
+                    PDF_Builder_Notification_Manager.show_toast('Test de notification de succès réussi !', 'success');
                 } else {
-                    alert('✅ Test de notification de succès réussi !');
+                    alert('Test de notification de succès réussi !');
                 }
             });
 
             $('#test-notifications-error').on('click', function() {
                 if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                    PDF_Builder_Notification_Manager.show_toast('❌ Test de notification d\'erreur réussi !', 'error');
+                    PDF_Builder_Notification_Manager.show_toast('Test de notification d\'erreur réussi !', 'error');
                 } else {
-                    alert('❌ Test de notification d\'erreur réussi !');
+                    alert('Test de notification d\'erreur réussi !');
                 }
             });
 
             $('#test-notifications-warning').on('click', function() {
                 if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                    PDF_Builder_Notification_Manager.show_toast('⚠️ Test de notification d\'avertissement réussi !', 'warning');
+                    PDF_Builder_Notification_Manager.show_toast('Test de notification d\'avertissement réussi !', 'warning');
                 } else {
-                    alert('⚠️ Test de notification d\'avertissement réussi !');
+                    alert('Test de notification d\'avertissement réussi !');
                 }
             });
 
             $('#test-notifications-info').on('click', function() {
                 if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                    PDF_Builder_Notification_Manager.show_toast('ℹ️ Test de notification d\'information réussi !', 'info');
+                    PDF_Builder_Notification_Manager.show_toast('Test de notification d\'information réussi !', 'info');
                 } else {
-                    alert('ℹ️ Test de notification d\'information réussi !');
+                    alert('Test de notification d\'information réussi !');
                 }
             });
         });
