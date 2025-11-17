@@ -2370,14 +2370,6 @@
                         </tr>
                     </table>
                 </div>
-
-                <!-- Bouton de sauvegarde pour l'onglet système -->
-                <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                    <button type="button" id="save-systeme-btn" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                        💾 Enregistrer les paramètres système
-                    </button>
-                    <div id="systeme-save-status" style="margin-top: 10px;"></div>
-                </div>
             </form>
         </div>
         <div id="acces" class="tab-content hidden-tab">
@@ -5042,66 +5034,6 @@
                 }
             });
 
-            // Gestionnaire pour le bouton de sauvegarde spécifique à l'onglet système
-            $('#save-systeme-btn').on('click', function() {
-                const $btn = $(this);
-                const $status = $('#systeme-save-status');
-
-                $btn.prop('disabled', true).html('⏳ Sauvegarde en cours...');
-                $status.html('<span style="color: #007cba;">⏳ Sauvegarde en cours...</span>');
-
-                console.log('[PDF Builder JS] === SAUVEGARDE VIA BOUTON SYSTÈME ===');
-
-                const $systemeForm = $('#systeme-settings-form');
-                const formData = new FormData($systemeForm[0]);
-
-                // S'assurer que les cases à cocher non cochées sont incluses
-                $systemeForm.find('input[type="checkbox"]').each(function() {
-                    const $checkbox = $(this);
-                    const name = $checkbox.attr('name');
-                    if (name && !$checkbox.is(':checked')) {
-                        formData.append(name, '0');
-                        console.log('[PDF Builder JS] Checkbox non cochée:', name, '= 0');
-                    }
-                });
-
-                // Ajouter action et nonce
-                formData.append('action', 'pdf_builder_save_settings');
-                formData.append('nonce', pdf_builder_ajax.nonce);
-
-                console.log('[PDF Builder JS] Données à envoyer:');
-                for (let [key, value] of formData.entries()) {
-                    console.log('  ', key, '=', value);
-                }
-
-                // Envoyer via AJAX
-                $.ajax({
-                    url: pdf_builder_ajax.ajax_url,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        if (response.success) {
-                            console.log('[PDF Builder JS] Sauvegarde système réussie');
-                            $status.html('<span style="color: #28a745;">✅ Paramètres sauvegardés avec succès !</span>');
-                            $btn.prop('disabled', false).html('💾 Enregistrer les paramètres système');
-                        } else {
-                            console.log('[PDF Builder JS] Erreur sauvegarde système:', response.data);
-                            $status.html('<span style="color: #dc3545;">❌ Erreur lors de la sauvegarde</span>');
-                            $btn.prop('disabled', false).html('❌ Erreur - Réessayer');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log('[PDF Builder JS] Erreur AJAX système:', status, error);
-                        $status.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
-                        $btn.prop('disabled', false).html('❌ Erreur - Réessayer');
-                    },
-                    complete: function() {
-                        // Le bouton est déjà réactivé dans success/error, pas besoin de timeout
-                    }
-                });
-            });
         });
     </script>
 
