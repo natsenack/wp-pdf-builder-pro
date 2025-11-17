@@ -1776,13 +1776,25 @@
 
             <!-- Section RGPD -->
             <div style="background: linear-gradient(135deg, #d4edda 0%, #e8f5e8 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">📋 Gestion RGPD</h3>
+                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">📋 Gestion RGPD & Conformité</h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_rgpd', 'pdf_builder_rgpd_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="rgpd">
+                    <input type="hidden" name="current_tab" value="securite">
 
+                    <!-- Section Paramètres RGPD -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">⚙️ Paramètres RGPD</h4>
                     <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="gdpr_enabled">RGPD Activé</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="gdpr_enabled" name="gdpr_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr_enabled', true)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Activer la conformité RGPD pour le plugin</p>
+                            </td>
+                        </tr>
                         <tr>
                             <th scope="row"><label for="gdpr_consent_required">Consentement RGPD requis</label></th>
                             <td>
@@ -1796,21 +1808,105 @@
                         <tr>
                             <th scope="row"><label for="gdpr_data_retention">Rétention des données (jours)</label></th>
                             <td>
-                                <input type="number" id="gdpr_data_retention" name="gdpr_data_retention" value="<?php echo esc_attr(get_option('pdf_builder_gdpr_data_retention', 365)); ?>" min="30" max="3650">
-                                <p class="description">Nombre de jours avant suppression automatique des données utilisateur</p>
+                                <input type="number" id="gdpr_data_retention" name="gdpr_data_retention" value="<?php echo esc_attr(get_option('pdf_builder_gdpr_data_retention', 2555)); ?>" min="30" max="3650">
+                                <p class="description">Nombre de jours avant suppression automatique des données utilisateur (RGPD: 7 ans recommandé)</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="gdpr_export_enabled">Export des données utilisateur</label></th>
+                            <th scope="row"><label for="gdpr_audit_enabled">Audit Logging</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="gdpr_export_enabled" name="gdpr_export_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr_export_enabled', true)); ?>>
+                                    <input type="checkbox" id="gdpr_audit_enabled" name="gdpr_audit_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr_audit_enabled', true)); ?>>
                                     <span class="slider round"></span>
                                 </label>
-                                <p class="description">Permettre aux utilisateurs d'exporter leurs données</p>
+                                <p class="description">Activer la journalisation des actions pour audit RGPD</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gdpr_encryption_enabled">Chiffrement des données</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="gdpr_encryption_enabled" name="gdpr_encryption_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr_encryption_enabled', true)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Chiffrer les données sensibles des utilisateurs</p>
                             </td>
                         </tr>
                     </table>
+
+                    <!-- Section Types de Consentement -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">🤝 Types de Consentement</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="gdpr_consent_analytics">Consentement Analytics</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="gdpr_consent_analytics" name="gdpr_consent_analytics" value="1" <?php checked(get_option('pdf_builder_gdpr_consent_analytics', true)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Collecte de données d'utilisation anonymes pour améliorer le service</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gdpr_consent_templates">Consentement Templates</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="gdpr_consent_templates" name="gdpr_consent_templates" value="1" <?php checked(get_option('pdf_builder_gdpr_consent_templates', true)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Sauvegarde des templates personnalisés sur le serveur</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gdpr_consent_marketing">Consentement Marketing</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="gdpr_consent_marketing" name="gdpr_consent_marketing" value="1" <?php checked(get_option('pdf_builder_gdpr_consent_marketing', false)); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Réception d'informations sur les nouvelles fonctionnalités et mises à jour</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Section Actions Utilisateur -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">👤 Actions RGPD Utilisateur</h4>
+                    <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                        <p style="margin-top: 0; color: #495057;"><strong>Droits RGPD :</strong> En tant qu'administrateur, vous pouvez gérer vos propres données personnelles.</p>
+
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
+                            <button type="button" id="export-my-data" class="button button-secondary" style="display: flex; align-items: center; gap: 8px;">
+                                📥 Exporter mes données
+                            </button>
+                            <button type="button" id="delete-my-data" class="button button-danger" style="display: flex; align-items: center; gap: 8px; background: #dc3545; color: white; border-color: #dc3545;">
+                                🗑️ Supprimer mes données
+                            </button>
+                            <button type="button" id="view-consent-status" class="button button-info" style="display: flex; align-items: center; gap: 8px; background: #17a2b8; color: white; border-color: #17a2b8;">
+                                👁️ Voir mes consentements
+                            </button>
+                        </div>
+
+                        <div id="gdpr-user-actions-result" style="margin-top: 15px; display: none;"></div>
+                    </div>
+
+                    <!-- Section Logs d'Audit -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">📊 Logs d'Audit RGPD</h4>
+                    <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                        <p style="margin-top: 0; color: #495057;">Consultez et exportez les logs d'audit RGPD pour vérifier la conformité.</p>
+
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
+                            <button type="button" id="refresh-audit-log" class="button button-secondary" style="display: flex; align-items: center; gap: 8px;">
+                                🔄 Actualiser les logs
+                            </button>
+                            <button type="button" id="export-audit-log" class="button button-primary" style="display: flex; align-items: center; gap: 8px;">
+                                📤 Exporter les logs
+                            </button>
+                        </div>
+
+                        <div id="audit-log-container" style="margin-top: 20px; max-height: 300px; overflow-y: auto; background: white; border: 1px solid #dee2e6; border-radius: 4px; padding: 10px; display: none;">
+                            <div id="audit-log-content"></div>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -2345,6 +2441,234 @@
                     feedbackDiv.classList.remove('show');
                 }, 3000);
             }
+        });
+    </script>
+
+    <!-- Script pour les actions RGPD -->
+    <script>
+        jQuery(document).ready(function($) {
+            // Actions RGPD - Export des données utilisateur
+            $('#export-my-data').on('click', function() {
+                const $btn = $(this);
+                const originalText = $btn.html();
+
+                $btn.html('⏳ Export en cours...').prop('disabled', true);
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_export_user_data',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#gdpr-user-actions-result')
+                                .removeClass('notice-error')
+                                .addClass('notice notice-success')
+                                .html('<p>✅ ' + response.data.message + '</p>')
+                                .show();
+
+                            // Télécharger automatiquement le fichier
+                            if (response.data.download_url) {
+                                window.open(response.data.download_url, '_blank');
+                            }
+                        } else {
+                            $('#gdpr-user-actions-result')
+                                .removeClass('notice-success')
+                                .addClass('notice notice-error')
+                                .html('<p>❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</p>')
+                                .show();
+                        }
+                    },
+                    error: function() {
+                        $('#gdpr-user-actions-result')
+                            .removeClass('notice-success')
+                            .addClass('notice notice-error')
+                            .html('<p>❌ Erreur de connexion</p>')
+                            .show();
+                    },
+                    complete: function() {
+                        $btn.html(originalText).prop('disabled', false);
+                    }
+                });
+            });
+
+            // Actions RGPD - Suppression des données utilisateur
+            $('#delete-my-data').on('click', function() {
+                if (!confirm('Êtes-vous sûr de vouloir supprimer toutes vos données ? Cette action est irréversible.')) {
+                    return;
+                }
+
+                const $btn = $(this);
+                const originalText = $btn.html();
+
+                $btn.html('⏳ Suppression...').prop('disabled', true);
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_delete_user_data',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#gdpr-user-actions-result')
+                                .removeClass('notice-error')
+                                .addClass('notice notice-success')
+                                .html('<p>✅ ' + response.data.message + '</p>')
+                                .show();
+                        } else {
+                            $('#gdpr-user-actions-result')
+                                .removeClass('notice-success')
+                                .addClass('notice notice-error')
+                                .html('<p>❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</p>')
+                                .show();
+                        }
+                    },
+                    error: function() {
+                        $('#gdpr-user-actions-result')
+                            .removeClass('notice-success')
+                            .addClass('notice notice-error')
+                            .html('<p>❌ Erreur de connexion</p>')
+                            .show();
+                    },
+                    complete: function() {
+                        $btn.html(originalText).prop('disabled', false);
+                    }
+                });
+            });
+
+            // Actions RGPD - Voir le statut des consentements
+            $('#view-consent-status').on('click', function() {
+                const $btn = $(this);
+                const originalText = $btn.html();
+
+                $btn.html('⏳ Chargement...').prop('disabled', true);
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_get_consent_status',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            let html = '<h4>Vos consentements actuels:</h4><ul>';
+                            if (response.data.consents) {
+                                Object.keys(response.data.consents).forEach(function(type) {
+                                    const consent = response.data.consents[type];
+                                    const status = consent && consent.granted ? '✅ Accordé' : '❌ Non accordé';
+                                    html += '<li><strong>' + type + ':</strong> ' + status + '</li>';
+                                });
+                            }
+                            html += '</ul>';
+
+                            $('#gdpr-user-actions-result')
+                                .removeClass('notice-error')
+                                .addClass('notice notice-info')
+                                .html(html)
+                                .show();
+                        } else {
+                            $('#gdpr-user-actions-result')
+                                .removeClass('notice-success')
+                                .addClass('notice notice-error')
+                                .html('<p>❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</p>')
+                                .show();
+                        }
+                    },
+                    error: function() {
+                        $('#gdpr-user-actions-result')
+                            .removeClass('notice-success')
+                            .addClass('notice notice-error')
+                            .html('<p>❌ Erreur de connexion</p>')
+                            .show();
+                    },
+                    complete: function() {
+                        $btn.html(originalText).prop('disabled', false);
+                    }
+                });
+            });
+
+            // Actions RGPD - Actualiser les logs d'audit
+            $('#refresh-audit-log').on('click', function() {
+                const $btn = $(this);
+                const originalText = $btn.html();
+
+                $btn.html('⏳ Actualisation...').prop('disabled', true);
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_refresh_audit_log',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#audit-log-content').html(response.data.html || '<p>Aucun log d\'audit trouvé.</p>');
+                            $('#audit-log-container').show();
+                        } else {
+                            $('#audit-log-content').html('<p class="notice notice-error">Erreur: ' + (response.data || 'Erreur inconnue') + '</p>');
+                            $('#audit-log-container').show();
+                        }
+                    },
+                    error: function() {
+                        $('#audit-log-content').html('<p class="notice notice-error">Erreur de connexion</p>');
+                        $('#audit-log-container').show();
+                    },
+                    complete: function() {
+                        $btn.html(originalText).prop('disabled', false);
+                    }
+                });
+            });
+
+            // Actions RGPD - Exporter les logs d'audit
+            $('#export-audit-log').on('click', function() {
+                const $btn = $(this);
+                const originalText = $btn.html();
+
+                $btn.html('⏳ Export...').prop('disabled', true);
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_export_audit_log',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            if (response.data.download_url) {
+                                window.open(response.data.download_url, '_blank');
+                            }
+                            $('#gdpr-user-actions-result')
+                                .removeClass('notice-error')
+                                .addClass('notice notice-success')
+                                .html('<p>✅ Logs d\'audit exportés avec succès</p>')
+                                .show();
+                        } else {
+                            $('#gdpr-user-actions-result')
+                                .removeClass('notice-success')
+                                .addClass('notice notice-error')
+                                .html('<p>❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</p>')
+                                .show();
+                        }
+                    },
+                    error: function() {
+                        $('#gdpr-user-actions-result')
+                            .removeClass('notice-success')
+                            .addClass('notice notice-error')
+                            .html('<p>❌ Erreur de connexion</p>')
+                            .show();
+                    },
+                    complete: function() {
+                        $btn.html(originalText).prop('disabled', false);
+                    }
+                });
+            });
         });
     </script>
 

@@ -497,9 +497,13 @@ function pdf_builder_save_settings_ajax() {
                 // Sauvegarder les paramètres RGPD
                 $settings = array(
                     'gdpr_enabled' => isset($_POST['gdpr_enabled']) ? '1' : '0',
-                    'gdpr_data_retention' => intval($_POST['gdpr_data_retention']),
-                    'gdpr_export_enabled' => isset($_POST['gdpr_export_enabled']) ? '1' : '0',
                     'gdpr_consent_required' => isset($_POST['gdpr_consent_required']) ? '1' : '0',
+                    'gdpr_data_retention' => intval($_POST['gdpr_data_retention']),
+                    'gdpr_audit_enabled' => isset($_POST['gdpr_audit_enabled']) ? '1' : '0',
+                    'gdpr_encryption_enabled' => isset($_POST['gdpr_encryption_enabled']) ? '1' : '0',
+                    'gdpr_consent_analytics' => isset($_POST['gdpr_consent_analytics']) ? '1' : '0',
+                    'gdpr_consent_templates' => isset($_POST['gdpr_consent_templates']) ? '1' : '0',
+                    'gdpr_consent_marketing' => isset($_POST['gdpr_consent_marketing']) ? '1' : '0',
                 );
 
                 foreach ($settings as $key => $value) {
