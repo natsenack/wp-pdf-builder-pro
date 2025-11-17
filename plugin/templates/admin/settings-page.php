@@ -353,6 +353,18 @@
                         error_log('[PDF Builder] === TRAITEMENT ONGLET SYSTEME ===');
                         error_log('[PDF Builder] Données POST reçues: ' . print_r($_POST, true));
 
+                        // Vérifier que toutes les données nécessaires sont présentes
+                        $required_fields = ['cache_enabled', 'cache_expiry', 'max_cache_size', 'auto_maintenance', 'auto_backup', 'backup_retention'];
+                        $missing_fields = [];
+                        foreach ($required_fields as $field) {
+                            if (!isset($_POST[$field])) {
+                                $missing_fields[] = $field;
+                            }
+                        }
+                        if (!empty($missing_fields)) {
+                            error_log('[PDF Builder] Champs manquants: ' . implode(', ', $missing_fields));
+                        }
+
                         // Traitement des paramètres de performance
                         $cache_enabled = (isset($_POST['cache_enabled']) && $_POST['cache_enabled'] === '1') ? '1' : '0';
                         $cache_expiry = intval($_POST['cache_expiry']);
@@ -2267,7 +2279,7 @@
                 <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">🚀 Performance</h3>
 
                 <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_performance', 'pdf_builder_systeme_nonce'); ?>
+                    <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_systeme_nonce'); ?>
                     <input type="hidden" name="current_tab" value="systeme">
 
                     <table class="form-table">
@@ -2304,7 +2316,7 @@
                 <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">🔧 Maintenance</h3>
 
                 <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_maintenance', 'pdf_builder_maintenance_nonce'); ?>
+                    <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_maintenance_nonce'); ?>
                     <input type="hidden" name="current_tab" value="systeme">
 
                     <table class="form-table">
@@ -2336,7 +2348,7 @@
                 <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">💾 Sauvegarde</h3>
 
                 <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_backup', 'pdf_builder_backup_nonce'); ?>
+                    <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_backup_nonce'); ?>
                     <input type="hidden" name="current_tab" value="systeme">
 
                     <table class="form-table">
@@ -4678,19 +4690,26 @@
 
                 // Pour l'onglet système, collecter toutes les données et les envoyer ensemble
                 if (currentTab === 'systeme') {
+                    console.log('[PDF Builder JS] === DÉBUT SAUVEGARDE ONGLET SYSTÈME ===');
+                    console.log('[PDF Builder JS] currentTab =', currentTab);
+                    console.log('[PDF Builder JS] Nombre de formulaires trouvés =', forms.length);
 
                     // Collecter les données de tous les formulaires de l'onglet système
                     const formData = new FormData();
 
+                    console.log('[PDF Builder JS] Collecte des données pour l\'onglet système');
+
                     forms.each(function(index) {
                         const $form = $(this);
+                        console.log('[PDF Builder JS] Traitement du formulaire', index, 'avec', $form.find('input, select, textarea').length, 'champs');
 
                         const formDataTemp = new FormData(this);
 
-                        // Ajouter les données de ce formulaire (sauf current_tab qui sera remplacé)
+                        // Ajouter les données de ce formulaire (sauf current_tab et les nonces individuels)
                         for (let [key, value] of formDataTemp.entries()) {
-                            if (key !== 'current_tab') {
+                            if (key !== 'current_tab' && !key.includes('_nonce')) {
                                 formData.append(key, value);
+                                console.log('[PDF Builder JS] Ajout champ:', key, '=', value);
                             }
                         }
 
@@ -4699,20 +4718,29 @@
                             const $checkbox = $(this);
                             const name = $checkbox.attr('name');
                             const isChecked = $checkbox.is(':checked');
+                            console.log('[PDF Builder JS] Checkbox', name, 'checked:', isChecked);
                             if (name && !isChecked) {
                                 formData.append(name, '0');
+                                console.log('[PDF Builder JS] Ajout checkbox non cochée:', name, '= 0');
                             }
                         });
                     });
-
-                    // S'assurer que developer_enabled est toujours envoyé
-                    const devEnabled = $('#developer_enabled').is(':checked');
-                    formData.append('developer_enabled', devEnabled ? '1' : '0');
 
                     // Ajouter l'onglet actuel (toujours 'systeme' pour cet onglet)
                     formData.append('current_tab', currentTab);
                     formData.append('action', 'pdf_builder_save_settings');
                     formData.append('nonce', pdf_builder_ajax.nonce);
+
+                    console.log('[PDF Builder JS] Données finales à envoyer:');
+                    for (let [key, value] of formData.entries()) {
+                        console.log('  ', key, '=', value);
+                    }
+                    console.log('[PDF Builder JS] === ENVOI REQUÊTE AJAX ===');
+
+                    console.log('[PDF Builder JS] Données finales à envoyer:');
+                    for (let [key, value] of formData.entries()) {
+                        console.log('  ', key, '=', value);
+                    }
 
                     // Envoyer via AJAX
                     $.ajax({
