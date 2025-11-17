@@ -268,9 +268,6 @@
                         break;
 
                     case 'systeme':
-                        // Debug: Afficher les données reçues
-                        error_log('SYSTEME SAVE - Données reçues: ' . print_r($_POST, true));
-
                         // Traitement des paramètres de performance
                         $cache_enabled = isset($_POST['cache_enabled']) ? '1' : '0';
                         $cache_expiry = intval($_POST['cache_expiry']);
@@ -4497,24 +4494,28 @@
 
                 // Pour l'onglet système, collecter toutes les données et les envoyer ensemble
                 if (currentTab === 'systeme') {
-                    console.log('Traitement onglet système - formulaires trouvés:', forms.length);
-
                     // Collecter les données de tous les formulaires de l'onglet système
                     const formData = new FormData();
 
-                    forms.each(function(index) {
+                    forms.each(function() {
                         const $form = $(this);
-                        console.log('Traitement formulaire', index, '- current_tab:', $form.find('input[name="current_tab"]').val());
-
                         const formDataTemp = new FormData(this);
 
                         // Ajouter les données de ce formulaire (sauf current_tab qui sera remplacé)
                         for (let [key, value] of formDataTemp.entries()) {
                             if (key !== 'current_tab') { // Ne pas ajouter les current_tab individuels
-                                console.log('Ajout champ:', key, '=', value);
                                 formData.append(key, value);
                             }
                         }
+
+                        // S'assurer que les cases à cocher non cochées sont aussi incluses
+                        $form.find('input[type="checkbox"]').each(function() {
+                            const $checkbox = $(this);
+                            const name = $checkbox.attr('name');
+                            if (name && !$form.find(`input[name="${name}"]`).is(':checked')) {
+                                formData.append(name, '0');
+                            }
+                        });
                     });
 
                     // S'assurer que developer_enabled est toujours envoyé
@@ -4524,8 +4525,6 @@
                     formData.append('current_tab', currentTab);
                     formData.append('action', 'pdf_builder_save_settings');
                     formData.append('nonce', pdf_builder_ajax.nonce);
-
-                    console.log('Envoi des données système...');
 
                     // Envoyer via AJAX
                     $.ajax({
