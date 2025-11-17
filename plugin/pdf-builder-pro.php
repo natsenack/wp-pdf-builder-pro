@@ -589,6 +589,7 @@ function pdf_builder_save_settings_ajax() {
             break;
 
         case 'systeme':
+            error_log('[PDF Builder PHP] Traitement onglet système');
             // Sauvegarder les paramètres système (performance + maintenance + sauvegarde)
             $settings = array(
                 'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
@@ -599,10 +600,14 @@ function pdf_builder_save_settings_ajax() {
                 'backup_retention' => intval($_POST['backup_retention']),
             );
 
+            error_log('[PDF Builder PHP] Paramètres système reçus: ' . print_r($settings, true));
+
             foreach ($settings as $key => $value) {
                 update_option('pdf_builder_' . $key, $value);
+                error_log('[PDF Builder PHP] Sauvegardé: pdf_builder_' . $key . ' = ' . $value);
             }
             $saved_count++;
+            error_log('[PDF Builder PHP] Onglet système traité, saved_count = ' . $saved_count);
             break;
     }
 

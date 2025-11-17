@@ -4750,7 +4750,9 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
+                            console.log('[PDF Builder JS] Réponse AJAX reçue:', response);
                             if (response.success) {
+                                console.log('[PDF Builder JS] Sauvegarde réussie:', response.data);
                                 // Succès
                                 $btn.removeClass('saving').addClass('saved');
                                 $icon.text('✅');
@@ -4763,6 +4765,7 @@
                                     $text.text('Enregistrer');
                                 }, 3000);
                             } else {
+                                console.log('[PDF Builder JS] Erreur de sauvegarde:', response.data);
                                 // Erreur
                                 $btn.removeClass('saving').addClass('error');
                                 $icon.text('❌');
@@ -4776,6 +4779,8 @@
                             }
                         },
                         error: function(xhr, status, error) {
+                            console.log('[PDF Builder JS] Erreur AJAX:', status, error);
+                            console.log('[PDF Builder JS] Réponse du serveur:', xhr.responseText);
                             // Erreur AJAX
                             $btn.removeClass('saving').addClass('error');
                             $icon.text('❌');
@@ -4819,7 +4824,9 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
+                            console.log('[PDF Builder JS] Réponse AJAX reçue:', response);
                             if (response.success) {
+                                console.log('[PDF Builder JS] Sauvegarde réussie:', response.data);
                                 // Succès
                                 $btn.removeClass('saving').addClass('saved');
                                 $icon.text('✅');
@@ -4832,6 +4839,7 @@
                                     $text.text('Enregistrer');
                                 }, 3000);
                             } else {
+                                console.log('[PDF Builder JS] Erreur de sauvegarde:', response.data);
                                 // Erreur
                                 $btn.removeClass('saving').addClass('error');
                                 $icon.text('❌');
@@ -4844,7 +4852,9 @@
                                 }, 3000);
                             }
                         },
-                        error: function() {
+                        error: function(xhr, status, error) {
+                            console.log('[PDF Builder JS] Erreur AJAX:', status, error);
+                            console.log('[PDF Builder JS] Réponse du serveur:', xhr.responseText);
                             // Erreur AJAX
                             $btn.removeClass('saving').addClass('error');
                             $icon.text('❌');
