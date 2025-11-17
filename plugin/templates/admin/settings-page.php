@@ -1186,7 +1186,7 @@
                                 formData.append('action', 'pdf_builder_clear_cache');
                                 formData.append('security', '<?php echo wp_create_nonce('pdf_builder_clear_cache_performance'); ?>');
 
-                                fetch(ajaxurl, {
+                                fetch(pdf_builder_ajax.ajax_url, {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -1211,6 +1211,97 @@
                                     resultsSpan.textContent = '❌ Erreur AJAX: ' + error.message;
                                     resultsSpan.style.color = '#dc3232';
                                     console.error('Erreur lors du vide du cache:', error);
+                                });
+                            });
+                        }
+
+                        // ✅ Handler pour le bouton "Tester l'intégration du cache"
+                        var testCacheBtn = document.getElementById('test-cache-btn');
+                        if (testCacheBtn) {
+                            testCacheBtn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                var resultsSpan = document.getElementById('cache-test-results');
+                                var outputDiv = document.getElementById('cache-test-output');
+                                var cacheEnabledCheckbox = document.getElementById('cache_enabled');
+
+                                // ✅ Vérifie si le cache est activé
+                                if (cacheEnabledCheckbox && !cacheEnabledCheckbox.checked) {
+                                    resultsSpan.textContent = '⚠️ Le cache n\'est pas activé!';
+                                    resultsSpan.style.color = '#ff9800';
+                                    outputDiv.style.display = 'none';
+                                    return;
+                                }
+
+                                testCacheBtn.disabled = true;
+                                testCacheBtn.textContent = '⏳ Test en cours...';
+                                resultsSpan.textContent = '';
+                                outputDiv.style.display = 'none';
+
+                                // ✅ Test du système de cache
+                                var testResults = [];
+                                var startTime = Date.now();
+
+                                // Test 1: Vérifier si les fonctions de cache sont disponibles
+                                if (typeof wp_cache_flush === 'function') {
+                                    testResults.push('✅ Fonction wp_cache_flush disponible');
+                                } else {
+                                    testResults.push('⚠️ Fonction wp_cache_flush non disponible');
+                                }
+
+                                // Test 2: Tester la création d'un transient
+                                var testTransientKey = 'pdf_builder_cache_test_' + Date.now();
+                                var testTransientValue = 'test_value_' + Math.random();
+
+                                // Simuler un appel AJAX pour tester le cache
+                                var formData = new FormData();
+                                formData.append('action', 'pdf_builder_test_cache');
+                                formData.append('security', '<?php echo wp_create_nonce('pdf_builder_test_cache'); ?>');
+                                formData.append('test_key', testTransientKey);
+                                formData.append('test_value', testTransientValue);
+
+                                fetch(pdf_builder_ajax.ajax_url, {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(function(response) {
+                                    return response.json();
+                                })
+                                .then(function(data) {
+                                    var endTime = Date.now();
+                                    var duration = endTime - startTime;
+
+                                    testCacheBtn.disabled = false;
+                                    testCacheBtn.textContent = '🧪 Tester l\'intégration du cache';
+
+                                    if (data.success) {
+                                        testResults.push('✅ Cache opérationnel');
+                                        testResults.push('⏱️ Temps de réponse: ' + duration + 'ms');
+
+                                        if (data.data && data.data.cache_status) {
+                                            testResults.push('📊 ' + data.data.cache_status);
+                                        }
+
+                                        resultsSpan.textContent = '✅ Tests réussis!';
+                                        resultsSpan.style.color = '#28a745';
+                                    } else {
+                                        testResults.push('❌ Erreur lors du test du cache');
+                                        resultsSpan.textContent = '❌ Tests échoués';
+                                        resultsSpan.style.color = '#dc3232';
+                                    }
+
+                                    // Afficher les détails du test
+                                    outputDiv.innerHTML = '<strong>Résultats du test :</strong><br>' + testResults.join('<br>');
+                                    outputDiv.style.display = 'block';
+                                })
+                                .catch(function(error) {
+                                    testCacheBtn.disabled = false;
+                                    testCacheBtn.textContent = '🧪 Tester l\'intégration du cache';
+                                    resultsSpan.textContent = '❌ Erreur AJAX: ' + error.message;
+                                    resultsSpan.style.color = '#dc3232';
+                                    console.error('Erreur lors du test du cache:', error);
+
+                                    outputDiv.innerHTML = '<strong>Erreur :</strong><br>' + error.message;
+                                    outputDiv.style.display = 'block';
                                 });
                             });
                         }

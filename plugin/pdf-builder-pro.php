@@ -198,6 +198,7 @@ function pdf_builder_register_ajax_handlers() {
 
     // Settings save
     add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax');
+    add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_test_cache_ajax');
 }
 
 /**
@@ -612,5 +613,75 @@ function pdf_builder_save_settings_ajax() {
     } else {
         wp_send_json_error('Aucun paramètre sauvegardé');
     }
+}
+
+/**
+ * AJAX handler pour tester le système de cache
+ */
+function pdf_builder_test_cache_ajax() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['security'], 'pdf_builder_test_cache')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    $test_key = sanitize_text_field($_POST['test_key']);
+    $test_value = sanitize_text_field($_POST['test_value']);
+
+    $results = array(
+        'cache_available' => false,
+        'transient_test' => false,
+        'cache_status' => 'Cache non testé'
+    );
+
+    // Test 1: Vérifier la disponibilité des fonctions de cache
+    if (function_exists('wp_cache_flush')) {
+        $results['cache_available'] = true;
+    }
+
+    // Test 2: Tester les transients WordPress
+    $transient_test_key = 'pdf_builder_test_' . time();
+    $transient_test_value = 'test_value_' . rand(1000, 9999);
+
+    // Définir un transient
+    $set_result = set_transient($transient_test_key, $transient_test_value, 300); // 5 minutes
+
+    if ($set_result) {
+        // Récupérer le transient
+        $get_result = get_transient($transient_test_key);
+
+        if ($get_result === $transient_test_value) {
+            $results['transient_test'] = true;
+            $results['cache_status'] = 'Transients WordPress opérationnels';
+
+            // Nettoyer le test
+            delete_transient($transient_test_key);
+        } else {
+            $results['cache_status'] = 'Erreur lors de la récupération du transient';
+        }
+    } else {
+        $results['cache_status'] = 'Impossible de définir un transient';
+    }
+
+    // Test 3: Vérifier les options de cache du plugin
+    $cache_enabled = get_option('pdf_builder_cache_enabled', false);
+    if ($cache_enabled) {
+        $results['cache_status'] .= ' | Cache du plugin activé';
+    } else {
+        $results['cache_status'] .= ' | Cache du plugin désactivé';
+    }
+
+    wp_send_json_success(array(
+        'message' => 'Test du cache terminé',
+        'cache_status' => $results['cache_status'],
+        'transient_working' => $results['transient_test'],
+        'cache_available' => $results['cache_available']
+    ));
 }
 
