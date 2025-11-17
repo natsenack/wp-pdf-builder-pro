@@ -268,7 +268,35 @@
                         break;
 
                     case 'systeme':
+                        // Traitement des paramètres de performance
+                        $cache_enabled = isset($_POST['cache_enabled']) ? '1' : '0';
+                        $cache_expiry = intval($_POST['cache_expiry']);
+                        $max_cache_size = intval($_POST['max_cache_size']);
+
+                        update_option('pdf_builder_cache_enabled', $cache_enabled);
+                        update_option('pdf_builder_cache_expiry', $cache_expiry);
+                        update_option('pdf_builder_max_cache_size', $max_cache_size);
+
                         send_ajax_response(true, 'Paramètres système enregistrés avec succès.');
+                        break;
+
+                    case 'maintenance':
+                        // Traitement des paramètres de maintenance
+                        $auto_maintenance = isset($_POST['auto_maintenance']) ? '1' : '0';
+                        update_option('pdf_builder_auto_maintenance', $auto_maintenance);
+
+                        send_ajax_response(true, 'Paramètres de maintenance enregistrés avec succès.');
+                        break;
+
+                    case 'sauvegarde':
+                        // Traitement des paramètres de sauvegarde
+                        $auto_backup = isset($_POST['auto_backup']) ? '1' : '0';
+                        $backup_retention = intval($_POST['backup_retention']);
+
+                        update_option('pdf_builder_auto_backup', $auto_backup);
+                        update_option('pdf_builder_backup_retention', $backup_retention);
+
+                        send_ajax_response(true, 'Paramètres de sauvegarde enregistrés avec succès.');
                         break;
 
                     case 'acces':
@@ -4470,26 +4498,125 @@
                     return;
                 }
 
-                // Collecter les données de tous les formulaires
-                const formData = new FormData();
+                // Traiter chaque formulaire séparément pour les onglets avec plusieurs formulaires
+                if (currentTab === 'systeme' && forms.length > 1) {
+                    // Onglet système avec plusieurs formulaires - traiter chacun séparément
+                    let completedForms = 0;
+                    const totalForms = forms.length;
 
-                forms.each(function() {
-                    const $form = $(this);
-                    const formDataTemp = new FormData(this);
+                    forms.each(function(index) {
+                        const $form = $(this);
+                        const formDataTemp = new FormData(this);
 
-                    // Ajouter les données de ce formulaire
-                    for (let [key, value] of formDataTemp.entries()) {
-                        formData.append(key, value);
-                    }
-                });
+                        // Ajouter l'action et le nonce
+                        formDataTemp.append('action', 'pdf_builder_save_settings');
+                        formDataTemp.append('nonce', pdf_builder_ajax.nonce);
 
-                // S'assurer que developer_enabled est toujours envoyé
-                formData.append('developer_enabled', $('#developer_enabled').is(':checked') ? '1' : '0');
+                        $.ajax({
+                            url: pdf_builder_ajax.ajax_url,
+                            type: 'POST',
+                            data: formDataTemp,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                completedForms++;
+                                if (completedForms === totalForms) {
+                                    // Tous les formulaires traités
+                                    $btn.removeClass('saving').addClass('saved');
+                                    $icon.text('✅');
+                                    $text.text('Enregistré !');
+                                    setTimeout(() => {
+                                        $btn.removeClass('saved');
+                                        $icon.text('💾');
+                                        $text.text('Enregistrer');
+                                    }, 3000);
+                                }
+                            },
+                            error: function() {
+                                completedForms++;
+                                if (completedForms === totalForms) {
+                                    $btn.removeClass('saving').addClass('error');
+                                    $icon.text('❌');
+                                    $text.text('Erreur');
+                                    setTimeout(() => {
+                                        $btn.removeClass('error');
+                                        $icon.text('💾');
+                                        $text.text('Enregistrer');
+                                    }, 3000);
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    // Traitement normal pour les autres onglets
+                    // Collecter les données de tous les formulaires
+                    const formData = new FormData();
 
-                // Ajouter l'onglet actuel
-                formData.append('current_tab', currentTab);
-                formData.append('action', 'pdf_builder_save_settings');
-                formData.append('nonce', pdf_builder_ajax.nonce);
+                    forms.each(function() {
+                        const $form = $(this);
+                        const formDataTemp = new FormData(this);
+
+                        // Ajouter les données de ce formulaire
+                        for (let [key, value] of formDataTemp.entries()) {
+                            formData.append(key, value);
+                        }
+                    });
+
+                    // S'assurer que developer_enabled est toujours envoyé
+                    formData.append('developer_enabled', $('#developer_enabled').is(':checked') ? '1' : '0');
+
+                    // Ajouter l'onglet actuel
+                    formData.append('current_tab', currentTab);
+                    formData.append('action', 'pdf_builder_save_settings');
+                    formData.append('nonce', pdf_builder_ajax.nonce);
+
+                    // Envoyer via AJAX
+                    $.ajax({
+                        url: pdf_builder_ajax.ajax_url,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            if (response.success) {
+                                // Succès
+                                $btn.removeClass('saving').addClass('saved');
+                                $icon.text('✅');
+                                $text.text('Enregistré !');
+
+                                // Revenir à l'état normal après 3 secondes
+                                setTimeout(() => {
+                                    $btn.removeClass('saved');
+                                    $icon.text('💾');
+                                    $text.text('Enregistrer');
+                                }, 3000);
+                            } else {
+                                // Erreur
+                                $btn.removeClass('saving').addClass('error');
+                                $icon.text('❌');
+                                $text.text('Erreur');
+
+                                setTimeout(() => {
+                                    $btn.removeClass('error');
+                                    $icon.text('💾');
+                                    $text.text('Enregistrer');
+                                }, 3000);
+                            }
+                        },
+                        error: function() {
+                            // Erreur AJAX
+                            $btn.removeClass('saving').addClass('error');
+                            $icon.text('❌');
+                            $text.text('Erreur');
+
+                            setTimeout(() => {
+                                $btn.removeClass('error');
+                                $icon.text('💾');
+                                $text.text('Enregistrer');
+                            }, 3000);
+                        }
+                    });
+                }
 
                 // Envoyer via AJAX
                 $.ajax({
