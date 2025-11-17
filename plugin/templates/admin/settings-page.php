@@ -1047,7 +1047,7 @@
                     </div>
                 </form>
 
-                <script>
+               <script>
                 jQuery(document).ready(function($) {
                     // Fonction de validation des champs entreprise
                     function validateCompanyFields() {
@@ -1179,7 +1179,7 @@
                     border-color: #28a745 !important;
                     box-shadow: 0 0 0 1px #28a745, 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
                 }
-                </style>
+               </style>
             </div>
 
             <!-- Section Paramètres PDF -->
@@ -1190,7 +1190,7 @@
                     <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
                     <input type="hidden" name="current_tab" value="general">
 
-                    <table class="form-table">
+                  <table class="form-table">
                     <tr>
                         <th scope="row"><label for="pdf_quality">Qualité PDF</label></th>
                         <td>
@@ -1221,7 +1221,7 @@
                             </select>
                         </td>
                     </tr>
-                </table>
+                  </table>
                 </form>
             </div>
         </div>
@@ -1254,7 +1254,7 @@
 
                     // Traitement activation licence
                     if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
-                    // Mode DÉMO : Activation de clés réelles désactivée
+                     // Mode DÉMO : Activation de clés réelles désactivée
                         // Les clés premium réelles seront validées une fois le système de licence en production
                         wp_die('<div style="background: #fff3cd; border: 2px solid #ffc107; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin: 20px; color: #856404; font-family: Arial, sans-serif;">
                                 <h2 style="margin-top: 0; color: #856404;">⚠️ Mode DÉMO</h2>
@@ -1968,8 +1968,6 @@
 
                         </form>
                     </div>
-
-            </div>
             </form>
         </div>
 
@@ -2622,7 +2620,6 @@
                 </table>
             </form>
         </div>
-
         <div id="contenu" class="tab-content hidden-tab">
             <h2>🎨 Contenu & Design</h2>
 
@@ -2687,7 +2684,6 @@
                 </form>
             </div>
         </div>
-
         <div id="roles" class="tab-content hidden-tab">
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
@@ -2714,7 +2710,7 @@
                 </table>
             </form>
         </div>
-    </div>
+</div>
 
     <style>
         /* Styles pour les interrupteurs */
