@@ -422,7 +422,7 @@
                 'max_fps' => intval($_POST['max_fps'] ?? 60),
             ];
             update_option('pdf_builder_settings', array_merge($settings, $performance_settings));
-     // Save auto_save settings to canvas_settings (not general settings)
+      // Save auto_save settings to canvas_settings (not general settings)
             $canvas_settings_to_update = $canvas_settings;
             $canvas_settings_to_update['auto_save_enabled'] = isset($_POST['auto_save_enabled']) && $_POST['auto_save_enabled'] === '1';
             $canvas_settings_to_update['auto_save_interval'] = intval($_POST['auto_save_interval'] ?? 30);
@@ -724,6 +724,10 @@
             <span class="tab-icon">⚙️</span>
             <span class="tab-text">Général</span>
         </a>
+        <a href="#licence" class="nav-tab" data-tab="licence">
+            <span class="tab-icon">🔑</span>
+            <span class="tab-text">Licence</span>
+        </a>
         <a href="#systeme" class="nav-tab" data-tab="systeme">
             <span class="tab-icon">🔧</span>
             <span class="tab-text">Système</span>
@@ -731,10 +735,6 @@
         <a href="#acces" class="nav-tab" data-tab="acces">
             <span class="tab-icon">👥</span>
             <span class="tab-text">Accès</span>
-        </a>
-        <a href="#licence" class="nav-tab" data-tab="licence">
-            <span class="tab-icon">🔑</span>
-            <span class="tab-text">Licence</span>
         </a>
         <a href="#securite" class="nav-tab" data-tab="securite">
             <span class="tab-icon">🔒</span>
@@ -1627,6 +1627,46 @@
             </form>
         </div>
 
+        <div id="licence" class="tab-content hidden-tab">
+            <h2>🔑 Gestion de la Licence</h2>
+
+            <!-- Section Licence -->
+            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #6c757d; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #6c757d; padding-bottom: 10px;">🔑 Gestion de la Licence</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="licence">
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="license_key">Clé de licence</label></th>
+                            <td>
+                                <input type="text" id="license_key" name="license_key" value="<?php echo esc_attr(get_option('pdf_builder_license_key', '')); ?>" class="regular-text">
+                                <p class="description">Entrez votre clé de licence premium</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Actions</th>
+                            <td>
+                                <button type="submit" name="activate_license" class="button button-primary" style="margin-right: 10px;">✅ Activer</button>
+                                <button type="submit" name="deactivate_license" class="button button-secondary">❌ Désactiver</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+
+            <!-- Bouton global d'enregistrement -->
+            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
+                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer les modifications</h3>
+                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer les paramètres de licence.</p>
+                <button type="button" id="save-all-licence" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                    🚀 Enregistrer
+                </button>
+            </div>
+        </div>
+
         <div id="systeme" class="tab-content hidden-tab">
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
@@ -1800,45 +1840,6 @@
                         🚀 Enregistrer
                     </button>
                 </div>
-            </div>
-        </div>
-        <div id="licence" class="tab-content hidden-tab">
-            <h2>🔑 Gestion de la Licence</h2>
-
-            <!-- Section Licence -->
-            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #6c757d; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #6c757d; padding-bottom: 10px;">🔑 Gestion de la Licence</h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="licence">
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="license_key">Clé de licence</label></th>
-                            <td>
-                                <input type="text" id="license_key" name="license_key" value="<?php echo esc_attr(get_option('pdf_builder_license_key', '')); ?>" class="regular-text">
-                                <p class="description">Entrez votre clé de licence premium</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Actions</th>
-                            <td>
-                                <button type="submit" name="activate_license" class="button button-primary" style="margin-right: 10px;">✅ Activer</button>
-                                <button type="submit" name="deactivate_license" class="button button-secondary">❌ Désactiver</button>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-
-            <!-- Bouton global d'enregistrement -->
-            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer les modifications</h3>
-                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer les paramètres de licence.</p>
-                <button type="button" id="save-all-licence" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                    🚀 Enregistrer
-                </button>
             </div>
         </div>
         <div id="securite" class="tab-content hidden-tab">
@@ -2094,6 +2095,7 @@
                 </p>
             </form>
         </div>
+    </div>
 
     <style>
         /* Styles pour les interrupteurs */
@@ -2286,4 +2288,4 @@
             });
         });
     </script>
-</div>
+
