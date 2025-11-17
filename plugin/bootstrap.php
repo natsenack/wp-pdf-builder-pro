@@ -445,8 +445,9 @@ function pdf_builder_load_bootstrap()
     pdf_builder_load_core();
     pdf_builder_load_new_classes();
 
-    // CHARGER LE TEST D'INTÉGRATION DU CACHE
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php')) {
+    // CHARGER LE TEST D'INTÉGRATION DU CACHE (seulement en mode développeur)
+    $developer_mode = get_option('pdf_builder_developer_enabled', false);
+    if ($developer_mode && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php';
     }
 
@@ -523,8 +524,8 @@ function pdf_builder_load_bootstrap()
         \PDF_Builder_Pro\PDF_Builder_GDPR_Manager::get_instance();
     }
 
-    // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
-    if (class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
+    // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1) - seulement si WooCommerce est actif
+    if (class_exists('WooCommerce') && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
         \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
     }
 
