@@ -3135,6 +3135,18 @@
                     $devSection.slideDown(300, function() {
                         console.log('[DEV MODE TOGGLE] slideDown animation completed, display:', $devSection.css('display'));
                         console.log('[DEV MODE TOGGLE] devSection is visible after animation:', $devSection.is(':visible'));
+                        console.log('[DEV MODE TOGGLE] devSection dimensions:', {
+                            width: $devSection.width(),
+                            height: $devSection.height(),
+                            outerWidth: $devSection.outerWidth(),
+                            outerHeight: $devSection.outerHeight()
+                        });
+                        console.log('[DEV MODE TOGGLE] devSection position:', $devSection.position());
+                        console.log('[DEV MODE TOGGLE] devSection offset:', $devSection.offset());
+                        console.log('[DEV MODE TOGGLE] parent dimensions:', {
+                            width: $devSection.parent().width(),
+                            height: $devSection.parent().height()
+                        });
                     });
                 } else {
                     console.log('[DEV MODE TOGGLE] Hiding developer section - calling slideUp');
