@@ -512,7 +512,14 @@ function pdf_builder_load_bootstrap()
 
     // INITIALISER LE GESTIONNAIRE RGPD
     if (class_exists('PDF_Builder_GDPR_Manager')) {
-        PDF_Builder_GDPR_Manager::get_instance();
+        try {
+            PDF_Builder_GDPR_Manager::get_instance();
+            error_log('PDF_Builder_GDPR_Manager initialized successfully');
+        } catch (Exception $e) {
+            error_log('Error initializing PDF_Builder_GDPR_Manager: ' . $e->getMessage());
+        }
+    } else {
+        error_log('PDF_Builder_GDPR_Manager class not found');
     }
 
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1)
