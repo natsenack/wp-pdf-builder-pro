@@ -918,43 +918,374 @@
 
 
         <div id="licence" class="tab-content hidden-tab">
-            <h2>🔑 Gestion de la Licence</h2>
+
 
             <!-- Section Licence -->
-            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #6c757d; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #6c757d; padding-bottom: 10px;">🔑 Gestion de la Licence</h3>
+            <h3 class="section-title">🔐 Gestion de la Licence</h3>
+            <form method="post" id="licence-form" action="">
+                <input type="hidden" name="current_tab" value="licence">
+                    <h4 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h4>
 
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="licence">
+                <?php
+                    $license_status = get_option('pdf_builder_license_status', 'free');
+                    $license_key = get_option('pdf_builder_license_key', '');
+                    $license_expires = get_option('pdf_builder_license_expires', '');
+                    $license_activated_at = get_option('pdf_builder_license_activated_at', '');
+                    $test_mode_enabled = get_option('pdf_builder_license_test_mode_enabled', false);
+                    $test_key = get_option('pdf_builder_license_test_key', '');
+                    $test_key_expires = get_option('pdf_builder_license_test_key_expires', '');
+                    // Email notifications
+                    $notification_email = get_option('pdf_builder_license_notification_email', get_option('admin_email'));
+                    $enable_expiration_notifications = get_option('pdf_builder_license_enable_notifications', true);
+                    // is_premium si vraie licence OU si clé de test existe
+                    $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
+                    // is_test_mode si clé de test existe
+                    $is_test_mode = !empty($test_key);
+                    // DEBUG: Afficher les valeurs pour verifier
+                    if (current_user_can('manage_options')) {
+                        echo '<!-- DEBUG: status=' . esc_html($license_status) . ' key=' . (!empty($license_key) ? 'YES' : 'NO') . ' test_key=' . (!empty($test_key) ? 'YES:' . substr($test_key, 0, 5) : 'NO') . ' is_premium=' . ($is_premium ? 'TRUE' : 'FALSE') . ' -->';
+                    }
 
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="license_key">Clé de licence</label></th>
-                            <td>
-                                <input type="text" id="license_key" name="license_key" value="<?php echo esc_attr(get_option('pdf_builder_license_key', '')); ?>" class="regular-text">
-                                <p class="description">Entrez votre clé de licence premium</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Actions</th>
-                            <td>
-                                <button type="submit" name="activate_license" class="button button-primary" style="margin-right: 10px;">✅ Activer</button>
-                                <button type="submit" name="deactivate_license" class="button button-secondary">❌ Désactiver</button>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
+                    // Traitement activation licence
+                    if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
+                    // Mode DÉMO : Activation de clés réelles désactivée
+                        // Les clés premium réelles seront validées une fois le système de licence en production
+                        wp_die('<div style="background: #fff3cd; border: 2px solid #ffc107; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin: 20px; color: #856404; font-family: Arial, sans-serif;">
+                                <h2 style="margin-top: 0; color: #856404;">⚠️ Mode DÉMO</h2>
+                                <p><strong>La validation des clés premium n\'est pas encore active.</strong></p>
+                                <p>Pour tester les fonctionnalités premium, veuillez :</p>
+                                <ol>
+                                    <li>Allez à l\'onglet <strong>Développeur</strong></li>
+                                    <li>Cliquez sur <strong>Générer une clé de test</strong></li>
+                                    <li>La clé TEST s\'activera automatiquement</li>
+                                </ol>
+                                <p><a href="' . admin_url('admin.php?page=pdf-builder-pro-settings&tab=developer') . '" style="background: #ffc107; color: #856404; padding: 10px 15px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -ms-border-radius: 5px; -o-border-radius: 5px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">↻ Aller au mode Développeur</a></p>
+                            </div>', 'Activation désactivée', ['response' => 403]);
+                    }
 
-            <!-- Bouton global d'enregistrement -->
-            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer les modifications</h3>
-                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer les paramètres de licence.</p>
-                <button type="button" id="save-all-licence" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                    🚀 Enregistrer
-                </button>
-            </div>
+                    // Traitement désactivation licence
+                    if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
+
+                        if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
+                            delete_option('pdf_builder_license_key');
+                            delete_option('pdf_builder_license_expires');
+                            delete_option('pdf_builder_license_activated_at');
+                            delete_option('pdf_builder_license_test_key');
+                            delete_option('pdf_builder_license_test_mode_enabled');
+                            update_option('pdf_builder_license_status', 'free');
+                            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée complètement.</p></div>';
+                            $is_premium = false;
+                            $license_key = '';
+                            $license_status = 'free';
+                            $license_activated_at = '';
+                            $test_key = '';
+                            $test_mode_enabled = false;
+                        }
+                    }
+
+                    // Traitement des paramètres de notification
+                    if (isset($_POST['pdf_builder_save_notifications']) && isset($_POST['pdf_builder_license_nonce'])) {
+                        if (wp_verify_nonce($_POST['pdf_builder_license_nonce'], 'pdf_builder_license')) {
+                            $email = sanitize_email($_POST['notification_email'] ?? get_option('admin_email'));
+                            $enable_notifications = isset($_POST['enable_expiration_notifications']) ? 1 : 0;
+                            update_option('pdf_builder_license_notification_email', $email);
+                            update_option('pdf_builder_license_enable_notifications', $enable_notifications);
+                            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de notification sauvegardés.</p></div>';
+                        // Recharger les valeurs
+                            $notification_email = $email;
+                            $enable_expiration_notifications = $enable_notifications;
+                        }
+                    }
+                ?>
+
+                    <!-- Statut de la licence -->
+                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 30px; margin-bottom: 30px; -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <h4 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">📊 Statut de la Licence</h4>
+
+                        <div style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
+                            <!-- Carte Statut Principal -->
+                            <div style="border: 3px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?> 0%, <?php echo $is_premium ? '#e8f5e9' : '#ffffff'; ?> 100%); -webkit-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -moz-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -ms-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -o-box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
+                                <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Statut</div>
+                                <div style="font-size: 26px; font-weight: 900; color: <?php echo $is_premium ? '#155724' : '#495057'; ?>; margin-bottom: 8px;">
+                                    <?php echo $is_premium ? '✅ Premium Actif' : '○ Gratuit'; ?>
+                                </div>
+                                <div style="font-size: 12px; color: <?php echo $is_premium ? '#155724' : '#6c757d'; ?>; font-style: italic;">
+                                    <?php echo $is_premium ? 'Licence premium activée' : 'Aucune licence premium'; ?>
+                                </div>
+                            </div>
+
+                            <!-- Carte Mode Test (si applicable) -->
+                            <?php if (!empty($test_key)) :
+                                ?>
+                            <div style="border: 3px solid #ffc107; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); -webkit-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -moz-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -ms-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -o-box-shadow: 0 4px 6px rgba(255,193,7,0.2); box-shadow: 0 4px 6px rgba(255,193,7,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
+                                <div style="font-size: 13px; color: #856404; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Mode</div>
+                                <div style="font-size: 26px; font-weight: 900; color: #856404; margin-bottom: 8px;">
+                                    🧪 TEST (Dev)
+                                </div>
+                                <div style="font-size: 12px; color: #856404; font-style: italic;">
+                                    Mode développement actif
+                                </div>
+                            </div>
+                                <?php
+                            endif; ?>
+
+                            <!-- Carte Date d'expiration -->
+                            <?php if ($is_premium && $license_expires) :
+                                ?>
+                            <div style="border: 3px solid #17a2b8; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); -webkit-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -moz-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -ms-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -o-box-shadow: 0 4px 6px rgba(23,162,184,0.2); box-shadow: 0 4px 6px rgba(23,162,184,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
+                                <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Expiration</div>
+                                <div style="font-size: 20px; font-weight: 700; color: #0066cc; margin-bottom: 8px;">
+                                    <?php echo date('d/m/Y', strtotime($license_expires)); ?>
+                                </div>
+                                <div style="font-size: 12px; color: #666; font-style: italic;">
+                                    <?php
+                                    $now = new DateTime();
+                                    $expires = new DateTime($license_expires);
+                                    $diff = $now->diff($expires);
+                                    if ($diff->invert) {
+                                        echo '❌ Expiré il y a ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
+                                    } else {
+                                        echo '✓ Valide pendant ' . $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                                <?php
+                            endif; ?>
+
+                            <!-- Carte Informations Licence -->
+                            <?php if ($is_premium && $license_activated_at) :
+                                ?>
+                            <div style="border: 3px solid #6f42c1; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #e6dffc 0%, #f3f0ff 100%); -webkit-box-shadow: 0 4px 6px rgba(111,66,193,0.2); -moz-box-shadow: 0 4px 6px rgba(111,66,193,0.2); -ms-box-shadow: 0 4px 6px rgba(111,66,193,0.2); -o-box-shadow: 0 4px 6px rgba(111,66,193,0.2); box-shadow: 0 4px 6px rgba(111,66,193,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
+                                <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Activée le</div>
+                                <div style="font-size: 18px; font-weight: 700; color: #6f42c1; margin-bottom: 8px;">
+                                    <?php echo date('d/m/Y', strtotime($license_activated_at)); ?>
+                                </div>
+                                <div style="font-size: 12px; color: #666; font-style: italic;">
+                                    <?php echo date('H:i', strtotime($license_activated_at)); ?>
+                                </div>
+                            </div>
+                                <?php
+                            endif; ?>
+                        </div>
+                </div>
+
+                    <!-- Activation/Désactivation - Mode DEMO ou Gestion TEST -->
+                <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border: 2px solid #e5e5e5; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 30px; margin-bottom: 30px; -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <h4 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔑 Gestion de la Licence</h4>
+
+                        <div style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
+                            <!-- Section Activation Licence -->
+                            <div style="border: 2px solid #28a745; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; background: linear-gradient(135deg, #d4edda 0%, #e8f5e9 100%);">
+                                <h4 style="margin-top: 0; color: #155724; font-size: 18px;">✅ Activation de Licence</h4>
+                                <p style="margin: 10px 0; color: #155724;">Entrez votre clé de licence premium pour activer toutes les fonctionnalités.</p>
+
+                                <form method="post" style="margin-top: 15px;">
+                                    <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
+                                    <input type="hidden" name="activate_license" value="1">
+
+                                    <div style="margin-bottom: 15px;">
+                                        <label for="license_key_input" style="display: block; font-weight: 600; margin-bottom: 5px; color: #155724;">Clé de Licence</label>
+                                        <input type="text" id="license_key_input" name="license_key" value="<?php echo esc_attr($license_key); ?>"
+                                               style="width: 100%; padding: 8px 12px; border: 2px solid #28a745; border-radius: 4px; font-family: monospace; font-size: 14px;"
+                                               placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" />
+                                    </div>
+
+                                    <button type="submit" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%;">
+                                        🔓 Activer la Licence
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Section Désactivation -->
+                            <div style="border: 2px solid #dc3545; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; background: linear-gradient(135deg, #f8d7da 0%, #fce4e6 100%);">
+                                <h4 style="margin-top: 0; color: #721c24; font-size: 18px;">❌ Désactivation</h4>
+                                <p style="margin: 10px 0; color: #721c24;">Désactivez complètement la licence actuelle.</p>
+
+                                <button type="button" id="deactivate-license-btn" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px;">
+                                    🔒 Désactiver
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Modal de confirmation désactivation -->
+                        <div id="deactivate_modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+                            <div style="background: white; margin: 15% auto; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; -webkit-box-shadow: 0 4px 20px rgba(0,0,0,0.3); -moz-box-shadow: 0 4px 20px rgba(0,0,0,0.3); -ms-box-shadow: 0 4px 20px rgba(0,0,0,0.3); -o-box-shadow: 0 4px 20px rgba(0,0,0,0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                                <h3 style="margin-top: 0; color: #dc3545;">⚠️ Confirmation de Désactivation</h3>
+                                <p style="margin: 20px 0; color: #666;">Êtes-vous sûr de vouloir désactiver cette licence ? Toutes les fonctionnalités premium seront perdues.</p>
+
+                                <form method="post" id="deactivate_form">
+                                    <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
+                                    <input type="hidden" name="deactivate_license" value="1">
+                                    <div style="display: flex; gap: 12px; margin-top: 30px;">
+                                        <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
+                                            Annuler
+                                        </button>
+                                        <button type="submit" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                                            Désactiver
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                </div>
+
+                <script>
+                    function showDeactivateModal() {
+                        var modal = document.getElementById('deactivate_modal');
+                        if (modal) {
+                            modal.style.display = 'flex';
+                        }
+                        return false;
+                    }
+
+                    function closeDeactivateModal() {
+                        var modal = document.getElementById('deactivate_modal');
+                        if (modal) {
+                            modal.style.display = 'none';
+                        }
+                    }
+
+                    // Fermer la modale si on clique en dehors
+                    document.addEventListener('click', function(event) {
+                        var modal = document.getElementById('deactivate_modal');
+                        if (event.target === modal) {
+                            closeDeactivateModal();
+                        }
+                    });
+
+                    // ✅ Handler pour le bouton "Vider le cache" dans l'onglet Général
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var clearCacheBtn = document.getElementById('clear-cache-general-btn');
+                        if (clearCacheBtn) {
+                            clearCacheBtn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                var resultsSpan = document.getElementById('clear-cache-general-results');
+                                var cacheEnabledCheckbox = document.getElementById('cache_enabled');
+
+                                // ✅ Vérifie si le cache est activé
+                                if (cacheEnabledCheckbox && !cacheEnabledCheckbox.checked) {
+                                    resultsSpan.textContent = '⚠️ Le cache n\'est pas activé!';
+                                    resultsSpan.style.color = '#ff9800';
+                                    return;
+                                }
+
+                                clearCacheBtn.disabled = true;
+                                clearCacheBtn.textContent = '⏳ Vérification...';
+                                resultsSpan.textContent = '';
+
+                                // ✅ Appel AJAX pour vider le cache
+                                var formData = new FormData();
+                                formData.append('action', 'pdf_builder_clear_cache');
+                                formData.append('security', '<?php echo wp_create_nonce('pdf_builder_clear_cache_performance'); ?>');
+
+                                fetch(ajaxurl, {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(function(response) {
+                                    return response.json();
+                                })
+                                .then(function(data) {
+                                    clearCacheBtn.disabled = false;
+                                    clearCacheBtn.textContent = '🗑️ Vider tout le cache';
+
+                                    if (data.success) {
+                                        resultsSpan.textContent = '✅ Cache vidé avec succès!';
+                                        resultsSpan.style.color = '#28a745';
+                                    } else {
+                                        resultsSpan.textContent = '❌ Erreur: ' + (data.data || 'Erreur inconnue');
+                                        resultsSpan.style.color = '#dc3232';
+                                    }
+                                })
+                                .catch(function(error) {
+                                    clearCacheBtn.disabled = false;
+                                    clearCacheBtn.textContent = '🗑️ Vider tout le cache';
+                                    resultsSpan.textContent = '❌ Erreur AJAX: ' + error.message;
+                                    resultsSpan.style.color = '#dc3232';
+                                    console.error('Erreur lors du vide du cache:', error);
+                                });
+                            });
+                        }
+                    });
+                </script>
+
+                    <!-- Informations utiles -->
+                    <div style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); border: none; border-radius: 12px; padding: 30px; margin-bottom: 30px; color: #fff; box-shadow: 0 4px 12px rgba(23,162,184,0.3);">
+                        <h4 style="margin: 0 0 20px 0; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">Informations Utiles</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                            <!-- Site actuel -->
+                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                                <strong>Site actuel :</strong><br>
+                                <code style="color: #fff; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 3px;"><?php echo esc_html(get_site_url()); ?></code>
+                            </div>
+
+                            <!-- Version du plugin -->
+                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                                <strong>Version :</strong><br>
+                                <code style="color: #fff; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 3px;"><?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : '1.0.0'; ?></code>
+                            </div>
+
+                            <!-- Support -->
+                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                                <strong>Support :</strong><br>
+                                <a href="mailto:support@pdf-builder-pro.com" style="color: #fff; text-decoration: underline;">support@pdf-builder-pro.com</a>
+                            </div>
+
+                            <!-- Documentation -->
+                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                                <strong>Documentation :</strong><br>
+                                <a href="https://docs.pdf-builder-pro.com" target="_blank" style="color: #fff; text-decoration: underline;">docs.pdf-builder-pro.com</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Notifications par Email -->
+                    <div style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: none; border-radius: 12px; padding: 30px; margin-top: 30px; color: #343a40; box-shadow: 0 4px 12px rgba(0,102,204,0.15);">
+                        <h4 style="margin-top: 0; color: #003d7a; font-size: 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
+                            📧 Notifications par Email
+                        </h4>
+
+                        <p style="color: #003d7a; margin: 0 0 25px 0; line-height: 1.6; font-size: 14px;">
+                            Recevez une notification par email quand votre licence expire bientôt. C'est une excellente façon de ne jamais oublier de renouveler votre licence.
+                        </p>
+
+                        <form method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start;">
+                            <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
+                            <input type="hidden" name="pdf_builder_save_notifications" value="1">
+
+                            <!-- Toggle Notifications -->
+                            <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div class="toggle-container">
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="enable_expiration_notifications" name="enable_expiration_notifications" value="1"
+                                                   <?php checked($enable_expiration_notifications); ?> />
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label for="enable_expiration_notifications" style="font-weight: 600; color: #003d7a; cursor: pointer;">Notifications d'expiration</label>
+                                        <div class="toggle-description" style="color: #666; font-size: 13px; margin-top: 2px;">Active les notifications par email pour les événements de licence</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email administrateur -->
+                            <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
+                                <label for="notification_email" style="display: block; font-weight: 600; margin-bottom: 8px; color: #003d7a;">Email Administrateur</label>
+                                <input type="email" id="notification_email" name="notification_email" value="<?php echo esc_attr($notification_email); ?>"
+                                       class="regular-text" autocomplete="email" style="width: 100%; padding: 8px 12px; border: 2px solid #0066cc; border-radius: 4px;" />
+                                <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">
+                                    Défaut : adresse administrateur du site
+                                </p>
+                            </div>
+
+                        </form>
+                    </div>
+
+            
+            </form>
         </div>
 
         <div id="systeme" class="tab-content hidden-tab">
