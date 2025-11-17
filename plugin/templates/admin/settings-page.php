@@ -3163,14 +3163,21 @@
                 // Utiliser CSS direct au lieu de JavaScript pour forcer l'affichage
                 if ($(this).is(':checked')) {
                     $('#developer-info-section').css({
-                        'display': 'block',
-                        'visibility': 'visible',
-                        'opacity': '1'
+                        'display': 'block !important',
+                        'visibility': 'visible !important',
+                        'opacity': '1 !important',
+                        'position': 'relative !important',
+                        'z-index': '9999 !important'
                     });
-                    console.log('[DEV MODE TOGGLE] Applied CSS display:block to section');
+                    console.log('[DEV MODE TOGGLE] Applied CSS display:block !important to section');
+
+                    // Test ultime : injecter du HTML visible directement dans le body
+                    $('body').append('<div id="test-visible-element" style="position: fixed; top: 100px; left: 100px; background: red; color: white; padding: 20px; z-index: 10000; font-size: 24px; border: 5px solid yellow;">🚨 TEST ULTIME - SI VOUS VOYEZ CECI, LE JS FONCTIONNE !</div>');
+                    console.log('[DEV MODE TOGGLE] Injected test element into body');
                 } else {
                     $('#developer-info-section').css('display', 'none');
-                    console.log('[DEV MODE TOGGLE] Applied CSS display:none to section');
+                    $('#test-visible-element').remove();
+                    console.log('[DEV MODE TOGGLE] Applied CSS display:none to section and removed test element');
                 }
             });
         });
