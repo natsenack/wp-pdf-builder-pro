@@ -302,6 +302,9 @@
                     if (response.success) {
                         this.updateConsentUI(response.data.consents);
                     }
+                },
+                error: (xhr, status, error) => {
+                    console.log('GDPR CONSENT AJAX Error:', xhr.status, xhr.statusText, xhr.responseText, error);
                 }
             });
         }
