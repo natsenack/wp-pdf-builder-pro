@@ -3172,6 +3172,50 @@
             </table>
             </div>
 
+            <div id="dev-todo-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <h3 class="section-title">📋 À Faire - Développement</h3>
+
+            <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h4 style="color: #856404; margin-top: 0;">🚧 Système de Cache - RÉIMPLÉMENTATION REQUISE</h4>
+                <p style="margin-bottom: 15px;"><strong>Statut :</strong> <span style="color: #dc3545; font-weight: bold;">SUPPRIMÉ DU CODE ACTUEL</span></p>
+
+                <div style="background: #f8f9fa; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #856404;">📂 Fichiers concernés :</h5>
+                    <ul style="margin-bottom: 0;">
+                        <li><code>src/Cache/</code> - Répertoire complet du système de cache</li>
+                        <li><code>src/Managers/PDF_Builder_Cache_Manager.php</code></li>
+                        <li><code>src/Managers/PDF_Builder_Extended_Cache_Manager.php</code></li>
+                        <li><code>templates/admin/settings-page.php</code> - Section système (lignes ~2133, ~276, ~349)</li>
+                        <li><code>pdf-builder-pro.php</code> - Référence ligne 671</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f8f9fa; border-left: 4px solid #17a2b8; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #17a2b8;">🎯 Actions requises :</h5>
+                    <ol style="margin-bottom: 0;">
+                        <li><strong>Analyser les besoins :</strong> Déterminer si un système de cache est nécessaire pour les performances</li>
+                        <li><strong>Concevoir l'architecture :</strong> Cache fichier/DB/transient selon les besoins</li>
+                        <li><strong>Réimplémenter le Cache Manager :</strong> Classe principale de gestion du cache</li>
+                        <li><strong>Réimplémenter l'Extended Cache Manager :</strong> Gestion avancée avec DB et nettoyage</li>
+                        <li><strong>Mettre à jour l'interface :</strong> Section système avec contrôles fonctionnels</li>
+                        <li><strong>Tester l'intégration :</strong> Vérifier que le cache améliore les performances sans bugs</li>
+                    </ol>
+                </div>
+
+                <div style="background: #d1ecf1; border-left: 4px solid #17a2b8; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #0c5460;">⚠️ Impact actuel :</h5>
+                    <ul style="margin-bottom: 0;">
+                        <li>Les toggles de cache dans l'onglet Système ne font rien</li>
+                        <li>Pas de cache des aperçus PDF (impact performance)</li>
+                        <li>Options de cache sauvegardées mais non utilisées</li>
+                        <li>Code de cache présent mais non chargé</li>
+                    </ul>
+                </div>
+
+                <p style="margin-top: 15px;"><strong>Priorité :</strong> <span style="color: #ffc107; font-weight: bold;">MOYENNE</span> - Fonctionnalité non critique pour le moment</p>
+            </div>
+            </div>
+
             <div id="dev-console-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Console Code</h3>
 
