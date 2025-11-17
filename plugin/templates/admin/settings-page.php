@@ -1604,17 +1604,6 @@
                                     <?php
                                 endif; ?>
 
-                                <!-- Section de test des notifications -->
-                                <tr style="border-bottom: 2px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Test Notifications :</td>
-                                    <td style="padding: 8px 0;">
-                                        <button type="button" id="test-notifications-success" class="button button-small" style="margin-right: 5px; background: #28a745; color: white; border: none;">✅ Test Succès</button>
-                                        <button type="button" id="test-notifications-error" class="button button-small" style="margin-right: 5px; background: #dc3545; color: white; border: none;">❌ Test Erreur</button>
-                                        <button type="button" id="test-notifications-warning" class="button button-small" style="margin-right: 5px; background: #ffc107; color: black; border: none;">⚠️ Test Avertissement</button>
-                                        <button type="button" id="test-notifications-info" class="button button-small" style="background: #17a2b8; color: white; border: none;">ℹ️ Test Info</button>
-                                    </td>
-                                </tr>
-
                                 <?php if ($is_premium && $license_activated_at) :
                                     ?>
                                 <tr style="border-bottom: 1px solid #e5e5e5;">
@@ -2820,6 +2809,16 @@
         <div id="developpeur" class="tab-content hidden-tab">
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
+
+            <h3 class="section-title">🔔 Tests de Notifications</h3>
+            <p style="color: #666; margin-bottom: 15px;">Testez les différents types de notifications du système.</p>
+
+            <div style="margin-bottom: 20px;">
+                <button type="button" id="test-notifications-success" class="button button-small" style="margin-right: 5px; background: #28a745; color: white; border: none;">✅ Test Succès</button>
+                <button type="button" id="test-notifications-error" class="button button-small" style="margin-right: 5px; background: #dc3545; color: white; border: none;">❌ Test Erreur</button>
+                <button type="button" id="test-notifications-warning" class="button button-small" style="margin-right: 5px; background: #ffc107; color: black; border: none;">⚠️ Test Avertissement</button>
+                <button type="button" id="test-notifications-info" class="button button-small" style="background: #17a2b8; color: white; border: none;">ℹ️ Test Info</button>
+            </div>
 
          <form method="post" id="developpeur-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
@@ -4538,6 +4537,39 @@
                         }, 3000);
                     }
                 });
+            });
+
+            // Gestionnaires pour les tests de notifications
+            $('#test-notifications-success').on('click', function() {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('✅ Test de notification de succès réussi !', 'success');
+                } else {
+                    alert('✅ Test de notification de succès réussi !');
+                }
+            });
+
+            $('#test-notifications-error').on('click', function() {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('❌ Test de notification d\'erreur réussi !', 'error');
+                } else {
+                    alert('❌ Test de notification d\'erreur réussi !');
+                }
+            });
+
+            $('#test-notifications-warning').on('click', function() {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('⚠️ Test de notification d\'avertissement réussi !', 'warning');
+                } else {
+                    alert('⚠️ Test de notification d\'avertissement réussi !');
+                }
+            });
+
+            $('#test-notifications-info').on('click', function() {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('ℹ️ Test de notification d\'information réussi !', 'info');
+                } else {
+                    alert('ℹ️ Test de notification d\'information réussi !');
+                }
             });
         });
     </script>
