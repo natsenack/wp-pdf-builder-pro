@@ -3160,7 +3160,18 @@
             // Écouter les changements sur le toggle développeur
             $('#developer_enabled').on('change', function() {
                 console.log('[DEV MODE TOGGLE] Toggle changed, new state:', $(this).is(':checked'));
-                toggleDeveloperSection();
+                // Utiliser CSS direct au lieu de JavaScript pour forcer l'affichage
+                if ($(this).is(':checked')) {
+                    $('#developer-info-section').css({
+                        'display': 'block',
+                        'visibility': 'visible',
+                        'opacity': '1'
+                    });
+                    console.log('[DEV MODE TOGGLE] Applied CSS display:block to section');
+                } else {
+                    $('#developer-info-section').css('display', 'none');
+                    console.log('[DEV MODE TOGGLE] Applied CSS display:none to section');
+                }
             });
         });
     </script>
