@@ -213,6 +213,21 @@
     $license_test_key = get_option('pdf_builder_license_test_key', '');
     $license_test_mode = get_option('pdf_builder_license_test_mode_enabled', false);
     $settings['license_test_mode'] = $license_test_mode;
+
+    // Charger les paramètres individuels sauvegardés via AJAX
+    $settings['cache_enabled'] = get_option('pdf_builder_cache_enabled', false);
+    $settings['cache_ttl'] = get_option('pdf_builder_cache_ttl', 3600);
+    $settings['cache_compression'] = get_option('pdf_builder_cache_compression', true);
+    $settings['cache_auto_cleanup'] = get_option('pdf_builder_cache_auto_cleanup', true);
+    $settings['cache_max_size'] = get_option('pdf_builder_cache_max_size', 100);
+    $settings['company_phone_manual'] = get_option('pdf_builder_company_phone_manual', '');
+    $settings['company_siret'] = get_option('pdf_builder_company_siret', '');
+    $settings['company_vat'] = get_option('pdf_builder_company_vat', '');
+    $settings['company_rcs'] = get_option('pdf_builder_company_rcs', '');
+    $settings['company_capital'] = get_option('pdf_builder_company_capital', '');
+    $settings['pdf_quality'] = get_option('pdf_builder_pdf_quality', 'high');
+    $settings['default_format'] = get_option('pdf_builder_default_format', 'A4');
+    $settings['default_orientation'] = get_option('pdf_builder_default_orientation', 'portrait');
     // Log ALL POST data at the beginning
     if (!empty($_POST)) {
         error_log('ALL POST data received: ' . print_r($_POST, true));
@@ -945,6 +960,7 @@
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_nonce'); ?>
                     <input type="hidden" name="current_tab" value="general">
+                    <!-- Le bouton submit est supprimé car on utilise le système AJAX global -->
 
                     <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                         <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>

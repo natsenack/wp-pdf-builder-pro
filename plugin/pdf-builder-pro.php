@@ -415,33 +415,31 @@ function pdf_builder_save_settings_ajax() {
     $current_tab = sanitize_text_field($_POST['current_tab']);
     $saved_count = 0;
 
-    // Traiter selon l'onglet
+        // Traiter selon l'onglet
     switch ($current_tab) {
         case 'general':
-            if (isset($_POST['pdf_builder_settings_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-                // Sauvegarder les paramètres généraux
-                $settings = array(
-                    'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
-                    'cache_ttl' => intval($_POST['cache_ttl']),
-                    'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
-                    'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
-                    'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
-                    'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
-                    'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
-                    'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
-                    'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
-                    'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
-                    'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
-                    'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
-                    'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
-                );
+            // Pour l'AJAX, on utilise le nonce principal pdf_builder_ajax
+            // Sauvegarder les paramètres généraux
+            $settings = array(
+                'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
+                'cache_ttl' => intval($_POST['cache_ttl']),
+                'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
+                'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
+                'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
+                'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
+                'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
+                'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
+                'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
+                'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
+                'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+                'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
+                'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+            );
 
-                foreach ($settings as $key => $value) {
-                    update_option('pdf_builder_' . $key, $value);
-                }
-                $saved_count++;
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
             }
+            $saved_count++;
             break;
 
         case 'performance':
