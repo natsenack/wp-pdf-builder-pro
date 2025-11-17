@@ -3126,6 +3126,8 @@
                 console.log('[DEV MODE TOGGLE] isEnabled:', isEnabled);
                 console.log('[DEV MODE TOGGLE] devSection exists:', $devSection.length > 0);
                 console.log('[DEV MODE TOGGLE] devSection current display:', $devSection.css('display'));
+                console.log('[DEV MODE TOGGLE] devSection HTML content length:', $devSection.html().length);
+                console.log('[DEV MODE TOGGLE] devSection children count:', $devSection.children().length);
                 console.log('[DEV MODE TOGGLE] tabContent display:', $tabContent.css('display'));
                 console.log('[DEV MODE TOGGLE] tabContent visibility:', $tabContent.css('visibility'));
                 console.log('[DEV MODE TOGGLE] tabContent is visible:', $tabContent.is(':visible'));
@@ -3191,6 +3193,12 @@
             <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; <?php echo get_option('pdf_builder_developer_enabled', false) ? '' : 'display: none;'; ?> border: 2px solid red !important; background: yellow !important;">
                 <h4 style="margin-top: 0; color: #495057;">🔧 Informations développeur</h4>
                 <p style="margin-bottom: 15px; color: #666;">Informations système et de débogage disponibles uniquement en mode développeur.</p>
+
+                <!-- CONTENU DE TEST POUR DEBUG -->
+                <div style="background: red; color: white; padding: 10px; margin: 10px 0; font-weight: bold;">
+                    🚨 CONTENU DE TEST - SI VOUS VOYEZ CECI, LA SECTION FONCTIONNE !
+                </div>
+                <!-- FIN CONTENU DE TEST -->
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
                     <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
