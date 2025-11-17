@@ -938,12 +938,15 @@
                 </script>
             </div>
 
+                </script>
+            </div>
+
             <!-- Section Informations Entreprise -->
             <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
                 <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">🏢 Informations Entreprise</h3>
 
                 <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_general_nonce', 'pdf_builder_general_nonce'); ?>
+                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
                     <input type="hidden" name="current_tab" value="general">
 
                     <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -1016,12 +1019,6 @@
                                 </td>
                             </tr>
                         </table>
-
-                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #dee2e6;">
-                            <button type="submit" name="submit" class="button button-primary" style="background-color: #0066cc; border-color: #0066cc; color: white; font-weight: bold; padding: 10px 20px;">
-                                💾 Enregistrer les informations entreprise
-                            </button>
-                        </div>
                     </div>
                 </form>
             </div>
