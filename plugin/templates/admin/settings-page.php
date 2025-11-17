@@ -2751,6 +2751,15 @@
             border-radius: 50%;
         }
 
+        /* Style pour la section développeur visible */
+        #developer-info-section.developer-visible {
+            display: block !important;
+        }
+
+        #developer-info-section:not(.developer-visible) {
+            display: none !important;
+        }
+
         /* Styles pour les onglets */
         .nav-tab-wrapper {
             border-bottom: 1px solid #ccc;
@@ -3121,10 +3130,9 @@
                 var $devSection = $('#developer-info-section');
 
                 if ($('#developer_enabled').is(':checked')) {
-                    // Utiliser CSS direct pour éviter les problèmes de jQuery
-                    $devSection.css('display', 'block');
+                    $devSection.addClass('developer-visible');
                 } else {
-                    $devSection.css('display', 'none');
+                    $devSection.removeClass('developer-visible');
                 }
             }
 
@@ -3150,6 +3158,7 @@
                         console.log('Width:', $section.width(), 'Height:', $section.height());
                         console.log('Offset:', $section.offset());
                         console.log('Is visible:', $section.is(':visible'));
+                        console.log('Has class developer-visible:', $section.hasClass('developer-visible'));
 
                         // Vérifier les parents
                         var $parents = $section.parents();
@@ -3193,7 +3202,7 @@
                 </tr>
             </table>
 
-            <div id="developer-info-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; <?php echo get_option('pdf_builder_developer_enabled', false) ? '' : 'display: none;'; ?>">
+            <div id="developer-info-section" class="<?php echo get_option('pdf_builder_developer_enabled', false) ? 'developer-visible' : ''; ?>" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
                 <h4 style="margin-top: 0; color: #495057;">🔧 Informations développeur</h4>
                 <p style="margin-bottom: 15px; color: #666;">Informations système et de débogage disponibles uniquement en mode développeur.</p>
 
