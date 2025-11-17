@@ -206,7 +206,7 @@ function pdf_builder_register_ajax_handlers() {
  * Debug: Vérifier les actions AJAX enregistrées
  */
 function pdf_builder_debug_ajax_actions() {
-    if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('manage_options')) {
+    if (current_user_can('manage_options')) {
         global $wp_filter;
         
         $ajax_actions = [
