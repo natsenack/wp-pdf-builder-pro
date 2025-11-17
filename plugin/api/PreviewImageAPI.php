@@ -60,7 +60,7 @@ class PreviewImageAPI
     /**
      * Enregistrer les routes REST API pour l'étape 1.4
      */
-    public function registerRestRoutes()
+    public function register_rest_routes()
     {
         register_rest_route('wp-pdf-builder-pro/v1', '/preview', array(
             'methods' => 'POST',
