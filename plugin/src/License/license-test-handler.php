@@ -47,21 +47,34 @@ class LicenseTestHandler
      */
     public function init()
     {
+        error_log('LICENSE TEST: LicenseTestHandler init() called');
+
         // AJAX handler pour générer une clé de test
         add_action('wp_ajax_pdf_builder_generate_test_license_key', [$this, 'handleGenerateTestKey']);
         add_action('wp_ajax_nopriv_pdf_builder_generate_test_license_key', [$this, 'handleGenerateTestKey']);
-// AJAX handler pour valider une clé de test
+        error_log('LICENSE TEST: Generate test key hooks registered');
+
+        // AJAX handler pour valider une clé de test
         add_action('wp_ajax_pdf_builder_validate_test_license_key', [$this, 'handleValidateTestKey']);
         add_action('wp_ajax_nopriv_pdf_builder_validate_test_license_key', [$this, 'handleValidateTestKey']);
-// AJAX handler pour basculer le mode test
+        error_log('LICENSE TEST: Validate test key hooks registered');
+
+        // AJAX handler pour basculer le mode test
         add_action('wp_ajax_pdf_builder_toggle_test_mode', [$this, 'handleToggleTestMode']);
         add_action('wp_ajax_nopriv_pdf_builder_toggle_test_mode', [$this, 'handleToggleTestMode']);
-// AJAX handler pour supprimer la clé de test
+        error_log('LICENSE TEST: Toggle test mode hooks registered');
+
+        // AJAX handler pour supprimer la clé de test
         add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handleDeleteTestKey']);
         add_action('wp_ajax_nopriv_pdf_builder_delete_test_license_key', [$this, 'handleDeleteTestKey']);
-// AJAX handler pour nettoyer complètement la licence
+        error_log('LICENSE TEST: Delete test key hooks registered');
+
+        // AJAX handler pour nettoyer complètement la licence
         add_action('wp_ajax_pdf_builder_cleanup_license', [$this, 'handleCleanupLicense']);
         add_action('wp_ajax_nopriv_pdf_builder_cleanup_license', [$this, 'handleCleanupLicense']);
+        error_log('LICENSE TEST: Cleanup license hooks registered');
+
+        error_log('LICENSE TEST: All hooks registered successfully');
     }
 
     /**
@@ -125,41 +138,55 @@ class LicenseTestHandler
      */
     public function handleGenerateTestKey()
     {
+        error_log('LICENSE TEST: handleGenerateTestKey called');
+
         // Vérifier la nonce
         if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_generate_license_key')) {
+            error_log('LICENSE TEST: Generate key - Nonce verification failed');
             wp_send_json_error([
                 'message' => 'Erreur de sécurité: nonce invalide'
             ], 403);
         }
+        error_log('LICENSE TEST: Generate key - Nonce verified');
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
+            error_log('LICENSE TEST: Generate key - Insufficient permissions');
             wp_send_json_error([
                 'message' => 'Permissions insuffisantes'
             ], 403);
         }
+        error_log('LICENSE TEST: Generate key - Permissions OK');
 
         try {
-// Générer une nouvelle clé
+            // Générer une nouvelle clé
             $new_key = $this->generateTestKey();
-// Sauvegarder la clé
+            error_log('LICENSE TEST: Generated key: ' . $new_key);
+
+            // Sauvegarder la clé
             $saved = $this->saveTestKey($new_key);
             if (!$saved) {
+                error_log('LICENSE TEST: Failed to save key');
                 wp_send_json_error([
                     'message' => 'Impossible de sauvegarder la clé de test'
                 ]);
             }
+            error_log('LICENSE TEST: Key saved successfully');
 
             // Sauvegarder la date d'expiration (30 jours)
             $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
             update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
-// Retourner la clé générée
+            error_log('LICENSE TEST: Expiration date set: ' . $expires_in_30_days);
+
+            // Retourner la clé générée
             wp_send_json_success([
                 'key' => $new_key,
                 'expires' => $expires_in_30_days,
                 'message' => 'Clé de test générée avec succès (expire dans 30 jours)'
             ]);
+            error_log('LICENSE TEST: Generate key response sent');
         } catch (\Exception $e) {
+            error_log('LICENSE TEST: Generate key exception: ' . $e->getMessage());
             wp_send_json_error([
                 'message' => 'Erreur: ' . $e->getMessage()
             ]);
@@ -234,33 +261,47 @@ class LicenseTestHandler
      */
     public function handleToggleTestMode()
     {
+        error_log('LICENSE TEST: handleToggleTestMode called');
+
         // Vérifier la nonce
         if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_toggle_test_mode')) {
+            error_log('LICENSE TEST: Nonce verification failed');
             wp_send_json_error([
                 'message' => 'Erreur de sécurité: nonce invalide'
             ], 403);
         }
+        error_log('LICENSE TEST: Nonce verified successfully');
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
+            error_log('LICENSE TEST: Insufficient permissions');
             wp_send_json_error([
                 'message' => 'Permissions insuffisantes'
             ], 403);
         }
+        error_log('LICENSE TEST: Permissions OK');
 
         try {
             // Récupérer l'état actuel
             $current_state = $this->isTestModeEnabled();
+            error_log('LICENSE TEST: Current state: ' . ($current_state ? 'enabled' : 'disabled'));
+
             // Basculer l'état
             $new_state = !$current_state;
+            error_log('LICENSE TEST: New state will be: ' . ($new_state ? 'enabled' : 'disabled'));
+
             // Sauvegarder le nouvel état
             $this->setTestModeEnabled($new_state);
+            error_log('LICENSE TEST: State saved successfully');
+
             // Retourner le nouvel état
             wp_send_json_success([
                 'enabled' => $new_state,
                 'message' => $new_state ? '✅ Mode test ACTIVÉ' : '❌ Mode test DÉSACTIVÉ'
             ]);
+            error_log('LICENSE TEST: Response sent successfully');
         } catch (\Exception $e) {
+            error_log('LICENSE TEST: Exception caught: ' . $e->getMessage());
             wp_send_json_error([
                 'message' => 'Erreur: ' . $e->getMessage()
             ]);

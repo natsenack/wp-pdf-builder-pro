@@ -13,6 +13,10 @@
         init() {
             this.bindEvents();
             this.loadConsentStatus();
+
+            // Expose test function globally for debugging
+            window.testLicenseToggle = () => this.testToggleLicenseMode();
+            console.log('LICENSE TEST JS: testLicenseToggle() function exposed globally. Call it from console to test.');
         }
 
         bindEvents() {
@@ -283,17 +287,9 @@
                     nonce: pdfBuilderGDPR.nonce
                 },
                 success: (response) => {
-                    console.log('GDPR: Consent status loaded successfully', response);
                     if (response.success) {
                         this.updateConsentUI(response.data.consents);
                     }
-                },
-                error: (xhr, status, error) => {
-                    console.error('GDPR: Consent status loading failed', {
-                        status: xhr.status,
-                        statusText: xhr.statusText,
-                        responseText: xhr.responseText
-                    });
                 }
             });
         }
@@ -365,6 +361,39 @@
             // Dismissible functionality
             notice.on('click', '.notice-dismiss', function() {
                 notice.fadeOut(() => notice.remove());
+            });
+        }
+
+        // Test function for license test mode toggle
+        testToggleLicenseMode() {
+            console.log('LICENSE TEST JS: Starting toggle test mode');
+
+            $.ajax({
+                url: pdfBuilderGDPR.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_toggle_test_mode',
+                    nonce: pdfBuilderGDPR.nonce
+                },
+                success: (response) => {
+                    console.log('LICENSE TEST JS: Success response:', response);
+                    if (response.success) {
+                        console.log('LICENSE TEST JS: Mode toggled successfully:', response.data);
+                        this.showSuccess(response.data.message);
+                    } else {
+                        console.error('LICENSE TEST JS: Server returned error:', response.data);
+                        this.showError(response.data.message);
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error('LICENSE TEST JS: AJAX error:', {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText,
+                        error: error
+                    });
+                    this.showError('Erreur AJAX lors du toggle du mode test');
+                }
             });
         }
     }
