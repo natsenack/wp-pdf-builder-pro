@@ -5016,6 +5016,15 @@
                 const filename = $(this).data('filename');
                 const filenameRaw = $(this).closest('.backup-item').find('strong').text() || filename;
 
+                console.log('[PDF Builder JS] Bouton restaurer cliqué');
+                console.log('[PDF Builder JS] Filename:', filename);
+                console.log('[PDF Builder JS] pdf_builder_ajax disponible:', typeof pdf_builder_ajax !== 'undefined');
+
+                if (!filename) {
+                    alert('Erreur: nom de fichier manquant');
+                    return;
+                }
+
                 if (!confirm('Êtes-vous sûr de vouloir restaurer la sauvegarde "' + filenameRaw + '" ?\n\n⚠️ Cette action va remplacer tous les paramètres actuels par ceux de la sauvegarde.')) {
                     return;
                 }
@@ -5060,6 +5069,16 @@
                 const filename = $(this).data('filename');
                 const filenameRaw = $(this).closest('.backup-item').find('strong').text() || filename;
 
+                console.log('[PDF Builder JS] Bouton supprimer cliqué');
+                console.log('[PDF Builder JS] Filename:', filename);
+                console.log('[PDF Builder JS] FilenameRaw:', filenameRaw);
+                console.log('[PDF Builder JS] pdf_builder_ajax disponible:', typeof pdf_builder_ajax !== 'undefined');
+
+                if (!filename) {
+                    alert('Erreur: nom de fichier manquant');
+                    return;
+                }
+
                 if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement la sauvegarde "' + filenameRaw + '" ?\n\n⚠️ Cette action est irréversible.')) {
                     return;
                 }
@@ -5067,6 +5086,9 @@
                 console.log('[PDF Builder JS] Bouton "Supprimer sauvegarde" cliqué:', filename);
                 const $btn = $(this);
                 const $results = $('#backup-results');
+
+                // Vérifier si la liste était déjà ouverte avant la suppression
+                const wasListOpen = $results.html().includes('Sauvegardes disponibles') || $results.html().includes('backup-item');
 
                 $btn.prop('disabled', true).text('⏳ Suppression...');
 
@@ -5084,8 +5106,7 @@
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Sauvegarde supprimée avec succès</span>');
                             // Recharger la liste automatiquement seulement si elle était déjà ouverte
-                            const currentContent = $results.html();
-                            if (currentContent.includes('Sauvegardes disponibles') || currentContent.includes('backup-item')) {
+                            if (wasListOpen) {
                                 setTimeout(() => {
                                     $('#list-backups-btn').click();
                                 }, 1000);
