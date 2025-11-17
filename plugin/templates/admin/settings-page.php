@@ -601,24 +601,6 @@
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
         }
     }
-
-    // Gestionnaire pour la sauvegarde des informations entreprise
-    if (isset($_POST['submit_company_settings']) && isset($_POST['pdf_builder_company_settings_nonce'])) {
-
-        if (wp_verify_nonce($_POST['pdf_builder_company_settings_nonce'], 'pdf_builder_company_settings')) {
-            $company_settings = [
-                'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
-                'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
-                'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
-                'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
-                'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
-            ];
-            update_option('pdf_builder_company_settings', $company_settings);
-            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Informations entreprise enregistrées avec succès.</p></div>';
-        } else {
-            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
-        }
-    }
 ?>
 <script>
     // Script de définition des paramètres canvas - exécuté très tôt
@@ -960,41 +942,39 @@
             <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
                 <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">🏢 Informations Entreprise</h3>
 
-                <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                    <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                        <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
-                        <p style="margin: 5px 0;"><strong>Adresse complète :</strong> <?php
-                        $address = get_option('woocommerce_store_address', '');
-                        $city = get_option('woocommerce_store_city', '');
-                        $postcode = get_option('woocommerce_store_postcode', '');
-                        $country = get_option('woocommerce_default_country', '');
-                        $full_address = array_filter([$address, $city, $postcode, $country]);
-                        echo esc_html(implode(', ', $full_address) ?: '<em>Non défini</em>');
-                        ?></p>
-                        <p style="margin: 5px 0;"><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
-                        <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
-                        ℹ️ Ces informations sont automatiquement récupérées depuis les paramètres WooCommerce (WooCommerce > Réglages > Général).
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_general_nonce', 'pdf_builder_general_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="general">
+
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                            <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
+                            <p style="margin: 5px 0;"><strong>Adresse complète :</strong> <?php
+                            $address = get_option('woocommerce_store_address', '');
+                            $city = get_option('woocommerce_store_city', '');
+                            $postcode = get_option('woocommerce_store_postcode', '');
+                            $country = get_option('woocommerce_default_country', '');
+                            $full_address = array_filter([$address, $city, $postcode, $country]);
+                            echo esc_html(implode(', ', $full_address) ?: '<em>Non défini</em>');
+                            ?></p>
+                            <p style="margin: 5px 0;"><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
+                            <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                            ℹ️ Ces informations sont automatiquement récupérées depuis les paramètres WooCommerce (WooCommerce > Réglages > Général).
+                            </p>
+                        </div>
+
+                        <h4 style="color: #dc3545;">📝 Informations à saisir manuellement</h4>
+                        <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
+                        Ces informations ne sont pas disponibles dans WooCommerce et doivent être saisies manuellement :
                         </p>
-                    </div>
-
-                    <h4 style="color: #dc3545;">📝 Informations à saisir manuellement</h4>
-                    <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
-                    Ces informations ne sont pas disponibles dans WooCommerce et doivent être saisies manuellement :
-                    </p>
-
-                    <?php $company_settings = get_option('pdf_builder_company_settings', []); ?>
-
-                    <form method="post" action="">
-                        <?php wp_nonce_field('pdf_builder_company_settings', 'pdf_builder_company_settings_nonce'); ?>
-                        <input type="hidden" name="current_tab" value="company">
 
                         <table class="form-table">
                             <tr>
                                 <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
                                 <td>
                                     <input type="text" id="company_phone_manual" name="company_phone_manual"
-                                        value="<?php echo esc_attr($company_settings['company_phone_manual'] ?? ''); ?>"
+                                        value="<?php echo esc_attr($settings['company_phone_manual'] ?? ''); ?>"
                                         placeholder="+33 1 23 45 67 89" />
                                     <p class="description">Téléphone de l'entreprise</p>
                                 </td>
@@ -1003,7 +983,7 @@
                                 <th scope="row"><label for="company_siret">Numéro SIRET</label></th>
                                 <td>
                                     <input type="text" id="company_siret" name="company_siret"
-                                        value="<?php echo esc_attr($company_settings['company_siret'] ?? ''); ?>"
+                                        value="<?php echo esc_attr($settings['company_siret'] ?? ''); ?>"
                                         placeholder="123 456 789 00012" />
                                     <p class="description">Numéro SIRET de l'entreprise</p>
                                 </td>
@@ -1012,7 +992,7 @@
                                 <th scope="row"><label for="company_vat">Numéro TVA</label></th>
                                 <td>
                                     <input type="text" id="company_vat" name="company_vat"
-                                        value="<?php echo esc_attr($company_settings['company_vat'] ?? ''); ?>"
+                                        value="<?php echo esc_attr($settings['company_vat'] ?? ''); ?>"
                                         placeholder="FR 12 345 678 901" />
                                     <p class="description">Numéro de TVA intracommunautaire</p>
                                 </td>
@@ -1021,7 +1001,7 @@
                                 <th scope="row"><label for="company_rcs">RCS</label></th>
                                 <td>
                                     <input type="text" id="company_rcs" name="company_rcs"
-                                        value="<?php echo esc_attr($company_settings['company_rcs'] ?? ''); ?>"
+                                        value="<?php echo esc_attr($settings['company_rcs'] ?? ''); ?>"
                                         placeholder="Lyon B 123 456 789" />
                                     <p class="description">Numéro RCS (Registre du Commerce et des Sociétés)</p>
                                 </td>
@@ -1030,18 +1010,20 @@
                                 <th scope="row"><label for="company_capital">Capital social</label></th>
                                 <td>
                                     <input type="text" id="company_capital" name="company_capital"
-                                        value="<?php echo esc_attr($company_settings['company_capital'] ?? ''); ?>"
+                                        value="<?php echo esc_attr($settings['company_capital'] ?? ''); ?>"
                                         placeholder="10 000 €" />
                                     <p class="description">Montant du capital social de l'entreprise</p>
                                 </td>
                             </tr>
                         </table>
 
-                        <p class="submit">
-                            <input type="submit" name="submit_company_settings" class="button button-primary" value="💾 Sauvegarder les informations entreprise" />
-                        </p>
-                    </form>
-                </div>
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+                            <button type="submit" name="submit" class="button button-primary" style="background-color: #0066cc; border-color: #0066cc; color: white; font-weight: bold; padding: 10px 20px;">
+                                💾 Enregistrer les informations entreprise
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
 
             <!-- Section Paramètres PDF -->
