@@ -4986,6 +4986,7 @@
                                     html += '</div>';
                                     html += '<div style="display: flex; gap: 8px;">';
                                     html += '<button type="button" class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="background: #28a745; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer;">🔄 Restaurer</button>';
+                                    html += '<a href="' + pdf_builder_ajax.ajax_url + '?action=pdf_builder_download_backup&filename=' + encodeURIComponent(backup.filename) + '&nonce=' + pdf_builder_ajax.nonce + '" class="button button-small" style="background: #007cba; color: white; text-decoration: none; padding: 4px 8px; border-radius: 3px; display: inline-block;">📥 Télécharger</a>';
                                     html += '<button type="button" class="button button-small delete-backup-btn" data-filename="' + backup.filename + '" style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer;">🗑️ Supprimer</button>';
                                     html += '</div>';
                                     html += '</div>';

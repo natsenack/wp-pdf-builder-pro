@@ -206,6 +206,7 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_delete_backup_ajax');
     add_action('pdf_builder_daily_backup', 'pdf_builder_execute_daily_backup');
     add_action('pdf_builder_cleanup_old_backups', 'pdf_builder_cleanup_old_backups');
+    add_action('init', 'pdf_builder_handle_backup_download');
 }
 
 /**
@@ -960,6 +961,51 @@ function pdf_builder_delete_backup_ajax() {
 }
 
 /**
+ * Handler pour télécharger une sauvegarde
+ */
+function pdf_builder_download_backup() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_GET['nonce'], 'pdf_builder_save_settings')) {
+        wp_die('Nonce invalide');
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_die('Permissions insuffisantes');
+    }
+
+    $filename = sanitize_file_name($_GET['filename']);
+
+    if (empty($filename)) {
+        wp_die('Nom de fichier manquant');
+    }
+
+    try {
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+        $filepath = $backup_dir . '/' . $filename;
+
+        if (!file_exists($filepath)) {
+            wp_die('Fichier de sauvegarde introuvable');
+        }
+
+        // Définir les headers pour le téléchargement
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . filesize($filepath));
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        // Lire et envoyer le fichier
+        readfile($filepath);
+        exit;
+
+    } catch (Exception $e) {
+        wp_die('Erreur lors du téléchargement: ' . $e->getMessage());
+    }
+}
+
+/**
  * Initialiser les sauvegardes automatiques
  */
 function pdf_builder_init_auto_backup() {
@@ -1070,6 +1116,15 @@ function pdf_builder_cleanup_old_backups() {
 
     } catch (Exception $e) {
         error_log('[PDF Builder] Erreur nettoyage automatique: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Gérer les requêtes de téléchargement de sauvegarde
+ */
+function pdf_builder_handle_backup_download() {
+    if (isset($_GET['action']) && $_GET['action'] === 'pdf_builder_download_backup') {
+        pdf_builder_download_backup();
     }
 }
 
