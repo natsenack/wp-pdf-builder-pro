@@ -2857,11 +2857,11 @@
 
                 // Ajouter l'onglet actuel
                 formData.append('current_tab', currentTab);
-                formData.append('action', 'save_all_settings');
+                formData.append('action', 'pdf_builder_save_settings');
 
                 // Envoyer via AJAX
                 $.ajax({
-                    url: ajaxurl,
+                    url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
                     data: formData,
                     processData: false,
