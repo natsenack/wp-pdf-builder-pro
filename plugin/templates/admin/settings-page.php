@@ -268,30 +268,22 @@
                         break;
 
                     case 'systeme':
-                        // Debug temporaire pour la sauvegarde système
-                        error_log('=== SYSTEME SAVE DEBUG ===');
-                        error_log('$_POST data: ' . print_r($_POST, true));
-
                         // Traitement des paramètres de performance
-                        $cache_enabled = isset($_POST['cache_enabled']) ? '1' : '0';
+                        $cache_enabled = (isset($_POST['cache_enabled']) && $_POST['cache_enabled'] === '1') ? '1' : '0';
                         $cache_expiry = intval($_POST['cache_expiry']);
                         $max_cache_size = intval($_POST['max_cache_size']);
-
-                        error_log("FINAL VALUES - Cache: enabled=$cache_enabled, expiry=$cache_expiry, max_size=$max_cache_size");
 
                         update_option('pdf_builder_cache_enabled', $cache_enabled);
                         update_option('pdf_builder_cache_expiry', $cache_expiry);
                         update_option('pdf_builder_max_cache_size', $max_cache_size);
 
                         // Traitement des paramètres de maintenance
-                        $auto_maintenance = isset($_POST['auto_maintenance']) ? '1' : '0';
-                        error_log("FINAL VALUES - Auto maintenance: $auto_maintenance");
+                        $auto_maintenance = (isset($_POST['auto_maintenance']) && $_POST['auto_maintenance'] === '1') ? '1' : '0';
                         update_option('pdf_builder_auto_maintenance', $auto_maintenance);
 
                         // Traitement des paramètres de sauvegarde
-                        $auto_backup = isset($_POST['auto_backup']) ? '1' : '0';
+                        $auto_backup = (isset($_POST['auto_backup']) && $_POST['auto_backup'] === '1') ? '1' : '0';
                         $backup_retention = intval($_POST['backup_retention']);
-                        error_log("FINAL VALUES - Auto backup: $auto_backup, retention: $backup_retention");
 
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
@@ -4533,12 +4525,6 @@
                     formData.append('action', 'pdf_builder_save_settings');
                     formData.append('nonce', pdf_builder_ajax.nonce);
 
-                    // Debug: Afficher les données envoyées
-                    console.log('=== SYSTEME SAVE DATA DEBUG ===');
-                    for (let [key, value] of formData.entries()) {
-                        console.log(key + ': ' + value);
-                    }
-
                     // Envoyer via AJAX
                     $.ajax({
                         url: pdf_builder_ajax.ajax_url,
@@ -4856,19 +4842,6 @@
                 } else {
                     alert('Test de notification d\'information réussi !');
                 }
-            });
-
-            // Test temporaire pour vérifier l'état des toggles système au chargement
-            console.log('=== TOGGLE STATE CHECK ===');
-            console.log('Cache enabled checkbox checked:', $('#systeme_cache_enabled').is(':checked'));
-            console.log('Auto maintenance checkbox checked:', $('#auto_maintenance').is(':checked'));
-            console.log('Auto backup checkbox checked:', $('#auto_backup').is(':checked'));
-
-            // Test de changement d'état des toggles
-            $('#systeme_cache_enabled, #auto_maintenance, #auto_backup').on('change', function() {
-                var checkboxId = $(this).attr('id');
-                var isChecked = $(this).is(':checked');
-                console.log('Toggle changed:', checkboxId, 'is now:', isChecked ? 'checked' : 'unchecked');
             });
         });
     </script>
