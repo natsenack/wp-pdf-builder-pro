@@ -3118,31 +3118,41 @@
         jQuery(document).ready(function($) {
             console.log('=== PDF BUILDER DEBUG === Toggle script loaded');
 
-            // Toggle simple et direct
+            // Toggle simple et direct - seulement si l'onglet est visible
             $('#developer_enabled').on('change', function() {
                 console.log('Toggle changed:', $(this).is(':checked'));
 
-                if ($(this).is(':checked')) {
-                    $('#developer-info-section').show();
-                    console.log('Section shown - display:', $('#developer-info-section').css('display'));
-                    console.log('Section visible:', $('#developer-info-section').is(':visible'));
-                    console.log('Section exists:', $('#developer-info-section').length > 0);
+                // Vérifier si l'onglet développeur est visible
+                var $tab = $('#roles');
+                var tabVisible = $tab.is(':visible') && !$tab.hasClass('hidden-tab');
+                console.log('Tab visible:', tabVisible, 'has hidden-tab:', $tab.hasClass('hidden-tab'));
+
+                if (tabVisible) {
+                    if ($(this).is(':checked')) {
+                        $('#developer-info-section').show();
+                        console.log('Section shown - display:', $('#developer-info-section').css('display'));
+                        console.log('Section visible:', $('#developer-info-section').is(':visible'));
+                    } else {
+                        $('#developer-info-section').hide();
+                        console.log('Section hidden - display:', $('#developer-info-section').css('display'));
+                        console.log('Section visible:', $('#developer-info-section').is(':visible'));
+                    }
                 } else {
-                    $('#developer-info-section').hide();
-                    console.log('Section hidden - display:', $('#developer-info-section').css('display'));
-                    console.log('Section visible:', $('#developer-info-section').is(':visible'));
+                    console.log('Tab not visible - toggle ignored');
                 }
             });
 
-            // État initial
-            if ($('#developer_enabled').is(':checked')) {
+            // État initial - seulement si l'onglet est visible
+            var $tab = $('#roles');
+            var tabVisible = $tab.is(':visible') && !$tab.hasClass('hidden-tab');
+            console.log('Initial tab visible:', tabVisible);
+
+            if (tabVisible && $('#developer_enabled').is(':checked')) {
                 $('#developer-info-section').show();
-                console.log('Initial state: shown - display:', $('#developer-info-section').css('display'));
-                console.log('Initial visible:', $('#developer-info-section').is(':visible'));
+                console.log('Initial state: shown');
             } else {
                 $('#developer-info-section').hide();
-                console.log('Initial state: hidden - display:', $('#developer-info-section').css('display'));
-                console.log('Initial visible:', $('#developer-info-section').is(':visible'));
+                console.log('Initial state: hidden');
             }
         });
     </script>
