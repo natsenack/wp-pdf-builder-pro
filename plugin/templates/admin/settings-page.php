@@ -27,9 +27,9 @@
     if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_clear_cache') {
         error_log('[PDF Builder] === ACTION: VIDER LE CACHE ===');
         error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
-        error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['security'], 'pdf_builder_clear_cache_performance') ? 'OUI' : 'NON'));
+        error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['security'], 'pdf_builder_save_settings') ? 'OUI' : 'NON'));
 
-        if (wp_verify_nonce($_POST['security'], 'pdf_builder_clear_cache_performance')) {
+        if (wp_verify_nonce($_POST['security'], 'pdf_builder_save_settings')) {
             // Clear transients and cache
             error_log('[PDF Builder] Suppression des transients...');
             delete_transient('pdf_builder_cache');
@@ -81,9 +81,9 @@
         elseif ($action === 'pdf_builder_optimize_db') {
             error_log('[PDF Builder] === ACTION: OPTIMISER LA BASE DE DONNÉES ===');
             error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
-            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_optimize_db') ? 'OUI' : 'NON'));
+            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings') ? 'OUI' : 'NON'));
 
-            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_optimize_db')) {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
                 global $wpdb;
                 error_log('[PDF Builder] Recherche des tables PDF Builder...');
                 $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder%'", ARRAY_N);
@@ -108,9 +108,9 @@
         elseif ($action === 'pdf_builder_repair_templates') {
             error_log('[PDF Builder] === ACTION: RÉPARER LES TEMPLATES ===');
             error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
-            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_repair_templates') ? 'OUI' : 'NON'));
+            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings') ? 'OUI' : 'NON'));
 
-            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_repair_templates')) {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
                 // Repair templates logic (implement as needed)
                 error_log('[PDF Builder] Logique de réparation des templates à implémenter');
                 error_log('[PDF Builder] === RÉPARATION TERMINÉE ===');
@@ -2210,7 +2210,7 @@
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_maintenance', 'pdf_builder_maintenance_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="maintenance">
+                    <input type="hidden" name="current_tab" value="systeme">
 
                     <table class="form-table">
                         <tr>
@@ -2242,7 +2242,7 @@
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_backup', 'pdf_builder_backup_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="sauvegarde">
+                    <input type="hidden" name="current_tab" value="systeme">
 
                     <table class="form-table">
                         <tr>
@@ -4896,7 +4896,7 @@
                             let html = '<div style="margin-top: 10px;"><strong>📋 Sauvegardes disponibles:</strong><br>';
                             if (response.data && response.data.backups && response.data.backups.length > 0) {
                                 response.data.backups.forEach(function(backup) {
-                                    html += '• ' + backup.name + ' (' + backup.size + ', ' + backup.date + ')<br>';
+                                    html += '• ' + backup.filename_raw + ' (' + backup.size_human + ', ' + backup.modified_human + ')<br>';
                                 });
                             } else {
                                 html += 'Aucune sauvegarde trouvée.';
