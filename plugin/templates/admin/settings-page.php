@@ -413,13 +413,6 @@
             update_option('pdf_builder_debug_logging', isset($_POST['debug_logging']));
             update_option('pdf_builder_license_test_mode_enabled', isset($_POST['test_mode']));
 
-            // Options avancées (uniquement si le mode développeur est activé)
-            if (isset($_POST['developer_enabled'])) {
-                update_option('pdf_builder_debug_level', sanitize_text_field($_POST['debug_level'] ?? 'error'));
-                update_option('pdf_builder_performance_monitoring', isset($_POST['performance_monitoring']));
-                update_option('pdf_builder_api_debugging', isset($_POST['api_debugging']));
-            }
-
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
         } else {
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
@@ -3121,32 +3114,8 @@
         });
     </script>
 
-    <script>
-        jQuery(document).ready(function($) {
-            // Gestion de l'affichage des options avancées développeur
-            function toggleDeveloperOptions() {
-                var isEnabled = $('#developer_enabled').is(':checked');
-                var $advancedOptions = $('#developer-advanced-options');
-
-                if (isEnabled) {
-                    $advancedOptions.slideDown(300);
-                } else {
-                    $advancedOptions.slideUp(300);
-                }
-            }
-
-            // Vérifier l'état initial au chargement
-            toggleDeveloperOptions();
-
-            // Écouter les changements sur le toggle développeur
-            $('#developer_enabled').on('change', function() {
-                toggleDeveloperOptions();
-            });
-        });
-    </script>
-
     <div id="roles" class="tab-content hidden-tab">
-        <h2>👨‍💻 Paramètres Développeur</h2>
+        <h2>Paramètres Développeur</h2>
         <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
         <div class="notice notice-info" style="margin-bottom: 20px;">
@@ -3161,156 +3130,33 @@
                 <tr>
                     <th scope="row"><label for="developer_enabled">Mode développeur</label></th>
                     <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php checked(get_option('pdf_builder_developer_enabled', false)); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Activer le mode développeur</span>
-                        </div>
-                        <p class="description">Active les fonctionnalités de développement avancées et les logs détaillés</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="debug_logging">Logs de débogage</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="debug_logging" name="debug_logging" value="1" <?php checked(get_option('pdf_builder_debug_logging', false)); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Activer les logs de débogage</span>
-                        </div>
-                        <p class="description">Enregistre les informations détaillées pour le débogage</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="test_mode">Mode test</label></th>
-                    <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="test_mode" name="test_mode" value="1" <?php checked(get_option('pdf_builder_test_mode', false)); ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span class="toggle-label">Activer le mode test</span>
-                        </div>
-                        <p class="description">Active les fonctionnalités de test et désactive certaines restrictions</p>
+                        <label class="switch">
+                            <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php checked(get_option('pdf_builder_developer_enabled', false)); ?>>
+                            <span class="slider round"></span>
+                        </label>
+                        <p class="description">Active les fonctionnalités de développement avancées</p>
                     </td>
                 </tr>
             </table>
-
-            <?php if (get_option('pdf_builder_developer_enabled', false)): ?>
-            <div id="developer-advanced-options" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
-                <h4 style="margin-top: 0; color: #495057;">🔧 Options Avancées de Développement</h4>
-                <p style="margin-bottom: 15px; color: #666;">Ces options sont disponibles uniquement en mode développeur.</p>
-
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="debug_level">Niveau de débogage</label></th>
-                        <td>
-                            <select id="debug_level" name="debug_level" style="min-width: 200px;">
-                                <option value="error" <?php selected(get_option('pdf_builder_debug_level', 'error'), 'error'); ?>>Erreur uniquement</option>
-                                <option value="warning" <?php selected(get_option('pdf_builder_debug_level', 'error'), 'warning'); ?>>Avertissement +</option>
-                                <option value="info" <?php selected(get_option('pdf_builder_debug_level', 'error'), 'info'); ?>>Info +</option>
-                                <option value="debug" <?php selected(get_option('pdf_builder_debug_level', 'error'), 'debug'); ?>>Debug complet</option>
-                            </select>
-                            <p class="description">Détermine le niveau de détail des logs de débogage</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="performance_monitoring">Monitoring des performances</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="performance_monitoring" name="performance_monitoring" value="1" <?php checked(get_option('pdf_builder_performance_monitoring', false)); ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Activer le monitoring des performances</span>
-                            </div>
-                            <p class="description">Surveille les temps d'exécution et l'utilisation des ressources</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="api_debugging">Débogage API</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="api_debugging" name="api_debugging" value="1" <?php checked(get_option('pdf_builder_api_debugging', false)); ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Activer le débogage des appels API</span>
-                            </div>
-                            <p class="description">Log tous les appels API entrants et sortants</p>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <?php endif; ?>
-
-            <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
-                <h4 style="margin-top: 0; color: #495057;">🔑 Gestion des Clés de Test</h4>
-                <p style="margin-bottom: 15px; color: #666;">Générez et gérez des clés de licence de test pour le développement.</p>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                        <button type="button" id="generate-test-key-btn" class="button button-primary" style="width: 100%; margin-bottom: 10px;">
-                            🎯 Générer une clé de test
-                        </button>
-                        <div id="test-key-result" style="font-family: monospace; font-size: 12px; color: #666; word-break: break-all;"></div>
-                    </div>
-
-                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                        <button type="button" id="delete-test-key-btn" class="button button-secondary" style="width: 100%; margin-bottom: 10px;">
-                            🗑️ Supprimer la clé de test
-                        </button>
-                        <div id="delete-test-key-result" style="font-size: 12px; color: #666;"></div>
-                    </div>
-                </div>
-
-                <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                    <h5 style="margin-top: 0; color: #495057;">📊 État actuel</h5>
-                    <div id="license-status-display" style="font-size: 13px; color: #666;">
-                        <?php
-                        $test_key = get_option('pdf_builder_license_test_key', '');
-                        $test_mode = get_option('pdf_builder_license_test_mode_enabled', false);
-                        echo '<strong>Clé de test :</strong> ' . (!empty($test_key) ? 'Présente (****' . substr($test_key, -4) . ')' : 'Aucune') . '<br>';
-                        echo '<strong>Mode test :</strong> ' . ($test_mode ? 'Activé' : 'Désactivé');
-                        ?>
-                    </div>
-                </div>
-            </div>
-
-            <p class="submit" style="margin-top: 30px;">
-                <input type="submit" name="submit_developpeur" class="button button-primary" value="💾 Enregistrer les paramètres développeur" style="font-size: 16px; padding: 12px 24px; height: auto;" />
-            </p>
         </form>
     </div>
 
     <style>
-        #developer-advanced-options {
-            display: none;
-        }
-
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .toggle-switch {
+        /* Styles pour les interrupteurs */
+        .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 24px;
+            width: 60px;
+            height: 34px;
         }
 
-        .toggle-switch input {
+        .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
 
-        .toggle-slider {
+        .slider {
             position: absolute;
             cursor: pointer;
             top: 0;
@@ -3319,39 +3165,37 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
-            border-radius: 24px;
         }
 
-        .toggle-slider:before {
+        .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
             background-color: white;
             transition: .4s;
-            border-radius: 50%;
         }
 
-        input:checked + .toggle-slider {
+        input:checked + .slider {
             background-color: #007cba;
         }
 
-        input:checked + .toggle-slider:before {
+        input:focus + .slider {
+            box-shadow: 0 0 1px #007cba;
+        }
+
+        input:checked + .slider:before {
             transform: translateX(26px);
         }
 
-        .toggle-label {
-            font-weight: 600;
-            color: #333;
-            cursor: pointer;
+        .slider.round {
+            border-radius: 34px;
         }
 
-        .toggle-description {
-            margin: 5px 0 0 0;
-            color: #666;
-            font-size: 13px;
+        .slider.round:before {
+            border-radius: 50%;
         }
     </style>
 
