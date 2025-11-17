@@ -38,7 +38,7 @@
 
         // Test function for license test mode toggle (accessible from console)
         testToggleLicenseMode() {
-            console.log('LICENSE TEST JS: Starting toggle test mode');
+            console.log('LICENSE TEST JS: ===== STARTING TOGGLE TEST MODE =====');
 
             // Update UI immediately for better UX
             var $checkbox = $('#license_test_mode');
