@@ -753,15 +753,16 @@ function pdf_builder_create_backup_ajax() {
         );
 
         // Créer le nom du fichier de sauvegarde
-        $timestamp = date('Y-m-d_H-i-s');
-        $filename = 'pdf_builder_backup_' . $timestamp . '.json';
+        $timestamp = current_time('timestamp');
+        $filename = 'pdf_builder_backup_' . wp_date('Y-m-d_H-i-s', $timestamp) . '.json';
         $filepath = $backup_dir . '/' . $filename;
 
         // Préparer les données de sauvegarde
         $backup_data = array(
             'version' => '1.0',
-            'timestamp' => time(),
-            'date' => date('Y-m-d H:i:s'),
+            'timestamp' => $timestamp,
+            'date' => wp_date('Y-m-d H:i:s', $timestamp),
+            'timezone' => wp_timezone_string(),
             'options' => array()
         );
 
@@ -820,11 +821,11 @@ function pdf_builder_list_backups_ajax() {
 
                 $backups[] = array(
                     'filename' => $filename,
-                    'filename_raw' => 'Sauvegarde du ' . date('d/m/Y à H:i', $timestamp),
+                    'filename_raw' => 'Sauvegarde du ' . wp_date('d/m/Y à H:i', $timestamp),
                     'size' => filesize($file),
                     'size_human' => size_format(filesize($file)),
                     'modified' => $timestamp,
-                    'modified_human' => date('d/m/Y H:i', $timestamp)
+                    'modified_human' => wp_date('d/m/Y H:i', $timestamp)
                 );
             }
 
