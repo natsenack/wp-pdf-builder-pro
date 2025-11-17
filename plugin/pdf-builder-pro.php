@@ -200,8 +200,6 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax');
     add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_test_cache_ajax');
     add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_ajax');
-    add_action('wp_ajax_pdf_builder_generate_test_license_key', 'pdf_builder_generate_test_license_key_ajax');
-    add_action('wp_ajax_pdf_builder_delete_test_license_key', 'pdf_builder_delete_test_license_key_ajax');
     add_action('wp_ajax_pdf_builder_get_consent_status', 'pdf_builder_get_consent_status_ajax');
     add_action('wp_ajax_pdf_builder_export_user_data', 'pdf_builder_export_user_data_ajax');
     add_action('wp_ajax_pdf_builder_delete_user_data', 'pdf_builder_delete_user_data_ajax');
@@ -668,64 +666,6 @@ function pdf_builder_test_cache_ajax() {
         'cache_status' => $results['cache_status'],
         'transient_working' => $results['transient_test'],
         'cache_available' => $results['cache_available']
-    ));
-}
-
-/**
- * AJAX handler pour générer une clé de licence de test
- */
-function pdf_builder_generate_test_license_key_ajax() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['security'], 'pdf_builder_save_settings')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    // Générer une clé de test
-    $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 16));
-    $expires = strtotime('+30 days'); // Expire dans 30 jours
-
-    // Sauvegarder la clé de test
-    update_option('pdf_builder_license_test_key', $test_key);
-    update_option('pdf_builder_license_test_key_expires', $expires);
-    update_option('pdf_builder_license_test_mode_enabled', true);
-
-    wp_send_json_success(array(
-        'message' => 'Clé de licence de test générée avec succès',
-        'test_key' => $test_key,
-        'expires' => date('Y-m-d H:i:s', $expires)
-    ));
-}
-
-/**
- * AJAX handler pour supprimer une clé de licence de test
- */
-function pdf_builder_delete_test_license_key_ajax() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['security'], 'pdf_builder_save_settings')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    // Supprimer la clé de test
-    delete_option('pdf_builder_license_test_key');
-    delete_option('pdf_builder_license_test_key_expires');
-    update_option('pdf_builder_license_test_mode_enabled', false);
-
-    wp_send_json_success(array(
-        'message' => 'Clé de licence de test supprimée avec succès'
     ));
 }
 
