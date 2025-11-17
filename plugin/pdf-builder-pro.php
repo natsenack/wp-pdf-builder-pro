@@ -402,12 +402,14 @@ function pdf_builder_handle_pdf_downloads()
 function pdf_builder_save_settings_ajax() {
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+        error_log('[DEBUG PHP] Nonce invalide');
         wp_send_json_error('Nonce invalide');
         return;
     }
 
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
+        error_log('[DEBUG PHP] Permissions insuffisantes');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
@@ -415,9 +417,14 @@ function pdf_builder_save_settings_ajax() {
     $current_tab = sanitize_text_field($_POST['current_tab']);
     $saved_count = 0;
 
+    error_log('[DEBUG PHP] Début sauvegarde - Onglet: ' . $current_tab);
+    error_log('[DEBUG PHP] Données POST reçues: ' . print_r($_POST, true));
+
         // Traiter selon l'onglet
     switch ($current_tab) {
         case 'general':
+            error_log('[DEBUG PHP] Traitement onglet general');
+
             // Pour l'AJAX, on utilise le nonce principal pdf_builder_ajax
             // Sauvegarder les paramètres généraux
             $settings = array(
@@ -436,8 +443,12 @@ function pdf_builder_save_settings_ajax() {
                 'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
             );
 
+            error_log('[DEBUG PHP] Paramètres à sauvegarder: ' . print_r($settings, true));
+
             foreach ($settings as $key => $value) {
-                update_option('pdf_builder_' . $key, $value);
+                $option_key = 'pdf_builder_' . $key;
+                $result = update_option($option_key, $value);
+                error_log('[DEBUG PHP] Sauvegarde ' . $option_key . ' = ' . $value . ' (résultat: ' . ($result ? 'true' : 'false') . ')');
             }
             $saved_count++;
             break;
@@ -616,8 +627,10 @@ function pdf_builder_save_settings_ajax() {
     }
 
     if ($saved_count > 0) {
+        error_log('[DEBUG PHP] Sauvegarde terminée avec succès - ' . $saved_count . ' onglet(s) traité(s)');
         wp_send_json_success('Paramètres sauvegardés avec succès');
     } else {
+        error_log('[DEBUG PHP] ERREUR: Aucun paramètre sauvegardé');
         wp_send_json_error('Aucun paramètre sauvegardé');
     }
 }
