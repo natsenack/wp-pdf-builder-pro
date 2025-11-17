@@ -268,10 +268,16 @@
                         break;
 
                     case 'systeme':
+                        // Debug temporaire pour la sauvegarde système
+                        error_log('=== SYSTEME SAVE DEBUG ===');
+                        error_log('$_POST data: ' . print_r($_POST, true));
+
                         // Traitement des paramètres de performance
                         $cache_enabled = isset($_POST['cache_enabled']) ? '1' : '0';
                         $cache_expiry = intval($_POST['cache_expiry']);
                         $max_cache_size = intval($_POST['max_cache_size']);
+
+                        error_log("FINAL VALUES - Cache: enabled=$cache_enabled, expiry=$cache_expiry, max_size=$max_cache_size");
 
                         update_option('pdf_builder_cache_enabled', $cache_enabled);
                         update_option('pdf_builder_cache_expiry', $cache_expiry);
@@ -279,11 +285,13 @@
 
                         // Traitement des paramètres de maintenance
                         $auto_maintenance = isset($_POST['auto_maintenance']) ? '1' : '0';
+                        error_log("FINAL VALUES - Auto maintenance: $auto_maintenance");
                         update_option('pdf_builder_auto_maintenance', $auto_maintenance);
 
                         // Traitement des paramètres de sauvegarde
                         $auto_backup = isset($_POST['auto_backup']) ? '1' : '0';
                         $backup_retention = intval($_POST['backup_retention']);
+                        error_log("FINAL VALUES - Auto backup: $auto_backup, retention: $backup_retention");
 
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
