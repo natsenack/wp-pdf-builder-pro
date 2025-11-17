@@ -2274,20 +2274,21 @@
         <div id="systeme" class="tab-content hidden-tab">
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
-            <!-- Section Performance -->
-            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">🚀 Performance</h3>
+            <!-- Formulaire unique pour tout l'onglet système -->
+            <form id="systeme-settings-form" method="post" action="">
+                <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_systeme_nonce'); ?>
+                <input type="hidden" name="current_tab" value="systeme">
 
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_systeme_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="systeme">
+                <!-- Section Performance -->
+                <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                    <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">🚀 Performance</h3>
 
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="systeme_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="systeme_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', '1'), '1'); ?>>
+                                    <input type="checkbox" id="systeme_cache_enabled" name="systeme_cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', '1'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Active le système de cache pour améliorer les performances</p>
@@ -2296,28 +2297,23 @@
                         <tr>
                             <th scope="row"><label for="systeme_cache_expiry">Expiration du cache (heures)</label></th>
                             <td>
-                                <input type="number" id="systeme_cache_expiry" name="cache_expiry" value="<?php echo esc_attr(get_option('pdf_builder_cache_expiry', 24)); ?>" min="1" max="168">
+                                <input type="number" id="systeme_cache_expiry" name="systeme_cache_expiry" value="<?php echo esc_attr(get_option('pdf_builder_cache_expiry', 24)); ?>" min="1" max="168">
                                 <p class="description">Durée avant expiration automatique du cache</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="systeme_max_cache_size">Taille max du cache (Mo)</label></th>
                             <td>
-                                <input type="number" id="systeme_max_cache_size" name="max_cache_size" value="<?php echo esc_attr(get_option('pdf_builder_max_cache_size', 100)); ?>" min="10" max="1000">
+                                <input type="number" id="systeme_max_cache_size" name="systeme_max_cache_size" value="<?php echo esc_attr(get_option('pdf_builder_max_cache_size', 100)); ?>" min="10" max="1000">
                                 <p class="description">Taille maximale du cache avant nettoyage automatique</p>
                             </td>
                         </tr>
                     </table>
-                </form>
-            </div>
+                </div>
 
-            <!-- Section Maintenance -->
-            <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">🔧 Maintenance</h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_maintenance_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="systeme">
+                <!-- Section Maintenance -->
+                <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                    <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">🔧 Maintenance</h3>
 
                     <table class="form-table">
                         <tr>
@@ -2330,26 +2326,21 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="auto_maintenance">Maintenance automatique</label></th>
+                            <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="auto_maintenance" name="auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
+                                    <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Active la maintenance automatique hebdomadaire</p>
                             </td>
                         </tr>
                     </table>
-                </form>
-            </div>
+                </div>
 
-            <!-- Section Sauvegarde -->
-            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">💾 Sauvegarde</h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_backup_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="systeme">
+                <!-- Section Sauvegarde -->
+                <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                    <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">💾 Sauvegarde</h3>
 
                     <table class="form-table">
                         <tr>
@@ -2361,10 +2352,10 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="auto_backup">Sauvegarde automatique</label></th>
+                            <th scope="row"><label for="systeme_auto_backup">Sauvegarde automatique</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="auto_backup" name="auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
+                                    <input type="checkbox" id="systeme_auto_backup" name="systeme_auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Crée automatiquement des sauvegardes quotidiennes</p>
@@ -2373,13 +2364,21 @@
                         <tr>
                             <th scope="row"><label for="systeme_backup_retention">Rétention des sauvegardes (jours)</label></th>
                             <td>
-                                <input type="number" id="systeme_backup_retention" name="backup_retention" value="<?php echo esc_attr(get_option('pdf_builder_backup_retention', 30)); ?>" min="1" max="365">
+                                <input type="number" id="systeme_backup_retention" name="systeme_backup_retention" value="<?php echo esc_attr(get_option('pdf_builder_backup_retention', 30)); ?>" min="1" max="365">
                                 <p class="description">Nombre de jours avant suppression automatique des anciennes sauvegardes</p>
                             </td>
                         </tr>
                     </table>
-                </form>
-            </div>
+                </div>
+
+                <!-- Bouton de sauvegarde pour l'onglet système -->
+                <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <button type="button" id="save-systeme-btn" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                        💾 Enregistrer les paramètres système
+                    </button>
+                    <div id="systeme-save-status" style="margin-top: 10px;"></div>
+                </div>
+            </form>
         </div>
         <div id="acces" class="tab-content hidden-tab">
             <h2>👥 Gestion des Rôles et Permissions</h2>
@@ -4688,56 +4687,29 @@
                     return;
                 }
 
-                // Pour l'onglet système, collecter toutes les données et les envoyer ensemble
+                // Pour l'onglet système, utiliser le formulaire unique simplifié
                 if (currentTab === 'systeme') {
-                    console.log('[PDF Builder JS] === DÉBUT SAUVEGARDE ONGLET SYSTÈME ===');
-                    console.log('[PDF Builder JS] currentTab =', currentTab);
-                    console.log('[PDF Builder JS] Nombre de formulaires trouvés =', forms.length);
+                    console.log('[PDF Builder JS] === SAUVEGARDE ONGLET SYSTÈME ===');
+                    console.log('[PDF Builder JS] Utilisation du formulaire unique système');
 
-                    // Collecter les données de tous les formulaires de l'onglet système
-                    const formData = new FormData();
+                    const $systemeForm = $('#systeme-settings-form');
+                    const formData = new FormData($systemeForm[0]);
 
-                    console.log('[PDF Builder JS] Collecte des données pour l\'onglet système');
-
-                    forms.each(function(index) {
-                        const $form = $(this);
-                        console.log('[PDF Builder JS] Traitement du formulaire', index, 'avec', $form.find('input, select, textarea').length, 'champs');
-
-                        const formDataTemp = new FormData(this);
-
-                        // Ajouter les données de ce formulaire (sauf current_tab et les nonces individuels)
-                        for (let [key, value] of formDataTemp.entries()) {
-                            if (key !== 'current_tab' && !key.includes('_nonce')) {
-                                formData.append(key, value);
-                                console.log('[PDF Builder JS] Ajout champ:', key, '=', value);
-                            }
+                    // S'assurer que les cases à cocher non cochées sont incluses
+                    $systemeForm.find('input[type="checkbox"]').each(function() {
+                        const $checkbox = $(this);
+                        const name = $checkbox.attr('name');
+                        if (name && !$checkbox.is(':checked')) {
+                            formData.append(name, '0');
+                            console.log('[PDF Builder JS] Checkbox non cochée:', name, '= 0');
                         }
-
-                        // S'assurer que les cases à cocher non cochées sont aussi incluses
-                        $form.find('input[type="checkbox"]').each(function() {
-                            const $checkbox = $(this);
-                            const name = $checkbox.attr('name');
-                            const isChecked = $checkbox.is(':checked');
-                            console.log('[PDF Builder JS] Checkbox', name, 'checked:', isChecked);
-                            if (name && !isChecked) {
-                                formData.append(name, '0');
-                                console.log('[PDF Builder JS] Ajout checkbox non cochée:', name, '= 0');
-                            }
-                        });
                     });
 
-                    // Ajouter l'onglet actuel (toujours 'systeme' pour cet onglet)
-                    formData.append('current_tab', currentTab);
+                    // Ajouter action et nonce
                     formData.append('action', 'pdf_builder_save_settings');
                     formData.append('nonce', pdf_builder_ajax.nonce);
 
-                    console.log('[PDF Builder JS] Données finales à envoyer:');
-                    for (let [key, value] of formData.entries()) {
-                        console.log('  ', key, '=', value);
-                    }
-                    console.log('[PDF Builder JS] === ENVOI REQUÊTE AJAX ===');
-
-                    console.log('[PDF Builder JS] Données finales à envoyer:');
+                    console.log('[PDF Builder JS] Données à envoyer:');
                     for (let [key, value] of formData.entries()) {
                         console.log('  ', key, '=', value);
                     }
@@ -4751,23 +4723,20 @@
                         contentType: false,
                         success: function(response) {
                             if (response.success) {
-                                // Succès
+                                console.log('[PDF Builder JS] Sauvegarde système réussie');
                                 $btn.removeClass('saving').addClass('saved');
                                 $icon.text('✅');
                                 $text.text('Enregistré !');
-
-                                // Revenir à l'état normal après 3 secondes
                                 setTimeout(() => {
                                     $btn.removeClass('saved');
                                     $icon.text('💾');
                                     $text.text('Enregistrer');
                                 }, 3000);
                             } else {
-                                // Erreur
+                                console.log('[PDF Builder JS] Erreur sauvegarde système:', response.data);
                                 $btn.removeClass('saving').addClass('error');
                                 $icon.text('❌');
                                 $text.text('Erreur');
-
                                 setTimeout(() => {
                                     $btn.removeClass('error');
                                     $icon.text('💾');
@@ -4776,11 +4745,10 @@
                             }
                         },
                         error: function(xhr, status, error) {
-                            // Erreur AJAX
+                            console.log('[PDF Builder JS] Erreur AJAX système:', status, error);
                             $btn.removeClass('saving').addClass('error');
                             $icon.text('❌');
                             $text.text('Erreur');
-
                             setTimeout(() => {
                                 $btn.removeClass('error');
                                 $icon.text('💾');
@@ -5072,6 +5040,69 @@
                 } else {
                     alert('Test de notification d\'information réussi !');
                 }
+            });
+
+            // Gestionnaire pour le bouton de sauvegarde spécifique à l'onglet système
+            $('#save-systeme-btn').on('click', function() {
+                const $btn = $(this);
+                const $status = $('#systeme-save-status');
+
+                $btn.prop('disabled', true).html('⏳ Sauvegarde en cours...');
+                $status.html('<span style="color: #007cba;">⏳ Sauvegarde en cours...</span>');
+
+                console.log('[PDF Builder JS] === SAUVEGARDE VIA BOUTON SYSTÈME ===');
+
+                const $systemeForm = $('#systeme-settings-form');
+                const formData = new FormData($systemeForm[0]);
+
+                // S'assurer que les cases à cocher non cochées sont incluses
+                $systemeForm.find('input[type="checkbox"]').each(function() {
+                    const $checkbox = $(this);
+                    const name = $checkbox.attr('name');
+                    if (name && !$checkbox.is(':checked')) {
+                        formData.append(name, '0');
+                        console.log('[PDF Builder JS] Checkbox non cochée:', name, '= 0');
+                    }
+                });
+
+                // Ajouter action et nonce
+                formData.append('action', 'pdf_builder_save_settings');
+                formData.append('nonce', pdf_builder_ajax.nonce);
+
+                console.log('[PDF Builder JS] Données à envoyer:');
+                for (let [key, value] of formData.entries()) {
+                    console.log('  ', key, '=', value);
+                }
+
+                // Envoyer via AJAX
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            console.log('[PDF Builder JS] Sauvegarde système réussie');
+                            $status.html('<span style="color: #28a745;">✅ Paramètres sauvegardés avec succès !</span>');
+                            $btn.html('💾 Enregistrer les paramètres système');
+                        } else {
+                            console.log('[PDF Builder JS] Erreur sauvegarde système:', response.data);
+                            $status.html('<span style="color: #dc3545;">❌ Erreur lors de la sauvegarde</span>');
+                            $btn.html('❌ Erreur - Réessayer');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('[PDF Builder JS] Erreur AJAX système:', status, error);
+                        $status.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
+                        $btn.html('❌ Erreur - Réessayer');
+                    },
+                    complete: function() {
+                        setTimeout(() => {
+                            $btn.prop('disabled', false);
+                        }, 2000);
+                    }
+                });
             });
         });
     </script>

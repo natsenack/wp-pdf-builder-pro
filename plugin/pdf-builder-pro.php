@@ -591,13 +591,22 @@ function pdf_builder_save_settings_ajax() {
         case 'systeme':
             // Sauvegarder les paramètres système (performance + maintenance + sauvegarde)
             $settings = array(
-                'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
-                'cache_expiry' => intval($_POST['cache_expiry']),
-                'max_cache_size' => intval($_POST['max_cache_size']),
-                'auto_maintenance' => isset($_POST['auto_maintenance']) ? '1' : '0',
-                'auto_backup' => isset($_POST['auto_backup']) ? '1' : '0',
-                'backup_retention' => intval($_POST['backup_retention']),
+                'cache_enabled' => isset($_POST['systeme_cache_enabled']) ? '1' : '0',
+                'cache_expiry' => intval($_POST['systeme_cache_expiry'] ?? 24),
+                'max_cache_size' => intval($_POST['systeme_max_cache_size'] ?? 100),
+                'auto_maintenance' => isset($_POST['systeme_auto_maintenance']) ? '1' : '0',
+                'auto_backup' => isset($_POST['systeme_auto_backup']) ? '1' : '0',
+                'backup_retention' => intval($_POST['systeme_backup_retention'] ?? 30),
             );
+
+            error_log('[PDF Builder PHP] Sauvegarde système - Données reçues: ' . print_r($settings, true));
+
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
+                error_log('[PDF Builder PHP] Sauvegardé: pdf_builder_' . $key . ' = ' . $value);
+            }
+            $saved_count++;
+            break;
 
             foreach ($settings as $key => $value) {
                 update_option('pdf_builder_' . $key, $value);
