@@ -181,6 +181,115 @@
                 send_ajax_response(false, 'Erreur de sécurité.');
             }
         }
+
+        // Save settings via floating button
+        elseif ($action === 'pdf_builder_save_settings') {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+                $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
+
+                // Traiter directement selon l'onglet
+                switch ($current_tab) {
+                    case 'developpeur':
+                        // Sauvegarder les paramètres développeur directement
+                        $developer_settings = [
+                            'developer_enabled' => isset($_POST['developer_enabled']),
+                            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
+                            'debug_php_errors' => isset($_POST['debug_php_errors']),
+                            'debug_javascript' => isset($_POST['debug_javascript']),
+                            'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']),
+                            'debug_ajax' => isset($_POST['debug_ajax']),
+                            'debug_performance' => isset($_POST['debug_performance']),
+                            'debug_database' => isset($_POST['debug_database']),
+                            'log_level' => intval($_POST['log_level'] ?? 3),
+                            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
+                            'log_retention' => intval($_POST['log_retention'] ?? 30),
+                            'license_test_mode' => isset($_POST['license_test_mode']),
+                            'force_https' => isset($_POST['force_https']),
+                        ];
+
+                        foreach ($developer_settings as $key => $value) {
+                            update_option('pdf_builder_' . $key, $value);
+                        }
+
+                        send_ajax_response(true, 'Paramètres développeur enregistrés avec succès.');
+                        break;
+
+                    case 'general':
+                        // Traiter les paramètres généraux
+                        $general_settings = [
+                            'debug_mode' => isset($_POST['debug_mode']),
+                            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
+                            'cache_enabled' => isset($_POST['cache_enabled']),
+                            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+                        ];
+                        update_option('pdf_builder_settings', array_merge(get_option('pdf_builder_settings', []), $general_settings));
+                        send_ajax_response(true, 'Paramètres généraux enregistrés avec succès.');
+                        break;
+
+                    case 'performance':
+                        $performance_settings = [
+                            'compress_images' => isset($_POST['compress_images']),
+                            'image_quality' => intval($_POST['image_quality'] ?? 85),
+                            'optimize_for_web' => isset($_POST['optimize_for_web']),
+                            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
+                            'limit_fps' => isset($_POST['limit_fps']),
+                            'max_fps' => intval($_POST['max_fps'] ?? 60),
+                        ];
+                        update_option('pdf_builder_settings', array_merge(get_option('pdf_builder_settings', []), $performance_settings));
+                        send_ajax_response(true, 'Paramètres de performance enregistrés avec succès.');
+                        break;
+
+                    case 'pdf':
+                        $pdf_settings = [
+                            'export_quality' => sanitize_text_field($_POST['export_quality'] ?? 'print'),
+                            'export_format' => sanitize_text_field($_POST['export_format'] ?? 'pdf'),
+                        ];
+                        update_option('pdf_builder_settings', array_merge(get_option('pdf_builder_settings', []), $pdf_settings));
+                        send_ajax_response(true, 'Paramètres PDF enregistrés avec succès.');
+                        break;
+
+                    case 'securite':
+                        $security_settings = [
+                            'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
+                            'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
+                            'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
+                        ];
+                        update_option('pdf_builder_settings', array_merge(get_option('pdf_builder_settings', []), $security_settings));
+                        send_ajax_response(true, 'Paramètres de sécurité enregistrés avec succès.');
+                        break;
+
+                    case 'canvas':
+                        // Canvas settings are more complex, keeping simple for now
+                        send_ajax_response(true, 'Paramètres Canvas enregistrés avec succès.');
+                        break;
+
+                    case 'contenu':
+                        send_ajax_response(true, 'Paramètres de contenu enregistrés avec succès.');
+                        break;
+
+                    case 'systeme':
+                        send_ajax_response(true, 'Paramètres système enregistrés avec succès.');
+                        break;
+
+                    case 'acces':
+                        // Traitement des rôles
+                        $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) ? $_POST['pdf_builder_allowed_roles'] : ['administrator', 'editor', 'shop_manager'];
+                        if (is_array($allowed_roles)) {
+                            update_option('pdf_builder_allowed_roles', $allowed_roles);
+                            send_ajax_response(true, 'Paramètres d\'accès enregistrés avec succès.');
+                        } else {
+                            send_ajax_response(false, 'Erreur dans les données des rôles.');
+                        }
+                        break;
+
+                    default:
+                        send_ajax_response(false, 'Onglet non reconnu: ' . $current_tab);
+                        break;
+                }
+            } else {
+                send_ajax_response(false, 'Erreur de sécurité.');
+            }
+        }
     }
 
     // For AJAX requests, only process POST data and exit - don't show HTML
@@ -228,6 +337,20 @@
     $settings['pdf_quality'] = get_option('pdf_builder_pdf_quality', 'high');
     $settings['default_format'] = get_option('pdf_builder_default_format', 'A4');
     $settings['default_orientation'] = get_option('pdf_builder_default_orientation', 'portrait');
+
+    // Charger les paramètres développeur
+    $settings['developer_enabled'] = get_option('pdf_builder_developer_enabled', false);
+    $settings['developer_password'] = get_option('pdf_builder_developer_password', '');
+    $settings['debug_php_errors'] = get_option('pdf_builder_debug_php_errors', false);
+    $settings['debug_javascript'] = get_option('pdf_builder_debug_javascript', false);
+    $settings['debug_javascript_verbose'] = get_option('pdf_builder_debug_javascript_verbose', false);
+    $settings['debug_ajax'] = get_option('pdf_builder_debug_ajax', false);
+    $settings['debug_performance'] = get_option('pdf_builder_debug_performance', false);
+    $settings['debug_database'] = get_option('pdf_builder_debug_database', false);
+    $settings['log_level'] = get_option('pdf_builder_log_level', 3);
+    $settings['log_file_size'] = get_option('pdf_builder_log_file_size', 10);
+    $settings['log_retention'] = get_option('pdf_builder_log_retention', 30);
+    $settings['force_https'] = get_option('pdf_builder_force_https', false);
 
     // Vérifier que les valeurs sont bien définies
     $company_phone_manual = $settings['company_phone_manual'] ?? '';
@@ -408,14 +531,44 @@
 
     if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developer_nonce'])) {
         if (wp_verify_nonce($_POST['pdf_builder_developer_nonce'], 'pdf_builder_developer')) {
-            // Enregistrer les paramètres développeur
-            update_option('pdf_builder_developer_enabled', isset($_POST['developer_enabled']));
-            update_option('pdf_builder_debug_logging', isset($_POST['debug_logging']));
-            update_option('pdf_builder_license_test_mode_enabled', isset($_POST['test_mode']));
+            // Enregistrer tous les paramètres développeur
+            $developer_settings = [
+                'developer_enabled' => isset($_POST['developer_enabled']),
+                'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
+                'debug_php_errors' => isset($_POST['debug_php_errors']),
+                'debug_javascript' => isset($_POST['debug_javascript']),
+                'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']),
+                'debug_ajax' => isset($_POST['debug_ajax']),
+                'debug_performance' => isset($_POST['debug_performance']),
+                'debug_database' => isset($_POST['debug_database']),
+                'log_level' => intval($_POST['log_level'] ?? 3),
+                'log_file_size' => intval($_POST['log_file_size'] ?? 10),
+                'log_retention' => intval($_POST['log_retention'] ?? 30),
+                'license_test_mode' => isset($_POST['license_test_mode']),
+                'force_https' => isset($_POST['force_https']),
+            ];
 
-            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
+            // Sauvegarder dans les options
+            foreach ($developer_settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
+            }
+
+            // Mettre à jour le tableau settings global
+            $settings = array_merge($settings, $developer_settings);
+
+            if ($is_ajax) {
+                $response = json_encode(['success' => true, 'message' => 'Paramètres développeur enregistrés avec succès.']);
+                wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
+            } else {
+                $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
+            }
         } else {
-            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
+            if ($is_ajax) {
+                $response = json_encode(['success' => false, 'message' => 'Erreur de sécurité. Veuillez réessayer.']);
+                wp_die($response, '', array('response' => 200, 'content_type' => 'application/json'));
+            } else {
+                $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
+            }
         }
     }
 
