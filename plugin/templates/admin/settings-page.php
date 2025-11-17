@@ -4856,6 +4856,14 @@
                 var isChecked = $(this).is(':checked');
                 console.log('Toggle changed:', checkboxId, 'is now:', isChecked ? 'checked' : 'unchecked');
             });
+
+            // Test de soumission du formulaire système
+            $('#systeme-settings-form').on('submit', function(e) {
+                console.log('=== FORM SUBMIT DEBUG ===');
+                console.log('Cache enabled:', $('#systeme_cache_enabled').is(':checked') ? '1' : '0');
+                console.log('Auto maintenance:', $('#auto_maintenance').is(':checked') ? '1' : '0');
+                console.log('Auto backup:', $('#auto_backup').is(':checked') ? '1' : '0');
+            });
         });
     </script>
 
