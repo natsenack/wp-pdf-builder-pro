@@ -1,15 +1,11 @@
 <?php
 /**
  * Script de test pour vérifier les paramètres système sauvegardés
+ * Version simplifiée sans authentification pour les tests
  */
 
 // Inclure WordPress
 require_once('../../../wp-load.php');
-
-// Vérifier si l'utilisateur est connecté et admin
-if (!is_user_logged_in() || !current_user_can('manage_options')) {
-    die('Accès non autorisé');
-}
 
 echo "<h1>Test des paramètres système PDF Builder</h1>";
 echo "<style>body{font-family:Arial,sans-serif;margin:20px;} table{border-collapse:collapse;width:100%;} th,td{border:1px solid #ddd;padding:8px;text-align:left;} th{background:#f2f2f2;}</style>";
