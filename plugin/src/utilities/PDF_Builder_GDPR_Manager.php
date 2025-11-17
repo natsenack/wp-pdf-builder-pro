@@ -657,8 +657,14 @@ class PDF_Builder_GDPR_Manager {
             ];
         }
 
-        error_log('GDPR: sending response');
-        wp_die(json_encode(['success' => true, 'data' => ['consents' => $consents]]), '', ['response' => 200]);
+        error_log('GDPR: sending raw response');
+        // Essai avec headers HTTP directs
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+            header('HTTP/1.1 200 OK');
+        }
+        echo json_encode(['success' => true, 'data' => ['consents' => $consents]]);
+        exit;
     }
 
     /**
