@@ -2666,27 +2666,426 @@
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
-            <div class="notice notice-info" style="margin-bottom: 20px;">
-                <p><strong>ℹ️ Rappel Onboarding :</strong> L'onboarding est actuellement désactivé en mode développement (WP_DEBUG=true). Il sera automatiquement activé en production (WP_DEBUG=false). Pensez à le tester avant le déploiement final.</p>
+         <form method="post" id="developpeur-form">
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
+                <input type="hidden" name="submit_developpeur" value="1">
+
+                <h3 class="section-title">🔐 Contrôle d'Accès</h3>
+
+             <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="developer_enabled">Mode Développeur</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Activer le mode développeur</span>
+                        </div>
+                        <div class="toggle-description">Active le mode développeur avec logs détaillés</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="developer_password">Mot de Passe Dev</label></th>
+                    <td>
+                        <!-- Champ username caché pour l'accessibilité -->
+                        <input type="text" autocomplete="username" style="display: none;" />
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="password" id="developer_password" name="developer_password"
+                                   placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
+                                   style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+                                   value="<?php echo esc_attr($settings['developer_password'] ?? ''); ?>" />
+                            <button type="button" id="toggle_password" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                                👁️ Afficher
+                            </button>
+                        </div>
+                        <p class="description">Protège les outils développeur avec un mot de passe (optionnel)</p>
+                        <?php if (!empty($settings['developer_password'])) :
+                            ?>
+                        <p class="description" style="color: #28a745;">✓ Mot de passe configuré et sauvegardé</p>
+                            <?php
+                        endif; ?>
+                    </td>
+                </tr>
+             </table>
+
+            <div id="dev-license-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <h3 class="section-title">🔐 Test de Licence</h3>
+
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="license_test_mode">Mode Test Licence</label></th>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <button type="button" id="toggle_license_test_mode_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                                🎚️ Basculer Mode Test
+                            </button>
+                            <span id="license_test_mode_status" style="font-weight: bold; padding: 8px 12px; border-radius: 4px; <?php echo $license_test_mode ? 'background: #d4edda; color: #155724;' : 'background: #f8d7da; color: #721c24;'; ?>">
+                                <?php echo $license_test_mode ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif'; ?>
+                            </span>
+                        </div>
+                        <p class="description">Basculer le mode test pour développer et tester sans serveur de licence en production</p>
+                        <input type="checkbox" id="license_test_mode" name="license_test_mode" value="1" <?php echo $license_test_mode ? 'checked' : ''; ?> style="display: none;" />
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label>Clé de Test</label></th>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="text" id="license_test_key" readonly style="width: 350px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa;" placeholder="Générer une clé..." value="<?php echo esc_attr($license_test_key); ?>" />
+                            <button type="button" id="generate_license_key_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                                🔑 Générer
+                            </button>
+                            <button type="button" id="copy_license_key_btn" class="button button-secondary" style="padding: 8px 12px; height: auto;">
+                                📋 Copier
+                            </button>
+                            <?php if ($license_test_key) :
+                                ?>
+                            <button type="button" id="delete_license_key_btn" class="button button-link-delete" style="padding: 8px 12px; height: auto;">
+                                🗑️ Supprimer
+                            </button>
+                                <?php
+                            endif; ?>
+                        </div>
+                        <p class="description">Génère une clé de test aléatoire pour valider le système de licence</p>
+                        <span id="license_key_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label>Nettoyage Complet</label></th>
+                    <td>
+                        <button type="button" id="cleanup_license_btn" class="button button-link-delete" style="padding: 10px 15px; height: auto; font-weight: bold;">
+                            🧹 Nettoyer complètement la licence
+                        </button>
+                        <p class="description">Supprime tous les paramètres de licence et réinitialise à l'état libre. Utile pour les tests.</p>
+                        <span id="cleanup_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
+                        <input type="hidden" id="cleanup_license_nonce" value="<?php echo wp_create_nonce('pdf_builder_cleanup_license'); ?>" />
+                    </td>
+                </tr>
+            </table>
             </div>
 
-            <form method="post" action="">
-                <?php wp_nonce_field('pdf_builder_developer', 'pdf_builder_developer_nonce'); ?>
-                <input type="hidden" name="current_tab" value="developpeur">
+            <div id="dev-debug-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <h3 class="section-title">🔍 Paramètres de Debug</h3>
 
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="developer_enabled">Mode développeur</label></th>
-                        <td>
-                            <label class="switch">
-                                <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php checked(get_option('pdf_builder_developer_enabled', false)); ?>>
-                                <span class="slider round"></span>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="debug_php_errors">Errors PHP</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_php_errors" name="debug_php_errors" value="1" <?php echo isset($settings['debug_php_errors']) && $settings['debug_php_errors'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
                             </label>
-                            <p class="description">Active les fonctionnalités de développement avancées</p>
-                        </td>
+                            <span class="toggle-label">Debug PHP</span>
+                        </div>
+                        <div class="toggle-description">Affiche les erreurs/warnings PHP du plugin</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="debug_javascript">Debug JavaScript</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_javascript" name="debug_javascript" value="1" <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug JS</span>
+                        </div>
+                        <div class="toggle-description">Active les logs détaillés en console (emojis: 🚀 start, ✅ success, ❌ error, ⚠️ warn)</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="debug_javascript_verbose">Logs Verbeux JS</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_javascript_verbose" name="debug_javascript_verbose" value="1" <?php echo isset($settings['debug_javascript_verbose']) && $settings['debug_javascript_verbose'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Logs détaillés</span>
+                        </div>
+                        <div class="toggle-description">Active les logs détaillés (rendu, interactions, etc.). À désactiver en production.</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="debug_ajax">Debug AJAX</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_ajax" name="debug_ajax" value="1" <?php echo isset($settings['debug_ajax']) && $settings['debug_ajax'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug AJAX</span>
+                        </div>
+                        <div class="toggle-description">Enregistre toutes les requêtes AJAX avec requête/réponse</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="debug_performance">Métriques Performance</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_performance" name="debug_performance" value="1" <?php echo isset($settings['debug_performance']) && $settings['debug_performance'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug perf.</span>
+                        </div>
+                        <div class="toggle-description">Affiche le temps d'exécution et l'utilisation mémoire des opérations</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="debug_database">Requêtes BD</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_database" name="debug_database" value="1" <?php echo isset($settings['debug_database']) && $settings['debug_database'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug DB</span>
+                        </div>
+                        <div class="toggle-description">Enregistre les requêtes SQL exécutées par le plugin</div>
+                    </td>
+                </tr>
+            </table>
+            </div>
+
+            <div id="dev-logs-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <h3 class="section-title">Fichiers Logs</h3>
+
+            <table class="form-table">
+                <tr>
+                  <th scope="row"><label for="log_level">Niveau de Log</label></th>
+                    <td>
+                        <select id="log_level" name="log_level" style="width: 200px;">
+                            <option value="0" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 0) ? 'selected' : ''; ?>>Aucun log</option>
+                            <option value="1" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 1) ? 'selected' : ''; ?>>Erreurs uniquement</option>
+                            <option value="2" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 2) ? 'selected' : ''; ?>>Erreurs + Avertissements</option>
+                            <option value="3" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 3) ? 'selected' : ''; ?>>Info complète</option>
+                            <option value="4" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 4) ? 'selected' : ''; ?>>Détails (Développement)</option>
+                        </select>
+                        <p class="description">0=Aucun, 1=Erreurs, 2=Warn, 3=Info, 4=Détails</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="log_file_size">Taille Max Log</label></th>
+                    <td>
+                        <input type="number" id="log_file_size" name="log_file_size" value="<?php echo isset($settings['log_file_size']) ? intval($settings['log_file_size']) : '10'; ?>" min="1" max="100" /> MB
+                        <p class="description">Rotation automatique quand le log dépasse cette taille</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="log_retention">Retention Logs</label></th>
+                    <td>
+                        <input type="number" id="log_retention" name="log_retention" value="<?php echo isset($settings['log_retention']) ? intval($settings['log_retention']) : '30'; ?>" min="1" max="365" /> jours
+                        <p class="description">Supprime automatiquement les logs plus vieux que ce délai</p>
+                    </td>
+                </tr>
+            </table>
+            </div>
+
+            <div id="dev-optimizations-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <h3 class="section-title">Optimisations Avancées</h3>
+
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="force_https">Forcer HTTPS API</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="force_https" name="force_https" value="1" <?php echo isset($settings['force_https']) && $settings['force_https'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">HTTPS forcé</span>
+                        </div>
+                        <div class="toggle-description">Force les appels API externes en HTTPS (sécurité renforcée)</div>
+                    </td>
+                </tr>
+            </table>
+            </div>
+
+            <div id="dev-logs-viewer-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <h3 class="section-title">Visualiseur de Logs Temps Réel</h3>
+
+            <div style="margin-bottom: 15px;">
+                <button type="button" id="refresh_logs_btn" class="button button-secondary">🔄 Actualiser Logs</button>
+                <button type="button" id="clear_logs_btn" class="button button-secondary" style="margin-left: 10px;">🗑️ Vider Logs</button>
+                <select id="log_filter" style="margin-left: 10px;">
+                    <option value="all">Tous les logs</option>
+                    <option value="error">Erreurs uniquement</option>
+                    <option value="warning">Avertissements</option>
+                    <option value="info">Info</option>
+                    <option value="debug">Debug</option>
+                </select>
+            </div>
+
+            <div id="logs_container" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; line-height: 1.4;">
+                <div id="logs_content" style="white-space: pre-wrap;">
+                    <!-- Logs will be loaded here -->
+                    <em style="color: #666;">Cliquez sur "Actualiser Logs" pour charger les logs récents...</em>
+                </div>
+            </div>
+            </div>
+
+            <div id="dev-tools-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <h3 class="section-title">Outils de Développement</h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <button type="button" id="reload_cache_btn" class="button button-secondary">
+                    🔄 Recharger Cache
+                </button>
+                <button type="button" id="clear_temp_btn" class="button button-secondary">
+                    🗑️ Vider Temp
+                </button>
+                <button type="button" id="test_routes_btn" class="button button-secondary">
+                    🛣️ Tester Routes
+                </button>
+                <button type="button" id="export_diagnostic_btn" class="button button-secondary">
+                    📊 Exporter Diagnostic
+                </button>
+                <button type="button" id="view_logs_btn" class="button button-secondary">
+                    📋 Voir Logs
+                </button>
+                <button type="button" id="system_info_btn" class="button button-secondary">
+                    ℹ️ Info Système
+                </button>
+            </div>
+            </div>
+
+            <div id="dev-shortcuts-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <h3 class="section-title">Raccourcis Clavier Développeur</h3>
+
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Raccourci</th>
+                        <th style="width: 70%;">Action</th>
                     </tr>
-                </table>
-            </form>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd></td>
+                        <td>Basculer le mode debug JavaScript</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd></td>
+                        <td>Ouvrir la console développeur du navigateur</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd></td>
+                        <td>Recharger la page (hard refresh)</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>F12</kbd></td>
+                        <td>Ouvrir les outils développeur</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Ctrl</kbd> + <kbd>U</kbd></td>
+                        <td>Voir le code source de la page</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd></td>
+                        <td>Inspecter l'élément sous le curseur</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+            <div id="dev-console-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <h3 class="section-title">Console Code</h3>
+
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="test_code">Code Test</label></th>
+                    <td>
+                        <textarea id="test_code" style="width: 100%; height: 150px; font-family: monospace; padding: 10px;"></textarea>
+                        <p class="description">Zone d'essai pour du code JavaScript (exécution côté client)</p>
+                        <div style="margin-top: 10px;">
+                            <button type="button" id="execute_code_btn" class="button button-secondary">▶️ Exécuter Code JS</button>
+                            <button type="button" id="clear_console_btn" class="button button-secondary" style="margin-left: 10px;">🗑️ Vider Console</button>
+                            <span id="code_result" style="margin-left: 20px; font-weight: bold;"></span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            </div>
+
+            <div id="dev-hooks-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <!-- Tableau de références des hooks disponibles -->
+            <h3 class="section-title">Hooks Disponibles</h3>
+
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Hook</th>
+                        <th style="width: 50%;">Description</th>
+                        <th style="width: 25%;">Typage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>pdf_builder_before_generate</code></td>
+                        <td>Avant la génération PDF</td>
+                        <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>pdf_builder_after_generate</code></td>
+                        <td>Après la génération PDF réussie</td>
+                        <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>pdf_builder_template_data</code></td>
+                        <td>Filtre les données de template</td>
+                        <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>pdf_builder_element_render</code></td>
+                        <td>Rendu d'un élément du canvas</td>
+                        <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>pdf_builder_security_check</code></td>
+                        <td>Vérifications de sécurité personnalisées</td>
+                        <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>pdf_builder_before_save</code></td>
+                        <td>Avant sauvegarde des paramètres</td>
+                        <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+            <!-- Avertissement production -->
+            <div style="background: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 20px; margin-top: 30px;">
+                <h3 style="margin-top: 0; color: #c62828;">🚨 Avertissement Production</h3>
+                <ul style="margin: 0; padding-left: 20px; color: #c62828;">
+                    <li>❌ Ne jamais laisser le mode développeur ACTIVÉ en production</li>
+                    <li>❌ Ne jamais afficher les logs détaillés aux utilisateurs</li>
+                    <li>❌ Désactivez le profiling et les hooks de debug après débogage</li>
+                    <li>❌ N'exécutez pas de code arbitraire en production</li>
+                    <li>✓ Utilisez des mots de passe forts pour protéger les outils dev</li>
+                </ul>
+            </div>
+
+            <!-- Conseils développement -->
+            <div style="background: #f3e5f5; border-left: 4px solid #7b1fa2; border-radius: 4px; padding: 20px; margin-top: 20px;">
+                <h3 style="margin-top: 0; color: #4a148c;">💻 Conseils Développement</h3>
+                <ul style="margin: 0; padding-left: 20px; color: #4a148c;">
+                    <li>Activez Debug JavaScript pour déboguer les interactions client</li>
+                    <li>Utilisez Debug AJAX pour vérifier les requêtes serveur</li>
+                    <li>Consultez Debug Performance pour optimiser les opérations lentes</li>
+                    <li>Lisez les logs détaillés (niveau 4) pour comprendre le flux</li>
+                    <li>Testez avec les différents niveaux de log</li>
+                </ul>
+            </div>
+
+            <p class="submit">
+                <button type="submit" name="submit_developpeur" class="button button-primary">Enregistrer les paramètres développeur</button>
+            </p>
+         </form>
         </div>
 </div>
 
@@ -2783,6 +3182,143 @@
 
         .hidden-tab {
             display: none !important;
+        }
+
+        /* Styles pour les toggles développeur */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #007cba;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .toggle-description {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* Styles pour les sections développeur */
+        .section-title {
+            color: #2271b1;
+            border-bottom: 2px solid #2271b1;
+            padding-bottom: 8px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        /* Styles pour les boutons d'action */
+        .button-secondary {
+            background: #f6f7f7;
+            border: 1px solid #c3c4c7;
+            color: #2271b1;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            cursor: pointer;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .button-secondary:hover {
+            background: #f0f0f1;
+            border-color: #2271b1;
+        }
+
+        .button-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .button-link-delete {
+            color: #b32d2e;
+            border-color: #b32d2e;
+        }
+
+        .button-link-delete:hover {
+            background: #fceaea;
+            color: #b32d2e;
+        }
+
+        /* Styles pour les raccourcis clavier */
+        kbd {
+            background: #f7f7f7;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.2), 0 0 0 2px #fff inset;
+            color: #333;
+            display: inline-block;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.4;
+            margin: 0 .1em;
+            padding: .1em .6em;
+            text-shadow: 0 1px 0 #fff;
+        }
+
+        /* Styles pour le visualiseur de logs */
+        #logs_container {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Styles pour la grille d'outils */
+        .dev-tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
     </style>
 
@@ -3114,59 +3650,368 @@
         jQuery(document).ready(function($) {
             console.log('=== PDF BUILDER DEBUG === Toggle script loaded');
 
-            // Toggle simple et direct - seulement si l'onglet est visible
+            // Toggle pour le mode développeur - gestion des sections
             $('#developer_enabled').on('change', function() {
-                console.log('Toggle changed:', $(this).is(':checked'));
+                console.log('Developer mode toggle changed:', $(this).is(':checked'));
 
-                // Vérifier si l'onglet développeur est visible
-                var $tab = $('#developpeur');
-                var tabVisible = $tab.is(':visible') && !$tab.hasClass('hidden-tab');
-                console.log('Tab visible:', tabVisible, 'has hidden-tab:', $tab.hasClass('hidden-tab'));
+                var isChecked = $(this).is(':checked');
+                var sections = [
+                    '#dev-license-section',
+                    '#dev-debug-section',
+                    '#dev-logs-section',
+                    '#dev-optimizations-section',
+                    '#dev-logs-viewer-section',
+                    '#dev-tools-section',
+                    '#dev-shortcuts-section',
+                    '#dev-console-section',
+                    '#dev-hooks-section'
+                ];
 
-                if (tabVisible) {
-                    if ($(this).is(':checked')) {
-                        $('#developer-info-section').show();
-                        console.log('Section shown - display:', $('#developer-info-section').css('display'));
-                        console.log('Section visible:', $('#developer-info-section').is(':visible'));
-
-                        // Inspecter les propriétés CSS problématiques
-                        var $section = $('#developer-info-section');
-                        console.log('CSS Properties:');
-                        console.log('- visibility:', $section.css('visibility'));
-                        console.log('- opacity:', $section.css('opacity'));
-                        console.log('- position:', $section.css('position'));
-                        console.log('- z-index:', $section.css('z-index'));
-                        console.log('- width:', $section.width(), 'height:', $section.height());
-
-                        // Vérifier les parents
-                        console.log('Parent containers:');
-                        $section.parents().each(function(index) {
-                            if (index < 5) { // Limiter aux 5 premiers parents
-                                var $parent = $(this);
-                                console.log('  ' + this.tagName + '.' + (this.className || 'no-class') + ' - display:' + $parent.css('display') + ' visibility:' + $parent.css('visibility') + ' overflow:' + $parent.css('overflow'));
-                            }
-                        });
+                sections.forEach(function(sectionId) {
+                    if (isChecked) {
+                        $(sectionId).show();
+                        console.log('Section shown:', sectionId);
                     } else {
-                        $('#developer-info-section').hide();
-                        console.log('Section hidden - display:', $('#developer-info-section').css('display'));
-                        console.log('Section visible:', $('#developer-info-section').is(':visible'));
+                        $(sectionId).hide();
+                        console.log('Section hidden:', sectionId);
                     }
+                });
+            });
+
+            // Gestionnaire pour afficher/masquer le mot de passe
+            $('#toggle_password').on('click', function() {
+                var $input = $('#developer_password');
+                var $btn = $(this);
+
+                if ($input.attr('type') === 'password') {
+                    $input.attr('type', 'text');
+                    $btn.html('🙈 Masquer');
                 } else {
-                    console.log('Tab not visible - toggle ignored');
+                    $input.attr('type', 'password');
+                    $btn.html('👁️ Afficher');
                 }
             });
 
-            // État initial - seulement si l'onglet est visible
-            var $tab = $('#developpeur');
-            var tabVisible = $tab.is(':visible') && !$tab.hasClass('hidden-tab');
-            console.log('Initial tab visible:', tabVisible);
+            // Gestionnaire pour basculer le mode test licence
+            $('#toggle_license_test_mode_btn').on('click', function() {
+                var $checkbox = $('#license_test_mode');
+                var $status = $('#license_test_mode_status');
+                var isChecked = $checkbox.is(':checked');
 
-            if (tabVisible && $('#developer_enabled').is(':checked')) {
-                $('#developer-info-section').show();
-                console.log('Initial state: shown');
-            } else {
-                $('#developer-info-section').hide();
-                console.log('Initial state: hidden');
+                $checkbox.prop('checked', !isChecked);
+
+                if (!isChecked) {
+                    $status.html('✅ MODE TEST ACTIF').css({
+                        'background': '#d4edda',
+                        'color': '#155724'
+                    });
+                } else {
+                    $status.html('❌ Mode test inactif').css({
+                        'background': '#f8d7da',
+                        'color': '#721c24'
+                    });
+                }
+
+                // Sauvegarder automatiquement
+                var formData = new FormData();
+                formData.append('action', 'pdf_builder_toggle_license_test_mode');
+                formData.append('license_test_mode', $checkbox.is(':checked') ? '1' : '0');
+                formData.append('security', '<?php echo wp_create_nonce("pdf_builder_toggle_license_test_mode"); ?>');
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log('License test mode toggled:', response);
+                    }
+                });
+            });
+
+            // Gestionnaire pour générer une clé de licence de test
+            $('#generate_license_key_btn').on('click', function() {
+                var $btn = $(this);
+                var $input = $('#license_test_key');
+                var $status = $('#license_key_status');
+
+                $btn.prop('disabled', true).text('🔄 Génération...');
+                $status.html('');
+
+                var formData = new FormData();
+                formData.append('action', 'pdf_builder_generate_license_test_key');
+                formData.append('security', '<?php echo wp_create_nonce("pdf_builder_generate_license_test_key"); ?>');
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $btn.prop('disabled', false).text('🔑 Générer');
+
+                        if (response.success) {
+                            $input.val(response.data.key);
+                            $status.html('<span style="color: #28a745;">✅ Clé générée avec succès</span>');
+                            $('#delete_license_key_btn').show();
+                        } else {
+                            $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $btn.prop('disabled', false).text('🔑 Générer');
+                        $status.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
+                    }
+                });
+            });
+
+            // Gestionnaire pour copier la clé de licence
+            $('#copy_license_key_btn').on('click', function() {
+                var $input = $('#license_test_key');
+                $input.select();
+                document.execCommand('copy');
+
+                var $status = $('#license_key_status');
+                $status.html('<span style="color: #17a2b8;">📋 Clé copiée dans le presse-papiers</span>');
+                setTimeout(function() {
+                    $status.html('');
+                }, 3000);
+            });
+
+            // Gestionnaire pour supprimer la clé de licence de test
+            $('#delete_license_key_btn').on('click', function() {
+                if (!confirm('Êtes-vous sûr de vouloir supprimer la clé de test ?')) {
+                    return;
+                }
+
+                var $btn = $(this);
+                var $input = $('#license_test_key');
+                var $status = $('#license_key_status');
+
+                $btn.prop('disabled', true).text('🗑️ Suppression...');
+
+                var formData = new FormData();
+                formData.append('action', 'pdf_builder_delete_license_test_key');
+                formData.append('security', '<?php echo wp_create_nonce("pdf_builder_delete_license_test_key"); ?>');
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $btn.prop('disabled', false).text('🗑️ Supprimer');
+
+                        if (response.success) {
+                            $input.val('');
+                            $status.html('<span style="color: #28a745;">✅ Clé supprimée</span>');
+                            $btn.hide();
+                        } else {
+                            $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $btn.prop('disabled', false).text('🗑️ Supprimer');
+                        $status.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
+                    }
+                });
+            });
+
+            // Gestionnaire pour nettoyer complètement la licence
+            $('#cleanup_license_btn').on('click', function() {
+                if (!confirm('⚠️ ATTENTION: Cette action va supprimer TOUS les paramètres de licence et réinitialiser le plugin à l\'état libre. Cette action est IRRÉVERSIBLE.\n\nÊtes-vous sûr de vouloir continuer ?')) {
+                    return;
+                }
+
+                var $btn = $(this);
+                var $status = $('#cleanup_status');
+
+                $btn.prop('disabled', true).text('🧹 Nettoyage...');
+                $status.html('');
+
+                var formData = new FormData();
+                formData.append('action', 'pdf_builder_cleanup_license');
+                formData.append('security', $('#cleanup_license_nonce').val());
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $btn.prop('disabled', false).text('🧹 Nettoyer complètement la licence');
+
+                        if (response.success) {
+                            $status.html('<span style="color: #28a745;">✅ Licence nettoyée avec succès. Rechargement de la page...</span>');
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $btn.prop('disabled', false).text('🧹 Nettoyer complètement la licence');
+                        $status.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
+                    }
+                });
+            });
+
+            // Gestionnaire pour actualiser les logs
+            $('#refresh_logs_btn').on('click', function() {
+                var $btn = $(this);
+                var $container = $('#logs_content');
+                var filter = $('#log_filter').val();
+
+                $btn.prop('disabled', true).text('🔄 Actualisation...');
+
+                var formData = new FormData();
+                formData.append('action', 'pdf_builder_refresh_logs');
+                formData.append('filter', filter);
+                formData.append('security', '<?php echo wp_create_nonce("pdf_builder_refresh_logs"); ?>');
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $btn.prop('disabled', false).text('🔄 Actualiser Logs');
+
+                        if (response.success) {
+                            $container.html(response.data.logs || '<em style="color: #666;">Aucun log trouvé</em>');
+                        } else {
+                            $container.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $btn.prop('disabled', false).text('🔄 Actualiser Logs');
+                        $container.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
+                    }
+                });
+            });
+
+            // Gestionnaire pour vider les logs
+            $('#clear_logs_btn').on('click', function() {
+                if (!confirm('Êtes-vous sûr de vouloir vider tous les logs ?')) {
+                    return;
+                }
+
+                var $btn = $(this);
+                var $container = $('#logs_content');
+
+                $btn.prop('disabled', true).text('🗑️ Vidage...');
+
+                var formData = new FormData();
+                formData.append('action', 'pdf_builder_clear_logs');
+                formData.append('security', '<?php echo wp_create_nonce("pdf_builder_clear_logs"); ?>');
+
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $btn.prop('disabled', false).text('🗑️ Vider Logs');
+
+                        if (response.success) {
+                            $container.html('<em style="color: #666;">Logs vidés. Cliquez sur "Actualiser Logs" pour recharger.</em>');
+                        } else {
+                            $container.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $btn.prop('disabled', false).text('🗑️ Vider Logs');
+                        $container.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
+                    }
+                });
+            });
+
+            // Gestionnaire pour exécuter du code JavaScript
+            $('#execute_code_btn').on('click', function() {
+                var code = $('#test_code').val();
+                var $result = $('#code_result');
+
+                if (!code.trim()) {
+                    $result.html('<span style="color: #ffc107;">⚠️ Veuillez entrer du code à exécuter</span>');
+                    return;
+                }
+
+                try {
+                    var result = eval(code);
+                    $result.html('<span style="color: #28a745;">✅ Exécuté avec succès. Résultat: ' + (result !== undefined ? JSON.stringify(result) : 'undefined') + '</span>');
+                } catch (error) {
+                    $result.html('<span style="color: #dc3545;">❌ Erreur: ' + error.message + '</span>');
+                }
+            });
+
+            // Gestionnaire pour vider la console de test
+            $('#clear_console_btn').on('click', function() {
+                $('#test_code').val('');
+                $('#code_result').html('');
+            });
+
+            // Gestionnaires pour les outils de développement
+            $('#reload_cache_btn').on('click', function() {
+                if (confirm('Recharger le cache du plugin ?')) {
+                    location.reload();
+                }
+            });
+
+            $('#clear_temp_btn').on('click', function() {
+                if (confirm('Vider les fichiers temporaires ?')) {
+                    alert('Fonctionnalité à implémenter');
+                }
+            });
+
+            $('#test_routes_btn').on('click', function() {
+                alert('Fonctionnalité à implémenter - Test des routes AJAX');
+            });
+
+            $('#export_diagnostic_btn').on('click', function() {
+                alert('Fonctionnalité à implémenter - Export diagnostic');
+            });
+
+            $('#view_logs_btn').on('click', function() {
+                $('#refresh_logs_btn').click();
+            });
+
+            $('#system_info_btn').on('click', function() {
+                var info = '=== INFORMATION SYSTÈME ===\n';
+                info += 'Navigateur: ' + navigator.userAgent + '\n';
+                info += 'URL: ' + window.location.href + '\n';
+                info += 'Résolution: ' + screen.width + 'x' + screen.height + '\n';
+                info += 'Cookie activés: ' + navigator.cookieEnabled + '\n';
+                info += 'JavaScript activé: oui\n';
+                info += 'LocalStorage: ' + (typeof Storage !== 'undefined' ? 'oui' : 'non') + '\n';
+
+                alert(info);
+            });
+
+            // État initial des sections selon le toggle
+            var isDeveloperEnabled = $('#developer_enabled').is(':checked');
+            if (!isDeveloperEnabled) {
+                var sections = [
+                    '#dev-license-section',
+                    '#dev-debug-section',
+                    '#dev-logs-section',
+                    '#dev-optimizations-section',
+                    '#dev-logs-viewer-section',
+                    '#dev-tools-section',
+                    '#dev-shortcuts-section',
+                    '#dev-console-section',
+                    '#dev-hooks-section'
+                ];
+
+                sections.forEach(function(sectionId) {
+                    $(sectionId).hide();
+                });
             }
         });
     </script>
