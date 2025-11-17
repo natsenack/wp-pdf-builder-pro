@@ -770,7 +770,7 @@
                             <th scope="row"><label for="cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked($settings['cache_enabled'] ?? false); ?>>
+                                    <input type="checkbox" id="cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Améliore les performances en mettant en cache les données</p>
@@ -780,7 +780,7 @@
                             <th scope="row"><label for="cache_compression">Compression du cache</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked($settings['cache_compression'] ?? true); ?>>
+                                    <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked(get_option('pdf_builder_cache_compression', true)); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
@@ -790,7 +790,7 @@
                             <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked($settings['cache_auto_cleanup'] ?? true); ?>>
+                                    <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked(get_option('pdf_builder_cache_auto_cleanup', true)); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
@@ -799,8 +799,15 @@
                         <tr>
                             <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
                             <td>
-                                <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo intval($settings['cache_max_size'] ?? 100); ?>" min="10" max="1000" step="10" />
+                                <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo intval(get_option('pdf_builder_cache_max_size', 100)); ?>" min="10" max="1000" step="10" />
                                 <p class="description">Taille maximale du dossier cache en mégaoctets</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
+                            <td>
+                                <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval(get_option('pdf_builder_cache_ttl', 3600)); ?>" min="0" max="86400" />
+                                <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
                             </td>
                         </tr>
                         <tr>
@@ -873,8 +880,8 @@
                                 <div style="color: #666; font-size: 12px;">Transients actifs</div>
                             </div>
                             <div style="text-align: center;">
-                                <div style="font-size: 24px; font-weight: bold; color: <?php echo ($settings['cache_enabled'] ?? false) ? '#28a745' : '#dc3545'; ?>;">
-                                    <?php echo ($settings['cache_enabled'] ?? false) ? '✅' : '❌'; ?>
+                                <div style="font-size: 24px; font-weight: bold; color: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
+                                    <?php echo get_option('pdf_builder_cache_enabled', false) ? '✅' : '❌'; ?>
                                 </div>
                                 <div style="color: #666; font-size: 12px;">Cache activé</div>
                             </div>
