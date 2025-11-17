@@ -139,14 +139,12 @@
     <script>
         // Script simple pour tester les interactions
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Test de l\'étape freemium chargé');
 
             // Simuler la sélection de mode
             const modeButtons = document.querySelectorAll('[data-action="select-freemium-mode"]');
             modeButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const mode = this.getAttribute('data-mode');
-                    console.log('Mode sélectionné:', mode);
                     alert('Mode ' + mode + ' sélectionné !');
                 });
             });

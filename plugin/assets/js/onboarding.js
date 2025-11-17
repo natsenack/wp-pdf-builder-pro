@@ -20,7 +20,6 @@
         }
 
         init() {
-            console.log('PDF Builder Onboarding: Initializing...');
             this.bindEvents();
             this.initializeWizard();
             this.setupKeyboardNavigation();
@@ -31,31 +30,25 @@
         bindEvents() {
             // Éviter la liaison multiple des événements
             if (this.eventsBound) {
-                console.log('PDF Builder Onboarding: Events already bound, skipping');
                 return;
             }
             this.eventsBound = true;
 
-            console.log('PDF Builder Onboarding: Binding events (first time only)');
-
             // Bouton "Suivant" / "Terminer" - simplifié
             $(document).on('click', '.complete-step', (e) => {
                 e.preventDefault();
-                console.log('PDF Builder Onboarding: Complete step button clicked');
                 this.handleCompleteStep();
             });
 
             // Bouton pour ignorer l'étape courante
             $(document).on('click', '[data-action="skip-step"]', (e) => {
                 e.preventDefault();
-                console.log('PDF Builder Onboarding: Skip step button clicked');
                 this.handleSkipStep();
             });
 
             // Bouton pour ignorer complètement l'onboarding
             $(document).on('click', '[data-action="skip-onboarding"]', (e) => {
                 e.preventDefault();
-                console.log('PDF Builder Onboarding: Skip onboarding button clicked');
                 this.handleSkipOnboarding();
             });
 
@@ -103,12 +96,6 @@
         }
 
         initializeWizard() {
-            console.log('PDF Builder Onboarding: Initializing wizard...');
-            console.log('PDF Builder Onboarding: pdfBuilderOnboarding exists:', typeof pdfBuilderOnboarding !== 'undefined');
-            if (typeof pdfBuilderOnboarding !== 'undefined') {
-                console.log('PDF Builder Onboarding: pdfBuilderOnboarding.current_step:', pdfBuilderOnboarding.current_step);
-            }
-
             // Vérifier si une étape spécifique est demandée via l'URL
             const urlParams = new URLSearchParams(window.location.search);
             const forcedStep = urlParams.get('pdf_onboarding_step');
@@ -119,9 +106,6 @@
             this.selectedMode = (this.currentStep === 2) ? null : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_mode || null : null);
             // Pour l'étape 3, on force selectedTemplate à null au départ pour s'assurer que le bouton est désactivé
             this.selectedTemplate = (this.currentStep === 3) ? null : (typeof pdfBuilderOnboarding !== 'undefined' ? pdfBuilderOnboarding.selected_template || null : null);
-            console.log('PDF Builder Onboarding: Current step set to', this.currentStep);
-            console.log('PDF Builder Onboarding: Selected mode:', this.selectedMode);
-            console.log('PDF Builder Onboarding: Selected template:', this.selectedTemplate);
 
             // S'assurer que tous les boutons sont dans un état cohérent
             this.resetButtonStates();
@@ -225,7 +209,6 @@
 
         trackAnalytics(event, data = {}) {
             // Suivre les événements d'analyse (optionnel)
-            console.log('PDF Builder Onboarding: Analytics event:', event, data);
             
             // Ici, vous pourriez envoyer les données à Google Analytics, etc.
             // Pour l'instant, juste logger
@@ -256,11 +239,9 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        console.log('PDF Builder Onboarding: Progress auto-saved');
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('PDF Builder Onboarding: Auto-save failed:', error);
                 }
             });
         }
@@ -297,7 +278,6 @@
 
         skipWoocommerceSetup() {
             // Sauter la configuration WooCommerce
-            console.log('PDF Builder Onboarding: Skipping WooCommerce setup');
             this.completeStep();
         }
 
@@ -402,19 +382,10 @@
         }
 
         showModal() {
-            console.log('PDF Builder Onboarding: Showing modal...');
             const $modal = $('#pdf-builder-onboarding-modal');
-            console.log('PDF Builder Onboarding: Modal element found:', $modal.length);
-            console.log('PDF Builder Onboarding: Modal current display:', $modal.css('display'));
-            console.log('PDF Builder Onboarding: Modal HTML:', $modal.prop('outerHTML').substring(0, 200) + '...');
             // Le modal est déjà affiché via CSS, juste ajouter l'animation
             const self = this; // Sauvegarder la référence this
             $modal.fadeIn(400, () => {
-                console.log('PDF Builder Onboarding: Modal fadeIn complete');
-                console.log('PDF Builder Onboarding: Modal display after fadeIn:', $modal.css('display'));
-                console.log('PDF Builder Onboarding: Modal visibility:', $modal.css('visibility'));
-                console.log('PDF Builder Onboarding: Modal opacity:', $modal.css('opacity'));
-                console.log('PDF Builder Onboarding: Modal z-index:', $modal.css('z-index'));
                 // Animation d'entrée améliorée
                 $modal.find('.modal-content').addClass('modal-entrance-animation');
                 self.announceStep();
@@ -489,13 +460,11 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        console.log('PDF Builder Onboarding: Onboarding marked as complete');
+
                     } else {
-                        console.error('PDF Builder Onboarding: Failed to mark onboarding complete:', response.data);
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('PDF Builder Onboarding: AJAX error marking onboarding complete:', error);
                 }
             });
         }
@@ -537,7 +506,6 @@
         selectTemplate(templateId) {
             // Sauvegarder le template sélectionné
             this.selectedTemplate = templateId;
-            console.log('PDF Builder Onboarding: Template selected:', templateId);
             
             // Mettre à jour l'interface utilisateur
             $('.template-option').removeClass('selected');
@@ -569,9 +537,9 @@
         // NOUVELLES MÉTHODES SIMPLIFIÉES - Refaites depuis zéro
 
         handleCompleteStep() {
-            console.log('PDF Builder Onboarding: Handling complete step for step', this.currentStep);
-            console.log('PDF Builder Onboarding: Current step before AJAX:', this.currentStep);
-            console.log('PDF Builder Onboarding: Selected template:', this.selectedTemplate);
+
+
+
 
             // Désactiver le bouton pour éviter les clics multiples
             const $button = $('.complete-step');
@@ -583,8 +551,6 @@
             if (this.currentStep === 6) {
                 stepAction = 'finish';
             }
-
-            console.log('PDF Builder Onboarding: Sending AJAX with step:', this.currentStep, 'action:', stepAction);
 
             // Faire l'appel AJAX
             $.ajax({
@@ -600,9 +566,6 @@
                     woocommerce_options: this.getWoocommerceOptions()
                 },
                 success: (response) => {
-                    console.log('PDF Builder Onboarding: Complete step success:', response);
-                    console.log('PDF Builder Onboarding: Response data:', response.data);
-
                     if (response.success) {
                         if (response.data.completed) {
                             // Onboarding terminé
@@ -635,8 +598,6 @@
         }
 
         handleSkipStep() {
-            console.log('PDF Builder Onboarding: Handling skip step for step', this.currentStep);
-
             // Désactiver le bouton
             const $button = $('[data-action="skip-step"]');
             const originalText = $button.text();
@@ -666,7 +627,7 @@
         }
 
         handleSkipOnboarding() {
-            console.log('PDF Builder Onboarding: Handling skip onboarding');
+
 
             if (confirm('Êtes-vous sûr de vouloir ignorer complètement l\'assistant de configuration ?')) {
                 // Désactiver le bouton
@@ -683,7 +644,7 @@
                         nonce: pdfBuilderOnboarding.nonce
                     },
                     success: (response) => {
-                        console.log('PDF Builder Onboarding: Skip onboarding success');
+
                         this.hideModal();
                         this.showNotification('Assistant de configuration ignoré', 'info');
                     },
@@ -708,7 +669,7 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        console.log('PDF Builder Onboarding: Template selection saved successfully');
+
                     } else {
                         console.error('PDF Builder Onboarding: Failed to save template selection:', response.data);
                     }
@@ -721,7 +682,7 @@
 
         finishOnboarding() {
             // Finaliser l'onboarding
-            console.log('PDF Builder Onboarding: Finishing onboarding...');
+
             
             // Marquer comme terminé
             this.markOnboardingComplete();
@@ -743,7 +704,7 @@
 
         loadStep(stepNumber) {
             // Charger une étape spécifique via AJAX
-            console.log('PDF Builder Onboarding: Loading step', stepNumber);
+
 
             $.ajax({
                 url: pdfBuilderOnboarding.ajax_url,
@@ -755,8 +716,8 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        console.log('PDF Builder Onboarding: Step loaded successfully');
-                        console.log('PDF Builder Onboarding: Response data content length:', response.data.content ? response.data.content.length : 'no content');
+
+
                         this.applyStepData(stepNumber, response.data);
                     } else {
                         console.error('PDF Builder Onboarding: Failed to load step:', response.data);
@@ -772,7 +733,7 @@
          * Appliquer les données d'une étape chargée
          */
         applyStepData(step, data) {
-            console.log('APPLYING STEP DATA FOR STEP', step, '- START');
+
             const $modal = $('#pdf-builder-onboarding-modal');
             const $content = $modal.find('.modal-body .step-content');
 
@@ -787,22 +748,22 @@
 
             // Vérifier les boutons existants avant remplacement
             const existingButtons = $content.find('.complete-step');
-            console.log('PDF Builder Onboarding: Existing buttons before replacement:', existingButtons.length);
+
 
             // Vérifier aussi tous les boutons dans la modal
             const allButtonsInModal = $modal.find('.complete-step');
-            console.log('PDF Builder Onboarding: All buttons in modal before replacement:', allButtonsInModal.length);
+
 
             // Mettre à jour le contenu de la modal
             $content.html(data.content);
 
             // Vérifier les boutons après remplacement
             const newButtons = $content.find('.complete-step');
-            console.log('PDF Builder Onboarding: New buttons after replacement:', newButtons.length);
+
 
             // Vérifier aussi tous les boutons dans la modal après
             const allButtonsInModalAfter = $modal.find('.complete-step');
-            console.log('PDF Builder Onboarding: All buttons in modal after replacement:', allButtonsInModalAfter.length);
+
 
             // Gérer les boutons du footer qui persistent entre les étapes
             const $footer = $modal.find('.modal-footer');
@@ -810,12 +771,12 @@
 
             // Supprimer tous les boutons existants du footer
             footerButtons.remove();
-            console.log('FOOTER: Removed', footerButtons.length, 'existing footer buttons for step', step);
+
 
             // Générer tous les boutons nécessaires pour cette étape
             const footerHtml = this.generateFooterButtons(step, data);
             $footer.html(footerHtml);
-            console.log('FOOTER: Generated footer buttons for step', step);
+
 
             // Gérer le bouton précédent dans le header
             this.updatePreviousButton(step);
@@ -837,7 +798,7 @@
                 $('#selected-template-name').text(templateName);
             }
 
-            console.log('APPLYING STEP DATA FOR STEP', step, '- END');
+
         }
 
         announceToScreenReader(message) {
@@ -1040,10 +1001,10 @@
         }
 
         completeStep(step, actionType = 'next') {
-            console.log(`PDF Builder Onboarding: completeStep called - step: ${step}, actionType: ${actionType}`);
+
 
             const $button = $(`.complete-step[data-step="${step}"]`);
-            console.log(`PDF Builder Onboarding: Button found:`, $button.length > 0 ? 'yes' : 'no');
+
 
             // Sauvegarder le texte original
             const originalText = $button.text();
@@ -1051,7 +1012,7 @@
 
             // Désactiver le bouton avec feedback visuel
             $button.prop('disabled', true);
-            console.log(`PDF Builder Onboarding: Button disabled for loading`);
+
 
             // Texte de chargement selon le type d'action
             const loadingText = actionType === 'finish' ? 'Finalisation...' : 'Chargement...';
@@ -1082,10 +1043,10 @@
                 },
                 success: (response) => {
                     clearTimeout(timeoutId);
-                    console.log('PDF Builder Onboarding: AJAX success - response:', response);
+
 
                     if (response.success) {
-                        console.log(`PDF Builder Onboarding: Step ${step} completed successfully, next_step: ${response.data.next_step}`);
+
 
                         // Feedback de succès selon le type d'action
                         if (actionType === 'finish') {
@@ -1113,7 +1074,7 @@
                     } else {
                         // Pour l'étape 2, si pas de template sélectionné, permettre de passer quand même
                         if (step === 2 && response.data?.message?.includes('template')) {
-                            console.log('PDF Builder Onboarding: Step 2 - allowing to continue without template selection');
+
                             // Simuler un succès et passer à l'étape suivante
                             $button.html('<span class="dashicons dashicons-yes"></span> Étape ignorée');
 
@@ -1165,7 +1126,7 @@
         }
 
         showError(message) {
-            console.log('PDF Builder Onboarding: Showing error message:', message);
+
             // Afficher un message d'erreur dans le modal
             const $modal = $('#pdf-builder-onboarding-modal');
             const $body = $modal.find('.modal-body');
@@ -1205,7 +1166,7 @@
         }
 
         resetButtonStates() {
-            console.log('PDF Builder Onboarding: Resetting button states');
+
             // Réactiver tous les boutons et restaurer leur état normal
             $('.button-previous, .complete-step, [data-action]').each(function() {
                 const $btn = $(this);
@@ -1221,17 +1182,17 @@
 
         selectTemplate($card) {
             const templateId = $card.data('template');
-            console.log('PDF Builder Onboarding: Template clicked', templateId);
+
 
             // Vérifier si ce template est déjà sélectionné
             if (this.selectedTemplate === templateId) {
                 // Désélectionner le template
-                console.log('PDF Builder Onboarding: Template deselected', templateId);
+
                 $('.template-card').removeClass('selected');
                 this.selectedTemplate = null;
             } else {
                 // Sélectionner le template
-                console.log('PDF Builder Onboarding: Template selected', templateId);
+
                 $('.template-card').removeClass('selected');
                 $card.addClass('selected');
                 this.selectedTemplate = templateId;
@@ -1246,7 +1207,7 @@
 
         selectFreemiumMode($card) {
             const modeId = $card.data('mode');
-            console.log('PDF Builder Onboarding: Freemium mode selected', modeId);
+
 
             // Sélectionner le mode
             $('.mode-card').removeClass('selected');
@@ -1255,7 +1216,7 @@
 
             // Comportement spécial pour le mode premium
             if (modeId === 'premium') {
-                console.log('PDF Builder Onboarding: Premium mode selected, completing onboarding and redirecting to license page');
+
                 // Sauvegarder la sélection et marquer l'onboarding comme terminé
                 this.saveFreemiumModeSelectionAndComplete();
                 return; // Arrêter l'exécution
@@ -1281,7 +1242,7 @@
                 const shouldDisable = stepData.requires_selection === true;
                 $primaryButton.prop('disabled', shouldDisable);
 
-                console.log(`PDF Builder Onboarding: Step ${stepData.step} - Button "${stepData.action}" - requires_selection: ${stepData.requires_selection} - disabled: ${shouldDisable}`);
+
             }
             
             // Mettre à jour ou créer le bouton secondaire
@@ -1363,7 +1324,7 @@
         loadStepContent(step) {
             // Cette fonction serait appelée depuis PHP pour charger le contenu dynamique
             // Pour l'instant, on simule avec les données existantes
-            console.log('Loading step content for step:', step);
+
         }
 
         /**
@@ -1609,7 +1570,7 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        console.log('PDF Builder Onboarding: Freemium mode saved, now marking onboarding as complete');
+
                         // Marquer l'onboarding comme terminé
                         $.ajax({
                             url: pdfBuilderOnboarding.ajax_url,
@@ -1620,7 +1581,7 @@
                             },
                             success: (completeResponse) => {
                                 if (completeResponse.success) {
-                                    console.log('PDF Builder Onboarding: Onboarding marked as complete, showing premium welcome before redirect');
+
                                     // Afficher un message de bienvenue premium avant la redirection
                                     this.showPremiumWelcome();
                                 } else {
@@ -1653,7 +1614,7 @@
             // Vérifier que la modal d'onboarding existe et est visible
             const $modal = $('#pdf-builder-onboarding-modal');
             if ($modal.length === 0 || !$modal.is(':visible')) {
-                console.log('PDF Builder Onboarding: Modal not visible, skipping premium welcome');
+
                 // Rediriger directement sans afficher le message
                 window.location.href = 'admin.php?page=pdf-builder-settings#licence';
                 return;
@@ -1738,7 +1699,7 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        console.log('PDF Builder Onboarding: Step updated on server to', step);
+
                         // Mettre à jour aussi côté client pour cohérence
                         if (typeof pdfBuilderOnboarding !== 'undefined') {
                             pdfBuilderOnboarding.current_step = step;
@@ -1775,9 +1736,9 @@
 
         generateFooterButtons(step, data) {
             // Générer tous les boutons du footer pour une étape
-            console.log('PDF Builder Onboarding: generateFooterButtons called for step', step);
-            console.log('PDF Builder Onboarding: data received:', data);
-            console.log('PDF Builder Onboarding: this.selectedTemplate:', this.selectedTemplate);
+
+
+
 
             let buttonsHtml = '';
 
@@ -1816,7 +1777,7 @@
 
                 const isDisabled = shouldDisable ? 'disabled' : '';
 
-                console.log('PDF Builder Onboarding: Button logic - step:', step, 'parsed step:', parseInt(step), 'requires_selection:', data.requires_selection, 'selectedMode:', this.selectedMode, 'selectedTemplate:', this.selectedTemplate, 'shouldDisable:', shouldDisable, 'isDisabled:', isDisabled);
+
 
                 buttonsHtml += `
                     <button class="button ${buttonClass} complete-step"
@@ -1828,7 +1789,7 @@
                 `;
             }
 
-            console.log('PDF Builder Onboarding: Generated footer HTML:', buttonsHtml.substring(0, 200) + '...');
+
             return buttonsHtml;
         }
 
@@ -1846,17 +1807,17 @@
                             <span class="dashicons dashicons-arrow-left-alt"></span>
                         </button>
                     `);
-                    console.log('HEADER: Created previous button for step', step);
+
                 } else {
                     // S'assurer que le bouton est visible et activé
                     $prevButton.show().prop('disabled', false);
-                    console.log('HEADER: Previous button is visible for step', step);
+
                 }
             } else {
                 // Supprimer le bouton précédent pour la première étape
                 if ($prevButton.length > 0) {
                     $prevButton.remove();
-                    console.log('HEADER: Removed previous button for step', step);
+
                 }
             }
         }
@@ -1864,8 +1825,8 @@
         updateFooterButtonsForCurrentStep() {
             // Régénérer les boutons du footer pour l'étape actuelle
             // Cela est nécessaire quand l'état change (par exemple, sélection de template)
-            console.log('PDF Builder Onboarding: Updating footer buttons for current step', this.currentStep);
-            console.log('PDF Builder Onboarding: Current selectedTemplate:', this.selectedTemplate);
+
+
 
             // Simuler les données de l'étape actuelle (on pourrait les récupérer du cache)
             const stepData = this.getStepData(this.currentStep);
@@ -1879,14 +1840,14 @@
                 requires_selection: stepData.requires_selection || false
             };
 
-            console.log('PDF Builder Onboarding: Step data for update:', data);
+
 
             // Régénérer les boutons
             const $footer = $('#pdf-builder-onboarding-modal .modal-footer');
             const footerHtml = this.generateFooterButtons(this.currentStep, data);
             $footer.html(footerHtml);
 
-            console.log('PDF Builder Onboarding: Footer buttons updated for step', this.currentStep);
+
         }
 
         getStepData(step) {
@@ -1903,10 +1864,10 @@
         }
 
         hideInactiveStepButtons() {
-            console.log('=== PDF Builder Onboarding: HIDING INACTIVE BUTTONS, current step:', this.currentStep, '===');
+
             const $modal = $('#pdf-builder-onboarding-modal');
             const allButtons = $modal.find('.complete-step');
-            console.log('PDF Builder Onboarding: Found', allButtons.length, 'total buttons in modal');
+
 
             // Lister tous les boutons avec leur chemin DOM
             allButtons.each(function(index) {
@@ -1921,7 +1882,7 @@
                     path.unshift(tag + id + classes);
                     element = element.parentElement;
                 }
-                console.log(`PDF Builder Onboarding: Button ${index}: step=${buttonStep}, path=${path.join(' > ')}, visible=${$btn.is(':visible')}`);
+
             });
 
             // Masquer tous les boutons qui ne correspondent pas à l'étape courante
@@ -1929,10 +1890,10 @@
                 const $btn = $(this);
                 const buttonStep = $btn.data('step');
                 if (buttonStep !== this.currentStep) {
-                    console.log('PDF Builder Onboarding: HIDING button from step', buttonStep);
+
                     $btn.hide();
                 } else {
-                    console.log('PDF Builder Onboarding: SHOWING button from step', buttonStep);
+
                     $btn.show();
                 }
             }.bind(this));
@@ -2019,7 +1980,7 @@
                 assignmentData.template_actions.push($(this).val());
             });
 
-            console.log('PDF Builder Onboarding: Saving template assignment', assignmentData);
+
 
             // Sauvegarder via AJAX
             $.ajax({
@@ -2032,7 +1993,7 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        console.log('PDF Builder Onboarding: Template assignment saved successfully');
+
                         this.showNotification('Configuration sauvegardée avec succès !', 'success');
                     } else {
                         console.error('PDF Builder Onboarding: Failed to save template assignment', response.data);

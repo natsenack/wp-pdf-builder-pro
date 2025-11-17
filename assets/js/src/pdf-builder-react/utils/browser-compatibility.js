@@ -1,5 +1,5 @@
 // Diagnostic de compatibilité navigateur pour PDF Builder
-console.log('🔍 Diagnostic de compatibilité navigateur démarré...');
+
 
 // Vérifier les APIs critiques
 const compatibilityChecks = {
@@ -59,14 +59,14 @@ const problematicAPIs = Object.entries(compatibilityChecks)
 if (problematicAPIs.length > 0) {
   console.error('❌ APIs manquantes:', problematicAPIs);
 } else {
-  console.log('✅ Toutes les APIs critiques sont disponibles');
+
 }
 
 // Test des Event Listeners passifs
 try {
   const testElement = document.createElement('div');
   testElement.addEventListener('test', () => {}, { passive: true, capture: false });
-  console.log('✅ Event Listeners passifs supportés');
+
 } catch (e) {
   console.error('❌ Event Listeners passifs NON supportés:', e);
 }
@@ -83,7 +83,7 @@ try {
   const testCanvas = document.createElement('canvas');
   const ctx = testCanvas.getContext('2d');
   if (ctx) {
-    console.log('✅ Canvas 2D API fonctionne');
+
   } else {
     console.error('❌ Canvas 2D API ne fonctionne pas');
   }
@@ -91,4 +91,4 @@ try {
   console.error('❌ Erreur Canvas:', e);
 }
 
-console.log('🔍 Diagnostic terminé');
+

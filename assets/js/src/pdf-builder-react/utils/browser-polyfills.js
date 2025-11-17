@@ -169,6 +169,6 @@
     };
   }
 
-  console.log('🔧 Polyfills chargés pour la compatibilité navigateur');
+
 
 })();

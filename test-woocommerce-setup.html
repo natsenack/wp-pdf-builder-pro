@@ -118,13 +118,11 @@
     <script>
         // Script de test pour les interactions
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Test WooCommerce Setup chargé');
 
             // Simuler les interactions des checkboxes
             const checkboxes = document.querySelectorAll('.woocommerce-setup input[type="checkbox"]');
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
-                    console.log('Checkbox changée:', this.name, this.checked);
                 });
             });
 
@@ -132,7 +130,6 @@
             const optionCards = document.querySelectorAll('.option-card');
             optionCards.forEach(card => {
                 card.addEventListener('mouseenter', function() {
-                    console.log('Tooltip affiché pour:', this.querySelector('h6').textContent);
                 });
             });
         });

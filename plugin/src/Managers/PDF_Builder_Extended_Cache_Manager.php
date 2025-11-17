@@ -118,7 +118,8 @@ class PdfBuilderExtendedCacheManager
      *                       stocker
      * @param  string $type  Type de cache (pdf, html, asset, etc.)
      * @param  int    $ttl   Durée de vie
-     *                       en secondes
+     *                       en
+ secondes
      * @return bool Succès
      */
     public function set($key, $value, $type = 'general', $ttl = null)

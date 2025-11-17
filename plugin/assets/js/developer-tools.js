@@ -16,7 +16,6 @@
 
             // Expose test function globally for debugging
             window.testLicenseToggle = () => this.testToggleLicenseMode();
-            console.log('DEVELOPER TOOLS: testLicenseToggle() function exposed globally. Call it from console to test license mode toggle.');
         }
 
         bindEvents() {
@@ -38,7 +37,6 @@
 
         // Test function for license test mode toggle (accessible from console)
         testToggleLicenseMode() {
-            console.log('LICENSE TEST JS: ===== STARTING TOGGLE TEST MODE =====');
 
             // Update UI immediately for better UX
             var $checkbox = $('#license_test_mode');
@@ -67,8 +65,6 @@
             var ajaxUrl, ajaxNonce;
             // Always try to get the specific nonce for license operations first
             var specificNonce = $('#toggle_license_test_mode_nonce').val();
-            console.log('LICENSE TEST JS: Specific nonce element:', $('#toggle_license_test_mode_nonce'));
-            console.log('LICENSE TEST JS: Specific nonce value:', specificNonce);
 
             if (specificNonce) {
                 // Use specific nonce with the appropriate AJAX URL
@@ -82,18 +78,15 @@
                     return;
                 }
                 ajaxData.nonce = specificNonce;
-                console.log('LICENSE TEST JS: Using specific nonce for license operation');
             } else {
                 // Fallback to general AJAX configuration
                 if (typeof pdfBuilderAjax !== 'undefined') {
                     ajaxUrl = pdfBuilderAjax.ajaxurl;
                     ajaxNonce = pdfBuilderAjax.nonce;
                     ajaxData.nonce = ajaxNonce;
-                    console.log('LICENSE TEST JS: Using pdfBuilderAjax fallback');
                 } else if (typeof pdf_builder_ajax !== 'undefined') {
                     ajaxUrl = pdf_builder_ajax.ajax_url;
                     ajaxData.security = pdf_builder_ajax.nonce;
-                    console.log('LICENSE TEST JS: Using pdf_builder_ajax fallback');
                 } else {
                     console.error('LICENSE TEST JS: No AJAX configuration found');
                     this.showError('Configuration AJAX manquante');
@@ -106,9 +99,7 @@
                 type: 'POST',
                 data: ajaxData,
                 success: (response) => {
-                    console.log('LICENSE TEST JS: Success response:', response);
                     if (response.success) {
-                        console.log('LICENSE TEST JS: Mode toggled successfully:', response.data);
                         this.showSuccess(response.data.message);
                     } else {
                         console.error('LICENSE TEST JS: Server returned error:', response.data);
@@ -155,14 +146,12 @@
 
         handleToggleLicenseTestMode(e) {
             e.preventDefault();
-            console.log('DEVELOPER TOOLS: Toggle license test mode clicked');
 
             this.testToggleLicenseMode();
         }
 
         handleGenerateTestKey(e) {
             e.preventDefault();
-            console.log('DEVELOPER TOOLS: Generate test key clicked');
 
             $.ajax({
                 url: pdfBuilderAjax.ajaxurl,
@@ -172,7 +161,6 @@
                     nonce: $('#generate_license_key_nonce').val()
                 },
                 success: (response) => {
-                    console.log('DEVELOPER TOOLS: Generate key response:', response);
                     if (response.success) {
                         this.showSuccess(response.data.message);
                         // Update UI with the generated key
@@ -191,7 +179,6 @@
 
         handleValidateTestKey(e) {
             e.preventDefault();
-            console.log('DEVELOPER TOOLS: Validate test key clicked');
 
             const keyToValidate = $('.test-license-key-input').val();
             if (!keyToValidate) {
@@ -208,7 +195,6 @@
                     key: keyToValidate
                 },
                 success: (response) => {
-                    console.log('DEVELOPER TOOLS: Validate key response:', response);
                     if (response.success) {
                         this.showSuccess(response.data.message);
                     } else {
@@ -224,7 +210,6 @@
 
         handleDeleteTestKey(e) {
             e.preventDefault();
-            console.log('DEVELOPER TOOLS: Delete test key clicked');
 
             if (!confirm('Êtes-vous sûr de vouloir supprimer la clé de test ?')) {
                 return;
@@ -238,7 +223,6 @@
                     nonce: $('#delete_license_key_nonce').val()
                 },
                 success: (response) => {
-                    console.log('DEVELOPER TOOLS: Delete key response:', response);
                     if (response.success) {
                         this.showSuccess(response.data.message);
                         // Clear UI
@@ -249,7 +233,6 @@
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('DEVELOPER TOOLS: Delete key AJAX error:', error);
                     this.showError('Erreur lors de la suppression de la clé de test');
                 }
             });
@@ -257,7 +240,6 @@
 
         handleCleanupLicense(e) {
             e.preventDefault();
-            console.log('DEVELOPER TOOLS: Cleanup license clicked');
 
             if (!confirm('Êtes-vous sûr de vouloir nettoyer complètement la licence ? Toutes les données de licence seront supprimées.')) {
                 return;
@@ -271,7 +253,6 @@
                     security: $('#cleanup_license_nonce').val()
                 },
                 success: (response) => {
-                    console.log('DEVELOPER TOOLS: Cleanup license response:', response);
                     if (response.success) {
                         this.showSuccess(response.data.message);
                         // Reload page to reflect changes
@@ -283,7 +264,6 @@
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('DEVELOPER TOOLS: Cleanup license AJAX error:', error);
                     this.showError('Erreur lors du nettoyage de la licence');
                 }
             });

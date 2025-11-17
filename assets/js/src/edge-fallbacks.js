@@ -16,7 +16,7 @@
   }
 
   const edgeVersion = isOldEdge ? 'ancien' : 'nouveau';
-  console.log(`🌐 Application des corrections spécifiques à Edge (${edgeVersion})`);
+
 
   // Correction pour les Event Listeners passifs dans Edge
   if (typeof window !== 'undefined' && typeof window.EventTarget !== 'undefined') {
@@ -157,10 +157,10 @@
     // L'ancien Edge peut ne pas avoir URLSearchParams
     if (!window.URLSearchParams) {
       // Utiliser le polyfill déjà défini dans browser-polyfills.js
-      console.log('Utilisation du polyfill URLSearchParams pour l\'ancien Edge');
+
     }
   }
 
-  console.log('✅ Corrections Edge appliquées');
+
 
 })();

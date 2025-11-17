@@ -2,7 +2,7 @@
 (function() {
   'use strict';
 
-  console.log('🧪 Test des corrections de compatibilité multi-navigateurs');
+
 
   // Détection du navigateur
   const browserInfo = {
@@ -53,17 +53,17 @@
     try {
       const result = test.test();
       if (result) {
-        console.log(`✅ ${test.name}: OK`);
+
         passed++;
       } else {
-        console.log(`❌ ${test.name}: ÉCHEC`);
+
       }
     } catch (error) {
-      console.log(`❌ ${test.name}: ERREUR - ${error.message}`);
+
     }
   });
 
-  console.log(`📊 Résultat polyfills: ${passed}/${total} tests réussis`);
+
 
   // Tests spécifiques par navigateur
   const browserSpecificTests = [];
@@ -139,39 +139,39 @@
     try {
       const result = test.test();
       if (result) {
-        console.log(`✅ ${test.name}: OK`);
+
         browserPassed++;
       } else {
-        console.log(`❌ ${test.name}: ÉCHEC`);
+
       }
     } catch (error) {
-      console.log(`❌ ${test.name}: ERREUR - ${error.message}`);
+
     }
   });
 
   if (browserTotal > 0) {
-    console.log(`📊 Résultat navigateur spécifique: ${browserPassed}/${browserTotal} tests réussis`);
+
   }
 
   const totalPassed = passed + browserPassed;
   const totalTests = total + browserTotal;
 
   if (totalPassed === totalTests) {
-    console.log('🎉 Toutes les corrections de compatibilité sont opérationnelles !');
+
   } else {
-    console.log('⚠️ Certaines corrections peuvent ne pas fonctionner correctement.');
+
   }
 
   // Résumé final
-  console.log('📋 Résumé de compatibilité:');
-  console.log(`   - Polyfills généraux: ${passed}/${total}`);
+
+
   if (browserTotal > 0) {
     const browserName = browserInfo.isChrome ? 'Chrome' :
                        browserInfo.isFirefox ? 'Firefox' :
                        browserInfo.isSafari ? 'Safari' :
                        browserInfo.isEdge ? 'Edge' : 'Mobile';
-    console.log(`   - Corrections ${browserName}: ${browserPassed}/${browserTotal}`);
+
   }
-  console.log(`   - Total: ${totalPassed}/${totalTests}`);
+
 
 })();

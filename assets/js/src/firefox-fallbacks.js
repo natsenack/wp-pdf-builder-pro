@@ -10,7 +10,7 @@
     return; // Ne rien faire si ce n'est pas Firefox
   }
 
-  console.log('🦊 Application des corrections spécifiques à Firefox');
+
 
   // Correction pour les Event Listeners passifs dans Firefox
   if (typeof window !== 'undefined' && typeof window.EventTarget !== 'undefined') {
@@ -105,6 +105,6 @@
     }
   }
 
-  console.log('✅ Corrections Firefox appliquées');
+
 
 })();

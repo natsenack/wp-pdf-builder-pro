@@ -10,7 +10,7 @@
     return; // Ne rien faire si ce n'est pas mobile
   }
 
-  console.log('📱 Application des corrections pour navigateurs mobiles');
+
 
   // Correction pour les Event Listeners passifs sur mobile
   if (typeof window !== 'undefined' && typeof window.EventTarget !== 'undefined') {
@@ -74,7 +74,7 @@
 
           let context = originalGetContext.call(this, contextType, mobileAttributes);
           if (context) {
-            console.log('Contexte WebGL optimisé pour mobile');
+
             return context;
           }
         }
@@ -116,7 +116,7 @@
   if (typeof navigator !== 'undefined' && !navigator.vibrate) {
     navigator.vibrate = function(_pattern) {
       // Stub pour les navigateurs mobiles qui ne supportent pas la vibration
-      console.log('Vibration demandée mais non supportée sur cet appareil');
+
       return false;
     };
   }
@@ -160,6 +160,6 @@
     };
   }
 
-  console.log('✅ Corrections mobiles appliquées');
+
 
 })();

@@ -12,7 +12,7 @@
     return; // Ne rien faire si ce n'est pas Safari
   }
 
-  console.log('🧭 Application des corrections spécifiques à Safari');
+
 
   // Correction pour les Event Listeners passifs dans Safari
   if (typeof window !== 'undefined' && typeof window.EventTarget !== 'undefined') {
@@ -159,6 +159,6 @@
     };
   }
 
-  console.log('✅ Corrections Safari appliquées');
+
 
 })();

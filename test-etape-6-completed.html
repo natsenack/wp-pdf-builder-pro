@@ -181,13 +181,11 @@
     <script>
         // Script de test pour les interactions
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Test Étape 6 - Configuration terminée chargée');
 
             // Animation des cartes au survol
             const cards = document.querySelectorAll('.action-card, .summary-card');
             cards.forEach(card => {
                 card.addEventListener('mouseenter', function() {
-                    console.log('Carte survolée:', this.querySelector('h5').textContent);
                 });
             });
 
@@ -195,7 +193,6 @@
             const feedbackBtns = document.querySelectorAll('.feedback-btn');
             feedbackBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    console.log('Feedback cliqué:', this.textContent);
                 });
             });
         });

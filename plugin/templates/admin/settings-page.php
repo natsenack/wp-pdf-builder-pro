@@ -296,6 +296,15 @@
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
 
+                        // Debug temporaire - afficher les valeurs sauvegardées
+                        error_log('=== VALEURS SAUVEGARDEES ===');
+                        error_log('cache_enabled: ' . get_option('pdf_builder_cache_enabled'));
+                        error_log('cache_expiry: ' . get_option('pdf_builder_cache_expiry'));
+                        error_log('max_cache_size: ' . get_option('pdf_builder_max_cache_size'));
+                        error_log('auto_maintenance: ' . get_option('pdf_builder_auto_maintenance'));
+                        error_log('auto_backup: ' . get_option('pdf_builder_auto_backup'));
+                        error_log('backup_retention: ' . get_option('pdf_builder_backup_retention'));
+
                         send_ajax_response(true, 'Paramètres système enregistrés avec succès.');
                         break;
 
@@ -3833,11 +3842,9 @@
 
     <script>
         jQuery(document).ready(function($) {
-            console.log('=== PDF BUILDER DEBUG === Toggle script loaded');
 
             // Toggle pour le mode développeur - gestion des sections
             $('#developer_enabled').on('change', function() {
-                console.log('Developer mode toggle changed:', $(this).is(':checked'));
 
                 var isChecked = $(this).is(':checked');
                 var sections = [
@@ -3855,10 +3862,8 @@
                 sections.forEach(function(sectionId) {
                     if (isChecked) {
                         $(sectionId).show();
-                        console.log('Section shown:', sectionId);
                     } else {
                         $(sectionId).hide();
-                        console.log('Section hidden:', sectionId);
                     }
                 });
             });
@@ -3922,7 +3927,6 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
-                            console.log('License test mode toggled:', response);
                         }
                     });
                 }
@@ -4502,21 +4506,18 @@
 
                 // Pour l'onglet système, collecter toutes les données et les envoyer ensemble
                 if (currentTab === 'systeme') {
-                    console.log('=== TRAITEMENT ONGLET SYSTEME ===');
 
                     // Collecter les données de tous les formulaires de l'onglet système
                     const formData = new FormData();
 
                     forms.each(function(index) {
                         const $form = $(this);
-                        console.log(`Formulaire ${index}:`, $form.find('input[name="current_tab"]').val());
 
                         const formDataTemp = new FormData(this);
 
                         // Ajouter les données de ce formulaire (sauf current_tab qui sera remplacé)
                         for (let [key, value] of formDataTemp.entries()) {
                             if (key !== 'current_tab') {
-                                console.log(`  Champ ${key} = ${value}`);
                                 formData.append(key, value);
                             }
                         }
@@ -4526,9 +4527,7 @@
                             const $checkbox = $(this);
                             const name = $checkbox.attr('name');
                             const isChecked = $checkbox.is(':checked');
-                            console.log(`  Checkbox ${name}: ${isChecked ? 'cochée' : 'non cochée'}`);
                             if (name && !isChecked) {
-                                console.log(`  -> Ajout ${name} = 0`);
                                 formData.append(name, '0');
                             }
                         });
@@ -4536,15 +4535,12 @@
 
                     // S'assurer que developer_enabled est toujours envoyé
                     const devEnabled = $('#developer_enabled').is(':checked');
-                    console.log(`developer_enabled: ${devEnabled}`);
                     formData.append('developer_enabled', devEnabled ? '1' : '0');
 
                     // Ajouter l'onglet actuel (toujours 'systeme' pour cet onglet)
                     formData.append('current_tab', currentTab);
                     formData.append('action', 'pdf_builder_save_settings');
                     formData.append('nonce', pdf_builder_ajax.nonce);
-
-                    console.log('=== ENVOI DONNEES SYSTEME ===');
 
                     // Envoyer via AJAX
                     $.ajax({
@@ -4554,7 +4550,6 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
-                            console.log('=== SUCCES AJAX ===', response);
                             if (response.success) {
                                 // Succès
                                 $btn.removeClass('saving').addClass('saved');
@@ -4569,7 +4564,6 @@
                                 }, 3000);
                             } else {
                                 // Erreur
-                                console.log('=== ERREUR SERVEUR ===', response);
                                 $btn.removeClass('saving').addClass('error');
                                 $icon.text('❌');
                                 $text.text('Erreur');
@@ -4582,8 +4576,6 @@
                             }
                         },
                         error: function(xhr, status, error) {
-                            console.log('=== ERREUR AJAX ===', xhr.status, status, error);
-                            console.log('Response:', xhr.responseText);
                             // Erreur AJAX
                             $btn.removeClass('saving').addClass('error');
                             $icon.text('❌');

@@ -25,7 +25,7 @@ const elementHistory = CanvasMonitoringDashboard.getElementHistory(elementId);
 console.table(elementHistory);
 
 // See how many times this element changed
-console.log(`Element ${elementId} changed ${elementHistory.length} times`);
+
 
 
 // ============================================
@@ -35,18 +35,18 @@ console.log(`Element ${elementId} changed ${elementHistory.length} times`);
 // Track all position changes
 const positionChanges = CanvasMonitoringDashboard.getPropertyHistory("x")
   .concat(CanvasMonitoringDashboard.getPropertyHistory("y"));
-console.log(`Position changed ${positionChanges.length} times`);
+
 
 // Track all color changes
 const colorChanges = CanvasMonitoringDashboard.getPropertyHistory("fillColor");
-console.log("All color changes:");
+
 colorChanges.forEach(change => {
-  console.log(`  ${change.elementId}: ${change.oldValue} → ${change.newValue}`);
+
 });
 
 // Track all text changes
 const textChanges = CanvasMonitoringDashboard.getPropertyHistory("text");
-console.log("Text changes:", textChanges.length);
+
 
 
 // ============================================
@@ -54,7 +54,7 @@ console.log("Text changes:", textChanges.length);
 // ============================================
 
 // Get detailed report
-console.log(CanvasMonitoringDashboard.generateReport());
+
 
 // Most changed elements
 const history = CanvasMonitoringDashboard.getHistory();
@@ -63,7 +63,7 @@ history.forEach(change => {
   elementCounts[change.elementId] = (elementCounts[change.elementId] || 0) + 1;
 });
 const sorted = Object.entries(elementCounts).sort((a, b) => b[1] - a[1]);
-console.log("Most changed elements:", sorted.slice(0, 5));
+
 
 // Most frequently changed properties
 const propertyCounts = {};
@@ -73,7 +73,7 @@ history.forEach(change => {
   }
 });
 const propsSort = Object.entries(propertyCounts).sort((a, b) => b[1] - a[1]);
-console.log("Most changed properties:", propsSort.slice(0, 5));
+
 
 
 // ============================================
@@ -83,7 +83,7 @@ console.log("Most changed properties:", propsSort.slice(0, 5));
 // Get changes from last 5 seconds
 const now = Date.now();
 const recentChanges = elementChangeTracker.getChangesBetween(now - 5000, now);
-console.log(`Changes in last 5 seconds: ${recentChanges.length}`);
+
 
 // Get first 10 changes of the session
 const firstChanges = CanvasMonitoringDashboard.getHistory().slice(0, 10);
@@ -100,11 +100,11 @@ console.table(lastChanges);
 
 // Export all data as JSON
 const exportedData = CanvasMonitoringDashboard.exportHistory();
-console.log(exportedData);
+
 
 // Save to clipboard (then paste to file)
 copy(exportedData);
-console.log("✅ Data copied to clipboard!");
+
 
 // Or stringify for sharing
 const jsonString = JSON.stringify(
@@ -112,7 +112,7 @@ const jsonString = JSON.stringify(
   null,
   2
 );
-console.log(jsonString);
+
 
 
 // ============================================
@@ -127,13 +127,13 @@ elementChangeTracker.onChange(change => {
     property_changed: '🔧'
   }[change.changeType] || '❓';
   
-  console.log(`${emoji} [${change.changeType}] ${change.elementId}.${change.property}`);
+
 });
 
 // Listen only to specific element
 elementChangeTracker.onChange(change => {
   if (change.elementId === "text-element-1") {
-    console.log(`Text element 1 changed:`, change);
+
   }
 });
 
@@ -156,7 +156,7 @@ const creations = CanvasMonitoringDashboard.getHistory()
   .filter(c => c.changeType === 'created' && c.elementId === "your-element-id");
 if (creations.length > 0) {
   const created = new Date(creations[0].timestamp);
-  console.log(`Element created at: ${created.toLocaleTimeString()}`);
+
 }
 
 // Find all property changes for specific element
@@ -174,8 +174,8 @@ console.table(allProps);
 const deletions = CanvasMonitoringDashboard.getHistory()
   .filter(c => c.changeType === 'deleted' && c.elementId === "your-element-id");
 if (deletions.length > 0) {
-  console.log("Element was deleted!");
-  console.log(deletions[0]);
+
+
 }
 
 
@@ -185,15 +185,15 @@ if (deletions.length > 0) {
 
 // Verify state synchronization
 const currentSnapshots = elementChangeTracker.getSnapshots();
-console.log(`${currentSnapshots.size} elements in tracking state`);
+
 
 // Check specific element's current state
 const snapshot = currentSnapshots.get("element-id");
-console.log("Current element state:", snapshot);
+
 
 // List all tracked elements
 currentSnapshots.forEach((snapshot, elementId) => {
-  console.log(`📦 ${elementId}: (${snapshot.x}, ${snapshot.y}) ${snapshot.width}×${snapshot.height}`);
+
 });
 
 
@@ -203,7 +203,7 @@ currentSnapshots.forEach((snapshot, elementId) => {
 
 // Clear history to start fresh test
 CanvasMonitoringDashboard.clearHistory();
-console.log("✅ Monitoring history cleared");
+
 
 // Then try your test scenario
 // ... make some element changes ...
@@ -231,7 +231,7 @@ function analyzeElementInTimeRange(elementId, startTime, endTime) {
 // Usage:
 const oneMinuteAgo = Date.now() - 60000;
 const changes = analyzeElementInTimeRange("element-1", oneMinuteAgo, Date.now());
-console.log(`Changes in last minute: ${changes.length}`);
+
 
 
 /**
@@ -252,8 +252,8 @@ function analyzePropertyChanges(propertyName) {
 }
 
 // Usage:
-console.log("Color analysis:", analyzePropertyChanges("fillColor"));
-console.log("Position analysis:", analyzePropertyChanges("x"));
+
+
 
 
 /**
@@ -303,22 +303,22 @@ console.table(CanvasMonitoringDashboard.getHistory().slice(-5));
 const textElements = CanvasMonitoringDashboard.getHistory()
   .filter(c => c.elementId.includes("text"))
   .length;
-console.log(`Text element changes: ${textElements}`);
+
 
 // Tip 3: Compare states before/after
 const before = CanvasMonitoringDashboard.getHistory().length;
 // ... make changes ...
 const after = CanvasMonitoringDashboard.getHistory().length;
-console.log(`Changes made: ${after - before}`);
+
 
 // Tip 4: Export and paste into Excel/Sheets
 const csv = CanvasMonitoringDashboard.getHistory()
   .map(c => `${c.elementId},${c.property},${c.oldValue},${c.newValue}`)
   .join('\n');
-console.log(csv);
+
 
 // Tip 5: Search within history
 const myChanges = CanvasMonitoringDashboard.getHistory()
   .filter(c => JSON.stringify(c).includes("search-term"));
-console.log(myChanges);
+
 

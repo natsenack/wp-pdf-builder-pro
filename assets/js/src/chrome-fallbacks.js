@@ -11,7 +11,7 @@
     return; // Ne rien faire si ce n'est pas Chrome
   }
 
-  console.log('🔧 Application des corrections spécifiques à Chrome');
+
 
   // Correction pour les Event Listeners passifs dans Chrome
   if (typeof window !== 'undefined' && typeof window.EventTarget !== 'undefined') {
@@ -167,7 +167,7 @@
 
         // Détecter les requêtes AJAX WordPress
         if (url && url.includes('admin-ajax.php') && url.includes('pdf_builder_get_template')) {
-          console.log('🔧 [Chrome Fix] Requête template détectée, application des corrections');
+
 
           // Forcer des en-têtes spécifiques pour les requêtes de templates
           const chromeInit = {
@@ -185,7 +185,7 @@
             cache: 'no-cache'
           };
 
-          console.log('🔧 [Chrome Fix] Options fetch modifiées:', chromeInit);
+
           return originalFetch.call(this, input, chromeInit);
         }
 
@@ -198,6 +198,6 @@
     };
   }
 
-  console.log('✅ Corrections Chrome appliquées');
+
 
 })();

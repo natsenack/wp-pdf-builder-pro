@@ -124,7 +124,6 @@
     <script>
         // Script de test pour les interactions
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Test Étape 3 - Sélection de Template chargée');
 
             // Simuler la sélection de template
             const templateCards = document.querySelectorAll('.template-card');
@@ -136,7 +135,6 @@
                     this.classList.add('selected');
 
                     const templateId = this.getAttribute('data-template');
-                    console.log('Template sélectionné:', templateId);
                 });
             });
 

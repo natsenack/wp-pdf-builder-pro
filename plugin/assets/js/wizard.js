@@ -55,12 +55,6 @@ var pdfBuilderWizard = {
     },
 
     testAjax: function() {
-        console.log('PDF Builder Wizard: Testing AJAX...');
-        console.log('PDF Builder Wizard: ajax_url =', typeof pdfBuilderWizardData !== 'undefined' ? pdfBuilderWizardData.ajax_url : 'undefined');
-        console.log('PDF Builder Wizard: global ajaxurl =', typeof ajaxurl !== 'undefined' ? ajaxurl : 'undefined');
-        console.log('PDF Builder Wizard: pdf_builder_ajax =', typeof pdf_builder_ajax !== 'undefined' ? pdf_builder_ajax : 'undefined');
-        console.log('PDF Builder Wizard: nonce =', typeof pdfBuilderWizardData !== 'undefined' ? pdfBuilderWizardData.nonce : 'undefined');
-        
         var ajaxData = {
             action: 'test_ajax'
         };
@@ -75,10 +69,8 @@ var pdfBuilderWizard = {
             type: 'POST',
             data: ajaxData,
             success: function(response) {
-                console.log('PDF Builder Wizard: AJAX test successful:', response);
             },
             error: function(xhr, status, error) {
-                console.error('PDF Builder Wizard: AJAX test failed:', xhr, status, error);
             }
         });
     },
@@ -98,18 +90,15 @@ var pdfBuilderWizard = {
 
         // Sauvegarde des données si nécessaire
         this.saveCurrentStepData().done(function(response) {
-            console.log('PDF Builder Wizard: AJAX response:', response);
             if (response.success) {
                 pdfBuilderWizard.showSuccess('Étape sauvegardée avec succès !');
                 pdfBuilderWizard.navigateToStep(step);
             } else {
-                console.error('PDF Builder Wizard: Error response:', response);
                 pdfBuilderWizard.showError(response.message || 'Erreur lors de la sauvegarde des données.');
             }
             pdfBuilderWizard.isLoading = false;
             pdfBuilderWizard.hideLoading();
         }).fail(function(xhr, status, error) {
-            console.error('PDF Builder Wizard: AJAX failed:', xhr, status, error);
             pdfBuilderWizard.showError('Erreur de communication avec le serveur. Vérifiez votre connexion internet.');
             pdfBuilderWizard.isLoading = false;
             pdfBuilderWizard.hideLoading();
@@ -188,8 +177,6 @@ var pdfBuilderWizard = {
             company_logo: jQuery('#company_logo').val()
         };
 
-        console.log('PDF Builder Wizard: Sending data:', data);
-
         return jQuery.ajax({
             url: typeof pdf_builder_ajax !== 'undefined' ? pdf_builder_ajax.ajax_url : ajaxurl,
             type: 'POST',
@@ -228,14 +215,12 @@ var pdfBuilderWizard = {
 
     finish: function() {
         // Rediriger vers la page principale du plugin
-        console.log('PDF Builder Wizard: finish() called');
-        console.log('PDF Builder Wizard: pdfBuilderWizardData =', typeof pdfBuilderWizardData !== 'undefined' ? pdfBuilderWizardData : 'undefined');
+
+
         
         if (typeof pdfBuilderWizardData !== 'undefined' && pdfBuilderWizardData.adminUrl) {
-            console.log('PDF Builder Wizard: redirecting to', pdfBuilderWizardData.adminUrl);
             window.location.href = pdfBuilderWizardData.adminUrl;
         } else {
-            console.error('PDF Builder Wizard: adminUrl not available, redirecting to admin dashboard');
             window.location.href = '/wp-admin/';
         }
     },

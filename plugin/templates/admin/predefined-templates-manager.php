@@ -751,8 +751,6 @@ class PDF_Builder_Predefined_Templates_Manager
                 $button.prop('disabled', true).text('<?php _e('Connexion...', 'pdf-builder-pro'); ?>');
                 $message.hide();
 
-                console.log('Sending developer auth request with password length:', password.length, 'nonce:', nonce);
-
                 $.ajax({
                     url: ajaxurl,
                     type: 'POST',
@@ -762,7 +760,6 @@ class PDF_Builder_Predefined_Templates_Manager
                         nonce: nonce
                     },
                     success: function(response) {
-                        console.log('Developer auth response:', response);
                         if (response.success) {
                             // Notification de succès
                             PDF_Builder_Notification_Manager.show_toast('Authentification réussie ! Redirection en cours...', 'success');

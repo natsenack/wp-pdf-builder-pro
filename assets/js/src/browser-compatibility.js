@@ -105,7 +105,7 @@ function checkBrowserCompatibility() {
       if (!supported) {
         results.errors.push(`❌ ${api.name}: ${api.description} - Non supporté`);
       } else {
-        console.log(`✅ ${api.name}: Supporté`);
+
       }
     } catch (error) {
       results.apis[api.name] = {
@@ -119,14 +119,14 @@ function checkBrowserCompatibility() {
 
   // Afficher un résumé
   console.group('🔍 Diagnostic de compatibilité navigateur');
-  console.log('Navigateur:', results.browser);
-  console.log('Timestamp:', results.timestamp);
+
+
 
   if (results.errors.length > 0) {
     console.warn('🚨 APIs non supportées:');
     results.errors.forEach(error => console.warn(error));
   } else {
-    console.log('✅ Toutes les APIs essentielles sont supportées');
+
   }
 
   console.groupEnd();
