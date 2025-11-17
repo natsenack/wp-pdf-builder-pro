@@ -1062,10 +1062,12 @@
                             if (phoneNumbers.length > 10) {
                                 isValid = false;
                                 errors.push('Le numéro de téléphone ne peut pas dépasser 10 chiffres.');
-                                $('#company_phone_manual').addClass('error');
+                                $('#company_phone_manual').addClass('error').removeClass('valid');
                             } else {
-                                $('#company_phone_manual').removeClass('error');
+                                $('#company_phone_manual').addClass('valid').removeClass('error');
                             }
+                        } else {
+                            $('#company_phone_manual').removeClass('error valid');
                         }
 
                         // Validation du SIRET (14 chiffres)
@@ -1075,10 +1077,12 @@
                             if (siretNumbers.length !== 14) {
                                 isValid = false;
                                 errors.push('Le numéro SIRET doit contenir exactement 14 chiffres.');
-                                $('#company_siret').addClass('error');
+                                $('#company_siret').addClass('error').removeClass('valid');
                             } else {
-                                $('#company_siret').removeClass('error');
+                                $('#company_siret').addClass('valid').removeClass('error');
                             }
+                        } else {
+                            $('#company_siret').removeClass('error valid');
                         }
 
                         // Validation du numéro TVA (format européen flexible)
@@ -1090,10 +1094,12 @@
                             if (!vatPattern.test(vat.replace(/\s/g, ''))) {
                                 isValid = false;
                                 errors.push('Le numéro TVA doit être au format européen valide (ex: FR12345678901, DE123456789, BE0123456789).');
-                                $('#company_vat').addClass('error');
+                                $('#company_vat').addClass('error').removeClass('valid');
                             } else {
-                                $('#company_vat').removeClass('error');
+                                $('#company_vat').addClass('valid').removeClass('error');
                             }
+                        } else {
+                            $('#company_vat').removeClass('error valid');
                         }
 
                         // Afficher les erreurs si il y en a
@@ -1109,9 +1115,11 @@
                         var phone = $(this).val().trim();
                         var phoneNumbers = phone.replace(/\D/g, '');
                         if (phoneNumbers.length > 10) {
-                            $(this).addClass('error');
+                            $(this).addClass('error').removeClass('valid');
+                        } else if (phoneNumbers.length > 0 && phoneNumbers.length <= 10) {
+                            $(this).addClass('valid').removeClass('error');
                         } else {
-                            $(this).removeClass('error');
+                            $(this).removeClass('error valid');
                         }
                     });
 
@@ -1119,10 +1127,12 @@
                     $('#company_siret').on('input', function() {
                         var siret = $(this).val().trim();
                         var siretNumbers = siret.replace(/\D/g, '');
-                        if (siretNumbers.length !== 14 && siretNumbers.length > 0) {
-                            $(this).addClass('error');
+                        if (siretNumbers.length === 14) {
+                            $(this).addClass('valid').removeClass('error');
+                        } else if (siretNumbers.length > 0) {
+                            $(this).addClass('error').removeClass('valid');
                         } else {
-                            $(this).removeClass('error');
+                            $(this).removeClass('error valid');
                         }
                     });
 
@@ -1131,10 +1141,12 @@
                         var vat = $(this).val().trim();
                         // Regex pour les formats TVA européens courants
                         var vatPattern = /^[A-Z]{2}[A-Z0-9]{8,12}$/i;
-                        if (vat !== '' && !vatPattern.test(vat.replace(/\s/g, ''))) {
-                            $(this).addClass('error');
+                        if (vat !== '' && vatPattern.test(vat.replace(/\s/g, ''))) {
+                            $(this).addClass('valid').removeClass('error');
+                        } else if (vat !== '' && !vatPattern.test(vat.replace(/\s/g, ''))) {
+                            $(this).addClass('error').removeClass('valid');
                         } else {
-                            $(this).removeClass('error');
+                            $(this).removeClass('error valid');
                         }
                     });
 
@@ -1157,6 +1169,15 @@
                 .form-table input.error:focus {
                     border-color: #dc3545 !important;
                     box-shadow: 0 0 0 1px #dc3545, 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+                }
+                .form-table input.valid {
+                    border-color: #28a745 !important;
+                    box-shadow: 0 0 0 1px #28a745 !important;
+                    background-color: #f8fff8 !important;
+                }
+                .form-table input.valid:focus {
+                    border-color: #28a745 !important;
+                    box-shadow: 0 0 0 1px #28a745, 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
                 }
                 </style>
             </div>
