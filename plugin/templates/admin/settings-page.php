@@ -296,15 +296,6 @@
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
 
-                        // Debug temporaire - afficher les valeurs sauvegardées
-                        error_log('=== VALEURS SAUVEGARDEES ===');
-                        error_log('cache_enabled: ' . get_option('pdf_builder_cache_enabled'));
-                        error_log('cache_expiry: ' . get_option('pdf_builder_cache_expiry'));
-                        error_log('max_cache_size: ' . get_option('pdf_builder_max_cache_size'));
-                        error_log('auto_maintenance: ' . get_option('pdf_builder_auto_maintenance'));
-                        error_log('auto_backup: ' . get_option('pdf_builder_auto_backup'));
-                        error_log('backup_retention: ' . get_option('pdf_builder_backup_retention'));
-
                         send_ajax_response(true, 'Paramètres système enregistrés avec succès.');
                         break;
 
@@ -2147,7 +2138,7 @@
                             <th scope="row"><label for="systeme_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="systeme_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', true)); ?>>
+                                    <input type="checkbox" id="systeme_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', '1'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Active le système de cache pour améliorer les performances</p>
@@ -2193,7 +2184,7 @@
                             <th scope="row"><label for="auto_maintenance">Maintenance automatique</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="auto_maintenance" name="auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', false)); ?>>
+                                    <input type="checkbox" id="auto_maintenance" name="auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Active la maintenance automatique hebdomadaire</p>
@@ -2224,7 +2215,7 @@
                             <th scope="row"><label for="auto_backup">Sauvegarde automatique</label></th>
                             <td>
                                 <label class="switch">
-                                    <input type="checkbox" id="auto_backup" name="auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', false)); ?>>
+                                    <input type="checkbox" id="auto_backup" name="auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
                                 <p class="description">Crée automatiquement des sauvegardes quotidiennes</p>
