@@ -4651,6 +4651,174 @@
                 }
             });
 
+            // === GESTIONNAIRES POUR LES BOUTONS DE MAINTENANCE ===
+            
+            // Bouton "Vider le cache"
+            $('#clear-cache-btn').on('click', function() {
+                const $btn = $(this);
+                const $results = $('#maintenance-results');
+                
+                $btn.prop('disabled', true).text('⏳ Vidage en cours...');
+                $results.html('<span style="color: #007cba;">⏳ Vidage du cache en cours...</span>');
+                
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_clear_cache',
+                        security: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $results.html('<span style="color: #28a745;">✅ Cache vidé avec succès</span>');
+                        } else {
+                            $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors du vidage du cache</span>');
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).text('🗑️ Vider le cache');
+                    }
+                });
+            });
+
+            // Bouton "Optimiser la base"
+            $('#optimize-db-btn').on('click', function() {
+                const $btn = $(this);
+                const $results = $('#maintenance-results');
+                
+                $btn.prop('disabled', true).text('⏳ Optimisation...');
+                $results.html('<span style="color: #007cba;">⏳ Optimisation de la base de données en cours...</span>');
+                
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_optimize_db',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $results.html('<span style="color: #28a745;">✅ Base de données optimisée avec succès</span>');
+                        } else {
+                            $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors de l\'optimisation</span>');
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).text('🗃️ Optimiser la base');
+                    }
+                });
+            });
+
+            // Bouton "Réparer la base"
+            $('#repair-db-btn').on('click', function() {
+                const $btn = $(this);
+                const $results = $('#maintenance-results');
+                
+                $btn.prop('disabled', true).text('⏳ Réparation...');
+                $results.html('<span style="color: #007cba;">⏳ Réparation de la base de données en cours...</span>');
+                
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_repair_templates',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $results.html('<span style="color: #28a745;">✅ Base de données réparée avec succès</span>');
+                        } else {
+                            $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors de la réparation</span>');
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).text('🔧 Réparer la base');
+                    }
+                });
+            });
+
+            // === GESTIONNAIRES POUR LES BOUTONS DE SAUVEGARDE ===
+            
+            // Bouton "Créer une sauvegarde"
+            $('#create-backup-btn').on('click', function() {
+                const $btn = $(this);
+                const $results = $('#backup-results');
+                
+                $btn.prop('disabled', true).text('⏳ Création...');
+                $results.html('<span style="color: #007cba;">⏳ Création de la sauvegarde en cours...</span>');
+                
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_create_backup',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $results.html('<span style="color: #28a745;">✅ Sauvegarde créée avec succès</span>');
+                        } else {
+                            $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors de la création de la sauvegarde</span>');
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).text('📦 Créer une sauvegarde');
+                    }
+                });
+            });
+
+            // Bouton "Lister les sauvegardes"
+            $('#list-backups-btn').on('click', function() {
+                const $btn = $(this);
+                const $results = $('#backup-results');
+                
+                $btn.prop('disabled', true).text('⏳ Chargement...');
+                $results.html('<span style="color: #007cba;">⏳ Chargement de la liste des sauvegardes...</span>');
+                
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_list_backups',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            let html = '<div style="margin-top: 10px;"><strong>📋 Sauvegardes disponibles:</strong><br>';
+                            if (response.data && response.data.backups && response.data.backups.length > 0) {
+                                response.data.backups.forEach(function(backup) {
+                                    html += '• ' + backup.name + ' (' + backup.size + ', ' + backup.date + ')<br>';
+                                });
+                            } else {
+                                html += 'Aucune sauvegarde trouvée.';
+                            }
+                            html += '</div>';
+                            $results.html('<span style="color: #28a745;">✅ Liste chargée</span>' + html);
+                        } else {
+                            $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors du chargement de la liste</span>');
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).text('📋 Lister les sauvegardes');
+                    }
+                });
+            });
+
             // Gestionnaires pour les tests de notifications
             $('#test-notifications-success').on('click', function() {
                 if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
