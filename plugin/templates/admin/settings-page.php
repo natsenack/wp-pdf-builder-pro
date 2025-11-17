@@ -383,13 +383,24 @@
                         update_option('pdf_builder_auto_maintenance', $auto_maintenance);
 
                         // Traitement des paramètres de sauvegarde
-                        $auto_backup = (isset($_POST['auto_backup']) && $_POST['auto_backup'] === '1') ? '1' : '0';
-                        $backup_retention = intval($_POST['backup_retention']);
+                        $auto_backup = (isset($_POST['systeme_auto_backup']) && $_POST['systeme_auto_backup'] === '1') ? '1' : '0';
+                        $backup_retention = intval($_POST['systeme_backup_retention']);
+                        $auto_backup_frequency = isset($_POST['systeme_auto_backup_frequency']) ? sanitize_text_field($_POST['systeme_auto_backup_frequency']) : 'daily';
 
-                        error_log('[PDF Builder] Sauvegarde - Auto backup: ' . $auto_backup . ', Rétention: ' . $backup_retention . ' jours');
+                        // Validation de la fréquence
+                        $valid_frequencies = array('daily', 'weekly', 'monthly');
+                        if (!in_array($auto_backup_frequency, $valid_frequencies)) {
+                            $auto_backup_frequency = 'daily';
+                        }
+
+                        error_log('[PDF Builder] Sauvegarde - Auto backup: ' . $auto_backup . ', Fréquence: ' . $auto_backup_frequency . ', Rétention: ' . $backup_retention . ' jours');
 
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
+                        update_option('pdf_builder_auto_backup_frequency', $auto_backup_frequency);
+
+                        // Reprogrammer le cron avec la nouvelle fréquence
+                        pdf_builder_reinit_auto_backup();
 
                         // LOG: Valeurs finales sauvegardées
                         error_log('[PDF Builder] Valeurs sauvegardées:');
@@ -398,6 +409,8 @@
                         error_log('[PDF Builder] - Max cache size: ' . get_option('pdf_builder_max_cache_size', 'N/A'));
                         error_log('[PDF Builder] - Auto maintenance: ' . get_option('pdf_builder_auto_maintenance', 'N/A'));
                         error_log('[PDF Builder] - Auto backup: ' . get_option('pdf_builder_auto_backup', 'N/A'));
+                        error_log('[PDF Builder] - Auto backup frequency: ' . get_option('pdf_builder_auto_backup_frequency', 'N/A'));
+                        error_log('[PDF Builder] - Backup retention: ' . get_option('pdf_builder_backup_retention', 'N/A'));
                         error_log('[PDF Builder] - Backup retention: ' . get_option('pdf_builder_backup_retention', 'N/A'));
                         error_log('[PDF Builder] === FIN TRAITEMENT ONGLET SYSTEME ===');
 
@@ -2383,7 +2396,22 @@
                                     <input type="checkbox" id="systeme_auto_backup" name="systeme_auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
                                     <span class="slider round"></span>
                                 </label>
-                                <span style="color: #6c757d; font-size: 13px;">Active la création automatique de sauvegardes quotidiennes</span>
+                                <span style="color: #6c757d; font-size: 13px;">Active la création automatique de sauvegardes</span>
+                            </td>
+                        </tr>
+                        <tr id="auto_backup_frequency_row" style="<?php echo (get_option('pdf_builder_auto_backup', '0') === '1') ? '' : 'display: none;'; ?>">
+                            <th scope="row">
+                                <label for="systeme_auto_backup_frequency" style="display: flex; align-items: center; gap: 8px;">
+                                    <span>⏰</span> Fréquence des sauvegardes
+                                </label>
+                            </th>
+                            <td>
+                                <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" style="min-width: 200px;">
+                                    <option value="daily" <?php selected(get_option('pdf_builder_auto_backup_frequency', 'daily'), 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
+                                    <option value="weekly" <?php selected(get_option('pdf_builder_auto_backup_frequency', 'daily'), 'weekly'); ?>>📆 Hebdomadaire (tous les dimanches)</option>
+                                    <option value="monthly" <?php selected(get_option('pdf_builder_auto_backup_frequency', 'daily'), 'monthly'); ?>>📊 Mensuelle (1er du mois)</option>
+                                </select>
+                                <p class="description" style="margin-top: 5px;">Détermine la fréquence de création automatique des sauvegardes</p>
                             </td>
                         </tr>
                         <tr>
@@ -5383,6 +5411,32 @@
                     PDF_Builder_Notification_Manager.show_toast('Test de notification d\'information réussi !', 'info');
                 } else {
                     alert('Test de notification d\'information réussi !');
+                }
+            });
+
+            // Gestionnaire pour afficher/masquer le select de fréquence des sauvegardes automatiques
+            $('#systeme_auto_backup').on('change', function() {
+                const $frequencyRow = $('#auto_backup_frequency_row');
+                if ($(this).is(':checked')) {
+                    $frequencyRow.slideDown(300);
+                    console.log('[PDF Builder JS] Sauvegarde automatique activée - affichage du select de fréquence');
+                } else {
+                    $frequencyRow.slideUp(300);
+                    console.log('[PDF Builder JS] Sauvegarde automatique désactivée - masquage du select de fréquence');
+                }
+            });
+
+            // Initialisation de l'état du select de fréquence au chargement de la page
+            $(document).ready(function() {
+                const $autoBackupCheckbox = $('#systeme_auto_backup');
+                const $frequencyRow = $('#auto_backup_frequency_row');
+
+                if ($autoBackupCheckbox.is(':checked')) {
+                    $frequencyRow.show();
+                    console.log('[PDF Builder JS] Page chargée - sauvegarde automatique activée, select de fréquence visible');
+                } else {
+                    $frequencyRow.hide();
+                    console.log('[PDF Builder JS] Page chargée - sauvegarde automatique désactivée, select de fréquence masqué');
                 }
             });
 

@@ -1021,22 +1021,102 @@ function pdf_builder_download_backup() {
 }
 
 /**
+ * Calcule le prochain timestamp pour la sauvegarde automatique selon la fréquence
+ */
+function pdf_builder_calculate_next_backup_time($frequency) {
+    $current_time = current_time('timestamp');
+
+    switch ($frequency) {
+        case 'daily':
+            // Prochaine exécution demain à 02:00
+            return strtotime('tomorrow 02:00:00');
+
+        case 'weekly':
+            // Prochaine exécution dimanche à 02:00
+            $days_until_sunday = (7 - date('w', $current_time)) % 7;
+            if ($days_until_sunday == 0 && date('H', $current_time) >= 2) {
+                // Si c'est dimanche et qu'il est déjà 02:00 ou plus, programmer pour dimanche prochain
+                $days_until_sunday = 7;
+            } elseif ($days_until_sunday == 0) {
+                // Si c'est dimanche avant 02:00, programmer pour aujourd'hui
+                $days_until_sunday = 0;
+            }
+            return strtotime('+' . $days_until_sunday . ' days 02:00:00');
+
+        case 'monthly':
+            // Prochaine exécution le 1er du mois à 02:00
+            $current_month = date('m', $current_time);
+            $current_year = date('Y', $current_time);
+            $current_day = date('d', $current_time);
+            $current_hour = date('H', $current_time);
+
+            // Si c'est le 1er du mois et qu'il est avant 02:00, programmer pour aujourd'hui
+            if ($current_day == 1 && $current_hour < 2) {
+                return strtotime($current_year . '-' . $current_month . '-01 02:00:00');
+            }
+
+            // Sinon, programmer pour le 1er du mois prochain
+            $next_month = $current_month + 1;
+            $next_year = $current_year;
+            if ($next_month > 12) {
+                $next_month = 1;
+                $next_year++;
+            }
+            return strtotime($next_year . '-' . str_pad($next_month, 2, '0', STR_PAD_LEFT) . '-01 02:00:00');
+
+        default:
+            // Par défaut, quotidien
+            return strtotime('tomorrow 02:00:00');
+    }
+}
+
+/**
+ * Réinitialise les sauvegardes automatiques (désactive et reprogramme avec nouvelle fréquence)
+ */
+function pdf_builder_reinit_auto_backup() {
+    // Désactiver l'ancien cron s'il existe
+    $timestamp = wp_next_scheduled('pdf_builder_daily_backup');
+    if ($timestamp) {
+        wp_unschedule_event($timestamp, 'pdf_builder_daily_backup');
+        error_log('[PDF Builder] Ancien cron de sauvegarde désactivé');
+    }
+
+    // Réinitialiser avec la nouvelle configuration
+    pdf_builder_init_auto_backup();
+}
+
+/**
  * Initialiser les sauvegardes automatiques
  */
 function pdf_builder_init_auto_backup() {
     // Vérifier si les sauvegardes automatiques sont activées
     $auto_backup_enabled = get_option('pdf_builder_auto_backup', '0');
+    $auto_backup_frequency = get_option('pdf_builder_auto_backup_frequency', 'daily');
+
+    // Mapping des fréquences vers les intervalles WordPress
+    $frequency_mapping = array(
+        'daily' => 'daily',
+        'weekly' => 'weekly',
+        'monthly' => 'monthly'
+    );
+
+    $wp_schedule = isset($frequency_mapping[$auto_backup_frequency]) ? $frequency_mapping[$auto_backup_frequency] : 'daily';
 
     if ($auto_backup_enabled === '1') {
-        // Programmer la sauvegarde automatique quotidienne
+        // Programmer la sauvegarde automatique selon la fréquence choisie
         if (!wp_next_scheduled('pdf_builder_daily_backup')) {
-            wp_schedule_event(strtotime('tomorrow 02:00:00'), 'daily', 'pdf_builder_daily_backup');
+            // Calculer le prochain timestamp selon la fréquence
+            $next_timestamp = pdf_builder_calculate_next_backup_time($auto_backup_frequency);
+            wp_schedule_event($next_timestamp, $wp_schedule, 'pdf_builder_daily_backup');
+
+            error_log('[PDF Builder] Sauvegarde automatique programmée - Fréquence: ' . $auto_backup_frequency . ', Intervalle WP: ' . $wp_schedule . ', Prochaine exécution: ' . wp_date('Y-m-d H:i:s', $next_timestamp));
         }
     } else {
         // Désactiver la sauvegarde automatique si elle était programmée
         $timestamp = wp_next_scheduled('pdf_builder_daily_backup');
         if ($timestamp) {
             wp_unschedule_event($timestamp, 'pdf_builder_daily_backup');
+            error_log('[PDF Builder] Sauvegarde automatique désactivée');
         }
     }
 
