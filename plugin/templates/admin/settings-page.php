@@ -777,10 +777,30 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
+                            <th scope="row"><label for="cache_compression">Compression du cache</label></th>
                             <td>
-                                <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval($settings['cache_ttl'] ?? 3600); ?>" min="0" max="86400" />
-                                <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
+                                <label class="switch">
+                                    <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked($settings['cache_compression'] ?? true); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked($settings['cache_auto_cleanup'] ?? true); ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
+                            <td>
+                                <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo intval($settings['cache_max_size'] ?? 100); ?>" min="10" max="1000" step="10" />
+                                <p class="description">Taille maximale du dossier cache en mégaoctets</p>
                             </td>
                         </tr>
                         <tr>
@@ -804,6 +824,74 @@
                             </td>
                         </tr>
                     </table>
+
+                    <!-- Informations sur l'état du cache -->
+                    <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
+                        <h4 style="margin-top: 0; color: #155724;">📊 État du système de cache</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #28a745;">
+                                    <?php
+                                    function get_folder_size($dir) {
+                                        $size = 0;
+                                        if (is_dir($dir)) {
+                                            $files = scandir($dir);
+                                            foreach ($files as $file) {
+                                                if ($file != '.' && $file != '..') {
+                                                    $path = $dir . '/' . $file;
+                                                    if (is_dir($path)) {
+                                                        $size += get_folder_size($path);
+                                                    } else {
+                                                        $size += filesize($path);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        return $size;
+                                    }
+
+                                    $cache_size = 0;
+                                    $upload_dir = wp_upload_dir();
+                                    $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
+                                    if (is_dir($cache_dir)) {
+                                        $cache_size = get_folder_size($cache_dir);
+                                    }
+                                    echo size_format($cache_size);
+                                    ?>
+                                </div>
+                                <div style="color: #666; font-size: 12px;">Taille du cache</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #28a745;">
+                                    <?php
+                                    $transient_count = 0;
+                                    global $wpdb;
+                                    $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+                                    echo intval($transient_count);
+                                    ?>
+                                </div>
+                                <div style="color: #666; font-size: 12px;">Transients actifs</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: <?php echo ($settings['cache_enabled'] ?? false) ? '#28a745' : '#dc3545'; ?>;">
+                                    <?php echo ($settings['cache_enabled'] ?? false) ? '✅' : '❌'; ?>
+                                </div>
+                                <div style="color: #666; font-size: 12px;">Cache activé</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #28a745;">
+                                    <?php
+                                    $last_cleanup = get_option('pdf_builder_cache_last_cleanup', 'Jamais');
+                                    if ($last_cleanup !== 'Jamais') {
+                                        $last_cleanup = human_time_diff(strtotime($last_cleanup)) . ' ago';
+                                    }
+                                    echo $last_cleanup;
+                                    ?>
+                                </div>
+                                <div style="color: #666; font-size: 12px;">Dernier nettoyage</div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
 

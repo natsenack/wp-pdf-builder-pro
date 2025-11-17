@@ -418,6 +418,9 @@ function pdf_builder_save_settings_ajax() {
                 $settings = array(
                     'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
                     'cache_ttl' => intval($_POST['cache_ttl']),
+                    'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
+                    'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
+                    'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
                     'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
                     'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
                     'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
