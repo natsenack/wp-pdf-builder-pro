@@ -5082,10 +5082,13 @@
                         console.log('[PDF Builder JS] Réponse reçue pour suppression sauvegarde:', response);
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Sauvegarde supprimée avec succès</span>');
-                            // Recharger la liste automatiquement
-                            setTimeout(() => {
-                                $('#list-backups-btn').click();
-                            }, 1000);
+                            // Recharger la liste automatiquement seulement si elle était déjà ouverte
+                            const currentContent = $results.html();
+                            if (currentContent.includes('Sauvegardes disponibles') || currentContent.includes('backup-item')) {
+                                setTimeout(() => {
+                                    $('#list-backups-btn').click();
+                                }, 1000);
+                            }
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur lors de la suppression: ' + (response.data || 'Erreur inconnue') + '</span>');
                             $btn.prop('disabled', false).text('🗑️ Supprimer');
