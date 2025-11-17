@@ -4266,7 +4266,7 @@
 
                     const formData = new FormData();
                     formData.append('action', 'pdf_builder_generate_test_license_key');
-                    formData.append('security', pdf_builder_ajax.nonce);
+                    formData.append('nonce', document.getElementById('generate_license_key_nonce').value);
 
                     fetch(pdf_builder_ajax.ajax_url, {
                         method: 'POST',
@@ -4317,7 +4317,7 @@
 
                     const formData = new FormData();
                     formData.append('action', 'pdf_builder_delete_test_license_key');
-                    formData.append('security', pdf_builder_ajax.nonce);
+                    formData.append('nonce', document.getElementById('delete_license_key_nonce').value);
 
                     fetch(pdf_builder_ajax.ajax_url, {
                         method: 'POST',
