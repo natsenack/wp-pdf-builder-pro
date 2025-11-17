@@ -2831,6 +2831,7 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
+                                <input type="hidden" name="developer_enabled" value="0" />
                                 <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>

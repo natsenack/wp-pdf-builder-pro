@@ -572,7 +572,7 @@ function pdf_builder_save_settings_ajax() {
         case 'developpeur':
             // Sauvegarder les paramètres développeur
             $settings = array(
-                'developer_enabled' => isset($_POST['developer_enabled']) ? '1' : '0',
+                'developer_enabled' => $_POST['developer_enabled'] ?? '0',
                 'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
                 'debug_php_errors' => isset($_POST['debug_php_errors']) ? '1' : '0',
                 'debug_javascript' => isset($_POST['debug_javascript']) ? '1' : '0',
