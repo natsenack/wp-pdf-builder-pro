@@ -4554,6 +4554,7 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
+                            console.log('=== SUCCES AJAX ===', response);
                             if (response.success) {
                                 // Succès
                                 $btn.removeClass('saving').addClass('saved');
@@ -4568,6 +4569,7 @@
                                 }, 3000);
                             } else {
                                 // Erreur
+                                console.log('=== ERREUR SERVEUR ===', response);
                                 $btn.removeClass('saving').addClass('error');
                                 $icon.text('❌');
                                 $text.text('Erreur');
@@ -4579,7 +4581,9 @@
                                 }, 3000);
                             }
                         },
-                        error: function() {
+                        error: function(xhr, status, error) {
+                            console.log('=== ERREUR AJAX ===', xhr.status, status, error);
+                            console.log('Response:', xhr.responseText);
                             // Erreur AJAX
                             $btn.removeClass('saving').addClass('error');
                             $icon.text('❌');
