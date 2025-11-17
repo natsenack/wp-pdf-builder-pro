@@ -494,15 +494,11 @@ function pdf_builder_load_bootstrap()
     }
 
     // CHARGER ET INITIALISER LE GESTIONNAIRE DE SAUVEGARDE/RESTAURATION
-    // Charger seulement si les sauvegardes sont activées ou si nous sommes en mode développeur
-    $auto_backup_enabled = get_option('pdf_builder_auto_backup', false);
-    $developer_mode = get_option('pdf_builder_developer_enabled', false);
-    if ($auto_backup_enabled || $developer_mode) {
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php';
-            // Initialiser l'instance
-            \WP_PDF_Builder_Pro\Managers\PdfBuilderBackupRestoreManager::getInstance();
-        }
+    // Nécessaire pour l'onglet système même si la sauvegarde automatique n'est pas activée
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php';
+        // Initialiser l'instance
+        \WP_PDF_Builder_Pro\Managers\PdfBuilderBackupRestoreManager::getInstance();
     }
 
     // INITIALISER LE GESTIONNAIRE DE TUTORIELS - SUPPRIMÉ

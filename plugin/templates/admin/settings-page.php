@@ -212,99 +212,6 @@
             }
         }
 
-        // Create backup
-        elseif ($action === 'pdf_builder_create_backup') {
-            error_log('[PDF Builder] === ACTION: CRÉER UNE SAUVEGARDE ===');
-            error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
-            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings') ? 'OUI' : 'NON'));
-
-            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
-                // Create backup logic
-                $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
-                error_log('[PDF Builder] Répertoire de sauvegarde: ' . $backup_dir);
-
-                if (!file_exists($backup_dir)) {
-                    error_log('[PDF Builder] Création du répertoire de sauvegarde...');
-                    wp_mkdir_p($backup_dir);
-                    error_log('[PDF Builder] Répertoire créé: ' . (file_exists($backup_dir) ? 'OUI' : 'NON'));
-                }
-
-                $timestamp = date('Y-m-d_H-i-s');
-                $backup_file = $backup_dir . '/pdf-builder-backup-' . $timestamp . '.zip';
-                error_log('[PDF Builder] Fichier de sauvegarde: ' . $backup_file);
-
-                // Simple backup creation (you may want to implement more comprehensive backup)
-                $zip = new ZipArchive();
-                error_log('[PDF Builder] Ouverture de l\'archive ZIP...');
-                if ($zip->open($backup_file, ZipArchive::CREATE) === TRUE) {
-                    error_log('[PDF Builder] Archive ZIP créée, ajout des fichiers...');
-                    // Add plugin files
-                    $plugin_dir = plugin_dir_path(__FILE__) . '../';
-                    error_log('[PDF Builder] Répertoire du plugin: ' . $plugin_dir);
-
-                    $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($plugin_dir));
-                    $file_count = 0;
-                    foreach ($files as $file) {
-                        if (!$file->isDir()) {
-                            $filePath = $file->getRealPath();
-                            $relativePath = substr($filePath, strlen($plugin_dir));
-                            $zip->addFile($filePath, $relativePath);
-                            $file_count++;
-                        }
-                    }
-                    $zip->close();
-                    error_log('[PDF Builder] Fichiers ajoutés à l\'archive: ' . $file_count);
-                    error_log('[PDF Builder] Taille de l\'archive: ' . filesize($backup_file) . ' octets');
-                    error_log('[PDF Builder] === SAUVEGARDE CRÉÉE AVEC SUCCÈS ===');
-                    send_ajax_response(true, 'Sauvegarde créée avec succès: ' . basename($backup_file));
-                } else {
-                    error_log('[PDF Builder] === ERREUR: IMPOSSIBLE DE CRÉER L\'ARCHIVE ZIP ===');
-                    send_ajax_response(false, 'Erreur lors de la création de la sauvegarde');
-                }
-            } else {
-                error_log('[PDF Builder] === ERREUR: NONCE INVALIDE ===');
-                send_ajax_response(false, 'Erreur de sécurité.');
-            }
-        }
-
-        // List backups
-        elseif ($action === 'pdf_builder_list_backups') {
-            error_log('[PDF Builder] === ACTION: LISTER LES SAUVEGARDES ===');
-            error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
-            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings') ? 'OUI' : 'NON'));
-
-            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
-                $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
-                error_log('[PDF Builder] Répertoire de sauvegarde: ' . $backup_dir);
-                $backups = [];
-
-                if (file_exists($backup_dir)) {
-                    error_log('[PDF Builder] Répertoire existe, recherche des fichiers...');
-                    $files = glob($backup_dir . '/pdf-builder-backup-*.zip');
-                    error_log('[PDF Builder] Fichiers trouvés: ' . count($files));
-
-                    foreach ($files as $file) {
-                        $backup_info = [
-                            'name' => basename($file),
-                            'size' => size_format(filesize($file)),
-                            'date' => date('Y-m-d H:i:s', filemtime($file))
-                        ];
-                        $backups[] = $backup_info;
-                        error_log('[PDF Builder] Sauvegarde: ' . $backup_info['name'] . ' (' . $backup_info['size'] . ', ' . $backup_info['date'] . ')');
-                    }
-                } else {
-                    error_log('[PDF Builder] Répertoire de sauvegarde n\'existe pas');
-                }
-
-                error_log('[PDF Builder] Total sauvegardes listées: ' . count($backups));
-                error_log('[PDF Builder] === LISTE DES SAUVEGARDES TERMINÉE ===');
-                send_ajax_response(true, 'Liste des sauvegardes récupérée', ['backups' => $backups]);
-            } else {
-                error_log('[PDF Builder] === ERREUR: NONCE INVALIDE ===');
-                send_ajax_response(false, 'Erreur de sécurité.');
-            }
-        }
-
         // Save settings via floating button
         elseif ($action === 'pdf_builder_save_settings') {
             if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
@@ -4966,9 +4873,7 @@
                         $btn.prop('disabled', false).text('📦 Créer une sauvegarde');
                     }
                 });
-            });
-
-            // Bouton "Lister les sauvegardes"
+            });            // Bouton "Lister les sauvegardes"
             $('#list-backups-btn').on('click', function() {
                 console.log('[PDF Builder JS] Bouton "Lister les sauvegardes" cliqué');
                 const $btn = $(this);
