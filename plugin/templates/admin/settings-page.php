@@ -5085,22 +5085,20 @@
                         if (response.success) {
                             console.log('[PDF Builder JS] Sauvegarde système réussie');
                             $status.html('<span style="color: #28a745;">✅ Paramètres sauvegardés avec succès !</span>');
-                            $btn.html('💾 Enregistrer les paramètres système');
+                            $btn.prop('disabled', false).html('💾 Enregistrer les paramètres système');
                         } else {
                             console.log('[PDF Builder JS] Erreur sauvegarde système:', response.data);
                             $status.html('<span style="color: #dc3545;">❌ Erreur lors de la sauvegarde</span>');
-                            $btn.html('❌ Erreur - Réessayer');
+                            $btn.prop('disabled', false).html('❌ Erreur - Réessayer');
                         }
                     },
                     error: function(xhr, status, error) {
                         console.log('[PDF Builder JS] Erreur AJAX système:', status, error);
                         $status.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
-                        $btn.html('❌ Erreur - Réessayer');
+                        $btn.prop('disabled', false).html('❌ Erreur - Réessayer');
                     },
                     complete: function() {
-                        setTimeout(() => {
-                            $btn.prop('disabled', false);
-                        }, 2000);
+                        // Le bouton est déjà réactivé dans success/error, pas besoin de timeout
                     }
                 });
             });
