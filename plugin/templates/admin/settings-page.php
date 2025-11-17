@@ -2016,15 +2016,6 @@
                     <input type="submit" name="submit_developer" class="button button-primary" value="💾 Sauvegarder Développeur">
                 </p>
             </form>
-
-            <!-- Bouton global d'enregistrement -->
-            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer les modifications</h3>
-                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer les paramètres développeur.</p>
-                <button type="button" id="save-all-developer" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                    🚀 Enregistrer
-                </button>
-            </div>
         </div>
     </div>
 
@@ -2217,6 +2208,290 @@
                     alert('✅ Toutes les modifications ont été enregistrées !');
                 });
             });
+        });
+    </script>
+
+    <div id="roles" class="tab-content hidden-tab">
+        <h2>👨‍💻 Paramètres Développeur</h2>
+        <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
+
+        <div class="notice notice-info" style="margin-bottom: 20px;">
+            <p><strong>ℹ️ Rappel Onboarding :</strong> L'onboarding est actuellement désactivé en mode développement (WP_DEBUG=true). Il sera automatiquement activé en production (WP_DEBUG=false). Pensez à le tester avant le déploiement final.</p>
+        </div>
+
+        <form method="post" action="">
+            <?php wp_nonce_field('pdf_builder_developer', 'pdf_builder_developer_nonce'); ?>
+            <input type="hidden" name="current_tab" value="developpeur">
+
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="developer_enabled">Mode développeur</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php checked(get_option('pdf_builder_developer_enabled', false)); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Activer le mode développeur</span>
+                        </div>
+                        <p class="description">Active les fonctionnalités de développement avancées et les logs détaillés</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="debug_logging">Logs de débogage</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_logging" name="debug_logging" value="1" <?php checked(get_option('pdf_builder_debug_logging', false)); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Activer les logs de débogage</span>
+                        </div>
+                        <p class="description">Enregistre les informations détaillées pour le débogage</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="test_mode">Mode test</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="test_mode" name="test_mode" value="1" <?php checked(get_option('pdf_builder_test_mode', false)); ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Activer le mode test</span>
+                        </div>
+                        <p class="description">Active les fonctionnalités de test et désactive certaines restrictions</p>
+                    </td>
+                </tr>
+            </table>
+
+            <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+                <h4 style="margin-top: 0; color: #495057;">🔑 Gestion des Clés de Test</h4>
+                <p style="margin-bottom: 15px; color: #666;">Générez et gérez des clés de licence de test pour le développement.</p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
+                        <button type="button" id="generate-test-key-btn" class="button button-primary" style="width: 100%; margin-bottom: 10px;">
+                            🎯 Générer une clé de test
+                        </button>
+                        <div id="test-key-result" style="font-family: monospace; font-size: 12px; color: #666; word-break: break-all;"></div>
+                    </div>
+
+                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
+                        <button type="button" id="delete-test-key-btn" class="button button-secondary" style="width: 100%; margin-bottom: 10px;">
+                            🗑️ Supprimer la clé de test
+                        </button>
+                        <div id="delete-test-key-result" style="font-size: 12px; color: #666;"></div>
+                    </div>
+                </div>
+
+                <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
+                    <h5 style="margin-top: 0; color: #495057;">📊 État actuel</h5>
+                    <div id="license-status-display" style="font-size: 13px; color: #666;">
+                        <?php
+                        $test_key = get_option('pdf_builder_license_test_key', '');
+                        $test_mode = get_option('pdf_builder_license_test_mode_enabled', false);
+                        echo '<strong>Clé de test :</strong> ' . (!empty($test_key) ? 'Présente (****' . substr($test_key, -4) . ')' : 'Aucune') . '<br>';
+                        echo '<strong>Mode test :</strong> ' . ($test_mode ? 'Activé' : 'Désactivé');
+                        ?>
+                    </div>
+                </div>
+            </div>
+
+            <p class="submit">
+                <input type="submit" name="submit_developer" class="button button-primary" value="💾 Sauvegarder les paramètres développeur">
+            </p>
+        </form>
+
+        <!-- Bouton global d'enregistrement -->
+        <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
+            <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
+            <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Développeur en une seule fois.</p>
+            <button type="button" id="save-all-developpeur" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
+                🚀 Enregistrer tout
+            </button>
+        </div>
+    </div>
+
+    <style>
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #007cba;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .toggle-description {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-size: 13px;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des toggles dans l'onglet développeur
+            const toggles = document.querySelectorAll('#roles .toggle-switch input[type="checkbox"]');
+            toggles.forEach(function(toggle) {
+                toggle.addEventListener('change', function() {
+                    const label = this.parentElement.nextElementSibling;
+                    if (label && label.classList.contains('toggle-label')) {
+                        // Animation visuelle pour confirmer le changement
+                        label.style.color = this.checked ? '#28a745' : '#333';
+                        setTimeout(function() {
+                            label.style.color = '#333';
+                        }, 300);
+                    }
+                });
+            });
+
+            // Gestionnaire pour générer une clé de test
+            const generateBtn = document.getElementById('generate-test-key-btn');
+            if (generateBtn) {
+                generateBtn.addEventListener('click', function() {
+                    generateBtn.disabled = true;
+                    generateBtn.textContent = '⏳ Génération...';
+
+                    const formData = new FormData();
+                    formData.append('action', 'pdf_builder_generate_test_license_key');
+                    formData.append('security', '<?php echo wp_create_nonce('pdf_builder_generate_license_key'); ?>');
+
+                    fetch(ajaxurl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        generateBtn.disabled = false;
+                        generateBtn.textContent = '🎯 Générer une clé de test';
+
+                        const resultDiv = document.getElementById('test-key-result');
+                        if (resultDiv) {
+                            if (data.success) {
+                                resultDiv.innerHTML = '<span style="color: #28a745;">✅ Clé générée : <strong>' + data.data.key + '</strong></span>';
+                                // Recharger la page pour mettre à jour l'état
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1500);
+                            } else {
+                                resultDiv.innerHTML = '<span style="color: #dc3545;">❌ Erreur : ' + (data.data || 'Erreur inconnue') + '</span>';
+                            }
+                        }
+                    })
+                    .catch(function(error) {
+                        generateBtn.disabled = false;
+                        generateBtn.textContent = '🎯 Générer une clé de test';
+                        console.error('Erreur lors de la génération de la clé:', error);
+                        const resultDiv = document.getElementById('test-key-result');
+                        if (resultDiv) {
+                            resultDiv.innerHTML = '<span style="color: #dc3545;">❌ Erreur AJAX</span>';
+                        }
+                    });
+                });
+            }
+
+            // Gestionnaire pour supprimer la clé de test
+            const deleteBtn = document.getElementById('delete-test-key-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    if (!confirm('Êtes-vous sûr de vouloir supprimer la clé de test ?')) {
+                        return;
+                    }
+
+                    deleteBtn.disabled = true;
+                    deleteBtn.textContent = '⏳ Suppression...';
+
+                    const formData = new FormData();
+                    formData.append('action', 'pdf_builder_delete_test_license_key');
+                    formData.append('security', '<?php echo wp_create_nonce('pdf_builder_delete_test_license_key'); ?>');
+
+                    fetch(ajaxurl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        deleteBtn.disabled = false;
+                        deleteBtn.textContent = '🗑️ Supprimer la clé de test';
+
+                        const resultDiv = document.getElementById('delete-test-key-result');
+                        if (resultDiv) {
+                            if (data.success) {
+                                resultDiv.innerHTML = '<span style="color: #28a745;">✅ Clé de test supprimée</span>';
+                                // Recharger la page pour mettre à jour l'état
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1500);
+                            } else {
+                                resultDiv.innerHTML = '<span style="color: #dc3545;">❌ Erreur : ' + (data.data || 'Erreur inconnue') + '</span>';
+                            }
+                        }
+                    })
+                    .catch(function(error) {
+                        deleteBtn.disabled = false;
+                        deleteBtn.textContent = '🗑️ Supprimer la clé de test';
+                        console.error('Erreur lors de la suppression de la clé:', error);
+                        const resultDiv = document.getElementById('delete-test-key-result');
+                        if (resultDiv) {
+                            resultDiv.innerHTML = '<span style="color: #dc3545;">❌ Erreur AJAX</span>';
+                        }
+                    });
+                });
+            }
         });
     </script>
 
