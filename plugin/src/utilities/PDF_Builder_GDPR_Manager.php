@@ -103,7 +103,7 @@ class PDF_Builder_GDPR_Manager {
      */
     public function enqueue_gdpr_scripts($hook) {
         // Charger seulement sur la page des paramètres
-        if ($hook !== 'pdf-builder_page_pdf-builder-settings') {
+        if ($hook !== 'toplevel_page_pdf-builder-pro' && strpos($hook, 'pdf-builder') === false) {
             return;
         }
 
