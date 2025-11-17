@@ -601,6 +601,24 @@
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
         }
     }
+
+    // Gestionnaire pour la sauvegarde des informations entreprise
+    if (isset($_POST['submit_company_settings']) && isset($_POST['pdf_builder_company_settings_nonce'])) {
+
+        if (wp_verify_nonce($_POST['pdf_builder_company_settings_nonce'], 'pdf_builder_company_settings')) {
+            $company_settings = [
+                'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
+                'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
+                'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
+                'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
+                'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
+            ];
+            update_option('pdf_builder_company_settings', $company_settings);
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Informations entreprise enregistrées avec succès.</p></div>';
+        } else {
+            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
+        }
+    }
 ?>
 <script>
     // Script de définition des paramètres canvas - exécuté très tôt
@@ -965,53 +983,64 @@
                     Ces informations ne sont pas disponibles dans WooCommerce et doivent être saisies manuellement :
                     </p>
 
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
-                            <td>
-                                <input type="text" id="company_phone_manual" name="company_phone_manual"
-                                    value="<?php echo esc_attr($settings['company_phone_manual'] ?? ''); ?>"
-                                    placeholder="+33 1 23 45 67 89" />
-                                <p class="description">Téléphone de l'entreprise</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="company_siret">Numéro SIRET</label></th>
-                            <td>
-                                <input type="text" id="company_siret" name="company_siret"
-                                    value="<?php echo esc_attr($settings['company_siret'] ?? ''); ?>"
-                                    placeholder="123 456 789 00012" />
-                                <p class="description">Numéro SIRET de l'entreprise</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="company_vat">Numéro TVA</label></th>
-                            <td>
-                                <input type="text" id="company_vat" name="company_vat"
-                                    value="<?php echo esc_attr($settings['company_vat'] ?? ''); ?>"
-                                    placeholder="FR 12 345 678 901" />
-                                <p class="description">Numéro de TVA intracommunautaire</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="company_rcs">RCS</label></th>
-                            <td>
-                                <input type="text" id="company_rcs" name="company_rcs"
-                                    value="<?php echo esc_attr($settings['company_rcs'] ?? ''); ?>"
-                                    placeholder="Lyon B 123 456 789" />
-                                <p class="description">Numéro RCS (Registre du Commerce et des Sociétés)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="company_capital">Capital social</label></th>
-                            <td>
-                                <input type="text" id="company_capital" name="company_capital"
-                                    value="<?php echo esc_attr($settings['company_capital'] ?? ''); ?>"
-                                    placeholder="10 000 €" />
-                                <p class="description">Montant du capital social de l'entreprise</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <?php $company_settings = get_option('pdf_builder_company_settings', []); ?>
+
+                    <form method="post" action="">
+                        <?php wp_nonce_field('pdf_builder_company_settings', 'pdf_builder_company_settings_nonce'); ?>
+                        <input type="hidden" name="current_tab" value="company">
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
+                                <td>
+                                    <input type="text" id="company_phone_manual" name="company_phone_manual"
+                                        value="<?php echo esc_attr($company_settings['company_phone_manual'] ?? ''); ?>"
+                                        placeholder="+33 1 23 45 67 89" />
+                                    <p class="description">Téléphone de l'entreprise</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="company_siret">Numéro SIRET</label></th>
+                                <td>
+                                    <input type="text" id="company_siret" name="company_siret"
+                                        value="<?php echo esc_attr($company_settings['company_siret'] ?? ''); ?>"
+                                        placeholder="123 456 789 00012" />
+                                    <p class="description">Numéro SIRET de l'entreprise</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="company_vat">Numéro TVA</label></th>
+                                <td>
+                                    <input type="text" id="company_vat" name="company_vat"
+                                        value="<?php echo esc_attr($company_settings['company_vat'] ?? ''); ?>"
+                                        placeholder="FR 12 345 678 901" />
+                                    <p class="description">Numéro de TVA intracommunautaire</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="company_rcs">RCS</label></th>
+                                <td>
+                                    <input type="text" id="company_rcs" name="company_rcs"
+                                        value="<?php echo esc_attr($company_settings['company_rcs'] ?? ''); ?>"
+                                        placeholder="Lyon B 123 456 789" />
+                                    <p class="description">Numéro RCS (Registre du Commerce et des Sociétés)</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="company_capital">Capital social</label></th>
+                                <td>
+                                    <input type="text" id="company_capital" name="company_capital"
+                                        value="<?php echo esc_attr($company_settings['company_capital'] ?? ''); ?>"
+                                        placeholder="10 000 €" />
+                                    <p class="description">Montant du capital social de l'entreprise</p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p class="submit">
+                            <input type="submit" name="submit_company_settings" class="button button-primary" value="💾 Sauvegarder les informations entreprise" />
+                        </p>
+                    </form>
                 </div>
             </div>
 
