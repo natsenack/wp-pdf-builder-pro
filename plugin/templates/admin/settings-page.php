@@ -2831,7 +2831,6 @@
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="hidden" name="developer_enabled" value="0" />
                                 <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -4465,6 +4464,9 @@
                         formData.append(key, value);
                     }
                 });
+
+                // S'assurer que developer_enabled est toujours envoyé
+                formData.append('developer_enabled', $('#developer_enabled').is(':checked') ? '1' : '0');
 
                 // Ajouter l'onglet actuel
                 formData.append('current_tab', currentTab);
