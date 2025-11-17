@@ -900,6 +900,42 @@
                         </div>
                     </div>
                 </form>
+
+                <script>
+                jQuery(document).ready(function($) {
+                    // Fonction pour afficher/cacher les éléments du cache
+                    function toggleCacheElements(show) {
+                        // Éléments à cacher/montrer
+                        var elementsToToggle = [
+                            'tr:has([for="cache_compression"])', // Ligne compression
+                            'tr:has([for="cache_auto_cleanup"])', // Ligne nettoyage auto
+                            'tr:has([for="cache_max_size"])', // Ligne taille max
+                            'tr:has([for="cache_ttl"])', // Ligne TTL
+                            'tr:has(#test-cache-btn)', // Ligne test du système
+                            'tr:has(#clear-cache-general-btn)', // Ligne vider le cache
+                            '.form-table + div' // Section d'informations sur l'état du cache
+                        ];
+
+                        elementsToToggle.forEach(function(selector) {
+                            if (show) {
+                                $(selector).show();
+                            } else {
+                                $(selector).hide();
+                            }
+                        });
+                    }
+
+                    // Vérifier l'état initial du cache
+                    var cacheEnabled = $('#cache_enabled').is(':checked');
+                    toggleCacheElements(cacheEnabled);
+
+                    // Gérer le changement d'état du cache
+                    $('#cache_enabled').on('change', function() {
+                        var isEnabled = $(this).is(':checked');
+                        toggleCacheElements(isEnabled);
+                    });
+                });
+                </script>
             </div>
 
             <!-- Section Informations Entreprise -->
