@@ -3124,20 +3124,25 @@
 
                 if ($(this).is(':checked')) {
                     $('#developer-info-section').show();
-                    console.log('Section shown');
+                    console.log('Section shown - display:', $('#developer-info-section').css('display'));
+                    console.log('Section visible:', $('#developer-info-section').is(':visible'));
+                    console.log('Section exists:', $('#developer-info-section').length > 0);
                 } else {
                     $('#developer-info-section').hide();
-                    console.log('Section hidden');
+                    console.log('Section hidden - display:', $('#developer-info-section').css('display'));
+                    console.log('Section visible:', $('#developer-info-section').is(':visible'));
                 }
             });
 
             // État initial
             if ($('#developer_enabled').is(':checked')) {
                 $('#developer-info-section').show();
-                console.log('Initial state: shown');
+                console.log('Initial state: shown - display:', $('#developer-info-section').css('display'));
+                console.log('Initial visible:', $('#developer-info-section').is(':visible'));
             } else {
                 $('#developer-info-section').hide();
-                console.log('Initial state: hidden');
+                console.log('Initial state: hidden - display:', $('#developer-info-section').css('display'));
+                console.log('Initial visible:', $('#developer-info-section').is(':visible'));
             }
         });
     </script>
