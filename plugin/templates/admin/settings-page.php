@@ -3851,40 +3851,46 @@
 
             // Gestionnaire pour basculer le mode test licence
             $('#toggle_license_test_mode_btn').on('click', function() {
-                var $checkbox = $('#license_test_mode');
-                var $status = $('#license_test_mode_status');
-                var isChecked = $checkbox.is(':checked');
-
-                $checkbox.prop('checked', !isChecked);
-
-                if (!isChecked) {
-                    $status.html('✅ MODE TEST ACTIF').css({
-                        'background': '#d4edda',
-                        'color': '#155724'
-                    });
+                // Utiliser la fonction de developer-tools.js si disponible
+                if (typeof window.testLicenseToggle === 'function') {
+                    window.testLicenseToggle();
                 } else {
-                    $status.html('❌ Mode test inactif').css({
-                        'background': '#f8d7da',
-                        'color': '#721c24'
+                    // Fallback direct AJAX si developer-tools.js n'est pas chargé
+                    var $checkbox = $('#license_test_mode');
+                    var $status = $('#license_test_mode_status');
+                    var isChecked = $checkbox.is(':checked');
+
+                    $checkbox.prop('checked', !isChecked);
+
+                    if (!isChecked) {
+                        $status.html('✅ MODE TEST ACTIF').css({
+                            'background': '#d4edda',
+                            'color': '#155724'
+                        });
+                    } else {
+                        $status.html('❌ Mode test inactif').css({
+                            'background': '#f8d7da',
+                            'color': '#721c24'
+                        });
+                    }
+
+                    // Sauvegarder automatiquement
+                    var formData = new FormData();
+                    formData.append('action', 'pdf_builder_toggle_license_test_mode');
+                    formData.append('license_test_mode', $checkbox.is(':checked') ? '1' : '0');
+                    formData.append('security', '<?php echo wp_create_nonce("pdf_builder_toggle_license_test_mode"); ?>');
+
+                    $.ajax({
+                        url: pdf_builder_ajax.ajax_url,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            console.log('License test mode toggled:', response);
+                        }
                     });
                 }
-
-                // Sauvegarder automatiquement
-                var formData = new FormData();
-                formData.append('action', 'pdf_builder_toggle_license_test_mode');
-                formData.append('license_test_mode', $checkbox.is(':checked') ? '1' : '0');
-                formData.append('security', '<?php echo wp_create_nonce("pdf_builder_toggle_license_test_mode"); ?>');
-
-                $.ajax({
-                    url: pdf_builder_ajax.ajax_url,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log('License test mode toggled:', response);
-                    }
-                });
             });
 
             // Gestionnaire pour générer une clé de licence de test

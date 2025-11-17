@@ -40,6 +40,25 @@
         testToggleLicenseMode() {
             console.log('LICENSE TEST JS: Starting toggle test mode');
 
+            // Update UI immediately for better UX
+            var $checkbox = $('#license_test_mode');
+            var $status = $('#license_test_mode_status');
+            var isChecked = $checkbox.is(':checked');
+
+            $checkbox.prop('checked', !isChecked);
+
+            if (!isChecked) {
+                $status.html('✅ MODE TEST ACTIF').css({
+                    'background': '#d4edda',
+                    'color': '#155724'
+                });
+            } else {
+                $status.html('❌ Mode test inactif').css({
+                    'background': '#f8d7da',
+                    'color': '#721c24'
+                });
+            }
+
             $.ajax({
                 url: pdfBuilderAjax.ajaxurl,
                 type: 'POST',
@@ -55,6 +74,19 @@
                     } else {
                         console.error('LICENSE TEST JS: Server returned error:', response.data);
                         this.showError(response.data.message);
+                        // Revert UI change on error
+                        $checkbox.prop('checked', isChecked);
+                        if (isChecked) {
+                            $status.html('✅ MODE TEST ACTIF').css({
+                                'background': '#d4edda',
+                                'color': '#155724'
+                            });
+                        } else {
+                            $status.html('❌ Mode test inactif').css({
+                                'background': '#f8d7da',
+                                'color': '#721c24'
+                            });
+                        }
                     }
                 },
                 error: (xhr, status, error) => {
@@ -65,6 +97,19 @@
                         error: error
                     });
                     this.showError('Erreur AJAX lors du toggle du mode test');
+                    // Revert UI change on error
+                    $checkbox.prop('checked', isChecked);
+                    if (isChecked) {
+                        $status.html('✅ MODE TEST ACTIF').css({
+                            'background': '#d4edda',
+                            'color': '#155724'
+                        });
+                    } else {
+                        $status.html('❌ Mode test inactif').css({
+                            'background': '#f8d7da',
+                            'color': '#721c24'
+                        });
+                    }
                 }
             });
         }
