@@ -5047,10 +5047,18 @@
                     success: function(response) {
                         console.log('[PDF Builder JS] Réponse reçue pour restauration sauvegarde:', response);
                         if (response.success) {
-                            $results.html('<span style="color: #28a745;">✅ Sauvegarde restaurée avec succès ! Rechargement de la page...</span>');
+                            // Afficher le message de succès et recharger la liste
+                            $results.html('<span style="color: #28a745;">✅ Sauvegarde restaurée avec succès !</span> <span style="color: #666;">⏳ Actualisation de la liste...</span>');
+
+                            // Recharger la liste des sauvegardes après restauration
                             setTimeout(() => {
-                                window.location.reload();
-                            }, 2000);
+                                $('#list-backups-btn').click();
+                            }, 1000);
+
+                            // Optionnel : afficher un message global de succès
+                            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                PDF_Builder_Notification_Manager.show_toast('Paramètres restaurés avec succès depuis la sauvegarde !', 'success');
+                            }
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur lors de la restauration: ' + (response.data || 'Erreur inconnue') + '</span>');
                             $btn.prop('disabled', false).text('🔄 Restaurer');
@@ -5107,13 +5115,13 @@
                     success: function(response) {
                         console.log('[PDF Builder JS] Réponse reçue pour suppression sauvegarde:', response);
                         if (response.success) {
-                            $results.html('<span style="color: #28a745;">✅ Sauvegarde supprimée avec succès</span>');
-                            // Recharger la liste automatiquement seulement si elle était déjà ouverte
-                            if (wasListOpen) {
-                                setTimeout(() => {
-                                    $('#list-backups-btn').click();
-                                }, 1000);
-                            }
+                            // Afficher le message de succès avec un indicateur de rechargement
+                            $results.html('<span style="color: #28a745;">✅ Sauvegarde supprimée avec succès</span> <span style="color: #666;">⏳ Actualisation de la liste...</span>');
+
+                            // Recharger la liste immédiatement après la suppression
+                            setTimeout(() => {
+                                $('#list-backups-btn').click();
+                            }, 500); // Délai réduit pour une meilleure UX
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur lors de la suppression: ' + (response.data || 'Erreur inconnue') + '</span>');
                             $btn.prop('disabled', false).text('🗑️ Supprimer');
@@ -5127,7 +5135,23 @@
                 });
             });
 
-            // Gestionnaires pour les tests de notifications
+            // Fonction utilitaire pour nettoyer les messages après un délai
+            function clearMessageAfterDelay($element, delay = 5000) {
+                setTimeout(() => {
+                    if ($element.html().includes('✅') || $element.html().includes('❌')) {
+                        $element.html('');
+                    }
+                }, delay);
+            }
+
+            // Améliorer la gestion des erreurs AJAX pour tous les boutons
+            $(document).ajaxComplete(function(event, xhr, settings) {
+                // Nettoyer automatiquement les messages de succès/erreur après 5 secondes
+                const $results = $('#backup-results');
+                if ($results.html() && ($results.html().includes('✅') || $results.html().includes('❌'))) {
+                    clearMessageAfterDelay($results);
+                }
+            });
             $('#test-notifications-success').on('click', function() {
                 if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                     PDF_Builder_Notification_Manager.show_toast('Test de notification de succès réussi !', 'success');
