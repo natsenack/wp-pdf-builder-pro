@@ -1325,10 +1325,6 @@
                             </td>
                         </tr>
                     </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_performance" class="button button-primary" value="💾 Sauvegarder Performance">
-                    </p>
                 </form>
             </div>
 
@@ -1361,10 +1357,6 @@
                             </td>
                         </tr>
                     </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_maintenance" class="button button-primary" value="💾 Sauvegarder Maintenance">
-                    </p>
                 </form>
             </div>
 
@@ -1403,20 +1395,7 @@
                             </td>
                         </tr>
                     </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_backup" class="button button-primary" value="💾 Sauvegarder Configuration">
-                    </p>
                 </form>
-
-                <!-- Bouton global d'enregistrement -->
-                <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-                    <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
-                    <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Système en une seule fois.</p>
-                    <button type="button" id="save-all-systeme" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                        🚀 Enregistrer tout
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -1487,18 +1466,6 @@
                     <span class="description" style="margin-left: 10px;">
                         Sélectionnés: <strong id="selected-count"><?php echo count($allowed_roles); ?></strong> rôle(s)
                     </span>
-                </div>
-
-                <!-- Bouton de sauvegarde en haut -->
-                <div style="margin-bottom: 20px; padding: 15px; background: #e7f3ff; border: 1px solid #b3d7ff; border-radius: 8px;">
-                    <p class="submit" style="margin: 0;">
-                        <button type="submit" name="submit_roles" class="button button-primary" style="font-size: 14px; padding: 8px 16px;">
-                            💾 Sauvegarder les Rôles
-                        </button>
-                        <span class="description" style="margin-left: 15px; color: #0056b3;">
-                            Cliquez ici pour enregistrer vos modifications
-                        </span>
-                    </p>
                 </div>
 
                 <!-- Boutons toggle pour les rôles -->
@@ -1798,10 +1765,6 @@
                             </td>
                         </tr>
                     </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_securite" class="button button-primary" value="💾 Sauvegarder Sécurité">
-                    </p>
                 </form>
             </div>
 
@@ -1842,20 +1805,7 @@
                             </td>
                         </tr>
                     </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_rgpd" class="button button-primary" value="💾 Sauvegarder RGPD">
-                    </p>
                 </form>
-            </div>
-
-            <!-- Bouton global d'enregistrement -->
-            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
-                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Sécurité & Conformité en une seule fois.</p>
-                <button type="button" id="save-all-securite" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                    🚀 Enregistrer tout
-                </button>
             </div>
         </div>
         <div id="pdf" class="tab-content hidden-tab">
@@ -1889,20 +1839,7 @@
                         </td>
                     </tr>
                 </table>
-
-                <p class="submit">
-                    <input type="submit" name="submit_pdf" class="button button-primary" value="💾 Sauvegarder PDF">
-                </p>
             </form>
-
-            <!-- Bouton global d'enregistrement -->
-            <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-                <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
-                <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Configuration PDF en une seule fois.</p>
-                <button type="button" id="save-all-pdf" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                    🚀 Enregistrer tout
-                </button>
-            </div>
         </div>
 
         <div id="contenu" class="tab-content hidden-tab">
@@ -1932,10 +1869,6 @@
                             </td>
                         </tr>
                     </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_canvas" class="button button-primary" value="💾 Sauvegarder Canvas">
-                    </p>
                 </form>
             </div>
 
@@ -1970,20 +1903,7 @@
                             </td>
                         </tr>
                     </table>
-
-                    <p class="submit">
-                        <input type="submit" name="submit_templates" class="button button-primary" value="💾 Sauvegarder Templates">
-                    </p>
                 </form>
-
-                <!-- Bouton global d'enregistrement -->
-                <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-                    <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
-                    <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Contenu & Design en une seule fois.</p>
-                    <button type="button" id="save-all-contenu" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                        🚀 Enregistrer tout
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -2011,10 +1931,6 @@
                         </td>
                     </tr>
                 </table>
-
-                <p class="submit">
-                    <input type="submit" name="submit_developer" class="button button-primary" value="💾 Sauvegarder Développeur">
-                </p>
             </form>
         </div>
     </div>
@@ -2211,6 +2127,235 @@
         });
     </script>
 
+    <!-- Bouton flottant d'enregistrement global -->
+    <div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: none;">
+        <button type="button" class="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
+            <span class="save-icon">💾</span>
+            <span class="save-text">Enregistrer</span>
+        </button>
+    </div>
+
+    <style>
+        .floating-save-btn {
+            min-width: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .floating-save-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .floating-save-btn.saving {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            animation: pulse 1.5s infinite;
+        }
+
+        .floating-save-btn.saved {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .save-feedback {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .save-feedback.show {
+            opacity: 1;
+        }
+
+        /* Masquer le bouton sur mobile si nécessaire */
+        @media (max-width: 768px) {
+            #floating-save-button {
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .floating-save-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 120px;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const floatingSaveBtn = document.querySelector('.floating-save-btn');
+            const floatingSaveContainer = document.getElementById('floating-save-button');
+
+            // Fonction pour afficher/masquer le bouton flottant selon l'onglet actif
+            function updateFloatingButtonVisibility() {
+                const activeTab = document.querySelector('.tab-content.active');
+                if (activeTab && activeTab.id !== 'general') { // Ne pas afficher sur l'onglet général
+                    floatingSaveContainer.style.display = 'block';
+                } else {
+                    floatingSaveContainer.style.display = 'none';
+                }
+            }
+
+            // Observer les changements d'onglets
+            const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    setTimeout(updateFloatingButtonVisibility, 100); // Délai pour laisser le temps au changement d'onglet
+                });
+            });
+
+            // Initialiser la visibilité
+            updateFloatingButtonVisibility();
+
+            // Gestionnaire du bouton flottant
+            if (floatingSaveBtn) {
+                floatingSaveBtn.addEventListener('click', function() {
+                    const activeTabContent = document.querySelector('.tab-content.active');
+                    if (!activeTabContent) return;
+
+                    // Trouver l'onglet actif
+                    const activeTabId = activeTabContent.id;
+                    const forms = activeTabContent.querySelectorAll('form');
+
+                    if (forms.length === 0) {
+                        showSaveFeedback('Aucun formulaire trouvé dans cet onglet', 'error');
+                        return;
+                    }
+
+                    // Changer l'apparence du bouton
+                    floatingSaveBtn.classList.add('saving');
+                    floatingSaveBtn.querySelector('.save-text').textContent = 'Sauvegarde...';
+                    floatingSaveBtn.querySelector('.save-icon').textContent = '⏳';
+
+                    // Créer un feedback visuel
+                    let feedbackDiv = floatingSaveBtn.querySelector('.save-feedback');
+                    if (!feedbackDiv) {
+                        feedbackDiv = document.createElement('div');
+                        feedbackDiv.className = 'save-feedback';
+                        floatingSaveBtn.appendChild(feedbackDiv);
+                    }
+
+                    // Compter les formulaires soumis
+                    let submittedForms = 0;
+                    const totalForms = forms.length;
+
+                    forms.forEach(form => {
+                        // Créer un élément temporaire pour soumettre le formulaire
+                        const tempForm = document.createElement('form');
+                        tempForm.method = form.method || 'post';
+                        tempForm.action = form.action || '';
+                        tempForm.style.display = 'none';
+                        tempForm.target = '_blank'; // Ouvrir dans un nouvel onglet pour éviter de quitter la page
+
+                        // Copier tous les champs du formulaire original
+                        const inputs = form.querySelectorAll('input, select, textarea, button');
+                        inputs.forEach(input => {
+                            if (input.type !== 'submit' && input.type !== 'button') { // Ne pas copier les boutons
+                                const clone = input.cloneNode(true);
+                                tempForm.appendChild(clone);
+                            }
+                        });
+
+                        // Ajouter au body et soumettre
+                        document.body.appendChild(tempForm);
+
+                        // Utiliser une requête AJAX au lieu de soumettre directement
+                        const formData = new FormData(tempForm);
+
+                        fetch(form.action || window.location.href, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => {
+                            submittedForms++;
+                            document.body.removeChild(tempForm);
+
+                            // Quand tous les formulaires sont soumis
+                            if (submittedForms === totalForms) {
+                                floatingSaveBtn.classList.remove('saving');
+                                floatingSaveBtn.classList.add('saved');
+                                floatingSaveBtn.querySelector('.save-text').textContent = 'Enregistré !';
+                                floatingSaveBtn.querySelector('.save-icon').textContent = '✅';
+
+                                showSaveFeedback('Paramètres enregistrés avec succès !', 'success');
+
+                                // Revenir à l'état normal après 3 secondes
+                                setTimeout(function() {
+                                    floatingSaveBtn.classList.remove('saved');
+                                    floatingSaveBtn.querySelector('.save-text').textContent = 'Enregistrer';
+                                    floatingSaveBtn.querySelector('.save-icon').textContent = '💾';
+                                }, 3000);
+                            }
+                        })
+                        .catch(error => {
+                            submittedForms++;
+                            document.body.removeChild(tempForm);
+
+                            console.error('Erreur lors de la sauvegarde:', error);
+
+                            if (submittedForms === totalForms) {
+                                floatingSaveBtn.classList.remove('saving');
+                                floatingSaveBtn.querySelector('.save-text').textContent = 'Erreur';
+                                floatingSaveBtn.querySelector('.save-icon').textContent = '❌';
+
+                                showSaveFeedback('Erreur lors de la sauvegarde', 'error');
+
+                                // Revenir à l'état normal après 3 secondes
+                                setTimeout(function() {
+                                    floatingSaveBtn.querySelector('.save-text').textContent = 'Enregistrer';
+                                    floatingSaveBtn.querySelector('.save-icon').textContent = '💾';
+                                }, 3000);
+                            }
+                        });
+                    });
+                });
+            }
+
+            function showSaveFeedback(message, type) {
+                let feedbackDiv = floatingSaveBtn.querySelector('.save-feedback');
+                if (!feedbackDiv) {
+                    feedbackDiv = document.createElement('div');
+                    feedbackDiv.className = 'save-feedback';
+                    floatingSaveBtn.appendChild(feedbackDiv);
+                }
+
+                feedbackDiv.textContent = message;
+                feedbackDiv.className = 'save-feedback show';
+
+                if (type === 'error') {
+                    feedbackDiv.style.background = 'rgba(220, 53, 69, 0.9)';
+                } else {
+                    feedbackDiv.style.background = 'rgba(40, 167, 69, 0.9)';
+                }
+
+                setTimeout(function() {
+                    feedbackDiv.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+
     <div id="roles" class="tab-content hidden-tab">
         <h2>👨‍💻 Paramètres Développeur</h2>
         <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
@@ -2297,20 +2442,7 @@
                     </div>
                 </div>
             </div>
-
-            <p class="submit">
-                <input type="submit" name="submit_developer" class="button button-primary" value="💾 Sauvegarder les paramètres développeur">
-            </p>
         </form>
-
-        <!-- Bouton global d'enregistrement -->
-        <div style="background: #f1f1f1; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 30px; text-align: center;">
-            <h3 style="margin-top: 0; color: #333;">💾 Enregistrer toutes les modifications</h3>
-            <p style="margin-bottom: 15px; color: #666;">Cliquez ci-dessous pour enregistrer tous les paramètres de l'onglet Développeur en une seule fois.</p>
-            <button type="button" id="save-all-developpeur" class="button button-primary button-hero" style="font-size: 16px; padding: 12px 24px;">
-                🚀 Enregistrer tout
-            </button>
-        </div>
     </div>
 
     <style>
@@ -2492,6 +2624,189 @@
                     });
                 });
             }
+        });
+    </script>
+
+    <!-- Bouton flottant d'enregistrement global -->
+    <div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: none;">
+        <button type="button" class="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
+            <span class="save-icon">💾</span>
+            <span class="save-text">Enregistrer</span>
+        </button>
+        <div class="floating-tooltip" style="position: absolute; bottom: 70px; right: 0; background: #333; color: white; padding: 8px 12px; border-radius: 6px; font-size: 14px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+            Enregistrer tous les paramètres de cet onglet
+        </div>
+    </div>
+
+    <style>
+        /* Styles pour le bouton flottant */
+        .floating-save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+        }
+
+        .floating-save-btn.saving {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            animation: pulse 1.5s infinite;
+        }
+
+        .floating-save-btn.saved {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        }
+
+        .floating-save-btn.error {
+            background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
+        }
+
+        .floating-tooltip {
+            opacity: 0;
+        }
+
+        .floating-save-btn:hover + .floating-tooltip,
+        .floating-tooltip:hover {
+            opacity: 1;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive design pour mobile */
+        @media (max-width: 768px) {
+            #floating-save-button {
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .floating-save-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .floating-tooltip {
+                display: none; /* Masquer le tooltip sur mobile */
+            }
+        }
+    </style>
+
+    <script>
+        jQuery(document).ready(function($) {
+            let currentTab = 'general';
+
+            // Fonction pour afficher/masquer le bouton flottant selon l'onglet actif
+            function updateFloatingButtonVisibility() {
+                const activeTab = $('.nav-tab-active').attr('href').substring(1);
+                currentTab = activeTab;
+
+                if (activeTab === 'general') {
+                    $('#floating-save-button').hide();
+                } else {
+                    $('#floating-save-button').show();
+                }
+            }
+
+            // Mettre à jour la visibilité lors du changement d'onglet
+            $('.nav-tab').on('click', function() {
+                setTimeout(updateFloatingButtonVisibility, 100);
+            });
+
+            // Vérifier l'onglet actif au chargement
+            updateFloatingButtonVisibility();
+
+            // Gestionnaire pour le bouton flottant
+            $('.floating-save-btn').on('click', function() {
+                const $btn = $(this);
+                const $icon = $btn.find('.save-icon');
+                const $text = $btn.find('.save-text');
+
+                // État de sauvegarde
+                $btn.removeClass('saved error').addClass('saving');
+                $icon.text('⏳');
+                $text.text('Sauvegarde...');
+
+                // Trouver tous les formulaires dans l'onglet actif
+                const activeTabContent = $('.tab-content:not(.hidden-tab)');
+                const forms = activeTabContent.find('form');
+
+                if (forms.length === 0) {
+                    // Pas de formulaires trouvés
+                    $btn.removeClass('saving').addClass('error');
+                    $icon.text('❌');
+                    $text.text('Erreur');
+                    setTimeout(() => {
+                        $btn.removeClass('error');
+                        $icon.text('💾');
+                        $text.text('Enregistrer');
+                    }, 3000);
+                    return;
+                }
+
+                // Collecter les données de tous les formulaires
+                const formData = new FormData();
+
+                forms.each(function() {
+                    const $form = $(this);
+                    const formDataTemp = new FormData(this);
+
+                    // Ajouter les données de ce formulaire
+                    for (let [key, value] of formDataTemp.entries()) {
+                        formData.append(key, value);
+                    }
+                });
+
+                // Ajouter l'onglet actuel
+                formData.append('current_tab', currentTab);
+                formData.append('action', 'save_all_settings');
+
+                // Envoyer via AJAX
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            // Succès
+                            $btn.removeClass('saving').addClass('saved');
+                            $icon.text('✅');
+                            $text.text('Enregistré !');
+
+                            // Revenir à l'état normal après 3 secondes
+                            setTimeout(() => {
+                                $btn.removeClass('saved');
+                                $icon.text('💾');
+                                $text.text('Enregistrer');
+                            }, 3000);
+                        } else {
+                            // Erreur
+                            $btn.removeClass('saving').addClass('error');
+                            $icon.text('❌');
+                            $text.text('Erreur');
+
+                            setTimeout(() => {
+                                $btn.removeClass('error');
+                                $icon.text('💾');
+                                $text.text('Enregistrer');
+                            }, 3000);
+                        }
+                    },
+                    error: function() {
+                        // Erreur AJAX
+                        $btn.removeClass('saving').addClass('error');
+                        $icon.text('❌');
+                        $text.text('Erreur');
+
+                        setTimeout(() => {
+                            $btn.removeClass('error');
+                            $icon.text('💾');
+                            $text.text('Enregistrer');
+                        }, 3000);
+                    }
+                });
+            });
         });
     </script>
 
