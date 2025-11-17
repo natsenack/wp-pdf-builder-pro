@@ -2729,43 +2729,6 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
-                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                        <h5 style="margin-top: 0; color: #495057;">📊 État du système</h5>
-                        <div style="font-size: 13px; color: #666;">
-                            <strong>PHP Version :</strong> <?php echo PHP_VERSION; ?><br>
-                            <strong>WordPress Version :</strong> <?php echo get_bloginfo('version'); ?><br>
-                            <strong>Mode Debug WP :</strong> <?php echo WP_DEBUG ? 'Activé' : 'Désactivé'; ?><br>
-                            <strong>Mémoire limite :</strong> <?php echo ini_get('memory_limit'); ?><br>
-                        </div>
-                    </div>
-
-                    <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                        <h5 style="margin-top: 0; color: #495057;">🔍 Informations plugin</h5>
-                        <div style="font-size: 13px; color: #666;">
-                            <strong>Version plugin :</strong> <?php echo get_option('pdf_builder_version', 'N/A'); ?><br>
-                            <strong>Base de données :</strong> <?php echo get_option('pdf_builder_db_version', 'N/A'); ?><br>
-                            <strong>Cache activé :</strong> <?php echo get_option('pdf_builder_cache_enabled', false) ? 'Oui' : 'Non'; ?><br>
-                            <strong>Logs activés :</strong> <?php echo get_option('pdf_builder_enable_logging', true) ? 'Oui' : 'Non'; ?><br>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                    <h5 style="margin-top: 0; color: #495057;">⚙️ Actions développeur</h5>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button type="button" class="button button-secondary" onclick="console.log('Debug info:', wp.plugins.pdf_builder || 'Plugin data not available'); alert('Informations de débogage affichées dans la console');">
-                            📋 Afficher debug info
-                        </button>
-                        <button type="button" class="button button-secondary" onclick="if(confirm('Vider le cache ?')) { localStorage.clear(); sessionStorage.clear(); alert('Cache vidé'); }">
-                            🗑️ Vider cache navigateur
-                        </button>
-                        <button type="button" class="button button-secondary" onclick="window.open('<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=diagnostic'); ?>', '_blank');">
-                            🔍 Ouvrir diagnostics
-                        </button>
-                    </div>
-                </div>
-
                 <p class="submit" style="margin-top: 30px;">
                     <input type="submit" name="submit_developpeur" class="button button-primary" value="💾 Enregistrer les paramètres développeur" style="font-size: 16px; padding: 12px 24px; height: auto;" />
                 </p>
