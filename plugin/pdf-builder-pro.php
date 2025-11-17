@@ -443,175 +443,154 @@ function pdf_builder_save_settings_ajax() {
             break;
 
         case 'performance':
-            if (isset($_POST['pdf_builder_performance_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_performance_nonce'], 'pdf_builder_performance')) {
-                // Sauvegarder les paramètres performance
-                $settings = array(
-                    'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
-                    'cache_expiry' => intval($_POST['cache_expiry']),
-                    'compression_enabled' => isset($_POST['compression_enabled']) ? '1' : '0',
-                    'lazy_loading' => isset($_POST['lazy_loading']) ? '1' : '0',
-                    'preload_resources' => isset($_POST['preload_resources']) ? '1' : '0',
-                );
+            // Sauvegarder les paramètres performance
+            $settings = array(
+                'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
+                'cache_expiry' => intval($_POST['cache_expiry']),
+                'compression_enabled' => isset($_POST['compression_enabled']) ? '1' : '0',
+                'lazy_loading' => isset($_POST['lazy_loading']) ? '1' : '0',
+                'preload_resources' => isset($_POST['preload_resources']) ? '1' : '0',
+            );
 
-                foreach ($settings as $key => $value) {
-                    update_option('pdf_builder_' . $key, $value);
-                }
-                $saved_count++;
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
             }
+            $saved_count++;
             break;
 
         case 'maintenance':
-            if (isset($_POST['pdf_builder_maintenance_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_maintenance_nonce'], 'pdf_builder_maintenance')) {
-                // Sauvegarder les paramètres maintenance
-                $settings = array(
-                    'auto_cleanup' => isset($_POST['auto_cleanup']) ? '1' : '0',
-                    'cleanup_interval' => sanitize_text_field($_POST['cleanup_interval']),
-                    'log_retention' => intval($_POST['log_retention']),
-                    'backup_enabled' => isset($_POST['backup_enabled']) ? '1' : '0',
-                );
+            // Sauvegarder les paramètres maintenance
+            $settings = array(
+                'auto_cleanup' => isset($_POST['auto_cleanup']) ? '1' : '0',
+                'cleanup_interval' => sanitize_text_field($_POST['cleanup_interval']),
+                'log_retention' => intval($_POST['log_retention']),
+                'backup_enabled' => isset($_POST['backup_enabled']) ? '1' : '0',
+            );
 
-                foreach ($settings as $key => $value) {
-                    update_option('pdf_builder_' . $key, $value);
-                }
-                $saved_count++;
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
             }
+            $saved_count++;
             break;
 
         case 'sauvegarde':
-            if (isset($_POST['pdf_builder_backup_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_backup_nonce'], 'pdf_builder_backup')) {
-                // Sauvegarder les paramètres sauvegarde
-                $settings = array(
-                    'auto_backup' => isset($_POST['auto_backup']) ? '1' : '0',
-                    'backup_frequency' => sanitize_text_field($_POST['backup_frequency']),
-                    'backup_retention' => intval($_POST['backup_retention']),
-                    'cloud_backup' => isset($_POST['cloud_backup']) ? '1' : '0',
-                );
+            // Sauvegarder les paramètres sauvegarde
+            $settings = array(
+                'auto_backup' => isset($_POST['auto_backup']) ? '1' : '0',
+                'backup_frequency' => sanitize_text_field($_POST['backup_frequency']),
+                'backup_retention' => intval($_POST['backup_retention']),
+                'cloud_backup' => isset($_POST['cloud_backup']) ? '1' : '0',
+            );
 
-                foreach ($settings as $key => $value) {
-                    update_option('pdf_builder_' . $key, $value);
-                }
-                $saved_count++;
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
             }
+            $saved_count++;
             break;
 
         case 'acces':
-            if (isset($_POST['pdf_builder_roles_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_roles_nonce'], 'pdf_builder_roles')) {
-                // Sauvegarder les rôles
-                $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) ? $_POST['pdf_builder_allowed_roles'] : array();
-                update_option('pdf_builder_allowed_roles', $allowed_roles);
-                $saved_count++;
-            }
+            // Sauvegarder les rôles
+            $allowed_roles = isset($_POST['pdf_builder_allowed_roles']) ? $_POST['pdf_builder_allowed_roles'] : array();
+            update_option('pdf_builder_allowed_roles', $allowed_roles);
+            $saved_count++;
             break;
 
         case 'securite':
-            if (isset($_POST['pdf_builder_securite_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_securite_nonce'], 'pdf_builder_securite')) {
-                // Sauvegarder les paramètres sécurité
-                $settings = array(
-                    'ip_filtering' => isset($_POST['ip_filtering']) ? '1' : '0',
-                    'rate_limiting' => isset($_POST['rate_limiting']) ? '1' : '0',
-                    'encryption' => isset($_POST['encryption']) ? '1' : '0',
-                    'audit_log' => isset($_POST['audit_log']) ? '1' : '0',
-                );
+            // Sauvegarder les paramètres sécurité
+            $settings = array(
+                'ip_filtering' => isset($_POST['ip_filtering']) ? '1' : '0',
+                'rate_limiting' => isset($_POST['rate_limiting']) ? '1' : '0',
+                'encryption' => isset($_POST['encryption']) ? '1' : '0',
+                'audit_log' => isset($_POST['audit_log']) ? '1' : '0',
+            );
 
-                foreach ($settings as $key => $value) {
-                    update_option('pdf_builder_' . $key, $value);
-                }
-                $saved_count++;
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
             }
+            $saved_count++;
 
-            if (isset($_POST['pdf_builder_rgpd_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_rgpd_nonce'], 'pdf_builder_rgpd')) {
-                // Sauvegarder les paramètres RGPD
-                $settings = array(
-                    'gdpr_enabled' => isset($_POST['gdpr_enabled']) ? '1' : '0',
-                    'gdpr_consent_required' => isset($_POST['gdpr_consent_required']) ? '1' : '0',
-                    'gdpr_data_retention' => intval($_POST['gdpr_data_retention']),
-                    'gdpr_audit_enabled' => isset($_POST['gdpr_audit_enabled']) ? '1' : '0',
-                    'gdpr_encryption_enabled' => isset($_POST['gdpr_encryption_enabled']) ? '1' : '0',
-                    'gdpr_consent_analytics' => isset($_POST['gdpr_consent_analytics']) ? '1' : '0',
-                    'gdpr_consent_templates' => isset($_POST['gdpr_consent_templates']) ? '1' : '0',
-                    'gdpr_consent_marketing' => isset($_POST['gdpr_consent_marketing']) ? '1' : '0',
-                );
+            // Sauvegarder les paramètres RGPD
+            $settings = array(
+                'gdpr_enabled' => isset($_POST['gdpr_enabled']) ? '1' : '0',
+                'gdpr_consent_required' => isset($_POST['gdpr_consent_required']) ? '1' : '0',
+                'gdpr_data_retention' => intval($_POST['gdpr_data_retention']),
+                'gdpr_audit_enabled' => isset($_POST['gdpr_audit_enabled']) ? '1' : '0',
+                'gdpr_encryption_enabled' => isset($_POST['gdpr_encryption_enabled']) ? '1' : '0',
+                'gdpr_consent_analytics' => isset($_POST['gdpr_consent_analytics']) ? '1' : '0',
+                'gdpr_consent_templates' => isset($_POST['gdpr_consent_templates']) ? '1' : '0',
+                'gdpr_consent_marketing' => isset($_POST['gdpr_consent_marketing']) ? '1' : '0',
+            );
 
-                foreach ($settings as $key => $value) {
-                    update_option('pdf_builder_' . $key, $value);
-                }
-                $saved_count++;
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
             }
+            $saved_count++;
             break;
 
         case 'pdf':
-            if (isset($_POST['pdf_builder_pdf_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_pdf_nonce'], 'pdf_builder_pdf')) {
-                // Sauvegarder les paramètres PDF
-                $settings = array(
-                    'pdf_quality' => sanitize_text_field($_POST['pdf_quality']),
-                    'pdf_format' => sanitize_text_field($_POST['pdf_format']),
-                    'pdf_compression' => isset($_POST['pdf_compression']) ? '1' : '0',
-                    'pdf_metadata' => isset($_POST['pdf_metadata']) ? '1' : '0',
-                );
+            // Sauvegarder les paramètres PDF
+            $settings = array(
+                'pdf_quality' => sanitize_text_field($_POST['pdf_quality']),
+                'pdf_format' => sanitize_text_field($_POST['pdf_format']),
+                'pdf_compression' => isset($_POST['pdf_compression']) ? '1' : '0',
+                'pdf_metadata' => isset($_POST['pdf_metadata']) ? '1' : '0',
+            );
 
-                foreach ($settings as $key => $value) {
-                    update_option('pdf_builder_' . $key, $value);
-                }
-                $saved_count++;
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
             }
+            $saved_count++;
             break;
 
         case 'contenu':
-            if (isset($_POST['pdf_builder_canvas_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_canvas_nonce'], 'pdf_builder_canvas')) {
-                // Sauvegarder les paramètres canvas
-                $settings = array(
-                    'canvas_max_size' => intval($_POST['canvas_max_size']),
-                    'canvas_dpi' => intval($_POST['canvas_dpi']),
-                    'canvas_format' => sanitize_text_field($_POST['canvas_format']),
-                    'canvas_quality' => intval($_POST['canvas_quality']),
-                );
+            // Sauvegarder les paramètres canvas
+            $settings = array(
+                'canvas_max_size' => intval($_POST['canvas_max_size']),
+                'canvas_dpi' => intval($_POST['canvas_dpi']),
+                'canvas_format' => sanitize_text_field($_POST['canvas_format']),
+                'canvas_quality' => intval($_POST['canvas_quality']),
+            );
 
-                foreach ($settings as $key => $value) {
-                    update_option('pdf_builder_' . $key, $value);
-                }
-                $saved_count++;
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
             }
+            $saved_count++;
 
-            if (isset($_POST['pdf_builder_templates_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_templates_nonce'], 'pdf_builder_templates')) {
-                // Sauvegarder les paramètres templates
-                $settings = array(
-                    'template_library' => isset($_POST['template_library']) ? '1' : '0',
-                    'custom_templates' => isset($_POST['custom_templates']) ? '1' : '0',
-                    'template_sharing' => isset($_POST['template_sharing']) ? '1' : '0',
-                );
+            // Sauvegarder les paramètres templates
+            $settings = array(
+                'template_library' => isset($_POST['template_library']) ? '1' : '0',
+                'custom_templates' => isset($_POST['custom_templates']) ? '1' : '0',
+                'template_sharing' => isset($_POST['template_sharing']) ? '1' : '0',
+            );
 
-                foreach ($settings as $key => $value) {
-                    update_option('pdf_builder_' . $key, $value);
-                }
-                $saved_count++;
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
             }
+            $saved_count++;
             break;
 
         case 'developpeur':
-            if (isset($_POST['pdf_builder_developer_nonce']) &&
-                wp_verify_nonce($_POST['pdf_builder_developer_nonce'], 'pdf_builder_developer')) {
-                // Sauvegarder les paramètres développeur
-                $settings = array(
-                    'debug_mode' => isset($_POST['debug_mode']) ? '1' : '0',
-                    'dev_tools' => isset($_POST['dev_tools']) ? '1' : '0',
-                    'api_logging' => isset($_POST['api_logging']) ? '1' : '0',
-                    'performance_monitoring' => isset($_POST['performance_monitoring']) ? '1' : '0',
-                );
+            // Sauvegarder les paramètres développeur
+            $settings = array(
+                'developer_enabled' => isset($_POST['developer_enabled']) ? '1' : '0',
+                'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
+                'debug_php_errors' => isset($_POST['debug_php_errors']) ? '1' : '0',
+                'debug_javascript' => isset($_POST['debug_javascript']) ? '1' : '0',
+                'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']) ? '1' : '0',
+                'debug_ajax' => isset($_POST['debug_ajax']) ? '1' : '0',
+                'debug_performance' => isset($_POST['debug_performance']) ? '1' : '0',
+                'debug_database' => isset($_POST['debug_database']) ? '1' : '0',
+                'log_level' => intval($_POST['log_level'] ?? 3),
+                'log_file_size' => intval($_POST['log_file_size'] ?? 10),
+                'log_retention' => intval($_POST['log_retention'] ?? 30),
+                'license_test_mode' => isset($_POST['license_test_mode']) ? '1' : '0',
+                'force_https' => isset($_POST['force_https']) ? '1' : '0',
+            );
 
-                foreach ($settings as $key => $value) {
-                    update_option('pdf_builder_' . $key, $value);
-                }
-                $saved_count++;
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
             }
+            $saved_count++;
             break;
     }
 
