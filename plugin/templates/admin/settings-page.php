@@ -3828,6 +3828,13 @@
                 });
             });
 
+            // Vérification initiale de l'état du toggle développeur
+            if ($('#developer_enabled').is(':checked')) {
+                $('#dev-license-section, #dev-debug-section, #dev-logs-section, #dev-optimizations-section, #dev-logs-viewer-section, #dev-tools-section, #dev-shortcuts-section, #dev-console-section, #dev-hooks-section').show();
+            } else {
+                $('#dev-license-section, #dev-debug-section, #dev-logs-section, #dev-optimizations-section, #dev-logs-viewer-section, #dev-tools-section, #dev-shortcuts-section, #dev-console-section, #dev-hooks-section').hide();
+            }
+
             // Gestionnaire pour afficher/masquer le mot de passe
             $('#toggle_password').on('click', function() {
                 var $input = $('#developer_password');
