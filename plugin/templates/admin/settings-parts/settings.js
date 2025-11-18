@@ -405,6 +405,14 @@ document.addEventListener('DOMContentLoaded', function() {
             cacheBadge.textContent = currentCache ? 'ACTIF' : 'INACTIF';
         }
 
+        // Indicateur d'état du cache dans la section "État du système de cache"
+        const cacheEnabledIndicator = document.querySelector('.cache-enabled-indicator');
+        if (cacheEnabledIndicator) {
+            const currentCache = document.getElementById('general_cache_enabled')?.checked || false;
+            cacheEnabledIndicator.style.color = currentCache ? '#28a745' : '#dc3545';
+            cacheEnabledIndicator.textContent = currentCache ? 'Cache activé' : 'Cache désactivé';
+        }
+
         // Badge Maintenance
         const maintenanceBadge = document.querySelector('.maintenance-status');
         if (maintenanceBadge) {
