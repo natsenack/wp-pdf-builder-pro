@@ -33,6 +33,3 @@ require_once $settings_parts_dir . 'settings-developpeur.php';
 
 // Include modal components
 require_once $settings_parts_dir . 'settings-modals.php';
-
-// Now include the main HTML structure
-require_once $settings_parts_dir . 'settings-main.php';
