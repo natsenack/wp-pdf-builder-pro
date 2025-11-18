@@ -333,6 +333,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Envoyer la requête AJAX
         fetch(pdf_builder_ajax.ajax_url, {
             method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             body: formData
         })
         .then(response => response.json())
