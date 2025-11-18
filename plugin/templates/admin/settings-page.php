@@ -327,6 +327,9 @@
                         break;
 
                     case 'securite':
+                        // Debug: Log des données reçues pour sécurité
+                        error_log('[DEBUG] Traitement securite - POST data: ' . print_r($_POST, true));
+
                         // Traitement des paramètres de sécurité
                         $security_level = sanitize_text_field($_POST['security_level'] ?? 'medium');
                         $enable_logging = (isset($_POST['enable_logging']) && $_POST['enable_logging'] === '1') ? '1' : '0';
@@ -4917,6 +4920,12 @@
                     forms.each(function() {
                         const $form = $(this);
                         const formDataTemp = new FormData(this);
+
+                        // Debug: Log des données de chaque formulaire
+                        console.log('[DEBUG] Formulaire trouvé:', $form.attr('id') || 'sans-id');
+                        for (let [key, value] of formDataTemp.entries()) {
+                            console.log(`  ${key}: ${value}`);
+                        }
 
                         // Ajouter les données de ce formulaire
                         for (let [key, value] of formDataTemp.entries()) {
