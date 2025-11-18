@@ -4922,6 +4922,9 @@
                                 $icon.text('✅');
                                 $text.text('Enregistré !');
 
+                                // Mettre à jour tous les indicateurs
+                                updateAllStatusIndicators();
+
                                 // Revenir à l'état normal après 3 secondes
                                 setTimeout(() => {
                                     $btn.removeClass('saved');
