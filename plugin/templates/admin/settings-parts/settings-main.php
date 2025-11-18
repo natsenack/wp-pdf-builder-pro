@@ -216,7 +216,7 @@ if (
     <?php foreach ($notices as $notice) {
         echo $notice;
     } ?>
-</div>
+    <!-- Tabs Navigation -->
     <div class="nav-tab-wrapper wp-clearfix">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general">
             <span class="tab-icon">⚙️</span>
@@ -346,7 +346,7 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
         <div class="floating-tooltip">Cliquez pour sauvegarder tous les paramètres</div>
     </div>
 </div>
-</div>
+
 
 <script>
 // Tab switching functionality
