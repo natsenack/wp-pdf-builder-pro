@@ -1061,7 +1061,7 @@
             <span class="tab-icon">👨‍💻</span>
             <span class="tab-text">Développeur</span>
         </a>
-        <a href="#canvas" class="nav-tab" data-tab="canvas">
+        <a href="#canvas" class="nav-tab" data-tab="canvas" style="background: #ffeb3b; color: #000; font-weight: bold;">
             <span class="tab-icon">🎨</span>
             <span class="tab-text">Canvas</span>
         </a>
