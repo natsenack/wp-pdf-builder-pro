@@ -22,8 +22,8 @@ if (!function_exists('wc_get_order')) {
 
 class PreviewImageAPI
 {
-    private $cache_dir;
-    private $max_cache_age = 3600;
+    private static $cache_dir;
+    private static $max_cache_age = 3600;
 // 1 heure
     private $rate_limit_window = 60;
 // 1 minute
@@ -35,11 +35,11 @@ class PreviewImageAPI
     public function __construct()
     {
 
-        $this->cache_dir = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : sys_get_temp_dir())
+        self::$cache_dir = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : sys_get_temp_dir())
             . '/cache/wp-pdf-builder-previews/';
 // Créer répertoire cache si inexistant
-        if (!file_exists($this->cache_dir)) {
-            wp_mkdir_p($this->cache_dir);
+        if (!file_exists(self::$cache_dir)) {
+            wp_mkdir_p(self::$cache_dir);
         }
 
         // Initialiser le gestionnaire de générateurs
@@ -51,7 +51,8 @@ class PreviewImageAPI
 
 
         // Nettoyage automatique du cache
-        add_action('wp_pdf_cleanup_preview_cache', array($this, 'cleanup_cache'));
+        add_action('wp_pdf_cleanup_preview_cache', array(__CLASS__, 'cleanup_cache'));
+        wp_clear_scheduled_hook('wp_pdf_cleanup_preview_cache');
         if (!wp_next_scheduled('wp_pdf_cleanup_preview_cache')) {
             wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
         }
@@ -425,7 +426,7 @@ class PreviewImageAPI
     public function generateWithCache($params)
     {
         $cache_key = $this->generateCacheKey($params);
-        $cache_file = $this->cache_dir . $cache_key . '.' . $params['format'];
+        $cache_file = self::$cache_dir . $cache_key . '.' . $params['format'];
 // Vérifier si cache valide
         if ($this->isCacheValid($cache_file, $params)) {
             return array(
@@ -561,7 +562,7 @@ class PreviewImageAPI
 
         // Vérifier âge du fichier
         $file_age = time() - filemtime($cache_file);
-        if ($file_age > $this->max_cache_age) {
+        if ($file_age > self::$max_cache_age) {
             return false;
         }
 
@@ -594,14 +595,14 @@ class PreviewImageAPI
      */
     public function cleanupCache()
     {
-        if (!is_dir($this->cache_dir)) {
+        if (!is_dir(self::$cache_dir)) {
             return;
         }
 
-        $files = glob($this->cache_dir . '*');
+        $files = glob(self::$cache_dir . '*');
         $now = time();
         foreach ($files as $file) {
-            if (is_file($file) && ($now - filemtime($file)) > $this->max_cache_age) {
+            if (is_file($file) && ($now - filemtime($file)) > self::$max_cache_age) {
                 unlink($file);
             }
         }
@@ -737,5 +738,38 @@ class PreviewImageAPI
             'code' => 'PREVIEW_ERROR',
             'debug' => defined('WP_DEBUG') && WP_DEBUG ? $error_message : null
         ]);
+    }
+
+    public static function cleanup_cache()
+    {
+        try {
+            if (!is_dir(self::$cache_dir)) {
+                return;
+            }
+
+            $files = glob(self::$cache_dir . '*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+            $now = time();
+            $deleted_count = 0;
+
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    $file_age = $now - filemtime($file);
+                    if ($file_age > self::$max_cache_age) {
+                        if (unlink($file)) {
+                            $deleted_count++;
+                        }
+                    }
+                }
+            }
+
+            // Log pour debug
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log("PreviewImageAPI: Cleaned up $deleted_count expired cache files");
+            }
+
+        } catch (\Exception $e) {
+            // Log l'erreur mais ne pas interrompre l'exécution
+            error_log("PreviewImageAPI cleanup_cache error: " . $e->getMessage());
+        }
     }
 }

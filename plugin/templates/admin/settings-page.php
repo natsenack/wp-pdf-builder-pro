@@ -2114,14 +2114,23 @@
                                     $upload_dir = wp_upload_dir();
                                     $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
 
-                                    // Debug: Afficher le chemin du dossier
-                                    // echo "<!-- Cache dir: $cache_dir -->";
-
+                                    // Debug temporaire
+                                    echo "<!-- DEBUG Cache:\n";
+                                    echo "Cache dir: $cache_dir\n";
+                                    echo "is_dir: " . (is_dir($cache_dir) ? 'YES' : 'NO') . "\n";
                                     if (is_dir($cache_dir)) {
+                                        echo "is_readable: " . (is_readable($cache_dir) ? 'YES' : 'NO') . "\n";
+                                        $files = scandir($cache_dir);
+                                        echo "Files in dir: " . count($files) . "\n";
+                                        foreach ($files as $file) {
+                                            if ($file != '.' && $file != '..') {
+                                                echo "  - $file\n";
+                                            }
+                                        }
                                         $cache_size = pdf_builder_get_folder_size($cache_dir);
-                                        // Debug: Afficher la taille brute
-                                        // echo "<!-- Raw size: $cache_size bytes -->";
+                                        echo "Calculated size: $cache_size bytes\n";
                                     }
+                                    echo "-->";
 
                                     // Afficher en Ko si < 1 Mo, sinon en Mo
                                     if ($cache_size < 1048576) { // 1 Mo = 1048576 bytes
