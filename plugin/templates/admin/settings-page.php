@@ -4896,6 +4896,11 @@
                     success: function(response) {
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Cache vidé avec succès</span>');
+                            // Update cache size display
+                            var cacheSizeDisplay = document.getElementById('cache-size-display');
+                            if (cacheSizeDisplay && response.data && response.data.new_cache_size) {
+                                cacheSizeDisplay.innerHTML = response.data.new_cache_size;
+                            }
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
                         }
