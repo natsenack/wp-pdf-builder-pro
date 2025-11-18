@@ -4694,6 +4694,7 @@
 
     <script>
         jQuery(document).ready(function($) {
+            console.log('[PDF Builder JS] Script chargé et exécuté');
             let currentTab = 'general';
             let isLoadingBackups = false; // Flag pour éviter la fermeture automatique pendant le chargement
 
