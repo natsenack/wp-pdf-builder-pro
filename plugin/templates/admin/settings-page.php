@@ -1143,39 +1143,39 @@
                 </form>
 
                 <script>
-                jQuery(document).ready(function($) {
-                    // Fonction pour afficher/cacher les éléments du cache
-                    function toggleCacheElements(show) {
-                        // Éléments à cacher/montrer
-                        var elementsToToggle = [
-                            'tr:has([for="cache_compression"])', // Ligne compression
-                            'tr:has([for="cache_auto_cleanup"])', // Ligne nettoyage auto
-                            'tr:has([for="cache_max_size"])', // Ligne taille max
-                            'tr:has([for="cache_ttl"])', // Ligne TTL
-                            'tr:has(#test-cache-btn)', // Ligne test du système
-                            'tr:has(#clear-cache-general-btn)', // Ligne vider le cache
-                            '.form-table + div' // Section d'informations sur l'état du cache
-                        ];
+                    jQuery(document).ready(function($) {
+                        // Fonction pour afficher/cacher les éléments du cache
+                        function toggleCacheElements(show) {
+                            // Éléments à cacher/montrer
+                            var elementsToToggle = [
+                                'tr:has([for="cache_compression"])', // Ligne compression
+                                'tr:has([for="cache_auto_cleanup"])', // Ligne nettoyage auto
+                                'tr:has([for="cache_max_size"])', // Ligne taille max
+                                'tr:has([for="cache_ttl"])', // Ligne TTL
+                                'tr:has(#test-cache-btn)', // Ligne test du système
+                                'tr:has(#clear-cache-general-btn)', // Ligne vider le cache
+                                '.form-table + div' // Section d'informations sur l'état du cache
+                            ];
 
-                        elementsToToggle.forEach(function(selector) {
-                            if (show) {
-                                $(selector).show();
-                            } else {
-                                $(selector).hide();
-                            }
+                            elementsToToggle.forEach(function(selector) {
+                                if (show) {
+                                    $(selector).show();
+                                } else {
+                                    $(selector).hide();
+                                }
+                            });
+                        }
+
+                        // Vérifier l'état initial du cache
+                        var cacheEnabled = $('#general_cache_enabled').is(':checked');
+                        toggleCacheElements(cacheEnabled);
+
+                        // Gérer le changement d'état du cache
+                        $('#general_cache_enabled').on('change', function() {
+                            var isEnabled = $(this).is(':checked');
+                            toggleCacheElements(isEnabled);
                         });
-                    }
-
-                    // Vérifier l'état initial du cache
-                    var cacheEnabled = $('#general_cache_enabled').is(':checked');
-                    toggleCacheElements(cacheEnabled);
-
-                    // Gérer le changement d'état du cache
-                    $('#general_cache_enabled').on('change', function() {
-                        var isEnabled = $(this).is(':checked');
-                        toggleCacheElements(isEnabled);
                     });
-                });
                 </script>
             </section>
 
@@ -1375,83 +1375,43 @@
                 </script>
 
                 <style>
-                /* Classe commune pour les sections de l'onglet général */
-                .general-section {
-                    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-                    border: 2px solid #e9ecef;
-                    border-radius: 12px;
-                    padding: 20px;
-                    margin-bottom: 20px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                }
-                .general-section h3 {
-                    color: #495057;
-                    margin-top: 0;
-                    border-bottom: 2px solid #e9ecef;
-                    padding-bottom: 8px;
-                    font-size: 18px;
-                }
-                .form-table input.error {
-                    border-color: #dc3545 !important;
-                    box-shadow: 0 0 0 1px #dc3545 !important;
-                    background-color: #fff5f5 !important;
-                }
-                .form-table input.error:focus {
-                    border-color: #dc3545 !important;
-                    box-shadow: 0 0 0 1px #dc3545, 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
-                }
-                .form-table input.valid {
-                    border-color: #28a745 !important;
-                    box-shadow: 0 0 0 1px #28a745 !important;
-                    background-color: #f8fff8 !important;
-                }
-                .form-table input.valid:focus {
-                    border-color: #28a745 !important;
-                    box-shadow: 0 0 0 1px #28a745, 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
-                }
+                    /* Classe commune pour les sections de l'onglet général */
+                    .general-section {
+                        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                        border: 2px solid #e9ecef;
+                        border-radius: 12px;
+                        padding: 20px;
+                        margin-bottom: 20px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                    }
+                    .general-section h3 {
+                        color: #495057;
+                        margin-top: 0;
+                        border-bottom: 2px solid #e9ecef;
+                        padding-bottom: 8px;
+                        font-size: 18px;
+                    }
+                    .form-table input.error {
+                        border-color: #dc3545 !important;
+                        box-shadow: 0 0 0 1px #dc3545 !important;
+                        background-color: #fff5f5 !important;
+                    }
+                    .form-table input.error:focus {
+                        border-color: #dc3545 !important;
+                        box-shadow: 0 0 0 1px #dc3545, 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+                    }
+                    .form-table input.valid {
+                        border-color: #28a745 !important;
+                        box-shadow: 0 0 0 1px #28a745 !important;
+                        background-color: #f8fff8 !important;
+                    }
+                    .form-table input.valid:focus {
+                        border-color: #28a745 !important;
+                        box-shadow: 0 0 0 1px #28a745, 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
+                    }
                </style>
             </section>
 
-            <!-- Section Paramètres PDF -->
-            <section class="general-section">
-                <h3>📄 Configuration PDF</h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_pdf_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="general">
-
-                  <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="general_pdf_quality">Qualité PDF</label></th>
-                        <td>
-                            <select id="general_pdf_quality" name="pdf_quality">
-                                <option value="low" <?php selected($pdf_quality, 'low'); ?>>Faible (fichiers plus petits)</option>
-                                <option value="medium" <?php selected($pdf_quality, 'medium'); ?>>Moyen</option>
-                                <option value="high" <?php selected($pdf_quality, 'high'); ?>>Élevée (meilleure qualité)</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="default_format">Format PDF par défaut</label></th>
-                        <td>
-                            <select id="default_format" name="default_format">
-                                <option value="A4" <?php selected($default_format, 'A4'); ?>>A4</option>
-                                <option value="A3" <?php selected($default_format, 'A3'); ?>>A3</option>
-                                <option value="Letter" <?php selected($default_format, 'Letter'); ?>>Letter</option>
-                                <option value="Legal" <?php selected($default_format, 'Legal'); ?>>Legal</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="default_orientation">Orientation par défaut</label></th>
-                        <td>
-                            <select id="default_orientation" name="default_orientation">
-                                <option value="portrait" <?php selected($default_orientation, 'portrait'); ?>>Portrait</option>
-                                <option value="landscape" <?php selected($default_orientation, 'landscape'); ?>>Paysage</option>
-                            </select>
-                        </td>
-                    </tr>
-            </section>
         </div>
         <div id="licence" class="tab-content hidden-tab">
             <form method="post" id="licence-form" action="">
