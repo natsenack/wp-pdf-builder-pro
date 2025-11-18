@@ -2088,11 +2088,7 @@
                     <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; font-size: 18px;">
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             📋 Cache & Performance
-                            <?php if (get_option('pdf_builder_cache_enabled', false)): ?>
-                                <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
-                            <?php else: ?>
-                                <span style="font-size: 12px; background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">NON ACTIF</span>
-                            <?php endif; ?>
+                            <span class="cache-performance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_cache_enabled', false) ? 'ACTIF' : 'NON ACTIF'; ?></span>
                         </span>
                     </h3>
 
@@ -5358,20 +5354,17 @@
                 const $cacheStatusIcon = $('.systeme-cache-status .cache-enabled-indicator');
                 const $cacheStatusText = $('.systeme-cache-status .cache-enabled-text');
                 const $container = $('.systeme-cache-status');
-
-                console.log('[DEBUG] Container visible:', $container.is(':visible'));
-                console.log('[DEBUG] Container CSS display:', $container.css('display'));
-                console.log('[DEBUG] Avant mise à jour - Icon:', $cacheStatusIcon.html(), 'Text:', $cacheStatusText.text());
+                const $performanceStatus = $('.cache-performance-status');
 
                 if (isEnabled) {
                     $cacheStatusIcon.html('ACTIF').css('color', '#28a745');
                     $cacheStatusText.text('Cache activé');
+                    $performanceStatus.html('ACTIF').css('background', '#28a745');
                 } else {
                     $cacheStatusIcon.html('INACTIF').css('color', '#dc3545');
                     $cacheStatusText.text('Cache désactivé');
+                    $performanceStatus.html('NON ACTIF').css('background', '#dc3545');
                 }
-
-                console.log('[DEBUG] Après mise à jour - Icon:', $cacheStatusIcon.html(), 'Text:', $cacheStatusText.text());
 
                 // Forcer un re-render
                 $container.hide().show(0);
