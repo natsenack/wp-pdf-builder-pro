@@ -428,6 +428,12 @@ function pdf_builder_save_settings_ajax() {
 
     // Si current_tab est 'all', sauvegarder tous les paramètres
     if ($current_tab === 'all') {
+        // DEBUG: Log des paramètres de sécurité reçus
+        error_log('[DEBUG AJAX MAIN] Paramètres sécurité reçus:');
+        error_log('[DEBUG AJAX MAIN] security_level: ' . (isset($_POST['security_level']) ? $_POST['security_level'] : 'NOT_SET'));
+        error_log('[DEBUG AJAX MAIN] enable_logging: ' . (isset($_POST['enable_logging']) ? $_POST['enable_logging'] : 'NOT_SET'));
+        error_log('[DEBUG AJAX MAIN] gdpr_enabled: ' . (isset($_POST['gdpr_enabled']) ? $_POST['gdpr_enabled'] : 'NOT_SET'));
+
         // Collecter tous les paramètres possibles
         $all_settings = array(
             // Général
@@ -457,6 +463,20 @@ function pdf_builder_save_settings_ajax() {
 
             // Accès - Rôles autorisés
             'allowed_roles' => isset($_POST['pdf_builder_allowed_roles']) ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles']) : ['administrator'],
+
+            // Sécurité
+            'security_level' => sanitize_text_field($_POST['security_level'] ?? 'medium'),
+            'enable_logging' => !empty($_POST['enable_logging']) ? '1' : '0',
+
+            // RGPD
+            'gdpr_enabled' => !empty($_POST['gdpr_enabled']) ? '1' : '0',
+            'gdpr_consent_required' => !empty($_POST['gdpr_consent_required']) ? '1' : '0',
+            'gdpr_data_retention' => intval($_POST['gdpr_data_retention'] ?? 2555),
+            'gdpr_audit_enabled' => !empty($_POST['gdpr_audit_enabled']) ? '1' : '0',
+            'gdpr_encryption_enabled' => !empty($_POST['gdpr_encryption_enabled']) ? '1' : '0',
+            'gdpr_consent_analytics' => !empty($_POST['gdpr_consent_analytics']) ? '1' : '0',
+            'gdpr_consent_templates' => !empty($_POST['gdpr_consent_templates']) ? '1' : '0',
+            'gdpr_consent_marketing' => !empty($_POST['gdpr_consent_marketing']) ? '1' : '0',
         );
 
         foreach ($all_settings as $key => $value) {
@@ -468,6 +488,12 @@ function pdf_builder_save_settings_ajax() {
             }
         }
         $saved_count = count($all_settings);
+
+        // DEBUG: Vérification des options sauvegardées
+        error_log('[DEBUG AJAX MAIN] Options sauvegardées:');
+        error_log('[DEBUG AJAX MAIN] pdf_builder_security_level: ' . get_option('pdf_builder_security_level', 'DEFAULT'));
+        error_log('[DEBUG AJAX MAIN] pdf_builder_enable_logging: ' . get_option('pdf_builder_enable_logging', 'DEFAULT'));
+        error_log('[DEBUG AJAX MAIN] pdf_builder_gdpr_enabled: ' . get_option('pdf_builder_gdpr_enabled', 'DEFAULT'));
 
     } else {
         // Traiter selon l'onglet (code existant)
