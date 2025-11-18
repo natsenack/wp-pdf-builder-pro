@@ -169,7 +169,7 @@ class LicenseTestHandler
         try {
             // Générer une nouvelle clé
             $new_key = $this->generateTestKey();
-            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Generated key: ' . $new_key);
+            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Generated key: ' . $new_key); }
 
             // Sauvegarder la clé
             $saved = $this->saveTestKey($new_key);
@@ -184,7 +184,7 @@ class LicenseTestHandler
             // Sauvegarder la date d'expiration (30 jours)
             $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
             update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
-            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Expiration date set: ' . $expires_in_30_days);
+            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Expiration date set: ' . $expires_in_30_days); }
 
             // Retourner la clé générée
             wp_send_json_success([
@@ -194,7 +194,7 @@ class LicenseTestHandler
             ]);
             if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Generate key response sent'); }
         } catch (\Exception $e) {
-            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Generate key exception: ' . $e->getMessage());
+            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Generate key exception: ' . $e->getMessage()); }
             wp_send_json_error([
                 'message' => 'Erreur: ' . $e->getMessage()
             ]);
@@ -292,11 +292,11 @@ class LicenseTestHandler
         try {
             // Récupérer l'état actuel
             $current_state = $this->isTestModeEnabled();
-            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Current state: ' . ($current_state ? 'enabled' : 'disabled'));
+            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Current state: ' . ($current_state ? 'enabled' : 'disabled')); }
 
             // Basculer l'état
             $new_state = !$current_state;
-            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: New state will be: ' . ($new_state ? 'enabled' : 'disabled'));
+            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: New state will be: ' . ($new_state ? 'enabled' : 'disabled')); }
 
             // Sauvegarder le nouvel état
             $this->setTestModeEnabled($new_state);
@@ -309,7 +309,7 @@ class LicenseTestHandler
             ]);
             if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Response sent successfully'); }
         } catch (\Exception $e) {
-            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Exception caught: ' . $e->getMessage());
+            if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: Exception caught: ' . $e->getMessage()); }
             wp_send_json_error([
                 'message' => 'Erreur: ' . $e->getMessage()
             ]);
@@ -336,9 +336,10 @@ class LicenseTestHandler
         }
 
         try {
-// Supprimer la clé de test
-            delete_option('pdf_builder_license_test_key'); }
-// Retourner la confirmation
+            // Supprimer la clé de test
+            delete_option('pdf_builder_license_test_key');
+
+            // Retourner la confirmation
             wp_send_json_success([
                 'message' => '✅ Clé de test supprimée'
             ]);
@@ -364,9 +365,9 @@ class LicenseTestHandler
         // Vérifier le nonce - accepter avec -1 si non fourni
         $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '-1';
         if ($nonce !== '-1' && !wp_verify_nonce($nonce, 'pdf_builder_cleanup_license')) {
-        // Si la vérification échoue, essayer quand même pour les admin authentifiés
+            // Si la vérification échoue, essayer quand même pour les admin authentifiés
             // (le nonce peut être incorrect pour les AJAX handlers)
-            error_log('PDF Builder: Nonce verification failed for cleanup, but attempting anyway for authenticated user'); }
+            error_log('PDF Builder: Nonce verification failed for cleanup, but attempting anyway for authenticated user');
         }
 
         try {
@@ -384,7 +385,7 @@ class LicenseTestHandler
             }
 
             // Définir l'état clean
-            update_option('pdf_builder_license_status', 'free'); }
+            update_option('pdf_builder_license_status', 'free');
             wp_send_json_success([
                 'message' => '✨ Licence complètement nettoyée et réinitialisée'
             ]);
