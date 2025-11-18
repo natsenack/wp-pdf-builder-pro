@@ -1007,7 +1007,7 @@ function pdf_builder_download_backup() {
         }
 
         // Définir les headers pour le téléchargement
-        header('Content-Type: application/json');
+        header('Content-Type: application/zip');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Content-Length: ' . filesize($filepath));
         header('Cache-Control: no-cache, no-store, must-revalidate');
