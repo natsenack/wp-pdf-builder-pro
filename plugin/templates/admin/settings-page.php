@@ -2724,7 +2724,7 @@
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                     <span style="display: inline-flex; align-items: center; gap: 10px;">
                         🛡️ Sécurité
-                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                        <span class="security-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_enable_logging', true) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_enable_logging', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                     </span>
                 </h3>
 
@@ -5379,6 +5379,7 @@
                 updateStatusIndicator('input[name="cache_enabled"]', '.cache-performance-status');
                 updateStatusIndicator('input[name="systeme_auto_maintenance"]', '.maintenance-status');
                 updateStatusIndicator('input[name="systeme_auto_backup"]', '.backup-status');
+                updateStatusIndicator('input[name="enable_logging"]', '.security-status');
             }
 
             // Initialiser les indicateurs au chargement de la page
