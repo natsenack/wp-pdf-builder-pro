@@ -387,9 +387,13 @@
                         $backup_retention = intval($_POST['systeme_backup_retention']);
                         $auto_backup_frequency = isset($_POST['systeme_auto_backup_frequency']) ? sanitize_text_field($_POST['systeme_auto_backup_frequency']) : 'daily';
 
-                        // DEBUG: Log de la valeur reçue du formulaire
+                        // DEBUG: Log détaillé de la valeur reçue du formulaire
                         if (defined('WP_DEBUG') && WP_DEBUG) {
+                            error_log('[PDF Builder] === TRAITEMENT SAUVEGARDE ===');
                             error_log('[PDF Builder] Form received - Auto backup: ' . $auto_backup . ', Frequency: ' . $auto_backup_frequency . ', Retention: ' . $backup_retention);
+                            error_log('[PDF Builder] POST data contains systeme_auto_backup_frequency: ' . (isset($_POST['systeme_auto_backup_frequency']) ? 'YES' : 'NO'));
+                            error_log('[PDF Builder] Raw POST systeme_auto_backup_frequency: ' . (isset($_POST['systeme_auto_backup_frequency']) ? $_POST['systeme_auto_backup_frequency'] : 'NOT SET'));
+                            error_log('[PDF Builder] All POST keys: ' . implode(', ', array_keys($_POST)));
                         }
 
                         // Validation de la fréquence
@@ -403,6 +407,13 @@
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
                         update_option('pdf_builder_auto_backup_frequency', $auto_backup_frequency);
+
+                        // DEBUG: Vérifier que la valeur a été sauvegardée
+                        if (defined('WP_DEBUG') && WP_DEBUG) {
+                            $saved_frequency = get_option('pdf_builder_auto_backup_frequency', 'NOT_SET');
+                            error_log('[PDF Builder] Frequency saved and retrieved: ' . $saved_frequency);
+                            error_log('[PDF Builder] Frequency matches input: ' . ($saved_frequency === $auto_backup_frequency ? 'YES' : 'NO'));
+                        }
 
                         // Reprogrammer le cron avec la nouvelle fréquence
                         pdf_builder_reinit_auto_backup();
@@ -4787,6 +4798,15 @@
                             formData.append(name, '0');
                         }
                     });
+
+                    // S'assurer que le select de fréquence des sauvegardes est toujours inclus,
+                    // même s'il est masqué (quand les sauvegardes automatiques sont désactivées)
+                    const $frequencySelect = $('#systeme_auto_backup_frequency');
+                    if ($frequencySelect.length > 0) {
+                        const frequencyValue = $frequencySelect.val() || 'daily';
+                        formData.append('systeme_auto_backup_frequency', frequencyValue);
+                        console.log('[PDF Builder] Frequency select value:', frequencyValue);
+                    }
 
                     // Ajouter action et nonce
                     formData.append('action', 'pdf_builder_save_settings');
