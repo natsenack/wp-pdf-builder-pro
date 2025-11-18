@@ -10,34 +10,30 @@
                     </span>
                 </h3>
 
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_securite', 'pdf_builder_securite_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="securite">
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="security_level">Niveau de sécurité</label></th>
-                            <td>
-                                <select id="security_level" name="security_level">
-                                    <option value="low" <?php selected(get_option('pdf_builder_security_level', 'medium'), 'low'); ?>>Faible</option>
-                                    <option value="medium" <?php selected(get_option('pdf_builder_security_level', 'medium'), 'medium'); ?>>Moyen</option>
-                                    <option value="high" <?php selected(get_option('pdf_builder_security_level', 'medium'), 'high'); ?>>Élevé</option>
-                                </select>
-                                <p class="description">Niveau de sécurité pour la génération de PDF</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="enable_logging">Journalisation activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="enable_logging" name="enable_logging" value="1" <?php checked(get_option('pdf_builder_enable_logging', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Active la journalisation des actions pour audit</p>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
+                <!-- Section Paramètres de sécurité -->
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="security_level">Niveau de sécurité</label></th>
+                        <td>
+                            <select id="security_level" name="security_level">
+                                <option value="low" <?php selected(get_option('pdf_builder_security_level', 'medium'), 'low'); ?>>Faible</option>
+                                <option value="medium" <?php selected(get_option('pdf_builder_security_level', 'medium'), 'medium'); ?>>Moyen</option>
+                                <option value="high" <?php selected(get_option('pdf_builder_security_level', 'medium'), 'high'); ?>>Élevé</option>
+                            </select>
+                            <p class="description">Niveau de sécurité pour la génération de PDF</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="enable_logging">Journalisation activée</label></th>
+                        <td>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="enable_logging" name="enable_logging" value="1" <?php checked(get_option('pdf_builder_enable_logging', true)); ?>>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <p class="description">Active la journalisation des actions pour audit</p>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
             <!-- Section RGPD -->
@@ -49,13 +45,9 @@
                     </span>
                 </h3>
 
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_rgpd', 'pdf_builder_rgpd_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="securite">
-
-                    <!-- Section Paramètres RGPD -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">⚙️ Paramètres RGPD</h4>
-                    <table class="form-table">
+                <!-- Section Paramètres RGPD -->
+                <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">⚙️ Paramètres RGPD</h4>
+                <table class="form-table">
                         <tr>
                             <th scope="row"><label for="gdpr_enabled">RGPD Activé</label></th>
                             <td>
@@ -180,5 +172,4 @@
                             <div id="audit-log-content"></div>
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>

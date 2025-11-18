@@ -422,6 +422,22 @@ document.addEventListener('DOMContentLoaded', function() {
             backupBadge.style.background = backupEnabled ? '#28a745' : '#dc3545';
             backupBadge.textContent = backupEnabled ? 'ACTIF' : 'INACTIF';
         }
+
+        // Badge Sécurité
+        const loggingEnabled = document.getElementById('enable_logging')?.checked || false;
+        const securityBadge = document.querySelector('.security-status');
+        if (securityBadge) {
+            securityBadge.style.background = loggingEnabled ? '#28a745' : '#dc3545';
+            securityBadge.textContent = loggingEnabled ? 'ACTIF' : 'INACTIF';
+        }
+
+        // Badge RGPD
+        const gdprEnabled = document.getElementById('gdpr_enabled')?.checked || false;
+        const rgpdBadge = document.querySelector('.rgpd-status');
+        if (rgpdBadge) {
+            rgpdBadge.style.background = gdprEnabled ? '#28a745' : '#dc3545';
+            rgpdBadge.textContent = gdprEnabled ? 'ACTIF' : 'INACTIF';
+        }
     }
 
     // Fonctions pour collecter les données de chaque onglet
