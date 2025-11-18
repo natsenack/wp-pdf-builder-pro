@@ -2,6 +2,7 @@
 /**
  * Scripts JavaScript pour la page de paramètres
  * Charge les fichiers JavaScript externes
+ * Updated: 2025-11-18 20:20:00
  */
 
 // Inclure d'abord les paramètres canvas

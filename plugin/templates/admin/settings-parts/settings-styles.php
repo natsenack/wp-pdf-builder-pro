@@ -2,6 +2,7 @@
 /**
  * Styles CSS pour la page de paramètres
  * Charge le fichier settings.css externe
+ * Updated: 2025-11-18 20:20:00
  */
 
 // Enregistrer et charger la feuille de style CSS

@@ -1,1 +1,1 @@
-<?php // Modals HTML ?>
+<?php // Modal components - Updated: 2025-11-18 20:20:00 ?>
