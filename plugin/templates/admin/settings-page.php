@@ -3013,281 +3013,6 @@
         <div id="contenu" class="tab-content hidden-tab">
             <h2>🎨 Contenu & Design</h2>
 
-            <!-- Section Canvas -->
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
-                    <span style="display: inline-flex; align-items: center; gap: 10px;">
-                        🖼️ Canvas
-                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
-                    </span>
-                </h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_canvas', 'pdf_builder_canvas_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="canvas">
-
-                    <!-- Grille de cartes Canvas -->
-                    <div class="canvas-settings-grid">
-                        <!-- Carte Dimensions & Format -->
-                        <div class="canvas-card" data-category="dimensions">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-icon">📏</div>
-                                <h4>Dimensions & Format</h4>
-                                <div class="canvas-card-status" id="dimensions-status">ACTIF</div>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Configuration des dimensions, format et orientation du canvas</p>
-                                <div class="canvas-card-preview">
-                                    <div class="preview-format">A4</div>
-                                    <div class="preview-size">800×600px</div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="dimensions">
-                                    ⚙️ Configurer
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Carte Apparence -->
-                        <div class="canvas-card" data-category="appearance">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-icon">🎨</div>
-                                <h4>Apparence</h4>
-                                <div class="canvas-card-status" id="appearance-status">ACTIF</div>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Couleurs, transparences et style visuel du canvas</p>
-                                <div class="canvas-card-preview">
-                                    <div class="preview-colors">
-                                        <div class="color-preview" style="background: <?php echo esc_attr(get_option('pdf_builder_canvas_background_color', '#ffffff')); ?>; border: 1px solid #ddd;"></div>
-                                        <div class="color-preview" style="background: <?php echo esc_attr(get_option('pdf_builder_canvas_container_background_color', '#f8f9fa')); ?>; border: 1px solid #ddd;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="appearance">
-                                    🎨 Personnaliser
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Carte Grille & Guides -->
-                        <div class="canvas-card" data-category="grid">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-icon">📊</div>
-                                <h4>Grille & Guides</h4>
-                                <div class="canvas-card-status" id="grid-status">ACTIF</div>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Système d'alignement et guides de conception</p>
-                                <div class="canvas-card-preview">
-                                    <div class="grid-preview">
-                                        <div class="grid-line"></div>
-                                        <div class="grid-line"></div>
-                                        <div class="grid-line"></div>
-                                        <div class="grid-dot"></div>
-                                        <div class="grid-dot"></div>
-                                        <div class="grid-dot"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="grid">
-                                    📐 Ajuster
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Carte Zoom & Navigation -->
-                        <div class="canvas-card" data-category="zoom">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-icon">🔍</div>
-                                <h4>Zoom & Navigation</h4>
-                                <div class="canvas-card-status" id="zoom-status">ACTIF</div>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Contrôles de zoom et navigation dans le canvas</p>
-                                <div class="canvas-card-preview">
-                                    <div class="zoom-preview">
-                                        <div class="zoom-controls">
-                                            <span class="zoom-plus">+</span>
-                                            <span class="zoom-value">100%</span>
-                                            <span class="zoom-minus">-</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="zoom">
-                                    🔍 Régler
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Carte Éléments Interactifs -->
-                        <div class="canvas-card" data-category="interaction">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-icon">🎯</div>
-                                <h4>Éléments Interactifs</h4>
-                                <div class="canvas-card-status" id="interaction-status">ACTIF</div>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Poignées, rotation et interactions avec les éléments</p>
-                                <div class="canvas-card-preview">
-                                    <div class="interaction-preview">
-                                        <div class="element-handle">⬜</div>
-                                        <div class="element-handle">🔄</div>
-                                        <div class="element-handle">↗️</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="interaction">
-                                    🎯 Configurer
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Carte Comportement -->
-                        <div class="canvas-card" data-category="behavior">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-icon">⚙️</div>
-                                <h4>Comportement</h4>
-                                <div class="canvas-card-status" id="behavior-status">ACTIF</div>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Sélection, copier-coller et raccourcis clavier</p>
-                                <div class="canvas-card-preview">
-                                    <div class="behavior-preview">
-                                        <div class="behavior-icon">👆</div>
-                                        <div class="behavior-icon">📋</div>
-                                        <div class="behavior-icon">⌨️</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="behavior">
-                                    ⚙️ Ajuster
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Carte Export & Qualité -->
-                        <div class="canvas-card" data-category="export">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-icon">📤</div>
-                                <h4>Export & Qualité</h4>
-                                <div class="canvas-card-status" id="export-status">ACTIF</div>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Paramètres d'export PDF et qualité de rendu</p>
-                                <div class="canvas-card-preview">
-                                    <div class="export-preview">
-                                        <div class="export-format">PDF</div>
-                                        <div class="export-quality">HD</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="export">
-                                    📤 Optimiser
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Carte Performance -->
-                        <div class="canvas-card" data-category="performance">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-icon">⚡</div>
-                                <h4>Performance</h4>
-                                <div class="canvas-card-status" id="performance-status">ACTIF</div>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Optimisations et accélération matérielle</p>
-                                <div class="canvas-card-preview">
-                                    <div class="performance-preview">
-                                        <div class="performance-bar">
-                                            <div class="performance-fill" style="width: 85%"></div>
-                                        </div>
-                                        <div class="performance-fps">60 FPS</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="performance">
-                                    ⚡ Booster
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Carte Sauvegarde -->
-                        <div class="canvas-card" data-category="autosave">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-icon">💾</div>
-                                <h4>Sauvegarde Auto</h4>
-                                <div class="canvas-card-status" id="autosave-status">ACTIF</div>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Sauvegarde automatique et gestion des versions</p>
-                                <div class="canvas-card-preview">
-                                    <div class="autosave-preview">
-                                        <div class="autosave-icon">💾</div>
-                                        <div class="autosave-timer">5min</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="autosave">
-                                    💾 Configurer
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Carte Debug -->
-                        <div class="canvas-card" data-category="debug">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-icon">🐛</div>
-                                <h4>Debug</h4>
-                                <div class="canvas-card-status" id="debug-status">INACTIF</div>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Outils de débogage et monitoring</p>
-                                <div class="canvas-card-preview">
-                                    <div class="debug-preview">
-                                        <div class="debug-icon">🔍</div>
-                                        <div class="debug-fps">FPS</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="debug">
-                                    🐛 Diagnostiquer
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Modale de configuration détaillée -->
-                    <div id="canvas-config-modal" class="canvas-modal" style="display: none;">
-                        <div class="canvas-modal-overlay"></div>
-                        <div class="canvas-modal-content">
-                            <div class="canvas-modal-header">
-                                <h3 id="modal-title">Configuration</h3>
-                                <button type="button" class="canvas-modal-close">&times;</button>
-                            </div>
-                            <div class="canvas-modal-body" id="modal-body">
-                                <!-- Le contenu sera chargé dynamiquement -->
-                            </div>
-                            <div class="canvas-modal-footer">
-                                <button type="button" class="button button-secondary" id="modal-cancel">Annuler</button>
-                                <button type="button" class="button button-primary" id="modal-save">Enregistrer</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
             <!-- Section Templates -->
             <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
@@ -4318,13 +4043,9 @@
             const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
             const tabContents = document.querySelectorAll('.tab-content');
 
-            console.log('Onglets trouvés:', tabLinks.length);
-            tabLinks.forEach(link => console.log('Onglet:', link.getAttribute('data-tab')));
-
             tabLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('Clic sur onglet:', this.getAttribute('data-tab'));
 
                     // Retirer la classe active de tous les onglets
                     tabLinks.forEach(tabLink => {
@@ -4343,11 +4064,9 @@
                     // Afficher le contenu de l'onglet sélectionné
                     const targetTab = this.getAttribute('data-tab');
                     const targetContent = document.getElementById(targetTab);
-                    console.log('Contenu cible:', targetContent);
                     if (targetContent) {
                         targetContent.classList.remove('hidden-tab');
                         targetContent.classList.add('active');
-                        console.log('Onglet activé:', targetTab);
                     }
 
                     // Sauvegarder l'onglet actif dans le localStorage
@@ -6473,10 +6192,9 @@
 
             // === GESTION DES CARTES CANVAS ===
 
-            console.log('Initialisation des cartes Canvas');
+            // Gestionnaire de clic sur les cartes Canvas
             $('.canvas-card').on('click', function() {
                 const category = $(this).data('category');
-                console.log('Clic sur carte:', category);
                 openCanvasModal(category);
             });
 
@@ -6504,6 +6222,7 @@
 
             // Fonction pour ouvrir la modale Canvas
             function openCanvasModal(category) {
+                console.log('Ouverture modale pour catégorie:', category);
                 const modal = $('.canvas-modal');
                 const modalTitle = $('.canvas-modal-header h3');
                 const modalBody = $('.canvas-modal-body');
