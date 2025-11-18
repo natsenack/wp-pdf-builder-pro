@@ -338,9 +338,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Envoyer la requête AJAX
-        console.log('[DEBUG] Sending AJAX request to:', pdf_builder_ajax.ajax_url);
-        console.log('[DEBUG] Request body:', params.toString());
-
         fetch(pdf_builder_ajax.ajax_url, {
             method: 'POST',
             headers: {
@@ -349,49 +346,26 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: params.toString()
         })
-        .then(response => {
-            console.log('[DEBUG] Response status:', response.status);
-            console.log('[DEBUG] Response headers:', response.headers);
-            return response.text(); // Get raw response first
-        })
-        .then(rawResponse => {
-            console.log('[DEBUG] Raw response:', rawResponse);
-            try {
-                const data = JSON.parse(rawResponse);
-                console.log('[DEBUG] Parsed response:', data);
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                saveBtn.classList.remove('saving');
+                saveBtn.classList.add('saved');
+                saveBtn.textContent = '✅ Sauvegardé !';
 
-                if (data.success) {
-                    saveBtn.classList.remove('saving');
-                    saveBtn.classList.add('saved');
-                    saveBtn.textContent = '✅ Sauvegardé !';
+                // Mettre à jour les badges de statut en temps réel
+                updateStatusBadges();
 
-                    // Mettre à jour les badges de statut en temps réel
-                    updateStatusBadges();
-
-                    // Remettre le bouton normal après 3 secondes
-                    setTimeout(() => {
-                        saveBtn.classList.remove('saved');
-                        saveBtn.textContent = '💾 Sauvegarder';
-                        saveBtn.disabled = false;
-                    }, 3000);
-                } else {
-                    console.error('[DEBUG] Server returned error:', data);
-                    saveBtn.classList.remove('saving');
-                    saveBtn.classList.add('error');
-                    saveBtn.textContent = '❌ Erreur';
-
-                    setTimeout(() => {
-                        saveBtn.classList.remove('error');
-                        saveBtn.textContent = '💾 Sauvegarder';
-                        saveBtn.disabled = false;
-                    }, 3000);
-                }
-            } catch (parseError) {
-                console.error('[DEBUG] JSON parse error:', parseError);
-                console.error('[DEBUG] Raw response was:', rawResponse);
+                // Remettre le bouton normal après 3 secondes
+                setTimeout(() => {
+                    saveBtn.classList.remove('saved');
+                    saveBtn.textContent = '💾 Sauvegarder';
+                    saveBtn.disabled = false;
+                }, 3000);
+            } else {
                 saveBtn.classList.remove('saving');
                 saveBtn.classList.add('error');
-                saveBtn.textContent = '❌ Erreur JSON';
+                saveBtn.textContent = '❌ Erreur';
 
                 setTimeout(() => {
                     saveBtn.classList.remove('error');
@@ -401,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
-            console.error('[DEBUG] Fetch error:', error);
+            console.error('Erreur lors de la sauvegarde:', error);
             saveBtn.classList.remove('saving');
             saveBtn.classList.add('error');
             saveBtn.textContent = '❌ Erreur';
@@ -412,14 +386,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveBtn.disabled = false;
             }, 3000);
         });
-    }
+            saveBtn.textContent = '❌ Erreur';
 
-    // === MISE À JOUR DES BADGES DE STATUT ===
+            setTimeout(() => {
+                saveBtn.classList.remove('error');
+                saveBtn.textContent = '💾 Sauvegarder';
+                saveBtn.disabled = false;
+            }, 3000);
+        });
+    }
 
     // Fonction pour mettre à jour les badges de statut après sauvegarde
     function updateStatusBadges() {
-        console.log('[DEBUG] updateStatusBadges called');
-
         // Badge Sécurité - utiliser la valeur sauvegardée
         const securityBadge = document.querySelector('.security-status');
         if (securityBadge) {
@@ -428,7 +406,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentLogging = document.getElementById('enable_logging')?.checked || false;
             securityBadge.style.background = currentLogging ? '#28a745' : '#dc3545';
             securityBadge.textContent = currentLogging ? 'ACTIF' : 'INACTIF';
-            console.log('[DEBUG] Security badge updated - logging:', currentLogging);
         }
 
         // Badge RGPD
@@ -437,7 +414,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentGdpr = document.getElementById('gdpr_enabled')?.checked || false;
             rgpdBadge.style.background = currentGdpr ? '#28a745' : '#dc3545';
             rgpdBadge.textContent = currentGdpr ? 'ACTIF' : 'INACTIF';
-            console.log('[DEBUG] RGPD badge updated - enabled:', currentGdpr);
         }
     }
 
@@ -504,7 +480,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function collectSecuriteSettings(formData) {
         // Collecter les données de l'onglet Sécurité
-        console.log('[DEBUG] collectSecuriteSettings called');
 
         // Sécurité générale - utiliser querySelector pour être plus robuste
         const securityLevelEl = document.querySelector('#security_level');
@@ -512,8 +487,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const securityLevel = securityLevelEl ? securityLevelEl.value : 'medium';
         const enableLogging = enableLoggingEl ? enableLoggingEl.checked : false;
-
-        console.log('[DEBUG] Sécurité - Level:', securityLevel, 'Logging:', enableLogging, 'Elements found:', !!securityLevelEl, !!enableLoggingEl);
 
         formData.append('security_level', securityLevel);
         formData.append('enable_logging', enableLogging ? '1' : '0');
@@ -531,8 +504,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const gdprAuditEnabled = gdprAuditEnabledEl ? gdprAuditEnabledEl.checked : false;
         const gdprEncryptionEnabled = gdprEncryptionEnabledEl ? gdprEncryptionEnabledEl.checked : false;
 
-        console.log('[DEBUG] RGPD - Enabled:', gdprEnabled, 'Consent required:', gdprConsentRequired, 'Data retention:', gdprDataRetention);
-
         formData.append('gdpr_enabled', gdprEnabled ? '1' : '0');
         formData.append('gdpr_consent_required', gdprConsentRequired ? '1' : '0');
         formData.append('gdpr_data_retention', gdprDataRetention);
@@ -547,8 +518,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const gdprConsentAnalytics = gdprConsentAnalyticsEl ? gdprConsentAnalyticsEl.checked : false;
         const gdprConsentTemplates = gdprConsentTemplatesEl ? gdprConsentTemplatesEl.checked : false;
         const gdprConsentMarketing = gdprConsentMarketingEl ? gdprConsentMarketingEl.checked : false;
-
-        console.log('[DEBUG] Consent - Analytics:', gdprConsentAnalytics, 'Templates:', gdprConsentTemplates, 'Marketing:', gdprConsentMarketing);
 
         formData.append('gdpr_consent_analytics', gdprConsentAnalytics ? '1' : '0');
         formData.append('gdpr_consent_templates', gdprConsentTemplates ? '1' : '0');
