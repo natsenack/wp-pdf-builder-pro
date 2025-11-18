@@ -392,7 +392,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveBtn.classList.remove('error');
                 saveBtn.textContent = '💾 Sauvegarder';
                 saveBtn.disabled = false;
-            }, 3000);
         });
     }
 
