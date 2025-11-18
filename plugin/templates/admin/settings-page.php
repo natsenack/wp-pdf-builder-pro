@@ -4730,6 +4730,7 @@
             opacity: 0.5;
             background-color: #f8f9fa;
         }
+        .disabled-row input:disabled,
         .disabled-row select:disabled {
             background-color: #e9ecef;
             cursor: not-allowed;
@@ -5508,6 +5509,50 @@
                 // Synchroniser le champ hidden avec le select au chargement
                 const selectValue = $frequencySelect.val() || 'daily';
                 $frequencyHidden.val(selectValue);
+            });
+
+            // === GESTION DES DÉPENDANCES RGPD ===
+            // Si "RGPD Activé" est désactivé, désactiver tous les autres champs RGPD
+            $('#gdpr_enabled').on('change', function() {
+                const isEnabled = $(this).is(':checked');
+                const rgpdFields = [
+                    '#gdpr_consent_required',
+                    '#gdpr_data_retention',
+                    '#gdpr_audit_enabled',
+                    '#gdpr_encryption_enabled',
+                    '#gdpr_consent_analytics',
+                    '#gdpr_consent_templates',
+                    '#gdpr_consent_marketing'
+                ];
+
+                rgpdFields.forEach(function(fieldSelector) {
+                    const $field = $(fieldSelector);
+                    const $row = $field.closest('tr');
+
+                    if (isEnabled) {
+                        // Réactiver le champ
+                        $field.prop('disabled', false);
+                        $row.removeClass('disabled-row');
+                    } else {
+                        // Désactiver le champ et le décocher/définir à vide
+                        $field.prop('disabled', true);
+                        if ($field.is(':checkbox')) {
+                            $field.prop('checked', false);
+                        } else if ($field.is('input[type="number"]')) {
+                            $field.val('');
+                        }
+                        $row.addClass('disabled-row');
+                    }
+                });
+            });
+
+            // Initialiser l'état des champs RGPD au chargement de la page
+            $(document).ready(function() {
+                const $gdprEnabled = $('#gdpr_enabled');
+                if (!$gdprEnabled.is(':checked')) {
+                    // Simuler le changement pour désactiver les champs
+                    $gdprEnabled.trigger('change');
+                }
             });
 
         });
