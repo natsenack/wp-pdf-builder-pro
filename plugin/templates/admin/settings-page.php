@@ -2137,8 +2137,12 @@
                                     echo "Total calculated size: $cache_size bytes\n";
                                     echo "-->";
 
-                                    // Afficher la taille avec l'unité appropriée
-                                    echo size_format($cache_size);
+                                    // Afficher la taille avec l'unité appropriée et décimales
+                                    if ($cache_size < 1048576) { // < 1 Mo
+                                        echo number_format($cache_size / 1024, 1) . ' Ko';
+                                    } else {
+                                        echo number_format($cache_size / 1048576, 1) . ' Mo';
+                                    }
                                     ?>
                                 </div>
                                 <div style="color: #666; font-size: 12px;">Taille du cache</div>
