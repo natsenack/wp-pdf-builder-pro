@@ -999,11 +999,20 @@ function pdf_builder_download_backup() {
     }
 
     try {
-        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
-        $filepath = $backup_dir . '/' . $filename;
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups/';
+        $filepath = $backup_dir . $filename;
 
         if (!file_exists($filepath)) {
-            wp_die('Fichier de sauvegarde introuvable');
+            wp_die('Fichier de sauvegarde introuvable: ' . $filepath);
+        }
+
+        if (!is_readable($filepath)) {
+            wp_die('Fichier non lisible: ' . $filepath);
+        }
+
+        // Nettoyer toute sortie précédente
+        if (ob_get_level()) {
+            ob_clean();
         }
 
         // Définir les headers pour le téléchargement
@@ -1013,6 +1022,11 @@ function pdf_builder_download_backup() {
         header('Cache-Control: no-cache, no-store, must-revalidate');
         header('Pragma: no-cache');
         header('Expires: 0');
+
+        // Désactiver la compression zlib si activée
+        if (ini_get('zlib.output_compression')) {
+            ini_set('zlib.output_compression', 'Off');
+        }
 
         // Lire et envoyer le fichier
         readfile($filepath);
