@@ -999,7 +999,7 @@
             <h2>🏠 Paramètres Généraux</h2>
 
             <!-- Section Cache et Performance -->
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <section style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">📋 Cache & Performance</h3>
 
                 <form method="post" action="">
@@ -1177,10 +1177,10 @@
                     });
                 });
                 </script>
-            </div>
+            </section>
 
             <!-- Section Informations Entreprise -->
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <section style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🏢 Informations Entreprise</h3>
 
                 <form method="post" action="">
@@ -1188,7 +1188,7 @@
                     <input type="hidden" name="current_tab" value="general">
                     <!-- Le bouton submit est supprimé car on utilise le système AJAX global -->
 
-                    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <article style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                         <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
                         <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
                             <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
@@ -1258,7 +1258,7 @@
                                 </td>
                             </tr>
                         </table>
-                    </div>
+                    </article>
                 </form>
 
                <script>
@@ -1394,10 +1394,10 @@
                     box-shadow: 0 0 0 1px #28a745, 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
                 }
                </style>
-            </div>
+            </section>
 
             <!-- Section Paramètres PDF -->
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <section style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">📄 Configuration PDF</h3>
 
                 <form method="post" action="">
@@ -1437,7 +1437,7 @@
                     </tr>
                   </table>
                 </form>
-            </div>
+            </section>
         </div>
         <div id="licence" class="tab-content hidden-tab">
             <form method="post" id="licence-form" action="">
