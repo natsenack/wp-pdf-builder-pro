@@ -352,6 +352,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveBtn.classList.add('saved');
                 saveBtn.textContent = '✅ Sauvegardé !';
 
+                // Mettre à jour les badges de statut en temps réel
+                updateStatusBadges();
+
                 // Remettre le bouton normal après 3 secondes
                 setTimeout(() => {
                     saveBtn.classList.remove('saved');
@@ -382,6 +385,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveBtn.disabled = false;
             }, 3000);
         });
+    }
+
+    // === MISE À JOUR DES BADGES DE STATUT ===
+
+    // Fonction pour mettre à jour les badges de statut après sauvegarde
+    function updateStatusBadges() {
+        // Badge Cache & Performance
+        const cacheEnabled = document.getElementById('general_cache_enabled')?.checked || false;
+        const cacheBadge = document.querySelector('.cache-performance-status');
+        if (cacheBadge) {
+            cacheBadge.style.background = cacheEnabled ? '#28a745' : '#dc3545';
+            cacheBadge.textContent = cacheEnabled ? 'ACTIF' : 'INACTIF';
+        }
+
+        // Badge Maintenance
+        const maintenanceEnabled = document.getElementById('systeme_auto_maintenance')?.checked || false;
+        const maintenanceBadge = document.querySelector('.maintenance-status');
+        if (maintenanceBadge) {
+            maintenanceBadge.style.background = maintenanceEnabled ? '#28a745' : '#dc3545';
+            maintenanceBadge.textContent = maintenanceEnabled ? 'ACTIF' : 'INACTIF';
+        }
+
+        // Badge Sauvegarde
+        const backupEnabled = document.getElementById('systeme_auto_backup')?.checked || false;
+        const backupBadge = document.querySelector('.backup-status');
+        if (backupBadge) {
+            backupBadge.style.background = backupEnabled ? '#28a745' : '#dc3545';
+            backupBadge.textContent = backupEnabled ? 'ACTIF' : 'INACTIF';
+        }
     }
 
     // Fonctions pour collecter les données de chaque onglet
