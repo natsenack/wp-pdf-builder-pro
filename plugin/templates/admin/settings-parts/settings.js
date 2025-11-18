@@ -199,6 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (viewConsentStatusBtn) {
         console.log('Bouton consentements trouvé:', viewConsentStatusBtn);
         viewConsentStatusBtn.addEventListener('click', function() {
+            console.log('=== NOUVEL APPUI SUR "VOIR MES CONSENTEMENTS" ===');
             console.log('Bouton consentements cliqué');
             const nonce = document.getElementById('export_user_data_nonce')?.value;
             if (!nonce) {
@@ -242,6 +243,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         resultDiv.style.display = 'block';
                         resultDiv.innerHTML = consentHtml;
                         console.log('HTML injecté dans le div');
+                        console.log('Contenu actuel du div:', resultDiv.innerHTML.substring(0, 200) + '...');
+
+                        // Observer les changements dans le div pour détecter quand il se vide
+                        const observer = new MutationObserver(function(mutations) {
+                            mutations.forEach(function(mutation) {
+                                if (mutation.type === 'childList' && mutation.target.innerHTML === '') {
+                                    console.log('ATTENTION: Le div gdpr-user-actions-result a été vidé !');
+                                }
+                            });
+                        });
+                        observer.observe(resultDiv, { childList: true, subtree: true });
                     } else {
                         console.error('Div gdpr-user-actions-result NON trouvé !');
                     }
