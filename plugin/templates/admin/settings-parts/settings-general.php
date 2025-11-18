@@ -4,7 +4,6 @@
  * Updated: 2025-11-18 20:15:00
  */
 ?>
-        <div id="general" class="tab-content active">
             <h2>🏠 Paramètres Généraux</h2>
 
             <!-- Section Informations Entreprise -->
@@ -239,5 +238,3 @@
                     }
                </style>
             </section>
-
-        </div>
