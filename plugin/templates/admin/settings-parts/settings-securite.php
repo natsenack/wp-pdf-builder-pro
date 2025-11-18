@@ -1,19 +1,6 @@
 <?php // Securite tab content - Updated: 2025-11-18 20:20:00 ?>
             <h2>🔒 Sécurité & Conformité</h2>
 
-            <?php
-            // Debug: Afficher les valeurs actuelles des options
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                echo '<div style="background: #f0f0f0; border: 1px solid #ccc; padding: 10px; margin-bottom: 20px; font-family: monospace; font-size: 12px;">';
-                echo '<strong>DEBUG - Valeurs actuelles des options sécurité:</strong><br>';
-                echo 'security_level: ' . get_option('pdf_builder_security_level', 'NOT_SET') . '<br>';
-                echo 'enable_logging: ' . get_option('pdf_builder_enable_logging', 'NOT_SET') . '<br>';
-                echo 'gdpr_enabled: ' . get_option('pdf_builder_gdpr_enabled', 'NOT_SET') . '<br>';
-                echo 'gdpr_data_retention: ' . get_option('pdf_builder_gdpr_data_retention', 'NOT_SET') . '<br>';
-                echo '</div>';
-            }
-            ?>
-
             <!-- Section Sécurité -->
             <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
