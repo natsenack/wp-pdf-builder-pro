@@ -20,8 +20,8 @@ function send_ajax_response($success, $message = '', $data = [])
 }
 
 // Check if this is an AJAX request
-$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) ===
-    'xmlhttprequest';
+$is_ajax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ||
+           (isset($_POST['action']) && !empty($_POST['action']));
 error_log('[DEBUG] is_ajax: ' . ($is_ajax ? 'true' : 'false'));
 error_log('[DEBUG] HTTP_X_REQUESTED_WITH: ' . ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'not set'));
 error_log('[DEBUG] POST action: ' . ($_POST['action'] ?? 'not set'));
