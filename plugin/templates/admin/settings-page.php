@@ -998,187 +998,6 @@
         <div id="general" class="tab-content active">
             <h2>🏠 Paramètres Généraux</h2>
 
-            <!-- Section Cache et Performance -->
-            <section class="general-section">
-                <h3>📋 Cache & Performance</h3>
-
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="general">
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="general_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Améliore les performances en mettant en cache les données</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="cache_compression">Compression du cache</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked(get_option('pdf_builder_cache_compression', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked(get_option('pdf_builder_cache_auto_cleanup', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
-                            <td>
-                                <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo intval(get_option('pdf_builder_cache_max_size', 100)); ?>" min="10" max="1000" step="10" />
-                                <p class="description">Taille maximale du dossier cache en mégaoctets</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
-                            <td>
-                                <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval(get_option('pdf_builder_cache_ttl', 3600)); ?>" min="0" max="86400" />
-                                <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Test du système</th>
-                            <td>
-                                <button type="button" id="test-cache-btn" class="button button-secondary" style="background-color: #6c757d; border-color: #6c757d; color: white; font-weight: bold; padding: 10px 15px;">
-                                    🧪 Tester l'intégration du cache
-                                </button>
-                                <span id="cache-test-results" style="margin-left: 10px;"></span>
-                                <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; color: #155724;"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Vider le cache</th>
-                            <td>
-                                <button type="button" id="clear-cache-general-btn" class="button button-secondary" style="background-color: #dc3232; border-color: #dc3232; color: white; font-weight: bold; padding: 10px 15px;">
-                                    🗑️ Vider tout le cache
-                                </button>
-                                <span id="clear-cache-general-results" style="margin-left: 10px;"></span>
-                                <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <!-- Informations sur l'état du cache -->
-                    <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
-                        <h4 style="margin-top: 0; color: #155724; font-size: 16px;">📊 État du système de cache</h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px;">
-                            <div style="text-align: center;">
-                                <div style="font-size: 24px; font-weight: bold; color: #28a745;">
-                                    <?php
-                                    function get_folder_size($dir) {
-                                        $size = 0;
-                                        if (is_dir($dir)) {
-                                            $files = scandir($dir);
-                                            foreach ($files as $file) {
-                                                if ($file != '.' && $file != '..') {
-                                                    $path = $dir . '/' . $file;
-                                                    if (is_dir($path)) {
-                                                        $size += get_folder_size($path);
-                                                    } else {
-                                                        $size += filesize($path);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        return $size;
-                                    }
-
-                                    $cache_size = 0;
-                                    $upload_dir = wp_upload_dir();
-                                    $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
-                                    if (is_dir($cache_dir)) {
-                                        $cache_size = get_folder_size($cache_dir);
-                                    }
-                                    echo size_format($cache_size);
-                                    ?>
-                                </div>
-                                <div style="color: #666; font-size: 12px;">Taille du cache</div>
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="font-size: 24px; font-weight: bold; color: #28a745;">
-                                    <?php
-                                    $transient_count = 0;
-                                    global $wpdb;
-                                    $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-                                    echo intval($transient_count);
-                                    ?>
-                                </div>
-                                <div style="color: #666; font-size: 12px;">Transients actifs</div>
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="font-size: 24px; font-weight: bold; color: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
-                                    <?php echo get_option('pdf_builder_cache_enabled', false) ? '✅' : '❌'; ?>
-                                </div>
-                                <div style="color: #666; font-size: 12px;">Cache activé</div>
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="font-size: 24px; font-weight: bold; color: #28a745;">
-                                    <?php
-                                    $last_cleanup = get_option('pdf_builder_cache_last_cleanup', 'Jamais');
-                                    if ($last_cleanup !== 'Jamais') {
-                                        $last_cleanup = human_time_diff(strtotime($last_cleanup)) . ' ago';
-                                    }
-                                    echo $last_cleanup;
-                                    ?>
-                                </div>
-                                <div style="color: #666; font-size: 12px;">Dernier nettoyage</div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-                <script>
-                    jQuery(document).ready(function($) {
-                        // Fonction pour afficher/cacher les éléments du cache
-                        function toggleCacheElements(show) {
-                            // Éléments à cacher/montrer
-                            var elementsToToggle = [
-                                'tr:has([for="cache_compression"])', // Ligne compression
-                                'tr:has([for="cache_auto_cleanup"])', // Ligne nettoyage auto
-                                'tr:has([for="cache_max_size"])', // Ligne taille max
-                                'tr:has([for="cache_ttl"])', // Ligne TTL
-                                'tr:has(#test-cache-btn)', // Ligne test du système
-                                'tr:has(#clear-cache-general-btn)', // Ligne vider le cache
-                                '.form-table + div' // Section d'informations sur l'état du cache
-                            ];
-
-                            elementsToToggle.forEach(function(selector) {
-                                if (show) {
-                                    $(selector).show();
-                                } else {
-                                    $(selector).hide();
-                                }
-                            });
-                        }
-
-                        // Vérifier l'état initial du cache
-                        var cacheEnabled = $('#general_cache_enabled').is(':checked');
-                        toggleCacheElements(cacheEnabled);
-
-                        // Gérer le changement d'état du cache
-                        $('#general_cache_enabled').on('change', function() {
-                            var isEnabled = $(this).is(':checked');
-                            toggleCacheElements(isEnabled);
-                        });
-                    });
-                </script>
-            </section>
-
             <!-- Section Informations Entreprise -->
             <section class="general-section">
                 <h3>🏢 Informations Entreprise</h3>
@@ -2213,36 +2032,144 @@
                 <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_systeme_nonce'); ?>
                 <input type="hidden" name="current_tab" value="systeme">
 
-                <!-- Section Performance -->
-                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🚀 Performance</h3>
+                <!-- Section Cache et Performance -->
+                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; font-size: 18px;">📋 Cache & Performance</h3>
 
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><label for="systeme_cache_enabled">Cache activé</label></th>
+                            <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="systeme_cache_enabled" name="systeme_cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', '1'), '1'); ?>>
+                                    <input type="checkbox" id="general_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p class="description">Active le système de cache pour améliorer les performances</p>
+                                <p class="description">Améliore les performances en mettant en cache les données</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="systeme_cache_expiry">Expiration du cache (heures)</label></th>
+                            <th scope="row"><label for="cache_compression">Compression du cache</label></th>
                             <td>
-                                <input type="number" id="systeme_cache_expiry" name="systeme_cache_expiry" value="<?php echo esc_attr(get_option('pdf_builder_cache_expiry', 24)); ?>" min="1" max="168">
-                                <p class="description">Durée avant expiration automatique du cache</p>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked(get_option('pdf_builder_cache_compression', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="systeme_max_cache_size">Taille max du cache (Mo)</label></th>
+                            <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
                             <td>
-                                <input type="number" id="systeme_max_cache_size" name="systeme_max_cache_size" value="<?php echo esc_attr(get_option('pdf_builder_max_cache_size', 100)); ?>" min="10" max="1000">
-                                <p class="description">Taille maximale du cache avant nettoyage automatique</p>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked(get_option('pdf_builder_cache_auto_cleanup', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
+                            <td>
+                                <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo intval(get_option('pdf_builder_cache_max_size', 100)); ?>" min="10" max="1000" step="10" />
+                                <p class="description">Taille maximale du dossier cache en mégaoctets</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
+                            <td>
+                                <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval(get_option('pdf_builder_cache_ttl', 3600)); ?>" min="0" max="86400" />
+                                <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Test du système</th>
+                            <td>
+                                <button type="button" id="test-cache-btn" class="button button-secondary" style="background-color: #6c757d; border-color: #6c757d; color: white; font-weight: bold; padding: 10px 15px;">
+                                    🧪 Tester l'intégration du cache
+                                </button>
+                                <span id="cache-test-results" style="margin-left: 10px;"></span>
+                                <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; color: #155724;"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Vider le cache</th>
+                            <td>
+                                <button type="button" id="clear-cache-general-btn" class="button button-secondary" style="background-color: #dc3232; border-color: #dc3232; color: white; font-weight: bold; padding: 10px 15px;">
+                                    🗑️ Vider tout le cache
+                                </button>
+                                <span id="clear-cache-general-results" style="margin-left: 10px;"></span>
+                                <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
                             </td>
                         </tr>
                     </table>
+
+                    <!-- Informations sur l'état du cache -->
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
+                        <h4 style="margin-top: 0; color: #155724; font-size: 16px;">📊 État du système de cache</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #28a745;">
+                                    <?php
+                                    function get_folder_size($dir) {
+                                        $size = 0;
+                                        if (is_dir($dir)) {
+                                            $files = scandir($dir);
+                                            foreach ($files as $file) {
+                                                if ($file != '.' && $file != '..') {
+                                                    $path = $dir . '/' . $file;
+                                                    if (is_dir($path)) {
+                                                        $size += get_folder_size($path);
+                                                    } else {
+                                                        $size += filesize($path);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        return $size;
+                                    }
+
+                                    $cache_size = 0;
+                                    $upload_dir = wp_upload_dir();
+                                    $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
+                                    if (is_dir($cache_dir)) {
+                                        $cache_size = get_folder_size($cache_dir);
+                                    }
+                                    echo size_format($cache_size);
+                                    ?>
+                                </div>
+                                <div style="color: #666; font-size: 12px;">Taille du cache</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #28a745;">
+                                    <?php
+                                    $transient_count = 0;
+                                    global $wpdb;
+                                    $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+                                    echo intval($transient_count);
+                                    ?>
+                                </div>
+                                <div style="color: #666; font-size: 12px;">Transients actifs</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
+                                    <?php echo get_option('pdf_builder_cache_enabled', false) ? '✅' : '❌'; ?>
+                                </div>
+                                <div style="color: #666; font-size: 12px;">Cache activé</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #28a745;">
+                                    <?php
+                                    $last_cleanup = get_option('pdf_builder_cache_last_cleanup', 'Jamais');
+                                    if ($last_cleanup !== 'Jamais') {
+                                        $last_cleanup = human_time_diff(strtotime($last_cleanup)) . ' ago';
+                                    }
+                                    echo $last_cleanup;
+                                    ?>
+                                </div>
+                                <div style="color: #666; font-size: 12px;">Dernier nettoyage</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Section Maintenance -->
