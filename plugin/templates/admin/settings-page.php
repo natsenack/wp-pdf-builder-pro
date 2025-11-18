@@ -5360,7 +5360,13 @@
             $(document).ready(function() {
                 const $autoBackupCheckbox = $('#systeme_auto_backup');
                 const $frequencySelect = $('#systeme_auto_backup_frequency');
+                const $frequencyHidden = $('#systeme_auto_backup_frequency_hidden');
                 const $frequencyRow = $('#auto_backup_frequency_row');
+
+                console.log('[PDF Builder] Page loaded - initializing frequency controls');
+                console.log('[PDF Builder] Auto backup checkbox checked:', $autoBackupCheckbox.is(':checked'));
+                console.log('[PDF Builder] Frequency select value:', $frequencySelect.val());
+                console.log('[PDF Builder] Frequency hidden value:', $frequencyHidden.val());
 
                 if ($autoBackupCheckbox.is(':checked')) {
                     $frequencySelect.prop('disabled', false);
@@ -5369,6 +5375,11 @@
                     $frequencySelect.prop('disabled', true);
                     $frequencyRow.addClass('disabled-row');
                 }
+
+                // Synchroniser le champ hidden avec le select au chargement
+                const selectValue = $frequencySelect.val() || 'daily';
+                $frequencyHidden.val(selectValue);
+                console.log('[PDF Builder] Initialized hidden field with value:', selectValue);
             });
 
         });
