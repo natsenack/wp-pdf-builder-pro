@@ -354,7 +354,7 @@
                         error_log('[PDF Builder] Données POST reçues: ' . print_r($_POST, true));
 
                         // Vérifier que toutes les données nécessaires sont présentes
-                        $required_fields = ['cache_enabled', 'cache_expiry', 'max_cache_size', 'auto_maintenance', 'auto_backup', 'backup_retention'];
+                        $required_fields = ['systeme_cache_enabled', 'systeme_cache_expiry', 'systeme_max_cache_size', 'systeme_auto_maintenance', 'systeme_auto_backup', 'systeme_backup_retention'];
                         $missing_fields = [];
                         foreach ($required_fields as $field) {
                             if (!isset($_POST[$field])) {
@@ -366,9 +366,9 @@
                         }
 
                         // Traitement des paramètres de performance
-                        $cache_enabled = (isset($_POST['cache_enabled']) && $_POST['cache_enabled'] === '1') ? '1' : '0';
-                        $cache_expiry = intval($_POST['cache_expiry']);
-                        $max_cache_size = intval($_POST['max_cache_size']);
+                        $cache_enabled = (isset($_POST['systeme_cache_enabled']) && $_POST['systeme_cache_enabled'] === '1') ? '1' : '0';
+                        $cache_expiry = intval($_POST['systeme_cache_expiry']);
+                        $max_cache_size = intval($_POST['systeme_max_cache_size']);
 
                         error_log('[PDF Builder] Performance - Cache activé: ' . $cache_enabled . ', Expiration: ' . $cache_expiry . 'h, Taille max: ' . $max_cache_size . 'Mo');
 
@@ -377,7 +377,7 @@
                         update_option('pdf_builder_max_cache_size', $max_cache_size);
 
                         // Traitement des paramètres de maintenance
-                        $auto_maintenance = (isset($_POST['auto_maintenance']) && $_POST['auto_maintenance'] === '1') ? '1' : '0';
+                        $auto_maintenance = (isset($_POST['systeme_auto_maintenance']) && $_POST['systeme_auto_maintenance'] === '1') ? '1' : '0';
                         error_log('[PDF Builder] Maintenance - Auto maintenance: ' . $auto_maintenance);
 
                         update_option('pdf_builder_auto_maintenance', $auto_maintenance);
