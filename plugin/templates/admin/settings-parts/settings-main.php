@@ -351,17 +351,12 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 <script>
 // Tab switching functionality
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Tab switching script loaded');
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
-
-    console.log('Found tabs:', tabs.length);
-    console.log('Found contents:', contents.length);
 
     tabs.forEach(function(tab) {
         tab.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Tab clicked:', this.getAttribute('href'));
 
             // Remove active class from all tabs
             tabs.forEach(function(t) {
@@ -376,16 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             // Show corresponding tab content
             const target = this.getAttribute('href').substring(1);
-            console.log('Target content ID:', target);
-            const targetElement = document.getElementById(target);
-            console.log('Target element found:', targetElement);
-            if (targetElement) {
-                targetElement.classList.add('active');
-                console.log('Active class added to:', target);
-                console.log('Element classes after:', targetElement.className);
-            } else {
-                console.error('Target element not found:', target);
-            }
+            document.getElementById(target).classList.add('active');
         });
     });
 });
