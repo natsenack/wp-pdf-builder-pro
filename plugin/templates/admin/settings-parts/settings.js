@@ -397,6 +397,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction pour mettre à jour les badges de statut après sauvegarde
     function updateStatusBadges() {
+        // Badge Cache & Performance
+        const cacheBadge = document.querySelector('.cache-performance-status');
+        if (cacheBadge) {
+            const currentCache = document.getElementById('general_cache_enabled')?.checked || false;
+            cacheBadge.style.background = currentCache ? '#28a745' : '#dc3545';
+            cacheBadge.textContent = currentCache ? 'ACTIF' : 'INACTIF';
+        }
+
+        // Badge Maintenance
+        const maintenanceBadge = document.querySelector('.maintenance-status');
+        if (maintenanceBadge) {
+            const currentMaintenance = document.getElementById('systeme_auto_maintenance')?.checked || false;
+            maintenanceBadge.style.background = currentMaintenance ? '#28a745' : '#dc3545';
+            maintenanceBadge.textContent = currentMaintenance ? 'ACTIF' : 'INACTIF';
+        }
+
+        // Badge Sauvegarde
+        const backupBadge = document.querySelector('.backup-status');
+        if (backupBadge) {
+            const currentBackup = document.getElementById('systeme_auto_backup')?.checked || false;
+            backupBadge.style.background = currentBackup ? '#28a745' : '#dc3545';
+            backupBadge.textContent = currentBackup ? 'ACTIF' : 'INACTIF';
+        }
+
         // Badge Sécurité - utiliser la valeur sauvegardée
         const securityBadge = document.querySelector('.security-status');
         if (securityBadge) {
@@ -440,11 +464,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function collectSystemeSettings(formData) {
         // Collecter les données de l'onglet Système
+        console.log('[DEBUG] Début collecte système');
+
         const cacheEnabled = document.getElementById('general_cache_enabled')?.checked || false;
         const cacheTtl = document.getElementById('cache_ttl')?.value || '3600';
         const cacheCompression = document.getElementById('cache_compression')?.checked || false;
         const cacheAutoCleanup = document.getElementById('cache_auto_cleanup')?.checked || false;
         const cacheMaxSize = document.getElementById('cache_max_size')?.value || '100';
+
+        console.log('[DEBUG] cacheEnabled element:', document.getElementById('general_cache_enabled'));
+        console.log('[DEBUG] cacheEnabled value:', cacheEnabled);
 
         // Paramètres de maintenance
         const autoMaintenance = document.getElementById('systeme_auto_maintenance')?.checked || false;
@@ -467,6 +496,8 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('systeme_auto_backup', autoBackup ? '1' : '0');
         formData.append('systeme_auto_backup_frequency', backupFrequency);
         formData.append('systeme_backup_retention', backupRetention);
+
+        console.log('[DEBUG] Fin collecte système');
     }
 
     function collectAccesSettings(formData) {

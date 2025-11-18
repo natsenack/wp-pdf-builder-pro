@@ -434,6 +434,12 @@ function pdf_builder_save_settings_ajax() {
         error_log('[DEBUG AJAX MAIN] enable_logging: ' . (isset($_POST['enable_logging']) ? $_POST['enable_logging'] : 'NOT_SET'));
         error_log('[DEBUG AJAX MAIN] gdpr_enabled: ' . (isset($_POST['gdpr_enabled']) ? $_POST['gdpr_enabled'] : 'NOT_SET'));
 
+        // DEBUG: Log des paramètres système reçus
+        error_log('[DEBUG AJAX MAIN] Paramètres système reçus:');
+        error_log('[DEBUG AJAX MAIN] cache_enabled: ' . (isset($_POST['cache_enabled']) ? $_POST['cache_enabled'] : 'NOT_SET'));
+        error_log('[DEBUG AJAX MAIN] systeme_auto_maintenance: ' . (isset($_POST['systeme_auto_maintenance']) ? $_POST['systeme_auto_maintenance'] : 'NOT_SET'));
+        error_log('[DEBUG AJAX MAIN] systeme_auto_backup: ' . (isset($_POST['systeme_auto_backup']) ? $_POST['systeme_auto_backup'] : 'NOT_SET'));
+
         // Collecter tous les paramètres possibles
         $all_settings = array(
             // Général
