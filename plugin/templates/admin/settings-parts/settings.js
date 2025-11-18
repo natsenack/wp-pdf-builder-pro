@@ -337,6 +337,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Envoyer la requête AJAX
+        console.log('🔍 DEBUG: Sending AJAX request...');
+        console.log('🔍 DEBUG: Nonce:', pdf_builder_ajax.nonce);
         fetch(pdf_builder_ajax.ajax_url, {
             method: 'POST',
             headers: {
@@ -344,6 +346,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: params.toString()
+        })
+        .then(response => {
+            console.log('🔍 DEBUG: Response status:', response.status);
+            console.log('🔍 DEBUG: Response ok:', response.ok);
+            return response.text().then(text => {
+                console.log('🔍 DEBUG: Raw response:', text);
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error('🔍 DEBUG: JSON parse error:', e);
+                    throw new Error('Invalid JSON response: ' + text);
+                }
+            });
         })
         .then(data => {
             if (data.success) {
