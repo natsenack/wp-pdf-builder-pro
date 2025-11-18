@@ -2073,7 +2073,12 @@
 
                 <!-- Section Cache et Performance -->
                 <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; font-size: 18px;">📋 Cache & Performance</h3>
+                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; font-size: 18px;">
+                        <span style="display: inline-flex; align-items: center; gap: 10px;">
+                            📋 Cache & Performance
+                            <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                        </span>
+                    </h3>
 
                     <table class="form-table">
                         <tr>
@@ -2223,7 +2228,14 @@
 
                 <!-- Section Maintenance -->
                 <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🔧 Maintenance</h3>
+                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+                        <span style="display: inline-flex; align-items: center; gap: 10px;">
+                            🔧 Maintenance
+                            <?php if (get_option('pdf_builder_auto_maintenance', '0') === '1'): ?>
+                                <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                            <?php endif; ?>
+                        </span>
+                    </h3>
 
                     <table class="form-table">
                         <tr>
@@ -2699,7 +2711,12 @@
 
             <!-- Section Sécurité -->
             <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🛡️ Sécurité</h3>
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+                    <span style="display: inline-flex; align-items: center; gap: 10px;">
+                        🛡️ Sécurité
+                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                    </span>
+                </h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_securite', 'pdf_builder_securite_nonce'); ?>
@@ -2733,7 +2750,12 @@
 
             <!-- Section RGPD -->
             <div style="background: linear-gradient(135deg, #d4edda 0%, #e8f5e8 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">📋 Gestion RGPD & Conformité</h3>
+                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">
+                    <span style="display: inline-flex; align-items: center; gap: 10px;">
+                        📋 Gestion RGPD & Conformité
+                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                    </span>
+                </h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_rgpd', 'pdf_builder_rgpd_nonce'); ?>
@@ -2874,7 +2896,12 @@
 
             <!-- Section Configuration PDF -->
             <section class="general-section">
-                <h3>📄 Configuration PDF</h3>
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+                    <span style="display: inline-flex; align-items: center; gap: 10px;">
+                        📄 Configuration PDF
+                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                    </span>
+                </h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_pdf_nonce'); ?>
@@ -2950,7 +2977,12 @@
 
             <!-- Section Canvas -->
             <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🖼️ Canvas</h3>
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+                    <span style="display: inline-flex; align-items: center; gap: 10px;">
+                        🖼️ Canvas
+                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                    </span>
+                </h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_canvas', 'pdf_builder_canvas_nonce'); ?>
@@ -2977,7 +3009,12 @@
 
             <!-- Section Templates -->
             <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">📋 Templates</h3>
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+                    <span style="display: inline-flex; align-items: center; gap: 10px;">
+                        📋 Templates
+                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                    </span>
+                </h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_templates', 'pdf_builder_templates_nonce'); ?>
