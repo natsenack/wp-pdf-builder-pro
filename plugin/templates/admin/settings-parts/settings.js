@@ -337,10 +337,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Envoyer la requête AJAX
-        console.log('Sending AJAX request with data:');
-        for (let [key, value] of formData.entries()) {
-            console.log(key + ':', value);
-        }
         fetch(pdf_builder_ajax.ajax_url, {
             method: 'POST',
             headers: {

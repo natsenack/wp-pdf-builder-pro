@@ -411,12 +411,8 @@ function pdf_builder_handle_pdf_downloads()
  * Handler AJAX pour sauvegarder les paramètres
  */
 function pdf_builder_save_settings_ajax() {
-    // Debug: Log que la fonction est appelée
-    error_log('[DEBUG] pdf_builder_save_settings_ajax appelée');
-
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
-        error_log('[DEBUG] Nonce invalide');
         wp_send_json_error('Nonce invalide');
         return;
     }
@@ -428,7 +424,6 @@ function pdf_builder_save_settings_ajax() {
     }
 
     $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'all');
-    error_log('[DEBUG] Current tab: ' . $current_tab);
     $saved_count = 0;
 
     // Si current_tab est 'all', sauvegarder tous les paramètres
@@ -477,7 +472,6 @@ function pdf_builder_save_settings_ajax() {
 
         foreach ($all_settings as $key => $value) {
             update_option('pdf_builder_' . $key, $value);
-            error_log("[DEBUG] Saved setting: pdf_builder_{$key} = {$value}");
         }
         $saved_count = count($all_settings);
 
