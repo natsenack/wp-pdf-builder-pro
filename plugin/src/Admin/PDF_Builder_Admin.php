@@ -1316,7 +1316,7 @@ class PdfBuilderAdmin
         if ($hook === 'pdf-builder_page_pdf-builder-settings') {
             wp_enqueue_script(
                 'pdf-builder-settings-page',
-                PDF_BUILDER_PRO_ASSETS_URL . 'templates/admin/js/settings-page.js',
+                plugins_url('templates/admin/js/settings-page.js', PDF_BUILDER_PLUGIN_FILE),
                 ['jquery'],
                 PDF_BUILDER_PRO_VERSION . '-' . time(),
                 true
