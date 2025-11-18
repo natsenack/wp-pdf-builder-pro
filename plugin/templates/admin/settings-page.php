@@ -2220,11 +2220,11 @@
                                 </div>
                                 <div style="color: #666; font-size: 12px;">Transients actifs</div>
                             </div>
-                            <div style="text-align: center;">
-                                <div style="font-size: 24px; font-weight: bold; color: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
+                            <div style="text-align: center;" class="systeme-cache-status">
+                                <div class="cache-enabled-indicator" style="font-size: 24px; font-weight: bold; color: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
                                     <?php echo get_option('pdf_builder_cache_enabled', false) ? '✅' : '❌'; ?>
                                 </div>
-                                <div style="color: #666; font-size: 12px;">Cache activé</div>
+                                <div class="cache-enabled-text" style="color: #666; font-size: 12px;"><?php echo get_option('pdf_builder_cache_enabled', false) ? 'Cache activé' : 'Cache désactivé'; ?></div>
                             </div>
                             <div style="text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold; color: #28a745;">
@@ -4858,6 +4858,22 @@
                                 if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                                     PDF_Builder_Notification_Manager.show_toast('Paramètres enregistrés avec succès!', 'success');
                                 }
+
+                                // Mettre à jour l'indicateur actif/inactif du cache en temps réel
+                                if (currentTab === 'systeme') {
+                                    const cacheEnabledValue = formData.get('cache_enabled') === '1';
+                                    const $cacheStatusIcon = $('.systeme-cache-status .cache-enabled-indicator');
+                                    const $cacheStatusText = $('.systeme-cache-status .cache-enabled-text');
+
+                                    if (cacheEnabledValue) {
+                                        $cacheStatusIcon.html('✅').css('color', '#28a745');
+                                        $cacheStatusText.text('Cache activé');
+                                    } else {
+                                        $cacheStatusIcon.html('❌').css('color', '#dc3545');
+                                        $cacheStatusText.text('Cache désactivé');
+                                    }
+                                }
+
                                 setTimeout(() => {
                                     $btn.removeClass('saved');
                                     $icon.text('💾');
