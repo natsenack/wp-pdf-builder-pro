@@ -123,14 +123,7 @@ jQuery(document).ready(function($) {
         const $cacheEnabledRow = $allRows.first();
 
         // Cacher/afficher toutes les lignes sauf la première
-        $allRows.not($cacheEnabledRow).each(function(index) {
-            if (index < $allRows.length - 2) { // Exclure les 2 dernières lignes (Test et Vider)
-                $(this).toggle(isEnabled);
-            }
-        });
-
-        // Toujours afficher les boutons Test et Vider le cache
-        // Ils sont utiles même si le cache est désactivé pour nettoyer les résidus
+        $allRows.not($cacheEnabledRow).toggle(isEnabled);
     }
 
     // Fonction pour mettre à jour l'état du cache en temps réel
