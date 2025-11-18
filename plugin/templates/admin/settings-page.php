@@ -5191,37 +5191,14 @@
                 });
             });
 
-            // Observer les changements du conteneur #backup-results pour diagnostiquer la fermeture automatique
-            const backupResultsObserver = new MutationObserver(function(mutations) {
-                // Ignorer les changements pendant le chargement pour éviter le spam de logs
-                if (isLoadingBackups) {
-                    return;
-                }
-
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                        // Plus de logs détaillés
-                    }
-                });
-            });
-
-            // Démarrer l'observation du conteneur
-            $(document).ready(function() {
-                const $backupResults = $('#backup-results');
-                if ($backupResults.length > 0) {
-                    backupResultsObserver.observe($backupResults[0], {
-                        childList: true,
-                        characterData: true,
-                        subtree: true
-                    });
-                }
-            });
-
             // Fonction utilitaire pour nettoyer les messages après un délai
             function clearMessageAfterDelay($element, delay = 5000) {
                 setTimeout(() => {
                     if ($element.html().includes('✅') || $element.html().includes('❌')) {
-                        $element.html('');
+                        // Ne pas vider si c'est une liste de sauvegardes (contient des éléments .backup-item)
+                        if (!$element.find('.backup-item').length) {
+                            $element.html('');
+                        }
                     }
                 }, delay);
             }
@@ -5229,9 +5206,12 @@
             // Améliorer la gestion des erreurs AJAX pour tous les boutons
             $(document).ajaxComplete(function(event, xhr, settings) {
                 // Nettoyer automatiquement les messages de succès/erreur après 5 secondes
+                // Mais seulement si ce n'est pas une liste de sauvegardes
                 const $results = $('#backup-results');
                 if ($results.html() && ($results.html().includes('✅') || $results.html().includes('❌'))) {
-                    clearMessageAfterDelay($results);
+                    if (!$results.find('.backup-item').length) {
+                        clearMessageAfterDelay($results);
+                    }
                 }
             });
             $('#test-notifications-success').on('click', function() {
