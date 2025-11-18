@@ -2415,7 +2415,7 @@
                                 <span style="color: #6c757d; font-size: 13px;">Active la création automatique de sauvegardes</span>
                             </td>
                         </tr>
-                        <tr id="auto_backup_frequency_row" style="<?php echo (get_option('pdf_builder_auto_backup', '0') === '1') ? '' : 'display: none;'; ?>">
+                        <tr id="auto_backup_frequency_row">
                             <th scope="row">
                                 <label for="systeme_auto_backup_frequency" style="display: flex; align-items: center; gap: 8px;">
                                     <span>⏰</span> Fréquence des sauvegardes
@@ -2436,7 +2436,7 @@
                                     error_log('[PDF Builder] Select frequency - Stored value: ' . $stored_value . ', Current frequency: ' . $current_frequency);
                                 }
                                 ?>
-                                <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" style="min-width: 200px;">
+                                <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" style="min-width: 200px;" <?php echo (get_option('pdf_builder_auto_backup', '0') === '0') ? 'disabled' : ''; ?>>
                                     <option value="daily" <?php selected($current_frequency, 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
                                     <option value="weekly" <?php selected($current_frequency, 'weekly'); ?>>📆 Hebdomadaire (tous les dimanches)</option>
                                     <option value="monthly" <?php selected($current_frequency, 'monthly'); ?>>📊 Mensuelle (1er du mois)</option>
@@ -4713,6 +4713,16 @@
             100% { transform: scale(1); }
         }
 
+        /* Style pour les lignes désactivées */
+        .disabled-row {
+            opacity: 0.5;
+            background-color: #f8f9fa;
+        }
+        .disabled-row select:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
         /* Responsive design pour mobile */
         @media (max-width: 768px) {
             #floating-save-button {
@@ -4787,9 +4797,7 @@
 
                 // Pour l'onglet système, utiliser le formulaire unique simplifié
                 if (currentTab === 'systeme') {
-                    console.log('[PDF Builder] Processing systeme tab form submission');
                     const $systemeForm = $('#systeme-settings-form');
-                    console.log('[PDF Builder] Systeme form found:', $systemeForm.length > 0);
                     const formData = new FormData($systemeForm[0]);
 
                     // S'assurer que les cases à cocher non cochées sont incluses
@@ -4801,21 +4809,8 @@
                         }
                     });
 
-                    // S'assurer que le select de fréquence des sauvegardes est toujours inclus,
-                    // même s'il est masqué (quand les sauvegardes automatiques sont désactivées)
-                    const $frequencySelect = $('#systeme_auto_backup_frequency');
-                    console.log('[PDF Builder] Frequency select found:', $frequencySelect.length > 0);
-                    console.log('[PDF Builder] Frequency select element:', $frequencySelect);
-                    if ($frequencySelect.length > 0) {
-                        const frequencyValue = $frequencySelect.val() || 'daily';
-                        console.log('[PDF Builder] Frequency select raw val:', $frequencySelect.val());
-                        console.log('[PDF Builder] Frequency select final value:', frequencyValue);
-                        formData.append('systeme_auto_backup_frequency', frequencyValue);
-                        console.log('[PDF Builder] Frequency select value added to formData:', frequencyValue);
-                    } else {
-                        console.log('[PDF Builder] Frequency select NOT found, adding default value');
-                        formData.append('systeme_auto_backup_frequency', 'daily');
-                    }
+                    // Le select de fréquence est maintenant toujours soumis avec le formulaire
+                    // puisqu'il n'est plus masqué mais seulement désactivé
 
                     // Ajouter action et nonce
                     formData.append('action', 'pdf_builder_save_settings');
@@ -5303,25 +5298,31 @@
                 }
             });
 
-            // Gestionnaire pour afficher/masquer le select de fréquence des sauvegardes automatiques
+            // Gestionnaire pour activer/désactiver le select de fréquence des sauvegardes automatiques
             $('#systeme_auto_backup').on('change', function() {
+                const $frequencySelect = $('#systeme_auto_backup_frequency');
                 const $frequencyRow = $('#auto_backup_frequency_row');
                 if ($(this).is(':checked')) {
-                    $frequencyRow.slideDown(300);
+                    $frequencySelect.prop('disabled', false);
+                    $frequencyRow.removeClass('disabled-row');
                 } else {
-                    $frequencyRow.slideUp(300);
+                    $frequencySelect.prop('disabled', true);
+                    $frequencyRow.addClass('disabled-row');
                 }
             });
 
             // Initialisation de l'état du select de fréquence au chargement de la page
             $(document).ready(function() {
                 const $autoBackupCheckbox = $('#systeme_auto_backup');
+                const $frequencySelect = $('#systeme_auto_backup_frequency');
                 const $frequencyRow = $('#auto_backup_frequency_row');
 
                 if ($autoBackupCheckbox.is(':checked')) {
-                    $frequencyRow.show();
+                    $frequencySelect.prop('disabled', false);
+                    $frequencyRow.removeClass('disabled-row');
                 } else {
-                    $frequencyRow.hide();
+                    $frequencySelect.prop('disabled', true);
+                    $frequencyRow.addClass('disabled-row');
                 }
             });
 
