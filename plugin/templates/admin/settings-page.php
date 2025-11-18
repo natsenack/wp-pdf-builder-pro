@@ -327,13 +327,37 @@
                         break;
 
                     case 'securite':
-                        $security_settings = [
-                            'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
-                            'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
-                            'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
-                        ];
-                        update_option('pdf_builder_settings', array_merge(get_option('pdf_builder_settings', []), $security_settings));
-                        send_ajax_response(true, 'Paramètres de sécurité enregistrés avec succès.');
+                        // Traitement des paramètres de sécurité
+                        $security_level = sanitize_text_field($_POST['security_level'] ?? 'medium');
+                        $enable_logging = (isset($_POST['enable_logging']) && $_POST['enable_logging'] === '1') ? '1' : '0';
+
+                        update_option('pdf_builder_security_level', $security_level);
+                        update_option('pdf_builder_enable_logging', $enable_logging);
+
+                        // Traitement des paramètres RGPD
+                        $gdpr_enabled = (isset($_POST['gdpr_enabled']) && $_POST['gdpr_enabled'] === '1') ? '1' : '0';
+                        $gdpr_consent_required = (isset($_POST['gdpr_consent_required']) && $_POST['gdpr_consent_required'] === '1') ? '1' : '0';
+                        $gdpr_data_retention = intval($_POST['gdpr_data_retention'] ?? 2555);
+                        $gdpr_audit_enabled = (isset($_POST['gdpr_audit_enabled']) && $_POST['gdpr_audit_enabled'] === '1') ? '1' : '0';
+                        $gdpr_encryption_enabled = (isset($_POST['gdpr_encryption_enabled']) && $_POST['gdpr_encryption_enabled'] === '1') ? '1' : '0';
+                        $gdpr_consent_analytics = (isset($_POST['gdpr_consent_analytics']) && $_POST['gdpr_consent_analytics'] === '1') ? '1' : '0';
+                        $gdpr_consent_templates = (isset($_POST['gdpr_consent_templates']) && $_POST['gdpr_consent_templates'] === '1') ? '1' : '0';
+                        $gdpr_consent_marketing = (isset($_POST['gdpr_consent_marketing']) && $_POST['gdpr_consent_marketing'] === '1') ? '1' : '0';
+
+                        update_option('pdf_builder_gdpr_enabled', $gdpr_enabled);
+                        update_option('pdf_builder_gdpr_consent_required', $gdpr_consent_required);
+                        update_option('pdf_builder_gdpr_data_retention', $gdpr_data_retention);
+                        update_option('pdf_builder_gdpr_audit_enabled', $gdpr_audit_enabled);
+                        update_option('pdf_builder_gdpr_encryption_enabled', $gdpr_encryption_enabled);
+                        update_option('pdf_builder_gdpr_consent_analytics', $gdpr_consent_analytics);
+                        update_option('pdf_builder_gdpr_consent_templates', $gdpr_consent_templates);
+                        update_option('pdf_builder_gdpr_consent_marketing', $gdpr_consent_marketing);
+
+                        // Debug: Log des valeurs sauvegardées
+                        error_log('[DEBUG] Sécurité - Level: ' . $security_level . ', Logging: ' . $enable_logging);
+                        error_log('[DEBUG] RGPD - Enabled: ' . $gdpr_enabled . ', Consent required: ' . $gdpr_consent_required);
+
+                        send_ajax_response(true, 'Paramètres de sécurité et RGPD enregistrés avec succès.');
                         break;
 
                     case 'canvas':
