@@ -999,8 +999,8 @@
             <h2>🏠 Paramètres Généraux</h2>
 
             <!-- Section Cache et Performance -->
-            <section style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">📋 Cache & Performance</h3>
+            <section class="general-section">
+                <h3>📋 Cache & Performance</h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
@@ -1074,9 +1074,9 @@
                     </table>
 
                     <!-- Informations sur l'état du cache -->
-                    <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
-                        <h4 style="margin-top: 0; color: #155724;">📊 État du système de cache</h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
+                        <h4 style="margin-top: 0; color: #155724; font-size: 16px;">📊 État du système de cache</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px;">
                             <div style="text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold; color: #28a745;">
                                     <?php
@@ -1180,19 +1180,19 @@
             </section>
 
             <!-- Section Informations Entreprise -->
-            <section style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🏢 Informations Entreprise</h3>
+            <section class="general-section">
+                <h3>🏢 Informations Entreprise</h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_company_nonce'); ?>
                     <input type="hidden" name="current_tab" value="general">
                     <!-- Le bouton submit est supprimé car on utilise le système AJAX global -->
 
-                    <article style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                        <h4 style="margin-top: 0; color: #155724;">📋 Informations récupérées automatiquement de WooCommerce</h4>
-                        <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                            <p style="margin: 5px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
-                            <p style="margin: 5px 0;"><strong>Adresse complète :</strong> <?php
+                    <article style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <h4 style="margin-top: 0; color: #155724; font-size: 16px;">📋 Informations récupérées automatiquement de WooCommerce</h4>
+                        <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+                            <p style="margin: 3px 0;"><strong>Nom de l'entreprise :</strong> <?php echo esc_html(get_option('woocommerce_store_name', get_bloginfo('name'))); ?></p>
+                            <p style="margin: 3px 0;"><strong>Adresse complète :</strong> <?php
                             $address = get_option('woocommerce_store_address', '');
                             $city = get_option('woocommerce_store_city', '');
                             $postcode = get_option('woocommerce_store_postcode', '');
@@ -1200,8 +1200,8 @@
                             $full_address = array_filter([$address, $city, $postcode, $country]);
                             echo esc_html(implode(', ', $full_address) ?: '<em>Non défini</em>');
                             ?></p>
-                            <p style="margin: 5px 0;"><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
-                            <p style="color: #666; font-size: 12px; margin: 10px 0 0 0;">
+                            <p style="margin: 3px 0;"><strong>Email :</strong> <?php echo esc_html(get_option('admin_email', '<em>Non défini</em>')); ?></p>
+                            <p style="color: #666; font-size: 12px; margin: 8px 0 0 0;">
                             ℹ️ Ces informations sont automatiquement récupérées depuis les paramètres WooCommerce (WooCommerce > Réglages > Général).
                             </p>
                         </div>
@@ -1375,6 +1375,22 @@
                 </script>
 
                 <style>
+                /* Classe commune pour les sections de l'onglet général */
+                .general-section {
+                    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                    border: 2px solid #e9ecef;
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                }
+                .general-section h3 {
+                    color: #495057;
+                    margin-top: 0;
+                    border-bottom: 2px solid #e9ecef;
+                    padding-bottom: 8px;
+                    font-size: 18px;
+                }
                 .form-table input.error {
                     border-color: #dc3545 !important;
                     box-shadow: 0 0 0 1px #dc3545 !important;
@@ -1397,8 +1413,8 @@
             </section>
 
             <!-- Section Paramètres PDF -->
-            <section style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">📄 Configuration PDF</h3>
+            <section class="general-section">
+                <h3>📄 Configuration PDF</h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_pdf_nonce'); ?>
