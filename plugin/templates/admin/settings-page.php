@@ -21,15 +21,5 @@ require_once $settings_parts_dir . 'settings-main.php';
 require_once $settings_parts_dir . 'settings-styles.php';
 require_once $settings_parts_dir . 'settings-scripts.php';
 
-// Include individual tab contents
-require_once $settings_parts_dir . 'settings-general.php';
-require_once $settings_parts_dir . 'settings-licence.php';
-require_once $settings_parts_dir . 'settings-systeme.php';
-require_once $settings_parts_dir . 'settings-acces.php';
-require_once $settings_parts_dir . 'settings-securite.php';
-require_once $settings_parts_dir . 'settings-pdf.php';
-require_once $settings_parts_dir . 'settings-contenu.php';
-require_once $settings_parts_dir . 'settings-developpeur.php';
-
 // Include modal components
 require_once $settings_parts_dir . 'settings-modals.php';
