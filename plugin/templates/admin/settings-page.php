@@ -2934,10 +2934,7 @@
             <!-- Section Configuration PDF -->
             <section class="general-section">
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
-                    <span style="display: inline-flex; align-items: center; gap: 10px;">
-                        📄 Configuration PDF
-                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
-                    </span>
+                    📄 Configuration PDF
                 </h3>
 
                 <form method="post" action="">
