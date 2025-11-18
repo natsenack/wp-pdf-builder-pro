@@ -22,6 +22,9 @@ function send_ajax_response($success, $message = '', $data = [])
 // Check if this is an AJAX request
 $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) ===
     'xmlhttprequest';
+error_log('[DEBUG] is_ajax: ' . ($is_ajax ? 'true' : 'false'));
+error_log('[DEBUG] HTTP_X_REQUESTED_WITH: ' . ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'not set'));
+error_log('[DEBUG] POST action: ' . ($_POST['action'] ?? 'not set'));
 
 // Handle AJAX clear cache request BEFORE the early exit
 if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_clear_cache') {
@@ -443,7 +446,9 @@ if ($is_ajax && isset($_POST['action'])) {
 
 // Handler pour la sauvegarde globale de tous les paramètres
 if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_save_all_settings') {
+    error_log('[DEBUG] AJAX save handler reached');
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_nonce')) {
+        error_log('[DEBUG] Nonce verified successfully');
         try {
             // Collecter et sauvegarder tous les paramètres
 
