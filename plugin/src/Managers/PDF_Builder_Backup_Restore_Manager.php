@@ -734,6 +734,13 @@ class PdfBuilderBackupRestoreManager
 
         $filename = $_POST['filename'] ?? '';
 
+        // Décoder le base64 (le JavaScript envoie le filename encodé en base64)
+        $decoded_filename = base64_decode($filename);
+        if ($decoded_filename === false || empty($decoded_filename)) {
+            wp_send_json_error(['message' => __('Nom de fichier invalide (décodage base64 échoué).', 'pdf-builder-pro')]);
+        }
+        $filename = $decoded_filename;
+
         if (empty($filename)) {
             wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
         }
@@ -827,6 +834,13 @@ class PdfBuilderBackupRestoreManager
         }
 
         $filename = $_POST['filename'] ?? '';
+
+        // Décoder le base64 (le JavaScript envoie le filename encodé en base64)
+        $decoded_filename = base64_decode($filename);
+        if ($decoded_filename === false || empty($decoded_filename)) {
+            wp_send_json_error(['message' => __('Nom de fichier invalide (décodage base64 échoué).', 'pdf-builder-pro')]);
+        }
+        $filename = $decoded_filename;
 
         if (empty($filename)) {
             wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
