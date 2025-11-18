@@ -3168,17 +3168,65 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
+                            <th scope="row"><label for="canvas_grid_type">Type de grille</label></th>
                             <td>
-                                <input type="number" id="canvas_grid_size" name="canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100">
-                                <p class="description">Espacement entre les lignes de la grille</p>
+                                <select id="canvas_grid_type" name="canvas_grid_type">
+                                    <option value="lines" <?php selected(get_option('pdf_builder_canvas_grid_type', 'lines'), 'lines'); ?>>Lignes continues</option>
+                                    <option value="dots" <?php selected(get_option('pdf_builder_canvas_grid_type', 'lines'), 'dots'); ?>>Points</option>
+                                    <option value="crosses" <?php selected(get_option('pdf_builder_canvas_grid_type', 'lines'), 'crosses'); ?>>Croix</option>
+                                    <option value="dashed" <?php selected(get_option('pdf_builder_canvas_grid_type', 'lines'), 'dashed'); ?>>Lignes pointillées</option>
+                                </select>
+                                <p class="description">Style d'affichage de la grille</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_grid_color">Couleur de la grille</label></th>
+                            <th scope="row"><label for="canvas_grid_size">Taille de la grille principale (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_grid_size" name="canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100">
+                                <p class="description">Espacement entre les lignes principales de la grille</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_subdivisions">Sous-divisions de grille</label></th>
+                            <td>
+                                <input type="number" id="canvas_grid_subdivisions" name="canvas_grid_subdivisions" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_subdivisions', 5)); ?>" min="2" max="10">
+                                <p class="description">Nombre de sous-divisions entre les lignes principales</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_line_width">Épaisseur des lignes (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_grid_line_width" name="canvas_grid_line_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_line_width', 1)); ?>" min="0.5" max="5" step="0.5">
+                                <p class="description">Épaisseur des lignes de la grille principale</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_sub_line_width">Épaisseur sous-lignes (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_grid_sub_line_width" name="canvas_grid_sub_line_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_sub_line_width', 0.5)); ?>" min="0.1" max="2" step="0.1">
+                                <p class="description">Épaisseur des lignes de sous-division</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_color">Couleur de la grille principale</label></th>
                             <td>
                                 <input type="color" id="canvas_grid_color" name="canvas_grid_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_color', '#e9ecef')); ?>">
-                                <p class="description">Couleur des lignes de la grille</p>
+                                <p class="description">Couleur des lignes principales de la grille</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_sub_color">Couleur des sous-lignes</label></th>
+                            <td>
+                                <input type="color" id="canvas_grid_sub_color" name="canvas_grid_sub_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_sub_color', '#f8f9fa')); ?>">
+                                <p class="description">Couleur des lignes de sous-division</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_opacity">Opacité de la grille (%)</label></th>
+                            <td>
+                                <input type="range" id="canvas_grid_opacity" name="canvas_grid_opacity" min="10" max="100" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_opacity', 30)); ?>" step="5">
+                                <span id="canvas_grid_opacity_value"><?php echo esc_attr(get_option('pdf_builder_canvas_grid_opacity', 30)); ?>%</span>
+                                <p class="description">Transparence de la grille (10% = très discret, 100% = très visible)</p>
                             </td>
                         </tr>
                         <tr>
@@ -3189,6 +3237,13 @@
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Les éléments s'alignent automatiquement sur la grille</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_snap_strength">Force d'aimantation (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_snap_strength" name="canvas_snap_strength" value="<?php echo esc_attr(get_option('pdf_builder_canvas_snap_strength', 8)); ?>" min="1" max="50">
+                                <p class="description">Distance d'attraction magnétique de la grille</p>
                             </td>
                         </tr>
                         <tr>
@@ -3216,6 +3271,47 @@
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Affiche les guides d'alignement personnalisés</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_guide_color">Couleur des guides</label></th>
+                            <td>
+                                <input type="color" id="canvas_guide_color" name="canvas_guide_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_guide_color', '#007cba')); ?>">
+                                <p class="description">Couleur des guides d'alignement</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_smart_grid">Grille intelligente</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_smart_grid" name="canvas_smart_grid" value="1" <?php checked(get_option('pdf_builder_canvas_smart_grid', false)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">La grille s'adapte automatiquement au contenu et aux éléments</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_columns">Colonnes de grille</label></th>
+                            <td>
+                                <input type="number" id="canvas_grid_columns" name="canvas_grid_columns" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_columns', 12)); ?>" min="1" max="24">
+                                <p class="description">Nombre de colonnes pour une grille responsive</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_gutter">Gouttière de grille (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_grid_gutter" name="canvas_grid_gutter" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_gutter', 20)); ?>" min="0" max="100">
+                                <p class="description">Espacement entre les colonnes de la grille</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_show_numbers">Numéros de grille</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_grid_show_numbers" name="canvas_grid_show_numbers" value="1" <?php checked(get_option('pdf_builder_canvas_grid_show_numbers', false)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Affiche les numéros des colonnes et lignes de la grille</p>
                             </td>
                         </tr>
                     </table>
@@ -6089,10 +6185,15 @@
                 $('#canvas_container_transparency_value').text($(this).val() + '%');
             });
 
+            $('#canvas_grid_opacity').on('input', function() {
+                $('#canvas_grid_opacity_value').text($(this).val() + '%');
+            });
+
             // Initialiser les valeurs affichées au chargement
             $(document).ready(function() {
                 $('#canvas_background_transparency_value').text($('#canvas_background_transparency').val() + '%');
                 $('#canvas_container_transparency_value').text($('#canvas_container_transparency').val() + '%');
+                $('#canvas_grid_opacity_value').text($('#canvas_grid_opacity').val() + '%');
             });
 
         });
