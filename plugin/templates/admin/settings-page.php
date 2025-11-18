@@ -2226,7 +2226,8 @@
                             <th scope="row">Actions de maintenance</th>
                             <td>
                                 <button type="button" id="optimize-db-btn" class="button button-secondary" style="margin-right: 10px;">🗃️ Optimiser la base</button>
-                                <button type="button" id="repair-templates-btn" class="button button-secondary">🔧 Réparer les templates</button>
+                                <button type="button" id="repair-templates-btn" class="button button-secondary" style="margin-right: 10px;">🔧 Réparer les templates</button>
+                                <button type="button" id="remove-temp-btn" class="button button-secondary">🗂️ Supprimer fichiers temp</button>
                                 <div id="maintenance-results" style="margin-top: 10px;"></div>
                             </td>
                         </tr>
@@ -4935,6 +4936,37 @@
                     },
                     complete: function() {
                         $btn.prop('disabled', false).text('🔧 Réparer les templates');
+                    }
+                });
+            });
+
+            // Bouton "Supprimer fichiers temp"
+            $('#remove-temp-btn').on('click', function() {
+                const $btn = $(this);
+                const $results = $('#maintenance-results');
+                
+                $btn.prop('disabled', true).text('⏳ Suppression...');
+                $results.html('<span style="color: #007cba;">⏳ Suppression des fichiers temporaires en cours...</span>');
+                
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_remove_temp_files',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $results.html('<span style="color: #28a745;">✅ Fichiers temporaires supprimés avec succès</span>');
+                        } else {
+                            $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors de la suppression</span>');
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).text('🗂️ Supprimer fichiers temp');
                     }
                 });
             });
