@@ -178,3 +178,80 @@ function pdf_builder_clear_all_cache_ajax() {
         wp_send_json_error('Erreur lors du nettoyage: ' . $e->getMessage());
     }
 }
+
+/**
+ * AJAX Handler - Obtenir les métriques du cache
+ */
+function pdf_builder_get_cache_metrics_ajax() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    try {
+        $metrics = [];
+
+        // 1. Taille du cache
+        $upload_dir = wp_upload_dir();
+        $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
+        $cache_size = 0;
+
+        if (is_dir($cache_dir) && is_readable($cache_dir)) {
+            $cache_size = pdf_builder_get_folder_size($cache_dir);
+        }
+
+        $metrics['cache_size'] = size_format($cache_size);
+
+        // 2. Nombre de transients actifs
+        global $wpdb;
+        $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+        $metrics['transient_count'] = intval($transient_count);
+
+        // 3. État du cache
+        $cache_enabled = get_option('pdf_builder_cache_enabled', false);
+        $metrics['cache_enabled'] = $cache_enabled;
+
+        // 4. Dernier nettoyage
+        $last_cleanup = get_option('pdf_builder_cache_last_cleanup', 'Jamais');
+        if ($last_cleanup !== 'Jamais') {
+            $last_cleanup = human_time_diff(strtotime($last_cleanup)) . ' ago';
+        }
+        $metrics['last_cleanup'] = $last_cleanup;
+
+        wp_send_json_success([
+            'metrics' => $metrics,
+            'timestamp' => current_time('mysql')
+        ]);
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la récupération des métriques: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Fonction utilitaire pour calculer la taille d'un dossier
+ */
+function pdf_builder_get_folder_size($dir) {
+    $size = 0;
+    if (is_dir($dir) && is_readable($dir)) {
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if ($file != '.' && $file != '..') {
+                $path = $dir . '/' . $file;
+                if (is_dir($path) && is_readable($path)) {
+                    $size += pdf_builder_get_folder_size($path);
+                } elseif (is_file($path) && is_readable($path)) {
+                    $size += filesize($path);
+                }
+            }
+        }
+    }
+    return $size;
+}

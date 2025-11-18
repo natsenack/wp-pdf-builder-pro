@@ -203,6 +203,7 @@ function pdf_builder_register_ajax_handlers() {
     // Nouveaux handlers pour les fonctionnalités de cache avancées
     add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_test_cache_integration_ajax');
     add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_clear_all_cache_ajax');
+    add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_get_cache_metrics_ajax');
     // add_action('wp_ajax_pdf_builder_create_backup', 'pdf_builder_create_backup_ajax'); // Désactivé - conflit avec le manager
     // add_action('wp_ajax_pdf_builder_list_backups', 'pdf_builder_list_backups_ajax'); // Désactivé - conflit avec le manager
     // add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_restore_backup_ajax'); // Désactivé - conflit avec le manager

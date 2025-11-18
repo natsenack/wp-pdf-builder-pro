@@ -78,8 +78,9 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     $results.html('<span style="color: #28a745;">✅ Cache vidé avec succès</span>');
 
-                    // Recharger la page après 2 secondes pour mettre à jour les métriques
+                    // Mettre à jour les métriques du cache en temps réel
                     setTimeout(function() {
+                        updateCacheMetrics();
                         location.reload();
                     }, 2000);
                 } else {
@@ -174,33 +175,66 @@ jQuery(document).ready(function($) {
     toggleCacheOptions(initialCacheEnabled);
     updateCacheStatus(initialCacheEnabled);
 
-    // Animation des métriques de cache
-    function animateMetrics() {
-        $('.cache-metric-value').each(function() {
-            const $element = $(this);
-            const targetValue = parseInt($element.data('value')) || 0;
-            const currentValue = parseInt($element.text().replace(/[^\d]/g, '')) || 0;
+    // Mettre à jour les métriques du cache au chargement
+    updateCacheMetrics();
 
-            if (currentValue !== targetValue) {
-                $({ count: currentValue }).animate({ count: targetValue }, {
-                    duration: 1000,
-                    easing: 'swing',
-                    step: function() {
-                        $element.text(Math.floor(this.count));
-                    }
-                });
+    // Mettre à jour les métriques toutes les 30 secondes
+    setInterval(function() {
+        updateCacheMetrics();
+    }, 30000);
+
+    // Fonction pour mettre à jour les métriques du cache en temps réel
+    function updateCacheMetrics() {
+        // Faire l'appel AJAX pour récupérer les métriques
+        $.ajax({
+            url: pdfBuilderAjax.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_get_cache_metrics',
+                nonce: pdfBuilderAjax.nonce
+            },
+            success: function(response) {
+                if (response.success && response.data.metrics) {
+                    const metrics = response.data.metrics;
+
+                    // Mettre à jour la taille du cache
+                    updateMetricValue('Taille du cache', metrics.cache_size);
+
+                    // Mettre à jour le nombre de transients
+                    updateMetricValue('Transients actifs', metrics.transient_count);
+
+                    // Mettre à jour l'état du cache (déjà géré par updateCacheStatus)
+                    // updateMetricValue('Cache activé', metrics.cache_enabled ? '✅' : '❌');
+
+                    // Mettre à jour le dernier nettoyage
+                    updateMetricValue('Dernier nettoyage', metrics.last_cleanup);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('Erreur lors de la mise à jour des métriques:', error);
             }
         });
     }
 
-    // Animer les métriques au chargement de la page
-    animateMetrics();
+    // Fonction utilitaire pour mettre à jour une valeur de métrique
+    function updateMetricValue(label, value) {
+        // Trouver la section des métriques
+        const $statusSection = $('h4:contains("📊 État du système de cache")').closest('div');
 
-    // Mettre à jour les métriques toutes les 30 secondes
-    setInterval(function() {
-        // Cette fonction pourrait être étendue pour mettre à jour les métriques en temps réel
-        // Pour l'instant, on garde juste l'animation
-        animateMetrics();
-    }, 30000);
+        if ($statusSection.length > 0) {
+            // Trouver tous les éléments de métriques
+            const $metricDivs = $statusSection.find('div[style*="text-align: center"]');
+
+            $metricDivs.each(function() {
+                const $textDiv = $(this).find('div').last();
+                if ($textDiv.text().trim() === label) {
+                    // Mettre à jour la valeur (premier div du conteneur)
+                    const $valueDiv = $(this).find('div').first();
+                    $valueDiv.text(value);
+                    return false; // Sortir de la boucle each
+                }
+            });
+        }
+    }
 
 });
