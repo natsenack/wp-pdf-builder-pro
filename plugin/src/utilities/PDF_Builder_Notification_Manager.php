@@ -70,7 +70,7 @@ class PDF_Builder_Notification_Manager {
             PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js',
             ['jquery'],
             '1.0.0',
-            true
+            false
         );
 
         wp_enqueue_style(
