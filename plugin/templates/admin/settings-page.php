@@ -346,6 +346,10 @@
                         break;
 
                     case 'systeme':
+                        // Debug: Log de la requête système
+                        error_log('[DEBUG] Traitement de l\'onglet système');
+                        error_log('[DEBUG] POST data: ' . print_r($_POST, true));
+
                         // Traitement des paramètres de cache et performance
                         $cache_enabled = (isset($_POST['cache_enabled']) && $_POST['cache_enabled'] === '1') ? '1' : '0';
                         $cache_compression = (isset($_POST['cache_compression']) && $_POST['cache_compression'] === '1') ? '1' : '0';
@@ -363,6 +367,9 @@
                         $auto_maintenance = (isset($_POST['systeme_auto_maintenance']) && $_POST['systeme_auto_maintenance'] === '1') ? '1' : '0';
 
                         update_option('pdf_builder_auto_maintenance', $auto_maintenance);
+
+                        // Debug: Log des valeurs sauvegardées
+                        error_log('[DEBUG] Valeurs sauvegardées - Cache enabled: ' . $cache_enabled . ', Compression: ' . $cache_compression . ', Auto cleanup: ' . $cache_auto_cleanup . ', Max size: ' . $cache_max_size . ', TTL: ' . $cache_ttl);
 
                         // Traitement des paramètres de sauvegarde
                         $auto_backup = (isset($_POST['systeme_auto_backup']) && $_POST['systeme_auto_backup'] === '1') ? '1' : '0';
@@ -4786,6 +4793,16 @@
                     const formData = new FormData($systemeForm[0]);
 
                     // Debug: Vérifier les champs du formulaire
+                    console.log('[DEBUG] Champs du formulaire système:');
+                    $systemeForm.find('input, select, textarea').each(function() {
+                        const $field = $(this);
+                        const fieldName = $field.attr('name');
+                        const fieldValue = $field.val();
+                        const fieldType = this.tagName.toLowerCase() + ($field.attr('type') ? '[' + $field.attr('type') + ']' : '');
+                        console.log(`  ${fieldName} (${fieldType}): ${fieldValue}`);
+                    });
+
+                    // Debug: Vérifier les champs du formulaire
                     $systemeForm.find('input, select, textarea').each(function() {
                         const $field = $(this);
                         const fieldName = $field.attr('name');
@@ -4804,7 +4821,9 @@
                     }
 
                     // DEBUG: Afficher tout le contenu du FormData
+                    console.log('[DEBUG] Données FormData avant envoi:');
                     for (let [key, value] of formData.entries()) {
+                        console.log(`  ${key}: ${value}`);
                     }
 
                     // S'assurer que les cases à cocher non cochées sont incluses
