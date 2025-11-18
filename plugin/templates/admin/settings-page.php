@@ -999,8 +999,8 @@
             <h2>🏠 Paramètres Généraux</h2>
 
             <!-- Section Cache et Performance -->
-            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">📋 Cache & Performance</h3>
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">📋 Cache & Performance</h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
@@ -1180,8 +1180,8 @@
             </div>
 
             <!-- Section Informations Entreprise -->
-            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">🏢 Informations Entreprise</h3>
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🏢 Informations Entreprise</h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_company_nonce'); ?>
@@ -1397,8 +1397,8 @@
             </div>
 
             <!-- Section Paramètres PDF -->
-            <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">📄 Configuration PDF</h3>
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">📄 Configuration PDF</h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_pdf_nonce'); ?>
@@ -2224,8 +2224,8 @@
                 <input type="hidden" name="current_tab" value="systeme">
 
                 <!-- Section Performance -->
-                <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%); border: 2px solid #28a745; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                    <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">🚀 Performance</h3>
+                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🚀 Performance</h3>
 
                     <table class="form-table">
                         <tr>
@@ -2256,8 +2256,8 @@
                 </div>
 
                 <!-- Section Maintenance -->
-                <div style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                    <h3 style="color: #856404; margin-top: 0; border-bottom: 2px solid #ffc107; padding-bottom: 10px;">🔧 Maintenance</h3>
+                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🔧 Maintenance</h3>
 
                     <table class="form-table">
                         <tr>
@@ -2283,8 +2283,8 @@
                 </div>
 
                 <!-- Section Sauvegarde -->
-                <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border: 2px solid #0066cc; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                    <h3 style="color: #004085; margin-top: 0; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">
+                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             💾 Gestion des Sauvegardes
                             <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
@@ -2724,8 +2724,8 @@
             <h2>🔒 Sécurité & Conformité</h2>
 
             <!-- Section Sécurité -->
-            <div style="background: linear-gradient(135deg, #f8d7da 0%, #fce4e6 100%); border: 2px solid #dc3545; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #721c24; margin-top: 0; border-bottom: 2px solid #dc3545; padding-bottom: 10px;">🛡️ Sécurité</h3>
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🛡️ Sécurité</h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_securite', 'pdf_builder_securite_nonce'); ?>
@@ -2932,8 +2932,8 @@
             <h2>🎨 Contenu & Design</h2>
 
             <!-- Section Canvas -->
-            <div style="background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%); border: 2px solid #6c757d; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #6c757d; padding-bottom: 10px;">🖼️ Canvas</h3>
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">🖼️ Canvas</h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_canvas', 'pdf_builder_canvas_nonce'); ?>
@@ -2959,8 +2959,8 @@
             </div>
 
             <!-- Section Templates -->
-            <div style="background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); border: 2px solid #17a2b8; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h3 style="color: #0c5460; margin-top: 0; border-bottom: 2px solid #17a2b8; padding-bottom: 10px;">📋 Templates</h3>
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">📋 Templates</h3>
 
                 <form method="post" action="">
                     <?php wp_nonce_field('pdf_builder_templates', 'pdf_builder_templates_nonce'); ?>
