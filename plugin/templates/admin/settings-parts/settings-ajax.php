@@ -482,13 +482,6 @@ if ($is_ajax && isset($_POST['action'])) {
                         update_option('pdf_builder_allowed_roles', $_POST['pdf_builder_allowed_roles']);
                     }
 
-                    // DEBUG: Log des paramètres de sécurité reçus
-                    error_log('[DEBUG AJAX] Paramètres sécurité reçus:');
-                    error_log('[DEBUG AJAX] security_level: ' . (isset($_POST['security_level']) ? $_POST['security_level'] : 'NOT_SET'));
-                    error_log('[DEBUG AJAX] enable_logging: ' . (isset($_POST['enable_logging']) ? $_POST['enable_logging'] : 'NOT_SET'));
-                    error_log('[DEBUG AJAX] gdpr_enabled: ' . (isset($_POST['gdpr_enabled']) ? $_POST['gdpr_enabled'] : 'NOT_SET'));
-                    error_log('[DEBUG AJAX] gdpr_data_retention: ' . (isset($_POST['gdpr_data_retention']) ? $_POST['gdpr_data_retention'] : 'NOT_SET'));
-
                     // Paramètres de sécurité
                     if (isset($_POST['security_level'])) {
                         update_option('pdf_builder_security_level', sanitize_text_field($_POST['security_level']));
@@ -523,13 +516,6 @@ if ($is_ajax && isset($_POST['action'])) {
                     if (isset($_POST['gdpr_consent_marketing'])) {
                         update_option('pdf_builder_gdpr_consent_marketing', $_POST['gdpr_consent_marketing'] === '1');
                     }
-
-                    // DEBUG: Vérification des options sauvegardées
-                    error_log('[DEBUG AJAX] Options sauvegardées:');
-                    error_log('[DEBUG AJAX] pdf_builder_security_level: ' . get_option('pdf_builder_security_level', 'DEFAULT'));
-                    error_log('[DEBUG AJAX] pdf_builder_enable_logging: ' . get_option('pdf_builder_enable_logging', 'DEFAULT'));
-                    error_log('[DEBUG AJAX] pdf_builder_gdpr_enabled: ' . get_option('pdf_builder_gdpr_enabled', 'DEFAULT'));
-                    error_log('[DEBUG AJAX] pdf_builder_gdpr_data_retention: ' . get_option('pdf_builder_gdpr_data_retention', 'DEFAULT'));
 
                     // Paramètres PDF
                     if (isset($_POST['pdf_quality'])) {

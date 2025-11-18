@@ -479,20 +479,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function collectSecuriteSettings(formData) {
         // Collecter les données de l'onglet Sécurité
-        console.log('[DEBUG] Début collecte sécurité');
 
         // Sécurité générale - utiliser querySelector pour être plus robuste
         const securityLevelEl = document.querySelector('#security_level');
         const enableLoggingEl = document.querySelector('#enable_logging');
 
-        console.log('[DEBUG] securityLevelEl:', securityLevelEl);
-        console.log('[DEBUG] enableLoggingEl:', enableLoggingEl);
-
         const securityLevel = securityLevelEl ? securityLevelEl.value : 'medium';
         const enableLogging = enableLoggingEl ? enableLoggingEl.checked : false;
-
-        console.log('[DEBUG] securityLevel:', securityLevel);
-        console.log('[DEBUG] enableLogging:', enableLogging);
 
         formData.append('security_level', securityLevel);
         formData.append('enable_logging', enableLogging ? '1' : '0');
@@ -504,17 +497,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const gdprAuditEnabledEl = document.querySelector('#gdpr_audit_enabled');
         const gdprEncryptionEnabledEl = document.querySelector('#gdpr_encryption_enabled');
 
-        console.log('[DEBUG] gdprEnabledEl:', gdprEnabledEl);
-        console.log('[DEBUG] gdprDataRetentionEl:', gdprDataRetentionEl);
-
         const gdprEnabled = gdprEnabledEl ? gdprEnabledEl.checked : false;
         const gdprConsentRequired = gdprConsentRequiredEl ? gdprConsentRequiredEl.checked : false;
         const gdprDataRetention = gdprDataRetentionEl ? gdprDataRetentionEl.value : '2555';
         const gdprAuditEnabled = gdprAuditEnabledEl ? gdprAuditEnabledEl.checked : false;
         const gdprEncryptionEnabled = gdprEncryptionEnabledEl ? gdprEncryptionEnabledEl.checked : false;
-
-        console.log('[DEBUG] gdprEnabled:', gdprEnabled);
-        console.log('[DEBUG] gdprDataRetention:', gdprDataRetention);
 
         formData.append('gdpr_enabled', gdprEnabled ? '1' : '0');
         formData.append('gdpr_consent_required', gdprConsentRequired ? '1' : '0');
@@ -534,8 +521,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('gdpr_consent_analytics', gdprConsentAnalytics ? '1' : '0');
         formData.append('gdpr_consent_templates', gdprConsentTemplates ? '1' : '0');
         formData.append('gdpr_consent_marketing', gdprConsentMarketing ? '1' : '0');
-
-        console.log('[DEBUG] Fin collecte sécurité - tous les paramètres ajoutés');
     }
 
     function collectPdfSettings(formData) {
