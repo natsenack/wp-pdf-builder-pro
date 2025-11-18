@@ -3022,6 +3022,8 @@
                     <?php wp_nonce_field('pdf_builder_canvas', 'pdf_builder_canvas_nonce'); ?>
                     <input type="hidden" name="current_tab" value="canvas">
 
+                    <!-- Dimensions & Format -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">📏 Dimensions & Format</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_width">Largeur canvas (px)</label></th>
@@ -3035,6 +3037,531 @@
                             <td>
                                 <input type="number" id="canvas_height" name="canvas_height" value="<?php echo esc_attr(get_option('pdf_builder_canvas_height', 600)); ?>" min="300" max="2000">
                                 <p class="description">Hauteur par défaut du canvas de conception</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_default_format">Format par défaut</label></th>
+                            <td>
+                                <select id="canvas_default_format" name="canvas_default_format">
+                                    <option value="A4" <?php selected(get_option('pdf_builder_canvas_default_format', 'A4'), 'A4'); ?>>A4 (210×297mm)</option>
+                                    <option value="A3" <?php selected(get_option('pdf_builder_canvas_default_format', 'A4'), 'A3'); ?>>A3 (297×420mm)</option>
+                                    <option value="Letter" <?php selected(get_option('pdf_builder_canvas_default_format', 'A4'), 'Letter'); ?>>Letter (8.5×11")</option>
+                                    <option value="Legal" <?php selected(get_option('pdf_builder_canvas_default_format', 'A4'), 'Legal'); ?>>Legal (8.5×14")</option>
+                                    <option value="Custom" <?php selected(get_option('pdf_builder_canvas_default_format', 'A4'), 'Custom'); ?>>Personnalisé</option>
+                                </select>
+                                <p class="description">Format de page par défaut pour les nouveaux documents</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_default_orientation">Orientation par défaut</label></th>
+                            <td>
+                                <select id="canvas_default_orientation" name="canvas_default_orientation">
+                                    <option value="portrait" <?php selected(get_option('pdf_builder_canvas_default_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
+                                    <option value="landscape" <?php selected(get_option('pdf_builder_canvas_default_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
+                                </select>
+                                <p class="description">Orientation par défaut des pages</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_default_unit">Unité par défaut</label></th>
+                            <td>
+                                <select id="canvas_default_unit" name="canvas_default_unit">
+                                    <option value="px" <?php selected(get_option('pdf_builder_canvas_default_unit', 'px'), 'px'); ?>>Pixels (px)</option>
+                                    <option value="mm" <?php selected(get_option('pdf_builder_canvas_default_unit', 'px'), 'mm'); ?>>Millimètres (mm)</option>
+                                    <option value="cm" <?php selected(get_option('pdf_builder_canvas_default_unit', 'px'), 'cm'); ?>>Centimètres (cm)</option>
+                                    <option value="in" <?php selected(get_option('pdf_builder_canvas_default_unit', 'px'), 'in'); ?>>Pouces (in)</option>
+                                </select>
+                                <p class="description">Unité de mesure utilisée dans l'interface</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Apparence -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">🎨 Apparence</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_background_color">Couleur de fond du canvas</label></th>
+                            <td>
+                                <input type="color" id="canvas_background_color" name="canvas_background_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_background_color', '#ffffff')); ?>">
+                                <p class="description">Couleur de fond du canvas de conception</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_background_transparency">Transparence du canvas (%)</label></th>
+                            <td>
+                                <input type="range" id="canvas_background_transparency" name="canvas_background_transparency" min="0" max="100" value="<?php echo esc_attr(get_option('pdf_builder_canvas_background_transparency', 100)); ?>" step="5">
+                                <span id="canvas_background_transparency_value"><?php echo esc_attr(get_option('pdf_builder_canvas_background_transparency', 100)); ?>%</span>
+                                <p class="description">Transparence du fond du canvas (0% = transparent, 100% = opaque)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_container_background_color">Couleur de fond du conteneur</label></th>
+                            <td>
+                                <input type="color" id="canvas_container_background_color" name="canvas_container_background_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_background_color', '#f8f9fa')); ?>">
+                                <p class="description">Couleur de fond de la zone conteneur autour du canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_container_transparency">Transparence du conteneur (%)</label></th>
+                            <td>
+                                <input type="range" id="canvas_container_transparency" name="canvas_container_transparency" min="0" max="100" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_transparency', 100)); ?>" step="5">
+                                <span id="canvas_container_transparency_value"><?php echo esc_attr(get_option('pdf_builder_canvas_container_transparency', 100)); ?>%</span>
+                                <p class="description">Transparence du fond du conteneur</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Marges & Espacement -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">📐 Marges & Espacement</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_margin_top">Marge haute (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_margin_top" name="canvas_margin_top" value="<?php echo esc_attr(get_option('pdf_builder_canvas_margin_top', 20)); ?>" min="0" max="200">
+                                <p class="description">Marge en haut du canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_margin_right">Marge droite (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_margin_right" name="canvas_margin_right" value="<?php echo esc_attr(get_option('pdf_builder_canvas_margin_right', 20)); ?>" min="0" max="200">
+                                <p class="description">Marge à droite du canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_margin_bottom">Marge basse (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_margin_bottom" name="canvas_margin_bottom" value="<?php echo esc_attr(get_option('pdf_builder_canvas_margin_bottom', 20)); ?>" min="0" max="200">
+                                <p class="description">Marge en bas du canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_margin_left">Marge gauche (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_margin_left" name="canvas_margin_left" value="<?php echo esc_attr(get_option('pdf_builder_canvas_margin_left', 20)); ?>" min="0" max="200">
+                                <p class="description">Marge à gauche du canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_show_margins">Afficher les marges</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_show_margins" name="canvas_show_margins" value="1" <?php checked(get_option('pdf_builder_canvas_show_margins', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Affiche les guides de marges sur le canvas</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Grille & Guides -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">📊 Grille & Guides</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_show_grid">Afficher la grille</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_show_grid" name="canvas_show_grid" value="1" <?php checked(get_option('pdf_builder_canvas_show_grid', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Affiche une grille d'alignement sur le canvas</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_grid_size" name="canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100">
+                                <p class="description">Espacement entre les lignes de la grille</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_grid_color">Couleur de la grille</label></th>
+                            <td>
+                                <input type="color" id="canvas_grid_color" name="canvas_grid_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_color', '#e9ecef')); ?>">
+                                <p class="description">Couleur des lignes de la grille</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_snap_to_grid">Aimantation à la grille</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Les éléments s'alignent automatiquement sur la grille</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_snap_to_elements">Aimantation aux éléments</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_snap_to_elements" name="canvas_snap_to_elements" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_elements', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Les éléments s'alignent automatiquement sur d'autres éléments</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_snap_tolerance">Tolérance d'aimantation (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_snap_tolerance" name="canvas_snap_tolerance" value="<?php echo esc_attr(get_option('pdf_builder_canvas_snap_tolerance', 5)); ?>" min="1" max="20">
+                                <p class="description">Distance maximale pour l'aimantation automatique</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_show_guides">Afficher les guides</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_show_guides" name="canvas_show_guides" value="1" <?php checked(get_option('pdf_builder_canvas_show_guides', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Affiche les guides d'alignement personnalisés</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Zoom & Navigation -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">🔍 Zoom & Navigation</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_default_zoom">Zoom par défaut (%)</label></th>
+                            <td>
+                                <input type="number" id="canvas_default_zoom" name="canvas_default_zoom" value="<?php echo esc_attr(get_option('pdf_builder_canvas_default_zoom', 100)); ?>" min="10" max="500">
+                                <p class="description">Niveau de zoom initial lors de l'ouverture d'un document</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_zoom_step">Étape de zoom (%)</label></th>
+                            <td>
+                                <input type="number" id="canvas_zoom_step" name="canvas_zoom_step" value="<?php echo esc_attr(get_option('pdf_builder_canvas_zoom_step', 25)); ?>" min="5" max="100">
+                                <p class="description">Incrément de zoom lors des zooms avant/arrière</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_min_zoom">Zoom minimum (%)</label></th>
+                            <td>
+                                <input type="number" id="canvas_min_zoom" name="canvas_min_zoom" value="<?php echo esc_attr(get_option('pdf_builder_canvas_min_zoom', 10)); ?>" min="1" max="100">
+                                <p class="description">Niveau de zoom minimum autorisé</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_max_zoom">Zoom maximum (%)</label></th>
+                            <td>
+                                <input type="number" id="canvas_max_zoom" name="canvas_max_zoom" value="<?php echo esc_attr(get_option('pdf_builder_canvas_max_zoom', 500)); ?>" min="100" max="1000">
+                                <p class="description">Niveau de zoom maximum autorisé</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_zoom_wheel">Zoom avec la molette</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_zoom_wheel" name="canvas_zoom_wheel" value="1" <?php checked(get_option('pdf_builder_canvas_zoom_wheel', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Permet de zoomer avec la molette de la souris</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_pan_mouse">Pan avec la souris</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_pan_mouse" name="canvas_pan_mouse" value="1" <?php checked(get_option('pdf_builder_canvas_pan_mouse', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Permet de déplacer la vue en maintenant le clic droit</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Éléments Interactifs -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">🎯 Éléments Interactifs</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_show_handles">Afficher les poignées de redimensionnement</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_show_handles" name="canvas_show_handles" value="1" <?php checked(get_option('pdf_builder_canvas_show_handles', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Affiche les poignées pour redimensionner les éléments</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_handle_size">Taille des poignées (px)</label></th>
+                            <td>
+                                <input type="number" id="canvas_handle_size" name="canvas_handle_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_handle_size', 8)); ?>" min="4" max="20">
+                                <p class="description">Taille des poignées de redimensionnement</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_handle_color">Couleur des poignées</label></th>
+                            <td>
+                                <input type="color" id="canvas_handle_color" name="canvas_handle_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_handle_color', '#007cba')); ?>">
+                                <p class="description">Couleur des poignées de redimensionnement</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_enable_rotation">Activer la rotation</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_enable_rotation" name="canvas_enable_rotation" value="1" <?php checked(get_option('pdf_builder_canvas_enable_rotation', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Permet la rotation des éléments</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_rotation_step">Étape de rotation (°)</label></th>
+                            <td>
+                                <input type="number" id="canvas_rotation_step" name="canvas_rotation_step" value="<?php echo esc_attr(get_option('pdf_builder_canvas_rotation_step', 15)); ?>" min="1" max="90">
+                                <p class="description">Incrément de rotation en degrés</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Comportement -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">⚙️ Comportement</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_multi_select">Sélection multiple</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_multi_select" name="canvas_multi_select" value="1" <?php checked(get_option('pdf_builder_canvas_multi_select', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Permet de sélectionner plusieurs éléments simultanément</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_copy_paste">Copier-coller activé</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_copy_paste" name="canvas_copy_paste" value="1" <?php checked(get_option('pdf_builder_canvas_copy_paste', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Active les fonctions copier/coller pour les éléments</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_keyboard_shortcuts">Raccourcis clavier activés</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_keyboard_shortcuts" name="canvas_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_shortcuts', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Active les raccourcis clavier (Ctrl+Z, Ctrl+C, etc.)</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Export & Qualité -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">📤 Export & Qualité</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_export_quality">Qualité d'export</label></th>
+                            <td>
+                                <select id="canvas_export_quality" name="canvas_export_quality">
+                                    <option value="draft" <?php selected(get_option('pdf_builder_canvas_export_quality', 'standard'), 'draft'); ?>>Brouillon (rapide)</option>
+                                    <option value="standard" <?php selected(get_option('pdf_builder_canvas_export_quality', 'standard'), 'standard'); ?>>Standard</option>
+                                    <option value="high" <?php selected(get_option('pdf_builder_canvas_export_quality', 'standard'), 'high'); ?>>Haute qualité</option>
+                                    <option value="maximum" <?php selected(get_option('pdf_builder_canvas_export_quality', 'standard'), 'maximum'); ?>>Qualité maximum</option>
+                                </select>
+                                <p class="description">Qualité de rendu lors de l'export PDF</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_export_format">Format d'export</label></th>
+                            <td>
+                                <select id="canvas_export_format" name="canvas_export_format">
+                                    <option value="pdf" <?php selected(get_option('pdf_builder_canvas_export_format', 'pdf'), 'pdf'); ?>>PDF</option>
+                                    <option value="png" <?php selected(get_option('pdf_builder_canvas_export_format', 'pdf'), 'png'); ?>>PNG</option>
+                                    <option value="jpg" <?php selected(get_option('pdf_builder_canvas_export_format', 'pdf'), 'jpg'); ?>>JPEG</option>
+                                    <option value="svg" <?php selected(get_option('pdf_builder_canvas_export_format', 'pdf'), 'svg'); ?>>SVG</option>
+                                </select>
+                                <p class="description">Format de fichier pour l'export</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_image_compression">Compression des images</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_image_compression" name="canvas_image_compression" value="1" <?php checked(get_option('pdf_builder_canvas_image_compression', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Compresse les images pour réduire la taille du fichier</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_image_quality">Qualité des images (%)</label></th>
+                            <td>
+                                <input type="number" id="canvas_image_quality" name="canvas_image_quality" value="<?php echo esc_attr(get_option('pdf_builder_canvas_image_quality', 85)); ?>" min="10" max="100">
+                                <p class="description">Qualité de compression des images (100% = sans perte)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_max_image_size">Taille max des images (MB)</label></th>
+                            <td>
+                                <input type="number" id="canvas_max_image_size" name="canvas_max_image_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_max_image_size', 10)); ?>" min="1" max="50">
+                                <p class="description">Taille maximale autorisée pour les images importées</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_include_metadata">Inclure les métadonnées</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_include_metadata" name="canvas_include_metadata" value="1" <?php checked(get_option('pdf_builder_canvas_include_metadata', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Inclut les informations de création et auteur dans le PDF</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_pdf_author">Auteur du PDF</label></th>
+                            <td>
+                                <input type="text" id="canvas_pdf_author" name="canvas_pdf_author" value="<?php echo esc_attr(get_option('pdf_builder_canvas_pdf_author', get_bloginfo('name'))); ?>">
+                                <p class="description">Nom de l'auteur inscrit dans les métadonnées du PDF</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_pdf_subject">Sujet du PDF</label></th>
+                            <td>
+                                <input type="text" id="canvas_pdf_subject" name="canvas_pdf_subject" value="<?php echo esc_attr(get_option('pdf_builder_canvas_pdf_subject', 'Document créé avec PDF Builder Pro')); ?>">
+                                <p class="description">Sujet du document dans les métadonnées du PDF</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_auto_crop">Recadrage automatique</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_auto_crop" name="canvas_auto_crop" value="1" <?php checked(get_option('pdf_builder_canvas_auto_crop', false)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Recadre automatiquement le PDF aux dimensions du contenu</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_embed_fonts">Incorporer les polices</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_embed_fonts" name="canvas_embed_fonts" value="1" <?php checked(get_option('pdf_builder_canvas_embed_fonts', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Incorpore les polices dans le PDF pour une compatibilité maximale</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Performance -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">⚡ Performance</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_web_optimization">Optimisation pour le web</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_web_optimization" name="canvas_web_optimization" value="1" <?php checked(get_option('pdf_builder_canvas_web_optimization', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Optimise le rendu pour les navigateurs web modernes</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_hardware_acceleration">Accélération matérielle</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_hardware_acceleration" name="canvas_hardware_acceleration" value="1" <?php checked(get_option('pdf_builder_canvas_hardware_acceleration', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Utilise l'accélération GPU pour de meilleures performances</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_limit_fps">Limiter les FPS</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_limit_fps" name="canvas_limit_fps" value="1" <?php checked(get_option('pdf_builder_canvas_limit_fps', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Limite les images par seconde pour économiser les ressources</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_max_fps">FPS maximum</label></th>
+                            <td>
+                                <input type="number" id="canvas_max_fps" name="canvas_max_fps" value="<?php echo esc_attr(get_option('pdf_builder_canvas_max_fps', 60)); ?>" min="15" max="120">
+                                <p class="description">Nombre maximum d'images par seconde</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Sauvegarde Automatique -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">💾 Sauvegarde Automatique</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_auto_save_enabled">Sauvegarde automatique activée</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_auto_save_enabled" name="canvas_auto_save_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_auto_save_enabled', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Sauvegarde automatiquement le travail en cours</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_auto_save_interval">Intervalle de sauvegarde (minutes)</label></th>
+                            <td>
+                                <input type="number" id="canvas_auto_save_interval" name="canvas_auto_save_interval" value="<?php echo esc_attr(get_option('pdf_builder_canvas_auto_save_interval', 5)); ?>" min="1" max="60">
+                                <p class="description">Fréquence des sauvegardes automatiques</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_auto_save_versions">Versions de sauvegarde automatique</label></th>
+                            <td>
+                                <input type="number" id="canvas_auto_save_versions" name="canvas_auto_save_versions" value="<?php echo esc_attr(get_option('pdf_builder_canvas_auto_save_versions', 10)); ?>" min="1" max="50">
+                                <p class="description">Nombre de versions de sauvegarde à conserver</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Annulation/Rétablissement -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">↩️ Annulation/Rétablissement</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_undo_levels">Niveaux d'annulation</label></th>
+                            <td>
+                                <input type="number" id="canvas_undo_levels" name="canvas_undo_levels" value="<?php echo esc_attr(get_option('pdf_builder_canvas_undo_levels', 50)); ?>" min="5" max="200">
+                                <p class="description">Nombre maximum d'actions annulables</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_redo_levels">Niveaux de rétablissement</label></th>
+                            <td>
+                                <input type="number" id="canvas_redo_levels" name="canvas_redo_levels" value="<?php echo esc_attr(get_option('pdf_builder_canvas_redo_levels', 50)); ?>" min="5" max="200">
+                                <p class="description">Nombre maximum d'actions rétablissables</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Debug -->
+                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">🐛 Debug</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_debug_mode">Mode debug</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_debug_mode" name="canvas_debug_mode" value="1" <?php checked(get_option('pdf_builder_canvas_debug_mode', false)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Active les informations de débogage dans la console</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_show_fps">Afficher les FPS</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_show_fps" name="canvas_show_fps" value="1" <?php checked(get_option('pdf_builder_canvas_show_fps', false)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Affiche le compteur d'images par seconde</p>
                             </td>
                         </tr>
                     </table>
@@ -5550,6 +6077,22 @@
                     // Simuler le changement pour désactiver les champs
                     $gdprEnabled.trigger('change');
                 }
+            });
+
+            // === GESTION DES SLIDERS DE TRANSPARENCE CANVAS ===
+            // Mettre à jour les valeurs affichées des sliders en temps réel
+            $('#canvas_background_transparency').on('input', function() {
+                $('#canvas_background_transparency_value').text($(this).val() + '%');
+            });
+
+            $('#canvas_container_transparency').on('input', function() {
+                $('#canvas_container_transparency_value').text($(this).val() + '%');
+            });
+
+            // Initialiser les valeurs affichées au chargement
+            $(document).ready(function() {
+                $('#canvas_background_transparency_value').text($('#canvas_background_transparency').val() + '%');
+                $('#canvas_container_transparency_value').text($('#canvas_container_transparency').val() + '%');
             });
 
         });
