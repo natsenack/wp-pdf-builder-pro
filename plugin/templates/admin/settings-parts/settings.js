@@ -197,7 +197,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Voir mes consentements
     if (viewConsentStatusBtn) {
+        console.log('Bouton consentements trouvé:', viewConsentStatusBtn);
         viewConsentStatusBtn.addEventListener('click', function() {
+            console.log('Bouton consentements cliqué');
             const nonce = document.getElementById('export_user_data_nonce')?.value;
             if (!nonce) {
                 showGdprResult('Erreur: Nonce de sécurité manquant', 'error');
@@ -220,6 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
+                console.log('Réponse AJAX consentements:', data);
                 if (data.success) {
                     // Afficher les consentements dans une modal ou un conteneur
                     const consentHtml = `
@@ -250,6 +253,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.innerHTML = '👁️ Voir mes consentements';
             });
         });
+    } else {
+        console.log('Bouton consentements NON trouvé');
     }
 
     // Actualiser les logs d'audit
