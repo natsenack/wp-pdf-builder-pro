@@ -223,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 console.log('Réponse AJAX consentements:', data);
+                console.log('Contenu HTML des consentements:', data.data?.consent_html);
                 if (data.success) {
                     // Afficher les consentements dans une modal ou un conteneur
                     const consentHtml = `
@@ -234,10 +235,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
 
+                    console.log('HTML généré pour affichage:', consentHtml);
                     const resultDiv = document.getElementById('gdpr-user-actions-result');
+                    console.log('Div résultat trouvé:', resultDiv);
                     if (resultDiv) {
                         resultDiv.style.display = 'block';
                         resultDiv.innerHTML = consentHtml;
+                        console.log('HTML injecté dans le div');
+                    } else {
+                        console.error('Div gdpr-user-actions-result NON trouvé !');
+                    }
                     }
                 } else {
                     showGdprResult('❌ Erreur lors du chargement: ' + (data.data || 'Erreur inconnue'), 'error');
@@ -961,6 +968,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(event) {
         // Bouton "Accorder" un consentement
         if (event.target.classList.contains('grant-consent')) {
+            console.log('Bouton "Accorder" cliqué:', event.target);
             event.preventDefault();
             const consentType = event.target.getAttribute('data-consent-type');
             const nonce = document.getElementById('export_user_data_nonce')?.value;
@@ -1014,6 +1022,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Bouton "Révoquer" un consentement
         if (event.target.classList.contains('revoke-consent')) {
+            console.log('Bouton "Révoquer" cliqué:', event.target);
             event.preventDefault();
             const consentType = event.target.getAttribute('data-consent-type');
             const nonce = document.getElementById('export_user_data_nonce')?.value;
