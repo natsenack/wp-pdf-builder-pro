@@ -210,6 +210,7 @@ function pdf_builder_register_ajax_handlers() {
     // add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_delete_backup_ajax'); // Désactivé - conflit avec le manager
     add_action('pdf_builder_daily_backup', 'pdf_builder_execute_daily_backup');
     add_action('pdf_builder_cleanup_old_backups', 'pdf_builder_cleanup_old_backups');
+    add_action('pdf_builder_weekly_maintenance', 'pdf_builder_execute_weekly_maintenance');
     add_action('admin_action_pdf_builder_download_backup', 'pdf_builder_download_backup');
 }
 
@@ -900,6 +901,25 @@ function pdf_builder_init_auto_backup() {
     if (!wp_next_scheduled('pdf_builder_cleanup_old_backups')) {
         wp_schedule_event(strtotime('tomorrow 03:00:00'), 'daily', 'pdf_builder_cleanup_old_backups');
     }
+
+    // Programmer la maintenance automatique hebdomadaire
+    $auto_maintenance_enabled = get_option('pdf_builder_auto_maintenance', '0');
+    if ($auto_maintenance_enabled === '1') {
+        if (!wp_next_scheduled('pdf_builder_weekly_maintenance')) {
+            // Programmer pour le prochain dimanche à 02:00
+            $next_sunday = strtotime('next Sunday 02:00:00');
+            if ($next_sunday < current_time('timestamp')) {
+                $next_sunday = strtotime('next Sunday 02:00:00', strtotime('+1 week'));
+            }
+            wp_schedule_event($next_sunday, 'weekly', 'pdf_builder_weekly_maintenance');
+        }
+    } else {
+        // Désactiver la maintenance automatique si elle était programmée
+        $timestamp = wp_next_scheduled('pdf_builder_weekly_maintenance');
+        if ($timestamp) {
+            wp_unschedule_event($timestamp, 'pdf_builder_weekly_maintenance');
+        }
+    }
 }
 
 /**
@@ -978,6 +998,166 @@ function pdf_builder_cleanup_old_backups() {
         }
 
     } catch (Exception $e) {
+    }
+}
+
+/**
+ * Exécuter la maintenance automatique hebdomadaire
+ */
+function pdf_builder_execute_weekly_maintenance() {
+    // Vérifier si la maintenance automatique est activée
+    $auto_maintenance_enabled = get_option('pdf_builder_auto_maintenance', '0');
+    if ($auto_maintenance_enabled !== '1') {
+        return; // Maintenance automatique désactivée
+    }
+
+    try {
+        // Log de début de maintenance
+        error_log('[PDF Builder] Démarrage de la maintenance automatique hebdomadaire');
+
+        // 1. Optimiser la base de données
+        pdf_builder_auto_optimize_db();
+
+        // 2. Réparer les templates
+        pdf_builder_auto_repair_templates();
+
+        // 3. Supprimer les fichiers temporaires
+        pdf_builder_auto_remove_temp_files();
+
+        // 4. Nettoyer le cache
+        pdf_builder_auto_clear_cache();
+
+        // Log de fin de maintenance
+        error_log('[PDF Builder] Maintenance automatique hebdomadaire terminée avec succès');
+
+    } catch (Exception $e) {
+        error_log('[PDF Builder] Erreur lors de la maintenance automatique: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Optimisation automatique de la base de données
+ */
+function pdf_builder_auto_optimize_db() {
+    try {
+        global $wpdb;
+        $tables = [
+            $wpdb->posts,
+            $wpdb->postmeta,
+            $wpdb->prefix . 'woocommerce_order_items',
+            $wpdb->prefix . 'woocommerce_order_itemmeta'
+        ];
+
+        foreach ($tables as $table) {
+            $wpdb->query("OPTIMIZE TABLE {$table}");
+            $wpdb->query("REPAIR TABLE {$table}");
+        }
+
+        error_log('[PDF Builder] Base de données optimisée automatiquement');
+    } catch (Exception $e) {
+        error_log('[PDF Builder] Erreur lors de l\'optimisation automatique de la DB: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Réparation automatique des templates
+ */
+function pdf_builder_auto_repair_templates() {
+    try {
+        global $wpdb;
+
+        // Vérifier et réparer les tables des templates
+        $tables = ['pdf_builder_templates', 'pdf_builder_pdfs'];
+        foreach ($tables as $table) {
+            $result = $wpdb->get_row("CHECK TABLE {$wpdb->prefix}{$table}");
+            if ($result && $result->Msg_text !== 'OK') {
+                $wpdb->query("REPAIR TABLE {$wpdb->prefix}{$table}");
+            }
+        }
+
+        // Vérifier l'accès aux options
+        $settings = get_option('pdf_builder_settings', []);
+        if (!is_array($settings)) {
+            update_option('pdf_builder_settings', []);
+        }
+
+        error_log('[PDF Builder] Templates réparés automatiquement');
+    } catch (Exception $e) {
+        error_log('[PDF Builder] Erreur lors de la réparation automatique des templates: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Suppression automatique des fichiers temporaires
+ */
+function pdf_builder_auto_remove_temp_files() {
+    try {
+        $upload_dir = wp_upload_dir();
+        $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+
+        if (file_exists($temp_dir) && is_dir($temp_dir)) {
+            // Supprimer les fichiers temporaires de plus de 24h
+            $files = glob($temp_dir . '/*');
+            $now = current_time('timestamp');
+            $deleted_count = 0;
+
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    $file_age = $now - filemtime($file);
+                    if ($file_age > 86400) { // 24 heures
+                        if (unlink($file)) {
+                            $deleted_count++;
+                        }
+                    }
+                }
+            }
+
+            error_log('[PDF Builder] ' . $deleted_count . ' fichiers temporaires supprimés automatiquement');
+        }
+    } catch (Exception $e) {
+        error_log('[PDF Builder] Erreur lors de la suppression automatique des fichiers temp: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Nettoyage automatique du cache
+ */
+function pdf_builder_auto_clear_cache() {
+    try {
+        // Nettoyer le cache principal
+        if (function_exists('wp_cache_flush')) {
+            wp_cache_flush();
+        }
+
+        // Nettoyer les caches spécifiques du plugin
+        $cache_dirs = [
+            WP_CONTENT_DIR . '/cache/pdf-builder',
+            WP_CONTENT_DIR . '/cache/pdf-builder-preview'
+        ];
+
+        foreach ($cache_dirs as $cache_dir) {
+            if (file_exists($cache_dir) && is_dir($cache_dir)) {
+                $files = glob($cache_dir . '/*');
+                $deleted_count = 0;
+
+                foreach ($files as $file) {
+                    if (is_file($file)) {
+                        $file_age = current_time('timestamp') - filemtime($file);
+                        if ($file_age > 604800) { // 7 jours
+                            if (unlink($file)) {
+                                $deleted_count++;
+                            }
+                        }
+                    }
+                }
+
+                error_log('[PDF Builder] ' . $deleted_count . ' fichiers cache supprimés automatiquement');
+            }
+        }
+
+        error_log('[PDF Builder] Cache nettoyé automatiquement');
+    } catch (Exception $e) {
+        error_log('[PDF Builder] Erreur lors du nettoyage automatique du cache: ' . $e->getMessage());
     }
 }
 
