@@ -273,7 +273,12 @@ class PdfBuilderBackupRestoreManager
         ];
 
         foreach ($option_keys as $key) {
-            $settings[$key] = get_option($key);
+            $value = get_option($key);
+            $settings[$key] = $value;
+            // DEBUG: Log pour vérifier l'export
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log("[PDF Builder] Export setting: $key = " . (is_array($value) ? json_encode($value) : $value));
+            }
         }
 
         return $settings;
@@ -394,6 +399,10 @@ class PdfBuilderBackupRestoreManager
     {
         foreach ($settings as $key => $value) {
             update_option($key, $value);
+            // DEBUG: Log pour vérifier l'import
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log("[PDF Builder] Import setting: $key = " . (is_array($value) ? json_encode($value) : $value));
+            }
         }
         return true;
     }
