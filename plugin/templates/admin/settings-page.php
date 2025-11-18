@@ -385,14 +385,17 @@
                         // Traitement des paramètres de sauvegarde
                         $auto_backup = (isset($_POST['systeme_auto_backup']) && $_POST['systeme_auto_backup'] === '1') ? '1' : '0';
                         $backup_retention = intval($_POST['systeme_backup_retention']);
-                        $auto_backup_frequency = isset($_POST['systeme_auto_backup_frequency']) ? sanitize_text_field($_POST['systeme_auto_backup_frequency']) : 'daily';
+                        $auto_backup_frequency = isset($_POST['systeme_auto_backup_frequency']) ? sanitize_text_field($_POST['systeme_auto_backup_frequency']) : 
+                                                (isset($_POST['systeme_auto_backup_frequency_hidden']) ? sanitize_text_field($_POST['systeme_auto_backup_frequency_hidden']) : 'daily');
 
                         // DEBUG: Log détaillé de la valeur reçue du formulaire
                         if (defined('WP_DEBUG') && WP_DEBUG) {
                             error_log('[PDF Builder] === TRAITEMENT SAUVEGARDE ===');
                             error_log('[PDF Builder] Form received - Auto backup: ' . $auto_backup . ', Frequency: ' . $auto_backup_frequency . ', Retention: ' . $backup_retention);
                             error_log('[PDF Builder] POST data contains systeme_auto_backup_frequency: ' . (isset($_POST['systeme_auto_backup_frequency']) ? 'YES' : 'NO'));
+                            error_log('[PDF Builder] POST data contains systeme_auto_backup_frequency_hidden: ' . (isset($_POST['systeme_auto_backup_frequency_hidden']) ? 'YES' : 'NO'));
                             error_log('[PDF Builder] Raw POST systeme_auto_backup_frequency: ' . (isset($_POST['systeme_auto_backup_frequency']) ? $_POST['systeme_auto_backup_frequency'] : 'NOT SET'));
+                            error_log('[PDF Builder] Raw POST systeme_auto_backup_frequency_hidden: ' . (isset($_POST['systeme_auto_backup_frequency_hidden']) ? $_POST['systeme_auto_backup_frequency_hidden'] : 'NOT SET'));
                             error_log('[PDF Builder] All POST keys: ' . implode(', ', array_keys($_POST)));
                         }
 
@@ -2441,6 +2444,8 @@
                                     <option value="weekly" <?php selected($current_frequency, 'weekly'); ?>>📆 Hebdomadaire (tous les dimanches)</option>
                                     <option value="monthly" <?php selected($current_frequency, 'monthly'); ?>>📊 Mensuelle (1er du mois)</option>
                                 </select>
+                                <!-- Champ hidden pour garantir que la valeur est toujours soumise, même si le select est disabled -->
+                                <input type="hidden" name="systeme_auto_backup_frequency_hidden" value="<?php echo esc_attr($current_frequency); ?>" id="systeme_auto_backup_frequency_hidden">
                                 <p class="description" style="margin-top: 5px;">Détermine la fréquence de création automatique des sauvegardes</p>
                             </td>
                         </tr>
@@ -5301,6 +5306,7 @@
             // Gestionnaire pour activer/désactiver le select de fréquence des sauvegardes automatiques
             $('#systeme_auto_backup').on('change', function() {
                 const $frequencySelect = $('#systeme_auto_backup_frequency');
+                const $frequencyHidden = $('#systeme_auto_backup_frequency_hidden');
                 const $frequencyRow = $('#auto_backup_frequency_row');
                 if ($(this).is(':checked')) {
                     $frequencySelect.prop('disabled', false);
@@ -5309,6 +5315,14 @@
                     $frequencySelect.prop('disabled', true);
                     $frequencyRow.addClass('disabled-row');
                 }
+                // Synchroniser le champ hidden avec la valeur actuelle du select
+                $frequencyHidden.val($frequencySelect.val());
+            });
+
+            // Synchroniser le champ hidden quand la valeur du select change
+            $('#systeme_auto_backup_frequency').on('change', function() {
+                const $frequencyHidden = $('#systeme_auto_backup_frequency_hidden');
+                $frequencyHidden.val($(this).val());
             });
 
             // Initialisation de l'état du select de fréquence au chargement de la page
