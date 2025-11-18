@@ -4836,6 +4836,12 @@
                     // Le select de fréquence est maintenant toujours soumis avec le formulaire
                     // puisqu'il n'est plus masqué mais seulement désactivé
 
+                    // DEBUG: Afficher tout le contenu du FormData avant envoi
+                    console.log('[DEBUG] Données FormData avant envoi:');
+                    for (let [key, value] of formData.entries()) {
+                        console.log(`  ${key}: ${value}`);
+                    }
+
                     // Ajouter action et nonce
                     formData.append('action', 'pdf_builder_save_settings');
                     formData.append('nonce', pdf_builder_ajax.nonce);

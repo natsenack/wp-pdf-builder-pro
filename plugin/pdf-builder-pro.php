@@ -414,6 +414,9 @@ function pdf_builder_save_settings_ajax() {
     // Debug: Log que la fonction est appelée
     error_log('[DEBUG] pdf_builder_save_settings_ajax appelée');
 
+    // Debug: Log toutes les données POST reçues
+    error_log('[DEBUG] Données POST reçues: ' . print_r($_POST, true));
+
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
         error_log('[DEBUG] Nonce invalide');
