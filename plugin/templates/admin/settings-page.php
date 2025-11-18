@@ -2406,10 +2406,17 @@
                                 </label>
                             </th>
                             <td>
+                                <?php
+                                // S'assurer que l'option existe avec une valeur par défaut
+                                if (!get_option('pdf_builder_auto_backup_frequency')) {
+                                    update_option('pdf_builder_auto_backup_frequency', 'daily');
+                                }
+                                $current_frequency = get_option('pdf_builder_auto_backup_frequency', 'daily');
+                                ?>
                                 <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" style="min-width: 200px;">
-                                    <option value="daily" <?php selected(get_option('pdf_builder_auto_backup_frequency', 'daily'), 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
-                                    <option value="weekly" <?php selected(get_option('pdf_builder_auto_backup_frequency', 'daily'), 'weekly'); ?>>📆 Hebdomadaire (tous les dimanches)</option>
-                                    <option value="monthly" <?php selected(get_option('pdf_builder_auto_backup_frequency', 'daily'), 'monthly'); ?>>📊 Mensuelle (1er du mois)</option>
+                                    <option value="daily" <?php selected($current_frequency, 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
+                                    <option value="weekly" <?php selected($current_frequency, 'weekly'); ?>>📆 Hebdomadaire (tous les dimanches)</option>
+                                    <option value="monthly" <?php selected($current_frequency, 'monthly'); ?>>📊 Mensuelle (1er du mois)</option>
                                 </select>
                                 <p class="description" style="margin-top: 5px;">Détermine la fréquence de création automatique des sauvegardes</p>
                             </td>
