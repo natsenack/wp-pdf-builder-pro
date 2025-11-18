@@ -258,6 +258,7 @@
         elseif ($action === 'pdf_builder_save_settings') {
             if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
                 $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
+                error_log('[PDF Builder] Current tab received: ' . $current_tab);
 
                 // Traiter directement selon l'onglet
                 switch ($current_tab) {
@@ -349,6 +350,7 @@
                         break;
 
                     case 'systeme':
+                        error_log('[PDF Builder] === CASE SYSTEME EXECUTED ===');
                         // LOG: Début du traitement de l'onglet système
                         error_log('[PDF Builder] === TRAITEMENT ONGLET SYSTEME ===');
                         error_log('[PDF Builder] Données POST reçues: ' . print_r($_POST, true));
