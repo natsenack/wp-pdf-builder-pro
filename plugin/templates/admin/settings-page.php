@@ -2243,6 +2243,14 @@
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Active la maintenance automatique hebdomadaire</p>
+                                <div style="margin-top: 8px; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; font-size: 12px; color: #6c757d;">
+                                    <strong>ℹ️ Ce que fait la maintenance automatique :</strong><br>
+                                    • Optimisation de la base de données (réparation des tables)<br>
+                                    • Vérification et réparation des templates<br>
+                                    • Suppression des fichiers temporaires (+24h)<br>
+                                    • Nettoyage du cache ancien (+7 jours)<br>
+                                    <em>Exécution tous les dimanches à 02:00. Les logs sont enregistrés automatiquement.</em>
+                                </div>
                             </td>
                         </tr>
                     </table>
