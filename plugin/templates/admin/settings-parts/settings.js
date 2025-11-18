@@ -195,6 +195,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Vérifier si la table des consentements était ouverte lors de la dernière visite
+    const consentTableWasOpen = localStorage.getItem('pdf_builder_consent_table_open') === 'true';
+    if (consentTableWasOpen) {
+        // Rouvrir automatiquement la table si elle était ouverte
+        const resultDiv = document.getElementById('gdpr-user-actions-result');
+        if (resultDiv && resultDiv.innerHTML.trim() === '') {
+            // Recharger le contenu si le div est vide
+            const viewBtn = document.getElementById('view-consent-status');
+            if (viewBtn) {
+                viewBtn.click();
+            }
+        } else if (resultDiv) {
+            resultDiv.style.display = 'block';
+        }
+    }
+
     // Voir mes consentements
     if (viewConsentStatusBtn) {
         viewConsentStatusBtn.addEventListener('click', function() {
@@ -237,6 +253,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (resultDiv) {
                         resultDiv.style.display = 'block';
                         resultDiv.innerHTML = consentHtml;
+                        // Sauvegarder que la table est ouverte
+                        localStorage.setItem('pdf_builder_consent_table_open', 'true');
                     } else {
                         console.error('Div gdpr-user-actions-result NON trouvé !');
                     }
