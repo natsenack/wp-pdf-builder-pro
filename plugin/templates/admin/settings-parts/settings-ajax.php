@@ -485,16 +485,24 @@ if ($is_ajax && isset($_POST['action'])) {
 
                     // Paramètres de sécurité
                     if (isset($_POST['security_level'])) {
-                        update_option('pdf_builder_security_level', sanitize_text_field($_POST['security_level']));
+                        $security_level_value = sanitize_text_field($_POST['security_level']);
+                        update_option('pdf_builder_security_level', $security_level_value);
+                        error_log('[DEBUG] Saved security_level: ' . $security_level_value);
                     }
                     if (isset($_POST['enable_logging'])) {
-                        update_option('pdf_builder_enable_logging', $_POST['enable_logging'] === '1');
+                        $enable_logging_value = $_POST['enable_logging'] === '1' ? '1' : '0';
+                        update_option('pdf_builder_enable_logging', $enable_logging_value);
+                        error_log('[DEBUG] Saved enable_logging: ' . $enable_logging_value);
                     }
                     if (isset($_POST['gdpr_enabled'])) {
-                        update_option('pdf_builder_gdpr_enabled', $_POST['gdpr_enabled'] === '1');
+                        $gdpr_enabled_value = $_POST['gdpr_enabled'] === '1' ? '1' : '0';
+                        update_option('pdf_builder_gdpr_enabled', $gdpr_enabled_value);
+                        error_log('[DEBUG] Saved gdpr_enabled: ' . $gdpr_enabled_value);
                     }
-                    if (isset($_POST['gdpr_consent_required'])) {
-                        update_option('pdf_builder_gdpr_consent_required', $_POST['gdpr_consent_required'] === '1');
+                    if (isset($_POST['gdpr_data_retention'])) {
+                        $gdpr_data_retention_value = intval($_POST['gdpr_data_retention']);
+                        update_option('pdf_builder_gdpr_data_retention', $gdpr_data_retention_value);
+                        error_log('[DEBUG] Saved gdpr_data_retention: ' . $gdpr_data_retention_value);
                     }
                     if (isset($_POST['gdpr_data_retention'])) {
                         update_option('pdf_builder_gdpr_data_retention', intval($_POST['gdpr_data_retention']));

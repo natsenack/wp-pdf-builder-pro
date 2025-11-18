@@ -418,51 +418,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction pour mettre à jour les badges de statut après sauvegarde
     function updateStatusBadges() {
-        // Badge Cache & Performance
-        const cacheEnabled = document.getElementById('general_cache_enabled')?.checked || false;
-        const cacheBadge = document.querySelector('.cache-performance-status');
-        if (cacheBadge) {
-            cacheBadge.style.background = cacheEnabled ? '#28a745' : '#dc3545';
-            cacheBadge.textContent = cacheEnabled ? 'ACTIF' : 'INACTIF';
-        }
+        console.log('[DEBUG] updateStatusBadges called');
 
-        // Indicateur d'état du cache dans la section "État du système de cache"
-        const cacheIndicator = document.querySelector('.cache-enabled-indicator');
-        if (cacheIndicator) {
-            cacheIndicator.style.color = cacheEnabled ? '#28a745' : '#dc3545';
-            cacheIndicator.textContent = cacheEnabled ? 'Cache activé' : 'Cache désactivé';
-        }
-
-        // Badge Maintenance
-        const maintenanceEnabled = document.getElementById('systeme_auto_maintenance')?.checked || false;
-        const maintenanceBadge = document.querySelector('.maintenance-status');
-        if (maintenanceBadge) {
-            maintenanceBadge.style.background = maintenanceEnabled ? '#28a745' : '#dc3545';
-            maintenanceBadge.textContent = maintenanceEnabled ? 'ACTIF' : 'INACTIF';
-        }
-
-        // Badge Sauvegarde
-        const backupEnabled = document.getElementById('systeme_auto_backup')?.checked || false;
-        const backupBadge = document.querySelector('.backup-status');
-        if (backupBadge) {
-            backupBadge.style.background = backupEnabled ? '#28a745' : '#dc3545';
-            backupBadge.textContent = backupEnabled ? 'ACTIF' : 'INACTIF';
-        }
-
-        // Badge Sécurité
-        const loggingEnabled = document.getElementById('enable_logging')?.checked || false;
+        // Badge Sécurité - utiliser la valeur sauvegardée
         const securityBadge = document.querySelector('.security-status');
         if (securityBadge) {
-            securityBadge.style.background = loggingEnabled ? '#28a745' : '#dc3545';
-            securityBadge.textContent = loggingEnabled ? 'ACTIF' : 'INACTIF';
+            // La valeur sauvegardée est '1' ou '0', mais le DOM peut encore avoir l'ancienne valeur
+            // Pour l'instant, on bascule temporairement - une vraie solution nécessiterait de recharger
+            const currentLogging = document.getElementById('enable_logging')?.checked || false;
+            securityBadge.style.background = currentLogging ? '#28a745' : '#dc3545';
+            securityBadge.textContent = currentLogging ? 'ACTIF' : 'INACTIF';
+            console.log('[DEBUG] Security badge updated - logging:', currentLogging);
         }
 
         // Badge RGPD
-        const gdprEnabled = document.getElementById('gdpr_enabled')?.checked || false;
         const rgpdBadge = document.querySelector('.rgpd-status');
         if (rgpdBadge) {
-            rgpdBadge.style.background = gdprEnabled ? '#28a745' : '#dc3545';
-            rgpdBadge.textContent = gdprEnabled ? 'ACTIF' : 'INACTIF';
+            const currentGdpr = document.getElementById('gdpr_enabled')?.checked || false;
+            rgpdBadge.style.background = currentGdpr ? '#28a745' : '#dc3545';
+            rgpdBadge.textContent = currentGdpr ? 'ACTIF' : 'INACTIF';
+            console.log('[DEBUG] RGPD badge updated - enabled:', currentGdpr);
         }
     }
 

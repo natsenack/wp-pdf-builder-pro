@@ -73,6 +73,10 @@
                             <td>
                                 <input type="number" id="gdpr_data_retention" name="gdpr_data_retention" value="<?php echo esc_attr(get_option('pdf_builder_gdpr_data_retention', 2555)); ?>" min="30" max="3650">
                                 <p class="description">Nombre de jours avant suppression automatique des données utilisateur (RGPD: 7 ans recommandé)</p>
+                                <?php
+                                $current_value = get_option('pdf_builder_gdpr_data_retention', 2555);
+                                echo "<!-- DEBUG: Current gdpr_data_retention value: $current_value -->";
+                                ?>
                             </td>
                         </tr>
                         <tr>
