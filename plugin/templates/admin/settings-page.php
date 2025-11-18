@@ -4802,6 +4802,7 @@
 
                 // Pour l'onglet système, utiliser le formulaire unique simplifié
                 if (currentTab === 'systeme') {
+                    console.log('[PDF Builder] Starting AJAX submission for systeme tab');
                     const $systemeForm = $('#systeme-settings-form');
                     console.log('[PDF Builder] Systeme form found:', $systemeForm.length > 0);
                     console.log('[PDF Builder] Systeme form element:', $systemeForm[0]);
@@ -4855,6 +4856,7 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
+                            console.log('[PDF Builder] AJAX success response:', response);
                             if (response.success) {
                                 $btn.removeClass('saving').addClass('saved');
                                 $icon.text('✅');
@@ -4865,6 +4867,7 @@
                                     $text.text('Enregistrer');
                                 }, 3000);
                             } else {
+                                console.log('[PDF Builder] AJAX response error:', response.data);
                                 $btn.removeClass('saving').addClass('error');
                                 $icon.text('❌');
                                 $text.text('Erreur');
@@ -4876,9 +4879,11 @@
                             }
                         },
                         error: function(xhr, status, error) {
+                            console.log('[PDF Builder] AJAX error:', xhr.status, xhr.statusText, error);
+                            console.log('[PDF Builder] AJAX error response:', xhr.responseText);
                             $btn.removeClass('saving').addClass('error');
                             $icon.text('❌');
-                            $text.text('Erreur');
+                            $text.text('Erreur AJAX');
                             setTimeout(() => {
                                 $btn.removeClass('error');
                                 $icon.text('💾');
