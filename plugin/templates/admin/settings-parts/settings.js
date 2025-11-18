@@ -330,6 +330,18 @@ document.addEventListener('DOMContentLoaded', function() {
         collectContenuSettings(formData);
         collectDeveloppeurSettings(formData);
 
+        // DEBUG: Afficher les données système collectées
+        console.log('🔍 DEBUG: Données système collectées:');
+        console.log('🔍 DEBUG: cache_enabled:', formData.get('cache_enabled'));
+        console.log('🔍 DEBUG: cache_ttl:', formData.get('cache_ttl'));
+        console.log('🔍 DEBUG: cache_compression:', formData.get('cache_compression'));
+        console.log('🔍 DEBUG: cache_auto_cleanup:', formData.get('cache_auto_cleanup'));
+        console.log('🔍 DEBUG: cache_max_size:', formData.get('cache_max_size'));
+        console.log('🔍 DEBUG: systeme_auto_maintenance:', formData.get('systeme_auto_maintenance'));
+        console.log('🔍 DEBUG: systeme_auto_backup:', formData.get('systeme_auto_backup'));
+        console.log('🔍 DEBUG: systeme_auto_backup_frequency:', formData.get('systeme_auto_backup_frequency'));
+        console.log('🔍 DEBUG: systeme_backup_retention:', formData.get('systeme_backup_retention'));
+
         // Convertir FormData en URLSearchParams pour compatibilité
         const params = new URLSearchParams();
         for (let [key, value] of formData.entries()) {

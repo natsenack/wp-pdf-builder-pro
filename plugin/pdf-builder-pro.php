@@ -440,38 +440,27 @@ function pdf_builder_save_settings_ajax() {
             // Licence
             'license_test_mode' => isset($_POST['license_test_mode']) ? '1' : '0',
 
-            // Système
+            // Système - Cache
             'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
             'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
             'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
             'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
             'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
 
-            // PDF
-            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
-            'pdf_page_size' => sanitize_text_field($_POST['pdf_page_size'] ?? 'A4'),
-            'default_template' => sanitize_text_field($_POST['default_template'] ?? 'blank'),
+            // Système - Maintenance
+            'auto_maintenance' => isset($_POST['systeme_auto_maintenance']) ? '1' : '0',
 
-            // Contenu
-            'template_library_enabled' => isset($_POST['template_library_enabled']) ? '1' : '0',
-
-            // Développeur
-            'developer_enabled' => isset($_POST['developer_enabled']) ? '1' : '0',
-            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
-            'debug_php_errors' => isset($_POST['debug_php_errors']) ? '1' : '0',
-            'debug_javascript' => isset($_POST['debug_javascript']) ? '1' : '0',
-            'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']) ? '1' : '0',
-            'debug_ajax' => isset($_POST['debug_ajax']) ? '1' : '0',
-            'debug_performance' => isset($_POST['debug_performance']) ? '1' : '0',
-            'debug_database' => isset($_POST['debug_database']) ? '1' : '0',
-            'log_level' => intval($_POST['log_level'] ?? 0),
-            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
-            'log_retention' => intval($_POST['log_retention'] ?? 0),
-            'force_https' => isset($_POST['force_https']) ? '1' : '0',
+            // Système - Sauvegarde
+            'auto_backup' => isset($_POST['systeme_auto_backup']) ? '1' : '0',
+            'auto_backup_frequency' => sanitize_text_field($_POST['systeme_auto_backup_frequency'] ?? 'daily'),
+            'backup_retention' => intval($_POST['systeme_backup_retention'] ?? 30),
         );
 
         foreach ($all_settings as $key => $value) {
             update_option('pdf_builder_' . $key, $value);
+            if (strpos($key, 'cache') === 0 || strpos($key, 'auto_') === 0 || strpos($key, 'backup') === 0) {
+                error_log('[DEBUG AJAX] Saved system setting: pdf_builder_' . $key . ' = ' . $value);
+            }
         }
         $saved_count = count($all_settings);
 
