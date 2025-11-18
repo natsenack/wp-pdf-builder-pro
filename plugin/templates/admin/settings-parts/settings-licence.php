@@ -5,19 +5,19 @@
                     <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h2>
 
                 <style>
-                /* Classe commune pour les sections de l'onglet licence */
-                .licence-section {
-                    border-radius: 12px;
-                    padding: 20px;
-                    margin-bottom: 20px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                }
-                .licence-section h3 {
-                    margin-top: 0;
-                    border-bottom: 2px solid #007cba;
-                    padding-bottom: 8px;
-                    font-size: 18px;
-                }
+                    /* Classe commune pour les sections de l'onglet licence */
+                    .licence-section {
+                        border-radius: 12px;
+                        padding: 20px;
+                        margin-bottom: 20px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                    }
+                    .licence-section h3 {
+                        margin-top: 0;
+                        border-bottom: 2px solid #007cba;
+                        padding-bottom: 8px;
+                        font-size: 18px;
+                    }
                 </style>
 
                 <?php

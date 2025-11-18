@@ -258,64 +258,12 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 ?>
 <script>
     // Script de définition des paramètres canvas - exécuté très tôt
-
-    // Récupérer les paramètres canvas depuis les options WordPress
-    window.pdfBuilderCanvasSettings = <?php echo wp_json_encode([
-        'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
-        'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
-        'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
-        'default_orientation' => $canvas_settings_js['default_orientation'] ?? 'portrait',
-        'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',
-        'canvas_show_transparency' => $canvas_settings_js['canvas_show_transparency'] ?? false,
-        'container_background_color' => $canvas_settings_js['container_background_color'] ?? '#f8f9fa',
-        'container_show_transparency' => $canvas_settings_js['container_show_transparency'] ?? false,
-        'margin_top' => $canvas_settings_js['margin_top'] ?? 28,
-        'margin_right' => $canvas_settings_js['margin_right'] ?? 28,
-        'margin_bottom' => $canvas_settings_js['margin_bottom'] ?? 10,
-        'margin_left' => $canvas_settings_js['margin_left'] ?? 10,
-        'show_margins' => ($canvas_settings_js['show_margins'] ?? false) === '1',
-        'show_grid' => ($canvas_settings_js['show_grid'] ?? false) === '1',
-        'grid_size' => $canvas_settings_js['grid_size'] ?? 10,
-        'grid_color' => $canvas_settings_js['grid_color'] ?? '#e0e0e0',
-        'snap_to_elements' => ($canvas_settings_js['snap_to_elements'] ?? false) === '1',
-        'snap_tolerance' => $canvas_settings_js['snap_tolerance'] ?? 5,
-        'show_guides' => ($canvas_settings_js['show_guides'] ?? false) === '1',
-        'default_zoom' => $canvas_settings_js['default_zoom'] ?? 100,
-        'zoom_step' => $canvas_settings_js['zoom_step'] ?? 25,
-        'min_zoom' => $canvas_settings_js['min_zoom'] ?? 10,
-        'max_zoom' => $canvas_settings_js['max_zoom'] ?? 500,
-        'zoom_with_wheel' => ($canvas_settings_js['zoom_with_wheel'] ?? false) === '1',
-        'pan_with_mouse' => ($canvas_settings_js['pan_with_mouse'] ?? false) === '1',
-        'show_resize_handles' => ($canvas_settings_js['show_resize_handles'] ?? false) === '1',
-        'handle_size' => $canvas_settings_js['handle_size'] ?? 8,
-        'handle_color' => $canvas_settings_js['handle_color'] ?? '#007cba',
-        'enable_rotation' => ($canvas_settings_js['enable_rotation'] ?? false) === '1',
-        'rotation_step' => $canvas_settings_js['rotation_step'] ?? 15,
-        'multi_select' => $canvas_settings_js['multi_select'] ?? false,
-        'copy_paste_enabled' => $canvas_settings_js['copy_paste_enabled'] ?? false,
-        'export_quality' => $canvas_settings_js['export_quality'] ?? 'print',
-        'export_format' => $canvas_settings_js['export_format'] ?? 'pdf',
-        'compress_images' => $canvas_settings_js['compress_images'] ?? true,
-        'image_quality' => $canvas_settings_js['image_quality'] ?? 85,
-        'max_image_size' => $canvas_settings_js['max_image_size'] ?? 2048,
-        'include_metadata' => $canvas_settings_js['include_metadata'] ?? true,
-        'pdf_author' => $canvas_settings_js['pdf_author'] ?? 'PDF Builder Pro',
-        'pdf_subject' => $canvas_settings_js['pdf_subject'] ?? '',
-        'auto_crop' => $canvas_settings_js['auto_crop'] ?? false,
-        'embed_fonts' => $canvas_settings_js['embed_fonts'] ?? true,
-        'optimize_for_web' => $canvas_settings_js['optimize_for_web'] ?? true,
-        'enable_hardware_acceleration' => $canvas_settings_js['enable_hardware_acceleration'] ?? true,
-        'limit_fps' => $canvas_settings_js['limit_fps'] ?? true,
-        'max_fps' => $canvas_settings_js['max_fps'] ?? 60,
-        'auto_save_enabled' => $canvas_settings_js['auto_save_enabled'] ?? false,
-        'auto_save_interval' => $canvas_settings_js['auto_save_interval'] ?? 30,
-        'auto_save_versions' => $canvas_settings_js['auto_save_versions'] ?? 10,
-        'undo_levels' => $canvas_settings_js['undo_levels'] ?? 50,
-        'redo_levels' => $canvas_settings_js['redo_levels'] ?? 50,
-        'enable_keyboard_shortcuts' => $canvas_settings_js['enable_keyboard_shortcuts'] ?? true,
-        'debug_mode' => $canvas_settings_js['debug_mode'] ?? false,
-        'show_fps' => $canvas_settings_js['show_fps'] ?? false
-    ]); ?>;
+    window.pdfBuilderCanvasSettings = {
+        'default_canvas_format': 'A4',
+        'default_canvas_orientation': 'portrait',
+        'default_canvas_unit': 'px',
+        'default_orientation': 'portrait'
+    };
 
     // Fonction pour convertir le format et l'orientation en dimensions pixels
     window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {
@@ -352,15 +300,7 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
         window.pdfBuilderCanvasSettings.default_canvas_format,
         window.pdfBuilderCanvasSettings.default_canvas_orientation
     ).height;
-
-    // ✅ PDF_BUILDER_VERBOSE initialized in PDF_Builder_Admin.php via wp_add_inline_script()
 </script>
-<?php
-    // If this is an AJAX request that wasn't handled above, return error
-    if ($is_ajax) {
-        send_ajax_response(false, 'Requête AJAX non reconnue ou invalide.');
-    }
-?>
 
     <!-- Tab Content Containers -->
     <div id="general" class="tab-content active">
@@ -414,20 +354,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
 
-    tabs.forEach(tab => {
+    tabs.forEach(function(tab) {
         tab.addEventListener('click', function(e) {
             e.preventDefault();
 
             // Remove active class from all tabs
-            tabs.forEach(t => t.classList.remove('nav-tab-active'));
+            tabs.forEach(function(t) {
+                t.classList.remove('nav-tab-active');
+            });
             // Add active class to clicked tab
             this.classList.add('nav-tab-active');
 
             // Hide all tab contents
-            contents.forEach(c => c.classList.remove('active'));
+            contents.forEach(function(c) {
+                c.classList.remove('active');
+            });
             // Show corresponding tab content
             const target = this.getAttribute('href').substring(1);
             document.getElementById(target).classList.add('active');
         });
     });
+});
 </script>
