@@ -245,7 +245,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                         console.error('Div gdpr-user-actions-result NON trouvé !');
                     }
-                    }
                 } else {
                     showGdprResult('❌ Erreur lors du chargement: ' + (data.data || 'Erreur inconnue'), 'error');
                 }
