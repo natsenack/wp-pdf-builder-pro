@@ -607,6 +607,7 @@ function pdf_builder_save_settings_ajax() {
                 'auto_maintenance' => $_POST['systeme_auto_maintenance'] ?? '0',
                 'auto_backup' => $_POST['systeme_auto_backup'] ?? '0',
                 'backup_retention' => intval($_POST['systeme_backup_retention'] ?? 30),
+                'auto_backup_frequency' => $_POST['systeme_auto_backup_frequency'] ?? $_POST['systeme_auto_backup_frequency_hidden'] ?? 'daily',
             );
 
             error_log('[PDF Builder PHP] Sauvegarde système - Données reçues: ' . print_r($settings, true));
