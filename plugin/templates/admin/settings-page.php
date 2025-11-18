@@ -5379,7 +5379,7 @@
                 updateStatusIndicator('input[name="cache_enabled"]', '.cache-performance-status');
                 updateStatusIndicator('input[name="systeme_auto_maintenance"]', '.maintenance-status');
                 updateStatusIndicator('input[name="systeme_auto_backup"]', '.backup-status');
-                updateStatusIndicator('input[name="enable_logging"]', '.security-status');
+                updateStatusIndicator('input[name="enable_logging"]', '.security-status'); // Indicateur sécurité
             }
 
             // Initialiser les indicateurs au chargement de la page
