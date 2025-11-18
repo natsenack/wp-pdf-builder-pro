@@ -408,17 +408,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function collectSystemeSettings(formData) {
         // Collecter les données de l'onglet Système
-        const cacheEnabled = document.getElementById('cache_enabled')?.checked || false;
+        const cacheEnabled = document.getElementById('general_cache_enabled')?.checked || false;
         const cacheTtl = document.getElementById('cache_ttl')?.value || '3600';
         const cacheCompression = document.getElementById('cache_compression')?.checked || false;
         const cacheAutoCleanup = document.getElementById('cache_auto_cleanup')?.checked || false;
         const cacheMaxSize = document.getElementById('cache_max_size')?.value || '100';
+
+        // Paramètres de maintenance
+        const autoMaintenance = document.getElementById('systeme_auto_maintenance')?.checked || false;
+
+        // Paramètres de sauvegarde
+        const autoBackup = document.getElementById('systeme_auto_backup')?.checked || false;
+        const backupFrequency = document.getElementById('systeme_auto_backup_frequency')?.value || 'daily';
+        const backupRetention = document.getElementById('systeme_backup_retention')?.value || '30';
 
         formData.append('cache_enabled', cacheEnabled ? '1' : '0');
         formData.append('cache_ttl', cacheTtl);
         formData.append('cache_compression', cacheCompression ? '1' : '0');
         formData.append('cache_auto_cleanup', cacheAutoCleanup ? '1' : '0');
         formData.append('cache_max_size', cacheMaxSize);
+
+        // Maintenance
+        formData.append('systeme_auto_maintenance', autoMaintenance ? '1' : '0');
+
+        // Sauvegarde
+        formData.append('systeme_auto_backup', autoBackup ? '1' : '0');
+        formData.append('systeme_auto_backup_frequency', backupFrequency);
+        formData.append('systeme_backup_retention', backupRetention);
     }
 
     function collectAccesSettings(formData) {
