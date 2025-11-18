@@ -477,8 +477,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function collectAccesSettings(formData) {
-        // Collecter les données de l'onglet Accès
-        // Les rôles sont gérés individuellement via AJAX
+        // Collecter les rôles autorisés
+        const roleCheckboxes = document.querySelectorAll('input[name="pdf_builder_allowed_roles[]"]:checked');
+        roleCheckboxes.forEach(checkbox => {
+            formData.append('pdf_builder_allowed_roles[]', checkbox.value);
+        });
     }
 
     function collectSecuriteSettings(formData) {

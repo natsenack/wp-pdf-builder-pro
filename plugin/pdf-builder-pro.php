@@ -454,10 +454,18 @@ function pdf_builder_save_settings_ajax() {
             'auto_backup' => !empty($_POST['systeme_auto_backup']) ? '1' : '0',
             'auto_backup_frequency' => sanitize_text_field($_POST['systeme_auto_backup_frequency'] ?? 'daily'),
             'backup_retention' => intval($_POST['systeme_backup_retention'] ?? 30),
+
+            // Accès - Rôles autorisés
+            'allowed_roles' => isset($_POST['pdf_builder_allowed_roles']) ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles']) : ['administrator'],
         );
 
         foreach ($all_settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
+            if ($key === 'allowed_roles') {
+                // Sauvegarde spéciale pour les rôles
+                update_option('pdf_builder_allowed_roles', $value);
+            } else {
+                update_option('pdf_builder_' . $key, $value);
+            }
         }
         $saved_count = count($all_settings);
 
