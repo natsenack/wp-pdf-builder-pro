@@ -2,8 +2,6 @@
 
 namespace WP_PDF_Builder_Pro\Data;
 
-use WC_Order;
-use WC_Order_Item_Product;
 use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
 
 /**
@@ -12,7 +10,7 @@ use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
  */
 class WooCommerceDataProvider implements DataProviderInterface
 {
-    /** @var WC_Order Commande WooCommerce */
+    /** @var \WC_Order Commande WooCommerce */
     private $order;
 /** @var string Contexte d'utilisation */
     private $context;
@@ -212,11 +210,11 @@ class WooCommerceDataProvider implements DataProviderInterface
     /**
      * Récupère la valeur d'un champ pour un produit
      *
-     * @param WC_Order_Item_Product $item Article de commande
+     * @param \WC_Order_Item_Product $item Article de commande
      * @param string $field Champ demandé
      * @return string Valeur du champ
      */
-    private function getProductFieldValue(WC_Order_Item_Product $item, string $field): string
+    private function getProductFieldValue(\WC_Order_Item_Product $item, string $field): string
     {
         switch ($field) {
             case 'name':
@@ -498,7 +496,7 @@ class WooCommerceDataProvider implements DataProviderInterface
      */
     public function hasOrder(): bool
     {
-        return $this->order instanceof WC_Order;
+        return $this->order instanceof \WC_Order;
     }
 
     /**
