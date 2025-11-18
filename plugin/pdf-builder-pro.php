@@ -427,6 +427,7 @@ function pdf_builder_save_settings_ajax() {
     }
 
     $current_tab = sanitize_text_field($_POST['current_tab']);
+    error_log('[DEBUG] Current tab: ' . $current_tab);
     $saved_count = 0;
 
         // Traiter selon l'onglet
