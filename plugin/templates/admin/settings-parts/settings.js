@@ -503,10 +503,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function collectSecuriteSettings(formData) {
         // Collecter les données de l'onglet Sécurité
+        console.log('[DEBUG] collectSecuriteSettings called');
 
         // Sécurité générale
         const securityLevel = document.getElementById('security_level')?.value || 'medium';
         const enableLogging = document.getElementById('enable_logging')?.checked || false;
+
+        console.log('[DEBUG] Sécurité - Level:', securityLevel, 'Logging:', enableLogging);
 
         formData.append('security_level', securityLevel);
         formData.append('enable_logging', enableLogging ? '1' : '0');
@@ -518,6 +521,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const gdprAuditEnabled = document.getElementById('gdpr_audit_enabled')?.checked || false;
         const gdprEncryptionEnabled = document.getElementById('gdpr_encryption_enabled')?.checked || false;
 
+        console.log('[DEBUG] RGPD - Enabled:', gdprEnabled, 'Consent required:', gdprConsentRequired);
+
         formData.append('gdpr_enabled', gdprEnabled ? '1' : '0');
         formData.append('gdpr_consent_required', gdprConsentRequired ? '1' : '0');
         formData.append('gdpr_data_retention', gdprDataRetention);
@@ -528,6 +533,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const gdprConsentAnalytics = document.getElementById('gdpr_consent_analytics')?.checked || false;
         const gdprConsentTemplates = document.getElementById('gdpr_consent_templates')?.checked || false;
         const gdprConsentMarketing = document.getElementById('gdpr_consent_marketing')?.checked || false;
+
+        console.log('[DEBUG] Consent - Analytics:', gdprConsentAnalytics, 'Templates:', gdprConsentTemplates, 'Marketing:', gdprConsentMarketing);
 
         formData.append('gdpr_consent_analytics', gdprConsentAnalytics ? '1' : '0');
         formData.append('gdpr_consent_templates', gdprConsentTemplates ? '1' : '0');

@@ -437,6 +437,7 @@ if ($is_ajax && isset($_POST['action'])) {
                 case 'all':
                     // Traitement de tous les paramètres (bouton flottant de sauvegarde)
                     error_log('[DEBUG] Traitement de tous les paramètres (bouton flottant)');
+                    error_log('[DEBUG] POST data: ' . print_r($_POST, true));
 
                     // Paramètres généraux
                     if (isset($_POST['debug_mode'])) {
