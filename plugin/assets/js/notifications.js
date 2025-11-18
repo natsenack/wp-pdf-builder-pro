@@ -8,7 +8,7 @@
     class PDFBuilderNotifications {
         constructor() {
             this.toastContainer = null;
-            this.init();
+            // Init will be called on DOM ready
         }
 
         init() {
@@ -158,8 +158,8 @@
 
     // Initialiser aussi quand le DOM est prêt (au cas où)
     $(document).ready(function() {
-        if (!window.pdfBuilderNotifications) {
-            window.pdfBuilderNotifications = new PDFBuilderNotifications();
+        if (window.pdfBuilderNotifications) {
+            window.pdfBuilderNotifications.init();
         }
     });
 
