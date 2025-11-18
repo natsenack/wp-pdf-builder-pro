@@ -142,9 +142,9 @@
                             </div>
                             <div style="text-align: center;" class="systeme-cache-status">
                                 <div class="cache-enabled-indicator" style="font-size: 24px; font-weight: bold; color: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
-                                <?php echo get_option('pdf_builder_cache_enabled', false) ? 'ACTIF' : 'INACTIF'; ?>
+                                <?php echo get_option('pdf_builder_cache_enabled', false) ? 'Cache activé' : 'Cache désactivé'; ?>
                             </div>
-                                <div style="color: #666; font-size: 12px;"></div>
+                                <div style="color: #666; font-size: 12px;">État du cache</div>
                             </div>
                             <div style="text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold; color: #28a745;">

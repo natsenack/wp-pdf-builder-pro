@@ -399,6 +399,13 @@ document.addEventListener('DOMContentLoaded', function() {
             cacheBadge.textContent = cacheEnabled ? 'ACTIF' : 'INACTIF';
         }
 
+        // Indicateur d'état du cache dans la section "État du système de cache"
+        const cacheIndicator = document.querySelector('.cache-enabled-indicator');
+        if (cacheIndicator) {
+            cacheIndicator.style.color = cacheEnabled ? '#28a745' : '#dc3545';
+            cacheIndicator.textContent = cacheEnabled ? 'Cache activé' : 'Cache désactivé';
+        }
+
         // Badge Maintenance
         const maintenanceEnabled = document.getElementById('systeme_auto_maintenance')?.checked || false;
         const maintenanceBadge = document.querySelector('.maintenance-status');
