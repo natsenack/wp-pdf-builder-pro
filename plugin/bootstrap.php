@@ -301,6 +301,11 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
     }
 
+    // Charger les handlers AJAX pour le cache
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/cache-handlers.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/cache-handlers.php';
+    }
+
     // Charger le handler AJAX pour générer les styles des éléments
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php';

@@ -1312,6 +1312,30 @@ class PdfBuilderAdmin
             error_log('PDF_Builder_Admin::enqueueAdminScripts: PDF_Builder_Notification_Manager class does not exist');
         }
 
+        // Charger le script JavaScript pour la page de paramètres
+        if ($hook === 'pdf-builder_page_pdf-builder-settings') {
+            wp_enqueue_script(
+                'pdf-builder-settings-page',
+                PDF_BUILDER_PRO_ASSETS_URL . 'templates/admin/js/settings-page.js',
+                ['jquery'],
+                PDF_BUILDER_PRO_VERSION . '-' . time(),
+                true
+            );
+
+            // Localiser les variables AJAX pour les fonctionnalités de cache
+            wp_localize_script('pdf-builder-settings-page', 'pdfBuilderAjax', [
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_cache_actions'),
+                'strings' => [
+                    'testing' => __('Test en cours...', 'pdf-builder-pro'),
+                    'clearing' => __('Nettoyage en cours...', 'pdf-builder-pro'),
+                    'confirm_clear' => __('Êtes-vous sûr de vouloir vider tout le cache ?', 'pdf-builder-pro'),
+                    'error' => __('Erreur', 'pdf-builder-pro'),
+                    'success' => __('Succès', 'pdf-builder-pro'),
+                ]
+            ]);
+        }
+
 // Styles pour l'éditeur canvas - Plus nécessaire car nous utilisons seulement l'éditeur React
     }
 
