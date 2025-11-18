@@ -2283,7 +2283,7 @@
                     <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             💾 Gestion des Sauvegardes
-                            <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                            <span class="backup-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_auto_backup', '0') === '1' ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_auto_backup', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
                         </span>
                     </h3>
 
@@ -5378,6 +5378,7 @@
                 // Mettre à jour les indicateurs dans les titres des sections
                 updateStatusIndicator('input[name="cache_enabled"]', '.cache-performance-status');
                 updateStatusIndicator('input[name="systeme_auto_maintenance"]', '.maintenance-status');
+                updateStatusIndicator('input[name="systeme_auto_backup"]', '.backup-status');
             }
 
             // Initialiser les indicateurs au chargement de la page
@@ -5409,15 +5410,8 @@
                             }
                         }
 
-                        // Mettre à jour l'indicateur de maintenance (utilise la valeur du checkbox)
-                        const maintenanceEnabled = $('input[name="systeme_auto_maintenance"]').is(':checked');
-                        const $maintenanceStatus = $('.maintenance-status');
-
-                        if (maintenanceEnabled) {
-                            $maintenanceStatus.html('ACTIF').css('background', '#28a745');
-                        } else {
-                            $maintenanceStatus.html('INACTIF').css('background', '#dc3545');
-                        }
+                        // Mettre à jour tous les indicateurs (maintenance et sauvegardes)
+                        updateAllStatusIndicators();
                     },
                     error: function() {
                         // En cas d'erreur, utiliser les valeurs par défaut
