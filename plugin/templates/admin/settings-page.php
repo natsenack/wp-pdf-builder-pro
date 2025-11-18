@@ -4693,6 +4693,12 @@
     </style>
 
     <script>
+        // Définir les variables AJAX nécessaires
+        var pdf_builder_ajax = {
+            ajax_url: '<?php echo esc_js(admin_url('admin-ajax.php')); ?>',
+            nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_save_settings')); ?>'
+        };
+
         jQuery(document).ready(function($) {
             let currentTab = 'general';
             let isLoadingBackups = false; // Flag pour éviter la fermeture automatique pendant le chargement
@@ -4742,9 +4748,6 @@
 
                 // Pour l'onglet système, utiliser le formulaire unique simplifié
                 if (currentTab === 'systeme') {
-                    console.log('[PDF Builder JS] === SAUVEGARDE ONGLET SYSTÈME ===');
-                    console.log('[PDF Builder JS] Utilisation du formulaire unique système');
-
                     const $systemeForm = $('#systeme-settings-form');
                     const formData = new FormData($systemeForm[0]);
 
@@ -4754,18 +4757,12 @@
                         const name = $checkbox.attr('name');
                         if (name && !$checkbox.is(':checked')) {
                             formData.append(name, '0');
-                            console.log('[PDF Builder JS] Checkbox non cochée:', name, '= 0');
                         }
                     });
 
                     // Ajouter action et nonce
                     formData.append('action', 'pdf_builder_save_settings');
                     formData.append('nonce', pdf_builder_ajax.nonce);
-
-                    console.log('[PDF Builder JS] Données à envoyer:');
-                    for (let [key, value] of formData.entries()) {
-                        console.log('  ', key, '=', value);
-                    }
 
                     // Envoyer via AJAX
                     $.ajax({
@@ -4776,7 +4773,6 @@
                         contentType: false,
                         success: function(response) {
                             if (response.success) {
-                                console.log('[PDF Builder JS] Sauvegarde système réussie');
                                 $btn.removeClass('saving').addClass('saved');
                                 $icon.text('✅');
                                 $text.text('Enregistré !');
@@ -4786,7 +4782,6 @@
                                     $text.text('Enregistrer');
                                 }, 3000);
                             } else {
-                                console.log('[PDF Builder JS] Erreur sauvegarde système:', response.data);
                                 $btn.removeClass('saving').addClass('error');
                                 $icon.text('❌');
                                 $text.text('Erreur');
@@ -4798,7 +4793,6 @@
                             }
                         },
                         error: function(xhr, status, error) {
-                            console.log('[PDF Builder JS] Erreur AJAX système:', status, error);
                             $btn.removeClass('saving').addClass('error');
                             $icon.text('❌');
                             $text.text('Erreur');
@@ -4885,14 +4879,12 @@
             
             // Bouton "Vider le cache"
             $('#clear-cache-btn').on('click', function() {
-                console.log('[PDF Builder JS] Bouton "Vider le cache" cliqué');
                 const $btn = $(this);
                 const $results = $('#maintenance-results');
 
                 $btn.prop('disabled', true).text('⏳ Vidage en cours...');
                 $results.html('<span style="color: #007cba;">⏳ Vidage du cache en cours...</span>');
 
-                console.log('[PDF Builder JS] Envoi requête AJAX pour vider le cache');
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
@@ -4901,7 +4893,6 @@
                         security: pdf_builder_ajax.nonce
                     },
                     success: function(response) {
-                        console.log('[PDF Builder JS] Réponse reçue pour vidage cache:', response);
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Cache vidé avec succès</span>');
                         } else {
@@ -4913,7 +4904,6 @@
                         $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors du vidage du cache</span>');
                     },
                     complete: function() {
-                        console.log('[PDF Builder JS] Requête vidage cache terminée');
                         $btn.prop('disabled', false).text('🗑️ Vider le cache');
                     }
                 });
@@ -4985,27 +4975,11 @@
             
             // Bouton "Créer une sauvegarde"
             $('#create-backup-btn').on('click', function() {
-                console.log('[PDF Builder JS] === ACTION: CRÉER UNE SAUVEGARDE ===');
-                console.log('[PDF Builder JS] Timestamp:', new Date().toISOString());
-                console.log('[PDF Builder JS] Bouton cliqué - État initial:', {
-                    disabled: $(this).prop('disabled'),
-                    text: $(this).text()
-                });
-
                 const $btn = $(this);
                 const $results = $('#backup-results');
 
-                console.log('[PDF Builder JS] État du conteneur #backup-results avant:', {
-                    html: $results.html(),
-                    isVisible: $results.is(':visible'),
-                    hasContent: $results.html().length > 0
-                });
-
                 $btn.prop('disabled', true).text('⏳ Création...');
                 $results.html('<span style="color: #007cba;">⏳ Création de la sauvegarde en cours...</span>');
-
-                console.log('[PDF Builder JS] Bouton désactivé et message affiché');
-                console.log('[PDF Builder JS] Envoi requête AJAX...');
 
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
@@ -5015,39 +4989,18 @@
                         nonce: pdf_builder_ajax.nonce
                     },
                     success: function(response) {
-                        console.log('[PDF Builder JS] === RÉPONSE CRÉATION SAUVEGARDE ===');
-                        console.log('[PDF Builder JS] Timestamp:', new Date().toISOString());
-                        console.log('[PDF Builder JS] Réponse complète:', response);
-                        console.log('[PDF Builder JS] Success:', response.success);
-                        console.log('[PDF Builder JS] Data:', response.data);
-                        console.log('[PDF Builder JS] État du conteneur avant mise à jour:', {
-                            html: $results.html(),
-                            isVisible: $results.is(':visible')
-                        });
-
                         if (response.success) {
-                            console.log('[PDF Builder JS] Sauvegarde créée avec succès');
-                            console.log('[PDF Builder JS] Message à afficher:', response.data ? response.data.message : 'Sauvegarde créée');
                             $results.html('<span style="color: #28a745;">✅ Sauvegarde créée avec succès</span>');
-                            console.log('[PDF Builder JS] HTML mis à jour avec succès');
                         } else {
-                            console.log('[PDF Builder JS] Erreur lors de la création:', response.data);
                             $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
                             $btn.prop('disabled', false).text('📦 Créer une sauvegarde');
-                            console.log('[PDF Builder JS] Bouton réactivé après erreur');
                         }
-
-                        console.log('[PDF Builder JS] État du conteneur après mise à jour:', {
-                            html: $results.html(),
-                            isVisible: $results.is(':visible')
-                        });
                     },
                     error: function(xhr, status, error) {
                         console.error('[PDF Builder JS] Erreur AJAX création sauvegarde:', xhr, status, error);
                         $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors de la création de la sauvegarde</span>');
                     },
                     complete: function() {
-                        console.log('[PDF Builder JS] Requête création sauvegarde terminée');
                         $btn.prop('disabled', false).text('📦 Créer une sauvegarde');
                     }
                 });
@@ -5118,18 +5071,7 @@
 
                             $results.html('<span style="color: #28a745;">✅ Liste chargée</span>' + html);
 
-                            console.log('[PDF Builder JS] HTML injecté dans le DOM');
-                            console.log('[PDF Builder JS] Nombre d\'éléments .backup-item trouvés:', $results.find('.backup-item').length);
-                            console.log('[PDF Builder JS] Nombre de boutons .restore-backup-btn:', $results.find('.restore-backup-btn').length);
-                            console.log('[PDF Builder JS] Nombre de boutons .delete-backup-btn:', $results.find('.delete-backup-btn').length);
-                            console.log('[PDF Builder JS] État final du conteneur:', {
-                                html: $results.html().substring(0, 200) + '...',
-                                isVisible: $results.is(':visible'),
-                                hasContent: $results.html().length > 0
-                            });
-
                         } else {
-                            console.log('[PDF Builder JS] Erreur lors du chargement de la liste:', response.data);
                             $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
                         }
                     },
@@ -5149,35 +5091,20 @@
                 const filename = $(this).data('filename');
                 const filenameRaw = $(this).closest('.backup-item').find('strong').text() || filename;
 
-                console.log('[PDF Builder JS] === ACTION: RESTAURER UNE SAUVEGARDE ===');
-                console.log('[PDF Builder JS] Timestamp:', new Date().toISOString());
-                console.log('[PDF Builder JS] Filename (data):', filename);
-                console.log('[PDF Builder JS] FilenameRaw:', filenameRaw);
-                console.log('[PDF Builder JS] Bouton cliqué dans item:', $(this).closest('.backup-item').find('strong').text());
-
                 if (!filename) {
-                    console.log('[PDF Builder JS] ERREUR: Nom de fichier manquant');
                     alert('Erreur: nom de fichier manquant');
                     return;
                 }
 
                 if (!confirm('Êtes-vous sûr de vouloir restaurer la sauvegarde "' + filenameRaw + '" ?\n\n⚠️ Cette action va remplacer tous les paramètres actuels par ceux de la sauvegarde.')) {
-                    console.log('[PDF Builder JS] Restauration annulée par l\'utilisateur');
                     return;
                 }
 
-                console.log('[PDF Builder JS] Confirmation reçue, lancement de la restauration');
                 const $btn = $(this);
                 const $results = $('#backup-results');
 
-                console.log('[PDF Builder JS] État du conteneur avant restauration:', {
-                    html: $results.html().substring(0, 100) + '...',
-                    hasBackupItems: $results.find('.backup-item').length
-                });
-
                 $btn.prop('disabled', true).text('⏳ Restauration...');
 
-                console.log('[PDF Builder JS] Bouton désactivé, envoi requête AJAX...');
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
                     type: 'POST',
@@ -5187,35 +5114,22 @@
                         filename: filename
                     },
                     success: function(response) {
-                        console.log('[PDF Builder JS] === RÉPONSE RESTAURATION SAUVEGARDE ===');
-                        console.log('[PDF Builder JS] Timestamp:', new Date().toISOString());
-                        console.log('[PDF Builder JS] Réponse complète:', response);
-                        console.log('[PDF Builder JS] Success:', response.success);
-                        console.log('[PDF Builder JS] Data:', response.data);
-
                         if (response.success) {
-                            console.log('[PDF Builder JS] Restauration réussie, affichage message de succès');
                             // Afficher le message de succès et recharger la liste
                             $results.html('<span style="color: #28a745;">✅ Sauvegarde restaurée avec succès !</span> <span style="color: #666;">⏳ Actualisation de la liste...</span>');
 
-                            console.log('[PDF Builder JS] Message affiché, programmation du rechargement de liste dans 1s');
-
                             // Recharger la liste des sauvegardes après restauration
                             setTimeout(() => {
-                                console.log('[PDF Builder JS] Rechargement automatique de la liste après restauration');
                                 $('#list-backups-btn').click();
                             }, 1000);
 
                             // Optionnel : afficher un message global de succès
                             if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                console.log('[PDF Builder JS] Affichage notification toast');
                                 PDF_Builder_Notification_Manager.show_toast('Paramètres restaurés avec succès depuis la sauvegarde !', 'success');
                             }
                         } else {
-                            console.log('[PDF Builder JS] Erreur lors de la restauration:', response.data);
                             $results.html('<span style="color: #dc3545;">❌ Erreur lors de la restauration: ' + (response.data || 'Erreur inconnue') + '</span>');
                             $btn.prop('disabled', false).text('🔄 Restaurer');
-                            console.log('[PDF Builder JS] Bouton réactivé après erreur');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -5267,7 +5181,6 @@
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur lors de la suppression: ' + (response.data || 'Erreur inconnue') + '</span>');
                             $btn.prop('disabled', false).text('🗑️ Supprimer');
-                            console.log('[PDF Builder JS] Bouton réactivé après erreur');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -5301,7 +5214,6 @@
                         characterData: true,
                         subtree: true
                     });
-                    console.log('[PDF Builder JS] 🔍 Observateur de mutations activé sur #backup-results');
                 }
             });
 
@@ -5359,10 +5271,8 @@
                 const $frequencyRow = $('#auto_backup_frequency_row');
                 if ($(this).is(':checked')) {
                     $frequencyRow.slideDown(300);
-                    console.log('[PDF Builder JS] Sauvegarde automatique activée - affichage du select de fréquence');
                 } else {
                     $frequencyRow.slideUp(300);
-                    console.log('[PDF Builder JS] Sauvegarde automatique désactivée - masquage du select de fréquence');
                 }
             });
 
@@ -5373,10 +5283,8 @@
 
                 if ($autoBackupCheckbox.is(':checked')) {
                     $frequencyRow.show();
-                    console.log('[PDF Builder JS] Page chargée - sauvegarde automatique activée, select de fréquence visible');
                 } else {
                     $frequencyRow.hide();
-                    console.log('[PDF Builder JS] Page chargée - sauvegarde automatique désactivée, select de fréquence masqué');
                 }
             });
 
