@@ -2221,10 +2221,8 @@
                                 <div style="color: #666; font-size: 12px;">Transients actifs</div>
                             </div>
                             <div style="text-align: center;" class="systeme-cache-status">
-                                <div class="cache-enabled-indicator" style="font-size: 24px; font-weight: bold; color: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
-                                    <?php echo get_option('pdf_builder_cache_enabled', false) ? '✅' : '❌'; ?>
-                                </div>
-                                <div class="cache-enabled-text" style="color: #666; font-size: 12px;"><?php echo get_option('pdf_builder_cache_enabled', false) ? 'Cache activé' : 'Cache désactivé'; ?></div>
+                                <div class="cache-enabled-indicator" style="font-size: 24px; font-weight: bold;"></div>
+                                <div class="cache-enabled-text" style="color: #666; font-size: 12px;"></div>
                             </div>
                             <div style="text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold; color: #28a745;">
@@ -4862,16 +4860,7 @@
                                 // Mettre à jour l'indicateur actif/inactif du cache en temps réel
                                 if (currentTab === 'systeme') {
                                     const cacheEnabledValue = formData.get('cache_enabled') === '1';
-                                    const $cacheStatusIcon = $('.systeme-cache-status .cache-enabled-indicator');
-                                    const $cacheStatusText = $('.systeme-cache-status .cache-enabled-text');
-
-                                    if (cacheEnabledValue) {
-                                        $cacheStatusIcon.html('✅').css('color', '#28a745');
-                                        $cacheStatusText.text('Cache activé');
-                                    } else {
-                                        $cacheStatusIcon.html('❌').css('color', '#dc3545');
-                                        $cacheStatusText.text('Cache désactivé');
-                                    }
+                                    updateCacheStatusIndicator(cacheEnabledValue);
                                 }
 
                                 setTimeout(() => {
@@ -5362,6 +5351,42 @@
                 } else {
                     alert('Test de notification d\'information réussi !');
                 }
+            });
+
+            // Fonction pour mettre à jour l'indicateur actif/inactif du cache
+            function updateCacheStatusIndicator(isEnabled) {
+                const $cacheStatusIcon = $('.systeme-cache-status .cache-enabled-indicator');
+                const $cacheStatusText = $('.systeme-cache-status .cache-enabled-text');
+
+                if (isEnabled) {
+                    $cacheStatusIcon.html('✅').css('color', '#28a745');
+                    $cacheStatusText.text('Cache activé');
+                } else {
+                    $cacheStatusIcon.html('❌').css('color', '#dc3545');
+                    $cacheStatusText.text('Cache désactivé');
+                }
+            }
+
+            // Initialiser l'indicateur au chargement de la page
+            $(document).ready(function() {
+                // Récupérer l'état actuel du cache depuis les options WordPress
+                $.ajax({
+                    url: pdf_builder_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_get_cache_status',
+                        nonce: pdf_builder_ajax.nonce
+                    },
+                    success: function(response) {
+                        if (response.success && typeof response.data.cache_enabled !== 'undefined') {
+                            updateCacheStatusIndicator(response.data.cache_enabled === '1');
+                        }
+                    },
+                    error: function() {
+                        // En cas d'erreur, utiliser une valeur par défaut
+                        updateCacheStatusIndicator(false);
+                    }
+                });
             });
 
             // Gestionnaire pour activer/désactiver le select de fréquence des sauvegardes automatiques
