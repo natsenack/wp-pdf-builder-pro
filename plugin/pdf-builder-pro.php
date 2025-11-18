@@ -1015,8 +1015,18 @@ function pdf_builder_download_backup() {
             ob_clean();
         }
 
+        // Déterminer le type de fichier et le Content-Type approprié
+        $file_extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $content_type = 'application/octet-stream'; // Type par défaut
+
+        if ($file_extension === 'zip') {
+            $content_type = 'application/zip';
+        } elseif ($file_extension === 'json') {
+            $content_type = 'application/json';
+        }
+
         // Définir les headers pour le téléchargement
-        header('Content-Type: application/zip');
+        header('Content-Type: ' . $content_type);
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Content-Length: ' . filesize($filepath));
         header('Cache-Control: no-cache, no-store, must-revalidate');
