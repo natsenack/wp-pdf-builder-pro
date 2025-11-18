@@ -94,6 +94,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (exportMyDataBtn) {
         exportMyDataBtn.addEventListener('click', function() {
             const nonce = document.getElementById('export_user_data_nonce')?.value;
+            const format = document.getElementById('export-format')?.value || 'json';
+
             if (!nonce) {
                 showGdprResult('Erreur: Nonce de sécurité manquant', 'error');
                 return;
@@ -110,7 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: new URLSearchParams({
                     action: 'pdf_builder_export_user_data',
-                    nonce: nonce
+                    nonce: nonce,
+                    format: format
                 })
             })
             .then(response => response.json())
@@ -124,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     link.click();
                     document.body.removeChild(link);
 
-                    showGdprResult('✅ Données exportées avec succès');
+                    showGdprResult(`✅ Données exportées avec succès au format ${format.toUpperCase()}`);
                 } else {
                     showGdprResult('❌ Erreur lors de l\'export: ' + (data.data || 'Erreur inconnue'), 'error');
                 }

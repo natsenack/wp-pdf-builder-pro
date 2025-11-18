@@ -168,27 +168,181 @@ class PDF_Builder_GDPR_Manager {
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
         $user_id = get_current_user_id();
+        $format = sanitize_text_field($_POST['format'] ?? 'json');
 
         // Récupérer toutes les données utilisateur
         $user_data = $this->get_user_data($user_id);
 
-        // Créer un fichier JSON
-        $filename = 'pdf-builder-user-data-' . $user_id . '-' . date('Y-m-d') . '.json';
-        $file_path = wp_upload_dir()['basedir'] . '/pdf-builder-exports/' . $filename;
+        // Créer le fichier selon le format demandé
+        $export_result = $this->create_user_data_export($user_data, $user_id, $format);
 
-        // Créer le dossier s'il n'existe pas
-        wp_mkdir_p(dirname($file_path));
-
-        // Écrire le fichier
-        file_put_contents($file_path, json_encode($user_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        if (is_wp_error($export_result)) {
+            wp_send_json_error(['message' => $export_result->get_error_message()]);
+            return;
+        }
 
         // Logger l'action
-        $this->log_audit_action($user_id, 'data_exported', 'user_data', 'all');
+        $this->log_audit_action($user_id, 'data_exported', 'user_data', $format);
 
         wp_send_json_success([
-            'message' => __('Données exportées avec succès.', 'pdf-builder-pro'),
-            'download_url' => wp_upload_dir()['baseurl'] . '/pdf-builder-exports/' . $filename
+            'message' => sprintf(__('Données exportées avec succès au format %s.', 'pdf-builder-pro'), strtoupper($format)),
+            'download_url' => $export_result['download_url'],
+            'filename' => $export_result['filename']
         ]);
+    }
+
+    /**
+     * Créer un export des données utilisateur dans le format spécifié
+     */
+    private function create_user_data_export($user_data, $user_id, $format = 'json') {
+        $upload_dir = wp_upload_dir();
+        $export_dir = $upload_dir['basedir'] . '/pdf-builder-exports';
+
+        // Créer le dossier s'il n'existe pas
+        wp_mkdir_p($export_dir);
+
+        $timestamp = date('Y-m-d-H-i-s');
+        $filename = "pdf-builder-user-data-{$user_id}-{$timestamp}.{$format}";
+        $file_path = $export_dir . '/' . $filename;
+
+        $content = '';
+        $mime_type = 'text/plain';
+
+        switch ($format) {
+            case 'json':
+                $content = json_encode($user_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                $mime_type = 'application/json';
+                break;
+
+            case 'csv':
+                $content = $this->convert_to_csv($user_data);
+                $mime_type = 'text/csv';
+                break;
+
+            case 'xml':
+                $content = $this->convert_to_xml($user_data);
+                $mime_type = 'application/xml';
+                break;
+
+            case 'txt':
+                $content = $this->convert_to_text($user_data);
+                $mime_type = 'text/plain';
+                break;
+
+            default:
+                return new WP_Error('invalid_format', __('Format d\'export non supporté.', 'pdf-builder-pro'));
+        }
+
+        // Écrire le fichier
+        if (file_put_contents($file_path, $content) === false) {
+            return new WP_Error('file_write_error', __('Erreur lors de l\'écriture du fichier d\'export.', 'pdf-builder-pro'));
+        }
+
+        return [
+            'filename' => $filename,
+            'file_path' => $file_path,
+            'download_url' => $upload_dir['baseurl'] . '/pdf-builder-exports/' . $filename,
+            'mime_type' => $mime_type
+        ];
+    }
+
+    /**
+     * Convertir les données utilisateur en CSV
+     */
+    private function convert_to_csv($user_data) {
+        $output = fopen('php://temp', 'r+');
+
+        // En-têtes
+        fputcsv($output, ['Section', 'Clé', 'Valeur', 'Type']);
+
+        // Fonction récursive pour aplatir les données
+        $flatten_data = function($data, $prefix = '') use (&$flatten_data, $output) {
+            foreach ($data as $key => $value) {
+                $full_key = $prefix ? $prefix . '.' . $key : $key;
+
+                if (is_array($value) || is_object($value)) {
+                    $flatten_data((array) $value, $full_key);
+                } else {
+                    $type = gettype($value);
+                    if ($type === 'boolean') {
+                        $value = $value ? 'true' : 'false';
+                    }
+                    fputcsv($output, ['', $full_key, (string) $value, $type]);
+                }
+            }
+        };
+
+        $flatten_data($user_data);
+        rewind($output);
+        $csv_content = stream_get_contents($output);
+        fclose($output);
+
+        return $csv_content;
+    }
+
+    /**
+     * Convertir les données utilisateur en XML
+     */
+    private function convert_to_xml($user_data) {
+        $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><user-data></user-data>');
+
+        // Fonction récursive pour convertir array en XML
+        $array_to_xml = function($data, $xml) use (&$array_to_xml) {
+            foreach ($data as $key => $value) {
+                // Nettoyer le nom de la clé pour XML
+                $key = preg_replace('/[^a-zA-Z0-9_-]/', '_', $key);
+
+                if (is_array($value) || is_object($value)) {
+                    $child = $xml->addChild($key);
+                    $array_to_xml((array) $value, $child);
+                } else {
+                    $xml->addChild($key, htmlspecialchars((string) $value));
+                }
+            }
+        };
+
+        $array_to_xml($user_data, $xml);
+
+        // Formater le XML
+        $dom = new DOMDocument('1.0');
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+        $dom->loadXML($xml->asXML());
+
+        return $dom->saveXML();
+    }
+
+    /**
+     * Convertir les données utilisateur en texte lisible
+     */
+    private function convert_to_text($user_data) {
+        $output = "EXPORT DES DONNEES UTILISATEUR - " . date('d/m/Y H:i:s') . "\n";
+        $output .= str_repeat("=", 60) . "\n\n";
+
+        // Fonction récursive pour formater les données
+        $format_data = function($data, $indent = 0) use (&$format_data) {
+            $result = '';
+            $indent_str = str_repeat('  ', $indent);
+
+            foreach ($data as $key => $value) {
+                $result .= $indent_str . strtoupper($key) . ":\n";
+
+                if (is_array($value) || is_object($value)) {
+                    $result .= $format_data((array) $value, $indent + 1);
+                } else {
+                    $result .= $indent_str . '  - ' . (string) $value . "\n";
+                }
+                $result .= "\n";
+            }
+
+            return $result;
+        };
+
+        $output .= $format_data($user_data);
+        $output .= "\n" . str_repeat("=", 60) . "\n";
+        $output .= "Fin de l'export - Généré automatiquement par PDF Builder Pro\n";
+
+        return $output;
     }
 
     /**

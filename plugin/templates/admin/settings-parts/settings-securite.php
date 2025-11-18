@@ -148,9 +148,17 @@
                         <p style="margin-top: 0; color: #495057;"><strong>Droits RGPD :</strong> En tant qu'administrateur, vous pouvez gérer vos propres données personnelles.</p>
 
                         <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
-                            <button type="button" id="export-my-data" class="button button-secondary" style="display: flex; align-items: center; gap: 8px;">
-                                📥 Exporter mes données
-                            </button>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select id="export-format" style="min-width: 100px;">
+                                    <option value="json">JSON</option>
+                                    <option value="csv">CSV</option>
+                                    <option value="xml">XML</option>
+                                    <option value="txt">Texte</option>
+                                </select>
+                                <button type="button" id="export-my-data" class="button button-secondary" style="display: flex; align-items: center; gap: 8px;">
+                                    📥 Exporter mes données
+                                </button>
+                            </div>
                             <button type="button" id="delete-my-data" class="button button-danger" style="display: flex; align-items: center; gap: 8px; background: #dc3545; color: white; border-color: #dc3545;">
                                 🗑️ Supprimer mes données
                             </button>
