@@ -990,6 +990,9 @@ function pdf_builder_download_backup() {
 
     $filename = sanitize_file_name($_GET['filename']);
 
+    // Décoder l'URI encoding (JavaScript fait encodeURIComponent)
+    $filename = urldecode($filename);
+
     // Plus besoin de décodage base64 puisque nous envoyons le filename brut maintenant
     if (empty($filename)) {
         wp_die('Nom de fichier manquant');
