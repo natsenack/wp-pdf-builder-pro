@@ -2110,30 +2110,19 @@
                             <div style="text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold; color: #28a745;">
                                     <?php
-                                    function get_folder_size($dir) {
-                                        $size = 0;
-                                        if (is_dir($dir)) {
-                                            $files = scandir($dir);
-                                            foreach ($files as $file) {
-                                                if ($file != '.' && $file != '..') {
-                                                    $path = $dir . '/' . $file;
-                                                    if (is_dir($path)) {
-                                                        $size += get_folder_size($path);
-                                                    } else {
-                                                        $size += filesize($path);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        return $size;
-                                    }
-
                                     $cache_size = 0;
                                     $upload_dir = wp_upload_dir();
                                     $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
+
+                                    // Debug: Afficher le chemin du dossier
+                                    // echo "<!-- Cache dir: $cache_dir -->";
+
                                     if (is_dir($cache_dir)) {
-                                        $cache_size = get_folder_size($cache_dir);
+                                        $cache_size = pdf_builder_get_folder_size($cache_dir);
+                                        // Debug: Afficher la taille brute
+                                        // echo "<!-- Raw size: $cache_size bytes -->";
                                     }
+
                                     // Afficher en Ko si < 1 Mo, sinon en Mo
                                     if ($cache_size < 1048576) { // 1 Mo = 1048576 bytes
                                         echo round($cache_size / 1024, 1) . ' Ko';
