@@ -948,4 +948,116 @@ document.addEventListener('DOMContentLoaded', function() {
             floatingBtn.style.display = 'block';
         }
     }, 1000);
+
+    // Gestion des boutons de consentement dans la vue détaillée
+    document.addEventListener('click', function(event) {
+        // Bouton "Accorder" un consentement
+        if (event.target.classList.contains('grant-consent')) {
+            event.preventDefault();
+            const consentType = event.target.getAttribute('data-consent-type');
+            const nonce = document.getElementById('export_user_data_nonce')?.value;
+
+            if (!consentType || !nonce) {
+                showGdprResult('Erreur: Type de consentement ou nonce manquant', 'error');
+                return;
+            }
+
+            // Désactiver le bouton pendant le traitement
+            event.target.disabled = true;
+            event.target.textContent = '⏳ Traitement...';
+
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_save_consent',
+                    consent_type: consentType,
+                    granted: '1',
+                    nonce: nonce
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showGdprResult(`✅ Consentement "${consentType}" accordé`);
+                    // Recharger la vue des consentements après 1 seconde
+                    setTimeout(() => {
+                        const viewConsentBtn = document.getElementById('view-consent-status');
+                        if (viewConsentBtn) {
+                            viewConsentBtn.click();
+                        }
+                    }, 1000);
+                } else {
+                    showGdprResult('❌ Erreur lors de l\'accord du consentement: ' + (data.data || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur accord consentement:', error);
+                showGdprResult('❌ Erreur réseau lors de l\'accord du consentement', 'error');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                event.target.disabled = false;
+                event.target.textContent = 'Accorder';
+            });
+        }
+
+        // Bouton "Révoquer" un consentement
+        if (event.target.classList.contains('revoke-consent')) {
+            event.preventDefault();
+            const consentType = event.target.getAttribute('data-consent-type');
+            const nonce = document.getElementById('export_user_data_nonce')?.value;
+
+            if (!consentType || !nonce) {
+                showGdprResult('Erreur: Type de consentement ou nonce manquant', 'error');
+                return;
+            }
+
+            if (!confirm(`⚠️ Êtes-vous sûr de vouloir révoquer le consentement "${consentType}" ?\n\nCette action sera enregistrée dans les logs d'audit.`)) {
+                return;
+            }
+
+            // Désactiver le bouton pendant le traitement
+            event.target.disabled = true;
+            event.target.textContent = '⏳ Traitement...';
+
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_revoke_consent',
+                    consent_type: consentType,
+                    nonce: nonce
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showGdprResult(`✅ Consentement "${consentType}" révoqué`);
+                    // Recharger la vue des consentements après 1 seconde
+                    setTimeout(() => {
+                        const viewConsentBtn = document.getElementById('view-consent-status');
+                        if (viewConsentBtn) {
+                            viewConsentBtn.click();
+                        }
+                    }, 1000);
+                } else {
+                    showGdprResult('❌ Erreur lors de la révocation du consentement: ' + (data.data || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur révocation consentement:', error);
+                showGdprResult('❌ Erreur réseau lors de la révocation du consentement', 'error');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                event.target.disabled = false;
+                event.target.textContent = 'Révoquer';
+            });
+        }
+    });
 });
