@@ -514,6 +514,8 @@ function pdf_builder_save_settings_ajax() {
         case 'securite':
             // Sauvegarder les paramètres sécurité
             $settings = array(
+                'security_level' => sanitize_text_field($_POST['security_level'] ?? 'medium'),
+                'enable_logging' => isset($_POST['enable_logging']) ? '1' : '0',
                 'ip_filtering' => isset($_POST['ip_filtering']) ? '1' : '0',
                 'rate_limiting' => isset($_POST['rate_limiting']) ? '1' : '0',
                 'encryption' => isset($_POST['encryption']) ? '1' : '0',
