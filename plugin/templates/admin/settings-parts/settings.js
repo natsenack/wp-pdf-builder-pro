@@ -197,17 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Voir mes consentements
     if (viewConsentStatusBtn) {
-        console.log('Bouton consentements trouvé:', viewConsentStatusBtn);
         viewConsentStatusBtn.addEventListener('click', function() {
-            console.log('=== NOUVEL APPUI SUR "VOIR MES CONSENTEMENTS" ===');
-            console.log('Bouton consentements cliqué');
-            const resultDiv = document.getElementById('gdpr-user-actions-result');
-            console.log('État actuel du div avant traitement:', resultDiv ? {
-                exists: true,
-                display: window.getComputedStyle(resultDiv).display,
-                hasContent: resultDiv.innerHTML.trim() !== '',
-                contentLength: resultDiv.innerHTML.length
-            } : { exists: false });
             const nonce = document.getElementById('export_user_data_nonce')?.value;
             if (!nonce) {
                 showGdprResult('Erreur: Nonce de sécurité manquant', 'error');
@@ -231,7 +221,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 console.log('Réponse AJAX consentements:', data);
-                console.log('Contenu HTML des consentements:', data.data?.consent_html);
                 if (data.success) {
                     // Afficher les consentements dans une modal ou un conteneur
                     const consentHtml = `
@@ -245,35 +234,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     console.log('HTML généré pour affichage:', consentHtml);
                     const resultDiv = document.getElementById('gdpr-user-actions-result');
-                    console.log('Div résultat trouvé:', resultDiv);
                     if (resultDiv) {
                         resultDiv.style.display = 'block';
                         resultDiv.innerHTML = consentHtml;
-                        console.log('HTML injecté dans le div');
-                        console.log('Contenu actuel du div:', resultDiv.innerHTML.substring(0, 200) + '...');
-
-                        // Observer les changements dans le div pour détecter quand il se vide
-                        const observer = new MutationObserver(function(mutations) {
-                            mutations.forEach(function(mutation) {
-                                if (mutation.type === 'childList' && mutation.target.innerHTML.trim() === '') {
-                                    console.log('ATTENTION: Le div gdpr-user-actions-result a été vidé !');
-                                    console.log('Mutation details:', mutation);
-                                }
-                                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                                    const display = window.getComputedStyle(mutation.target).display;
-                                    if (display === 'none') {
-                                        console.log('ATTENTION: Le div gdpr-user-actions-result a été masqué (display: none) !');
-                                        console.log('Mutation details:', mutation);
-                                    }
-                                }
-                            });
-                        });
-                        observer.observe(resultDiv, {
-                            childList: true,
-                            subtree: true,
-                            attributes: true,
-                            attributeFilter: ['style']
-                        });
                     } else {
                         console.error('Div gdpr-user-actions-result NON trouvé !');
                     }
@@ -995,11 +958,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 1000);
 
+    // Fonction pour mettre à jour une ligne de consentement dans la table
+    function updateConsentRowInTable(consentType, isGranted) {
+        console.log(`Mise à jour de la ligne ${consentType} - Accordé: ${isGranted}`);
+        const resultDiv = document.getElementById('gdpr-user-actions-result');
+        if (!resultDiv) return;
+
+        // Trouver la ligne correspondante dans la table
+        const consentRow = resultDiv.querySelector(`button[data-consent-type="${consentType}"]`)?.closest('tr');
+        if (!consentRow) {
+            console.log('Ligne de consentement non trouvée');
+            return;
+        }
+
+        // Mettre à jour le statut
+        const statusCell = consentRow.cells[1]; // Colonne "Statut"
+        const actionCell = consentRow.cells[3]; // Colonne "Actions"
+
+        if (isGranted) {
+            statusCell.innerHTML = '<span class="text-success">✅ Accordé</span>';
+            statusCell.className = 'text-success';
+            actionCell.innerHTML = `<button type="button" class="button button-small button-secondary revoke-consent"
+                                data-consent-type="${consentType}">
+                            Révoquer
+                        </button>`;
+        } else {
+            statusCell.innerHTML = '<span class="text-danger">❌ Refusé</span>';
+            statusCell.className = 'text-danger';
+            actionCell.innerHTML = `<button type="button" class="button button-small button-primary grant-consent"
+                                data-consent-type="${consentType}">
+                            Accorder
+                        </button>`;
+        }
+
+        console.log('Ligne mise à jour avec succès');
+    }
+
     // Gestion des boutons de consentement dans la vue détaillée
     document.addEventListener('click', function(event) {
         // Bouton "Accorder" un consentement
         if (event.target.classList.contains('grant-consent')) {
-            console.log('Bouton "Accorder" cliqué:', event.target);
             event.preventDefault();
             const consentType = event.target.getAttribute('data-consent-type');
             const nonce = document.getElementById('export_user_data_nonce')?.value;
@@ -1029,13 +1027,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     showGdprResult(`✅ Consentement "${consentType}" accordé`);
-                    // Recharger la vue des consentements après 1 seconde
-                    setTimeout(() => {
-                        const viewConsentBtn = document.getElementById('view-consent-status');
-                        if (viewConsentBtn) {
-                            viewConsentBtn.click();
-                        }
-                    }, 1000);
+                    // Mettre à jour la ligne du consentement dans la table existante
+                    updateConsentRowInTable(consentType, true);
                 } else {
                     showGdprResult('❌ Erreur lors de l\'accord du consentement: ' + (data.data || 'Erreur inconnue'), 'error');
                 }
@@ -1053,7 +1046,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Bouton "Révoquer" un consentement
         if (event.target.classList.contains('revoke-consent')) {
-            console.log('Bouton "Révoquer" cliqué:', event.target);
             event.preventDefault();
             const consentType = event.target.getAttribute('data-consent-type');
             const nonce = document.getElementById('export_user_data_nonce')?.value;
@@ -1086,13 +1078,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     showGdprResult(`✅ Consentement "${consentType}" révoqué`);
-                    // Recharger la vue des consentements après 1 seconde
-                    setTimeout(() => {
-                        const viewConsentBtn = document.getElementById('view-consent-status');
-                        if (viewConsentBtn) {
-                            viewConsentBtn.click();
-                        }
-                    }, 1000);
+                    // Mettre à jour la ligne du consentement dans la table existante
+                    updateConsentRowInTable(consentType, false);
                 } else {
                     showGdprResult('❌ Erreur lors de la révocation du consentement: ' + (data.data || 'Erreur inconnue'), 'error');
                 }
