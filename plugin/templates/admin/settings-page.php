@@ -2763,7 +2763,7 @@
                 <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">
                     <span style="display: inline-flex; align-items: center; gap: 10px;">
                         📋 Gestion RGPD & Conformité
-                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                        <span class="rgpd-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_gdpr_enabled', true) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_gdpr_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                     </span>
                 </h3>
 
@@ -5383,6 +5383,7 @@
                 updateStatusIndicator('input[name="systeme_auto_maintenance"]', '.maintenance-status');
                 updateStatusIndicator('input[name="systeme_auto_backup"]', '.backup-status');
                 updateStatusIndicator('input[name="enable_logging"]', '.security-status'); // Indicateur sécurité
+                updateStatusIndicator('input[name="gdpr_enabled"]', '.rgpd-status'); // Indicateur RGPD
             }
 
             // Initialiser les indicateurs au chargement de la page
