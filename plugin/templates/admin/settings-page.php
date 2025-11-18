@@ -2076,7 +2076,11 @@
                     <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; font-size: 18px;">
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             📋 Cache & Performance
-                            <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                            <?php if (get_option('pdf_builder_cache_enabled', false)): ?>
+                                <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                            <?php else: ?>
+                                <span style="font-size: 12px; background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">NON ACTIF</span>
+                            <?php endif; ?>
                         </span>
                     </h3>
 
