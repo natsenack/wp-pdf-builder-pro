@@ -10,9 +10,6 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Accès direct interdit');
 }
 
-// Log pour déboguer le chargement
-error_log('PDF Builder: bootstrap.php loaded, is_admin: ' . (is_admin() ? 'true' : 'false') . ', doing_ajax: ' . (wp_doing_ajax() ? 'true' : 'false') . ', action: ' . (isset($_REQUEST['action']) ? $_REQUEST['action'] : 'none'));
-
 // ============================================================================
 // ✅ BLOQUER LES NOTIFICATIONS WORDPRESS AVANT TOUT
 // ============================================================================

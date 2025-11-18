@@ -443,50 +443,30 @@ class PdfBuilderTemplateManager
      */
     public function ajax_auto_save_template()
     {
-        // LOG AU DÉBUT POUR VÉRIFIER QUE LA FONCTION EST APPELEE
-        $log_message = '🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] FUNCTION CALLED - ajax_auto_save_template() - REQUEST: ' . print_r($_REQUEST, true);
-        error_log($log_message);
-        // Écrire aussi dans un fichier temporaire pour être sûr
-        file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' ' . $log_message . "\n", FILE_APPEND);
         try {
-            error_log('PDF Builder: Auto-save - checking permissions and nonce');
-            
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
-                error_log('PDF Builder: Auto-save - permissions failed');
                 \wp_send_json_error('Permissions insuffisantes');
             }
             
-            error_log('PDF Builder: Auto-save - permissions OK, processing data');
-
             // Vérifier le nonce
             if (!isset($_REQUEST['nonce']) || !\wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_nonce')) {
-                error_log('PDF Builder: Auto-save - nonce verification failed');
                 \wp_send_json_error('Sécurité: Nonce invalide');
             }
-
-            error_log('PDF Builder: Auto-save - nonce OK, extracting data');
 
             // Récupération des données
             $template_id = isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0;
             $elements_raw = isset($_REQUEST['elements']) ? \wp_unslash($_REQUEST['elements']) : '[]';
 
             if (empty($template_id)) {
-                error_log('PDF Builder: Auto-save - invalid template_id: ' . $template_id);
                 \wp_send_json_error('ID template invalide');
             }
-
-            error_log('PDF Builder: Auto-save - template_id OK, decoding JSON');
 
             $elements = \json_decode($elements_raw, true);
             if ($elements === null && \json_last_error() !== JSON_ERROR_NONE) {
                 $json_error = \json_last_error_msg();
-                error_log('PDF Builder: Auto-save - JSON decode failed: ' . $json_error);
                 \wp_send_json_error('Données des éléments corrompues - Erreur JSON: ' . $json_error);
             }
-            
-            error_log('PDF Builder: Auto-save - JSON decode success, elements count: ' . count($elements));
-            error_log('PDF Builder: Auto-save - about to log elements');
 
             // Charger le template existant pour récupérer le canvas
             global $wpdb;
@@ -497,7 +477,6 @@ class PdfBuilderTemplateManager
             );
 
             if (!$template_row) {
-                error_log('PDF Builder: Auto-save - template not found: ' . $template_id);
                 \wp_send_json_error('Template non trouvé pour auto-save');
             }
 
@@ -506,8 +485,6 @@ class PdfBuilderTemplateManager
             if ($existing_data === null) {
                 $existing_data = ['elements' => [], 'canvas' => []];
             }
-
-            error_log('PDF Builder: Auto-save - processing ' . count($elements) . ' elements');
 
             // Enrichir les éléments company_logo avec src si absent
             foreach ($elements as &$el) {
@@ -526,23 +503,6 @@ class PdfBuilderTemplateManager
             }
             unset($el);
 
-            error_log('� 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO PREPARE TEMPLATE DATA...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO PREPARE TEMPLATE DATA...' . "\n", FILE_APPEND);
-
-            error_log('�🔍 [AUTO-SAVE] Après enrichissement - Element count: ' . count($elements));
-            if (!empty($elements)) {
-                error_log('🔍 [AUTO-SAVE] Element[0] AFTER enrichment: ' . json_encode($elements[0]));
-                // Check for company_logo specifically
-                foreach ($elements as $idx => $el) {
-                    if (isset($el['type']) && $el['type'] === 'company_logo') {
-                        error_log('🔍 [AUTO-SAVE] company_logo[' . $idx . '] after enrichment: src=' . (isset($el['src']) ? $el['src'] : 'MISSING'));
-                    }
-                }
-            }
-
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO CREATE TEMPLATE_DATA ARRAY...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO CREATE TEMPLATE_DATA ARRAY...' . "\n", FILE_APPEND);
-
             // Préparer les nouvelles données (conserver le canvas, mettre à jour les éléments)
             $template_data = [
                 'elements' => $elements,
@@ -552,31 +512,11 @@ class PdfBuilderTemplateManager
                 'version' => '1.0'
             ];
 
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] TEMPLATE_DATA ARRAY CREATED SUCCESSFULLY');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' � 🔥 🔥 🔥 🔥 [AUTO-SAVE] TEMPLATE_DATA ARRAY CREATED SUCCESSFULLY' . "\n", FILE_APPEND);
-
-            error_log('�🔍 [AUTO-SAVE] Template data structure - keys: ' . implode(', ', array_keys($template_data)));
-            error_log('🔍 [AUTO-SAVE] Elements in template_data: ' . count($template_data['elements']));
-
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO JSON ENCODE...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO JSON ENCODE...' . "\n", FILE_APPEND);
-
             // Encoder en JSON
             $json_data = \wp_json_encode($template_data);
             if ($json_data === false) {
-                error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON ENCODE FAILED');
-                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON ENCODE FAILED' . "\n", FILE_APPEND);
                 \wp_send_json_error('Erreur lors de l\'encodage des données JSON');
             }
-
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON ENCODE SUCCESS - LENGTH: ' . strlen($json_data));
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] JSON ENCODE SUCCESS - LENGTH: ' . strlen($json_data) . "\n", FILE_APPEND);
-
-            error_log('🔍 [AUTO-SAVE] JSON encoded length: ' . strlen($json_data));
-            error_log('🔍 [AUTO-SAVE] JSON saved to DB (first 500 chars): ' . substr($json_data, 0, 500));
-
-            error_log('� 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO UPDATE DATABASE...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO UPDATE DATABASE...' . "\n", FILE_APPEND);
 
             // Mettre à jour la base de données
             $updated = $wpdb->update(
@@ -590,55 +530,16 @@ class PdfBuilderTemplateManager
                 ['%d']
             );
 
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATABASE UPDATE COMPLETED - RESULT: ' . ($updated === false ? 'FALSE' : $updated));
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATABASE UPDATE COMPLETED - RESULT: ' . ($updated === false ? 'FALSE' : $updated) . "\n", FILE_APPEND);
-
             if ($updated === false) {
-                error_log('🔍 [AUTO-SAVE] Database update FAILED - Error: ' . $wpdb->last_error);
-                file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔍 [AUTO-SAVE] Database update FAILED - Error: ' . $wpdb->last_error . "\n", FILE_APPEND);
                 \wp_send_json_error('Erreur lors de la mise à jour du template');
             }
-
-            error_log('� 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATABASE UPDATE SUCCESSFUL - ABOUT TO VERIFY...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DATABASE UPDATE SUCCESSFUL - ABOUT TO VERIFY...' . "\n", FILE_APPEND);
-
-            error_log('�🔍 [AUTO-SAVE] Database update successful - rows affected: ' . $updated);
-            
-            // Vérifier que les données ont bien été sauvegardées en les relisant
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO VERIFY DATA IN DB...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO VERIFY DATA IN DB...' . "\n", FILE_APPEND);
-
-            $verify_row = $wpdb->get_row(
-                $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
-                ARRAY_A
-            );
-
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DB VERIFICATION COMPLETED - ROW FOUND: ' . ($verify_row ? 'YES' : 'NO'));
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] DB VERIFICATION COMPLETED - ROW FOUND: ' . ($verify_row ? 'YES' : 'NO') . "\n", FILE_APPEND);
-            
-            if ($verify_row) {
-                $saved_data = json_decode($verify_row['template_data'], true);
-                $saved_elements_count = isset($saved_data['elements']) ? count($saved_data['elements']) : 0;
-                error_log('🔍 [AUTO-SAVE] VERIFICATION: ' . $saved_elements_count . ' elements found in DB after save');
-                
-                if ($saved_elements_count > 0) {
-                    error_log('🔍 [AUTO-SAVE] VERIFICATION: First element type: ' . (isset($saved_data['elements'][0]['type']) ? $saved_data['elements'][0]['type'] : 'unknown'));
-                }
-            } else {
-                error_log('🔍 [AUTO-SAVE] VERIFICATION FAILED: Could not read back from DB');
-            }
-
-            error_log('🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO SEND SUCCESS RESPONSE...');
-            file_put_contents(ABSPATH . '/wp-content/debug_pdf_builder.log', date('Y-m-d H:i:s') . ' 🔥 🔥 🔥 🔥 🔥 [AUTO-SAVE] ABOUT TO SEND SUCCESS RESPONSE...' . "\n", FILE_APPEND);
-
-            error_log('PDF Builder: Auto-save completed successfully - template_id: ' . $template_id . ', elements: ' . count($elements));
 
             \wp_send_json_success([
                 'message' => 'Auto-save réussi',
                 'template_id' => $template_id,
                 'saved_at' => \current_time('mysql'),
                 'element_count' => count($elements),
-                'elements_saved' => $elements  // ← Return the saved elements so frontend can verify
+                'elements_saved' => $elements
             ]);
 
         } catch (\Throwable $e) {
@@ -659,60 +560,17 @@ class PdfBuilderTemplateManager
         header('Pragma: no-cache');
         header('Expires: 0');
         
-        // LOG IMMEDIATELY to confirm function is called
-        error_log('=== PDF BUILDER LOAD START === Template ID: ' . (isset($_REQUEST['template_id']) ? $_REQUEST['template_id'] : 'none'));
-        
         try {
-            // Log that function was called
-            $upload_dir = wp_upload_dir();
-            $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
-            file_put_contents($log_file, date('Y-m-d H:i:s') . ' === LOAD FUNCTION CALLED === REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
-            
-            error_log('PDF Builder: ajaxLoadTemplate called - REQUEST: ' . print_r($_REQUEST, true));
-            
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
-                error_log('PDF Builder: ajaxLoadTemplate - permissions failed');
                 \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Récupération de l'ID (doit être numérique pour les templates personnalisés)
             $template_id = isset($_REQUEST['template_id']) ? \intval($_REQUEST['template_id']) : 0;
-            error_log('PDF Builder: ajaxLoadTemplate - template_id: ' . $template_id);
 
             if (empty($template_id)) {
-                error_log('PDF Builder: ajaxLoadTemplate - invalid template_id');
                 \wp_send_json_error('ID template invalide');
-            }
-
-            // DIRECT DATABASE CHECK - BEFORE ANY PROCESSING
-            global $wpdb;
-            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $template_row = $wpdb->get_row(
-                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-                ARRAY_A
-            );
-            
-            if ($template_row) {
-                $raw_data = $template_row['template_data'];
-                error_log('=== DIRECT DB CHECK === Template ID: ' . $template_id);
-                error_log('=== DIRECT DB CHECK === Raw data contains contentAlign: ' . (strpos($raw_data, 'contentAlign') !== false ? 'YES' : 'NO'));
-                error_log('=== DIRECT DB CHECK === Raw data contains labelPosition: ' . (strpos($raw_data, 'labelPosition') !== false ? 'YES' : 'NO'));
-                
-                // Extract order_number element from raw data
-                if (strpos($raw_data, 'order_number') !== false) {
-                    $data = json_decode($raw_data, true);
-                    if ($data && isset($data['elements'])) {
-                        foreach ($data['elements'] as $el) {
-                            if (isset($el['type']) && $el['type'] === 'order_number') {
-                                error_log('=== DIRECT DB CHECK === Order element in DB: ' . json_encode($el));
-                                error_log('=== DIRECT DB CHECK === Has contentAlign: ' . (isset($el['contentAlign']) ? 'YES (' . $el['contentAlign'] . ')' : 'NO'));
-                                error_log('=== DIRECT DB CHECK === Has labelPosition: ' . (isset($el['labelPosition']) ? 'YES (' . $el['labelPosition'] . ')' : 'NO'));
-                                break;
-                            }
-                        }
-                    }
-                }
             }
 
             // Chercher d'abord dans la table personnalisée (custom table)
@@ -723,83 +581,21 @@ class PdfBuilderTemplateManager
                 ARRAY_A
             );
 
-            error_log('PDF Builder: ajaxLoadTemplate - template_row found: ' . ($template_row ? 'YES' : 'NO'));
-            
             $template_data = null;
             $template_name = '';
 
             if ($template_row) {
-                error_log('PDF Builder: ajaxLoadTemplate - USING CUSTOM TABLE DATA');
                 // Trouver dans la table custom
                 $template_data_raw = $template_row['template_data'];
                 $template_name = $template_row['name'];
-                
-                error_log('PDF Builder: ajaxLoadTemplate - LOADING FROM CUSTOM TABLE');
-                error_log('PDF Builder: ajaxLoadTemplate - template_data_raw length: ' . strlen($template_data_raw));
-                error_log('PDF Builder: ajaxLoadTemplate - template_data_raw (first 500 chars): ' . substr($template_data_raw, 0, 500));
-                
-                // Log the raw data containing order_number properties
-                if (strpos($template_data_raw, 'order_number') !== false) {
-                    error_log('PDF Builder: ajaxLoadTemplate - RAW DATA CONTAINS ORDER NUMBER');
-                    // Extract just the order_number element from raw JSON
-                    $raw_data_log = $template_data_raw;
-                    $upload_dir = wp_upload_dir();
-                    $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
-                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' RAW TEMPLATE DATA: ' . $raw_data_log . "\n", FILE_APPEND);
-                }
-                
-                // Write to uploads directory for guaranteed access
-                $upload_dir = wp_upload_dir();
-                $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOAD FROM CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data_raw) . "\n", FILE_APPEND);
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOADED DATA: ' . substr($template_data_raw, 0, 500) . "\n", FILE_APPEND);
-                
-                // ADD DEBUG LOG: Check if properties exist in raw data
-                if (strpos($template_data_raw, 'contentAlign') !== false) {
-                    error_log('PDF Builder: ajaxLoadTemplate - RAW DATA CONTAINS contentAlign');
-                } else {
-                    error_log('PDF Builder: ajaxLoadTemplate - RAW DATA DOES NOT CONTAIN contentAlign');
-                }
-                if (strpos($template_data_raw, 'labelPosition') !== false) {
-                    error_log('PDF Builder: ajaxLoadTemplate - RAW DATA CONTAINS labelPosition');
-                } else {
-                    error_log('PDF Builder: ajaxLoadTemplate - RAW DATA DOES NOT CONTAIN labelPosition');
-                }
 
                 $template_data = \json_decode($template_data_raw, true);
                 if ($template_data === null && \json_last_error() !== JSON_ERROR_NONE) {
                     $json_error = \json_last_error_msg();
-                    error_log('PDF Builder: ajaxLoadTemplate - JSON decode failed: ' . $json_error);
                     \wp_send_json_error('Données du template corrompues - Erreur JSON: ' . $json_error);
                     return;
                 }
-                
-                // LOG DECODED DATA - DÉTAILLÉ
-                error_log('=== PDF BUILDER LOAD DECODED === Elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'none'));
-                if (isset($template_data['elements'])) {
-                    foreach ($template_data['elements'] as $index => $el) {
-                        if (isset($el['type']) && $el['type'] === 'order_number') {
-                            error_log('=== PDF BUILDER LOAD DECODED ORDER ELEMENT ' . $index . ' === ' . json_encode($el));
-                            error_log('=== PDF BUILDER LOAD DECODED ORDER ELEMENT ' . $index . ' KEYS === ' . json_encode(array_keys($el)));
-                            error_log('=== PDF BUILDER LOAD DECODED ORDER ELEMENT ' . $index . ' PROPERTIES === ' . json_encode([
-                                'contentAlign' => isset($el['contentAlign']) ? $el['contentAlign'] : 'NOT_SET',
-                                'labelPosition' => isset($el['labelPosition']) ? $el['labelPosition'] : 'NOT_SET',
-                                'hasContentAlign' => array_key_exists('contentAlign', $el),
-                                'hasLabelPosition' => array_key_exists('labelPosition', $el)
-                            ]));
-                            
-                            // Log the raw JSON data for this element to compare with saved data
-                            $element_json = json_encode($el);
-                            $upload_dir = wp_upload_dir();
-                            $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
-                            file_put_contents($log_file, date('Y-m-d H:i:s') . ' DECODED ORDER ELEMENT ' . $index . ': ' . $element_json . "\n", FILE_APPEND);
-                        }
-                    }
-                }
-                
-                error_log('PDF Builder: ajaxLoadTemplate - JSON decode successful, elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
             } else {
-                error_log('PDF Builder: ajaxLoadTemplate - USING POST META DATA');
                 // Fallback: chercher dans wp_posts
                 $post = get_post($template_id);
 
@@ -823,13 +619,6 @@ class PdfBuilderTemplateManager
                     \wp_send_json_error('Données du template corrompues - Erreur JSON: ' . $json_error);
                     return;
                 }
-                
-                // Log loading from post meta
-                error_log('PDF Builder: ajaxLoadTemplate - LOADING FROM POST META');
-                $upload_dir = wp_upload_dir();
-                $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOAD FROM POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data_raw) . "\n", FILE_APPEND);
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOADED DATA: ' . substr($template_data_raw, 0, 500) . "\n", FILE_APPEND);
             }
 
             // Validation de la structure
@@ -853,95 +642,24 @@ class PdfBuilderTemplateManager
             // Analyse du contenu
             $element_count = isset($template_data['elements']) ? \count($template_data['elements']) : 0;
 
-        // Analyser les types d'éléments
+            // Analyser les types d'éléments
             $element_types = [];
             foreach ($template_data['elements'] as $element) {
                 $type = $element['type'] ?? 'unknown';
                 $element_types[$type] = ($element_types[$type] ?? 0) + 1;
             }
 
-            error_log('PDF Builder: ajaxLoadTemplate - sending response with ' . $element_count . ' elements');
-            error_log('PDF Builder: ajaxLoadTemplate - element types: ' . json_encode($element_types));
-            
-            // Vérifier si les éléments ont les bonnes propriétés
-            if (!empty($template_data['elements'])) {
-                $first_element = $template_data['elements'][0];
-                error_log('PDF Builder: ajaxLoadTemplate - first element keys: ' . implode(', ', array_keys($first_element)));
-                error_log('PDF Builder: ajaxLoadTemplate - first element type: ' . ($first_element['type'] ?? 'unknown'));
-                if (isset($first_element['type']) && $first_element['type'] === 'order_number') {
-                    error_log('PDF Builder: ajaxLoadTemplate - order_number properties: ' . json_encode([
-                        'contentAlign' => $first_element['contentAlign'] ?? 'missing',
-                        'labelPosition' => $first_element['labelPosition'] ?? 'missing'
-                    ]));
-                    $upload_dir = wp_upload_dir();
-                    $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
-                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' LOAD - ORDER ELEMENT: ' . json_encode($first_element) . "\n", FILE_APPEND);
-                }
-            }
-
-        // Réponse de succès
-            // LOG JUST BEFORE RESPONSE
-            error_log('=== PDF BUILDER LOAD END === Sending response with ' . $element_count . ' elements');
-            $upload_dir = wp_upload_dir();
-            $log_file = $upload_dir['basedir'] . '/debug_pdf_load.log';
-            file_put_contents($log_file, date('Y-m-d H:i:s') . ' === SENDING RESPONSE === Elements: ' . $element_count . "\n", FILE_APPEND);
-            
-            // Add debug info to response
-            $debug_info = array();
-            if (isset($template_data['elements'])) {
-                foreach ($template_data['elements'] as $el) {
-                    if (isset($el['type']) && $el['type'] === 'order_number') {
-                        $debug_info['order_element'] = $el;
-                        $debug_info['order_element_json'] = json_encode($el);
-                        $debug_info['has_contentAlign'] = isset($el['contentAlign']);
-                        $debug_info['has_labelPosition'] = isset($el['labelPosition']);
-                        $debug_info['contentAlign_value'] = $el['contentAlign'] ?? 'MISSING';
-                        $debug_info['labelPosition_value'] = $el['labelPosition'] ?? 'MISSING';
-                        break;
-                    }
-                }
-            }
-            
-            // LOG FINAL RESPONSE DATA - JUST BEFORE SENDING
-            error_log('=== PDF BUILDER LOAD FINAL RESPONSE === About to send template_data');
-            error_log('=== PDF BUILDER LOAD FINAL RESPONSE === Template name: ' . $template_name);
-            error_log('=== PDF BUILDER LOAD FINAL RESPONSE === template_data elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'none'));
-            if (isset($template_data['elements'])) {
-                foreach ($template_data['elements'] as $index => $el) {
-                    if (isset($el['type']) && $el['type'] === 'order_number') {
-                        error_log('=== PDF BUILDER LOAD FINAL RESPONSE === Order element ' . $index . ': ' . json_encode($el));
-                        error_log('=== PDF BUILDER LOAD FINAL RESPONSE === Order element ' . $index . ' contentAlign: ' . ($el['contentAlign'] ?? 'MISSING'));
-                        error_log('=== PDF BUILDER LOAD FINAL RESPONSE === Order element ' . $index . ' labelPosition: ' . ($el['labelPosition'] ?? 'MISSING'));
-                        break;
-                    }
-                }
-            }
-            error_log('=== PDF BUILDER LOAD FINAL RESPONSE === Full response data: ' . json_encode([
-                'template' => $template_data,
-                'name' => $template_name,
-                'element_count' => $element_count,
-                'element_types' => $element_types,
-                'debug' => $debug_info
-            ]));
-            
-            $response_data = array(
-                'template' => $template_data,
-                'name' => $template_name,
+            // Réponse de succès
+            \wp_send_json_success([
+                'template_data' => $template_data,
                 'template_name' => $template_name,
                 'element_count' => $element_count,
-                'element_types' => $element_types,
-                'debug' => $debug_info
-            );
-            
-            error_log('=== PDF BUILDER ABOUT TO SEND RESPONSE ===');
-            error_log('Response data array: ' . json_encode($response_data));
-            error_log('Response data keys: ' . json_encode(array_keys($response_data)));
-            error_log('Template name in response: ' . ($response_data['name'] ?? 'MISSING'));
-            error_log('=== END ABOUT TO SEND RESPONSE ===');
-            
-            \wp_send_json_success($response_data);
-        } catch (Exception $e) {
-            \wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
+                'element_types' => $element_types
+            ]);
+
+        } catch (\Throwable $e) {
+            error_log('PDF Builder: Critical error in ajaxLoadTemplate: ' . $e->getMessage());
+            \wp_send_json_error('Erreur critique: ' . $e->getMessage());
         }
     }
 

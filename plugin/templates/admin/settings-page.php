@@ -4694,7 +4694,6 @@
 
     <script>
         jQuery(document).ready(function($) {
-            console.log('[PDF Builder JS] Script chargé et exécuté');
             let currentTab = 'general';
             let isLoadingBackups = false; // Flag pour éviter la fermeture automatique pendant le chargement
 
@@ -5054,30 +5053,12 @@
                 });
             });            // Bouton "Lister les sauvegardes"
             $('#list-backups-btn').on('click', function() {
-                console.log('[PDF Builder JS] === ACTION: LISTER LES SAUVEGARDES ===');
-                console.log('[PDF Builder JS] Timestamp:', new Date().toISOString());
-                console.log('[PDF Builder JS] Bouton cliqué - État initial:', {
-                    disabled: $(this).prop('disabled'),
-                    text: $(this).text()
-                });
-
                 const $btn = $(this);
                 const $results = $('#backup-results');
-
-                console.log('[PDF Builder JS] État du conteneur #backup-results avant:', {
-                    html: $results.html(),
-                    isVisible: $results.is(':visible'),
-                    hasContent: $results.html().length > 0,
-                    hasBackupItems: $results.find('.backup-item').length,
-                    hasSauvegardesText: $results.html().includes('Sauvegardes disponibles')
-                });
 
                 isLoadingBackups = true; // Marquer le début du chargement
                 $btn.prop('disabled', true).text('⏳ Chargement...');
                 $results.html('<span style="color: #007cba;">⏳ Chargement de la liste des sauvegardes...</span>');
-
-                console.log('[PDF Builder JS] Bouton désactivé et message de chargement affiché');
-                console.log('[PDF Builder JS] Envoi requête AJAX pour lister les sauvegardes...');
 
                 $.ajax({
                     url: pdf_builder_ajax.ajax_url,
@@ -5087,17 +5068,7 @@
                         nonce: pdf_builder_ajax.nonce
                     },
                     success: function(response) {
-                        console.log('[PDF Builder JS] === RÉPONSE LISTE SAUVEGARDES ===');
-                        console.log('[PDF Builder JS] Timestamp:', new Date().toISOString());
-                        console.log('[PDF Builder JS] Réponse complète:', response);
-                        console.log('[PDF Builder JS] Success:', response.success);
-                        console.log('[PDF Builder JS] Data:', response.data);
-                        console.log('[PDF Builder JS] isLoadingBackups:', isLoadingBackups);
-
                         if (response.success) {
-                            console.log('[PDF Builder JS] Liste chargée avec succès');
-                            console.log('[PDF Builder JS] Nombre de sauvegardes:', response.data && response.data.backups ? response.data.backups.length : 0);
-
                             let html = '<div style="margin-top: 15px;">';
                             html += '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 10px; background: #e9ecef; border-radius: 6px;">';
                             html += '<h4 style="margin: 0; color: #495057; display: flex; align-items: center; gap: 8px;">';
@@ -5106,12 +5077,8 @@
                             html += '<small style="color: #6c757d;">Triées par date (plus récent en premier)</small>';
                             html += '</div>';
 
-                            console.log('[PDF Builder JS] Génération du HTML pour', response.data.backups.length, 'sauvegardes');
-
                             if (response.data.backups.length > 0) {
                                 response.data.backups.forEach(function(backup, index) {
-                                    console.log('[PDF Builder JS] Traitement sauvegarde', index + 1, ':', backup.filename, '- Type:', backup.type);
-
                                     const isAuto = backup.type === 'automatic';
                                     const badgeColor = isAuto ? '#17a2b8' : '#28a745';
                                     const badgeText = isAuto ? 'AUTO' : 'MANUEL';
@@ -5141,7 +5108,6 @@
                                     html += '</div>';
                                 });
                             } else {
-                                console.log('[PDF Builder JS] Aucune sauvegarde trouvée');
                                 html += '<div style="text-align: center; padding: 40px; color: #6c757d;">';
                                 html += '<div style="font-size: 48px; margin-bottom: 15px;">📂</div>';
                                 html += '<p>Aucune sauvegarde trouvée.</p>';
@@ -5150,7 +5116,6 @@
                             }
                             html += '</div>';
 
-                            console.log('[PDF Builder JS] HTML généré, longueur:', html.length, 'caractères');
                             $results.html('<span style="color: #28a745;">✅ Liste chargée</span>' + html);
 
                             console.log('[PDF Builder JS] HTML injecté dans le DOM');
@@ -5264,14 +5229,7 @@
             // Bouton "Supprimer une sauvegarde"
             $(document).on('click', '.delete-backup-btn', function() {
                 const filename = $(this).data('filename');
-                const filenameAttr = $(this).attr('data-filename');
                 const filenameRaw = $(this).closest('.backup-item').find('strong').text() || filename;
-
-                console.log('[PDF Builder JS] Bouton supprimer cliqué');
-                console.log('[PDF Builder JS] Filename (data):', filename);
-                console.log('[PDF Builder JS] Filename (attr):', filenameAttr);
-                console.log('[PDF Builder JS] FilenameRaw:', filenameRaw);
-                console.log('[PDF Builder JS] Sont-ils égaux ?', filename === filenameAttr);
 
                 if (!filename) {
                     alert('Erreur: nom de fichier manquant');
@@ -5282,12 +5240,8 @@
                     return;
                 }
 
-                console.log('[PDF Builder JS] Bouton "Supprimer sauvegarde" cliqué:', filename);
                 const $btn = $(this);
                 const $results = $('#backup-results');
-
-                // Vérifier si la liste était déjà ouverte avant la suppression
-                const wasListOpen = $results.html().includes('Sauvegardes disponibles') || $results.html().includes('backup-item');
 
                 $btn.prop('disabled', true).text('⏳ Suppression...');
 
@@ -5300,32 +5254,17 @@
                         filename: filename
                     },
                     success: function(response) {
-                        console.log('[PDF Builder JS] === RÉPONSE SUPPRESSION SAUVEGARDE ===');
-                        console.log('[PDF Builder JS] Timestamp:', new Date().toISOString());
-                        console.log('[PDF Builder JS] Réponse complète:', response);
-                        console.log('[PDF Builder JS] Success:', response.success);
-                        console.log('[PDF Builder JS] Data:', response.data);
 
                         if (response.success) {
-                            console.log('[PDF Builder JS] Suppression réussie, affichage message de succès');
                             // Garder le contenu existant et ajouter seulement le message de succès
                             const currentHtml = $results.html();
                             $results.html(currentHtml + '<br><span style="color: #28a745;">✅ Sauvegarde supprimée avec succès</span> <span style="color: #666;">⏳ Actualisation de la liste...</span>');
 
-                            console.log('[PDF Builder JS] Message affiché, programmation du rechargement de liste dans 500ms');
-
                             // Recharger la liste immédiatement après la suppression
                             setTimeout(() => {
-                                console.log('[PDF Builder JS] Rechargement automatique de la liste après suppression');
-                                console.log('[PDF Builder JS] État avant rechargement:', {
-                                    hasContent: $results.html().length > 0,
-                                    hasBackupItems: $results.find('.backup-item').length,
-                                    htmlPreview: $results.html().substring(0, 100)
-                                });
                                 $('#list-backups-btn').click();
                             }, 500); // Délai réduit pour une meilleure UX
                         } else {
-                            console.log('[PDF Builder JS] Erreur lors de la suppression:', response.data);
                             $results.html('<span style="color: #dc3545;">❌ Erreur lors de la suppression: ' + (response.data || 'Erreur inconnue') + '</span>');
                             $btn.prop('disabled', false).text('🗑️ Supprimer');
                             console.log('[PDF Builder JS] Bouton réactivé après erreur');
@@ -5348,22 +5287,7 @@
 
                 mutations.forEach(function(mutation) {
                     if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                        const $results = $('#backup-results');
-                        const hasContent = $results.html().length > 0;
-                        const hasBackupItems = $results.find('.backup-item').length;
-                        const hasSuccessMessage = $results.html().includes('✅');
-                        const hasErrorMessage = $results.html().includes('❌');
-
-                        console.log('[PDF Builder JS] 🔍 CHANGEMENT DÉTECTÉ dans #backup-results:', {
-                            timestamp: new Date().toISOString(),
-                            type: mutation.type,
-                            hasContent: hasContent,
-                            hasBackupItems: hasBackupItems,
-                            hasSuccessMessage: hasSuccessMessage,
-                            hasErrorMessage: hasErrorMessage,
-                            htmlLength: $results.html().length,
-                            htmlPreview: $results.html().substring(0, 100) + (hasContent ? '...' : '')
-                        });
+                        // Plus de logs détaillés
                     }
                 });
             });

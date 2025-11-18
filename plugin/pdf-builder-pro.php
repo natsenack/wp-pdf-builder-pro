@@ -956,29 +956,16 @@ function pdf_builder_delete_backup_ajax() {
         $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
         $filepath = $backup_dir . '/' . $filename;
 
-        // Log dans un fichier spécifique pour les sauvegardes
-        $log_file = WP_CONTENT_DIR . '/pdf-builder-debug.log';
-        $log_message = sprintf(
-            "[%s] SUPPRESSION SAUVEGARDE - Fichier: %s, Existe: %s\n",
-            date('Y-m-d H:i:s'),
-            $filepath,
-            file_exists($filepath) ? 'OUI' : 'NON'
-        );
-        file_put_contents($log_file, $log_message, FILE_APPEND);
-
         if (!file_exists($filepath)) {
-            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] ERREUR: Fichier introuvable: $filepath\n", FILE_APPEND);
             wp_send_json_error('Fichier de sauvegarde introuvable');
             return;
         }
 
         if (unlink($filepath)) {
-            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] SUCCES: Fichier supprimé: $filepath\n", FILE_APPEND);
             wp_send_json_success(array(
                 'message' => 'Sauvegarde supprimée avec succès'
             ));
         } else {
-            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] ERREUR: Échec suppression: $filepath\n", FILE_APPEND);
             wp_send_json_error('Erreur lors de la suppression du fichier');
         }
 

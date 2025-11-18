@@ -7,8 +7,6 @@
 
 namespace PDF_Builder\Admin;
 
-error_log('PDF Builder: PDF_Builder_Admin.php file loaded');
-
 // Importer les types/classes
 use Exception;
 use Error;
@@ -1210,10 +1208,6 @@ class PdfBuilderAdmin
             error_log('PDF_Builder_Admin::enqueueAdminScripts: Hook ' . $hook . ' not in allowed hooks');
             return;
         }
-
-        error_log('PDF_Builder_Admin::enqueueAdminScripts: Loading scripts for hook: ' . $hook);
-        
-        error_log('PDF_Builder_Admin::enqueueAdminScripts: Loading assets for ' . $hook);
 
         // Charger les scripts
         $this->loadAdminScripts($hook);
