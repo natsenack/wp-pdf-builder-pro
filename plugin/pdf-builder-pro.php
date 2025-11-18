@@ -411,28 +411,19 @@ function pdf_builder_handle_pdf_downloads()
  * Handler AJAX pour sauvegarder les paramètres
  */
 function pdf_builder_save_settings_ajax() {
-    // Debug temporaire
-    error_log('[DEBUG AJAX] Fonction appelée');
-    error_log('[DEBUG AJAX] POST data keys: ' . implode(', ', array_keys($_POST)));
-
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
-        error_log('[DEBUG AJAX] Nonce invalide - reçu: ' . ($_POST['nonce'] ?? 'null'));
         wp_send_json_error('Nonce invalide');
         return;
     }
 
-    error_log('[DEBUG AJAX] Nonce valide');
-
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
-        error_log('[DEBUG AJAX] Permissions insuffisantes');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
 
     $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'all');
-    error_log('[DEBUG AJAX] Current tab: ' . $current_tab);
     $saved_count = 0;
 
     // Si current_tab est 'all', sauvegarder tous les paramètres
@@ -483,7 +474,6 @@ function pdf_builder_save_settings_ajax() {
             update_option('pdf_builder_' . $key, $value);
         }
         $saved_count = count($all_settings);
-        error_log('[DEBUG AJAX] Saved ' . $saved_count . ' settings');
 
     } else {
         // Traiter selon l'onglet (code existant)
@@ -689,10 +679,8 @@ function pdf_builder_save_settings_ajax() {
     } // End of else block
 
     if ($saved_count > 0) {
-        error_log('[DEBUG AJAX] Success: ' . $saved_count . ' paramètres sauvegardés');
         wp_send_json_success('Paramètres sauvegardés avec succès');
     } else {
-        error_log('[DEBUG AJAX] Error: Aucun paramètre sauvegardé');
         wp_send_json_error('Aucun paramètre sauvegardé');
     }
 }
