@@ -204,7 +204,14 @@ if (
 // Main HTML structure
 ?>
 <div class="wrap">
-    <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
+    <div class="pdf-builder-header">
+        <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
+        <div class="pdf-builder-actions">
+            <a href="<?php echo esc_url(home_url('/')); ?>" target="_blank" class="button button-secondary">
+                👁️ <?php _e('Visiter le site', 'pdf-builder-pro'); ?>
+            </a>
+        </div>
+    </div>
 
     <?php foreach ($notices as $notice) {
         echo $notice;
@@ -355,7 +362,6 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
     }
 ?>
 
-<div class="wrap">
     <!-- Tab Content Containers -->
     <div id="general" class="tab-content active">
         <?php require_once 'settings-general.php'; ?>

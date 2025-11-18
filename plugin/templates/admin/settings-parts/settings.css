@@ -1,5 +1,31 @@
 /* PDF Builder Pro Settings Styles */
 
+/* === STYLES POUR L'EN-TÊTE === */
+.pdf-builder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.pdf-builder-header h1 {
+    margin: 0;
+    color: #1d2327;
+    font-size: 23px;
+    font-weight: 400;
+}
+
+.pdf-builder-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.pdf-builder-actions .button {
+    margin: 0;
+}
+
 /* === STYLES GÉNÉRAUX === */
 
 /* Styles pour les interrupteurs */
