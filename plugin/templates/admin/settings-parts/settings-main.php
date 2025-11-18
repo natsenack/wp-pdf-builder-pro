@@ -216,7 +216,7 @@ if (
     <?php foreach ($notices as $notice) {
         echo $notice;
     } ?>
-
+</div>
     <div class="nav-tab-wrapper wp-clearfix">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general">
             <span class="tab-icon">⚙️</span>

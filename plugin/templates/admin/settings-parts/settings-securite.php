@@ -1,5 +1,4 @@
 <?php // Securite tab content - Updated: 2025-11-18 20:20:00 ?>
-        <div id="securite" class="tab-content">
             <h2>🔒 Sécurité & Conformité</h2>
 
             <!-- Section Sécurité -->
@@ -183,4 +182,3 @@
                     </div>
                 </form>
             </div>
-        </div>
