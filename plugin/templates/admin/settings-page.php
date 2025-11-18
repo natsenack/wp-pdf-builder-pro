@@ -346,14 +346,18 @@
                         break;
 
                     case 'systeme':
-                        // Traitement des paramètres de performance
-                        $cache_enabled = (isset($_POST['systeme_cache_enabled']) && $_POST['systeme_cache_enabled'] === '1') ? '1' : '0';
-                        $cache_expiry = intval($_POST['systeme_cache_expiry']);
-                        $max_cache_size = intval($_POST['systeme_max_cache_size']);
+                        // Traitement des paramètres de cache et performance
+                        $cache_enabled = (isset($_POST['cache_enabled']) && $_POST['cache_enabled'] === '1') ? '1' : '0';
+                        $cache_compression = (isset($_POST['cache_compression']) && $_POST['cache_compression'] === '1') ? '1' : '0';
+                        $cache_auto_cleanup = (isset($_POST['cache_auto_cleanup']) && $_POST['cache_auto_cleanup'] === '1') ? '1' : '0';
+                        $cache_max_size = intval($_POST['cache_max_size'] ?? 100);
+                        $cache_ttl = intval($_POST['cache_ttl'] ?? 3600);
 
                         update_option('pdf_builder_cache_enabled', $cache_enabled);
-                        update_option('pdf_builder_cache_expiry', $cache_expiry);
-                        update_option('pdf_builder_max_cache_size', $max_cache_size);
+                        update_option('pdf_builder_cache_compression', $cache_compression);
+                        update_option('pdf_builder_cache_auto_cleanup', $cache_auto_cleanup);
+                        update_option('pdf_builder_cache_max_size', $cache_max_size);
+                        update_option('pdf_builder_cache_ttl', $cache_ttl);
 
                         // Traitement des paramètres de maintenance
                         $auto_maintenance = (isset($_POST['systeme_auto_maintenance']) && $_POST['systeme_auto_maintenance'] === '1') ? '1' : '0';
@@ -2069,6 +2073,7 @@
             <!-- Formulaire unique pour tout l'onglet système -->
             <form id="systeme-settings-form" method="post" action="">
                 <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_systeme_nonce'); ?>
+                <input type="hidden" name="current_tab" value="systeme">
                 <input type="hidden" name="current_tab" value="systeme">
 
                 <!-- Section Cache et Performance -->
