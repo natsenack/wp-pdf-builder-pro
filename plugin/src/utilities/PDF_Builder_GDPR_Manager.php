@@ -63,7 +63,7 @@ class PDF_Builder_GDPR_Manager {
         add_action('wp_ajax_pdf_builder_request_data_portability', [$this, 'ajax_request_data_portability']);
         add_action('wp_ajax_pdf_builder_get_consent_status', [$this, 'ajax_get_consent_status']);
         add_action('wp_ajax_pdf_builder_save_gdpr_settings', [$this, 'ajax_save_gdpr_settings']);
-        add_action('wp_ajax_pdf_builder_save_gdpr_security', [$this, 'ajax_save_gdpr_security']);
+        add_action('wp_ajax_pdf_builder_view_consent_status', [$this, 'ajax_view_consent_status']);
         add_action('wp_ajax_pdf_builder_refresh_audit_log', [$this, 'ajax_refresh_audit_log']);
         add_action('wp_ajax_pdf_builder_export_audit_log', [$this, 'ajax_export_audit_log']);
 
@@ -656,6 +656,77 @@ class PDF_Builder_GDPR_Manager {
         }
 
         wp_send_json_success(['consents' => $consents]);
+    }
+
+    /**
+     * AJAX - Voir le statut des consentements (HTML formaté)
+     */
+    public function ajax_view_consent_status() {
+        check_ajax_referer('pdf_builder_gdpr', 'nonce');
+
+        $user_id = get_current_user_id();
+
+        ob_start();
+        ?>
+        <table class="widefat striped" style="margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th>Type de consentement</th>
+                    <th>Statut</th>
+                    <th>Date de consentement</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $consent_types = [
+                    'analytics' => 'Analytics & Suivi',
+                    'templates' => 'Sauvegarde des Templates',
+                    'marketing' => 'Communications Marketing'
+                ];
+
+                foreach ($consent_types as $type => $label) {
+                    $status = $this->get_user_consent_status($user_id, $type);
+                    $consent_data = get_user_meta($user_id, 'pdf_builder_consent_' . $type, true);
+
+                    $status_text = $status ? '✅ Accordé' : '❌ Refusé';
+                    $status_class = $status ? 'text-success' : 'text-danger';
+                    $date_text = 'Non défini';
+
+                    if (is_array($consent_data) && isset($consent_data['timestamp'])) {
+                        $date_text = date_i18n('d/m/Y H:i', $consent_data['timestamp']);
+                    }
+                    ?>
+                    <tr>
+                        <td><strong><?php echo esc_html($label); ?></strong></td>
+                        <td class="<?php echo esc_attr($status_class); ?>"><?php echo esc_html($status_text); ?></td>
+                        <td><?php echo esc_html($date_text); ?></td>
+                        <td>
+                            <?php if ($status): ?>
+                                <button type="button" class="button button-small button-secondary revoke-consent"
+                                        data-consent-type="<?php echo esc_attr($type); ?>">
+                                    Révoquer
+                                </button>
+                            <?php else: ?>
+                                <button type="button" class="button button-small button-primary grant-consent"
+                                        data-consent-type="<?php echo esc_attr($type); ?>">
+                                    Accorder
+                                </button>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php
+                }
+                ?>
+            </tbody>
+        </table>
+        <p style="margin-top: 15px; color: #666; font-size: 12px;">
+            <em>💡 Vous pouvez modifier vos consentements à tout moment. Ces informations sont stockées de manière sécurisée et conforme au RGPD.</em>
+        </p>
+        <?php
+
+        $html = ob_get_clean();
+        wp_send_json_success(['consent_html' => $html]);
     }
 
     /**

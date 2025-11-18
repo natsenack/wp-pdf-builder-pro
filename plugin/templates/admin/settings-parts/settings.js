@@ -70,6 +70,288 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Gestion des actions RGPD utilisateur
+    const exportMyDataBtn = document.getElementById('export-my-data');
+    const deleteMyDataBtn = document.getElementById('delete-my-data');
+    const viewConsentStatusBtn = document.getElementById('view-consent-status');
+    const refreshAuditLogBtn = document.getElementById('refresh-audit-log');
+    const exportAuditLogBtn = document.getElementById('export-audit-log');
+
+    // Fonction pour afficher les résultats
+    function showGdprResult(message, type = 'success') {
+        const resultDiv = document.getElementById('gdpr-user-actions-result');
+        if (resultDiv) {
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `<div class="notice notice-${type} is-dismissible"><p>${message}</p></div>`;
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 5000);
+        }
+    }
+
+    // Exporter mes données
+    if (exportMyDataBtn) {
+        exportMyDataBtn.addEventListener('click', function() {
+            const nonce = document.getElementById('export_user_data_nonce')?.value;
+            if (!nonce) {
+                showGdprResult('Erreur: Nonce de sécurité manquant', 'error');
+                return;
+            }
+
+            // Désactiver le bouton pendant le traitement
+            this.disabled = true;
+            this.textContent = '⏳ Exportation en cours...';
+
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_export_user_data',
+                    nonce: nonce
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Créer un lien de téléchargement
+                    const link = document.createElement('a');
+                    link.href = data.data.download_url;
+                    link.download = data.data.filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    showGdprResult('✅ Données exportées avec succès');
+                } else {
+                    showGdprResult('❌ Erreur lors de l\'export: ' + (data.data || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur export:', error);
+                showGdprResult('❌ Erreur réseau lors de l\'export', 'error');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                this.disabled = false;
+                this.innerHTML = '📥 Exporter mes données';
+            });
+        });
+    }
+
+    // Supprimer mes données
+    if (deleteMyDataBtn) {
+        deleteMyDataBtn.addEventListener('click', function() {
+            if (!confirm('⚠️ ATTENTION: Cette action est irréversible!\n\nÊtes-vous sûr de vouloir supprimer toutes vos données personnelles?\n\nCette action supprimera:\n- Vos préférences utilisateur\n- Vos consentements RGPD\n- Vos données de profil')) {
+                return;
+            }
+
+            const nonce = document.getElementById('delete_user_data_nonce')?.value;
+            if (!nonce) {
+                showGdprResult('Erreur: Nonce de sécurité manquant', 'error');
+                return;
+            }
+
+            // Désactiver le bouton pendant le traitement
+            this.disabled = true;
+            this.textContent = '⏳ Suppression en cours...';
+
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_delete_user_data',
+                    nonce: nonce
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showGdprResult('✅ Données supprimées avec succès');
+                    // Recharger la page après 2 secondes
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showGdprResult('❌ Erreur lors de la suppression: ' + (data.data || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur suppression:', error);
+                showGdprResult('❌ Erreur réseau lors de la suppression', 'error');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                this.disabled = false;
+                this.innerHTML = '🗑️ Supprimer mes données';
+            });
+        });
+    }
+
+    // Voir mes consentements
+    if (viewConsentStatusBtn) {
+        viewConsentStatusBtn.addEventListener('click', function() {
+            const nonce = document.getElementById('export_user_data_nonce')?.value;
+            if (!nonce) {
+                showGdprResult('Erreur: Nonce de sécurité manquant', 'error');
+                return;
+            }
+
+            // Désactiver le bouton pendant le traitement
+            this.disabled = true;
+            this.textContent = '⏳ Chargement...';
+
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_view_consent_status',
+                    nonce: nonce
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Afficher les consentements dans une modal ou un conteneur
+                    const consentHtml = `
+                        <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-top: 15px;">
+                            <h4>📋 État de vos consentements RGPD</h4>
+                            <div style="margin-top: 15px;">
+                                ${data.data.consent_html}
+                            </div>
+                        </div>
+                    `;
+
+                    const resultDiv = document.getElementById('gdpr-user-actions-result');
+                    if (resultDiv) {
+                        resultDiv.style.display = 'block';
+                        resultDiv.innerHTML = consentHtml;
+                    }
+                } else {
+                    showGdprResult('❌ Erreur lors du chargement: ' + (data.data || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur chargement consentements:', error);
+                showGdprResult('❌ Erreur réseau lors du chargement', 'error');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                this.disabled = false;
+                this.innerHTML = '👁️ Voir mes consentements';
+            });
+        });
+    }
+
+    // Actualiser les logs d'audit
+    if (refreshAuditLogBtn) {
+        refreshAuditLogBtn.addEventListener('click', function() {
+            const nonce = document.getElementById('export_user_data_nonce')?.value;
+            if (!nonce) {
+                showGdprResult('Erreur: Nonce de sécurité manquant', 'error');
+                return;
+            }
+
+            // Désactiver le bouton pendant le traitement
+            this.disabled = true;
+            this.textContent = '⏳ Actualisation...';
+
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_refresh_audit_log',
+                    nonce: nonce
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Afficher les logs dans le conteneur
+                    const logContainer = document.getElementById('audit-log-container');
+                    const logContent = document.getElementById('audit-log-content');
+
+                    if (logContainer && logContent) {
+                        logContent.innerHTML = data.data.log_html || '<p style="color: #666; font-style: italic;">Aucun log d\'audit disponible</p>';
+                        logContainer.style.display = 'block';
+                    }
+
+                    showGdprResult('✅ Logs actualisés');
+                } else {
+                    showGdprResult('❌ Erreur lors de l\'actualisation: ' + (data.data || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur actualisation logs:', error);
+                showGdprResult('❌ Erreur réseau lors de l\'actualisation', 'error');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                this.disabled = false;
+                this.innerHTML = '🔄 Actualiser les logs';
+            });
+        });
+    }
+
+    // Exporter les logs d'audit
+    if (exportAuditLogBtn) {
+        exportAuditLogBtn.addEventListener('click', function() {
+            const nonce = document.getElementById('export_user_data_nonce')?.value;
+            if (!nonce) {
+                showGdprResult('Erreur: Nonce de sécurité manquant', 'error');
+                return;
+            }
+
+            // Désactiver le bouton pendant le traitement
+            this.disabled = true;
+            this.textContent = '⏳ Exportation...';
+
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_export_audit_log',
+                    nonce: nonce
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Créer un lien de téléchargement
+                    const link = document.createElement('a');
+                    link.href = data.data.download_url;
+                    link.download = data.data.filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    showGdprResult('✅ Logs exportés avec succès');
+                } else {
+                    showGdprResult('❌ Erreur lors de l\'export: ' + (data.data || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur export logs:', error);
+                showGdprResult('❌ Erreur réseau lors de l\'export', 'error');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                this.disabled = false;
+                this.innerHTML = '📤 Exporter les logs';
+            });
+        });
+    }
+
     // Gestionnaire pour générer une clé de test
     const generateBtn = document.getElementById('generate-test-key-btn');
     if (generateBtn) {
