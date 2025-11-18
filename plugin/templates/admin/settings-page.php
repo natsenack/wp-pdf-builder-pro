@@ -4787,7 +4787,9 @@
 
                 // Pour l'onglet système, utiliser le formulaire unique simplifié
                 if (currentTab === 'systeme') {
+                    console.log('[PDF Builder] Processing systeme tab form submission');
                     const $systemeForm = $('#systeme-settings-form');
+                    console.log('[PDF Builder] Systeme form found:', $systemeForm.length > 0);
                     const formData = new FormData($systemeForm[0]);
 
                     // S'assurer que les cases à cocher non cochées sont incluses
@@ -4802,10 +4804,17 @@
                     // S'assurer que le select de fréquence des sauvegardes est toujours inclus,
                     // même s'il est masqué (quand les sauvegardes automatiques sont désactivées)
                     const $frequencySelect = $('#systeme_auto_backup_frequency');
+                    console.log('[PDF Builder] Frequency select found:', $frequencySelect.length > 0);
+                    console.log('[PDF Builder] Frequency select element:', $frequencySelect);
                     if ($frequencySelect.length > 0) {
                         const frequencyValue = $frequencySelect.val() || 'daily';
+                        console.log('[PDF Builder] Frequency select raw val:', $frequencySelect.val());
+                        console.log('[PDF Builder] Frequency select final value:', frequencyValue);
                         formData.append('systeme_auto_backup_frequency', frequencyValue);
-                        console.log('[PDF Builder] Frequency select value:', frequencyValue);
+                        console.log('[PDF Builder] Frequency select value added to formData:', frequencyValue);
+                    } else {
+                        console.log('[PDF Builder] Frequency select NOT found, adding default value');
+                        formData.append('systeme_auto_backup_frequency', 'daily');
                     }
 
                     // Ajouter action et nonce
