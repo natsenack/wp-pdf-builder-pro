@@ -90,6 +90,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Fonction pour afficher les messages de consentement sans écraser la table
+    function showConsentMessage(message, type = 'success') {
+        // Créer ou utiliser un div séparé pour les messages de consentement
+        let messageDiv = document.getElementById('gdpr-consent-message');
+        if (!messageDiv) {
+            messageDiv = document.createElement('div');
+            messageDiv.id = 'gdpr-consent-message';
+            messageDiv.style.marginTop = '10px';
+            // Insérer avant la table des consentements
+            const resultDiv = document.getElementById('gdpr-user-actions-result');
+            if (resultDiv) {
+                resultDiv.parentNode.insertBefore(messageDiv, resultDiv);
+            }
+        }
+
+        messageDiv.innerHTML = `<div class="notice notice-${type} is-dismissible"><p>${message}</p></div>`;
+        messageDiv.style.display = 'block';
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            messageDiv.style.display = 'none';
+        }, 3000);
+    }
+
     // Exporter mes données
     if (exportMyDataBtn) {
         exportMyDataBtn.addEventListener('click', function() {
@@ -1044,11 +1068,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showGdprResult(`✅ Consentement "${consentType}" accordé`);
+                    showConsentMessage(`✅ Consentement "${consentType}" accordé`);
                     // Mettre à jour la ligne du consentement dans la table existante
                     updateConsentRowInTable(consentType, true);
                 } else {
-                    showGdprResult('❌ Erreur lors de l\'accord du consentement: ' + (data.data || 'Erreur inconnue'), 'error');
+                    showConsentMessage('❌ Erreur lors de l\'accord du consentement: ' + (data.data || 'Erreur inconnue'), 'error');
                 }
             })
             .catch(error => {
@@ -1095,11 +1119,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showGdprResult(`✅ Consentement "${consentType}" révoqué`);
+                    showConsentMessage(`✅ Consentement "${consentType}" révoqué`);
                     // Mettre à jour la ligne du consentement dans la table existante
                     updateConsentRowInTable(consentType, false);
                 } else {
-                    showGdprResult('❌ Erreur lors de la révocation du consentement: ' + (data.data || 'Erreur inconnue'), 'error');
+                    showConsentMessage('❌ Erreur lors de la révocation du consentement: ' + (data.data || 'Erreur inconnue'), 'error');
                 }
             })
             .catch(error => {
