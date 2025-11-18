@@ -609,21 +609,26 @@ function pdf_builder_save_settings_ajax() {
             break;
 
         case 'systeme':
+            error_log('[DEBUG] Processing systeme tab');
             // Sauvegarder les paramètres système (performance + maintenance + sauvegarde)
             $settings = array(
-                'cache_enabled' => $_POST['systeme_cache_enabled'] ?? '0',
-                'cache_expiry' => intval($_POST['systeme_cache_expiry'] ?? 24),
-                'max_cache_size' => intval($_POST['systeme_max_cache_size'] ?? 100),
-                'auto_maintenance' => $_POST['systeme_auto_maintenance'] ?? '0',
-                'auto_backup' => $_POST['systeme_auto_backup'] ?? '0',
+                'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
+                'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
+                'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
+                'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
+                'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+                'auto_maintenance' => isset($_POST['systeme_auto_maintenance']) ? '1' : '0',
+                'auto_backup' => isset($_POST['systeme_auto_backup']) ? '1' : '0',
+                'auto_backup_frequency' => sanitize_text_field($_POST['systeme_auto_backup_frequency'] ?? $_POST['systeme_auto_backup_frequency_hidden'] ?? 'daily'),
                 'backup_retention' => intval($_POST['systeme_backup_retention'] ?? 30),
-                'auto_backup_frequency' => $_POST['systeme_auto_backup_frequency'] ?? $_POST['systeme_auto_backup_frequency_hidden'] ?? 'daily',
             );
 
             foreach ($settings as $key => $value) {
                 update_option('pdf_builder_' . $key, $value);
+                error_log('[DEBUG] Saved option: pdf_builder_' . $key . ' = ' . $value);
             }
             $saved_count++;
+            error_log('[DEBUG] Systeme tab processed, saved_count: ' . $saved_count);
             break;
     }
 
