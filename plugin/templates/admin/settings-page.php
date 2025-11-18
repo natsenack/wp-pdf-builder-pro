@@ -4860,6 +4860,7 @@
                                 // Mettre à jour l'indicateur actif/inactif du cache en temps réel
                                 if (currentTab === 'systeme') {
                                     const cacheEnabledValue = formData.get('cache_enabled') === '1';
+                                    console.log('[DEBUG] Mise à jour indicateur cache après sauvegarde:', cacheEnabledValue);
                                     updateCacheStatusIndicator(cacheEnabledValue);
                                 }
 
