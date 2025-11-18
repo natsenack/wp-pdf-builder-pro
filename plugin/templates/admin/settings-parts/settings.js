@@ -19,6 +19,57 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Gestion de l'état des contrôles RGPD en fonction du toggle principal
+    const gdprEnabledToggle = document.getElementById('gdpr_enabled');
+    if (gdprEnabledToggle) {
+        // Fonction pour activer/désactiver les contrôles RGPD
+        function toggleGdprControls(enabled) {
+            const gdprControls = [
+                'gdpr_consent_required',
+                'gdpr_data_retention',
+                'gdpr_audit_enabled',
+                'gdpr_encryption_enabled',
+                'gdpr_consent_analytics',
+                'gdpr_consent_templates',
+                'gdpr_consent_marketing'
+            ];
+
+            gdprControls.forEach(function(controlId) {
+                const control = document.getElementById(controlId);
+                if (control) {
+                    control.disabled = !enabled;
+                    // Appliquer un style visuel pour montrer que c'est désactivé
+                    if (!enabled) {
+                        control.style.opacity = '0.5';
+                        control.style.pointerEvents = 'none';
+                    } else {
+                        control.style.opacity = '1';
+                        control.style.pointerEvents = 'auto';
+                    }
+                }
+                // Désactiver aussi les labels parentes pour éviter la confusion
+                const label = control ? control.closest('label') : null;
+                if (label) {
+                    if (!enabled) {
+                        label.style.opacity = '0.5';
+                        label.style.pointerEvents = 'none';
+                    } else {
+                        label.style.opacity = '1';
+                        label.style.pointerEvents = 'auto';
+                    }
+                }
+            });
+        }
+
+        // Appliquer l'état initial
+        toggleGdprControls(gdprEnabledToggle.checked);
+
+        // Écouter les changements
+        gdprEnabledToggle.addEventListener('change', function() {
+            toggleGdprControls(this.checked);
+        });
+    }
+
     // Gestionnaire pour générer une clé de test
     const generateBtn = document.getElementById('generate-test-key-btn');
     if (generateBtn) {
