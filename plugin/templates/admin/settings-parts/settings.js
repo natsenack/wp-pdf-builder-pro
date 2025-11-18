@@ -330,6 +330,12 @@ document.addEventListener('DOMContentLoaded', function() {
         collectContenuSettings(formData);
         collectDeveloppeurSettings(formData);
 
+        // Convertir FormData en URLSearchParams pour compatibilité
+        const params = new URLSearchParams();
+        for (let [key, value] of formData.entries()) {
+            params.append(key, value);
+        }
+
         // Envoyer la requête AJAX
         console.log('Sending AJAX request with data:');
         for (let [key, value] of formData.entries()) {
@@ -338,9 +344,10 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(pdf_builder_ajax.ajax_url, {
             method: 'POST',
             headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
                 'X-Requested-With': 'XMLHttpRequest'
             },
-            body: formData
+            body: params.toString()
         })
         .then(response => response.json())
         .then(data => {
