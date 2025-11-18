@@ -53,8 +53,7 @@ class PdfBuilderBackupRestoreManager
      */
     private function init()
     {
-        $upload_dir = wp_upload_dir();
-        $this->backup_dir = $upload_dir['basedir'] . '/pdf-builder-backups/';
+        $this->backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups/';
 
         // Créer le dossier de sauvegarde s'il n'existe pas
         if (!file_exists($this->backup_dir)) {
@@ -795,6 +794,13 @@ class PdfBuilderBackupRestoreManager
         }
 
         $filename = $_POST['filename'] ?? '';
+
+        // Décoder le base64 (le JavaScript envoie le filename encodé en base64)
+        $decoded_filename = base64_decode($filename);
+        if ($decoded_filename === false || empty($decoded_filename)) {
+            wp_send_json_error(['message' => __('Nom de fichier invalide (décodage base64 échoué).', 'pdf-builder-pro')]);
+        }
+        $filename = $decoded_filename;
 
         if (empty($filename)) {
             wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
