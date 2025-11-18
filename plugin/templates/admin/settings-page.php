@@ -5356,8 +5356,11 @@
 
             // Fonction pour mettre à jour l'indicateur actif/inactif du cache
             function updateCacheStatusIndicator(isEnabled) {
+                console.log('[DEBUG] updateCacheStatusIndicator appelée avec:', isEnabled);
                 const $cacheStatusIcon = $('.systeme-cache-status .cache-enabled-indicator');
                 const $cacheStatusText = $('.systeme-cache-status .cache-enabled-text');
+
+                console.log('[DEBUG] Éléments trouvés - Icon:', $cacheStatusIcon.length, 'Text:', $cacheStatusText.length);
 
                 if (isEnabled) {
                     $cacheStatusIcon.html('✅').css('color', '#28a745');
@@ -5366,6 +5369,8 @@
                     $cacheStatusIcon.html('❌').css('color', '#dc3545');
                     $cacheStatusText.text('Cache désactivé');
                 }
+
+                console.log('[DEBUG] Indicateur mis à jour - Icon HTML:', $cacheStatusIcon.html(), 'Text:', $cacheStatusText.text());
             }
 
             // Initialiser l'indicateur au chargement de la page
