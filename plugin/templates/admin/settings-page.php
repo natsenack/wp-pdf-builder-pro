@@ -2225,7 +2225,6 @@
                         <tr>
                             <th scope="row">Actions de maintenance</th>
                             <td>
-                                <button type="button" id="clear-cache-btn" class="button button-secondary" style="margin-right: 10px;">🗑️ Vider le cache</button>
                                 <button type="button" id="optimize-db-btn" class="button button-secondary" style="margin-right: 10px;">🗃️ Optimiser la base</button>
                                 <button type="button" id="repair-templates-btn" class="button button-secondary">🔧 Réparer les templates</button>
                                 <div id="maintenance-results" style="margin-top: 10px;"></div>
@@ -4878,43 +4877,6 @@
 
             // === GESTIONNAIRES POUR LES BOUTONS DE MAINTENANCE ===
             
-            // Bouton "Vider le cache"
-            $('#clear-cache-btn').on('click', function() {
-                const $btn = $(this);
-                const $results = $('#maintenance-results');
-
-                $btn.prop('disabled', true).text('⏳ Vidage en cours...');
-                $results.html('<span style="color: #007cba;">⏳ Vidage du cache en cours...</span>');
-
-                $.ajax({
-                    url: pdf_builder_ajax.ajax_url,
-                    type: 'POST',
-                    data: {
-                        action: 'pdf_builder_clear_cache',
-                        security: pdf_builder_ajax.nonce
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            $results.html('<span style="color: #28a745;">✅ Cache vidé avec succès</span>');
-                            // Update cache size display
-                            var cacheSizeDisplay = document.getElementById('cache-size-display');
-                            if (cacheSizeDisplay && response.data && response.data.new_cache_size) {
-                                cacheSizeDisplay.innerHTML = response.data.new_cache_size;
-                            }
-                        } else {
-                            $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('[PDF Builder JS] Erreur AJAX vidage cache:', xhr, status, error);
-                        $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors du vidage du cache</span>');
-                    },
-                    complete: function() {
-                        $btn.prop('disabled', false).text('🗑️ Vider le cache');
-                    }
-                });
-            });
-
             // Bouton "Optimiser la base"
             $('#optimize-db-btn').on('click', function() {
                 const $btn = $(this);
