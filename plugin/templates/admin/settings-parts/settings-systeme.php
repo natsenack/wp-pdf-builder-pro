@@ -1,5 +1,5 @@
 <?php // Systeme tab content - Updated: 2025-11-18 20:20:00 ?>
-        <div id="systeme" class="tab-content hidden-tab">
+        <div id="systeme" class="tab-content">
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
             <!-- Formulaire unique pour tout l'onglet système -->

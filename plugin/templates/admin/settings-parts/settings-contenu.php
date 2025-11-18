@@ -1,6 +1,6 @@
 <?php // Content tab content - Updated: 2025-11-18 20:20:00 ?>
 
-        <div id="contenu" class="tab-content hidden-tab">
+        <div id="contenu" class="tab-content">
             <h2>🎨 Contenu & Design</h2>
 
             <!-- Section Canvas -->

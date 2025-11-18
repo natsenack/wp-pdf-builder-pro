@@ -1,5 +1,5 @@
 <?php // Licence tab content - Updated: 2025-11-18 20:20:00 ?>
-        <div id="licence" class="tab-content hidden-tab">
+        <div id="licence" class="tab-content">
             <form method="post" id="licence-form" action="">
                 <input type="hidden" name="current_tab" value="licence">
                     <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h2>

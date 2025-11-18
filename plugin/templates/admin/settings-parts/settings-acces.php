@@ -1,5 +1,5 @@
 <?php // Acces tab content - Updated: 2025-11-18 20:20:00 ?>
-        <div id="acces" class="tab-content hidden-tab">
+        <div id="acces" class="tab-content">
             <h2>👥 Gestion des Rôles et Permissions</h2>
 
             <!-- Message de confirmation que l'onglet est chargé -->

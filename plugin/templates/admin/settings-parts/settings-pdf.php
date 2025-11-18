@@ -1,6 +1,6 @@
 <?php // PDF tab content - Updated: 2025-11-18 20:20:00 ?>
 
-        <div id="pdf" class="tab-content hidden-tab">
+        <div id="pdf" class="tab-content">
             <h2>📄 Configuration PDF</h2>
 
             <!-- Section Configuration PDF -->

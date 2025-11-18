@@ -1,6 +1,6 @@
 <?php // Developer tab content - Updated: 2025-11-18 20:20:00 ?>
 
-        <div id="developpeur" class="tab-content hidden-tab">
+        <div id="developpeur" class="tab-content">
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
