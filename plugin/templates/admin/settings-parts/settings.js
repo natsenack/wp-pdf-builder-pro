@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
 
         // Ajouter l'action AJAX
-        formData.append('action', 'pdf_builder_save_all_settings');
+        formData.append('action', 'pdf_builder_save_settings');
         formData.append('nonce', pdf_builder_ajax.nonce);
 
         // Collecter les données de tous les onglets

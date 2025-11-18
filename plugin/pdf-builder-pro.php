@@ -427,12 +427,63 @@ function pdf_builder_save_settings_ajax() {
         return;
     }
 
-    $current_tab = sanitize_text_field($_POST['current_tab']);
+    $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'all');
     error_log('[DEBUG] Current tab: ' . $current_tab);
     $saved_count = 0;
 
-        // Traiter selon l'onglet
-    switch ($current_tab) {
+    // Si current_tab est 'all', sauvegarder tous les paramètres
+    if ($current_tab === 'all') {
+        // Collecter tous les paramètres possibles
+        $all_settings = array(
+            // Général
+            'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
+            'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
+            'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
+            'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
+            'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
+
+            // Licence
+            'license_test_mode' => isset($_POST['license_test_mode']) ? '1' : '0',
+
+            // Système
+            'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
+            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+            'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
+            'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
+            'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
+
+            // PDF
+            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+            'pdf_page_size' => sanitize_text_field($_POST['pdf_page_size'] ?? 'A4'),
+            'default_template' => sanitize_text_field($_POST['default_template'] ?? 'blank'),
+
+            // Contenu
+            'template_library_enabled' => isset($_POST['template_library_enabled']) ? '1' : '0',
+
+            // Développeur
+            'developer_enabled' => isset($_POST['developer_enabled']) ? '1' : '0',
+            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
+            'debug_php_errors' => isset($_POST['debug_php_errors']) ? '1' : '0',
+            'debug_javascript' => isset($_POST['debug_javascript']) ? '1' : '0',
+            'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']) ? '1' : '0',
+            'debug_ajax' => isset($_POST['debug_ajax']) ? '1' : '0',
+            'debug_performance' => isset($_POST['debug_performance']) ? '1' : '0',
+            'debug_database' => isset($_POST['debug_database']) ? '1' : '0',
+            'log_level' => intval($_POST['log_level'] ?? 0),
+            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
+            'log_retention' => intval($_POST['log_retention'] ?? 0),
+            'force_https' => isset($_POST['force_https']) ? '1' : '0',
+        );
+
+        foreach ($all_settings as $key => $value) {
+            update_option('pdf_builder_' . $key, $value);
+            error_log("[DEBUG] Saved setting: pdf_builder_{$key} = {$value}");
+        }
+        $saved_count = count($all_settings);
+
+    } else {
+        // Traiter selon l'onglet (code existant)
+        switch ($current_tab) {
         case 'general':
             // Pour l'AJAX, on utilise le nonce principal pdf_builder_ajax
             // Sauvegarder les paramètres généraux
@@ -631,6 +682,7 @@ function pdf_builder_save_settings_ajax() {
             $saved_count++;
             break;
     }
+    } // End of else block
 
     if ($saved_count > 0) {
         wp_send_json_success('Paramètres sauvegardés avec succès');
