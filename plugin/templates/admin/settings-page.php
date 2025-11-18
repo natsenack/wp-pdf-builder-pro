@@ -2088,7 +2088,7 @@
                     <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; font-size: 18px;">
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             📋 Cache & Performance
-                            <span class="cache-performance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_cache_enabled', false) ? 'ACTIF' : 'NON ACTIF'; ?></span>
+                            <span class="cache-performance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_cache_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
                         </span>
                     </h3>
 
@@ -2217,7 +2217,9 @@
                                 <div style="color: #666; font-size: 12px;">Transients actifs</div>
                             </div>
                             <div style="text-align: center;" class="systeme-cache-status">
-                                <div class="cache-enabled-indicator" style="font-size: 24px; font-weight: bold;"></div>
+                                <div class="cache-enabled-indicator" style="font-size: 24px; font-weight: bold; color: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
+                                <?php echo get_option('pdf_builder_cache_enabled', false) ? 'ACTIF' : 'INACTIF'; ?>
+                            </div>
                                 <div class="cache-enabled-text" style="color: #666; font-size: 12px;"></div>
                             </div>
                             <div style="text-align: center;">
@@ -2241,9 +2243,7 @@
                     <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             🔧 Maintenance
-                            <?php if (get_option('pdf_builder_auto_maintenance', '0') === '1'): ?>
-                                <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
-                            <?php endif; ?>
+                            <span class="maintenance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
                         </span>
                     </h3>
 
@@ -4853,10 +4853,9 @@
                                     PDF_Builder_Notification_Manager.show_toast('Paramètres enregistrés avec succès!', 'success');
                                 }
 
-                                // Mettre à jour l'indicateur actif/inactif du cache en temps réel
+                                // Mettre à jour les indicateurs actif/inactif
                                 if (currentTab === 'systeme') {
-                                    const cacheEnabledValue = formData.get('cache_enabled') === '1';
-                                    updateCacheStatusIndicator(cacheEnabledValue);
+                                    updateAllStatusIndicators();
                                 }
 
                                 setTimeout(() => {
@@ -5349,28 +5348,39 @@
                 }
             });
 
-            // Fonction pour mettre à jour l'indicateur actif/inactif du cache
-            function updateCacheStatusIndicator(isEnabled) {
+            // Fonction générique pour mettre à jour un indicateur actif/inactif
+            function updateStatusIndicator(toggleSelector, indicatorSelector) {
+                const isChecked = $(toggleSelector).is(':checked');
+                const $indicator = $(indicatorSelector);
+
+                if (isChecked) {
+                    $indicator.html('ACTIF').css('background', '#28a745');
+                } else {
+                    $indicator.html('INACTIF').css('background', '#dc3545');
+                }
+            }
+
+            // Fonction pour mettre à jour tous les indicateurs
+            function updateAllStatusIndicators() {
+                // Mettre à jour l'indicateur du cache dans le tableau des métriques
+                const cacheEnabled = $('input[name="cache_enabled"]').is(':checked');
                 const $cacheStatusIcon = $('.systeme-cache-status .cache-enabled-indicator');
                 const $cacheStatusText = $('.systeme-cache-status .cache-enabled-text');
-                const $container = $('.systeme-cache-status');
-                const $performanceStatus = $('.cache-performance-status');
 
-                if (isEnabled) {
+                if (cacheEnabled) {
                     $cacheStatusIcon.html('ACTIF').css('color', '#28a745');
                     $cacheStatusText.text('Cache activé');
-                    $performanceStatus.html('ACTIF').css('background', '#28a745');
                 } else {
                     $cacheStatusIcon.html('INACTIF').css('color', '#dc3545');
                     $cacheStatusText.text('Cache désactivé');
-                    $performanceStatus.html('NON ACTIF').css('background', '#dc3545');
                 }
 
-                // Forcer un re-render
-                $container.hide().show(0);
+                // Mettre à jour les indicateurs dans les titres des sections
+                updateStatusIndicator('input[name="cache_enabled"]', '.cache-performance-status');
+                updateStatusIndicator('input[name="systeme_auto_maintenance"]', '.maintenance-status');
             }
 
-            // Initialiser l'indicateur au chargement de la page
+            // Initialiser les indicateurs au chargement de la page
             $(document).ready(function() {
                 // Récupérer l'état actuel du cache depuis les options WordPress
                 $.ajax({
@@ -5382,12 +5392,44 @@
                     },
                     success: function(response) {
                         if (response.success && typeof response.data.cache_enabled !== 'undefined') {
-                            updateCacheStatusIndicator(response.data.cache_enabled === '1');
+                            // Mettre à jour l'indicateur du cache
+                            const cacheEnabled = response.data.cache_enabled === '1';
+                            const $cacheStatusIcon = $('.systeme-cache-status .cache-enabled-indicator');
+                            const $cacheStatusText = $('.systeme-cache-status .cache-enabled-text');
+                            const $cachePerformanceStatus = $('.cache-performance-status');
+
+                            if (cacheEnabled) {
+                                $cacheStatusIcon.html('ACTIF').css('color', '#28a745');
+                                $cacheStatusText.text('Cache activé');
+                                $cachePerformanceStatus.html('ACTIF').css('background', '#28a745');
+                            } else {
+                                $cacheStatusIcon.html('INACTIF').css('color', '#dc3545');
+                                $cacheStatusText.text('Cache désactivé');
+                                $cachePerformanceStatus.html('INACTIF').css('background', '#dc3545');
+                            }
+                        }
+
+                        // Mettre à jour l'indicateur de maintenance (utilise la valeur du checkbox)
+                        const maintenanceEnabled = $('input[name="systeme_auto_maintenance"]').is(':checked');
+                        const $maintenanceStatus = $('.maintenance-status');
+
+                        if (maintenanceEnabled) {
+                            $maintenanceStatus.html('ACTIF').css('background', '#28a745');
+                        } else {
+                            $maintenanceStatus.html('INACTIF').css('background', '#dc3545');
                         }
                     },
                     error: function() {
-                        // En cas d'erreur, utiliser une valeur par défaut
-                        updateCacheStatusIndicator(false);
+                        // En cas d'erreur, utiliser les valeurs par défaut
+                        const $cacheStatusIcon = $('.systeme-cache-status .cache-enabled-indicator');
+                        const $cacheStatusText = $('.systeme-cache-status .cache-enabled-text');
+                        const $cachePerformanceStatus = $('.cache-performance-status');
+                        const $maintenanceStatus = $('.maintenance-status');
+
+                        $cacheStatusIcon.html('INACTIF').css('color', '#dc3545');
+                        $cacheStatusText.text('Cache désactivé');
+                        $cachePerformanceStatus.html('INACTIF').css('background', '#dc3545');
+                        $maintenanceStatus.html('INACTIF').css('background', '#dc3545');
                     }
                 });
             });
