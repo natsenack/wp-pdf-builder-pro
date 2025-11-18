@@ -1010,9 +1010,9 @@
                         <tr>
                             <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="general_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Améliore les performances en mettant en cache les données</p>
                             </td>
@@ -1020,9 +1020,9 @@
                         <tr>
                             <th scope="row"><label for="cache_compression">Compression du cache</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked(get_option('pdf_builder_cache_compression', true)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
                             </td>
@@ -1030,9 +1030,9 @@
                         <tr>
                             <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked(get_option('pdf_builder_cache_auto_cleanup', true)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
                             </td>
@@ -2231,9 +2231,9 @@
                         <tr>
                             <th scope="row"><label for="systeme_cache_enabled">Cache activé</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="systeme_cache_enabled" name="systeme_cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', '1'), '1'); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Active le système de cache pour améliorer les performances</p>
                             </td>
@@ -2272,9 +2272,9 @@
                         <tr>
                             <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Active la maintenance automatique hebdomadaire</p>
                             </td>
@@ -2323,9 +2323,9 @@
                                 </label>
                             </th>
                             <td>
-                                <label class="switch" style="margin-right: 15px;">
+                                <label class="toggle-switch" style="margin-right: 15px;">
                                     <input type="checkbox" id="systeme_auto_backup" name="systeme_auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <span style="color: #6c757d; font-size: 13px;">Active la création automatique de sauvegardes</span>
                             </td>
@@ -2746,9 +2746,9 @@
                         <tr>
                             <th scope="row"><label for="enable_logging">Journalisation activée</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="enable_logging" name="enable_logging" value="1" <?php checked(get_option('pdf_builder_enable_logging', true)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Active la journalisation des actions pour audit</p>
                             </td>
@@ -2771,9 +2771,9 @@
                         <tr>
                             <th scope="row"><label for="gdpr_enabled">RGPD Activé</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="gdpr_enabled" name="gdpr_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr_enabled', true)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Activer la conformité RGPD pour le plugin</p>
                             </td>
@@ -2781,9 +2781,9 @@
                         <tr>
                             <th scope="row"><label for="gdpr_consent_required">Consentement RGPD requis</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="gdpr_consent_required" name="gdpr_consent_required" value="1" <?php checked(get_option('pdf_builder_gdpr_consent_required', true)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Exiger le consentement RGPD avant génération de PDF</p>
                             </td>
@@ -2798,9 +2798,9 @@
                         <tr>
                             <th scope="row"><label for="gdpr_audit_enabled">Audit Logging</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="gdpr_audit_enabled" name="gdpr_audit_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr_audit_enabled', true)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Activer la journalisation des actions pour audit RGPD</p>
                             </td>
@@ -2808,9 +2808,9 @@
                         <tr>
                             <th scope="row"><label for="gdpr_encryption_enabled">Chiffrement des données</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="gdpr_encryption_enabled" name="gdpr_encryption_enabled" value="1" <?php checked(get_option('pdf_builder_gdpr_encryption_enabled', true)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Chiffrer les données sensibles des utilisateurs</p>
                             </td>
@@ -2823,9 +2823,9 @@
                         <tr>
                             <th scope="row"><label for="gdpr_consent_analytics">Consentement Analytics</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="gdpr_consent_analytics" name="gdpr_consent_analytics" value="1" <?php checked(get_option('pdf_builder_gdpr_consent_analytics', true)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Collecte de données d'utilisation anonymes pour améliorer le service</p>
                             </td>
@@ -2833,9 +2833,9 @@
                         <tr>
                             <th scope="row"><label for="gdpr_consent_templates">Consentement Templates</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="gdpr_consent_templates" name="gdpr_consent_templates" value="1" <?php checked(get_option('pdf_builder_gdpr_consent_templates', true)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Sauvegarde des templates personnalisés sur le serveur</p>
                             </td>
@@ -2843,9 +2843,9 @@
                         <tr>
                             <th scope="row"><label for="gdpr_consent_marketing">Consentement Marketing</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="gdpr_consent_marketing" name="gdpr_consent_marketing" value="1" <?php checked(get_option('pdf_builder_gdpr_consent_marketing', false)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Réception d'informations sur les nouvelles fonctionnalités et mises à jour</p>
                             </td>
@@ -2981,9 +2981,9 @@
                         <tr>
                             <th scope="row"><label for="template_library_enabled">Bibliothèque de templates</label></th>
                             <td>
-                                <label class="switch">
+                                <label class="toggle-switch">
                                     <input type="checkbox" id="template_library_enabled" name="template_library_enabled" value="1" <?php checked(get_option('pdf_builder_template_library_enabled', true)); ?>>
-                                    <span class="slider round"></span>
+                                    <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Active la bibliothèque de templates prédéfinis</p>
                             </td>
@@ -3476,20 +3476,20 @@
 
     <style>
         /* Styles pour les interrupteurs */
-        .switch {
+        .switch, .toggle-switch {
             position: relative;
             display: inline-block;
             width: 50px;
-            height: 28px;
+            height: 24px;
         }
 
-        .switch input {
+        .switch input, .toggle-switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
 
-        .slider {
+        .slider, .toggle-slider {
             position: absolute;
             cursor: pointer;
             top: 0;
@@ -3498,36 +3498,38 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
+            border-radius: 24px;
         }
 
-        .slider:before {
+        .slider:before, .toggle-slider:before {
             position: absolute;
             content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 4px;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
             background-color: white;
             transition: .4s;
+            border-radius: 50%;
         }
 
-        input:checked + .slider {
+        input:checked + .slider, input:checked + .toggle-slider {
             background-color: #007cba;
         }
 
-        input:focus + .slider {
+        input:focus + .slider, input:focus + .toggle-slider {
             box-shadow: 0 0 1px #007cba;
         }
 
-        input:checked + .slider:before {
-            transform: translateX(22px);
+        input:checked + .slider:before, input:checked + .toggle-slider:before {
+            transform: translateX(26px);
         }
 
-        .slider.round {
-            border-radius: 28px;
+        .slider.round, .toggle-slider {
+            border-radius: 24px;
         }
 
-        .slider.round:before {
+        .slider.round:before, .toggle-slider:before {
             border-radius: 50%;
         }
 
@@ -4411,20 +4413,20 @@
 
     <style>
         /* Styles pour les interrupteurs */
-        .switch {
+        .switch, .toggle-switch {
             position: relative;
             display: inline-block;
             width: 50px;
-            height: 28px;
+            height: 24px;
         }
 
-        .switch input {
+        .switch input, .toggle-switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
 
-        .slider {
+        .slider, .toggle-slider {
             position: absolute;
             cursor: pointer;
             top: 0;
@@ -4433,36 +4435,38 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
+            border-radius: 24px;
         }
 
-        .slider:before {
+        .slider:before, .toggle-slider:before {
             position: absolute;
             content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 4px;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
             background-color: white;
             transition: .4s;
+            border-radius: 50%;
         }
 
-        input:checked + .slider {
+        input:checked + .slider, input:checked + .toggle-slider {
             background-color: #007cba;
         }
 
-        input:focus + .slider {
+        input:focus + .slider, input:focus + .toggle-slider {
             box-shadow: 0 0 1px #007cba;
         }
 
-        input:checked + .slider:before {
-            transform: translateX(22px);
+        input:checked + .slider:before, input:checked + .toggle-slider:before {
+            transform: translateX(26px);
         }
 
-        .slider.round {
-            border-radius: 28px;
+        .slider.round, .toggle-slider {
+            border-radius: 24px;
         }
 
-        .slider.round:before {
+        .slider.round:before, .toggle-slider:before {
             border-radius: 50%;
         }
     </style>
