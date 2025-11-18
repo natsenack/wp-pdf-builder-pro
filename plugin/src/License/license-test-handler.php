@@ -22,6 +22,11 @@ class LicenseTestHandler
      * Instance singleton
      */
     private static $instance = null;
+
+    /**
+     * Flag pour éviter les réinitialisations multiples
+     */
+    private static $initialized = false;
 /**
      * Préfixe des clés de test
      */
@@ -47,6 +52,12 @@ class LicenseTestHandler
      */
     public function init()
     {
+        // Éviter les réinitialisations multiples
+        if (self::$initialized) {
+            return;
+        }
+        self::$initialized = true;
+
         if (defined('WP_DEBUG') && WP_DEBUG) {
             if (defined('WP_DEBUG') && WP_DEBUG) { error_log('LICENSE TEST: LicenseTestHandler init() called'); }
         }
@@ -396,7 +407,3 @@ class LicenseTestHandler
         }
     }
 }
-
-// Initialiser le handler
-$handler = LicenseTestHandler::getInstance();
-$handler->init();
