@@ -448,5 +448,3 @@ if ($is_ajax && !empty($_POST)) {
     return;
     // Exit early for AJAX POST requests to prevent HTML output
 }
-?></content>
-<parameter name="filePath">i:\wp-pdf-builder-pro\plugin\templates\admin\settings-parts\settings-ajax.php
