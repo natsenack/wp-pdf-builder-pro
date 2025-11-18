@@ -2,6 +2,7 @@
 /**
  * PDF Builder Pro - Main Settings Logic
  * Core settings processing and HTML structure
+ * Updated: 2025-11-18 20:10:00
  */
 
 if (!defined('ABSPATH')) {
