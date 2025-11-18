@@ -354,3 +354,74 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
         send_ajax_response(false, 'Requête AJAX non reconnue ou invalide.');
     }
 ?>
+
+<div class="wrap">
+    <!-- Tab Content Containers -->
+    <div id="general" class="tab-content active">
+        <?php require_once 'settings-general.php'; ?>
+    </div>
+
+    <div id="licence" class="tab-content">
+        <?php require_once 'settings-licence.php'; ?>
+    </div>
+
+    <div id="systeme" class="tab-content">
+        <?php require_once 'settings-systeme.php'; ?>
+    </div>
+
+    <div id="acces" class="tab-content">
+        <?php require_once 'settings-acces.php'; ?>
+    </div>
+
+    <div id="securite" class="tab-content">
+        <?php require_once 'settings-securite.php'; ?>
+    </div>
+
+    <div id="pdf" class="tab-content">
+        <?php require_once 'settings-pdf.php'; ?>
+    </div>
+
+    <div id="contenu" class="tab-content">
+        <?php require_once 'settings-contenu.php'; ?>
+    </div>
+
+    <div id="developpeur" class="tab-content">
+        <?php require_once 'settings-developpeur.php'; ?>
+    </div>
+
+    <!-- Modals -->
+    <?php require_once 'settings-modals.php'; ?>
+
+    <!-- Floating Save Button -->
+    <div id="floating-save-button" style="display: none;">
+        <button type="button" class="floating-save-btn" id="floating-save-btn">
+            💾 Sauvegarder
+        </button>
+        <div class="floating-tooltip">Cliquez pour sauvegarder tous les paramètres</div>
+    </div>
+</div>
+</div>
+
+<script>
+// Tab switching functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.nav-tab');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('nav-tab-active'));
+            // Add active class to clicked tab
+            this.classList.add('nav-tab-active');
+
+            // Hide all tab contents
+            contents.forEach(c => c.classList.remove('active'));
+            // Show corresponding tab content
+            const target = this.getAttribute('href').substring(1);
+            document.getElementById(target).classList.add('active');
+        });
+    });
+</script>
