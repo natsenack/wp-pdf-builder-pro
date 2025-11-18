@@ -441,26 +441,23 @@ function pdf_builder_save_settings_ajax() {
             'license_test_mode' => isset($_POST['license_test_mode']) ? '1' : '0',
 
             // Système - Cache
-            'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
+            'cache_enabled' => !empty($_POST['cache_enabled']) ? '1' : '0',
             'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-            'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
-            'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
+            'cache_compression' => !empty($_POST['cache_compression']) ? '1' : '0',
+            'cache_auto_cleanup' => !empty($_POST['cache_auto_cleanup']) ? '1' : '0',
             'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
 
             // Système - Maintenance
-            'auto_maintenance' => isset($_POST['systeme_auto_maintenance']) ? '1' : '0',
+            'auto_maintenance' => !empty($_POST['systeme_auto_maintenance']) ? '1' : '0',
 
             // Système - Sauvegarde
-            'auto_backup' => isset($_POST['systeme_auto_backup']) ? '1' : '0',
+            'auto_backup' => !empty($_POST['systeme_auto_backup']) ? '1' : '0',
             'auto_backup_frequency' => sanitize_text_field($_POST['systeme_auto_backup_frequency'] ?? 'daily'),
             'backup_retention' => intval($_POST['systeme_backup_retention'] ?? 30),
         );
 
         foreach ($all_settings as $key => $value) {
             update_option('pdf_builder_' . $key, $value);
-            if (strpos($key, 'cache') === 0 || strpos($key, 'auto_') === 0 || strpos($key, 'backup') === 0) {
-                error_log('[DEBUG AJAX] Saved system setting: pdf_builder_' . $key . ' = ' . $value);
-            }
         }
         $saved_count = count($all_settings);
 
