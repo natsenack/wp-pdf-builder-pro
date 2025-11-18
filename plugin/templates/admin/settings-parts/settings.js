@@ -300,4 +300,185 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 1500);
         });
     }
+
+    // === GESTION DU BOUTON FLOTTANT DE SAUVEGARDE ===
+
+    // Fonction pour sauvegarder tous les paramètres
+    function saveAllSettings() {
+        const saveBtn = document.getElementById('floating-save-btn');
+        if (!saveBtn) return;
+
+        // Changer l'apparence du bouton pendant la sauvegarde
+        saveBtn.classList.add('saving');
+        saveBtn.textContent = '⏳ Sauvegarde...';
+        saveBtn.disabled = true;
+
+        // Collecter toutes les données des formulaires
+        const formData = new FormData();
+
+        // Ajouter l'action AJAX
+        formData.append('action', 'pdf_builder_save_all_settings');
+        formData.append('nonce', pdf_builder_ajax.nonce);
+
+        // Collecter les données de tous les onglets
+        collectGeneralSettings(formData);
+        collectLicenceSettings(formData);
+        collectSystemeSettings(formData);
+        collectAccesSettings(formData);
+        collectSecuriteSettings(formData);
+        collectPdfSettings(formData);
+        collectContenuSettings(formData);
+        collectDeveloppeurSettings(formData);
+
+        // Envoyer la requête AJAX
+        fetch(pdf_builder_ajax.ajax_url, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                saveBtn.classList.remove('saving');
+                saveBtn.classList.add('saved');
+                saveBtn.textContent = '✅ Sauvegardé !';
+
+                // Remettre le bouton normal après 3 secondes
+                setTimeout(() => {
+                    saveBtn.classList.remove('saved');
+                    saveBtn.textContent = '💾 Sauvegarder';
+                    saveBtn.disabled = false;
+                }, 3000);
+            } else {
+                saveBtn.classList.remove('saving');
+                saveBtn.classList.add('error');
+                saveBtn.textContent = '❌ Erreur';
+
+                setTimeout(() => {
+                    saveBtn.classList.remove('error');
+                    saveBtn.textContent = '💾 Sauvegarder';
+                    saveBtn.disabled = false;
+                }, 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la sauvegarde:', error);
+            saveBtn.classList.remove('saving');
+            saveBtn.classList.add('error');
+            saveBtn.textContent = '❌ Erreur';
+
+            setTimeout(() => {
+                saveBtn.classList.remove('error');
+                saveBtn.textContent = '💾 Sauvegarder';
+                saveBtn.disabled = false;
+            }, 3000);
+        });
+    }
+
+    // Fonctions pour collecter les données de chaque onglet
+    function collectGeneralSettings(formData) {
+        // Collecter les données de l'onglet Général
+        const companyPhone = document.getElementById('company_phone_manual')?.value || '';
+        const companySiret = document.getElementById('company_siret')?.value || '';
+        const companyVat = document.getElementById('company_vat')?.value || '';
+        const companyRcs = document.getElementById('company_rcs')?.value || '';
+        const companyCapital = document.getElementById('company_capital')?.value || '';
+
+        formData.append('company_phone_manual', companyPhone);
+        formData.append('company_siret', companySiret);
+        formData.append('company_vat', companyVat);
+        formData.append('company_rcs', companyRcs);
+        formData.append('company_capital', companyCapital);
+    }
+
+    function collectLicenceSettings(formData) {
+        // Collecter les données de l'onglet Licence
+        const licenceTestMode = document.getElementById('license_test_mode')?.checked || false;
+        formData.append('license_test_mode', licenceTestMode ? '1' : '0');
+    }
+
+    function collectSystemeSettings(formData) {
+        // Collecter les données de l'onglet Système
+        const cacheEnabled = document.getElementById('cache_enabled')?.checked || false;
+        const cacheTtl = document.getElementById('cache_ttl')?.value || '3600';
+        const cacheCompression = document.getElementById('cache_compression')?.checked || false;
+        const cacheAutoCleanup = document.getElementById('cache_auto_cleanup')?.checked || false;
+        const cacheMaxSize = document.getElementById('cache_max_size')?.value || '100';
+
+        formData.append('cache_enabled', cacheEnabled ? '1' : '0');
+        formData.append('cache_ttl', cacheTtl);
+        formData.append('cache_compression', cacheCompression ? '1' : '0');
+        formData.append('cache_auto_cleanup', cacheAutoCleanup ? '1' : '0');
+        formData.append('cache_max_size', cacheMaxSize);
+    }
+
+    function collectAccesSettings(formData) {
+        // Collecter les données de l'onglet Accès
+        // Les rôles sont gérés individuellement via AJAX
+    }
+
+    function collectSecuriteSettings(formData) {
+        // Collecter les données de l'onglet Sécurité
+        // Les paramètres de sécurité sont gérés individuellement
+    }
+
+    function collectPdfSettings(formData) {
+        // Collecter les données de l'onglet PDF
+        const pdfQuality = document.getElementById('pdf_quality')?.value || 'high';
+        const pdfPageSize = document.getElementById('pdf_page_size')?.value || 'A4';
+
+        formData.append('pdf_quality', pdfQuality);
+        formData.append('pdf_page_size', pdfPageSize);
+    }
+
+    function collectContenuSettings(formData) {
+        // Collecter les données de l'onglet Contenu
+        const defaultTemplate = document.getElementById('default_template')?.value || 'blank';
+        const templateLibraryEnabled = document.getElementById('template_library_enabled')?.checked || false;
+
+        formData.append('default_template', defaultTemplate);
+        formData.append('template_library_enabled', templateLibraryEnabled ? '1' : '0');
+    }
+
+    function collectDeveloppeurSettings(formData) {
+        // Collecter les données de l'onglet Développeur
+        const developerEnabled = document.getElementById('developer_enabled')?.checked || false;
+        const developerPassword = document.getElementById('developer_password')?.value || '';
+        const debugPhpErrors = document.getElementById('debug_php_errors')?.checked || false;
+        const debugJavascript = document.getElementById('debug_javascript')?.checked || false;
+        const debugJavascriptVerbose = document.getElementById('debug_javascript_verbose')?.checked || false;
+        const debugAjax = document.getElementById('debug_ajax')?.checked || false;
+        const debugPerformance = document.getElementById('debug_performance')?.checked || false;
+        const debugDatabase = document.getElementById('debug_database')?.checked || false;
+        const logLevel = document.getElementById('log_level')?.value || '3';
+        const logFileSize = document.getElementById('log_file_size')?.value || '10';
+        const logRetention = document.getElementById('log_retention')?.value || '30';
+        const forceHttps = document.getElementById('force_https')?.checked || false;
+
+        formData.append('developer_enabled', developerEnabled ? '1' : '0');
+        formData.append('developer_password', developerPassword);
+        formData.append('debug_php_errors', debugPhpErrors ? '1' : '0');
+        formData.append('debug_javascript', debugJavascript ? '1' : '0');
+        formData.append('debug_javascript_verbose', debugJavascriptVerbose ? '1' : '0');
+        formData.append('debug_ajax', debugAjax ? '1' : '0');
+        formData.append('debug_performance', debugPerformance ? '1' : '0');
+        formData.append('debug_database', debugDatabase ? '1' : '0');
+        formData.append('log_level', logLevel);
+        formData.append('log_file_size', logFileSize);
+        formData.append('log_retention', logRetention);
+        formData.append('force_https', forceHttps ? '1' : '0');
+    }
+
+    // Attacher l'événement de clic au bouton flottant
+    const floatingSaveBtn = document.getElementById('floating-save-btn');
+    if (floatingSaveBtn) {
+        floatingSaveBtn.addEventListener('click', saveAllSettings);
+    }
+
+    // Afficher le bouton flottant après le chargement de la page
+    setTimeout(() => {
+        const floatingBtn = document.getElementById('floating-save-button');
+        if (floatingBtn) {
+            floatingBtn.style.display = 'block';
+        }
+    }, 1000);
 });
