@@ -107,7 +107,51 @@ jQuery(document).ready(function($) {
                 return;
             }
         }
+
+        // Cacher/afficher les options de cache avancées
+        toggleCacheOptions(isEnabled);
+
+        // Mettre à jour l'état du cache en temps réel
+        updateCacheStatus(isEnabled);
     });
+
+    // Fonction pour cacher/afficher les options de cache
+    function toggleCacheOptions(isEnabled) {
+        // Sélectionner toutes les lignes de la table sauf la première (Cache activé)
+        const $cacheTable = $('input[name="cache_enabled"]').closest('table.form-table');
+        const $allRows = $cacheTable.find('tr');
+        const $cacheEnabledRow = $allRows.first();
+
+        // Cacher/afficher toutes les lignes sauf la première
+        $allRows.not($cacheEnabledRow).each(function(index) {
+            if (index < $allRows.length - 2) { // Exclure les 2 dernières lignes (Test et Vider)
+                $(this).toggle(isEnabled);
+            }
+        });
+
+        // Toujours afficher les boutons Test et Vider le cache
+        // Ils sont utiles même si le cache est désactivé pour nettoyer les résidus
+    }
+
+    // Fonction pour mettre à jour l'état du cache en temps réel
+    function updateCacheStatus(isEnabled) {
+        const $statusSection = $('h4:contains("📊 État du système de cache")').closest('div');
+        const $statusIndicator = $statusSection.find('div').filter(function() {
+            return $(this).find('div:contains("Cache activé")').length > 0;
+        });
+
+        if ($statusIndicator.length > 0) {
+            const $indicator = $statusIndicator.find('div').first();
+            $indicator.css('color', isEnabled ? '#28a745' : '#dc3545');
+            $indicator.text(isEnabled ? '✅' : '❌');
+        }
+
+        // Mettre à jour le texte descriptif
+        const $textDiv = $statusIndicator.find('div').last();
+        if ($textDiv.length > 0) {
+            $textDiv.text(isEnabled ? 'Cache activé' : 'Cache désactivé');
+        }
+    }
 
     // Validation des champs numériques
     $('input[name="cache_max_size"], input[name="cache_ttl"]').on('input', function() {
@@ -123,17 +167,10 @@ jQuery(document).ready(function($) {
         }
     });
 
-    // Afficher/masquer les options avancées de cache
-    const $advancedOptions = $('input[name="cache_compression"], input[name="cache_auto_cleanup"]');
-    const $cacheEnabled = $('input[name="cache_enabled"]');
-
-    function toggleAdvancedOptions() {
-        const isEnabled = $cacheEnabled.is(':checked');
-        $advancedOptions.prop('disabled', !isEnabled).closest('tr').toggle(isEnabled);
-    }
-
-    $cacheEnabled.on('change', toggleAdvancedOptions);
-    toggleAdvancedOptions(); // État initial
+    // État initial au chargement de la page
+    const initialCacheEnabled = $('input[name="cache_enabled"]').is(':checked');
+    toggleCacheOptions(initialCacheEnabled);
+    updateCacheStatus(initialCacheEnabled);
 
     // Animation des métriques de cache
     function animateMetrics() {
