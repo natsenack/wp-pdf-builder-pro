@@ -2111,33 +2111,34 @@
                                 <div style="font-size: 24px; font-weight: bold; color: #28a745;">
                                     <?php
                                     $cache_size = 0;
-                                    $upload_dir = wp_upload_dir();
-                                    $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
+                                    $cache_dirs = [
+                                        WP_CONTENT_DIR . '/cache/wp-pdf-builder-previews/',
+                                        wp_upload_dir()['basedir'] . '/pdf-builder-cache'
+                                    ];
 
                                     // Debug temporaire
                                     echo "<!-- DEBUG Cache:\n";
-                                    echo "Cache dir: $cache_dir\n";
-                                    echo "is_dir: " . (is_dir($cache_dir) ? 'YES' : 'NO') . "\n";
-                                    if (is_dir($cache_dir)) {
-                                        echo "is_readable: " . (is_readable($cache_dir) ? 'YES' : 'NO') . "\n";
-                                        $files = scandir($cache_dir);
-                                        echo "Files in dir: " . count($files) . "\n";
-                                        foreach ($files as $file) {
-                                            if ($file != '.' && $file != '..') {
-                                                echo "  - $file\n";
+                                    foreach ($cache_dirs as $cache_dir) {
+                                        echo "Cache dir: $cache_dir\n";
+                                        echo "is_dir: " . (is_dir($cache_dir) ? 'YES' : 'NO') . "\n";
+                                        if (is_dir($cache_dir)) {
+                                            echo "is_readable: " . (is_readable($cache_dir) ? 'YES' : 'NO') . "\n";
+                                            $files = scandir($cache_dir);
+                                            echo "Files in dir: " . count($files) . "\n";
+                                            foreach ($files as $file) {
+                                                if ($file != '.' && $file != '..') {
+                                                    echo "  - $file\n";
+                                                }
                                             }
+                                            $cache_size += pdf_builder_get_folder_size($cache_dir);
+                                            echo "Size added: " . pdf_builder_get_folder_size($cache_dir) . " bytes\n";
                                         }
-                                        $cache_size = pdf_builder_get_folder_size($cache_dir);
-                                        echo "Calculated size: $cache_size bytes\n";
                                     }
+                                    echo "Total calculated size: $cache_size bytes\n";
                                     echo "-->";
 
-                                    // Afficher en Ko si < 1 Mo, sinon en Mo
-                                    if ($cache_size < 1048576) { // 1 Mo = 1048576 bytes
-                                        echo round($cache_size / 1024, 1) . ' Ko';
-                                    } else {
-                                        echo size_format($cache_size);
-                                    }
+                                    // Afficher la taille avec l'unité appropriée
+                                    echo size_format($cache_size);
                                     ?>
                                 </div>
                                 <div style="color: #666; font-size: 12px;">Taille du cache</div>
