@@ -1061,6 +1061,10 @@
             <span class="tab-icon">👨‍💻</span>
             <span class="tab-text">Développeur</span>
         </a>
+        <a href="#canvas" class="nav-tab" data-tab="canvas">
+            <span class="tab-icon">🎨</span>
+            <span class="tab-text">Canvas</span>
+        </a>
     </div>
 
         <div id="general" class="tab-content active">
@@ -3022,645 +3026,265 @@
                     <?php wp_nonce_field('pdf_builder_canvas', 'pdf_builder_canvas_nonce'); ?>
                     <input type="hidden" name="current_tab" value="canvas">
 
-                    <!-- Dimensions & Format -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">📏 Dimensions & Format</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_width">Largeur canvas (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_width" name="canvas_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_width', 800)); ?>" min="400" max="2000">
-                                <p class="description">Largeur par défaut du canvas de conception</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_height">Hauteur canvas (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_height" name="canvas_height" value="<?php echo esc_attr(get_option('pdf_builder_canvas_height', 600)); ?>" min="300" max="2000">
-                                <p class="description">Hauteur par défaut du canvas de conception</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_default_format">Format par défaut</label></th>
-                            <td>
-                                <select id="canvas_default_format" name="canvas_default_format">
-                                    <option value="A4" <?php selected(get_option('pdf_builder_canvas_default_format', 'A4'), 'A4'); ?>>A4 (210×297mm)</option>
-                                    <option value="A3" <?php selected(get_option('pdf_builder_canvas_default_format', 'A4'), 'A3'); ?>>A3 (297×420mm)</option>
-                                    <option value="Letter" <?php selected(get_option('pdf_builder_canvas_default_format', 'A4'), 'Letter'); ?>>Letter (8.5×11")</option>
-                                    <option value="Legal" <?php selected(get_option('pdf_builder_canvas_default_format', 'A4'), 'Legal'); ?>>Legal (8.5×14")</option>
-                                    <option value="Custom" <?php selected(get_option('pdf_builder_canvas_default_format', 'A4'), 'Custom'); ?>>Personnalisé</option>
-                                </select>
-                                <p class="description">Format de page par défaut pour les nouveaux documents</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_default_orientation">Orientation par défaut</label></th>
-                            <td>
-                                <select id="canvas_default_orientation" name="canvas_default_orientation">
-                                    <option value="portrait" <?php selected(get_option('pdf_builder_canvas_default_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
-                                    <option value="landscape" <?php selected(get_option('pdf_builder_canvas_default_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
-                                </select>
-                                <p class="description">Orientation par défaut des pages</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_default_unit">Unité par défaut</label></th>
-                            <td>
-                                <select id="canvas_default_unit" name="canvas_default_unit">
-                                    <option value="px" <?php selected(get_option('pdf_builder_canvas_default_unit', 'px'), 'px'); ?>>Pixels (px)</option>
-                                    <option value="mm" <?php selected(get_option('pdf_builder_canvas_default_unit', 'px'), 'mm'); ?>>Millimètres (mm)</option>
-                                    <option value="cm" <?php selected(get_option('pdf_builder_canvas_default_unit', 'px'), 'cm'); ?>>Centimètres (cm)</option>
-                                    <option value="in" <?php selected(get_option('pdf_builder_canvas_default_unit', 'px'), 'in'); ?>>Pouces (in)</option>
-                                </select>
-                                <p class="description">Unité de mesure utilisée dans l'interface</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <!-- Grille de cartes Canvas -->
+                    <div class="canvas-settings-grid">
+                        <!-- Carte Dimensions & Format -->
+                        <div class="canvas-card" data-category="dimensions">
+                            <div class="canvas-card-header">
+                                <div class="canvas-card-icon">📏</div>
+                                <h4>Dimensions & Format</h4>
+                                <div class="canvas-card-status" id="dimensions-status">ACTIF</div>
+                            </div>
+                            <div class="canvas-card-content">
+                                <p>Configuration des dimensions, format et orientation du canvas</p>
+                                <div class="canvas-card-preview">
+                                    <div class="preview-format">A4</div>
+                                    <div class="preview-size">800×600px</div>
+                                </div>
+                            </div>
+                            <div class="canvas-card-actions">
+                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="dimensions">
+                                    ⚙️ Configurer
+                                </button>
+                            </div>
+                        </div>
 
-                    <!-- Apparence -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">🎨 Apparence</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_background_color">Couleur de fond du canvas</label></th>
-                            <td>
-                                <input type="color" id="canvas_background_color" name="canvas_background_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_background_color', '#ffffff')); ?>">
-                                <p class="description">Couleur de fond du canvas de conception</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_background_transparency">Transparence du canvas (%)</label></th>
-                            <td>
-                                <input type="range" id="canvas_background_transparency" name="canvas_background_transparency" min="0" max="100" value="<?php echo esc_attr(get_option('pdf_builder_canvas_background_transparency', 100)); ?>" step="5">
-                                <span id="canvas_background_transparency_value"><?php echo esc_attr(get_option('pdf_builder_canvas_background_transparency', 100)); ?>%</span>
-                                <p class="description">Transparence du fond du canvas (0% = transparent, 100% = opaque)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_container_background_color">Couleur de fond du conteneur</label></th>
-                            <td>
-                                <input type="color" id="canvas_container_background_color" name="canvas_container_background_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_background_color', '#f8f9fa')); ?>">
-                                <p class="description">Couleur de fond de la zone conteneur autour du canvas</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_container_transparency">Transparence du conteneur (%)</label></th>
-                            <td>
-                                <input type="range" id="canvas_container_transparency" name="canvas_container_transparency" min="0" max="100" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_transparency', 100)); ?>" step="5">
-                                <span id="canvas_container_transparency_value"><?php echo esc_attr(get_option('pdf_builder_canvas_container_transparency', 100)); ?>%</span>
-                                <p class="description">Transparence du fond du conteneur</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- Carte Apparence -->
+                        <div class="canvas-card" data-category="appearance">
+                            <div class="canvas-card-header">
+                                <div class="canvas-card-icon">🎨</div>
+                                <h4>Apparence</h4>
+                                <div class="canvas-card-status" id="appearance-status">ACTIF</div>
+                            </div>
+                            <div class="canvas-card-content">
+                                <p>Couleurs, transparences et style visuel du canvas</p>
+                                <div class="canvas-card-preview">
+                                    <div class="preview-colors">
+                                        <div class="color-preview" style="background: <?php echo esc_attr(get_option('pdf_builder_canvas_background_color', '#ffffff')); ?>; border: 1px solid #ddd;"></div>
+                                        <div class="color-preview" style="background: <?php echo esc_attr(get_option('pdf_builder_canvas_container_background_color', '#f8f9fa')); ?>; border: 1px solid #ddd;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-card-actions">
+                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="appearance">
+                                    🎨 Personnaliser
+                                </button>
+                            </div>
+                        </div>
 
-                    <!-- Marges & Espacement -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">📐 Marges & Espacement</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_margin_top">Marge haute (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_margin_top" name="canvas_margin_top" value="<?php echo esc_attr(get_option('pdf_builder_canvas_margin_top', 20)); ?>" min="0" max="200">
-                                <p class="description">Marge en haut du canvas</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_margin_right">Marge droite (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_margin_right" name="canvas_margin_right" value="<?php echo esc_attr(get_option('pdf_builder_canvas_margin_right', 20)); ?>" min="0" max="200">
-                                <p class="description">Marge à droite du canvas</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_margin_bottom">Marge basse (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_margin_bottom" name="canvas_margin_bottom" value="<?php echo esc_attr(get_option('pdf_builder_canvas_margin_bottom', 20)); ?>" min="0" max="200">
-                                <p class="description">Marge en bas du canvas</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_margin_left">Marge gauche (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_margin_left" name="canvas_margin_left" value="<?php echo esc_attr(get_option('pdf_builder_canvas_margin_left', 20)); ?>" min="0" max="200">
-                                <p class="description">Marge à gauche du canvas</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_show_margins">Afficher les marges</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_show_margins" name="canvas_show_margins" value="1" <?php checked(get_option('pdf_builder_canvas_show_margins', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Affiche les guides de marges sur le canvas</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- Carte Grille & Guides -->
+                        <div class="canvas-card" data-category="grid">
+                            <div class="canvas-card-header">
+                                <div class="canvas-card-icon">📊</div>
+                                <h4>Grille & Guides</h4>
+                                <div class="canvas-card-status" id="grid-status">ACTIF</div>
+                            </div>
+                            <div class="canvas-card-content">
+                                <p>Système d'alignement et guides de conception</p>
+                                <div class="canvas-card-preview">
+                                    <div class="grid-preview">
+                                        <div class="grid-line"></div>
+                                        <div class="grid-line"></div>
+                                        <div class="grid-line"></div>
+                                        <div class="grid-dot"></div>
+                                        <div class="grid-dot"></div>
+                                        <div class="grid-dot"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-card-actions">
+                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="grid">
+                                    📐 Ajuster
+                                </button>
+                            </div>
+                        </div>
 
-                    <!-- Grille & Guides -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">📊 Grille & Guides</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_show_grid">Afficher la grille</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_show_grid" name="canvas_show_grid" value="1" <?php checked(get_option('pdf_builder_canvas_show_grid', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Affiche une grille d'alignement sur le canvas</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_type">Type de grille</label></th>
-                            <td>
-                                <select id="canvas_grid_type" name="canvas_grid_type">
-                                    <option value="lines" <?php selected(get_option('pdf_builder_canvas_grid_type', 'lines'), 'lines'); ?>>Lignes continues</option>
-                                    <option value="dots" <?php selected(get_option('pdf_builder_canvas_grid_type', 'lines'), 'dots'); ?>>Points</option>
-                                    <option value="crosses" <?php selected(get_option('pdf_builder_canvas_grid_type', 'lines'), 'crosses'); ?>>Croix</option>
-                                    <option value="dashed" <?php selected(get_option('pdf_builder_canvas_grid_type', 'lines'), 'dashed'); ?>>Lignes pointillées</option>
-                                </select>
-                                <p class="description">Style d'affichage de la grille</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_size">Taille de la grille principale (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_grid_size" name="canvas_grid_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100">
-                                <p class="description">Espacement entre les lignes principales de la grille</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_subdivisions">Sous-divisions de grille</label></th>
-                            <td>
-                                <input type="number" id="canvas_grid_subdivisions" name="canvas_grid_subdivisions" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_subdivisions', 5)); ?>" min="2" max="10">
-                                <p class="description">Nombre de sous-divisions entre les lignes principales</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_line_width">Épaisseur des lignes (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_grid_line_width" name="canvas_grid_line_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_line_width', 1)); ?>" min="0.5" max="5" step="0.5">
-                                <p class="description">Épaisseur des lignes de la grille principale</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_sub_line_width">Épaisseur sous-lignes (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_grid_sub_line_width" name="canvas_grid_sub_line_width" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_sub_line_width', 0.5)); ?>" min="0.1" max="2" step="0.1">
-                                <p class="description">Épaisseur des lignes de sous-division</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_color">Couleur de la grille principale</label></th>
-                            <td>
-                                <input type="color" id="canvas_grid_color" name="canvas_grid_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_color', '#e9ecef')); ?>">
-                                <p class="description">Couleur des lignes principales de la grille</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_sub_color">Couleur des sous-lignes</label></th>
-                            <td>
-                                <input type="color" id="canvas_grid_sub_color" name="canvas_grid_sub_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_sub_color', '#f8f9fa')); ?>">
-                                <p class="description">Couleur des lignes de sous-division</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_opacity">Opacité de la grille (%)</label></th>
-                            <td>
-                                <input type="range" id="canvas_grid_opacity" name="canvas_grid_opacity" min="10" max="100" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_opacity', 30)); ?>" step="5">
-                                <span id="canvas_grid_opacity_value"><?php echo esc_attr(get_option('pdf_builder_canvas_grid_opacity', 30)); ?>%</span>
-                                <p class="description">Transparence de la grille (10% = très discret, 100% = très visible)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_snap_to_grid">Aimantation à la grille</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Les éléments s'alignent automatiquement sur la grille</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_snap_strength">Force d'aimantation (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_snap_strength" name="canvas_snap_strength" value="<?php echo esc_attr(get_option('pdf_builder_canvas_snap_strength', 8)); ?>" min="1" max="50">
-                                <p class="description">Distance d'attraction magnétique de la grille</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_snap_to_elements">Aimantation aux éléments</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_snap_to_elements" name="canvas_snap_to_elements" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_elements', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Les éléments s'alignent automatiquement sur d'autres éléments</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_snap_tolerance">Tolérance d'aimantation (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_snap_tolerance" name="canvas_snap_tolerance" value="<?php echo esc_attr(get_option('pdf_builder_canvas_snap_tolerance', 5)); ?>" min="1" max="20">
-                                <p class="description">Distance maximale pour l'aimantation automatique</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_show_guides">Afficher les guides</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_show_guides" name="canvas_show_guides" value="1" <?php checked(get_option('pdf_builder_canvas_show_guides', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Affiche les guides d'alignement personnalisés</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_guide_color">Couleur des guides</label></th>
-                            <td>
-                                <input type="color" id="canvas_guide_color" name="canvas_guide_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_guide_color', '#007cba')); ?>">
-                                <p class="description">Couleur des guides d'alignement</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_smart_grid">Grille intelligente</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_smart_grid" name="canvas_smart_grid" value="1" <?php checked(get_option('pdf_builder_canvas_smart_grid', false)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">La grille s'adapte automatiquement au contenu et aux éléments</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_columns">Colonnes de grille</label></th>
-                            <td>
-                                <input type="number" id="canvas_grid_columns" name="canvas_grid_columns" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_columns', 12)); ?>" min="1" max="24">
-                                <p class="description">Nombre de colonnes pour une grille responsive</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_gutter">Gouttière de grille (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_grid_gutter" name="canvas_grid_gutter" value="<?php echo esc_attr(get_option('pdf_builder_canvas_grid_gutter', 20)); ?>" min="0" max="100">
-                                <p class="description">Espacement entre les colonnes de la grille</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_grid_show_numbers">Numéros de grille</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_grid_show_numbers" name="canvas_grid_show_numbers" value="1" <?php checked(get_option('pdf_builder_canvas_grid_show_numbers', false)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Affiche les numéros des colonnes et lignes de la grille</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- Carte Zoom & Navigation -->
+                        <div class="canvas-card" data-category="zoom">
+                            <div class="canvas-card-header">
+                                <div class="canvas-card-icon">🔍</div>
+                                <h4>Zoom & Navigation</h4>
+                                <div class="canvas-card-status" id="zoom-status">ACTIF</div>
+                            </div>
+                            <div class="canvas-card-content">
+                                <p>Contrôles de zoom et navigation dans le canvas</p>
+                                <div class="canvas-card-preview">
+                                    <div class="zoom-preview">
+                                        <div class="zoom-controls">
+                                            <span class="zoom-plus">+</span>
+                                            <span class="zoom-value">100%</span>
+                                            <span class="zoom-minus">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-card-actions">
+                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="zoom">
+                                    🔍 Régler
+                                </button>
+                            </div>
+                        </div>
 
-                    <!-- Zoom & Navigation -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">🔍 Zoom & Navigation</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_default_zoom">Zoom par défaut (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_default_zoom" name="canvas_default_zoom" value="<?php echo esc_attr(get_option('pdf_builder_canvas_default_zoom', 100)); ?>" min="10" max="500">
-                                <p class="description">Niveau de zoom initial lors de l'ouverture d'un document</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_zoom_step">Étape de zoom (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_zoom_step" name="canvas_zoom_step" value="<?php echo esc_attr(get_option('pdf_builder_canvas_zoom_step', 25)); ?>" min="5" max="100">
-                                <p class="description">Incrément de zoom lors des zooms avant/arrière</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_min_zoom">Zoom minimum (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_min_zoom" name="canvas_min_zoom" value="<?php echo esc_attr(get_option('pdf_builder_canvas_min_zoom', 10)); ?>" min="1" max="100">
-                                <p class="description">Niveau de zoom minimum autorisé</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_max_zoom">Zoom maximum (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_max_zoom" name="canvas_max_zoom" value="<?php echo esc_attr(get_option('pdf_builder_canvas_max_zoom', 500)); ?>" min="100" max="1000">
-                                <p class="description">Niveau de zoom maximum autorisé</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_zoom_wheel">Zoom avec la molette</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_zoom_wheel" name="canvas_zoom_wheel" value="1" <?php checked(get_option('pdf_builder_canvas_zoom_wheel', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Permet de zoomer avec la molette de la souris</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_pan_mouse">Pan avec la souris</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_pan_mouse" name="canvas_pan_mouse" value="1" <?php checked(get_option('pdf_builder_canvas_pan_mouse', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Permet de déplacer la vue en maintenant le clic droit</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- Carte Éléments Interactifs -->
+                        <div class="canvas-card" data-category="interaction">
+                            <div class="canvas-card-header">
+                                <div class="canvas-card-icon">🎯</div>
+                                <h4>Éléments Interactifs</h4>
+                                <div class="canvas-card-status" id="interaction-status">ACTIF</div>
+                            </div>
+                            <div class="canvas-card-content">
+                                <p>Poignées, rotation et interactions avec les éléments</p>
+                                <div class="canvas-card-preview">
+                                    <div class="interaction-preview">
+                                        <div class="element-handle">⬜</div>
+                                        <div class="element-handle">🔄</div>
+                                        <div class="element-handle">↗️</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-card-actions">
+                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="interaction">
+                                    🎯 Configurer
+                                </button>
+                            </div>
+                        </div>
 
-                    <!-- Éléments Interactifs -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">🎯 Éléments Interactifs</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_show_handles">Afficher les poignées de redimensionnement</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_show_handles" name="canvas_show_handles" value="1" <?php checked(get_option('pdf_builder_canvas_show_handles', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Affiche les poignées pour redimensionner les éléments</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_handle_size">Taille des poignées (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_handle_size" name="canvas_handle_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_handle_size', 8)); ?>" min="4" max="20">
-                                <p class="description">Taille des poignées de redimensionnement</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_handle_color">Couleur des poignées</label></th>
-                            <td>
-                                <input type="color" id="canvas_handle_color" name="canvas_handle_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_handle_color', '#007cba')); ?>">
-                                <p class="description">Couleur des poignées de redimensionnement</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_enable_rotation">Activer la rotation</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_enable_rotation" name="canvas_enable_rotation" value="1" <?php checked(get_option('pdf_builder_canvas_enable_rotation', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Permet la rotation des éléments</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_rotation_step">Étape de rotation (°)</label></th>
-                            <td>
-                                <input type="number" id="canvas_rotation_step" name="canvas_rotation_step" value="<?php echo esc_attr(get_option('pdf_builder_canvas_rotation_step', 15)); ?>" min="1" max="90">
-                                <p class="description">Incrément de rotation en degrés</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- Carte Comportement -->
+                        <div class="canvas-card" data-category="behavior">
+                            <div class="canvas-card-header">
+                                <div class="canvas-card-icon">⚙️</div>
+                                <h4>Comportement</h4>
+                                <div class="canvas-card-status" id="behavior-status">ACTIF</div>
+                            </div>
+                            <div class="canvas-card-content">
+                                <p>Sélection, copier-coller et raccourcis clavier</p>
+                                <div class="canvas-card-preview">
+                                    <div class="behavior-preview">
+                                        <div class="behavior-icon">👆</div>
+                                        <div class="behavior-icon">📋</div>
+                                        <div class="behavior-icon">⌨️</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-card-actions">
+                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="behavior">
+                                    ⚙️ Ajuster
+                                </button>
+                            </div>
+                        </div>
 
-                    <!-- Comportement -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">⚙️ Comportement</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_multi_select">Sélection multiple</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_multi_select" name="canvas_multi_select" value="1" <?php checked(get_option('pdf_builder_canvas_multi_select', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Permet de sélectionner plusieurs éléments simultanément</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_copy_paste">Copier-coller activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_copy_paste" name="canvas_copy_paste" value="1" <?php checked(get_option('pdf_builder_canvas_copy_paste', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Active les fonctions copier/coller pour les éléments</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_keyboard_shortcuts">Raccourcis clavier activés</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_keyboard_shortcuts" name="canvas_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_shortcuts', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Active les raccourcis clavier (Ctrl+Z, Ctrl+C, etc.)</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- Carte Export & Qualité -->
+                        <div class="canvas-card" data-category="export">
+                            <div class="canvas-card-header">
+                                <div class="canvas-card-icon">📤</div>
+                                <h4>Export & Qualité</h4>
+                                <div class="canvas-card-status" id="export-status">ACTIF</div>
+                            </div>
+                            <div class="canvas-card-content">
+                                <p>Paramètres d'export PDF et qualité de rendu</p>
+                                <div class="canvas-card-preview">
+                                    <div class="export-preview">
+                                        <div class="export-format">PDF</div>
+                                        <div class="export-quality">HD</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-card-actions">
+                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="export">
+                                    📤 Optimiser
+                                </button>
+                            </div>
+                        </div>
 
-                    <!-- Export & Qualité -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">📤 Export & Qualité</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_export_quality">Qualité d'export</label></th>
-                            <td>
-                                <select id="canvas_export_quality" name="canvas_export_quality">
-                                    <option value="draft" <?php selected(get_option('pdf_builder_canvas_export_quality', 'standard'), 'draft'); ?>>Brouillon (rapide)</option>
-                                    <option value="standard" <?php selected(get_option('pdf_builder_canvas_export_quality', 'standard'), 'standard'); ?>>Standard</option>
-                                    <option value="high" <?php selected(get_option('pdf_builder_canvas_export_quality', 'standard'), 'high'); ?>>Haute qualité</option>
-                                    <option value="maximum" <?php selected(get_option('pdf_builder_canvas_export_quality', 'standard'), 'maximum'); ?>>Qualité maximum</option>
-                                </select>
-                                <p class="description">Qualité de rendu lors de l'export PDF</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_export_format">Format d'export</label></th>
-                            <td>
-                                <select id="canvas_export_format" name="canvas_export_format">
-                                    <option value="pdf" <?php selected(get_option('pdf_builder_canvas_export_format', 'pdf'), 'pdf'); ?>>PDF</option>
-                                    <option value="png" <?php selected(get_option('pdf_builder_canvas_export_format', 'pdf'), 'png'); ?>>PNG</option>
-                                    <option value="jpg" <?php selected(get_option('pdf_builder_canvas_export_format', 'pdf'), 'jpg'); ?>>JPEG</option>
-                                    <option value="svg" <?php selected(get_option('pdf_builder_canvas_export_format', 'pdf'), 'svg'); ?>>SVG</option>
-                                </select>
-                                <p class="description">Format de fichier pour l'export</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_image_compression">Compression des images</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_image_compression" name="canvas_image_compression" value="1" <?php checked(get_option('pdf_builder_canvas_image_compression', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Compresse les images pour réduire la taille du fichier</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_image_quality">Qualité des images (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_image_quality" name="canvas_image_quality" value="<?php echo esc_attr(get_option('pdf_builder_canvas_image_quality', 85)); ?>" min="10" max="100">
-                                <p class="description">Qualité de compression des images (100% = sans perte)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_max_image_size">Taille max des images (MB)</label></th>
-                            <td>
-                                <input type="number" id="canvas_max_image_size" name="canvas_max_image_size" value="<?php echo esc_attr(get_option('pdf_builder_canvas_max_image_size', 10)); ?>" min="1" max="50">
-                                <p class="description">Taille maximale autorisée pour les images importées</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_include_metadata">Inclure les métadonnées</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_include_metadata" name="canvas_include_metadata" value="1" <?php checked(get_option('pdf_builder_canvas_include_metadata', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Inclut les informations de création et auteur dans le PDF</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_pdf_author">Auteur du PDF</label></th>
-                            <td>
-                                <input type="text" id="canvas_pdf_author" name="canvas_pdf_author" value="<?php echo esc_attr(get_option('pdf_builder_canvas_pdf_author', get_bloginfo('name'))); ?>">
-                                <p class="description">Nom de l'auteur inscrit dans les métadonnées du PDF</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_pdf_subject">Sujet du PDF</label></th>
-                            <td>
-                                <input type="text" id="canvas_pdf_subject" name="canvas_pdf_subject" value="<?php echo esc_attr(get_option('pdf_builder_canvas_pdf_subject', 'Document créé avec PDF Builder Pro')); ?>">
-                                <p class="description">Sujet du document dans les métadonnées du PDF</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_auto_crop">Recadrage automatique</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_auto_crop" name="canvas_auto_crop" value="1" <?php checked(get_option('pdf_builder_canvas_auto_crop', false)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Recadre automatiquement le PDF aux dimensions du contenu</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_embed_fonts">Incorporer les polices</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_embed_fonts" name="canvas_embed_fonts" value="1" <?php checked(get_option('pdf_builder_canvas_embed_fonts', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Incorpore les polices dans le PDF pour une compatibilité maximale</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- Carte Performance -->
+                        <div class="canvas-card" data-category="performance">
+                            <div class="canvas-card-header">
+                                <div class="canvas-card-icon">⚡</div>
+                                <h4>Performance</h4>
+                                <div class="canvas-card-status" id="performance-status">ACTIF</div>
+                            </div>
+                            <div class="canvas-card-content">
+                                <p>Optimisations et accélération matérielle</p>
+                                <div class="canvas-card-preview">
+                                    <div class="performance-preview">
+                                        <div class="performance-bar">
+                                            <div class="performance-fill" style="width: 85%"></div>
+                                        </div>
+                                        <div class="performance-fps">60 FPS</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-card-actions">
+                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="performance">
+                                    ⚡ Booster
+                                </button>
+                            </div>
+                        </div>
 
-                    <!-- Performance -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">⚡ Performance</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_web_optimization">Optimisation pour le web</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_web_optimization" name="canvas_web_optimization" value="1" <?php checked(get_option('pdf_builder_canvas_web_optimization', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Optimise le rendu pour les navigateurs web modernes</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_hardware_acceleration">Accélération matérielle</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_hardware_acceleration" name="canvas_hardware_acceleration" value="1" <?php checked(get_option('pdf_builder_canvas_hardware_acceleration', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Utilise l'accélération GPU pour de meilleures performances</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_limit_fps">Limiter les FPS</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_limit_fps" name="canvas_limit_fps" value="1" <?php checked(get_option('pdf_builder_canvas_limit_fps', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Limite les images par seconde pour économiser les ressources</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_max_fps">FPS maximum</label></th>
-                            <td>
-                                <input type="number" id="canvas_max_fps" name="canvas_max_fps" value="<?php echo esc_attr(get_option('pdf_builder_canvas_max_fps', 60)); ?>" min="15" max="120">
-                                <p class="description">Nombre maximum d'images par seconde</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- Carte Sauvegarde -->
+                        <div class="canvas-card" data-category="autosave">
+                            <div class="canvas-card-header">
+                                <div class="canvas-card-icon">💾</div>
+                                <h4>Sauvegarde Auto</h4>
+                                <div class="canvas-card-status" id="autosave-status">ACTIF</div>
+                            </div>
+                            <div class="canvas-card-content">
+                                <p>Sauvegarde automatique et gestion des versions</p>
+                                <div class="canvas-card-preview">
+                                    <div class="autosave-preview">
+                                        <div class="autosave-icon">💾</div>
+                                        <div class="autosave-timer">5min</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-card-actions">
+                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="autosave">
+                                    💾 Configurer
+                                </button>
+                            </div>
+                        </div>
 
-                    <!-- Sauvegarde Automatique -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">💾 Sauvegarde Automatique</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_auto_save_enabled">Sauvegarde automatique activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_auto_save_enabled" name="canvas_auto_save_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_auto_save_enabled', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Sauvegarde automatiquement le travail en cours</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_auto_save_interval">Intervalle de sauvegarde (minutes)</label></th>
-                            <td>
-                                <input type="number" id="canvas_auto_save_interval" name="canvas_auto_save_interval" value="<?php echo esc_attr(get_option('pdf_builder_canvas_auto_save_interval', 5)); ?>" min="1" max="60">
-                                <p class="description">Fréquence des sauvegardes automatiques</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_auto_save_versions">Versions de sauvegarde automatique</label></th>
-                            <td>
-                                <input type="number" id="canvas_auto_save_versions" name="canvas_auto_save_versions" value="<?php echo esc_attr(get_option('pdf_builder_canvas_auto_save_versions', 10)); ?>" min="1" max="50">
-                                <p class="description">Nombre de versions de sauvegarde à conserver</p>
-                            </td>
-                        </tr>
-                    </table>
+                        <!-- Carte Debug -->
+                        <div class="canvas-card" data-category="debug">
+                            <div class="canvas-card-header">
+                                <div class="canvas-card-icon">🐛</div>
+                                <h4>Debug</h4>
+                                <div class="canvas-card-status" id="debug-status">INACTIF</div>
+                            </div>
+                            <div class="canvas-card-content">
+                                <p>Outils de débogage et monitoring</p>
+                                <div class="canvas-card-preview">
+                                    <div class="debug-preview">
+                                        <div class="debug-icon">🔍</div>
+                                        <div class="debug-fps">FPS</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-card-actions">
+                                <button type="button" class="button button-secondary canvas-configure-btn" data-category="debug">
+                                    🐛 Diagnostiquer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                    <!-- Annulation/Rétablissement -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">↩️ Annulation/Rétablissement</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_undo_levels">Niveaux d'annulation</label></th>
-                            <td>
-                                <input type="number" id="canvas_undo_levels" name="canvas_undo_levels" value="<?php echo esc_attr(get_option('pdf_builder_canvas_undo_levels', 50)); ?>" min="5" max="200">
-                                <p class="description">Nombre maximum d'actions annulables</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_redo_levels">Niveaux de rétablissement</label></th>
-                            <td>
-                                <input type="number" id="canvas_redo_levels" name="canvas_redo_levels" value="<?php echo esc_attr(get_option('pdf_builder_canvas_redo_levels', 50)); ?>" min="5" max="200">
-                                <p class="description">Nombre maximum d'actions rétablissables</p>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <!-- Debug -->
-                    <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">🐛 Debug</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_debug_mode">Mode debug</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_debug_mode" name="canvas_debug_mode" value="1" <?php checked(get_option('pdf_builder_canvas_debug_mode', false)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Active les informations de débogage dans la console</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_show_fps">Afficher les FPS</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_show_fps" name="canvas_show_fps" value="1" <?php checked(get_option('pdf_builder_canvas_show_fps', false)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Affiche le compteur d'images par seconde</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <!-- Modale de configuration détaillée -->
+                    <div id="canvas-config-modal" class="canvas-modal" style="display: none;">
+                        <div class="canvas-modal-overlay"></div>
+                        <div class="canvas-modal-content">
+                            <div class="canvas-modal-header">
+                                <h3 id="modal-title">Configuration</h3>
+                                <button type="button" class="canvas-modal-close">&times;</button>
+                            </div>
+                            <div class="canvas-modal-body" id="modal-body">
+                                <!-- Le contenu sera chargé dynamiquement -->
+                            </div>
+                            <div class="canvas-modal-footer">
+                                <button type="button" class="button button-secondary" id="modal-cancel">Annuler</button>
+                                <button type="button" class="button button-primary" id="modal-save">Enregistrer</button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
 
@@ -4183,6 +3807,274 @@
 
          </form>
         </div>
+
+        <!-- Onglet Canvas -->
+        <div id="canvas" class="tab-content hidden-tab">
+            <h2>🎨 Paramètres Canvas</h2>
+            <p style="color: #666; margin-bottom: 20px;">Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
+
+            <form method="post" id="canvas-form">
+                <?php wp_nonce_field('pdf_builder_canvas_nonce', 'pdf_builder_canvas_nonce'); ?>
+                <input type="hidden" name="submit_canvas" value="1">
+
+                <!-- Grille de cartes Canvas -->
+                <div class="canvas-settings-grid">
+                    <!-- Carte Dimensions & Format -->
+                    <div class="canvas-card" data-category="dimensions">
+                        <div class="canvas-card-header">
+                            <span class="canvas-card-icon">📐</span>
+                            <div>
+                                <h4>Dimensions & Format</h4>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-content">
+                            <p>Configurez la taille, le format et la résolution de votre canvas.</p>
+                        </div>
+                        <div class="canvas-card-preview">
+                            <div class="preview-format">800×600px</div>
+                            <div class="preview-size">150 DPI</div>
+                        </div>
+                        <div class="canvas-card-actions">
+                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                        </div>
+                    </div>
+
+                    <!-- Carte Apparence -->
+                    <div class="canvas-card" data-category="apparence">
+                        <div class="canvas-card-header">
+                            <span class="canvas-card-icon">🎨</span>
+                            <div>
+                                <h4>Apparence</h4>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-content">
+                            <p>Personnalisez les couleurs, bordures et effets visuels.</p>
+                        </div>
+                        <div class="canvas-card-preview">
+                            <div class="color-preview bg" style="background-color: #ffffff;"></div>
+                            <div class="color-preview border" style="background-color: #cccccc;"></div>
+                        </div>
+                        <div class="canvas-card-actions">
+                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                        </div>
+                    </div>
+
+                    <!-- Carte Grille & Guides -->
+                    <div class="canvas-card" data-category="grille">
+                        <div class="canvas-card-header">
+                            <span class="canvas-card-icon">📏</span>
+                            <div>
+                                <h4>Grille & Guides</h4>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-content">
+                            <p>Gérez l'affichage et l'alignement sur la grille.</p>
+                        </div>
+                        <div class="canvas-card-preview">
+                            <div class="grid-preview">
+                                <div class="grid-line"></div>
+                                <div class="grid-dot"></div>
+                                <div class="grid-line"></div>
+                            </div>
+                        </div>
+                        <div class="canvas-card-actions">
+                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                        </div>
+                    </div>
+
+                    <!-- Carte Zoom & Navigation -->
+                    <div class="canvas-card" data-category="zoom">
+                        <div class="canvas-card-header">
+                            <span class="canvas-card-icon">🔍</span>
+                            <div>
+                                <h4>Zoom & Navigation</h4>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-content">
+                            <p>Contrôlez les niveaux de zoom et la navigation.</p>
+                        </div>
+                        <div class="canvas-card-preview">
+                            <div class="zoom-preview">
+                                <span class="zoom-minus">-</span>
+                                <span class="zoom-value">10-500%</span>
+                                <span class="zoom-plus">+</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-actions">
+                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                        </div>
+                    </div>
+
+                    <!-- Carte Éléments Interactifs -->
+                    <div class="canvas-card" data-category="interaction">
+                        <div class="canvas-card-header">
+                            <span class="canvas-card-icon">👆</span>
+                            <div>
+                                <h4>Éléments Interactifs</h4>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-content">
+                            <p>Activez le glisser-déposer, redimensionnement et rotation.</p>
+                        </div>
+                        <div class="canvas-card-preview">
+                            <div class="interaction-preview">
+                                <span class="element-handle">↔</span>
+                                <span class="element-handle">↕</span>
+                                <span class="element-handle">↻</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-actions">
+                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                        </div>
+                    </div>
+
+                    <!-- Carte Comportement -->
+                    <div class="canvas-card" data-category="comportement">
+                        <div class="canvas-card-header">
+                            <span class="canvas-card-icon">⚙️</span>
+                            <div>
+                                <h4>Comportement</h4>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-content">
+                            <p>Définissez la sélection et les raccourcis clavier.</p>
+                        </div>
+                        <div class="canvas-card-preview">
+                            <div class="behavior-preview">
+                                <span class="behavior-icon">👆</span>
+                                <span class="behavior-icon">⌨️</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-actions">
+                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                        </div>
+                    </div>
+
+                    <!-- Carte Export & Qualité -->
+                    <div class="canvas-card" data-category="export">
+                        <div class="canvas-card-header">
+                            <span class="canvas-card-icon">📤</span>
+                            <div>
+                                <h4>Export & Qualité</h4>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-content">
+                            <p>Configurez les formats et la qualité d'export.</p>
+                        </div>
+                        <div class="canvas-card-preview">
+                            <div class="export-preview">
+                                <span class="export-format">PNG</span>
+                                <span class="export-quality">90%</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-actions">
+                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                        </div>
+                    </div>
+
+                    <!-- Carte Performance -->
+                    <div class="canvas-card" data-category="performance">
+                        <div class="canvas-card-header">
+                            <span class="canvas-card-icon">⚡</span>
+                            <div>
+                                <h4>Performance</h4>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-content">
+                            <p>Optimisez les FPS et la gestion mémoire.</p>
+                        </div>
+                        <div class="canvas-card-preview">
+                            <div class="performance-bar">
+                                <div class="performance-fill" style="width: 80%;"></div>
+                            </div>
+                            <div class="performance-fps">60 FPS</div>
+                        </div>
+                        <div class="canvas-card-actions">
+                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                        </div>
+                    </div>
+
+                    <!-- Carte Sauvegarde Auto -->
+                    <div class="canvas-card" data-category="autosave">
+                        <div class="canvas-card-header">
+                            <span class="canvas-card-icon">💾</span>
+                            <div>
+                                <h4>Sauvegarde Auto</h4>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-content">
+                            <p>Gérez la sauvegarde automatique et l'historique.</p>
+                        </div>
+                        <div class="canvas-card-preview">
+                            <div class="autosave-preview">
+                                <span class="autosave-icon">⏰</span>
+                                <span class="autosave-timer">5min</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-actions">
+                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                        </div>
+                    </div>
+
+                    <!-- Carte Debug -->
+                    <div class="canvas-card" data-category="debug">
+                        <div class="canvas-card-header">
+                            <span class="canvas-card-icon">🐛</span>
+                            <div>
+                                <h4>Debug</h4>
+                                <span class="canvas-card-status INACTIF">INACTIF</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-content">
+                            <p>Outils de débogage et monitoring performance.</p>
+                        </div>
+                        <div class="canvas-card-preview">
+                            <div class="debug-preview">
+                                <span class="debug-icon">📊</span>
+                                <span class="debug-fps">60 FPS</span>
+                            </div>
+                        </div>
+                        <div class="canvas-card-actions">
+                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bouton de sauvegarde -->
+                <div style="margin-top: 30px; text-align: center;">
+                    <button type="submit" class="button button-primary button-hero" style="padding: 12px 24px; font-size: 16px;">
+                        💾 Sauvegarder les paramètres Canvas
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modale de configuration Canvas -->
+        <div class="canvas-modal">
+            <div class="canvas-modal-overlay"></div>
+            <div class="canvas-modal-content">
+                <div class="canvas-modal-header">
+                    <h3>Configuration Canvas</h3>
+                    <button class="canvas-modal-close">&times;</button>
+                </div>
+                <div class="canvas-modal-body">
+                    <!-- Le contenu sera chargé dynamiquement par JavaScript -->
+                </div>
+                <div class="canvas-modal-footer">
+                    <button id="modal-cancel" class="button">Annuler</button>
+                    <button id="modal-save" class="button button-primary">Sauvegarder</button>
+                </div>
+            </div>
+        </div>
 </div>
 
     <style>
@@ -4426,9 +4318,13 @@
             const tabLinks = document.querySelectorAll('.nav-tab[data-tab]');
             const tabContents = document.querySelectorAll('.tab-content');
 
+            console.log('Onglets trouvés:', tabLinks.length);
+            tabLinks.forEach(link => console.log('Onglet:', link.getAttribute('data-tab')));
+
             tabLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
+                    console.log('Clic sur onglet:', this.getAttribute('data-tab'));
 
                     // Retirer la classe active de tous les onglets
                     tabLinks.forEach(tabLink => {
@@ -4447,9 +4343,11 @@
                     // Afficher le contenu de l'onglet sélectionné
                     const targetTab = this.getAttribute('data-tab');
                     const targetContent = document.getElementById(targetTab);
+                    console.log('Contenu cible:', targetContent);
                     if (targetContent) {
                         targetContent.classList.remove('hidden-tab');
                         targetContent.classList.add('active');
+                        console.log('Onglet activé:', targetTab);
                     }
 
                     // Sauvegarder l'onglet actif dans le localStorage
@@ -5372,6 +5270,388 @@
                 display: none; /* Masquer le tooltip sur mobile */
             }
         }
+
+        /* === STYLES POUR LES CARTES CANVAS === */
+        .canvas-settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .canvas-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .canvas-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            border-color: #007cba;
+        }
+
+        .canvas-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .canvas-card-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .canvas-card-header h4 {
+            margin: 0;
+            color: #495057;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .canvas-card-status {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+
+        .canvas-card-status.ACTIF {
+            background: #28a745;
+            color: white;
+        }
+
+        .canvas-card-status.INACTIF {
+            background: #dc3545;
+            color: white;
+        }
+
+        .canvas-card-content {
+            margin-bottom: 15px;
+        }
+
+        .canvas-card-content p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .canvas-card-preview {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Aperçus spécifiques */
+        .preview-format {
+            font-weight: bold;
+            color: #007cba;
+            font-size: 14px;
+        }
+
+        .preview-size {
+            color: #6c757d;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .color-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            margin: 0 2px;
+        }
+
+        .grid-preview {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .grid-line {
+            height: 1px;
+            background: #e9ecef;
+            width: 100%;
+        }
+
+        .grid-dot {
+            width: 3px;
+            height: 3px;
+            background: #e9ecef;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .zoom-preview {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .zoom-plus, .zoom-minus, .zoom-value {
+            padding: 2px 6px;
+            background: #007cba;
+            color: white;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .zoom-value {
+            background: #28a745;
+        }
+
+        .interaction-preview, .behavior-preview {
+            display: flex;
+            gap: 8px;
+        }
+
+        .element-handle, .behavior-icon {
+            font-size: 16px;
+        }
+
+        .export-preview, .autosave-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .export-format, .export-quality {
+            padding: 2px 8px;
+            background: #28a745;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .autosave-icon {
+            font-size: 18px;
+        }
+
+        .autosave-timer {
+            background: #007cba;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .debug-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .debug-icon, .debug-fps {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .performance-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .performance-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            border-radius: 3px;
+        }
+
+        .performance-fps {
+            margin-left: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .canvas-card-actions {
+            text-align: center;
+        }
+
+        .canvas-configure-btn {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .canvas-configure-btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        /* === STYLES POUR LA MODALE CANVAS === */
+        .canvas-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .canvas-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(2px);
+        }
+
+        .canvas-modal-content {
+            position: relative;
+            background: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .canvas-modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .canvas-modal-header h3 {
+            margin: 0;
+            color: #495057;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .canvas-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .canvas-modal-close:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .canvas-modal-body {
+            padding: 25px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .canvas-modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #e9ecef;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .canvas-modal-footer button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #modal-cancel {
+            background: #6c757d;
+            color: white;
+            border: none;
+        }
+
+        #modal-cancel:hover {
+            background: #5a6268;
+        }
+
+        #modal-save {
+            background: #28a745;
+            color: white;
+            border: none;
+        }
+
+        #modal-save:hover {
+            background: #218838;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .canvas-settings-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .canvas-card {
+                padding: 15px;
+            }
+
+            .canvas-modal-content {
+                margin: 10% auto;
+                width: 95%;
+                max-height: 90vh;
+            }
+
+            .canvas-modal-body {
+                padding: 20px;
+                max-height: 70vh;
+            }
+        }
     </style>
 
     <script>
@@ -6185,15 +6465,312 @@
                 $('#canvas_container_transparency_value').text($(this).val() + '%');
             });
 
-            $('#canvas_grid_opacity').on('input', function() {
-                $('#canvas_grid_opacity_value').text($(this).val() + '%');
-            });
-
             // Initialiser les valeurs affichées au chargement
             $(document).ready(function() {
                 $('#canvas_background_transparency_value').text($('#canvas_background_transparency').val() + '%');
                 $('#canvas_container_transparency_value').text($('#canvas_container_transparency').val() + '%');
-                $('#canvas_grid_opacity_value').text($('#canvas_grid_opacity').val() + '%');
+            });
+
+            // === GESTION DES CARTES CANVAS ===
+
+            console.log('Initialisation des cartes Canvas');
+            $('.canvas-card').on('click', function() {
+                const category = $(this).data('category');
+                console.log('Clic sur carte:', category);
+                openCanvasModal(category);
+            });
+
+            // Fermer la modale si clic sur l'overlay
+            $('.canvas-modal-overlay').on('click', function() {
+                closeCanvasModal();
+            });
+
+            // Fermer la modale avec le bouton X
+            $('.canvas-modal-close').on('click', function() {
+                closeCanvasModal();
+            });
+
+            // Annuler la modale
+            $('#modal-cancel').on('click', function() {
+                closeCanvasModal();
+            });
+
+            // Sauvegarder et fermer la modale
+            $('#modal-save').on('click', function() {
+                // Ici nous pourrions ajouter la logique de sauvegarde
+                // Pour l'instant, juste fermer la modale
+                closeCanvasModal();
+            });
+
+            // Fonction pour ouvrir la modale Canvas
+            function openCanvasModal(category) {
+                const modal = $('.canvas-modal');
+                const modalTitle = $('.canvas-modal-header h3');
+                const modalBody = $('.canvas-modal-body');
+
+                // Définir le titre selon la catégorie
+                const titles = {
+                    'dimensions': '📐 Dimensions & Format',
+                    'apparence': '🎨 Apparence',
+                    'grille': '📏 Grille & Guides',
+                    'zoom': '🔍 Zoom & Navigation',
+                    'interaction': '👆 Éléments Interactifs',
+                    'comportement': '⚙️ Comportement',
+                    'export': '📤 Export & Qualité',
+                    'performance': '⚡ Performance',
+                    'autosave': '💾 Sauvegarde Auto',
+                    'debug': '🐛 Debug'
+                };
+
+                modalTitle.text(titles[category] || 'Configuration Canvas');
+
+                // Charger le contenu de la modale selon la catégorie
+                loadModalContent(category, modalBody);
+
+                // Afficher la modale
+                modal.fadeIn(300);
+                $('body').addClass('modal-open');
+            }
+
+            // Fonction pour fermer la modale Canvas
+            function closeCanvasModal() {
+                $('.canvas-modal').fadeOut(300);
+                $('body').removeClass('modal-open');
+            }
+
+            // Fonction pour charger le contenu de la modale
+            function loadModalContent(category, container) {
+                // Pour l'instant, un contenu générique
+                // Plus tard, nous pourrons charger du contenu spécifique depuis le serveur
+                let content = '<div class="canvas-modal-form">';
+
+                switch(category) {
+                    case 'dimensions':
+                        content += `
+                            <div class="form-group">
+                                <label for="canvas-width">Largeur (px)</label>
+                                <input type="number" id="canvas-width" name="canvas_width" value="800" min="100" max="5000">
+                            </div>
+                            <div class="form-group">
+                                <label for="canvas-height">Hauteur (px)</label>
+                                <input type="number" id="canvas-height" name="canvas_height" value="600" min="100" max="5000">
+                            </div>
+                            <div class="form-group">
+                                <label for="canvas-dpi">DPI</label>
+                                <select id="canvas-dpi" name="canvas_dpi">
+                                    <option value="72">72 DPI (Web)</option>
+                                    <option value="150" selected>150 DPI (Impression)</option>
+                                    <option value="300">300 DPI (Haute qualité)</option>
+                                </select>
+                            </div>
+                        `;
+                        break;
+
+                    case 'apparence':
+                        content += `
+                            <div class="form-group">
+                                <label for="canvas-bg-color">Couleur de fond</label>
+                                <input type="color" id="canvas-bg-color" name="canvas_bg_color" value="#ffffff">
+                            </div>
+                            <div class="form-group">
+                                <label for="canvas-border-color">Couleur des bordures</label>
+                                <input type="color" id="canvas-border-color" name="canvas_border_color" value="#cccccc">
+                            </div>
+                            <div class="form-group">
+                                <label for="canvas-shadow">Ombre</label>
+                                <input type="checkbox" id="canvas-shadow" name="canvas_shadow" checked>
+                            </div>
+                        `;
+                        break;
+
+                    case 'grille':
+                        content += `
+                            <div class="form-group">
+                                <label for="grid-visible">Afficher la grille</label>
+                                <input type="checkbox" id="grid-visible" name="grid_visible" checked>
+                            </div>
+                            <div class="form-group">
+                                <label for="grid-size">Taille de la grille (px)</label>
+                                <input type="number" id="grid-size" name="grid_size" value="20" min="5" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="snap-to-grid">Aligner sur la grille</label>
+                                <input type="checkbox" id="snap-to-grid" name="snap_to_grid" checked>
+                            </div>
+                        `;
+                        break;
+
+                    case 'zoom':
+                        content += `
+                            <div class="form-group">
+                                <label for="zoom-min">Zoom minimum (%)</label>
+                                <input type="number" id="zoom-min" name="zoom_min" value="10" min="1" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="zoom-max">Zoom maximum (%)</label>
+                                <input type="number" id="zoom-max" name="zoom_max" value="500" min="100" max="1000">
+                            </div>
+                            <div class="form-group">
+                                <label for="zoom-step">Pas de zoom (%)</label>
+                                <input type="number" id="zoom-step" name="zoom_step" value="25" min="5" max="100">
+                            </div>
+                        `;
+                        break;
+
+                    case 'interaction':
+                        content += `
+                            <div class="form-group">
+                                <label for="drag-enabled">Glisser-déposer</label>
+                                <input type="checkbox" id="drag-enabled" name="drag_enabled" checked>
+                            </div>
+                            <div class="form-group">
+                                <label for="resize-enabled">Redimensionnement</label>
+                                <input type="checkbox" id="resize-enabled" name="resize_enabled" checked>
+                            </div>
+                            <div class="form-group">
+                                <label for="rotation-enabled">Rotation</label>
+                                <input type="checkbox" id="rotation-enabled" name="rotation_enabled" checked>
+                            </div>
+                        `;
+                        break;
+
+                    case 'comportement':
+                        content += `
+                            <div class="form-group">
+                                <label for="auto-select">Sélection automatique</label>
+                                <input type="checkbox" id="auto-select" name="auto_select" checked>
+                            </div>
+                            <div class="form-group">
+                                <label for="multi-select">Sélection multiple</label>
+                                <input type="checkbox" id="multi-select" name="multi_select" checked>
+                            </div>
+                            <div class="form-group">
+                                <label for="keyboard-shortcuts">Raccourcis clavier</label>
+                                <input type="checkbox" id="keyboard-shortcuts" name="keyboard_shortcuts" checked>
+                            </div>
+                        `;
+                        break;
+
+                    case 'export':
+                        content += `
+                            <div class="form-group">
+                                <label for="export-format">Format d'export</label>
+                                <select id="export-format" name="export_format">
+                                    <option value="png" selected>PNG</option>
+                                    <option value="jpg">JPEG</option>
+                                    <option value="pdf">PDF</option>
+                                    <option value="svg">SVG</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="export-quality">Qualité (%)</label>
+                                <input type="number" id="export-quality" name="export_quality" value="90" min="1" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="export-transparent">Fond transparent</label>
+                                <input type="checkbox" id="export-transparent" name="export_transparent">
+                            </div>
+                        `;
+                        break;
+
+                    case 'performance':
+                        content += `
+                            <div class="form-group">
+                                <label for="fps-limit">Limite FPS</label>
+                                <input type="number" id="fps-limit" name="fps_limit" value="60" min="1" max="120">
+                            </div>
+                            <div class="form-group">
+                                <label for="render-quality">Qualité de rendu</label>
+                                <select id="render-quality" name="render_quality">
+                                    <option value="low">Basse</option>
+                                    <option value="medium" selected>Moyenne</option>
+                                    <option value="high">Haute</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="memory-limit">Limite mémoire (MB)</label>
+                                <input type="number" id="memory-limit" name="memory_limit" value="512" min="64" max="2048">
+                            </div>
+                        `;
+                        break;
+
+                    case 'autosave':
+                        content += `
+                            <div class="form-group">
+                                <label for="autosave-enabled">Sauvegarde automatique</label>
+                                <input type="checkbox" id="autosave-enabled" name="autosave_enabled" checked>
+                            </div>
+                            <div class="form-group">
+                                <label for="autosave-interval">Intervalle (minutes)</label>
+                                <input type="number" id="autosave-interval" name="autosave_interval" value="5" min="1" max="60">
+                            </div>
+                            <div class="form-group">
+                                <label for="autosave-max">Nombre maximum de sauvegardes</label>
+                                <input type="number" id="autosave-max" name="autosave_max" value="10" min="1" max="50">
+                            </div>
+                        `;
+                        break;
+
+                    case 'debug':
+                        content += `
+                            <div class="form-group">
+                                <label for="debug-mode">Mode debug</label>
+                                <input type="checkbox" id="debug-mode" name="debug_mode">
+                            </div>
+                            <div class="form-group">
+                                <label for="debug-console">Console de debug</label>
+                                <input type="checkbox" id="debug-console" name="debug_console">
+                            </div>
+                            <div class="form-group">
+                                <label for="debug-performance">Monitoring performance</label>
+                                <input type="checkbox" id="debug-performance" name="debug_performance" checked>
+                            </div>
+                        `;
+                        break;
+
+                    default:
+                        content += '<p>Configuration non disponible pour cette catégorie.</p>';
+                }
+
+                content += '</div>';
+                container.html(content);
+            }
+
+            // Initialiser les aperçus des cartes
+            function updateCardPreviews() {
+                // Aperçu des dimensions
+                const width = $('#canvas-width').val() || 800;
+                const height = $('#canvas-height').val() || 600;
+                $('.preview-format').text(`${width}×${height}px`);
+
+                // Aperçu des couleurs
+                const bgColor = $('#canvas-bg-color').val() || '#ffffff';
+                $('.color-preview.bg').css('background-color', bgColor);
+
+                const borderColor = $('#canvas-border-color').val() || '#cccccc';
+                $('.color-preview.border').css('background-color', borderColor);
+
+                // Aperçu du zoom
+                const zoomMin = $('#zoom-min').val() || 10;
+                const zoomMax = $('#zoom-max').val() || 500;
+                $('.zoom-value').text(`${zoomMin}-${zoomMax}%`);
+
+                // Aperçu de la performance
+                const fps = $('#fps-limit').val() || 60;
+                $('.performance-fill').css('width', Math.min((fps / 120) * 100, 100) + '%');
+                $('.performance-fps').text(`${fps} FPS`);
+
+                // Aperçu de l'autosave
+                const interval = $('#autosave-interval').val() || 5;
+                $('.autosave-timer').text(`${interval}min`);
+            }
+
+            // Mettre à jour les aperçus au chargement
+            updateCardPreviews();
+
+            // Mettre à jour les aperçus quand les valeurs changent
+            $(document).on('change', '.canvas-modal input, .canvas-modal select', function() {
+                updateCardPreviews();
             });
 
         });
