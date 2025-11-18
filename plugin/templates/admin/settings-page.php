@@ -4904,6 +4904,10 @@
                     success: function(response) {
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Base de données optimisée avec succès</span>');
+                            // Ajouter une notification toast
+                            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                PDF_Builder_Notification_Manager.show_toast('Base de données optimisée avec succès !', 'success');
+                            }
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
                         }
@@ -4935,6 +4939,10 @@
                     success: function(response) {
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Templates réparés avec succès</span>');
+                            // Ajouter une notification toast
+                            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                PDF_Builder_Notification_Manager.show_toast('Templates réparés avec succès !', 'success');
+                            }
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
                         }
@@ -4966,6 +4974,10 @@
                     success: function(response) {
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Fichiers temporaires supprimés avec succès</span>');
+                            // Ajouter une notification toast
+                            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                PDF_Builder_Notification_Manager.show_toast('Fichiers temporaires supprimés avec succès !', 'success');
+                            }
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
                         }
@@ -4999,6 +5011,10 @@
                     success: function(response) {
                         if (response.success) {
                             $results.html('<span style="color: #28a745;">✅ Sauvegarde créée avec succès</span>');
+                            // Ajouter une notification toast
+                            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                PDF_Builder_Notification_Manager.show_toast('Sauvegarde créée avec succès !', 'success');
+                            }
                         } else {
                             $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
                             $btn.prop('disabled', false).text('📦 Créer une sauvegarde');
@@ -5181,6 +5197,11 @@
                             // Garder le contenu existant et ajouter seulement le message de succès
                             const currentHtml = $results.html();
                             $results.html(currentHtml + '<br><span style="color: #28a745;">✅ Sauvegarde supprimée avec succès</span> <span style="color: #666;">⏳ Actualisation de la liste...</span>');
+                            
+                            // Ajouter une notification toast
+                            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                PDF_Builder_Notification_Manager.show_toast('Sauvegarde supprimée avec succès !', 'success');
+                            }
 
                             // Recharger la liste immédiatement après la suppression
                             setTimeout(() => {
