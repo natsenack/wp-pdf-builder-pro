@@ -201,6 +201,13 @@ document.addEventListener('DOMContentLoaded', function() {
         viewConsentStatusBtn.addEventListener('click', function() {
             console.log('=== NOUVEL APPUI SUR "VOIR MES CONSENTEMENTS" ===');
             console.log('Bouton consentements cliqué');
+            const resultDiv = document.getElementById('gdpr-user-actions-result');
+            console.log('État actuel du div avant traitement:', resultDiv ? {
+                exists: true,
+                display: window.getComputedStyle(resultDiv).display,
+                hasContent: resultDiv.innerHTML.trim() !== '',
+                contentLength: resultDiv.innerHTML.length
+            } : { exists: false });
             const nonce = document.getElementById('export_user_data_nonce')?.value;
             if (!nonce) {
                 showGdprResult('Erreur: Nonce de sécurité manquant', 'error');
@@ -248,12 +255,25 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Observer les changements dans le div pour détecter quand il se vide
                         const observer = new MutationObserver(function(mutations) {
                             mutations.forEach(function(mutation) {
-                                if (mutation.type === 'childList' && mutation.target.innerHTML === '') {
+                                if (mutation.type === 'childList' && mutation.target.innerHTML.trim() === '') {
                                     console.log('ATTENTION: Le div gdpr-user-actions-result a été vidé !');
+                                    console.log('Mutation details:', mutation);
+                                }
+                                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                                    const display = window.getComputedStyle(mutation.target).display;
+                                    if (display === 'none') {
+                                        console.log('ATTENTION: Le div gdpr-user-actions-result a été masqué (display: none) !');
+                                        console.log('Mutation details:', mutation);
+                                    }
                                 }
                             });
                         });
-                        observer.observe(resultDiv, { childList: true, subtree: true });
+                        observer.observe(resultDiv, {
+                            childList: true,
+                            subtree: true,
+                            attributes: true,
+                            attributeFilter: ['style']
+                        });
                     } else {
                         console.error('Div gdpr-user-actions-result NON trouvé !');
                     }
