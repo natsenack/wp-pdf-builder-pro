@@ -505,23 +505,32 @@ document.addEventListener('DOMContentLoaded', function() {
         // Collecter les données de l'onglet Sécurité
         console.log('[DEBUG] collectSecuriteSettings called');
 
-        // Sécurité générale
-        const securityLevel = document.getElementById('security_level')?.value || 'medium';
-        const enableLogging = document.getElementById('enable_logging')?.checked || false;
+        // Sécurité générale - utiliser querySelector pour être plus robuste
+        const securityLevelEl = document.querySelector('#security_level');
+        const enableLoggingEl = document.querySelector('#enable_logging');
 
-        console.log('[DEBUG] Sécurité - Level:', securityLevel, 'Logging:', enableLogging);
+        const securityLevel = securityLevelEl ? securityLevelEl.value : 'medium';
+        const enableLogging = enableLoggingEl ? enableLoggingEl.checked : false;
+
+        console.log('[DEBUG] Sécurité - Level:', securityLevel, 'Logging:', enableLogging, 'Elements found:', !!securityLevelEl, !!enableLoggingEl);
 
         formData.append('security_level', securityLevel);
         formData.append('enable_logging', enableLogging ? '1' : '0');
 
         // Paramètres RGPD
-        const gdprEnabled = document.getElementById('gdpr_enabled')?.checked || false;
-        const gdprConsentRequired = document.getElementById('gdpr_consent_required')?.checked || false;
-        const gdprDataRetention = document.getElementById('gdpr_data_retention')?.value || '2555';
-        const gdprAuditEnabled = document.getElementById('gdpr_audit_enabled')?.checked || false;
-        const gdprEncryptionEnabled = document.getElementById('gdpr_encryption_enabled')?.checked || false;
+        const gdprEnabledEl = document.querySelector('#gdpr_enabled');
+        const gdprConsentRequiredEl = document.querySelector('#gdpr_consent_required');
+        const gdprDataRetentionEl = document.querySelector('#gdpr_data_retention');
+        const gdprAuditEnabledEl = document.querySelector('#gdpr_audit_enabled');
+        const gdprEncryptionEnabledEl = document.querySelector('#gdpr_encryption_enabled');
 
-        console.log('[DEBUG] RGPD - Enabled:', gdprEnabled, 'Consent required:', gdprConsentRequired);
+        const gdprEnabled = gdprEnabledEl ? gdprEnabledEl.checked : false;
+        const gdprConsentRequired = gdprConsentRequiredEl ? gdprConsentRequiredEl.checked : false;
+        const gdprDataRetention = gdprDataRetentionEl ? gdprDataRetentionEl.value : '2555';
+        const gdprAuditEnabled = gdprAuditEnabledEl ? gdprAuditEnabledEl.checked : false;
+        const gdprEncryptionEnabled = gdprEncryptionEnabledEl ? gdprEncryptionEnabledEl.checked : false;
+
+        console.log('[DEBUG] RGPD - Enabled:', gdprEnabled, 'Consent required:', gdprConsentRequired, 'Data retention:', gdprDataRetention);
 
         formData.append('gdpr_enabled', gdprEnabled ? '1' : '0');
         formData.append('gdpr_consent_required', gdprConsentRequired ? '1' : '0');
@@ -530,9 +539,13 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('gdpr_encryption_enabled', gdprEncryptionEnabled ? '1' : '0');
 
         // Types de consentement
-        const gdprConsentAnalytics = document.getElementById('gdpr_consent_analytics')?.checked || false;
-        const gdprConsentTemplates = document.getElementById('gdpr_consent_templates')?.checked || false;
-        const gdprConsentMarketing = document.getElementById('gdpr_consent_marketing')?.checked || false;
+        const gdprConsentAnalyticsEl = document.querySelector('#gdpr_consent_analytics');
+        const gdprConsentTemplatesEl = document.querySelector('#gdpr_consent_templates');
+        const gdprConsentMarketingEl = document.querySelector('#gdpr_consent_marketing');
+
+        const gdprConsentAnalytics = gdprConsentAnalyticsEl ? gdprConsentAnalyticsEl.checked : false;
+        const gdprConsentTemplates = gdprConsentTemplatesEl ? gdprConsentTemplatesEl.checked : false;
+        const gdprConsentMarketing = gdprConsentMarketingEl ? gdprConsentMarketingEl.checked : false;
 
         console.log('[DEBUG] Consent - Analytics:', gdprConsentAnalytics, 'Templates:', gdprConsentTemplates, 'Marketing:', gdprConsentMarketing);
 
