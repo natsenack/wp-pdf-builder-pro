@@ -5364,10 +5364,10 @@
                 console.log('[DEBUG] Avant mise à jour - Icon:', $cacheStatusIcon.html(), 'Text:', $cacheStatusText.text());
 
                 if (isEnabled) {
-                    $cacheStatusIcon.html('✅').css('color', '#28a745');
+                    $cacheStatusIcon.html('ACTIF').css('color', '#28a745');
                     $cacheStatusText.text('Cache activé');
                 } else {
-                    $cacheStatusIcon.html('❌').css('color', '#dc3545');
+                    $cacheStatusIcon.html('INACTIF').css('color', '#dc3545');
                     $cacheStatusText.text('Cache désactivé');
                 }
 
