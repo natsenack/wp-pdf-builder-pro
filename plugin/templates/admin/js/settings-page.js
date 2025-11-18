@@ -128,21 +128,30 @@ jQuery(document).ready(function($) {
 
     // Fonction pour mettre à jour l'état du cache en temps réel
     function updateCacheStatus(isEnabled) {
+        // Trouver la section "État du système de cache"
         const $statusSection = $('h4:contains("📊 État du système de cache")').closest('div');
-        const $statusIndicator = $statusSection.find('div').filter(function() {
-            return $(this).find('div:contains("Cache activé")').length > 0;
-        });
 
-        if ($statusIndicator.length > 0) {
-            const $indicator = $statusIndicator.find('div').first();
-            $indicator.css('color', isEnabled ? '#28a745' : '#dc3545');
-            $indicator.text(isEnabled ? '✅' : '❌');
-        }
+        if ($statusSection.length > 0) {
+            // Trouver la grille des métriques
+            const $metricsGrid = $statusSection.find('div[style*="display: grid"]');
 
-        // Mettre à jour le texte descriptif
-        const $textDiv = $statusIndicator.find('div').last();
-        if ($textDiv.length > 0) {
-            $textDiv.text(isEnabled ? 'Cache activé' : 'Cache désactivé');
+            if ($metricsGrid.length > 0) {
+                // Le troisième div dans la grille est "Cache activé"
+                const $cacheStatusDiv = $metricsGrid.children('div').eq(2); // Index 2 = 3ème élément (0-indexed)
+
+                if ($cacheStatusDiv.length > 0) {
+                    // Mettre à jour l'indicateur visuel (✅ ou ❌)
+                    const $indicator = $cacheStatusDiv.find('div').first();
+                    $indicator.css('color', isEnabled ? '#28a745' : '#dc3545');
+                    $indicator.text(isEnabled ? '✅' : '❌');
+
+                    // Mettre à jour le texte descriptif
+                    const $textDiv = $cacheStatusDiv.find('div').last();
+                    if ($textDiv.length > 0) {
+                        $textDiv.text(isEnabled ? 'Cache activé' : 'Cache désactivé');
+                    }
+                }
+            }
         }
     }
 
