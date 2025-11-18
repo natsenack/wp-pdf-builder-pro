@@ -1761,6 +1761,10 @@
                                         if (cacheSizeDisplay && data.data && data.data.new_cache_size) {
                                             cacheSizeDisplay.innerHTML = data.data.new_cache_size;
                                         }
+                                        // Show toast notification
+                                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                            PDF_Builder_Notification_Manager.show_toast('Cache vidé avec succès!', 'success');
+                                        }
                                     } else {
                                         resultsSpan.textContent = '❌ Erreur: ' + (data.data || 'Erreur inconnue');
                                         resultsSpan.style.color = '#dc3232';
@@ -4777,6 +4781,10 @@
                                 $btn.removeClass('saving').addClass('saved');
                                 $icon.text('✅');
                                 $text.text('Enregistré !');
+                                // Show toast notification
+                                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                    PDF_Builder_Notification_Manager.show_toast('Paramètres enregistrés avec succès!', 'success');
+                                }
                                 setTimeout(() => {
                                     $btn.removeClass('saved');
                                     $icon.text('💾');
