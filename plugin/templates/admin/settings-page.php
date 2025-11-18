@@ -37,7 +37,37 @@
                 wp_cache_flush();
             }
 
-            send_ajax_response(true, 'Cache vidé avec succès.');
+            // Clear file cache
+            $cache_dirs = [
+                WP_CONTENT_DIR . '/cache/wp-pdf-builder-previews/',
+                wp_upload_dir()['basedir'] . '/pdf-builder-cache'
+            ];
+            foreach ($cache_dirs as $cache_dir) {
+                if (is_dir($cache_dir)) {
+                    $files = glob($cache_dir . '*');
+                    foreach ($files as $file) {
+                        if (is_file($file)) {
+                            unlink($file);
+                        }
+                    }
+                }
+            }
+
+            // Calculate new cache size
+            $new_cache_size = 0;
+            foreach ($cache_dirs as $cache_dir) {
+                if (is_dir($cache_dir)) {
+                    $new_cache_size += pdf_builder_get_folder_size($cache_dir);
+                }
+            }
+            $new_cache_display = '';
+            if ($new_cache_size < 1048576) {
+                $new_cache_display = number_format($new_cache_size / 1024, 1) . ' Ko';
+            } else {
+                $new_cache_display = number_format($new_cache_size / 1048576, 1) . ' Mo';
+            }
+
+            send_ajax_response(true, 'Cache vidé avec succès.', ['new_cache_size' => $new_cache_display]);
         } else {
             send_ajax_response(false, 'Erreur de sécurité.');
         }
@@ -1726,6 +1756,11 @@
                                     if (data.success) {
                                         resultsSpan.textContent = '✅ Cache vidé avec succès!';
                                         resultsSpan.style.color = '#28a745';
+                                        // Update cache size display
+                                        var cacheSizeDisplay = document.getElementById('cache-size-display');
+                                        if (cacheSizeDisplay && data.data && data.data.new_cache_size) {
+                                            cacheSizeDisplay.innerHTML = data.data.new_cache_size;
+                                        }
                                     } else {
                                         resultsSpan.textContent = '❌ Erreur: ' + (data.data || 'Erreur inconnue');
                                         resultsSpan.style.color = '#dc3232';
@@ -2138,11 +2173,13 @@
                                     echo "-->";
 
                                     // Afficher la taille avec l'unité appropriée et décimales
+                                    echo '<span id="cache-size-display">';
                                     if ($cache_size < 1048576) { // < 1 Mo
                                         echo number_format($cache_size / 1024, 1) . ' Ko';
                                     } else {
                                         echo number_format($cache_size / 1048576, 1) . ' Mo';
                                     }
+                                    echo '</span>';
                                     ?>
                                 </div>
                                 <div style="color: #666; font-size: 12px;">Taille du cache</div>
