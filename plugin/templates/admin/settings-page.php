@@ -4803,7 +4803,33 @@
                 // Pour l'onglet système, utiliser le formulaire unique simplifié
                 if (currentTab === 'systeme') {
                     const $systemeForm = $('#systeme-settings-form');
+                    console.log('[PDF Builder] Systeme form found:', $systemeForm.length > 0);
+                    console.log('[PDF Builder] Systeme form element:', $systemeForm[0]);
+
                     const formData = new FormData($systemeForm[0]);
+
+                    // Debug: Vérifier les champs du formulaire
+                    console.log('[PDF Builder] Form fields found:');
+                    $systemeForm.find('input, select, textarea').each(function() {
+                        const $field = $(this);
+                        const fieldName = $field.attr('name');
+                        const fieldValue = $field.val();
+                        const fieldType = this.tagName.toLowerCase() + ($field.attr('type') ? '[' + $field.attr('type') + ']' : '');
+                        console.log(`  ${fieldType} ${fieldName}: "${fieldValue}"`);
+                    });
+
+                    // Vérifier spécifiquement le champ hidden
+                    const $hiddenField = $('#systeme_auto_backup_frequency_hidden');
+                    console.log('[PDF Builder] Hidden field found:', $hiddenField.length > 0);
+                    console.log('[PDF Builder] Hidden field value:', $hiddenField.val());
+
+                    // Forcer l'inclusion du champ hidden de fréquence des sauvegardes
+                    const $frequencyHidden = $('#systeme_auto_backup_frequency_hidden');
+                    if ($frequencyHidden.length > 0) {
+                        const hiddenValue = $frequencyHidden.val() || 'daily';
+                        formData.append('systeme_auto_backup_frequency_hidden', hiddenValue);
+                        console.log('[PDF Builder] Manually added hidden field to FormData:', hiddenValue);
+                    }
 
                     // S'assurer que les cases à cocher non cochées sont incluses
                     $systemeForm.find('input[type="checkbox"]').each(function() {
@@ -5308,6 +5334,7 @@
                 const $frequencySelect = $('#systeme_auto_backup_frequency');
                 const $frequencyHidden = $('#systeme_auto_backup_frequency_hidden');
                 const $frequencyRow = $('#auto_backup_frequency_row');
+                console.log('[PDF Builder] Auto backup checkbox changed, checked:', $(this).is(':checked'));
                 if ($(this).is(':checked')) {
                     $frequencySelect.prop('disabled', false);
                     $frequencyRow.removeClass('disabled-row');
@@ -5316,13 +5343,17 @@
                     $frequencyRow.addClass('disabled-row');
                 }
                 // Synchroniser le champ hidden avec la valeur actuelle du select
-                $frequencyHidden.val($frequencySelect.val());
+                const currentValue = $frequencySelect.val();
+                $frequencyHidden.val(currentValue);
+                console.log('[PDF Builder] Synchronized hidden field with value:', currentValue);
             });
 
             // Synchroniser le champ hidden quand la valeur du select change
             $('#systeme_auto_backup_frequency').on('change', function() {
                 const $frequencyHidden = $('#systeme_auto_backup_frequency_hidden');
-                $frequencyHidden.val($(this).val());
+                const newValue = $(this).val();
+                $frequencyHidden.val(newValue);
+                console.log('[PDF Builder] Select changed, synchronized hidden field with value:', newValue);
             });
 
             // Initialisation de l'état du select de fréquence au chargement de la page
