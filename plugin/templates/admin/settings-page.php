@@ -1460,6 +1460,22 @@
                 <input type="hidden" name="current_tab" value="licence">
                     <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h2>
 
+                <style>
+                /* Classe commune pour les sections de l'onglet licence */
+                .licence-section {
+                    border-radius: 12px;
+                    padding: 30px;
+                    margin-bottom: 30px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                }
+                .licence-section h3 {
+                    margin-top: 0;
+                    border-bottom: 2px solid #007cba;
+                    padding-bottom: 10px;
+                    font-size: 22px;
+                }
+                </style>
+
                 <?php
                     $license_status = get_option('pdf_builder_license_status', 'free');
                     $license_key = get_option('pdf_builder_license_key', '');
@@ -1533,8 +1549,8 @@
                 ?>
 
                     <!-- Statut de la licence -->
-                <section style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 30px; margin-bottom: 30px; -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.08); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                        <h3 style="margin-top: 0; color: #007cba; font-size: 22px; border-bottom: 2px solid #007cba; padding-bottom: 10px;">📊 Statut de la Licence</h3>
+                <section class="licence-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5;">
+                        <h3 style="color: #007cba;">📊 Statut de la Licence</h3>
 
                         <div style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
                             <!-- Carte Statut Principal -->
@@ -1759,7 +1775,7 @@
                     <?php if (!$is_premium) :
                         ?>
                     <!-- Mode DÉMO : Pas de licence -->
-                    <section style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
+                    <section class="licence-section" style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                             <div style="font-size: 50px;">🧪</div>
                             <div>
@@ -1786,7 +1802,7 @@
                     elseif ($is_test_mode) :
                         ?>
                     <!-- Mode TEST : Gestion de la clé de test -->
-                    <section style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
+                    <section class="licence-section" style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                             <div style="font-size: 50px;">🧪</div>
                             <div>
@@ -1803,7 +1819,7 @@
                     else :
                         ?>
                     <!-- Mode PREMIUM : Gestion de la licence premium -->
-                    <section style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; border-radius: 12px; padding: 35px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(40,167,69,0.2);">
+                    <section class="licence-section" style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; box-shadow: 0 3px 8px rgba(40,167,69,0.2);">
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                             <div style="font-size: 50px;">🔐</div>
                             <div>
@@ -2035,8 +2051,8 @@
                     </aside>
 
                     <!-- Comparaison des fonctionnalités -->
-                    <section style="margin-top: 40px;">
-                        <h3 style="color: #007cba; font-size: 22px; border-bottom: 3px solid #007cba; padding-bottom: 12px; margin-bottom: 25px;">Comparaison des Fonctionnalités</h3>
+                    <section class="licence-section" style="margin-top: 40px;">
+                        <h3>Comparaison des Fonctionnalités</h3>
                         <table class="wp-list-table widefat fixed striped" style="margin-top: 15px; border-collapse: collapse; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                             <thead style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white;">
                                 <tr>
@@ -2185,8 +2201,8 @@
                     </section>
 
                     <!-- Section Notifications par Email -->
-                    <section style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: none; border-radius: 12px; padding: 30px; margin-top: 30px; color: #343a40; box-shadow: 0 4px 12px rgba(0,102,204,0.15);">
-                        <h3 style="margin-top: 0; color: #003d7a; font-size: 20px; display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
+                    <section class="licence-section" style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: none; color: #343a40; box-shadow: 0 4px 12px rgba(0,102,204,0.15); margin-top: 30px;">
+                        <h3 style="color: #003d7a; display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
                             📧 Notifications par Email
                         </h3>
 
