@@ -428,18 +428,6 @@ function pdf_builder_save_settings_ajax() {
 
     // Si current_tab est 'all', sauvegarder tous les paramètres
     if ($current_tab === 'all') {
-        // DEBUG: Log des paramètres de sécurité reçus
-        error_log('[DEBUG AJAX MAIN] Paramètres sécurité reçus:');
-        error_log('[DEBUG AJAX MAIN] security_level: ' . (isset($_POST['security_level']) ? $_POST['security_level'] : 'NOT_SET'));
-        error_log('[DEBUG AJAX MAIN] enable_logging: ' . (isset($_POST['enable_logging']) ? $_POST['enable_logging'] : 'NOT_SET'));
-        error_log('[DEBUG AJAX MAIN] gdpr_enabled: ' . (isset($_POST['gdpr_enabled']) ? $_POST['gdpr_enabled'] : 'NOT_SET'));
-
-        // DEBUG: Log des paramètres système reçus
-        error_log('[DEBUG AJAX MAIN] Paramètres système reçus:');
-        error_log('[DEBUG AJAX MAIN] cache_enabled: ' . (isset($_POST['cache_enabled']) ? $_POST['cache_enabled'] : 'NOT_SET'));
-        error_log('[DEBUG AJAX MAIN] systeme_auto_maintenance: ' . (isset($_POST['systeme_auto_maintenance']) ? $_POST['systeme_auto_maintenance'] : 'NOT_SET'));
-        error_log('[DEBUG AJAX MAIN] systeme_auto_backup: ' . (isset($_POST['systeme_auto_backup']) ? $_POST['systeme_auto_backup'] : 'NOT_SET'));
-
         // Collecter tous les paramètres possibles
         $all_settings = array(
             // Général
@@ -494,12 +482,6 @@ function pdf_builder_save_settings_ajax() {
             }
         }
         $saved_count = count($all_settings);
-
-        // DEBUG: Vérification des options sauvegardées
-        error_log('[DEBUG AJAX MAIN] Options sauvegardées:');
-        error_log('[DEBUG AJAX MAIN] pdf_builder_security_level: ' . get_option('pdf_builder_security_level', 'DEFAULT'));
-        error_log('[DEBUG AJAX MAIN] pdf_builder_enable_logging: ' . get_option('pdf_builder_enable_logging', 'DEFAULT'));
-        error_log('[DEBUG AJAX MAIN] pdf_builder_gdpr_enabled: ' . get_option('pdf_builder_gdpr_enabled', 'DEFAULT'));
 
     } else {
         // Traiter selon l'onglet (code existant)

@@ -464,16 +464,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function collectSystemeSettings(formData) {
         // Collecter les données de l'onglet Système
-        console.log('[DEBUG] Début collecte système');
-
         const cacheEnabled = document.getElementById('general_cache_enabled')?.checked || false;
         const cacheTtl = document.getElementById('cache_ttl')?.value || '3600';
         const cacheCompression = document.getElementById('cache_compression')?.checked || false;
         const cacheAutoCleanup = document.getElementById('cache_auto_cleanup')?.checked || false;
         const cacheMaxSize = document.getElementById('cache_max_size')?.value || '100';
-
-        console.log('[DEBUG] cacheEnabled element:', document.getElementById('general_cache_enabled'));
-        console.log('[DEBUG] cacheEnabled value:', cacheEnabled);
 
         // Paramètres de maintenance
         const autoMaintenance = document.getElementById('systeme_auto_maintenance')?.checked || false;
@@ -496,8 +491,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('systeme_auto_backup', autoBackup ? '1' : '0');
         formData.append('systeme_auto_backup_frequency', backupFrequency);
         formData.append('systeme_backup_retention', backupRetention);
-
-        console.log('[DEBUG] Fin collecte système');
     }
 
     function collectAccesSettings(formData) {
