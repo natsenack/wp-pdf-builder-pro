@@ -5091,6 +5091,7 @@
                         console.log('[PDF Builder JS] Réponse complète:', response);
                         console.log('[PDF Builder JS] Success:', response.success);
                         console.log('[PDF Builder JS] Data:', response.data);
+                        console.log('[PDF Builder JS] isLoadingBackups:', isLoadingBackups);
 
                         if (response.success) {
                             console.log('[PDF Builder JS] Liste chargée avec succès');
@@ -5315,6 +5316,11 @@
                             // Recharger la liste immédiatement après la suppression
                             setTimeout(() => {
                                 console.log('[PDF Builder JS] Rechargement automatique de la liste après suppression');
+                                console.log('[PDF Builder JS] État avant rechargement:', {
+                                    hasContent: $results.html().length > 0,
+                                    hasBackupItems: $results.find('.backup-item').length,
+                                    htmlPreview: $results.html().substring(0, 100)
+                                });
                                 $('#list-backups-btn').click();
                             }, 500); // Délai réduit pour une meilleure UX
                         } else {

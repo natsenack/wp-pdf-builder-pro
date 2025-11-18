@@ -938,13 +938,17 @@ function pdf_builder_delete_backup_ajax() {
 
     $filename = sanitize_file_name($_POST['filename']);
 
-    // Décoder le base64 si nécessaire (jQuery peut encoder automatiquement certains caractères)
-    if (base64_encode(base64_decode($filename, true)) === $filename) {
-        $filename = base64_decode($filename);
+    // Décoder le base64 (le JavaScript envoie le filename encodé en base64)
+    $decoded_filename = base64_decode($filename);
+    if ($decoded_filename === false || empty($decoded_filename)) {
+        wp_send_json_error('Nom de fichier invalide (décodage base64 échoué)');
+        return;
     }
 
+    $filename = $decoded_filename;
+
     if (empty($filename)) {
-        wp_send_json_error('Nom de fichier manquant');
+        wp_send_json_error('Nom de fichier manquant après décodage');
         return;
     }
 
@@ -952,16 +956,22 @@ function pdf_builder_delete_backup_ajax() {
         $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
         $filepath = $backup_dir . '/' . $filename;
 
+        error_log('[PDF Builder PHP] Tentative de suppression: ' . $filepath);
+        error_log('[PDF Builder PHP] Fichier existe: ' . (file_exists($filepath) ? 'OUI' : 'NON'));
+
         if (!file_exists($filepath)) {
+            error_log('[PDF Builder PHP] Fichier introuvable: ' . $filepath);
             wp_send_json_error('Fichier de sauvegarde introuvable');
             return;
         }
 
         if (unlink($filepath)) {
+            error_log('[PDF Builder PHP] Suppression réussie: ' . $filepath);
             wp_send_json_success(array(
                 'message' => 'Sauvegarde supprimée avec succès'
             ));
         } else {
+            error_log('[PDF Builder PHP] Échec de la suppression: ' . $filepath);
             wp_send_json_error('Erreur lors de la suppression du fichier');
         }
 
