@@ -610,11 +610,8 @@ function pdf_builder_save_settings_ajax() {
                 'auto_backup_frequency' => $_POST['systeme_auto_backup_frequency'] ?? $_POST['systeme_auto_backup_frequency_hidden'] ?? 'daily',
             );
 
-            error_log('[PDF Builder PHP] Sauvegarde système - Données reçues: ' . print_r($settings, true));
-
             foreach ($settings as $key => $value) {
                 update_option('pdf_builder_' . $key, $value);
-                error_log('[PDF Builder PHP] Sauvegardé: pdf_builder_' . $key . ' = ' . $value);
             }
             $saved_count++;
             break;
@@ -857,7 +854,6 @@ function pdf_builder_reinit_auto_backup() {
     $timestamp = wp_next_scheduled('pdf_builder_daily_backup');
     if ($timestamp) {
         wp_unschedule_event($timestamp, 'pdf_builder_daily_backup');
-        error_log('[PDF Builder] Ancien cron de sauvegarde désactivé');
     }
 
     // Réinitialiser avec la nouvelle configuration
@@ -887,15 +883,12 @@ function pdf_builder_init_auto_backup() {
             // Calculer le prochain timestamp selon la fréquence
             $next_timestamp = pdf_builder_calculate_next_backup_time($auto_backup_frequency);
             wp_schedule_event($next_timestamp, $wp_schedule, 'pdf_builder_daily_backup');
-
-            error_log('[PDF Builder] Sauvegarde automatique programmée - Fréquence: ' . $auto_backup_frequency . ', Intervalle WP: ' . $wp_schedule . ', Prochaine exécution: ' . wp_date('Y-m-d H:i:s', $next_timestamp));
         }
     } else {
         // Désactiver la sauvegarde automatique si elle était programmée
         $timestamp = wp_next_scheduled('pdf_builder_daily_backup');
         if ($timestamp) {
             wp_unschedule_event($timestamp, 'pdf_builder_daily_backup');
-            error_log('[PDF Builder] Sauvegarde automatique désactivée');
         }
     }
 
@@ -914,7 +907,6 @@ function pdf_builder_execute_daily_backup() {
         $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
         if (!file_exists($backup_dir)) {
             if (!wp_mkdir_p($backup_dir)) {
-                error_log('[PDF Builder] Impossible de créer le dossier de sauvegarde automatique');
                 return;
             }
         }
@@ -947,13 +939,10 @@ function pdf_builder_execute_daily_backup() {
 
         // Écrire le fichier de sauvegarde
         if (file_put_contents($filepath, json_encode($backup_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
-            error_log('[PDF Builder] Sauvegarde automatique créée: ' . $filename);
         } else {
-            error_log('[PDF Builder] Erreur lors de l\'écriture de la sauvegarde automatique');
         }
 
     } catch (Exception $e) {
-        error_log('[PDF Builder] Erreur sauvegarde automatique: ' . $e->getMessage());
     }
 }
 
@@ -984,12 +973,7 @@ function pdf_builder_cleanup_old_backups() {
             }
         }
 
-        if ($deleted_count > 0) {
-            error_log('[PDF Builder] Nettoyage automatique: ' . $deleted_count . ' sauvegardes supprimées');
-        }
-
     } catch (Exception $e) {
-        error_log('[PDF Builder] Erreur nettoyage automatique: ' . $e->getMessage());
     }
 }
 

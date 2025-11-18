@@ -25,30 +25,20 @@
 
     // Handle AJAX clear cache request BEFORE the early exit
     if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_clear_cache') {
-        error_log('[PDF Builder] === ACTION: VIDER LE CACHE ===');
-        error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
-        error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['security'], 'pdf_builder_save_settings') ? 'OUI' : 'NON'));
 
         if (wp_verify_nonce($_POST['security'], 'pdf_builder_save_settings')) {
             // Clear transients and cache
-            error_log('[PDF Builder] Suppression des transients...');
             delete_transient('pdf_builder_cache');
             delete_transient('pdf_builder_templates');
             delete_transient('pdf_builder_elements');
 
             // Clear WP object cache if available
             if (function_exists('wp_cache_flush')) {
-                error_log('[PDF Builder] Vidage du cache objet WP...');
                 wp_cache_flush();
-                error_log('[PDF Builder] Cache objet WP vidé');
-            } else {
-                error_log('[PDF Builder] Fonction wp_cache_flush non disponible');
             }
 
-            error_log('[PDF Builder] === CACHE VIDÉ AVEC SUCCÈS ===');
             send_ajax_response(true, 'Cache vidé avec succès.');
         } else {
-            error_log('[PDF Builder] === ERREUR: NONCE INVALIDE ===');
             send_ajax_response(false, 'Erreur de sécurité.');
         }
     }
@@ -79,41 +69,28 @@
 
         // Optimize database
         elseif ($action === 'pdf_builder_optimize_db') {
-            error_log('[PDF Builder] === ACTION: OPTIMISER LA BASE DE DONNÉES ===');
-            error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
-            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings') ? 'OUI' : 'NON'));
 
             if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
                 global $wpdb;
-                error_log('[PDF Builder] Recherche des tables PDF Builder...');
                 $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder%'", ARRAY_N);
-                error_log('[PDF Builder] Tables trouvées: ' . count($tables));
 
                 $optimized = 0;
                 foreach ($tables as $table) {
-                    error_log('[PDF Builder] Optimisation de la table: ' . $table[0]);
                     $wpdb->query("OPTIMIZE TABLE {$table[0]}");
                     $optimized++;
                 }
-                error_log('[PDF Builder] Tables optimisées: ' . $optimized);
-                error_log('[PDF Builder] === OPTIMISATION TERMINÉE ===');
                 send_ajax_response(true, "Tables optimisées: $optimized table(s)");
             } else {
-                error_log('[PDF Builder] === ERREUR: NONCE INVALIDE ===');
                 send_ajax_response(false, 'Erreur de sécurité.');
             }
         }
 
         // Repair templates
         elseif ($action === 'pdf_builder_repair_templates') {
-            error_log('[PDF Builder] === ACTION: RÉPARER LES TEMPLATES ===');
-            error_log('[PDF Builder] Utilisateur: ' . (wp_get_current_user()->user_login ?? 'N/A'));
-            error_log('[PDF Builder] Nonce vérifié: ' . (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings') ? 'OUI' : 'NON'));
 
             if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
                 // Réparer les templates : vérifier l'intégrité et corriger les erreurs basiques
                 global $wpdb;
-                error_log('[PDF Builder] === DÉBUT RÉPARATION DES TEMPLATES ===');
                 
                 $repaired = 0;
                 $errors = 0;
@@ -131,26 +108,17 @@
                         $repair_result = $wpdb->query("REPAIR TABLE $table");
                         if ($repair_result !== false) {
                             $repaired++;
-                            error_log('[PDF Builder] Table réparée: ' . $table);
                         } else {
                             $errors++;
-                            error_log('[PDF Builder] Erreur réparation table: ' . $table);
                         }
                         
                         // Optimiser la table
                         $wpdb->query("OPTIMIZE TABLE $table");
-                    } else {
-                        error_log('[PDF Builder] Table inexistante: ' . $table);
                     }
                 }
                 
                 // Nettoyer les transients corrompus liés aux templates
                 $cleaned_transients = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_template_%' OR option_name LIKE '_transient_timeout_pdf_builder_template_%'");
-                
-                error_log('[PDF Builder] Tables réparées: ' . $repaired);
-                error_log('[PDF Builder] Erreurs: ' . $errors);
-                error_log('[PDF Builder] Transients nettoyés: ' . $cleaned_transients);
-                error_log('[PDF Builder] === FIN RÉPARATION DES TEMPLATES ===');
                 
                 if ($errors == 0) {
                     send_ajax_response(true, "Templates réparés avec succès. $repaired table(s) réparée(s), $cleaned_transients transient(s) nettoyé(s).");
@@ -158,7 +126,6 @@
                     send_ajax_response(true, "Réparation partielle: $repaired table(s) réparée(s), $errors erreur(s). Vérifiez les logs.");
                 }
             } else {
-                error_log('[PDF Builder] === ERREUR: NONCE INVALIDE ===');
                 send_ajax_response(false, 'Erreur de sécurité.');
             }
         }
@@ -258,7 +225,6 @@
         elseif ($action === 'pdf_builder_save_settings') {
             if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
                 $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
-                error_log('[PDF Builder] Current tab received: ' . $current_tab);
 
                 // Traiter directement selon l'onglet
                 switch ($current_tab) {
@@ -350,38 +316,10 @@
                         break;
 
                     case 'systeme':
-                        error_log('[PDF Builder] === CASE SYSTEME EXECUTED ===');
-                        // LOG: Début du traitement de l'onglet système
-                        error_log('[PDF Builder] === TRAITEMENT ONGLET SYSTEME ===');
-                        error_log('[PDF Builder] Données POST reçues: ' . print_r($_POST, true));
-
-                        // DEBUG: Vérifier tous les champs commençant par "systeme_"
-                        $systeme_fields = [];
-                        foreach ($_POST as $key => $value) {
-                            if (strpos($key, 'systeme_') === 0) {
-                                $systeme_fields[$key] = $value;
-                            }
-                        }
-                        error_log('[PDF Builder] Champs systeme_ trouvés: ' . print_r($systeme_fields, true));
-
-                        // Vérifier que toutes les données nécessaires sont présentes
-                        $required_fields = ['systeme_cache_enabled', 'systeme_cache_expiry', 'systeme_max_cache_size', 'systeme_auto_maintenance', 'systeme_auto_backup', 'systeme_backup_retention'];
-                        $missing_fields = [];
-                        foreach ($required_fields as $field) {
-                            if (!isset($_POST[$field])) {
-                                $missing_fields[] = $field;
-                            }
-                        }
-                        if (!empty($missing_fields)) {
-                            error_log('[PDF Builder] Champs manquants: ' . implode(', ', $missing_fields));
-                        }
-
                         // Traitement des paramètres de performance
                         $cache_enabled = (isset($_POST['systeme_cache_enabled']) && $_POST['systeme_cache_enabled'] === '1') ? '1' : '0';
                         $cache_expiry = intval($_POST['systeme_cache_expiry']);
                         $max_cache_size = intval($_POST['systeme_max_cache_size']);
-
-                        error_log('[PDF Builder] Performance - Cache activé: ' . $cache_enabled . ', Expiration: ' . $cache_expiry . 'h, Taille max: ' . $max_cache_size . 'Mo');
 
                         update_option('pdf_builder_cache_enabled', $cache_enabled);
                         update_option('pdf_builder_cache_expiry', $cache_expiry);
@@ -389,7 +327,6 @@
 
                         // Traitement des paramètres de maintenance
                         $auto_maintenance = (isset($_POST['systeme_auto_maintenance']) && $_POST['systeme_auto_maintenance'] === '1') ? '1' : '0';
-                        error_log('[PDF Builder] Maintenance - Auto maintenance: ' . $auto_maintenance);
 
                         update_option('pdf_builder_auto_maintenance', $auto_maintenance);
 
@@ -399,50 +336,18 @@
                         $auto_backup_frequency = isset($_POST['systeme_auto_backup_frequency']) ? sanitize_text_field($_POST['systeme_auto_backup_frequency']) : 
                                                 (isset($_POST['systeme_auto_backup_frequency_hidden']) ? sanitize_text_field($_POST['systeme_auto_backup_frequency_hidden']) : 'daily');
 
-                        // DEBUG: Log détaillé de la valeur reçue du formulaire
-                        if (defined('WP_DEBUG') && WP_DEBUG) {
-                            error_log('[PDF Builder] === TRAITEMENT SAUVEGARDE ===');
-                            error_log('[PDF Builder] Form received - Auto backup: ' . $auto_backup . ', Frequency: ' . $auto_backup_frequency . ', Retention: ' . $backup_retention);
-                            error_log('[PDF Builder] POST data contains systeme_auto_backup_frequency: ' . (isset($_POST['systeme_auto_backup_frequency']) ? 'YES' : 'NO'));
-                            error_log('[PDF Builder] POST data contains systeme_auto_backup_frequency_hidden: ' . (isset($_POST['systeme_auto_backup_frequency_hidden']) ? 'YES' : 'NO'));
-                            error_log('[PDF Builder] Raw POST systeme_auto_backup_frequency: ' . (isset($_POST['systeme_auto_backup_frequency']) ? $_POST['systeme_auto_backup_frequency'] : 'NOT SET'));
-                            error_log('[PDF Builder] Raw POST systeme_auto_backup_frequency_hidden: ' . (isset($_POST['systeme_auto_backup_frequency_hidden']) ? $_POST['systeme_auto_backup_frequency_hidden'] : 'NOT SET'));
-                            error_log('[PDF Builder] All POST keys: ' . implode(', ', array_keys($_POST)));
-                        }
-
                         // Validation de la fréquence
                         $valid_frequencies = array('daily', 'weekly', 'monthly');
                         if (!in_array($auto_backup_frequency, $valid_frequencies)) {
                             $auto_backup_frequency = 'daily';
                         }
 
-                        error_log('[PDF Builder] Sauvegarde - Auto backup: ' . $auto_backup . ', Fréquence: ' . $auto_backup_frequency . ', Rétention: ' . $backup_retention . ' jours');
-
                         update_option('pdf_builder_auto_backup', $auto_backup);
                         update_option('pdf_builder_backup_retention', $backup_retention);
                         update_option('pdf_builder_auto_backup_frequency', $auto_backup_frequency);
 
-                        // DEBUG: Vérifier que la valeur a été sauvegardée
-                        if (defined('WP_DEBUG') && WP_DEBUG) {
-                            $saved_frequency = get_option('pdf_builder_auto_backup_frequency', 'NOT_SET');
-                            error_log('[PDF Builder] Frequency saved and retrieved: ' . $saved_frequency);
-                            error_log('[PDF Builder] Frequency matches input: ' . ($saved_frequency === $auto_backup_frequency ? 'YES' : 'NO'));
-                        }
-
                         // Reprogrammer le cron avec la nouvelle fréquence
                         pdf_builder_reinit_auto_backup();
-
-                        // LOG: Valeurs finales sauvegardées
-                        error_log('[PDF Builder] Valeurs sauvegardées:');
-                        error_log('[PDF Builder] - Cache activé: ' . get_option('pdf_builder_cache_enabled', 'N/A'));
-                        error_log('[PDF Builder] - Cache expiry: ' . get_option('pdf_builder_cache_expiry', 'N/A'));
-                        error_log('[PDF Builder] - Max cache size: ' . get_option('pdf_builder_max_cache_size', 'N/A'));
-                        error_log('[PDF Builder] - Auto maintenance: ' . get_option('pdf_builder_auto_maintenance', 'N/A'));
-                        error_log('[PDF Builder] - Auto backup: ' . get_option('pdf_builder_auto_backup', 'N/A'));
-                        error_log('[PDF Builder] - Auto backup frequency: ' . get_option('pdf_builder_auto_backup_frequency', 'N/A'));
-                        error_log('[PDF Builder] - Backup retention: ' . get_option('pdf_builder_backup_retention', 'N/A'));
-                        error_log('[PDF Builder] - Backup retention: ' . get_option('pdf_builder_backup_retention', 'N/A'));
-                        error_log('[PDF Builder] === FIN TRAITEMENT ONGLET SYSTEME ===');
 
                         send_ajax_response(true, 'Paramètres système enregistrés avec succès.');
                         break;
@@ -543,10 +448,6 @@
     $default_orientation = $settings['default_orientation'] ?? 'portrait';
     // Log ALL POST data at the beginning
     if (!empty($_POST)) {
-        error_log('ALL POST data received: ' . print_r($_POST, true));
-        error_log('is_ajax: ' . ($is_ajax ? 'true' : 'false'));
-        }
-        if (!empty($_POST)) {
 
         } else {
 
@@ -555,7 +456,7 @@
     // Process form
     if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         if ($is_ajax) {
-            error_log('AJAX: Matched condition 1 - submit + pdf_builder_settings_nonce');
+
         }
         if (defined('WP_DEBUG') && WP_DEBUG) {
 
@@ -664,7 +565,7 @@
 
     if (isset($_POST['submit']) && isset($_POST['pdf_builder_general_nonce'])) {
         if ($is_ajax) {
-            error_log('AJAX: Matched condition 2 - submit + pdf_builder_general_nonce');
+
         }
         if (wp_verify_nonce($_POST['pdf_builder_general_nonce'], 'pdf_builder_settings')) {
             $general_settings = [
@@ -2447,7 +2348,7 @@
 
                                 // DEBUG: Log de la valeur actuelle
                                 if (defined('WP_DEBUG') && WP_DEBUG) {
-                                    error_log('[PDF Builder] Select frequency - Stored value: ' . $stored_value . ', Current frequency: ' . $current_frequency);
+
                                 }
                                 ?>
                                 <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" style="min-width: 200px;" <?php echo (get_option('pdf_builder_auto_backup', '0') === '0') ? 'disabled' : ''; ?>>
@@ -4813,40 +4714,30 @@
 
                 // Pour l'onglet système, utiliser le formulaire unique simplifié
                 if (currentTab === 'systeme') {
-                    console.log('[PDF Builder] Starting AJAX submission for systeme tab');
                     const $systemeForm = $('#systeme-settings-form');
-                    console.log('[PDF Builder] Systeme form found:', $systemeForm.length > 0);
-                    console.log('[PDF Builder] Systeme form element:', $systemeForm[0]);
 
                     const formData = new FormData($systemeForm[0]);
 
                     // Debug: Vérifier les champs du formulaire
-                    console.log('[PDF Builder] Form fields found:');
                     $systemeForm.find('input, select, textarea').each(function() {
                         const $field = $(this);
                         const fieldName = $field.attr('name');
                         const fieldValue = $field.val();
                         const fieldType = this.tagName.toLowerCase() + ($field.attr('type') ? '[' + $field.attr('type') + ']' : '');
-                        console.log(`  ${fieldType} ${fieldName}: "${fieldValue}"`);
                     });
 
                     // Vérifier spécifiquement le champ hidden
                     const $hiddenField = $('#systeme_auto_backup_frequency_hidden');
-                    console.log('[PDF Builder] Hidden field found:', $hiddenField.length > 0);
-                    console.log('[PDF Builder] Hidden field value:', $hiddenField.val());
 
                     // Forcer l'inclusion du champ hidden de fréquence des sauvegardes
                     const $frequencyHidden = $('#systeme_auto_backup_frequency_hidden');
                     if ($frequencyHidden.length > 0) {
                         const hiddenValue = $frequencyHidden.val() || 'daily';
                         formData.append('systeme_auto_backup_frequency_hidden', hiddenValue);
-                        console.log('[PDF Builder] Manually added hidden field to FormData:', hiddenValue);
                     }
 
                     // DEBUG: Afficher tout le contenu du FormData
-                    console.log('[PDF Builder] FormData contents:');
                     for (let [key, value] of formData.entries()) {
-                        console.log(`  ${key}: ${value}`);
                     }
 
                     // S'assurer que les cases à cocher non cochées sont incluses
@@ -4873,7 +4764,6 @@
                         processData: false,
                         contentType: false,
                         success: function(response) {
-                            console.log('[PDF Builder] AJAX success response:', response);
                             if (response.success) {
                                 $btn.removeClass('saving').addClass('saved');
                                 $icon.text('✅');
@@ -4884,7 +4774,6 @@
                                     $text.text('Enregistrer');
                                 }, 3000);
                             } else {
-                                console.log('[PDF Builder] AJAX response error:', response.data);
                                 $btn.removeClass('saving').addClass('error');
                                 $icon.text('❌');
                                 $text.text('Erreur');
@@ -4896,8 +4785,6 @@
                             }
                         },
                         error: function(xhr, status, error) {
-                            console.log('[PDF Builder] AJAX error:', xhr.status, xhr.statusText, error);
-                            console.log('[PDF Builder] AJAX error response:', xhr.responseText);
                             $btn.removeClass('saving').addClass('error');
                             $icon.text('❌');
                             $text.text('Erreur AJAX');
@@ -5356,7 +5243,6 @@
                 const $frequencySelect = $('#systeme_auto_backup_frequency');
                 const $frequencyHidden = $('#systeme_auto_backup_frequency_hidden');
                 const $frequencyRow = $('#auto_backup_frequency_row');
-                console.log('[PDF Builder] Auto backup checkbox changed, checked:', $(this).is(':checked'));
                 if ($(this).is(':checked')) {
                     $frequencySelect.prop('disabled', false);
                     $frequencyRow.removeClass('disabled-row');
@@ -5367,7 +5253,6 @@
                 // Synchroniser le champ hidden avec la valeur actuelle du select
                 const currentValue = $frequencySelect.val();
                 $frequencyHidden.val(currentValue);
-                console.log('[PDF Builder] Synchronized hidden field with value:', currentValue);
             });
 
             // Synchroniser le champ hidden quand la valeur du select change
@@ -5375,7 +5260,6 @@
                 const $frequencyHidden = $('#systeme_auto_backup_frequency_hidden');
                 const newValue = $(this).val();
                 $frequencyHidden.val(newValue);
-                console.log('[PDF Builder] Select changed, synchronized hidden field with value:', newValue);
             });
 
             // Initialisation de l'état du select de fréquence au chargement de la page
@@ -5384,11 +5268,6 @@
                 const $frequencySelect = $('#systeme_auto_backup_frequency');
                 const $frequencyHidden = $('#systeme_auto_backup_frequency_hidden');
                 const $frequencyRow = $('#auto_backup_frequency_row');
-
-                console.log('[PDF Builder] Page loaded - initializing frequency controls');
-                console.log('[PDF Builder] Auto backup checkbox checked:', $autoBackupCheckbox.is(':checked'));
-                console.log('[PDF Builder] Frequency select value:', $frequencySelect.val());
-                console.log('[PDF Builder] Frequency hidden value:', $frequencyHidden.val());
 
                 if ($autoBackupCheckbox.is(':checked')) {
                     $frequencySelect.prop('disabled', false);
@@ -5401,7 +5280,6 @@
                 // Synchroniser le champ hidden avec le select au chargement
                 const selectValue = $frequencySelect.val() || 'daily';
                 $frequencyHidden.val(selectValue);
-                console.log('[PDF Builder] Initialized hidden field with value:', selectValue);
             });
 
         });
