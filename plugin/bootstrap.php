@@ -527,9 +527,11 @@ function pdf_builder_load_bootstrap()
     }
 
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1) - seulement si WooCommerce est actif
-    if (class_exists('WooCommerce') && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
-        \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
-    }
+    add_action('init', function() {
+        if (class_exists('WooCommerce') && class_exists('PDF_Builder\\Cache\\WooCommerceCache')) {
+            \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
+        }
+    });
 
     // CHARGER LES HOOKS AJAX ESSENTIELS TOUJOURS, MÊME EN MODE FALLBACK
     pdf_builder_register_essential_ajax_hooks();
