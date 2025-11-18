@@ -207,7 +207,12 @@ function pdf_builder_get_cache_metrics_ajax() {
             $cache_size = pdf_builder_get_folder_size($cache_dir);
         }
 
-        $metrics['cache_size'] = size_format($cache_size);
+        // Formater la taille intelligemment : Ko si < 1 Mo, sinon Mo
+        if ($cache_size < 1048576) { // 1 Mo = 1048576 bytes
+            $metrics['cache_size'] = round($cache_size / 1024, 1) . ' Ko';
+        } else {
+            $metrics['cache_size'] = size_format($cache_size);
+        }
 
         // 2. Nombre de transients actifs
         global $wpdb;

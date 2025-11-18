@@ -2134,7 +2134,12 @@
                                     if (is_dir($cache_dir)) {
                                         $cache_size = get_folder_size($cache_dir);
                                     }
-                                    echo size_format($cache_size);
+                                    // Afficher en Ko si < 1 Mo, sinon en Mo
+                                    if ($cache_size < 1048576) { // 1 Mo = 1048576 bytes
+                                        echo round($cache_size / 1024, 1) . ' Ko';
+                                    } else {
+                                        echo size_format($cache_size);
+                                    }
                                     ?>
                                 </div>
                                 <div style="color: #666; font-size: 12px;">Taille du cache</div>
