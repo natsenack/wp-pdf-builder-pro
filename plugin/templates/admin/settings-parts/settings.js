@@ -319,6 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Ajouter l'action AJAX
         formData.append('action', 'pdf_builder_save_settings');
         formData.append('nonce', pdf_builder_ajax.nonce);
+        formData.append('current_tab', 'all');
 
         // Collecter les données de tous les onglets
         collectGeneralSettings(formData);
@@ -486,7 +487,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function collectSecuriteSettings(formData) {
         // Collecter les données de l'onglet Sécurité
-        // Les paramètres de sécurité sont gérés individuellement
+
+        // Sécurité générale
+        const securityLevel = document.getElementById('security_level')?.value || 'medium';
+        const enableLogging = document.getElementById('enable_logging')?.checked || false;
+
+        formData.append('security_level', securityLevel);
+        formData.append('enable_logging', enableLogging ? '1' : '0');
+
+        // Paramètres RGPD
+        const gdprEnabled = document.getElementById('gdpr_enabled')?.checked || false;
+        const gdprConsentRequired = document.getElementById('gdpr_consent_required')?.checked || false;
+        const gdprDataRetention = document.getElementById('gdpr_data_retention')?.value || '2555';
+        const gdprAuditEnabled = document.getElementById('gdpr_audit_enabled')?.checked || false;
+        const gdprEncryptionEnabled = document.getElementById('gdpr_encryption_enabled')?.checked || false;
+
+        formData.append('gdpr_enabled', gdprEnabled ? '1' : '0');
+        formData.append('gdpr_consent_required', gdprConsentRequired ? '1' : '0');
+        formData.append('gdpr_data_retention', gdprDataRetention);
+        formData.append('gdpr_audit_enabled', gdprAuditEnabled ? '1' : '0');
+        formData.append('gdpr_encryption_enabled', gdprEncryptionEnabled ? '1' : '0');
+
+        // Types de consentement
+        const gdprConsentAnalytics = document.getElementById('gdpr_consent_analytics')?.checked || false;
+        const gdprConsentTemplates = document.getElementById('gdpr_consent_templates')?.checked || false;
+        const gdprConsentMarketing = document.getElementById('gdpr_consent_marketing')?.checked || false;
+
+        formData.append('gdpr_consent_analytics', gdprConsentAnalytics ? '1' : '0');
+        formData.append('gdpr_consent_templates', gdprConsentTemplates ? '1' : '0');
+        formData.append('gdpr_consent_marketing', gdprConsentMarketing ? '1' : '0');
     }
 
     function collectPdfSettings(formData) {

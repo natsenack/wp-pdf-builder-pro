@@ -434,6 +434,143 @@ if ($is_ajax && isset($_POST['action'])) {
                     }
                     break;
 
+                case 'all':
+                    // Traitement de tous les paramètres (bouton flottant de sauvegarde)
+                    error_log('[DEBUG] Traitement de tous les paramètres (bouton flottant)');
+
+                    // Paramètres généraux
+                    if (isset($_POST['debug_mode'])) {
+                        update_option('pdf_builder_debug_mode', $_POST['debug_mode'] === '1');
+                    }
+                    if (isset($_POST['log_level'])) {
+                        update_option('pdf_builder_log_level', sanitize_text_field($_POST['log_level']));
+                    }
+
+                    // Paramètres cache
+                    if (isset($_POST['cache_enabled'])) {
+                        update_option('pdf_builder_cache_enabled', $_POST['cache_enabled'] === '1');
+                    }
+                    if (isset($_POST['cache_compression'])) {
+                        update_option('pdf_builder_cache_compression', $_POST['cache_compression'] === '1');
+                    }
+                    if (isset($_POST['cache_auto_cleanup'])) {
+                        update_option('pdf_builder_cache_auto_cleanup', $_POST['cache_auto_cleanup'] === '1');
+                    }
+                    if (isset($_POST['cache_max_size'])) {
+                        update_option('pdf_builder_cache_max_size', intval($_POST['cache_max_size']));
+                    }
+                    if (isset($_POST['cache_ttl'])) {
+                        update_option('pdf_builder_cache_ttl', intval($_POST['cache_ttl']));
+                    }
+
+                    // Paramètres système
+                    if (isset($_POST['systeme_auto_maintenance'])) {
+                        update_option('pdf_builder_auto_maintenance', $_POST['systeme_auto_maintenance'] === '1');
+                    }
+                    if (isset($_POST['systeme_auto_backup'])) {
+                        update_option('pdf_builder_auto_backup', $_POST['systeme_auto_backup'] === '1');
+                    }
+                    if (isset($_POST['systeme_backup_retention'])) {
+                        update_option('pdf_builder_backup_retention', intval($_POST['systeme_backup_retention']));
+                    }
+                    if (isset($_POST['systeme_auto_backup_frequency'])) {
+                        update_option('pdf_builder_auto_backup_frequency', sanitize_text_field($_POST['systeme_auto_backup_frequency']));
+                    }
+
+                    // Paramètres d'accès (rôles)
+                    if (isset($_POST['pdf_builder_allowed_roles']) && is_array($_POST['pdf_builder_allowed_roles'])) {
+                        update_option('pdf_builder_allowed_roles', $_POST['pdf_builder_allowed_roles']);
+                    }
+
+                    // Paramètres de sécurité
+                    if (isset($_POST['security_level'])) {
+                        update_option('pdf_builder_security_level', sanitize_text_field($_POST['security_level']));
+                    }
+                    if (isset($_POST['enable_logging'])) {
+                        update_option('pdf_builder_enable_logging', $_POST['enable_logging'] === '1');
+                    }
+                    if (isset($_POST['gdpr_enabled'])) {
+                        update_option('pdf_builder_gdpr_enabled', $_POST['gdpr_enabled'] === '1');
+                    }
+                    if (isset($_POST['gdpr_consent_required'])) {
+                        update_option('pdf_builder_gdpr_consent_required', $_POST['gdpr_consent_required'] === '1');
+                    }
+                    if (isset($_POST['gdpr_data_retention'])) {
+                        update_option('pdf_builder_gdpr_data_retention', intval($_POST['gdpr_data_retention']));
+                    }
+                    if (isset($_POST['gdpr_audit_enabled'])) {
+                        update_option('pdf_builder_gdpr_audit_enabled', $_POST['gdpr_audit_enabled'] === '1');
+                    }
+                    if (isset($_POST['gdpr_encryption_enabled'])) {
+                        update_option('pdf_builder_gdpr_encryption_enabled', $_POST['gdpr_encryption_enabled'] === '1');
+                    }
+                    if (isset($_POST['gdpr_consent_analytics'])) {
+                        update_option('pdf_builder_gdpr_consent_analytics', $_POST['gdpr_consent_analytics'] === '1');
+                    }
+                    if (isset($_POST['gdpr_consent_templates'])) {
+                        update_option('pdf_builder_gdpr_consent_templates', $_POST['gdpr_consent_templates'] === '1');
+                    }
+                    if (isset($_POST['gdpr_consent_marketing'])) {
+                        update_option('pdf_builder_gdpr_consent_marketing', $_POST['gdpr_consent_marketing'] === '1');
+                    }
+
+                    // Paramètres PDF
+                    if (isset($_POST['pdf_quality'])) {
+                        update_option('pdf_builder_pdf_quality', sanitize_text_field($_POST['pdf_quality']));
+                    }
+                    if (isset($_POST['pdf_page_size'])) {
+                        update_option('pdf_builder_pdf_page_size', sanitize_text_field($_POST['pdf_page_size']));
+                    }
+
+                    // Paramètres de contenu
+                    if (isset($_POST['default_template'])) {
+                        update_option('pdf_builder_default_template', sanitize_text_field($_POST['default_template']));
+                    }
+                    if (isset($_POST['template_library_enabled'])) {
+                        update_option('pdf_builder_template_library_enabled', $_POST['template_library_enabled'] === '1');
+                    }
+
+                    // Paramètres développeur
+                    if (isset($_POST['developer_enabled'])) {
+                        update_option('pdf_builder_developer_enabled', $_POST['developer_enabled'] === '1');
+                    }
+                    if (isset($_POST['developer_password'])) {
+                        update_option('pdf_builder_developer_password', sanitize_text_field($_POST['developer_password']));
+                    }
+                    if (isset($_POST['debug_php_errors'])) {
+                        update_option('pdf_builder_debug_php_errors', $_POST['debug_php_errors'] === '1');
+                    }
+                    if (isset($_POST['debug_javascript'])) {
+                        update_option('pdf_builder_debug_javascript', $_POST['debug_javascript'] === '1');
+                    }
+                    if (isset($_POST['debug_javascript_verbose'])) {
+                        update_option('pdf_builder_debug_javascript_verbose', $_POST['debug_javascript_verbose'] === '1');
+                    }
+                    if (isset($_POST['debug_ajax'])) {
+                        update_option('pdf_builder_debug_ajax', $_POST['debug_ajax'] === '1');
+                    }
+                    if (isset($_POST['debug_performance'])) {
+                        update_option('pdf_builder_debug_performance', $_POST['debug_performance'] === '1');
+                    }
+                    if (isset($_POST['debug_database'])) {
+                        update_option('pdf_builder_debug_database', $_POST['debug_database'] === '1');
+                    }
+                    if (isset($_POST['log_level'])) {
+                        update_option('pdf_builder_log_level', intval($_POST['log_level']));
+                    }
+                    if (isset($_POST['log_file_size'])) {
+                        update_option('pdf_builder_log_file_size', intval($_POST['log_file_size']));
+                    }
+                    if (isset($_POST['log_retention'])) {
+                        update_option('pdf_builder_log_retention', intval($_POST['log_retention']));
+                    }
+                    if (isset($_POST['force_https'])) {
+                        update_option('pdf_builder_force_https', $_POST['force_https'] === '1');
+                    }
+
+                    send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.');
+                    break;
+
                 default:
                     send_ajax_response(false, 'Onglet non reconnu: ' . $current_tab);
                     break;
@@ -507,6 +644,38 @@ if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_sav
                 update_option('pdf_builder_template_library_enabled', $_POST['template_library_enabled'] === '1');
             }
 
+            // Paramètres de sécurité
+            if (isset($_POST['security_level'])) {
+                update_option('pdf_builder_security_level', sanitize_text_field($_POST['security_level']));
+            }
+            if (isset($_POST['enable_logging'])) {
+                update_option('pdf_builder_enable_logging', $_POST['enable_logging'] === '1');
+            }
+            if (isset($_POST['gdpr_enabled'])) {
+                update_option('pdf_builder_gdpr_enabled', $_POST['gdpr_enabled'] === '1');
+            }
+            if (isset($_POST['gdpr_consent_required'])) {
+                update_option('pdf_builder_gdpr_consent_required', $_POST['gdpr_consent_required'] === '1');
+            }
+            if (isset($_POST['gdpr_data_retention'])) {
+                update_option('pdf_builder_gdpr_data_retention', intval($_POST['gdpr_data_retention']));
+            }
+            if (isset($_POST['gdpr_audit_enabled'])) {
+                update_option('pdf_builder_gdpr_audit_enabled', $_POST['gdpr_audit_enabled'] === '1');
+            }
+            if (isset($_POST['gdpr_encryption_enabled'])) {
+                update_option('pdf_builder_gdpr_encryption_enabled', $_POST['gdpr_encryption_enabled'] === '1');
+            }
+            if (isset($_POST['gdpr_consent_analytics'])) {
+                update_option('pdf_builder_gdpr_consent_analytics', $_POST['gdpr_consent_analytics'] === '1');
+            }
+            if (isset($_POST['gdpr_consent_templates'])) {
+                update_option('pdf_builder_gdpr_consent_templates', $_POST['gdpr_consent_templates'] === '1');
+            }
+            if (isset($_POST['gdpr_consent_marketing'])) {
+                update_option('pdf_builder_gdpr_consent_marketing', $_POST['gdpr_consent_marketing'] === '1');
+            }
+
             // Paramètres développeur
             if (isset($_POST['developer_enabled'])) {
                 update_option('pdf_builder_developer_enabled', $_POST['developer_enabled'] === '1');
@@ -559,6 +728,16 @@ if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_sav
                 'pdf_quality' => isset($_POST['pdf_quality']) ? sanitize_text_field($_POST['pdf_quality']) : 'high',
                 'default_format' => isset($_POST['pdf_quality']) ? sanitize_text_field($_POST['pdf_quality']) : 'high', // Note: devrait être default_format
                 'default_orientation' => 'portrait', // Valeur par défaut
+                'security_level' => isset($_POST['security_level']) ? sanitize_text_field($_POST['security_level']) : 'medium',
+                'enable_logging' => isset($_POST['enable_logging']) && $_POST['enable_logging'] === '1',
+                'gdpr_enabled' => isset($_POST['gdpr_enabled']) && $_POST['gdpr_enabled'] === '1',
+                'gdpr_consent_required' => isset($_POST['gdpr_consent_required']) && $_POST['gdpr_consent_required'] === '1',
+                'gdpr_data_retention' => isset($_POST['gdpr_data_retention']) ? intval($_POST['gdpr_data_retention']) : 2555,
+                'gdpr_audit_enabled' => isset($_POST['gdpr_audit_enabled']) && $_POST['gdpr_audit_enabled'] === '1',
+                'gdpr_encryption_enabled' => isset($_POST['gdpr_encryption_enabled']) && $_POST['gdpr_encryption_enabled'] === '1',
+                'gdpr_consent_analytics' => isset($_POST['gdpr_consent_analytics']) && $_POST['gdpr_consent_analytics'] === '1',
+                'gdpr_consent_templates' => isset($_POST['gdpr_consent_templates']) && $_POST['gdpr_consent_templates'] === '1',
+                'gdpr_consent_marketing' => isset($_POST['gdpr_consent_marketing']) && $_POST['gdpr_consent_marketing'] === '1',
                 'developer_enabled' => isset($_POST['developer_enabled']) && $_POST['developer_enabled'] === '1',
                 'developer_password' => isset($_POST['developer_password']) ? sanitize_text_field($_POST['developer_password']) : '',
                 'debug_php_errors' => isset($_POST['debug_php_errors']) && $_POST['debug_php_errors'] === '1',
