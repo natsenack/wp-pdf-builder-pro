@@ -353,6 +353,15 @@
                         error_log('[PDF Builder] === TRAITEMENT ONGLET SYSTEME ===');
                         error_log('[PDF Builder] Données POST reçues: ' . print_r($_POST, true));
 
+                        // DEBUG: Vérifier tous les champs commençant par "systeme_"
+                        $systeme_fields = [];
+                        foreach ($_POST as $key => $value) {
+                            if (strpos($key, 'systeme_') === 0) {
+                                $systeme_fields[$key] = $value;
+                            }
+                        }
+                        error_log('[PDF Builder] Champs systeme_ trouvés: ' . print_r($systeme_fields, true));
+
                         // Vérifier que toutes les données nécessaires sont présentes
                         $required_fields = ['systeme_cache_enabled', 'systeme_cache_expiry', 'systeme_max_cache_size', 'systeme_auto_maintenance', 'systeme_auto_backup', 'systeme_backup_retention'];
                         $missing_fields = [];
@@ -4830,6 +4839,12 @@
                         const hiddenValue = $frequencyHidden.val() || 'daily';
                         formData.append('systeme_auto_backup_frequency_hidden', hiddenValue);
                         console.log('[PDF Builder] Manually added hidden field to FormData:', hiddenValue);
+                    }
+
+                    // DEBUG: Afficher tout le contenu du FormData
+                    console.log('[PDF Builder] FormData contents:');
+                    for (let [key, value] of formData.entries()) {
+                        console.log(`  ${key}: ${value}`);
                     }
 
                     // S'assurer que les cases à cocher non cochées sont incluses
