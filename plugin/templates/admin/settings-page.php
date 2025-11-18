@@ -4860,7 +4860,6 @@
                                 // Mettre à jour l'indicateur actif/inactif du cache en temps réel
                                 if (currentTab === 'systeme') {
                                     const cacheEnabledValue = formData.get('cache_enabled') === '1';
-                                    console.log('[DEBUG] Mise à jour indicateur cache après sauvegarde:', cacheEnabledValue);
                                     updateCacheStatusIndicator(cacheEnabledValue);
                                 }
 
@@ -5356,11 +5355,13 @@
 
             // Fonction pour mettre à jour l'indicateur actif/inactif du cache
             function updateCacheStatusIndicator(isEnabled) {
-                console.log('[DEBUG] updateCacheStatusIndicator appelée avec:', isEnabled);
                 const $cacheStatusIcon = $('.systeme-cache-status .cache-enabled-indicator');
                 const $cacheStatusText = $('.systeme-cache-status .cache-enabled-text');
+                const $container = $('.systeme-cache-status');
 
-                console.log('[DEBUG] Éléments trouvés - Icon:', $cacheStatusIcon.length, 'Text:', $cacheStatusText.length);
+                console.log('[DEBUG] Container visible:', $container.is(':visible'));
+                console.log('[DEBUG] Container CSS display:', $container.css('display'));
+                console.log('[DEBUG] Avant mise à jour - Icon:', $cacheStatusIcon.html(), 'Text:', $cacheStatusText.text());
 
                 if (isEnabled) {
                     $cacheStatusIcon.html('✅').css('color', '#28a745');
@@ -5370,7 +5371,10 @@
                     $cacheStatusText.text('Cache désactivé');
                 }
 
-                console.log('[DEBUG] Indicateur mis à jour - Icon HTML:', $cacheStatusIcon.html(), 'Text:', $cacheStatusText.text());
+                console.log('[DEBUG] Après mise à jour - Icon:', $cacheStatusIcon.html(), 'Text:', $cacheStatusText.text());
+
+                // Forcer un re-render
+                $container.hide().show(0);
             }
 
             // Initialiser l'indicateur au chargement de la page
