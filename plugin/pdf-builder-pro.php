@@ -414,9 +414,6 @@ function pdf_builder_save_settings_ajax() {
     // Debug: Log que la fonction est appelée
     error_log('[DEBUG] pdf_builder_save_settings_ajax appelée');
 
-    // Debug: Log toutes les données POST reçues
-    error_log('[DEBUG] Données POST reçues: ' . print_r($_POST, true));
-
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
         error_log('[DEBUG] Nonce invalide');
@@ -613,7 +610,6 @@ function pdf_builder_save_settings_ajax() {
             break;
 
         case 'systeme':
-            error_log('[DEBUG] Processing systeme tab');
             // Sauvegarder les paramètres système (performance + maintenance + sauvegarde)
             $settings = array(
                 'cache_enabled' => $_POST['cache_enabled'] ?? '0',
@@ -629,10 +625,8 @@ function pdf_builder_save_settings_ajax() {
 
             foreach ($settings as $key => $value) {
                 update_option('pdf_builder_' . $key, $value);
-                error_log('[DEBUG] Saved option: pdf_builder_' . $key . ' = ' . $value);
             }
             $saved_count++;
-            error_log('[DEBUG] Systeme tab processed, saved_count: ' . $saved_count);
             break;
     }
 
