@@ -387,6 +387,11 @@
                         $backup_retention = intval($_POST['systeme_backup_retention']);
                         $auto_backup_frequency = isset($_POST['systeme_auto_backup_frequency']) ? sanitize_text_field($_POST['systeme_auto_backup_frequency']) : 'daily';
 
+                        // DEBUG: Log de la valeur reçue du formulaire
+                        if (defined('WP_DEBUG') && WP_DEBUG) {
+                            error_log('[PDF Builder] Form received - Auto backup: ' . $auto_backup . ', Frequency: ' . $auto_backup_frequency . ', Retention: ' . $backup_retention);
+                        }
+
                         // Validation de la fréquence
                         $valid_frequencies = array('daily', 'weekly', 'monthly');
                         if (!in_array($auto_backup_frequency, $valid_frequencies)) {
@@ -2408,10 +2413,17 @@
                             <td>
                                 <?php
                                 // S'assurer que l'option existe avec une valeur par défaut
-                                if (!get_option('pdf_builder_auto_backup_frequency')) {
+                                $stored_value = get_option('pdf_builder_auto_backup_frequency');
+                                if (empty($stored_value)) {
                                     update_option('pdf_builder_auto_backup_frequency', 'daily');
+                                    $stored_value = 'daily';
                                 }
-                                $current_frequency = get_option('pdf_builder_auto_backup_frequency', 'daily');
+                                $current_frequency = $stored_value;
+
+                                // DEBUG: Log de la valeur actuelle
+                                if (defined('WP_DEBUG') && WP_DEBUG) {
+                                    error_log('[PDF Builder] Select frequency - Stored value: ' . $stored_value . ', Current frequency: ' . $current_frequency);
+                                }
                                 ?>
                                 <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" style="min-width: 200px;">
                                     <option value="daily" <?php selected($current_frequency, 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
@@ -2436,6 +2448,15 @@
                             </td>
                         </tr>
                     </table>
+                </div>
+
+                <!-- Message d'aide pour la sauvegarde -->
+                <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 2px solid #f39c12; border-radius: 12px;">
+                    <h4 style="margin: 0 0 10px 0; color: #8b4513;">💡 Comment sauvegarder les paramètres ?</h4>
+                    <p style="margin: 0; color: #5d4e37; font-size: 14px;">
+                        Utilisez le bouton <strong style="color: #007cba;">"💾 Enregistrer"</strong> flottant en bas à droite de l'écran pour sauvegarder tous les paramètres système.
+                        Les modifications ne sont appliquées que lorsque vous cliquez sur ce bouton.
+                    </p>
                 </div>
             </form>
         </div>
