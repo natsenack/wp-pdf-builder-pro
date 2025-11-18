@@ -5364,6 +5364,21 @@
                 }
             });
 
+            // Mise à jour en temps réel de l'indicateur actif/inactif du cache
+            $('#cache_enabled').on('change', function() {
+                const isChecked = $(this).is(':checked');
+                const $cacheStatusIcon = $('.systeme-cache-status .cache-enabled-indicator');
+                const $cacheStatusText = $('.systeme-cache-status .cache-enabled-text');
+
+                if (isChecked) {
+                    $cacheStatusIcon.html('✅').css('color', '#28a745');
+                    $cacheStatusText.text('Cache activé');
+                } else {
+                    $cacheStatusIcon.html('❌').css('color', '#dc3545');
+                    $cacheStatusText.text('Cache désactivé');
+                }
+            });
+
             // Gestionnaire pour activer/désactiver le select de fréquence des sauvegardes automatiques
             $('#systeme_auto_backup').on('change', function() {
                 const $frequencySelect = $('#systeme_auto_backup_frequency');
