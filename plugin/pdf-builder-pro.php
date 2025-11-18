@@ -410,8 +410,12 @@ function pdf_builder_handle_pdf_downloads()
  * Handler AJAX pour sauvegarder les paramètres
  */
 function pdf_builder_save_settings_ajax() {
+    // Debug: Log que la fonction est appelée
+    error_log('[DEBUG] pdf_builder_save_settings_ajax appelée');
+
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+        error_log('[DEBUG] Nonce invalide');
         wp_send_json_error('Nonce invalide');
         return;
     }
