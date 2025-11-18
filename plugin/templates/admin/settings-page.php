@@ -1451,8 +1451,6 @@
                             </select>
                         </td>
                     </tr>
-                  </table>
-                </form>
             </section>
         </div>
         <div id="licence" class="tab-content hidden-tab">
@@ -2929,6 +2927,49 @@
         </div>
         <div id="pdf" class="tab-content hidden-tab">
             <h2>📄 Configuration PDF</h2>
+
+            <!-- Section Configuration PDF -->
+            <section class="general-section">
+                <h3>📄 Configuration PDF</h3>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_general_pdf_nonce'); ?>
+                    <input type="hidden" name="current_tab" value="general">
+
+                  <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="general_pdf_quality">Qualité PDF</label></th>
+                        <td>
+                            <select id="general_pdf_quality" name="pdf_quality">
+                                <option value="low" <?php selected($pdf_quality, 'low'); ?>>Faible (fichiers plus petits)</option>
+                                <option value="medium" <?php selected($pdf_quality, 'medium'); ?>>Moyen</option>
+                                <option value="high" <?php selected($pdf_quality, 'high'); ?>>Élevée (meilleure qualité)</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="default_format">Format PDF par défaut</label></th>
+                        <td>
+                            <select id="default_format" name="default_format">
+                                <option value="A4" <?php selected($default_format, 'A4'); ?>>A4</option>
+                                <option value="A3" <?php selected($default_format, 'A3'); ?>>A3</option>
+                                <option value="Letter" <?php selected($default_format, 'Letter'); ?>>Letter</option>
+                                <option value="Legal" <?php selected($default_format, 'Legal'); ?>>Legal</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="default_orientation">Orientation par défaut</label></th>
+                        <td>
+                            <select id="default_orientation" name="default_orientation">
+                                <option value="portrait" <?php selected($default_orientation, 'portrait'); ?>>Portrait</option>
+                                <option value="landscape" <?php selected($default_orientation, 'landscape'); ?>>Paysage</option>
+                            </select>
+                        </td>
+                    </tr>
+                  </table>
+                </form>
+            </section>
 
             <form method="post" action="">
                 <?php wp_nonce_field('pdf_builder_pdf', 'pdf_builder_pdf_nonce'); ?>
