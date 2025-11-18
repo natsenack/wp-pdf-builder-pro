@@ -349,4 +349,118 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
     // ✅ PDF_BUILDER_VERBOSE initialized in PDF_Builder_Admin.php via wp_add_inline_script()
 </script>
 <?php
+    // If this is an AJAX request that wasn't handled above, return error
+    if ($is_ajax) {
+        send_ajax_response(false, 'Requête AJAX non reconnue ou invalide.');
+    }
 ?>
+<div class="wrap">
+    <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
+
+    <?php foreach ($notices as $notice) {
+        echo $notice;
+    } ?>
+
+    <div class="nav-tab-wrapper wp-clearfix">
+        <a href="#general" class="nav-tab nav-tab-active" data-tab="general">
+            <span class="tab-icon">⚙️</span>
+            <span class="tab-text">Général</span>
+        </a>
+        <a href="#licence" class="nav-tab" data-tab="licence">
+            <span class="tab-icon">🔑</span>
+            <span class="tab-text">Licence</span>
+        </a>
+        <a href="#systeme" class="nav-tab" data-tab="systeme">
+            <span class="tab-icon">🔧</span>
+            <span class="tab-text">Système</span>
+        </a>
+        <a href="#acces" class="nav-tab" data-tab="acces">
+            <span class="tab-icon">👥</span>
+            <span class="tab-text">Accès</span>
+        </a>
+        <a href="#securite" class="nav-tab" data-tab="securite">
+            <span class="tab-icon">🔒</span>
+            <span class="tab-text">Sécurité & Conformité</span>
+        </a>
+        <a href="#pdf" class="nav-tab" data-tab="pdf">
+            <span class="tab-icon">📄</span>
+            <span class="tab-text">PDF</span>
+        </a>
+        <a href="#contenu" class="nav-tab" data-tab="contenu">
+            <span class="tab-icon">📝</span>
+            <span class="tab-text">Contenu</span>
+        </a>
+        <a href="#developpeur" class="nav-tab" data-tab="developpeur">
+            <span class="tab-icon">👨‍💻</span>
+            <span class="tab-text">Développeur</span>
+        </a>
+    </div>
+
+    <!-- Tab Content Containers -->
+    <div id="general" class="tab-content active">
+        <?php require_once 'settings-general.php'; ?>
+    </div>
+
+    <div id="licence" class="tab-content">
+        <?php require_once 'settings-licence.php'; ?>
+    </div>
+
+    <div id="systeme" class="tab-content">
+        <?php require_once 'settings-systeme.php'; ?>
+    </div>
+
+    <div id="acces" class="tab-content">
+        <?php require_once 'settings-acces.php'; ?>
+    </div>
+
+    <div id="securite" class="tab-content">
+        <?php require_once 'settings-securite.php'; ?>
+    </div>
+
+    <div id="pdf" class="tab-content">
+        <?php require_once 'settings-pdf.php'; ?>
+    </div>
+
+    <div id="contenu" class="tab-content">
+        <?php require_once 'settings-contenu.php'; ?>
+    </div>
+
+    <div id="developpeur" class="tab-content">
+        <?php require_once 'settings-developpeur.php'; ?>
+    </div>
+
+    <!-- Modals -->
+    <?php require_once 'settings-modals.php'; ?>
+
+    <!-- Floating Save Button -->
+    <div id="floating-save-button" style="display: none;">
+        <button type="button" class="floating-save-btn" id="floating-save-btn">
+            💾 Sauvegarder
+        </button>
+        <div class="floating-tooltip">Cliquez pour sauvegarder tous les paramètres</div>
+    </div>
+</div>
+
+<script>
+// Tab switching functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.nav-tab');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('nav-tab-active'));
+            // Add active class to clicked tab
+            this.classList.add('nav-tab-active');
+
+            // Hide all tab contents
+            contents.forEach(c => c.classList.remove('active'));
+            // Show corresponding tab content
+            const target = this.getAttribute('href').substring(1);
+            document.getElementById(target).classList.add('active');
+        });
+    });
+</script>

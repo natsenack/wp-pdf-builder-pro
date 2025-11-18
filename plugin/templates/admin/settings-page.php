@@ -33,5 +33,6 @@ require_once $settings_parts_dir . 'settings-developpeur.php';
 
 // Include modal components
 require_once $settings_parts_dir . 'settings-modals.php';
-?></content>
-<parameter name="filePath">i:\wp-pdf-builder-pro\plugin\templates\admin\settings-page-new.php
+
+// Now include the main HTML structure
+require_once $settings_parts_dir . 'settings-main.php';
