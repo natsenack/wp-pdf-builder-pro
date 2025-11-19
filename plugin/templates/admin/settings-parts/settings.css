@@ -618,21 +618,21 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
 @media (max-width: 480px) {
     .canvas-settings-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
 
     .canvas-card {
-        padding: 12px;
+        padding: 10px;
     }
 
     .canvas-card-header h4 {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .canvas-card-content p {
-        font-size: 13px;
-        line-height: 1.4;
+        font-size: 12px;
+        line-height: 1.3;
     }
 }
 
