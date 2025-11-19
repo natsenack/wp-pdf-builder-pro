@@ -373,8 +373,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const target = this.getAttribute('href').substring(1);
             document.getElementById(target).classList.add('active');
 
-            // Update URL hash
-            window.location.hash = target;
+            // Update URL hash without scrolling
+            history.replaceState(null, null, '#' + target);
         });
     });
 
