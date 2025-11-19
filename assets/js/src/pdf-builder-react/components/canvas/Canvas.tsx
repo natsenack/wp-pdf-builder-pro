@@ -1141,6 +1141,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
+  console.log('Canvas render - canvasSettings:', canvasSettings);
+
   // État pour le menu contextuel
   const [contextMenu, setContextMenu] = React.useState<{
     isVisible: boolean;
@@ -2467,6 +2469,15 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     // Silent initialization
   }, []);
 
+  // Calculate border style based on canvas settings
+  const borderStyle = isDragOver 
+    ? '2px solid #007acc' 
+    : (canvasSettings.borderWidth && canvasSettings.borderWidth > 0) 
+      ? `${canvasSettings.borderWidth}px solid ${canvasSettings.borderColor || '#cccccc'}` 
+      : 'none';
+  
+  console.log('Canvas borderStyle:', borderStyle, 'borderWidth:', canvasSettings.borderWidth, 'borderColor:', canvasSettings.borderColor);
+
   return (
     <>
       <canvas
@@ -2483,11 +2494,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         style={{
-          border: isDragOver 
-            ? '2px solid #007acc' 
-            : (canvasSettings.borderWidth && canvasSettings.borderWidth > 0) 
-              ? `${canvasSettings.borderWidth}px solid ${canvasSettings.borderColor || '#cccccc'}` 
-              : 'none',
+          border: borderStyle,
           cursor: 'crosshair',
           backgroundColor: '#ffffff',
           transition: 'border-color 0.2s ease'
