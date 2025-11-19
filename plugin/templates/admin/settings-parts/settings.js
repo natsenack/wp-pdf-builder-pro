@@ -29,21 +29,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (checkbox && settings[settingKey] !== undefined) {
                 const shouldBeChecked = settings[settingKey] === true || settings[settingKey] === '1';
+                const parentElement = checkbox.parentElement;
                 
-                // Mettre à jour à la fois la propriété JavaScript et l'attribut HTML
+                // Mettre à jour l'état de la checkbox
                 checkbox.checked = shouldBeChecked;
+                
+                // Mettre à jour les attributs et classes
                 if (shouldBeChecked) {
                     checkbox.setAttribute('checked', 'checked');
-                    checkbox.parentElement.classList.add('checked');
+                    parentElement.classList.add('checked');
                 } else {
                     checkbox.removeAttribute('checked');
-                    checkbox.parentElement.classList.remove('checked');
+                    parentElement.classList.remove('checked');
                 }
                 
-                // Forcer la mise à jour visuelle avec un petit délai pour la transition CSS
-                setTimeout(() => {
-                    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-                }, 50);
+                // Forcer un reflow pour déclencher l'animation CSS
+                parentElement.offsetHeight;
+                
+                // Déclencher l'événement change pour les autres listeners
+                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
             }
         });
     }

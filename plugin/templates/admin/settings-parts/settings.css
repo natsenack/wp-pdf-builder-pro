@@ -1155,6 +1155,10 @@ input:checked + .toggle-slider:before {
 }
 
 /* Support pour la classe checked en plus de :checked */
+.toggle-switch.checked .toggle-slider {
+    background-color: #2271b1;
+}
+
 .toggle-switch.checked input + .toggle-slider:before {
     transform: translateX(26px);
 }
