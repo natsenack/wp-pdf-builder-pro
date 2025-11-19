@@ -11,18 +11,15 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mapping des paramètres vers les IDs des checkboxes
         const checkboxMappings = {
             'shadow_enabled': 'canvas_shadow_enabled',
-            'grid_enabled': 'canvas_grid_enabled',
-            'guides_enabled': 'canvas_guides_enabled',
+            'show_grid': 'canvas_grid_enabled',
+            'show_guides': 'canvas_guides_enabled',
             'snap_to_grid': 'canvas_snap_to_grid',
-            'pan_enabled': 'canvas_pan_enabled',
-            'drag_enabled': 'canvas_drag_enabled',
-            'resize_enabled': 'canvas_resize_enabled',
-            'rotate_enabled': 'canvas_rotate_enabled',
+            'pan_with_mouse': 'canvas_pan_enabled',
+            'show_resize_handles': 'canvas_resize_enabled',
+            'enable_rotation': 'canvas_rotate_enabled',
             'multi_select': 'canvas_multi_select',
-            'keyboard_shortcuts': 'canvas_keyboard_shortcuts',
-            'auto_save': 'canvas_auto_save',
-            'export_transparent': 'canvas_export_transparent',
-            'lazy_loading': 'canvas_lazy_loading'
+            'enable_keyboard_shortcuts': 'canvas_keyboard_shortcuts',
+            'auto_save_enabled': 'canvas_auto_save'
         };
 
         // Mettre à jour chaque checkbox
