@@ -766,26 +766,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 3000);
             }
         });
-        .catch(error => {
-            console.error('Erreur lors de la sauvegarde:', error);
-            saveBtn.classList.remove('saving');
-            saveBtn.classList.add('error');
-            saveBtn.textContent = '❌ Erreur';
-
-            setTimeout(() => {
-                saveBtn.classList.remove('error');
-                saveBtn.textContent = '💾 Sauvegarder';
-                saveBtn.disabled = false;
-            }, 3000);
-        });
-            saveBtn.textContent = '❌ Erreur';
-
-            setTimeout(() => {
-                saveBtn.classList.remove('error');
-                saveBtn.textContent = '💾 Sauvegarder';
-                saveBtn.disabled = false;
-        });
-    }
 
     // Fonction pour mettre à jour les badges de statut après sauvegarde
     function updateStatusBadges() {
