@@ -298,9 +298,32 @@ class PDF_Builder_GDPR_Manager {
             margin-bottom: 15px;
         }
 
-        .header .date {
-            color: #6c757d;
-            font-size: 0.9em;
+        .header .actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .print-button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .print-button:hover {
+            background: #005a87;
+        }
+
+        .print-button:active {
+            background: #004c6d;
         }
 
         .user-info {
@@ -504,17 +527,45 @@ class PDF_Builder_GDPR_Manager {
                 align-items: center;
             }
         }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: none;
+            }
+
+            .header .actions {
+                display: none;
+            }
+
+            .footer-links {
+                display: none;
+            }
+
+            .print-button {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
         <div class="container">
-            <div class="header">
-                <h1>Mes Données Personnelles</h1>
-                <div class="subtitle">Export RGPD - Document officiel</div>
-                <div class="date">Généré le ' . $export_date . '</div>
+        <div class="header">
+            <h1>Mes Données Personnelles</h1>
+            <div class="subtitle">Export RGPD - Document officiel</div>
+            <div class="date">Généré le ' . $export_date . '</div>
+            <div class="actions">
+                <button onclick="window.print()" class="print-button">
+                    🖨️ Imprimer le document
+                </button>
             </div>
-
-            <div class="user-info">
+        </div>            <div class="user-info">
                 <div class="user-info-item">
                     <div class="user-info-label">Utilisateur</div>
                     <div class="user-info-value">' . esc_html($user_info->display_name) . '</div>
