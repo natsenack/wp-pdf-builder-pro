@@ -96,27 +96,6 @@
                                         wp_upload_dir()['basedir'] . '/pdf-builder-cache'
                                     ];
 
-                                    // Debug temporaire
-                                    echo "<!-- DEBUG Cache:\n";
-                                    foreach ($cache_dirs as $cache_dir) {
-                                        echo "Cache dir: $cache_dir\n";
-                                        echo "is_dir: " . (is_dir($cache_dir) ? 'YES' : 'NO') . "\n";
-                                        if (is_dir($cache_dir)) {
-                                            echo "is_readable: " . (is_readable($cache_dir) ? 'YES' : 'NO') . "\n";
-                                            $files = scandir($cache_dir);
-                                            echo "Files in dir: " . count($files) . "\n";
-                                            foreach ($files as $file) {
-                                                if ($file != '.' && $file != '..') {
-                                                    echo "  - $file\n";
-                                                }
-                                            }
-                                            $cache_size += pdf_builder_get_folder_size($cache_dir);
-                                            echo "Size added: " . pdf_builder_get_folder_size($cache_dir) . " bytes\n";
-                                        }
-                                    }
-                                    echo "Total calculated size: $cache_size bytes\n";
-                                    echo "-->";
-
                                     // Afficher la taille avec l'unité appropriée et décimales
                                     echo '<span id="cache-size-display">';
                                     if ($cache_size < 1048576) { // < 1 Mo
@@ -265,11 +244,6 @@
                                     $stored_value = 'daily';
                                 }
                                 $current_frequency = $stored_value;
-
-                                // DEBUG: Log de la valeur actuelle
-                                if (defined('WP_DEBUG') && WP_DEBUG) {
-
-                                }
                                 ?>
                                 <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" style="min-width: 200px;" <?php echo (get_option('pdf_builder_auto_backup', '0') === '0') ? 'disabled' : ''; ?>>
                                     <option value="daily" <?php selected($current_frequency, 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
