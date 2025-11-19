@@ -1589,4 +1589,53 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+
+    // Synchronisation automatique des paramètres de grille dans les modals
+    function setupGridSynchronization() {
+        const gridEnabledCheckbox = document.getElementById('canvas_grid_enabled');
+        const gridSizeInput = document.getElementById('canvas_grid_size');
+        const snapToGridCheckbox = document.getElementById('canvas_snap_to_grid');
+        const snapToGridToggle = snapToGridCheckbox ? snapToGridCheckbox.closest('.toggle-switch') : null;
+
+        if (gridEnabledCheckbox) {
+            gridEnabledCheckbox.addEventListener('change', function() {
+                const isEnabled = this.checked;
+                
+                // Désactiver/activer les contrôles dépendants
+                if (gridSizeInput) {
+                    gridSizeInput.disabled = !isEnabled;
+                    if (!isEnabled) {
+                        gridSizeInput.value = '0';
+                    } else if (gridSizeInput.value === '0') {
+                        gridSizeInput.value = '20'; // Valeur par défaut
+                    }
+                }
+                
+                if (snapToGridCheckbox && snapToGridToggle) {
+                    snapToGridCheckbox.disabled = !isEnabled;
+                    if (isEnabled) {
+                        snapToGridToggle.classList.remove('disabled');
+                    } else {
+                        snapToGridToggle.classList.add('disabled');
+                        snapToGridCheckbox.checked = false;
+                    }
+                }
+            });
+
+            // Appliquer l'état initial
+            gridEnabledCheckbox.dispatchEvent(new Event('change'));
+        }
+    }
+
+    // Initialiser la synchronisation quand le modal de grille est ouvert
+    const grilleCard = document.querySelector('.canvas-card[data-category="grille"]');
+    if (grilleCard) {
+        grilleCard.addEventListener('click', function() {
+            // Attendre que le modal soit ouvert avant d'initialiser
+            setTimeout(setupGridSynchronization, 100);
+        });
+    }
+
+    // Aussi initialiser au chargement de la page si le modal est déjà ouvert
+    setupGridSynchronization();
 });

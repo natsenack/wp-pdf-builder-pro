@@ -181,7 +181,7 @@
                         <tr>
                             <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
                             <td>
-                                <input type="number" id="canvas_grid_size" name="canvas_grid_size" value="<?php echo intval(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100" />
+                                <input type="number" id="canvas_grid_size" name="canvas_grid_size" value="<?php echo intval(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100" <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?> />
                             </td>
                         </tr>
                         <tr>
@@ -196,8 +196,8 @@
                         <tr>
                             <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
                             <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', '1'), '1'); ?>>
+                                <label class="toggle-switch <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?>">
+                                    <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', '1'), '1'); ?> <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>

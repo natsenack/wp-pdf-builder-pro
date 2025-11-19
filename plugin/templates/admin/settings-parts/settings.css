@@ -1173,6 +1173,12 @@ input:checked + .toggle-slider:before {
     background-color: #d63384;
 }
 
+/* Classe pour désactiver visuellement les toggles */
+.toggle-switch.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 /* Animation au survol */
 .toggle-slider:hover {
     box-shadow: 0 0 8px rgba(34, 113, 177, 0.3);
