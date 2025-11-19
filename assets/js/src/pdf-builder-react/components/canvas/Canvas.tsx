@@ -769,8 +769,8 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element, canvas
 
   const currentTheme = themes[theme] || themes.corporate;
 
-  // Utiliser les couleurs depuis les paramètres canvas, sinon utiliser les props ou le thème
-  const bgColor = normalizeColor(canvasSettings.canvasBackgroundColor || props.backgroundColor || currentTheme.backgroundColor);
+  // Utiliser les couleurs depuis les props de l'élément ou le thème (PAS les paramètres canvas globaux)
+  const bgColor = normalizeColor(props.backgroundColor || currentTheme.backgroundColor);
   const borderCol = normalizeColor(props.borderColor || currentTheme.borderColor);
   const txtColor = normalizeColor(props.textColor || currentTheme.textColor);
   const headerTxtColor = normalizeColor(props.headerTextColor || currentTheme.headerTextColor);
@@ -2301,8 +2301,9 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       return;
     }
 
-    // Clear canvas with white background (matching PDF background)
-    ctx.fillStyle = '#ffffff';
+    // Clear canvas with background color from settings (matching PDF background)
+    const canvasBgColor = normalizeColor(canvasSettings.canvasBackgroundColor || '#ffffff');
+    ctx.fillStyle = canvasBgColor;
     ctx.fillRect(0, 0, width, height);
 
     // DEBUG: Log elements
