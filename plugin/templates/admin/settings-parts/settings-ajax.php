@@ -154,6 +154,9 @@ function pdf_builder_save_settings_handler() {
                 }
 
                 // Paramètres PDF
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('[DEBUG] AJAX save_settings - pdf fields: ' . print_r(array_intersect_key($_POST, array_flip(['pdf_quality','pdf_page_size','pdf_orientation','pdf_cache_enabled','pdf_compression','pdf_metadata_enabled','pdf_print_optimized'])), true));
+                }
                 if (isset($_POST['pdf_quality'])) {
                     update_option('pdf_builder_pdf_quality', sanitize_text_field($_POST['pdf_quality']));
                 }
