@@ -155,32 +155,25 @@ function pdf_builder_save_settings_handler() {
 
                 // Paramètres PDF
                 if (isset($_POST['pdf_quality'])) {
-                    $result = update_option('pdf_builder_pdf_quality', sanitize_text_field($_POST['pdf_quality']));
-                    if (!$result) error_log('[DEBUG] Failed to update pdf_quality');
+                    update_option('pdf_builder_pdf_quality', sanitize_text_field($_POST['pdf_quality']));
                 }
                 if (isset($_POST['pdf_page_size'])) {
-                    $result = update_option('pdf_builder_pdf_page_size', sanitize_text_field($_POST['pdf_page_size']));
-                    if (!$result) error_log('[DEBUG] Failed to update pdf_page_size');
+                    update_option('pdf_builder_pdf_page_size', sanitize_text_field($_POST['pdf_page_size']));
                 }
                 if (isset($_POST['pdf_orientation'])) {
-                    $result = update_option('pdf_builder_pdf_orientation', sanitize_text_field($_POST['pdf_orientation']));
-                    if (!$result) error_log('[DEBUG] Failed to update pdf_orientation');
+                    update_option('pdf_builder_pdf_orientation', sanitize_text_field($_POST['pdf_orientation']));
                 }
                 if (isset($_POST['pdf_cache_enabled'])) {
-                    $result = update_option('pdf_builder_pdf_cache_enabled', $_POST['pdf_cache_enabled'] === '1');
-                    if (!$result) error_log('[DEBUG] Failed to update pdf_cache_enabled');
+                    update_option('pdf_builder_pdf_cache_enabled', $_POST['pdf_cache_enabled'] === '1');
                 }
                 if (isset($_POST['pdf_compression'])) {
-                    $result = update_option('pdf_builder_pdf_compression', sanitize_text_field($_POST['pdf_compression']));
-                    if (!$result) error_log('[DEBUG] Failed to update pdf_compression');
+                    update_option('pdf_builder_pdf_compression', sanitize_text_field($_POST['pdf_compression']));
                 }
                 if (isset($_POST['pdf_metadata_enabled'])) {
-                    $result = update_option('pdf_builder_pdf_metadata_enabled', $_POST['pdf_metadata_enabled'] === '1');
-                    if (!$result) error_log('[DEBUG] Failed to update pdf_metadata_enabled');
+                    update_option('pdf_builder_pdf_metadata_enabled', $_POST['pdf_metadata_enabled'] === '1');
                 }
                 if (isset($_POST['pdf_print_optimized'])) {
-                    $result = update_option('pdf_builder_pdf_print_optimized', $_POST['pdf_print_optimized'] === '1');
-                    if (!$result) error_log('[DEBUG] Failed to update pdf_print_optimized');
+                    update_option('pdf_builder_pdf_print_optimized', $_POST['pdf_print_optimized'] === '1');
                 }
 
                 // Paramètres de contenu
@@ -191,7 +184,6 @@ function pdf_builder_save_settings_handler() {
                     update_option('pdf_builder_template_library_enabled', $_POST['template_library_enabled'] === '1');
                 }
 
-                error_log('[DEBUG] About to send success response');
                 send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.');
                 break;
 

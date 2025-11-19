@@ -2406,6 +2406,14 @@ class PdfBuilderAdmin
             }
 
             $html_content = $this->generateUnifiedHtml($template_data, $order);
+        // Récupérer les paramètres PDF depuis les options
+            $pdf_quality = get_option('pdf_builder_pdf_quality', 'high');
+            $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
+            $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
+            $pdf_compression = get_option('pdf_builder_pdf_compression', 'medium');
+            $pdf_metadata_enabled = get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
+            $pdf_print_optimized = get_option('pdf_builder_pdf_print_optimized', '1') === '1';
+
         // Utiliser Dompdf pour générer le PDF
             require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 
@@ -2414,8 +2422,44 @@ class PdfBuilderAdmin
                 $dompdf->set_option('isRemoteEnabled', true);
                 $dompdf->set_option('isHtml5ParserEnabled', true);
                 $dompdf->set_option('defaultFont', 'Arial');
+
+                // Appliquer les paramètres de qualité
+                switch ($pdf_quality) {
+                    case 'low':
+                        $dompdf->set_option('dpi', 72);
+                        $dompdf->set_option('defaultMediaType', 'screen');
+                        break;
+                    case 'medium':
+                        $dompdf->set_option('dpi', 96);
+                        $dompdf->set_option('defaultMediaType', 'screen');
+                        break;
+                    case 'high':
+                    default:
+                        $dompdf->set_option('dpi', 150);
+                        $dompdf->set_option('defaultMediaType', 'print');
+                        break;
+                }
+
+                // Appliquer la compression
+                if ($pdf_compression === 'high') {
+                    $dompdf->set_option('compress', true);
+                } elseif ($pdf_compression === 'low') {
+                    $dompdf->set_option('compress', false);
+                } // medium = default
+
+                // Métadonnées
+                if ($pdf_metadata_enabled) {
+                    $dompdf->set_option('enable_remote', true);
+                    // Les métadonnées peuvent être ajoutées via des options supplémentaires si nécessaire
+                }
+
+                // Optimisation pour l'impression
+                if ($pdf_print_optimized) {
+                    $dompdf->set_option('defaultMediaType', 'print');
+                }
+
                 $dompdf->loadHtml($html_content);
-                $dompdf->setPaper('A4', 'portrait');
+                $dompdf->setPaper($pdf_page_size, $pdf_orientation);
                 $dompdf->render();
                 file_put_contents($pdf_path, $dompdf->output());
                 return $pdf_path;

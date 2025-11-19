@@ -79,11 +79,16 @@ class PdfBuilderPreviewGenerator
     private function initDompdf()
     {
         require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
+
+        // Récupérer les paramètres PDF depuis les options pour la prévisualisation
+        $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
+        $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
+
         $this->dompdf = new Dompdf\Dompdf();
         $this->dompdf->set_option('isRemoteEnabled', true);
         $this->dompdf->set_option('isHtml5ParserEnabled', true);
         $this->dompdf->set_option('defaultFont', 'Arial');
-        $this->dompdf->setPaper('A4', 'portrait');
+        $this->dompdf->setPaper($pdf_page_size, $pdf_orientation);
     }
 
     /**

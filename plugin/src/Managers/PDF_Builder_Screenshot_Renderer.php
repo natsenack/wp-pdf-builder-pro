@@ -297,6 +297,10 @@ class PdfBuilderScreenshotRenderer
         try {
             require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
 
+            // Récupérer les paramètres PDF depuis les options
+            $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
+            $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
+
             $dompdf = new Dompdf\Dompdf();
             $dompdf->set_option('isRemoteEnabled', true);
             $dompdf->set_option('isHtml5ParserEnabled', true);
@@ -305,7 +309,7 @@ class PdfBuilderScreenshotRenderer
             // Lire le HTML et l'ajouter au PDF
             $html_content = file_get_contents($html_file);
             $dompdf->loadHtml($html_content);
-            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->setPaper($pdf_page_size, $pdf_orientation);
             $dompdf->render();
 
             file_put_contents($pdf_path, $dompdf->output());
