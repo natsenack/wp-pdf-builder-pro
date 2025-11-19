@@ -743,6 +743,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Mettre à jour les badges de statut en temps réel
                 updateStatusBadges();
 
+                console.log('Paramètres sauvegardés. Rechargez la page pour voir les changements appliqués.');
+
                 // Changer l'état du bouton à sauvegardé
                 saveBtn.classList.remove('saving');
                 saveBtn.classList.add('saved');
