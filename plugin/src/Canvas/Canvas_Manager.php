@@ -445,6 +445,7 @@ JS;
             'container_show_transparency' => 'pdf_builder_canvas_container_show_transparency',
             'border_color' => 'pdf_builder_canvas_border_color',
             'border_width' => 'pdf_builder_canvas_border_width',
+            'shadow_enabled' => 'pdf_builder_canvas_shadow_enabled',
             'margin_top' => 'pdf_builder_canvas_margin_top',
             'margin_right' => 'pdf_builder_canvas_margin_right',
             'margin_bottom' => 'pdf_builder_canvas_margin_bottom',
