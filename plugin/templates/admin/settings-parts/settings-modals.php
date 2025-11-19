@@ -9,6 +9,12 @@
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
             </div>
             <div class="canvas-modal-body">
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
+                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                        <strong>💡 Comment ça marche :</strong> Ces paramètres définissent la taille, l'orientation et la qualité du document PDF généré. 
+                        Le format A4 est actuellement supporté, d'autres formats arrivent bientôt.
+                    </p>
+                </div>
                 <form id="canvas-dimensions-form">
                     <table class="form-table">
                         <tr>
@@ -22,6 +28,7 @@
                                     <option value="Legal" disabled <?php selected(get_option('pdf_builder_canvas_format', 'A4'), 'Legal'); ?>>Legal (8.5×14") - soon</option>
                                     <option value="Tabloid" disabled <?php selected(get_option('pdf_builder_canvas_format', 'A4'), 'Tabloid'); ?>>Tabloid (11×17") - soon</option>
                                 </select>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Taille standard du document PDF (A4 disponible)</p>
                             </td>
                         </tr>
                         <tr>
@@ -31,6 +38,7 @@
                                     <option value="portrait" <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
                                     <option value="landscape" disabled <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'landscape'); ?>>Paysage - soon</option>
                                 </select>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Orientation verticale du document</p>
                             </td>
                         </tr>
                         <tr>
@@ -41,6 +49,7 @@
                                     <option value="150" <?php selected(get_option('pdf_builder_canvas_dpi', 150), '150'); ?>>150 DPI (Impression)</option>
                                     <option value="300" <?php selected(get_option('pdf_builder_canvas_dpi', 150), '300'); ?>>300 DPI (Haute qualité)</option>
                                 </select>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Qualité d'impression (plus élevé = meilleure qualité)</p>
                             </td>
                         </tr>
                         <tr>
@@ -99,6 +108,12 @@
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
             </div>
             <div class="canvas-modal-body">
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
+                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                        <strong>💡 Comment ça marche :</strong> Ces paramètres contrôlent l'apparence visuelle du canvas de conception et de l'interface d'édition. 
+                        Personnalisez les couleurs et les effets pour un meilleur confort de travail.
+                    </p>
+                </div>
 <?php
 /**
  * Paramètres canvas pour les modales
@@ -115,18 +130,21 @@
                             <th scope="row"><label for="canvas_bg_color">Couleur de fond du canvas</label></th>
                             <td>
                                 <input type="color" id="canvas_bg_color" name="canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>" />
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Couleur d'arrière-plan de la zone de conception</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_border_color">Couleur des bordures</label></th>
                             <td>
                                 <input type="color" id="canvas_border_color" name="canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_color', '#cccccc')); ?>" />
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Couleur des bordures autour du canvas</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_border_width">Épaisseur des bordures (px)</label></th>
                             <td>
                                 <input type="number" id="canvas_border_width" name="canvas_border_width" value="<?php echo intval(get_option('pdf_builder_canvas_border_width', 1)); ?>" min="0" max="10" />
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Épaisseur des bordures en pixels (0 = aucune)</p>
                             </td>
                         </tr>
                         <tr>
@@ -136,6 +154,7 @@
                                     <input type="checkbox" id="canvas_shadow_enabled" name="canvas_shadow_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_shadow_enabled', '0'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Ajoute une ombre portée au canvas</p>
                             </td>
                         </tr>
                     </table>
@@ -146,6 +165,7 @@
                             <th scope="row"><label for="canvas_container_bg_color">Arrière-plan de l'éditeur</label></th>
                             <td>
                                 <input type="color" id="canvas_container_bg_color" name="canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa')); ?>" />
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Couleur de fond de l'interface d'édition</p>
                             </td>
                         </tr>
                     </table>
