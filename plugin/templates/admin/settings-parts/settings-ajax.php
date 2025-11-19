@@ -351,15 +351,66 @@ function pdf_builder_save_canvas_settings_handler() {
             }
 
             // Convertir les checkboxes
-            $checkboxes = ['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_pan_enabled', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts', 'canvas_auto_save'];
+            $checkboxes = ['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_pan_enabled', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts', 'canvas_auto_save', 'canvas_export_transparent', 'canvas_lazy_loading'];
             foreach ($checkboxes as $checkbox) {
                 if (isset($_POST[$checkbox])) {
                     $settings[str_replace('canvas_', '', $checkbox)] = $_POST[$checkbox] === '1' ? 1 : 0;
                 }
             }
 
+            // Traiter les selects
+            $selects = ['canvas_selection_mode', 'canvas_export_format'];
+            foreach ($selects as $select) {
+                if (isset($_POST[$select])) {
+                    $settings[str_replace('canvas_', '', $select)] = sanitize_text_field($_POST[$select]);
+                }
+            }
+
+            // Traiter les nombres
+            $numbers = ['canvas_export_quality', 'canvas_fps_target', 'canvas_memory_limit'];
+            foreach ($numbers as $number) {
+                if (isset($_POST[$number])) {
+                    $settings[str_replace('canvas_', '', $number)] = intval($_POST[$number]);
+                }
+            }
+
             $saved = $canvas_manager->saveSettings($settings);
             if ($saved) {
+                // Synchroniser avec les options séparées pour cohérence avec les modales
+                $option_mappings = [
+                    'canvas_background_color' => 'pdf_builder_canvas_bg_color',
+                    'border_color' => 'pdf_builder_canvas_border_color',
+                    'border_width' => 'pdf_builder_canvas_border_width',
+                    'shadow_enabled' => 'pdf_builder_canvas_shadow_enabled',
+                    'show_grid' => 'pdf_builder_canvas_grid_enabled',
+                    'grid_size' => 'pdf_builder_canvas_grid_size',
+                    'show_guides' => 'pdf_builder_canvas_guides_enabled',
+                    'snap_to_grid' => 'pdf_builder_canvas_snap_to_grid',
+                    'min_zoom' => 'pdf_builder_canvas_zoom_min',
+                    'max_zoom' => 'pdf_builder_canvas_zoom_max',
+                    'default_zoom' => 'pdf_builder_canvas_zoom_default',
+                    'pan_with_mouse' => 'pdf_builder_canvas_pan_enabled',
+                    'drag_enabled' => 'pdf_builder_canvas_drag_enabled',
+                    'resize_enabled' => 'pdf_builder_canvas_resize_enabled',
+                    'rotate_enabled' => 'pdf_builder_canvas_rotate_enabled',
+                    'multi_select' => 'pdf_builder_canvas_multi_select',
+                    'keyboard_shortcuts' => 'pdf_builder_canvas_keyboard_shortcuts',
+                    'auto_save' => 'pdf_builder_canvas_auto_save',
+                    'selection_mode' => 'pdf_builder_canvas_selection_mode',
+                    'export_format' => 'pdf_builder_canvas_export_format',
+                    'export_quality' => 'pdf_builder_canvas_export_quality',
+                    'export_transparent' => 'pdf_builder_canvas_export_transparent',
+                    'fps_target' => 'pdf_builder_canvas_fps_target',
+                    'memory_limit' => 'pdf_builder_canvas_memory_limit',
+                    'lazy_loading' => 'pdf_builder_canvas_lazy_loading'
+                ];
+                
+                foreach ($option_mappings as $setting_key => $option_key) {
+                    if (isset($settings[$setting_key])) {
+                        update_option($option_key, $settings[$setting_key]);
+                    }
+                }
+                
                 error_log('Settings AJAX - Canvas settings saved successfully: ' . print_r($settings, true));
                 send_ajax_response(true, 'Paramètres canvas sauvegardés avec succès.', ['saved' => $settings]);
             } else {

@@ -102,11 +102,10 @@
 <?php
 /**
  * Paramètres canvas pour les modales
- * Définit les valeurs par défaut depuis le tableau centralisé
+ * Définit les valeurs par défaut depuis les options séparées (synchronisées)
  */
 
-// Récupérer les paramètres canvas depuis le tableau centralisé
-$canvas_settings_modal = get_option('pdf_builder_canvas_settings', []);
+// Les modales lisent depuis les options séparées pour cohérence
 ?>
 
                 <form id="canvas-apparence-form">
@@ -114,26 +113,26 @@ $canvas_settings_modal = get_option('pdf_builder_canvas_settings', []);
                         <tr>
                             <th scope="row"><label for="canvas_bg_color">Couleur de fond</label></th>
                             <td>
-                                <input type="color" id="canvas_bg_color" name="canvas_bg_color" value="<?php echo esc_attr($canvas_settings_modal['canvas_background_color'] ?? '#ffffff'); ?>" />
+                                <input type="color" id="canvas_bg_color" name="canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_border_color">Couleur des bordures</label></th>
                             <td>
-                                <input type="color" id="canvas_border_color" name="canvas_border_color" value="<?php echo esc_attr($canvas_settings_modal['border_color'] ?? '#cccccc'); ?>" />
+                                <input type="color" id="canvas_border_color" name="canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_color', '#cccccc')); ?>" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_border_width">Épaisseur des bordures (px)</label></th>
                             <td>
-                                <input type="number" id="canvas_border_width" name="canvas_border_width" value="<?php echo intval($canvas_settings_modal['border_width'] ?? 1); ?>" min="0" max="10" />
+                                <input type="number" id="canvas_border_width" name="canvas_border_width" value="<?php echo intval(get_option('pdf_builder_canvas_border_width', 1)); ?>" min="0" max="10" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_shadow_enabled">Ombre activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_shadow_enabled" name="canvas_shadow_enabled" value="1" <?php checked(($canvas_settings_modal['shadow_enabled'] ?? false) == true || $canvas_settings_modal['shadow_enabled'] == '1'); ?>>
+                                    <input type="checkbox" id="canvas_shadow_enabled" name="canvas_shadow_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_shadow_enabled', false)); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -163,7 +162,7 @@ $canvas_settings_modal = get_option('pdf_builder_canvas_settings', []);
                             <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_grid_enabled" name="canvas_grid_enabled" value="1" <?php checked(($canvas_settings_modal['show_grid'] ?? false) == true || $canvas_settings_modal['show_grid'] == '1'); ?>>
+                                    <input type="checkbox" id="canvas_grid_enabled" name="canvas_grid_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_grid_enabled', true)); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -171,14 +170,14 @@ $canvas_settings_modal = get_option('pdf_builder_canvas_settings', []);
                         <tr>
                             <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
                             <td>
-                                <input type="number" id="canvas_grid_size" name="canvas_grid_size" value="<?php echo intval($canvas_settings_modal['grid_size'] ?? 10); ?>" min="5" max="100" />
+                                <input type="number" id="canvas_grid_size" name="canvas_grid_size" value="<?php echo intval(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_guides_enabled" name="canvas_guides_enabled" value="1" <?php checked(($canvas_settings_modal['show_guides'] ?? false) == true || $canvas_settings_modal['show_guides'] == '1'); ?>>
+                                    <input type="checkbox" id="canvas_guides_enabled" name="canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', true)); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -187,7 +186,7 @@ $canvas_settings_modal = get_option('pdf_builder_canvas_settings', []);
                             <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(($canvas_settings_modal['snap_to_grid'] ?? false) == true || $canvas_settings_modal['snap_to_grid'] == '1'); ?>>
+                                    <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', true)); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -216,26 +215,26 @@ $canvas_settings_modal = get_option('pdf_builder_canvas_settings', []);
                         <tr>
                             <th scope="row"><label for="canvas_zoom_min">Zoom minimum (%)</label></th>
                             <td>
-                                <input type="number" id="canvas_zoom_min" name="canvas_zoom_min" value="<?php echo intval($canvas_settings_modal['min_zoom'] ?? 10); ?>" min="5" max="50" />
+                                <input type="number" id="canvas_zoom_min" name="canvas_zoom_min" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>" min="5" max="50" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_zoom_max">Zoom maximum (%)</label></th>
                             <td>
-                                <input type="number" id="canvas_zoom_max" name="canvas_zoom_max" value="<?php echo intval($canvas_settings_modal['max_zoom'] ?? 500); ?>" min="100" max="1000" />
+                                <input type="number" id="canvas_zoom_max" name="canvas_zoom_max" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>" min="100" max="1000" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_zoom_default">Zoom par défaut (%)</label></th>
                             <td>
-                                <input type="number" id="canvas_zoom_default" name="canvas_zoom_default" value="<?php echo intval($canvas_settings_modal['default_zoom'] ?? 100); ?>" min="10" max="500" />
+                                <input type="number" id="canvas_zoom_default" name="canvas_zoom_default" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>" min="10" max="500" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_pan_enabled">Navigation activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(($canvas_settings_modal['pan_with_mouse'] ?? false) == true || $canvas_settings_modal['pan_with_mouse'] == '1'); ?>>
+                                    <input type="checkbox" id="canvas_pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', true)); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
