@@ -60,15 +60,36 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     const canvasWidthPx = canvasWidth;
     const canvasHeightPx = canvasHeight;
 
+    let finalX = newX;
+    let finalY = newY;
+
+    // ✅ AJOUT: Logique d'accrochage à la grille
+    if (lastState.canvas.snapToGrid && lastState.canvas.gridSize > 0) {
+      const gridSize = lastState.canvas.gridSize;
+      const snapTolerance = 8; // Tolérance de 8px pour l'accrochage
+
+      // Calculer la distance à la grille la plus proche
+      const nearestGridX = Math.round(finalX / gridSize) * gridSize;
+      const nearestGridY = Math.round(finalY / gridSize) * gridSize;
+
+      // Appliquer l'accrochage seulement si on est assez proche de la grille
+      if (Math.abs(finalX - nearestGridX) <= snapTolerance) {
+        finalX = nearestGridX;
+      }
+      if (Math.abs(finalY - nearestGridY) <= snapTolerance) {
+        finalY = nearestGridY;
+      }
+    }
+
     // Clamp X position (laisser au moins 20px visible)
     const minVisibleWidth = Math.min(50, element.width * 0.3);
-    let clampedX = newX;
+    let clampedX = finalX;
     if (clampedX < 0) clampedX = 0;
     if (clampedX + minVisibleWidth > canvasWidthPx) clampedX = canvasWidthPx - minVisibleWidth;
 
     // Clamp Y position (laisser au moins 20px visible)
     const minVisibleHeight = Math.min(30, element.height * 0.3);
-    let clampedY = newY;
+    let clampedY = finalY;
     if (clampedY < 0) clampedY = 0;
     if (clampedY + minVisibleHeight > canvasHeightPx) clampedY = canvasHeightPx - minVisibleHeight;
 
@@ -148,6 +169,16 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const createElementAtPosition = useCallback((x: number, y: number, mode: string) => {
     const elementId = `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+    // ✅ AJOUT: Appliquer le snap à la grille lors de la création d'éléments
+    let finalX = x;
+    let finalY = y;
+
+    if (state.canvas.snapToGrid && state.canvas.gridSize > 0) {
+      const gridSize = state.canvas.gridSize;
+      finalX = Math.round(x / gridSize) * gridSize;
+      finalY = Math.round(y / gridSize) * gridSize;
+    }
+
     let newElement: Element;
 
     switch (mode) {
@@ -155,8 +186,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         newElement = {
           id: elementId,
           type: 'rectangle',
-          x: x - 50, // Centrer sur le clic
-          y: y - 50,
+          x: finalX - 50, // Centrer sur le clic (snapped)
+          y: finalY - 50,
           width: 100,
           height: 100,
           fillColor: '#ffffff',
@@ -175,8 +206,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         newElement = {
           id: elementId,
           type: 'circle',
-          x: x - 50,
-          y: y - 50,
+          x: finalX - 50,
+          y: finalY - 50,
           width: 100,
           height: 100,
           fillColor: '#ffffff',
@@ -194,8 +225,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         newElement = {
           id: elementId,
           type: 'line',
-          x: x - 50,
-          y: y - 1, // Centrer verticalement sur le clic
+          x: finalX - 50,
+          y: finalY - 1, // Centrer verticalement sur le clic
           width: 100,
           height: 2, // Épaisseur de la ligne
           strokeColor: '#000000',
@@ -212,8 +243,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         newElement = {
           id: elementId,
           type: 'text',
-          x: x - 50,
-          y: y - 10,
+          x: finalX - 50,
+          y: finalY - 10,
           width: 100,
           height: 30,
           text: 'Texte',
@@ -232,8 +263,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         newElement = {
           id: elementId,
           type: 'image',
-          x: x - 50,
-          y: y - 50,
+          x: finalX - 50,
+          y: finalY - 50,
           width: 100,
           height: 100,
           src: '', // URL de l'image à définir
@@ -259,7 +290,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // Remettre en mode sélection après création
     dispatch({ type: 'SET_MODE', payload: 'select' });
 
-  }, [dispatch]);
+  }, [dispatch, state.canvas.snapToGrid, state.canvas.gridSize]);
 
   // ✅ Syncer la ref avec l'état Redux (fallback au cas où dispatch arrive avant)
   useEffect(() => {
@@ -544,8 +575,28 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       }
     }
 
+    // ✅ AJOUT: Appliquer le snap à la grille pour les positions lors du redimensionnement
+    if (state.canvas.snapToGrid && state.canvas.gridSize > 0) {
+      const gridSize = state.canvas.gridSize;
+      const snapTolerance = 8;
+
+      if (updates.x !== undefined) {
+        const nearestGridX = Math.round(updates.x / gridSize) * gridSize;
+        if (Math.abs(updates.x - nearestGridX) <= snapTolerance) {
+          updates.x = nearestGridX;
+        }
+      }
+
+      if (updates.y !== undefined) {
+        const nearestGridY = Math.round(updates.y / gridSize) * gridSize;
+        if (Math.abs(updates.y - nearestGridY) <= snapTolerance) {
+          updates.y = nearestGridY;
+        }
+      }
+    }
+
     return updates;
-  }, []);
+  }, [state.canvas.snapToGrid, state.canvas.gridSize]);
 
   // Gestionnaire de mouse move pour le drag, resize et curseur
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
