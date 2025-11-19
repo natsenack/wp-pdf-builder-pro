@@ -372,7 +372,24 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show corresponding tab content
             const target = this.getAttribute('href').substring(1);
             document.getElementById(target).classList.add('active');
+
+            // Update URL hash
+            window.location.hash = target;
         });
     });
+
+    // Check hash on load
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+        const tab = document.querySelector('.nav-tab[href="#' + hash + '"]');
+        if (tab) {
+            tab.click();
+        }
+    } else {
+        const defaultTab = document.querySelector('.nav-tab[href="#general"]');
+        if (defaultTab) {
+            defaultTab.click();
+        }
+    }
 });
 </script>
