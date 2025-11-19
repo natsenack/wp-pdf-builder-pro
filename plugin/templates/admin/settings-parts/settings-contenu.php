@@ -65,7 +65,7 @@
                             <span class="canvas-card-icon">📏</span>
                             <div>
                                 <h4>Grille & Guides</h4>
-                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_grid_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_grid_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                         </div>
                         <div class="canvas-card-content">
@@ -91,7 +91,7 @@
                             <span class="canvas-card-icon">🔍</span>
                             <div>
                                 <h4>Zoom & Navigation</h4>
-                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                         </div>
                         <div class="canvas-card-content">
@@ -117,7 +117,7 @@
                             <span class="canvas-card-icon">👆</span>
                             <div>
                                 <h4>Éléments Interactifs</h4>
-                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_drag_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_drag_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                         </div>
                         <div class="canvas-card-content">
@@ -143,7 +143,7 @@
                             <span class="canvas-card-icon">⚙️</span>
                             <div>
                                 <h4>Comportement</h4>
-                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_keyboard_shortcuts', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_keyboard_shortcuts', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                         </div>
                         <div class="canvas-card-content">
@@ -218,7 +218,7 @@
                             <span class="canvas-card-icon">💾</span>
                             <div>
                                 <h4>Sauvegarde Auto</h4>
-                                <span class="canvas-card-status ACTIF">ACTIF</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                         </div>
                         <div class="canvas-card-content">
