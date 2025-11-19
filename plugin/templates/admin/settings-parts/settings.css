@@ -436,9 +436,10 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     color: #007cba;
     font-size: 13px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 2px;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .preview-size {
