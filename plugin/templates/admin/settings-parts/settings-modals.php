@@ -133,7 +133,7 @@
                             <th scope="row"><label for="canvas_shadow_enabled">Ombre activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_shadow_enabled" name="canvas_shadow_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_shadow_enabled', false)); ?>>
+                                    <input type="checkbox" id="canvas_shadow_enabled" name="canvas_shadow_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_shadow_enabled', '0'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>

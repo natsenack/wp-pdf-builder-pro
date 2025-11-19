@@ -356,9 +356,7 @@ function pdf_builder_save_canvas_settings_handler() {
             // Convertir les checkboxes
             $checkboxes = ['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_pan_enabled', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts', 'canvas_auto_save', 'canvas_export_transparent', 'canvas_lazy_loading'];
             foreach ($checkboxes as $checkbox) {
-                if (isset($_POST[$checkbox])) {
-                    $settings[str_replace('canvas_', '', $checkbox)] = $_POST[$checkbox] === '1' ? 1 : 0;
-                }
+                $settings[str_replace('canvas_', '', $checkbox)] = isset($_POST[$checkbox]) && $_POST[$checkbox] === '1' ? 1 : 0;
             }
 
             // Traiter les selects
