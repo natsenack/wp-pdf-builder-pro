@@ -248,27 +248,27 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
           const newSettings: CanvasSettingsContextType = {
             ...DEFAULT_SETTINGS,
             // Dimensions
-            canvasWidth: data.data.canvas_width ?? DEFAULT_SETTINGS.canvasWidth,
-            canvasHeight: data.data.canvas_height ?? DEFAULT_SETTINGS.canvasHeight,
-            canvasUnit: data.data.canvas_unit ?? DEFAULT_SETTINGS.canvasUnit,
-            canvasOrientation: data.data.canvas_orientation ?? DEFAULT_SETTINGS.canvasOrientation,
+            canvasWidth: data.data.settings.canvas_width ?? DEFAULT_SETTINGS.canvasWidth,
+            canvasHeight: data.data.settings.canvas_height ?? DEFAULT_SETTINGS.canvasHeight,
+            canvasUnit: data.data.settings.canvas_unit ?? DEFAULT_SETTINGS.canvasUnit,
+            canvasOrientation: data.data.settings.canvas_orientation ?? DEFAULT_SETTINGS.canvasOrientation,
             
             // Couleurs
-            canvasBackgroundColor: data.data.canvas_background_color ?? DEFAULT_SETTINGS.canvasBackgroundColor,
-            containerBackgroundColor: data.data.container_background_color ?? DEFAULT_SETTINGS.containerBackgroundColor,
-            borderColor: data.data.border_color ?? DEFAULT_SETTINGS.borderColor,
-            borderWidth: data.data.border_width ?? DEFAULT_SETTINGS.borderWidth,
+            canvasBackgroundColor: data.data.settings.canvas_background_color ?? DEFAULT_SETTINGS.canvasBackgroundColor,
+            containerBackgroundColor: data.data.settings.container_background_color ?? DEFAULT_SETTINGS.containerBackgroundColor,
+            borderColor: data.data.settings.border_color ?? DEFAULT_SETTINGS.borderColor,
+            borderWidth: data.data.settings.border_width ?? DEFAULT_SETTINGS.borderWidth,
             
             // Marges
-            marginTop: data.data.margin_top ?? DEFAULT_SETTINGS.marginTop,
-            marginRight: data.data.margin_right ?? DEFAULT_SETTINGS.marginRight,
-            marginBottom: data.data.margin_bottom ?? DEFAULT_SETTINGS.marginBottom,
-            marginLeft: data.data.margin_left ?? DEFAULT_SETTINGS.marginLeft,
-            showMargins: data.data.show_margins === true || data.data.show_margins === '1',
+            marginTop: data.data.settings.margin_top ?? DEFAULT_SETTINGS.marginTop,
+            marginRight: data.data.settings.margin_right ?? DEFAULT_SETTINGS.marginRight,
+            marginBottom: data.data.settings.margin_bottom ?? DEFAULT_SETTINGS.marginBottom,
+            marginLeft: data.data.settings.margin_left ?? DEFAULT_SETTINGS.marginLeft,
+            showMargins: data.data.settings.show_margins === true || data.data.settings.show_margins === '1',
             
             // Grille
-            gridShow: data.data.show_grid !== false,
-            gridSize: data.data.grid_size ?? DEFAULT_SETTINGS.gridSize,
+            gridShow: data.data.settings.show_grid !== false,
+            gridSize: data.data.settings.grid_size ?? DEFAULT_SETTINGS.gridSize,
             
             // Autres paramètres...
             isLoading: false,
