@@ -165,6 +165,7 @@ function pdf_builder_save_settings_handler() {
                 }
                 if (isset($_POST['pdf_cache_enabled'])) {
                     update_option('pdf_builder_pdf_cache_enabled', $_POST['pdf_cache_enabled'] === '1');
+                    error_log('Saved pdf_cache_enabled: ' . (get_option('pdf_builder_pdf_cache_enabled') ? 'true' : 'false'));
                 }
                 if (isset($_POST['pdf_compression'])) {
                     update_option('pdf_builder_pdf_compression', sanitize_text_field($_POST['pdf_compression']));
