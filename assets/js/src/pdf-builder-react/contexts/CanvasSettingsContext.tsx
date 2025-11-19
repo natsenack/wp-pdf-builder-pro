@@ -94,10 +94,10 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   gridSnapEnabled: true,
   gridSnapTolerance: 8,
   
-  zoomDefault: 1,
-  zoomMin: 0.1,
-  zoomMax: 5,
-  zoomStep: 0.1,
+  zoomDefault: 100,
+  zoomMin: 10,
+  zoomMax: 500,
+  zoomStep: 10,
   zoomWheelSupport: true,
   
   selectionMultiSelectEnabled: true,

@@ -145,7 +145,7 @@ const repairProductTableProperties = (elements: Element[]): Element[] => {
 
 // État initial
 const initialCanvasState: CanvasState = {
-  zoom: 1,
+  zoom: 100,
   pan: { x: 0, y: 0 },
   showGrid: false,
   gridSize: 20,
