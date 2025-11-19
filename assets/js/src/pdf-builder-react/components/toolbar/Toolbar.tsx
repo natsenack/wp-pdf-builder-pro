@@ -161,20 +161,10 @@ export function Toolbar({ className }: ToolbarProps) {
           >
             ↷ Rétablir
           </button>
-          <button
-            onClick={handleReset}
-            style={{
-              padding: '6px 12px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              backgroundColor: '#ffffff',
-              color: '#000000',
-              cursor: 'pointer',
-              fontSize: '12px'
-            }}
-          >
-            🔄 Réinitialiser
-          </button>
+        </div>
+
+        {/* Groupe Grille */}
+        <div style={{ display: 'flex', gap: '4px', marginLeft: '12px' }}>
           <button
             onClick={handleToggleGrid}
             disabled={!canvasSettings.gridShow}
@@ -192,6 +182,22 @@ export function Toolbar({ className }: ToolbarProps) {
             {state.canvas.showGrid ? '⬜ Grille ON' : '▦ Grille OFF'}
           </button>
           <button
+            onClick={handleToggleSnapToGrid}
+            disabled={!canvasSettings.gridShow}
+            style={{
+              padding: '6px 12px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              backgroundColor: !canvasSettings.gridShow ? '#f0f0f0' : (state.canvas.snapToGrid ? '#007acc' : '#ffffff'),
+              color: !canvasSettings.gridShow ? '#999' : (state.canvas.snapToGrid ? '#ffffff' : '#000000'),
+              cursor: !canvasSettings.gridShow ? 'not-allowed' : 'pointer',
+              fontSize: '12px',
+              opacity: !canvasSettings.gridShow ? 0.6 : 1
+            }}
+          >
+            {state.canvas.snapToGrid ? '🧲 ON' : '🧲 OFF'}
+          </button>
+          <button
             onClick={handleToggleGuides}
             disabled={!canvasSettings.guidesEnabled}
             style={{
@@ -207,21 +213,23 @@ export function Toolbar({ className }: ToolbarProps) {
           >
             {state.template.showGuides ? '📏 Guides ON' : '📐 Guides OFF'}
           </button>
+        </div>
+
+        {/* Groupe Général */}
+        <div style={{ display: 'flex', gap: '4px', marginLeft: '12px' }}>
           <button
-            onClick={handleToggleSnapToGrid}
-            disabled={!canvasSettings.gridShow}
+            onClick={handleReset}
             style={{
               padding: '6px 12px',
               border: '1px solid #ccc',
               borderRadius: '4px',
-              backgroundColor: !canvasSettings.gridShow ? '#f0f0f0' : (state.canvas.snapToGrid ? '#007acc' : '#ffffff'),
-              color: !canvasSettings.gridShow ? '#999' : (state.canvas.snapToGrid ? '#ffffff' : '#000000'),
-              cursor: !canvasSettings.gridShow ? 'not-allowed' : 'pointer',
-              fontSize: '12px',
-              opacity: !canvasSettings.gridShow ? 0.6 : 1
+              backgroundColor: '#ffffff',
+              color: '#000000',
+              cursor: 'pointer',
+              fontSize: '12px'
             }}
           >
-            {state.canvas.snapToGrid ? '🧲 ON' : '🧲 OFF'}
+            🔄 Réinitialiser
           </button>
         </div>
       </div>
