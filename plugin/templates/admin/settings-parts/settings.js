@@ -1,6 +1,7 @@
 /**
  * JavaScript pour la page de paramètres PDF Builder Pro
  * Gestion des interactions utilisateur et AJAX
+ * Updated: 2025-11-19 02:35:00 - Force redeploy
  */
 
 document.addEventListener('DOMContentLoaded', function() {
