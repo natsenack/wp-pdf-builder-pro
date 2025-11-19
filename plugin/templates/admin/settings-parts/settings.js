@@ -745,6 +745,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log('DEBUG: AJAX response received:', data);
             if (data.success) {
+                console.log('Save successful, button should show saved');
                 saveBtn.classList.remove('saving');
                 saveBtn.classList.add('saved');
                 saveBtn.textContent = '✅ Sauvegardé !';
