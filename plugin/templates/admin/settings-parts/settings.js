@@ -1500,6 +1500,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     button.classList.add('saved');
 
                     // Notifier l'éditeur React que les paramètres ont été mis à jour
+                    console.log('Settings.js - Dispatching pdfBuilderCanvasSettingsUpdated event');
                     const settingsUpdateEvent = new CustomEvent('pdfBuilderCanvasSettingsUpdated', {
                         detail: { category: category }
                     });
