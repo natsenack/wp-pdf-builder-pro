@@ -99,24 +99,34 @@
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
             </div>
             <div class="canvas-modal-body">
+<?php
+/**
+ * Paramètres canvas pour les modales
+ * Définit les valeurs par défaut depuis le tableau centralisé
+ */
+
+// Récupérer les paramètres canvas depuis le tableau centralisé
+$canvas_settings_modal = get_option('pdf_builder_canvas_settings', []);
+?>
+
                 <form id="canvas-apparence-form">
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_bg_color">Couleur de fond</label></th>
                             <td>
-                                <input type="color" id="canvas_bg_color" name="canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>" />
+                                <input type="color" id="canvas_bg_color" name="canvas_bg_color" value="<?php echo esc_attr($canvas_settings_modal['canvas_background_color'] ?? '#ffffff'); ?>" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_border_color">Couleur des bordures</label></th>
                             <td>
-                                <input type="color" id="canvas_border_color" name="canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_color', '#cccccc')); ?>" />
+                                <input type="color" id="canvas_border_color" name="canvas_border_color" value="<?php echo esc_attr($canvas_settings_modal['border_color'] ?? '#cccccc'); ?>" />
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_border_width">Épaisseur des bordures (px)</label></th>
                             <td>
-                                <input type="number" id="canvas_border_width" name="canvas_border_width" value="<?php echo intval(get_option('pdf_builder_canvas_border_width', 1)); ?>" min="0" max="10" />
+                                <input type="number" id="canvas_border_width" name="canvas_border_width" value="<?php echo intval($canvas_settings_modal['border_width'] ?? 1); ?>" min="0" max="10" />
                             </td>
                         </tr>
                         <tr>
