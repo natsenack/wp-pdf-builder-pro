@@ -986,6 +986,13 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     cursor: not-allowed;
 }
 
+/* Options disabled dans les selects */
+select option:disabled {
+    color: #6c757d;
+    background-color: #f8f9fa;
+    font-style: italic;
+}
+
 /* Responsive design pour mobile */
 @media (max-width: 768px) {
     #floating-save-button {
