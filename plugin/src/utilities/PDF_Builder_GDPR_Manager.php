@@ -229,6 +229,11 @@ class PDF_Builder_GDPR_Manager {
                 $mime_type = 'text/html';
                 break;
 
+            case 'pdf':
+                $content = $this->convert_to_pdf($user_data);
+                $mime_type = 'application/pdf';
+                break;
+
             default:
                 return new WP_Error('invalid_format', __('Format d\'export non supporté.', 'pdf-builder-pro'));
         }
