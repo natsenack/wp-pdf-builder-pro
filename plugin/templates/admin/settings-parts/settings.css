@@ -643,7 +643,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
     .canvas-card {
         padding: 10px;
-        min-height: 200px;
+        min-height: 260px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -660,15 +660,23 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
     .canvas-card-content {
         flex-grow: 1;
+        margin-bottom: 8px;
     }
 
     .canvas-card-preview {
         flex-shrink: 0;
+        margin: 8px 0;
     }
 
     .canvas-card-actions {
         margin-top: auto;
         flex-shrink: 0;
+        text-align: center;
+    }
+
+    .canvas-configure-btn {
+        padding: 8px 12px;
+        font-size: 12px;
     }
 }
 
