@@ -1724,6 +1724,17 @@ class PdfBuilderAdmin
      */
     public function generateUnifiedHtml($template, $order = null)
     {
+        // Récupérer les paramètres canvas
+        $canvas_bg_color = get_option('pdf_builder_canvas_bg_color', '#ffffff');
+        $canvas_border_color = get_option('pdf_builder_canvas_border_color', '#cccccc');
+        $canvas_border_width = intval(get_option('pdf_builder_canvas_border_width', 1));
+        $canvas_shadow_enabled = get_option('pdf_builder_canvas_shadow_enabled', false) == '1';
+
+        // Construire les styles du conteneur
+        $container_bg = "background: {$canvas_bg_color};";
+        $container_border = $canvas_border_width > 0 ? "border: {$canvas_border_width}px solid {$canvas_border_color};" : "border: none;";
+        $container_shadow = $canvas_shadow_enabled ? "box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" : "box-shadow: none;";
+
         $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . ($order ? 'Order #' . $order->get_id() : 'PDF') . '</title>';
 // Gestion des marges d'impression - utiliser la première page
         $margins = ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20];
@@ -1750,10 +1761,10 @@ class PdfBuilderAdmin
             position: relative;
             width: 100%;
             height: 100%;
-            background: white;
+            {$container_bg}
             margin: 0;
-            border: none;
-            box-shadow: none;
+            {$container_border}
+            {$container_shadow}
         }
         .pdf-element {
             position: absolute;
