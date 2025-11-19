@@ -33,6 +33,7 @@ export interface CanvasSettingsContextType {
   gridColor: string;
   gridSnapEnabled: boolean;
   gridSnapTolerance: number;
+  guidesEnabled: boolean;
   
   // Zoom
   zoomDefault: number;
@@ -95,6 +96,7 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   gridColor: '#e5e7eb',
   gridSnapEnabled: true,
   gridSnapTolerance: 8,
+  guidesEnabled: true,
   
   zoomDefault: 100,
   zoomMin: 10,
@@ -170,6 +172,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       gridColor: (windowSettings.grid_color as string) ?? DEFAULT_SETTINGS.gridColor,
       gridSnapEnabled: (windowSettings.snap_to_grid as boolean) !== false,
       gridSnapTolerance: (windowSettings.snap_tolerance as number) ?? DEFAULT_SETTINGS.gridSnapTolerance,
+      guidesEnabled: (windowSettings.show_guides as boolean) !== false,
       
       // Zoom
       zoomDefault: (windowSettings.default_zoom as number) ?? DEFAULT_SETTINGS.zoomDefault,
@@ -269,6 +272,10 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             // Grille
             gridShow: data.data.show_grid !== false,
             gridSize: data.data.grid_size ?? DEFAULT_SETTINGS.gridSize,
+            gridColor: data.data.grid_color ?? DEFAULT_SETTINGS.gridColor,
+            gridSnapEnabled: data.data.snap_to_grid !== false,
+            gridSnapTolerance: data.data.snap_tolerance ?? DEFAULT_SETTINGS.gridSnapTolerance,
+            guidesEnabled: data.data.show_guides !== false,
             
             // Autres paramètres...
             isLoading: false,
