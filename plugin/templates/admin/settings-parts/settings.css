@@ -469,6 +469,49 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     margin-bottom: 30px;
 }
 
+/* Optimisations mobiles pour les cartes canvas */
+@media (max-width: 768px) {
+    .canvas-settings-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .canvas-card {
+        padding: 16px;
+    }
+
+    .canvas-card-content {
+        margin-bottom: 12px;
+    }
+
+    .canvas-card-preview {
+        margin: 12px 0;
+        padding: 12px;
+        min-height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .canvas-settings-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .canvas-card {
+        padding: 12px;
+    }
+
+    .canvas-card-header h4 {
+        font-size: 14px;
+    }
+
+    .canvas-card-content p {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+}
+
 /* === STYLES POUR LES MODALES CANVAS === */
 .canvas-modal-overlay {
     position: fixed;
