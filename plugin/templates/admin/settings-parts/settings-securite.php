@@ -151,7 +151,6 @@
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <select id="export-format" style="min-width: 100px;">
                                     <option value="html">📄 HTML (Lisible)</option>
-                                    <option value="pdf">📕 PDF (Impression)</option>
                                 </select>
                                 <button type="button" id="export-my-data" class="button button-secondary" style="display: flex; align-items: center; gap: 8px;">
                                     📥 Exporter mes données

@@ -218,26 +218,6 @@ class PDF_Builder_GDPR_Manager {
                 $mime_type = 'text/html';
                 break;
 
-            case 'pdf':
-                $pdf_result = $this->convert_to_pdf($user_data);
-                if (is_array($pdf_result) && isset($pdf_result['type'])) {
-                    if ($pdf_result['type'] === 'pdf') {
-                        $content = $pdf_result['content'];
-                        $mime_type = 'application/pdf';
-                    } else {
-                        // Fallback vers HTML
-                        $content = $pdf_result['content'];
-                        $mime_type = 'text/html';
-                        $filename = str_replace('.pdf', '.html', $filename);
-                        $file_path = str_replace('.pdf', '.html', $file_path);
-                    }
-                } else {
-                    // Ancien comportement - traiter comme PDF
-                    $content = $pdf_result;
-                    $mime_type = 'application/pdf';
-                }
-                break;
-
             default:
                 return new WP_Error('invalid_format', __('Format d\'export non supporté.', 'pdf-builder-pro'));
         }
@@ -660,85 +640,7 @@ class PDF_Builder_GDPR_Manager {
         return $html;
     }
 
-    /**
-     * Convertir les données utilisateur en PDF (format professionnel et imprimable)
-     */
-    private function convert_to_pdf($user_data) {
-        // Générer d'abord le HTML
-        $html_content = $this->convert_to_html($user_data);
 
-        // Vérifier que DomPDF est disponible
-        $dompdf_path = plugin_dir_path(dirname(__FILE__, 2)) . 'vendor/dompdf/autoload.inc.php';
-        if (!file_exists($dompdf_path)) {
-            error_log('PDF Builder GDPR: DomPDF autoload not found at: ' . $dompdf_path);
-            return [
-                'type' => 'html',
-                'content' => $html_content,
-                'error' => 'DomPDF not found'
-            ];
-        }
-
-        // Utiliser DomPDF pour convertir en PDF
-        try {
-            require_once $dompdf_path;
-
-            $dompdf = new \Dompdf\Dompdf();
-
-            // Options simplifiées pour éviter les problèmes
-            $dompdf->set_option('isHtml5ParserEnabled', false);
-            $dompdf->set_option('isRemoteEnabled', false);
-            $dompdf->set_option('defaultFont', 'Arial');
-            $dompdf->set_option('isFontSubsettingEnabled', false);
-
-            // Nettoyer le HTML pour DomPDF
-            $html_content = $this->clean_html_for_pdf($html_content);
-
-            $dompdf->loadHtml($html_content);
-            $dompdf->setPaper('A4', 'portrait');
-            $dompdf->render();
-
-            $output = $dompdf->output();
-
-            // Vérifier que le PDF n'est pas vide
-            if (empty($output) || strlen($output) < 100) {
-                error_log('PDF Builder GDPR: PDF output is empty or too small, length: ' . strlen($output));
-                return [
-                    'type' => 'html',
-                    'content' => $html_content,
-                    'error' => 'PDF output empty'
-                ];
-            }
-
-            return [
-                'type' => 'pdf',
-                'content' => $output
-            ];
-        } catch (Exception $e) {
-            error_log('PDF Builder GDPR: PDF generation error: ' . $e->getMessage());
-            // En cas d'erreur, retourner le HTML brut
-            return [
-                'type' => 'html',
-                'content' => $html_content,
-                'error' => $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Nettoyer le HTML pour DomPDF
-     */
-    private function clean_html_for_pdf($html) {
-        // Supprimer les styles complexes qui peuvent poser problème
-        $html = preg_replace('/<style[^>]*>.*?<\/style>/is', '<style>body{font-family:Arial,sans-serif;font-size:12px;line-height:1.4;color:#333;} h1,h2,h3{font-weight:bold;} h1{font-size:18px;} h2{font-size:16px;} h3{font-size:14px;}</style>', $html);
-
-        // Supprimer les propriétés CSS complexes
-        $html = preg_replace('/(box-shadow|border-radius|flex|grid|transform|transition|animation|position:\s*(absolute|fixed|sticky))[^;]*;/i', '', $html);
-
-        // S'assurer que les images sont supprimées (pas de remote enabled)
-        $html = preg_replace('/<img[^>]*>/i', '', $html);
-
-        return $html;
-    }
 
     /**
      * AJAX - Supprimer les données utilisateur
