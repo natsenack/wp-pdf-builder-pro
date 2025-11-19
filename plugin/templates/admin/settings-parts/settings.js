@@ -783,15 +783,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     saveBtn.textContent = '💾 Sauvegarder';
                     saveBtn.disabled = false;
                 }, 3000);
-
-                // Préserver l'onglet actuel avant rechargement
-                const currentTab = document.querySelector('.tab-content.active').id;
-                window.location.hash = currentTab;
-
-                // Recharger la page après 4 secondes pour afficher les changements
-                setTimeout(() => {
-                    window.location.reload();
-                }, 4000);
             } else {
                 saveBtn.classList.remove('saving');
                 saveBtn.classList.add('error');
