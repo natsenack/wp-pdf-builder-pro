@@ -455,7 +455,7 @@ function pdf_builder_get_canvas_settings_handler() {
             'show_fps' => get_option('pdf_builder_canvas_show_fps', false) == '1'
         ];
         
-        send_ajax_response(true, 'Paramètres récupérés avec succès.', ['settings' => $settings]);
+        send_ajax_response(true, 'Paramètres récupérés avec succès.', $settings);
     } catch (Exception $e) {
         error_log('Erreur récupération paramètres canvas: ' . $e->getMessage());
         send_ajax_response(false, 'Erreur: ' . $e->getMessage());
