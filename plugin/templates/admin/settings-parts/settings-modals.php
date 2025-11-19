@@ -167,6 +167,12 @@
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
             </div>
             <div class="canvas-modal-body">
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
+                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                        <strong>💡 Comment ça marche :</strong> Activez la grille pour afficher un quadrillage sur le canvas. 
+                        Les éléments s'aligneront automatiquement sur les lignes de la grille si l'accrochage est activé.
+                    </p>
+                </div>
                 <form id="canvas-grille-form">
                     <table class="form-table">
                         <tr>
@@ -176,12 +182,14 @@
                                     <input type="checkbox" id="canvas_grid_enabled" name="canvas_grid_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_grid_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Affiche/masque le quadrillage sur le canvas</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
                             <td>
                                 <input type="number" id="canvas_grid_size" name="canvas_grid_size" value="<?php echo intval(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100" <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?> />
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Distance entre les lignes de la grille (5-100px)</p>
                             </td>
                         </tr>
                         <tr>
@@ -191,6 +199,7 @@
                                     <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', '1'), '1'); ?> <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Les éléments s'alignent automatiquement sur la grille</p>
                             </td>
                         </tr>
                         <tr>
@@ -200,6 +209,7 @@
                                     <input type="checkbox" id="canvas_guides_enabled" name="canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Affiche des guides d'alignement temporaires</p>
                             </td>
                         </tr>
                     </table>
