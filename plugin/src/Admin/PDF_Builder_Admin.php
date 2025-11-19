@@ -2412,9 +2412,7 @@ class PdfBuilderAdmin
             $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
             $pdf_compression = get_option('pdf_builder_pdf_compression', 'medium');
             $pdf_metadata_enabled = get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
-            $pdf_print_optimized = get_option('pdf_builder_pdf_print_optimized', '1') === '1';
-
-            error_log('[PDF_GEN] Using PDF settings: quality=' . $pdf_quality . ', size=' . $pdf_page_size . ', orientation=' . $pdf_orientation);        // Utiliser Dompdf pour générer le PDF
+            $pdf_print_optimized = get_option('pdf_builder_pdf_print_optimized', '1') === '1';        // Utiliser Dompdf pour générer le PDF
             require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 
             if (class_exists('Dompdf\Dompdf')) {

@@ -727,11 +727,6 @@ document.addEventListener('DOMContentLoaded', function() {
             params.append(key, value);
         }
 
-        console.log('DEBUG: FormData contents:');
-        for (let [key, value] of formData.entries()) {
-            console.log(`  ${key}: ${value}`);
-        }
-
         // Envoyer la requête AJAX
         fetch(pdf_builder_ajax.ajax_url, {
             method: 'POST',
@@ -743,13 +738,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('DEBUG: AJAX response received:', data);
             if (data.success) {
-                console.log('Save successful, button should show saved');
-                saveBtn.classList.remove('saving');
-                saveBtn.classList.add('saved');
-                saveBtn.textContent = '✅ Sauvegardé !';
-                console.log('Button text set to:', saveBtn.textContent);
 
                 // Mettre à jour les badges de statut en temps réel
                 updateStatusBadges();
