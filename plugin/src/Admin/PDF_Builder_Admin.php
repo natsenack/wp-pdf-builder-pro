@@ -1817,7 +1817,17 @@ class PdfBuilderAdmin
         }
         </style>';
         $html .= '</head><body>';
-        $html .= '<div class="pdf-container" style="position: relative; width: 595px; height: 842px; background: white;">';
+        // Récupérer les paramètres canvas pour appliquer les bordures au PDF
+        $canvas_border_color = get_option('pdf_builder_canvas_border_color', '#cccccc');
+        $canvas_border_width = intval(get_option('pdf_builder_canvas_border_width', 1));
+        $canvas_bg_color = get_option('pdf_builder_canvas_bg_color', '#ffffff');
+        
+        $container_style = sprintf('position: relative; width: 595px; height: 842px; background: %s;', $canvas_bg_color);
+        if ($canvas_border_width > 0) {
+            $container_style .= sprintf(' border: %dpx solid %s;', $canvas_border_width, $canvas_border_color);
+        }
+        
+        $html .= '<div class="pdf-container" style="' . $container_style . '">';
 // Utiliser les éléments de la première page
         $elements = [];
         if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
