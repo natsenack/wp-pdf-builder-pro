@@ -1541,7 +1541,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.dispatchEvent(settingsUpdateEvent);
 
                     // Mettre à jour les checkboxes HTML du formulaire avec les nouvelles valeurs
-                    updateFormCheckboxes(data.data);
+                    updateFormCheckboxes(data.data.saved);
 
                     // Fermer la modale après un court délai
                     setTimeout(() => {
