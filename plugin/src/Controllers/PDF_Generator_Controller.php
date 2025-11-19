@@ -38,7 +38,12 @@ class PdfBuilderProGenerator
         'margin_right' => 15,
         'margin_bottom' => 20,
         'auto_page_break' => true,
-        'page_break_margin' => 15
+        'page_break_margin' => 15,
+        // Paramètres canvas
+        'canvas_background_color' => '#ffffff',
+        'canvas_border_color' => '#cccccc',
+        'canvas_border_width' => 1,
+        'canvas_shadow_enabled' => false
     ];
 
     public function __construct($config = [])
@@ -103,6 +108,23 @@ class PdfBuilderProGenerator
      */
     private function generateHtmlFromElements($elements)
     {
+        // Récupérer les paramètres canvas
+        $canvas_bg_color = $this->config['canvas_background_color'] ?? '#ffffff';
+        $canvas_border_color = $this->config['canvas_border_color'] ?? '#cccccc';
+        $canvas_border_width = $this->config['canvas_border_width'] ?? 1;
+        $canvas_shadow_enabled = $this->config['canvas_shadow_enabled'] ?? false;
+
+        // Construire les styles du conteneur
+        $container_styles = "background: {$canvas_bg_color};";
+        if ($canvas_border_width > 0) {
+            $container_styles .= " border: {$canvas_border_width}px solid {$canvas_border_color};";
+        }
+        if ($canvas_shadow_enabled) {
+            $container_styles .= " box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);";
+        } else {
+            $container_styles .= " box-shadow: none;";
+        }
+
         $html = '<!DOCTYPE html>
 <html>
 <head>
@@ -115,9 +137,8 @@ class PdfBuilderProGenerator
             position: relative;
             width: 595px; 
             height: 842px; 
-            background: white; 
+            ' . $container_styles . '
             margin: 0 auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             overflow: hidden;
         }
         .canvas-element { position: absolute; overflow: hidden; }

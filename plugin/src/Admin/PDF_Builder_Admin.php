@@ -1635,8 +1635,17 @@ class PdfBuilderAdmin
 
         // Générer le HTML d'abord
         $html_content = $this->generateUnifiedHtml($template);
-// Utiliser notre générateur PDF personnalisé
-        $generator = new PDF_Generator();
+
+        // Récupérer les paramètres canvas
+        $canvas_settings = [
+            'canvas_background_color' => get_option('pdf_builder_canvas_bg_color', '#ffffff'),
+            'canvas_border_color' => get_option('pdf_builder_canvas_border_color', '#cccccc'),
+            'canvas_border_width' => intval(get_option('pdf_builder_canvas_border_width', 1)),
+            'canvas_shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', false) == '1'
+        ];
+
+        // Utiliser notre générateur PDF personnalisé avec les paramètres canvas
+        $generator = new PDF_Generator($canvas_settings);
         $pdf_content = $generator->generate_from_elements($this->convertTemplateToElements($template));
         if ($pdf_content) {
         // Sauvegarder le contenu HTML/PDF
