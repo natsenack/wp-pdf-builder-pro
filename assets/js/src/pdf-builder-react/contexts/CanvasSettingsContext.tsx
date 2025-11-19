@@ -247,6 +247,10 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
         console.log('CanvasSettingsContext - AJAX response:', data);
         if (data.success && data.data) {
           console.log('CanvasSettingsContext - border_color from server:', data.data.border_color, 'border_width:', data.data.border_width);
+          console.log('CanvasSettingsContext - shadow_enabled from server:', data.data.shadow_enabled, 'type:', typeof data.data.shadow_enabled);
+          if (data.debug) {
+            console.log('CanvasSettingsContext - DEBUG INFO:', data.debug);
+          }
           // Mapper les données reçues vers le format du contexte
           const newSettings: CanvasSettingsContextType = {
             ...DEFAULT_SETTINGS,
@@ -261,7 +265,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             containerBackgroundColor: data.data.container_background_color ?? DEFAULT_SETTINGS.containerBackgroundColor,
             borderColor: data.data.border_color ?? DEFAULT_SETTINGS.borderColor,
             borderWidth: data.data.border_width ?? DEFAULT_SETTINGS.borderWidth,
-            shadowEnabled: data.data.shadow_enabled !== false,
+            shadowEnabled: data.data.shadow_enabled === true || data.data.shadow_enabled === '1',
             
             // Marges
             marginTop: data.data.margin_top ?? DEFAULT_SETTINGS.marginTop,
