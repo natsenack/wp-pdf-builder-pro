@@ -318,8 +318,8 @@ function pdf_builder_save_settings_handler() {
 function pdf_builder_save_canvas_settings_handler() {
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
         // Utiliser le Canvas_Manager pour la sauvegarde centralisée
-        if (class_exists('PDF_Builder_Canvas_Manager')) {
-            $canvas_manager = new PDF_Builder_Canvas_Manager();
+        try {
+            $canvas_manager = WP_PDF_Builder_Pro\Canvas\Canvas_Manager::get_instance();
             // Mapper les champs du formulaire vers les noms attendus par le Canvas_Manager
             $settings = [];
             if (isset($_POST['canvas_bg_color'])) {
@@ -364,8 +364,8 @@ function pdf_builder_save_canvas_settings_handler() {
             } else {
                 send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres canvas.');
             }
-        } else {
-            send_ajax_response(false, 'Canvas_Manager non disponible.');
+        } catch (Exception $e) {
+            send_ajax_response(false, 'Canvas_Manager non disponible: ' . $e->getMessage());
         }
     } else {
         send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
