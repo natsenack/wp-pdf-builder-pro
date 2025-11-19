@@ -282,7 +282,9 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
 
   // Écouter les événements custom pour les mises à jour
   useEffect(() => {
+    console.log('CanvasSettingsContext - Adding event listener for pdfBuilderCanvasSettingsUpdated');
     const handleCustomUpdate = () => {
+      console.log('CanvasSettingsContext - Event pdfBuilderCanvasSettingsUpdated received');
       handleRefresh();
     };
     
