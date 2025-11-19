@@ -7,7 +7,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Fonction pour mettre à jour les checkboxes du formulaire avec les nouvelles valeurs
     function updateFormCheckboxes(settings) {
-        console.log('Settings.js - Updating form checkboxes with:', settings);
 
         // Mapping des paramètres vers les IDs des checkboxes
         const checkboxMappings = {
@@ -33,35 +32,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (checkbox && settings[settingKey] !== undefined) {
                 const shouldBeChecked = settings[settingKey] === true || settings[settingKey] === '1';
-                console.log(`Settings.js - Setting ${checkboxId} to ${shouldBeChecked} (value: ${settings[settingKey]}, type: ${typeof settings[settingKey]})`);
                 
                 // Mettre à jour à la fois la propriété JavaScript et l'attribut HTML
                 checkbox.checked = shouldBeChecked;
                 if (shouldBeChecked) {
                     checkbox.setAttribute('checked', 'checked');
                     checkbox.parentElement.classList.add('checked');
-                    console.log(`Settings.js - Added checked attribute and class to ${checkboxId}`);
                 } else {
                     checkbox.removeAttribute('checked');
                     checkbox.parentElement.classList.remove('checked');
-                    console.log(`Settings.js - Removed checked attribute and class from ${checkboxId}`);
                 }
-                
-                // Vérifier l'état final
-                console.log(`Settings.js - Final state for ${checkboxId}: checked=${checkbox.checked}, hasAttribute=${checkbox.hasAttribute('checked')}, hasClass=${checkbox.parentElement.classList.contains('checked')}`);
                 
                 // Forcer la mise à jour visuelle avec un petit délai pour la transition CSS
                 setTimeout(() => {
                     checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-                    
-                    // Vérifier la position du toggle-slider après la transition
-                    setTimeout(() => {
-                        const toggleSlider = checkbox.nextElementSibling;
-                        if (toggleSlider && toggleSlider.classList.contains('toggle-slider')) {
-                            const beforePseudo = window.getComputedStyle(toggleSlider, ':before');
-                            console.log(`Settings.js - Toggle slider position for ${checkboxId}:`, beforePseudo.transform);
-                        }
-                    }, 350); // Après la transition de 0.3s
                 }, 50);
             }
         });
@@ -1545,18 +1529,14 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Faire l'appel AJAX
-            console.log('Envoi sauvegarde canvas - Catégorie:', category);
-            console.log('FormData envoyé:', Array.from(formData.entries()));
             fetch(pdf_builder_ajax.ajax_url, {
                 method: 'POST',
                 body: formData
             })
             .then(response => {
-                console.log('Réponse HTTP:', response.status, response.statusText);
                 return response.json();
             })
             .then(data => {
-                console.log('Réponse JSON complète:', data);
                 if (data.success) {
                     button.textContent = '✅ Sauvegardé';
                     button.classList.add('saved');
@@ -1585,7 +1565,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     button.textContent = '❌ Erreur';
                     button.classList.add('error');
-                    console.error('Erreur sauvegarde canvas:', data.data);
 
                     // Réactiver le bouton après 3 secondes
                     setTimeout(() => {

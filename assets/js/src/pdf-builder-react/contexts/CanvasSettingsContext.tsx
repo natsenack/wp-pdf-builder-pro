@@ -223,12 +223,10 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
 
   // Load settings from server on mount
   useEffect(() => {
-    console.log('CanvasSettingsContext - Loading initial settings from server');
     handleRefresh();
   }, []);
 
   const handleRefresh = async () => {
-    console.log('CanvasSettingsContext - handleRefresh called');
     try {
       // Faire un appel AJAX pour récupérer les paramètres mis à jour
       const response = await fetch(window.pdfBuilderAjax?.ajax_url || '/wp-admin/admin-ajax.php', {
@@ -244,13 +242,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
 
       if (response.ok) {
         const data = await response.json();
-        console.log('CanvasSettingsContext - AJAX response:', data);
         if (data.success && data.data) {
-          console.log('CanvasSettingsContext - border_color from server:', data.data.border_color, 'border_width:', data.data.border_width);
-          console.log('CanvasSettingsContext - shadow_enabled from server:', data.data.shadow_enabled, 'type:', typeof data.data.shadow_enabled);
-          if (data.debug) {
-            console.log('CanvasSettingsContext - DEBUG INFO:', data.debug);
-          }
           // Mapper les données reçues vers le format du contexte
           const newSettings: CanvasSettingsContextType = {
             ...DEFAULT_SETTINGS,
@@ -284,7 +276,6 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
           };
           
           setSettings(newSettings);
-          console.log('CanvasSettingsContext - new settings applied:', newSettings.borderColor, newSettings.borderWidth);
         }
       }
     } catch (error) {
@@ -296,9 +287,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
 
   // Écouter les événements custom pour les mises à jour
   useEffect(() => {
-    console.log('CanvasSettingsContext - Adding event listener for pdfBuilderCanvasSettingsUpdated');
     const handleCustomUpdate = () => {
-      console.log('CanvasSettingsContext - Event pdfBuilderCanvasSettingsUpdated received');
       handleRefresh();
     };
     

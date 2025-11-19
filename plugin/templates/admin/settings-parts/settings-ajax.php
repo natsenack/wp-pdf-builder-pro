@@ -154,9 +154,6 @@ function pdf_builder_save_settings_handler() {
                 }
 
                 // Paramètres PDF
-                if (defined('WP_DEBUG') && WP_DEBUG) {
-                    error_log('[DEBUG] AJAX save_settings - pdf fields: ' . print_r(array_intersect_key($_POST, array_flip(['pdf_quality','pdf_page_size','pdf_orientation','pdf_cache_enabled','pdf_compression','pdf_metadata_enabled','pdf_print_optimized'])), true));
-                }
                 if (isset($_POST['pdf_quality'])) {
                     update_option('pdf_builder_pdf_quality', sanitize_text_field($_POST['pdf_quality']));
                 }
@@ -358,9 +355,6 @@ function pdf_builder_save_canvas_settings_handler() {
             foreach ($checkboxes as $checkbox) {
                 $value = isset($_POST[$checkbox]) && $_POST[$checkbox] === '1' ? 1 : 0;
                 $settings[str_replace('canvas_', '', $checkbox)] = $value;
-                if ($checkbox === 'canvas_shadow_enabled') {
-                    error_log('DEBUG: canvas_shadow_enabled - POST value: ' . (isset($_POST[$checkbox]) ? $_POST[$checkbox] : 'NOT SET') . ', computed value: ' . $value);
-                }
             }
 
             // Traiter les selects
@@ -381,14 +375,11 @@ function pdf_builder_save_canvas_settings_handler() {
 
             $saved = $canvas_manager->saveSettings($settings);
             if ($saved) {
-                error_log('Settings AJAX - Canvas settings saved successfully: ' . print_r($settings, true));
                 send_ajax_response(true, 'Paramètres canvas sauvegardés avec succès.', ['saved' => $settings]);
             } else {
-                error_log('Settings AJAX - Failed to save canvas settings');
                 send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres canvas.');
             }
         } catch (Exception $e) {
-            error_log('Canvas Manager exception: ' . $e->getMessage());
             send_ajax_response(false, 'Canvas_Manager non disponible: ' . $e->getMessage());
         }
     } else {
@@ -461,18 +452,8 @@ function pdf_builder_get_canvas_settings_handler() {
             'show_fps' => get_option('pdf_builder_canvas_show_fps', false) == '1'
         ];
         
-        // Debug info for shadow_enabled
-        $debug_info = [
-            'shadow_enabled_raw' => get_option('pdf_builder_canvas_shadow_enabled', '0'),
-            'shadow_enabled_computed' => $settings['shadow_enabled'],
-            'all_options' => [
-                'pdf_builder_canvas_shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', 'NOT_SET')
-            ]
-        ];
-        
-        send_ajax_response(true, 'Paramètres récupérés avec succès.', array_merge($settings, ['debug' => $debug_info]));
+        send_ajax_response(true, 'Paramètres récupérés avec succès.', $settings);
     } catch (Exception $e) {
-        error_log('Erreur récupération paramètres canvas: ' . $e->getMessage());
         send_ajax_response(false, 'Erreur: ' . $e->getMessage());
     }
 }
