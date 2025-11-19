@@ -946,13 +946,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function collectPdfSettings(formData) {
         // Collecter les données de l'onglet PDF
-        const pdfQuality = document.getElementById('pdf_quality')?.value || 'high';
-        const pdfPageSize = document.getElementById('pdf_page_size')?.value || 'A4';
-        const pdfOrientation = document.getElementById('pdf_orientation')?.value || 'portrait';
-        const pdfCacheEnabled = document.getElementById('pdf_cache_enabled')?.checked || true;
-        const pdfCompression = document.getElementById('pdf_compression')?.value || 'medium';
-        const pdfMetadataEnabled = document.getElementById('pdf_metadata_enabled')?.checked || true;
-        const pdfPrintOptimized = document.getElementById('pdf_print_optimized')?.checked || true;
+        console.log('[DEBUG] Collecting PDF settings...');
+
+        const pdfQuality = document.querySelector('#pdf_quality')?.value || 'high';
+        const pdfPageSize = document.querySelector('#pdf_page_size')?.value || 'A4';
+        const pdfOrientation = document.querySelector('#pdf_orientation')?.value || 'portrait';
+        const pdfCacheEnabled = document.querySelector('#pdf_cache_enabled')?.checked || false;
+        const pdfCompression = document.querySelector('#pdf_compression')?.value || 'medium';
+        const pdfMetadataEnabled = document.querySelector('#pdf_metadata_enabled')?.checked || true;
+        const pdfPrintOptimized = document.querySelector('#pdf_print_optimized')?.checked || true;
+
+        console.log('[DEBUG] PDF values:', {
+            pdfQuality, pdfPageSize, pdfOrientation, pdfCacheEnabled,
+            pdfCompression, pdfMetadataEnabled, pdfPrintOptimized
+        });
 
         formData.append('pdf_quality', pdfQuality);
         formData.append('pdf_page_size', pdfPageSize);
@@ -961,6 +968,8 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('pdf_compression', pdfCompression);
         formData.append('pdf_metadata_enabled', pdfMetadataEnabled ? '1' : '0');
         formData.append('pdf_print_optimized', pdfPrintOptimized ? '1' : '0');
+
+        console.log('[DEBUG] PDF settings collected successfully');
     }
 
     function collectContenuSettings(formData) {

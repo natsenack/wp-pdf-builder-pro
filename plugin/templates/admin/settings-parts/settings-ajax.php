@@ -647,25 +647,33 @@ if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_sav
             }
 
             // Paramètres PDF
+            error_log('[DEBUG] Processing PDF settings...');
             if (isset($_POST['pdf_quality'])) {
+                error_log('[DEBUG] pdf_quality: ' . $_POST['pdf_quality']);
                 update_option('pdf_builder_pdf_quality', sanitize_text_field($_POST['pdf_quality']));
             }
             if (isset($_POST['pdf_page_size'])) {
+                error_log('[DEBUG] pdf_page_size: ' . $_POST['pdf_page_size']);
                 update_option('pdf_builder_pdf_page_size', sanitize_text_field($_POST['pdf_page_size']));
             }
             if (isset($_POST['pdf_orientation'])) {
+                error_log('[DEBUG] pdf_orientation: ' . $_POST['pdf_orientation']);
                 update_option('pdf_builder_pdf_orientation', sanitize_text_field($_POST['pdf_orientation']));
             }
             if (isset($_POST['pdf_cache_enabled'])) {
+                error_log('[DEBUG] pdf_cache_enabled: ' . $_POST['pdf_cache_enabled']);
                 update_option('pdf_builder_pdf_cache_enabled', $_POST['pdf_cache_enabled'] === '1');
             }
             if (isset($_POST['pdf_compression'])) {
+                error_log('[DEBUG] pdf_compression: ' . $_POST['pdf_compression']);
                 update_option('pdf_builder_pdf_compression', sanitize_text_field($_POST['pdf_compression']));
             }
             if (isset($_POST['pdf_metadata_enabled'])) {
+                error_log('[DEBUG] pdf_metadata_enabled: ' . $_POST['pdf_metadata_enabled']);
                 update_option('pdf_builder_pdf_metadata_enabled', $_POST['pdf_metadata_enabled'] === '1');
             }
             if (isset($_POST['pdf_print_optimized'])) {
+                error_log('[DEBUG] pdf_print_optimized: ' . $_POST['pdf_print_optimized']);
                 update_option('pdf_builder_pdf_print_optimized', $_POST['pdf_print_optimized'] === '1');
             }
 
