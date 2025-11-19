@@ -120,7 +120,7 @@ class PdfBuilderProGenerator
             $container_styles .= " border: {$canvas_border_width}px solid {$canvas_border_color};";
         }
         if ($canvas_shadow_enabled) {
-            $container_styles .= " box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);";
+            $container_styles .= " box-shadow: 2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);";
         } else {
             $container_styles .= " box-shadow: none;";
         }
