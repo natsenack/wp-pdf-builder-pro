@@ -236,38 +236,48 @@ if (
     } ?>
     <!-- Tabs Navigation -->
     <div class="nav-tab-wrapper wp-clearfix">
-        <a href="#general" class="nav-tab nav-tab-active" data-tab="general">
-            <span class="tab-icon">⚙️</span>
-            <span class="tab-text">Général</span>
-        </a>
-        <a href="#licence" class="nav-tab" data-tab="licence">
-            <span class="tab-icon">🔑</span>
-            <span class="tab-text">Licence</span>
-        </a>
-        <a href="#systeme" class="nav-tab" data-tab="systeme">
-            <span class="tab-icon">🔧</span>
-            <span class="tab-text">Système</span>
-        </a>
-        <a href="#acces" class="nav-tab" data-tab="acces">
-            <span class="tab-icon">👥</span>
-            <span class="tab-text">Accès</span>
-        </a>
-        <a href="#securite" class="nav-tab" data-tab="securite">
-            <span class="tab-icon">🔒</span>
-            <span class="tab-text">Sécurité & Conformité</span>
-        </a>
-        <a href="#pdf" class="nav-tab" data-tab="pdf">
-            <span class="tab-icon">📄</span>
-            <span class="tab-text">Configuration PDF</span>
-        </a>
-        <a href="#contenu" class="nav-tab" data-tab="contenu">
-            <span class="tab-icon">🎨</span>
-            <span class="tab-text">Contenu & Design</span>
-        </a>
-        <a href="#developpeur" class="nav-tab" data-tab="developpeur">
-            <span class="tab-icon">👨‍💻</span>
-            <span class="tab-text">Développeur</span>
-        </a>
+        <div class="mobile-menu-toggle">
+            <button class="mobile-menu-button" aria-label="Menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <span class="current-tab-text">Général</span>
+        </div>
+        <div class="nav-tabs-container">
+            <a href="#general" class="nav-tab nav-tab-active" data-tab="general">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-text">Général</span>
+            </a>
+            <a href="#licence" class="nav-tab" data-tab="licence">
+                <span class="tab-icon">🔑</span>
+                <span class="tab-text">Licence</span>
+            </a>
+            <a href="#systeme" class="nav-tab" data-tab="systeme">
+                <span class="tab-icon">🔧</span>
+                <span class="tab-text">Système</span>
+            </a>
+            <a href="#acces" class="nav-tab" data-tab="acces">
+                <span class="tab-icon">👥</span>
+                <span class="tab-text">Accès</span>
+            </a>
+            <a href="#securite" class="nav-tab" data-tab="securite">
+                <span class="tab-icon">🔒</span>
+                <span class="tab-text">Sécurité & Conformité</span>
+            </a>
+            <a href="#pdf" class="nav-tab" data-tab="pdf">
+                <span class="tab-icon">📄</span>
+                <span class="tab-text">Configuration PDF</span>
+            </a>
+            <a href="#contenu" class="nav-tab" data-tab="contenu">
+                <span class="tab-icon">🎨</span>
+                <span class="tab-text">Contenu & Design</span>
+            </a>
+            <a href="#developpeur" class="nav-tab" data-tab="developpeur">
+                <span class="tab-icon">👨‍💻</span>
+                <span class="tab-text">Développeur</span>
+            </a>
+        </div>
     </div>
 <?php
 

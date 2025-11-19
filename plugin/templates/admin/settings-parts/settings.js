@@ -5,6 +5,47 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Gestion du menu hamburger mobile
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const navTabsContainer = document.querySelector('.nav-tabs-container');
+    const currentTabText = document.querySelector('.current-tab-text');
+
+    if (mobileMenuButton && navTabsContainer) {
+        mobileMenuButton.addEventListener('click', function() {
+            this.classList.toggle('active');
+            navTabsContainer.classList.toggle('active');
+        });
+
+        // Fermer le menu quand on clique sur un onglet
+        const navTabs = navTabsContainer.querySelectorAll('.nav-tab');
+        navTabs.forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                mobileMenuButton.classList.remove('active');
+                navTabsContainer.classList.remove('active');
+
+                // Mettre à jour le texte de l'onglet actif
+                const tabText = this.querySelector('.tab-text').textContent;
+                if (currentTabText) {
+                    currentTabText.textContent = tabText;
+                }
+            });
+        });
+
+        // Fermer le menu quand on clique en dehors
+        document.addEventListener('click', function(event) {
+            if (!mobileMenuButton.contains(event.target) && !navTabsContainer.contains(event.target)) {
+                mobileMenuButton.classList.remove('active');
+                navTabsContainer.classList.remove('active');
+            }
+        });
+    }
+
+    // Mettre à jour le texte de l'onglet actif au chargement
+    const activeTab = document.querySelector('.nav-tab-active .tab-text');
+    if (activeTab && currentTabText) {
+        currentTabText.textContent = activeTab.textContent;
+    }
+
     // Gestion des toggles dans l'onglet développeur
     const toggles = document.querySelectorAll('#developpeur .toggle-switch input[type="checkbox"]');
     toggles.forEach(function(toggle) {
