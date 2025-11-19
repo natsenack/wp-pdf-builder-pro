@@ -241,15 +241,7 @@
                     </div>
                 </div>
 
-                <!-- Bouton de sauvegarde -->
-                <div style="margin-top: 30px; text-align: center;">
-                    <button type="submit" class="button button-primary button-hero" style="padding: 12px 24px; font-size: 16px;">
-                        💾 Sauvegarder les paramètres Canvas
-                    </button>
-                </div>
-            </form>
-
-            <!-- Section Templates -->
+                <!-- Section Templates -->
             <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                     <span style="display: inline-flex; align-items: center; gap: 10px;">
@@ -369,44 +361,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle canvas form submission
-    const canvasForm = document.getElementById('canvas-form');
-    if (canvasForm) {
-        canvasForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            formData.append('action', 'pdf_builder_save_settings');
-            formData.append('current_tab', 'contenu');
-            
-            // Show loading state
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Sauvegarde en cours...';
-            submitBtn.disabled = true;
-            
-            fetch(ajaxurl, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showCanvasNotification('Paramètres canvas sauvegardés avec succès!', 'success');
-                } else {
-                    showCanvasNotification('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'), 'error');
-                }
-            })
-            .catch(error => {
-                showCanvasNotification('Erreur réseau: ' + error.message, 'error');
-            })
-            .finally(() => {
-                // Reset button state
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            });
-        });
-    }
     function showCanvasNotification(message, type) {
         // Remove existing notifications
         const existingNotifications = document.querySelectorAll('.canvas-notification');
