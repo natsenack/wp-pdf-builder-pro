@@ -764,10 +764,13 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             console.log('DEBUG: Response data:', data);
+            console.log('DEBUG: data.success:', data.success);
             if (data.success) {
+                console.log('DEBUG: Success condition met, updating button');
                 saveBtn.classList.remove('saving');
                 saveBtn.classList.add('saved');
                 saveBtn.textContent = '✅ Sauvegardé !';
+                console.log('DEBUG: Button text changed to:', saveBtn.textContent);
 
                 // Mettre à jour les badges de statut en temps réel
                 updateStatusBadges();
