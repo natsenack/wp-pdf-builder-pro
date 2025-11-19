@@ -150,10 +150,11 @@
                         <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <select id="export-format" style="min-width: 100px;">
-                                    <option value="json">JSON</option>
-                                    <option value="csv">CSV</option>
-                                    <option value="xml">XML</option>
-                                    <option value="txt">Texte</option>
+                                    <option value="html">📄 HTML (Lisible)</option>
+                                    <option value="pdf">📕 PDF (Impression)</option>
+                                    <option value="csv">📊 CSV (Excel)</option>
+                                    <option value="json">⚙️ JSON (Technique)</option>
+                                    <option value="xml">🔧 XML (Technique)</option>
                                 </select>
                                 <button type="button" id="export-my-data" class="button button-secondary" style="display: flex; align-items: center; gap: 8px;">
                                     📥 Exporter mes données
