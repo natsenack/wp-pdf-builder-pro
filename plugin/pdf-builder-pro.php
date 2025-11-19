@@ -196,15 +196,15 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
-    // Settings save
-    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax');
-    add_action('wp_ajax_pdf_builder_get_cache_status', 'pdf_builder_get_cache_status_ajax');
-    add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_test_cache_ajax');
-    add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_ajax');
+    // Settings save - REMOVED: now handled in settings-ajax.php
+    // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax');
+    // add_action('wp_ajax_pdf_builder_get_cache_status', 'pdf_builder_get_cache_status_ajax');
+    // add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_test_cache_ajax');
+    // add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_ajax');
     // Nouveaux handlers pour les fonctionnalités de cache avancées
-    add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_test_cache_integration_ajax');
-    add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_clear_all_cache_ajax');
-    add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_get_cache_metrics_ajax');
+    // add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_test_cache_integration_ajax');
+    // add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_clear_all_cache_ajax');
+    // add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_get_cache_metrics_ajax');
     // add_action('wp_ajax_pdf_builder_create_backup', 'pdf_builder_create_backup_ajax'); // Désactivé - conflit avec le manager
     // add_action('wp_ajax_pdf_builder_list_backups', 'pdf_builder_list_backups_ajax'); // Désactivé - conflit avec le manager
     // add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_restore_backup_ajax'); // Désactivé - conflit avec le manager
