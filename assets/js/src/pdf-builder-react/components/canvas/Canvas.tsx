@@ -2312,9 +2312,12 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     console.log('Canvas border settings:', { borderWidth, borderColor, canvasSettings });
     if (borderWidth > 0) {
       console.log('Drawing canvas border with:', borderColor, 'width:', borderWidth);
-      ctx.strokeStyle = borderColor;
-      ctx.lineWidth = borderWidth;
-      ctx.strokeRect(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth);
+      // TEMP: Force visible border for testing
+      const testBorderColor = '#ff0000'; // Red for testing
+      const testBorderWidth = 5; // Thicker for testing
+      ctx.strokeStyle = testBorderColor;
+      ctx.lineWidth = testBorderWidth;
+      ctx.strokeRect(testBorderWidth / 2, testBorderWidth / 2, width - testBorderWidth, height - testBorderWidth);
     }
 
     // DEBUG: Log elements
