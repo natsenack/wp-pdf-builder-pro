@@ -702,16 +702,6 @@ document.addEventListener('DOMContentLoaded', function() {
         saveBtn.textContent = '⏳ Sauvegarde...';
         saveBtn.disabled = true;
 
-        // Collecter toutes les données des formulaires
-        const formData = new FormData();
-
-        // Ajouter l'action AJAX
-        formData.append('action', 'pdf_builder_save_settings');
-        if (ajaxNonce) {
-            formData.append('nonce', ajaxNonce);
-        }
-        formData.append('current_tab', 'all');
-
         console.log('DEBUG: pdf_builder_ajax available:', typeof pdf_builder_ajax !== 'undefined');
         console.log('DEBUG: ajax_url:', pdf_builder_ajax?.ajax_url);
         console.log('DEBUG: nonce:', pdf_builder_ajax?.nonce);
@@ -726,6 +716,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log('DEBUG: Using ajax_url:', ajaxUrl);
         console.log('DEBUG: Using nonce:', ajaxNonce);
+
+        // Collecter toutes les données des formulaires
+        const formData = new FormData();
+
+        // Ajouter l'action AJAX
+        formData.append('action', 'pdf_builder_save_settings');
+        if (ajaxNonce) {
+            formData.append('nonce', ajaxNonce);
+        }
+        formData.append('current_tab', 'all');
 
         // Collecter les données de tous les onglets
         collectGeneralSettings(formData);
