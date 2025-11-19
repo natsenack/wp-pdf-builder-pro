@@ -676,7 +676,9 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   };
 
   const toggleGuides = () => {
+    console.log('🔄 BuilderContext: toggleGuides called, current showGuides:', state.template.showGuides);
     dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: { showGuides: !state.template.showGuides } });
+    console.log('🔄 BuilderContext: dispatched UPDATE_TEMPLATE_SETTINGS with showGuides:', !state.template.showGuides);
   };
 
   const value: BuilderContextType = {
@@ -693,8 +695,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     redo,
     reset,
     toggleGrid: toggleGrid,
-    toggleGuides: toggleGuides,
-    toggleGuides
+    toggleGuides: toggleGuides
   };
 
   return (

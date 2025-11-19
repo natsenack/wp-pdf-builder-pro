@@ -2363,7 +2363,10 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // Dessiner les guides si activés (utiliser les paramètres Canvas Settings et l'état du template)
     if (canvasSettings.guidesEnabled && state.template.showGuides) {
+      console.log('🎯 Canvas: Drawing guides - guidesEnabled:', canvasSettings.guidesEnabled, 'showGuides:', state.template.showGuides);
       drawGuides(ctx, width, height);
+    } else {
+      console.log('🎯 Canvas: Not drawing guides - guidesEnabled:', canvasSettings.guidesEnabled, 'showGuides:', state.template.showGuides);
     }
 
     // Dessiner les éléments
