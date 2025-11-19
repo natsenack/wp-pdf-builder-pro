@@ -578,6 +578,27 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     }
   }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin, state.canvas.zoom]);
 
+  // Synchroniser les paramètres de grille depuis CanvasSettingsContext
+  useEffect(() => {
+    const updates: Partial<CanvasState> = {};
+    
+    if (canvasSettings.gridShow !== (state.canvas.showGrid && canvasSettings.gridShow)) {
+      updates.showGrid = canvasSettings.gridShow;
+    }
+    
+    if (canvasSettings.gridSize !== state.canvas.gridSize) {
+      updates.gridSize = canvasSettings.gridSize;
+    }
+    
+    if (canvasSettings.gridSnapEnabled !== state.canvas.snapToGrid) {
+      updates.snapToGrid = canvasSettings.gridSnapEnabled;
+    }
+    
+    if (Object.keys(updates).length > 0) {
+      dispatch({ type: 'SET_CANVAS', payload: updates });
+    }
+  }, [canvasSettings.gridShow, canvasSettings.gridSize, canvasSettings.gridSnapEnabled, state.canvas.showGrid, state.canvas.gridSize, state.canvas.snapToGrid]);
+
   // ✅ DISABLED: Template loading is now EXCLUSIVELY handled by useTemplate hook
   // which reads template_id from URL/localized data and calls AJAX GET
   // This prevents duplicate/race condition loads which caused double canvas renders

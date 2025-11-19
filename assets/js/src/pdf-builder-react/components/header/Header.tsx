@@ -79,6 +79,9 @@ export const Header = memo(function Header({
   const [editedMarginBottom, setEditedMarginBottom] = useState(marginBottom);
   const [editedShowGuides, setEditedShowGuides] = useState(showGuides);
   const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
+  const [editedGridShow, setEditedGridShow] = useState(canvasSettings.gridShow);
+  const [editedGridSize, setEditedGridSize] = useState(canvasSettings.gridSize || 10);
+  const [editedGridSnapEnabled, setEditedGridSnapEnabled] = useState(canvasSettings.gridSnapEnabled);
   const [newTag, setNewTag] = useState('');
   const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
 
@@ -868,6 +871,85 @@ export const Header = memo(function Header({
                 </div>
               </div>
 
+              <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '16px', marginTop: '16px' }}>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
+                  📏 Grille & Guides
+                </h4>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      fontSize: '12px', 
+                      fontWeight: '500', 
+                      color: '#555' 
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={editedGridShow}
+                        onChange={(e) => {
+                          const newValue = e.target.checked;
+                          setEditedGridShow(newValue);
+                          // Synchronisation automatique
+                          if (!newValue) {
+                            setEditedGridSize(0);
+                            setEditedGridSnapEnabled(false);
+                          }
+                        }}
+                        style={{ margin: 0 }}
+                      />
+                      Grille activée
+                    </label>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: editedGridShow ? '#555' : '#999' }}>
+                      Taille de la grille (px)
+                    </label>
+                    <input
+                      type="number"
+                      value={editedGridSize}
+                      onChange={(e) => setEditedGridSize(Number(e.target.value))}
+                      disabled={!editedGridShow}
+                      min="5"
+                      max="100"
+                      style={{
+                        width: '100%',
+                        padding: '6px 8px',
+                        border: '1px solid #ddd',
+                        borderRadius: '3px',
+                        fontSize: '12px',
+                        backgroundColor: editedGridShow ? '#ffffff' : '#f5f5f5',
+                        color: editedGridShow ? '#000000' : '#999',
+                        cursor: editedGridShow ? 'text' : 'not-allowed'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      fontSize: '12px', 
+                      fontWeight: '500', 
+                      color: editedGridShow ? '#555' : '#999' 
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={editedGridSnapEnabled}
+                        onChange={(e) => setEditedGridSnapEnabled(e.target.checked)}
+                        disabled={!editedGridShow}
+                        style={{ margin: 0, cursor: editedGridShow ? 'pointer' : 'not-allowed' }}
+                      />
+                      Accrochage à la grille
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
                   Statut
@@ -950,6 +1032,14 @@ export const Header = memo(function Header({
                       showGuides: editedShowGuides,
                       snapToGrid: editedSnapToGrid
                     });
+                    
+                    // Mettre à jour les paramètres de grille
+                    canvasSettings.updateGridSettings({
+                      gridShow: editedGridShow,
+                      gridSize: editedGridSize,
+                      gridSnapEnabled: editedGridSnapEnabled
+                    });
+                    
                     setShowSettingsModal(false);
                   }}
                   style={{

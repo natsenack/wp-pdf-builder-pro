@@ -66,7 +66,8 @@ export interface CanvasSettingsContextType {
   isReady: boolean;
   error: string | null;
   
-  // Fonction pour recharger les paramètres
+  // Fonctions pour mettre à jour les paramètres
+  updateGridSettings: (settings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => void;
   refreshSettings: () => void;
 }
 
@@ -337,6 +338,9 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   // Ajouter la fonction refreshSettings au contexte final
   const contextValue: CanvasSettingsContextType = {
     ...settings,
+    updateGridSettings: (newSettings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => {
+      setSettings(prev => ({ ...prev, ...newSettings }));
+    },
     refreshSettings: handleRefresh
   };
 
