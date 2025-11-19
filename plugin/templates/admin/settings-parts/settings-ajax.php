@@ -168,7 +168,7 @@ function pdf_builder_save_settings_handler() {
                     $current_value = get_option('pdf_builder_pdf_cache_enabled', 'not_set');
                     error_log('Before save: pdf_cache_enabled current value: ' . ($current_value === 'not_set' ? 'not_set' : ($current_value ? 'true' : 'false')));
                     error_log('POST pdf_cache_enabled: ' . $_POST['pdf_cache_enabled']);
-                    $new_value = $_POST['pdf_cache_enabled'] === '1';
+                    $new_value = $_POST['pdf_cache_enabled'] === '1' ? 1 : 0;
                     // Try add_option instead
                     $add_result = add_option('pdf_builder_pdf_cache_enabled', $new_value);
                     error_log('Add result: ' . ($add_result ? 'success' : 'failed'));
