@@ -263,9 +263,8 @@ class PDF_Builder_GDPR_Manager {
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.6;
-            color: #2c3e50;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            color: #333;
+            background: #f8f9fa;
             padding: 20px;
         }
 
@@ -273,28 +272,35 @@ class PDF_Builder_GDPR_Manager {
             max-width: 900px;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 40px 30px;
+            background: #fff;
+            border-bottom: 1px solid #e9ecef;
+            color: #333;
+            padding: 30px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-size: 2em;
             margin-bottom: 10px;
-            font-weight: 300;
+            font-weight: 600;
+            color: #2c3e50;
         }
 
         .header .subtitle {
-            font-size: 1.1em;
-            opacity: 0.9;
-            margin-bottom: 20px;
+            font-size: 1em;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .header .date {
+            color: #6c757d;
+            font-size: 0.9em;
         }
 
         .user-info {
@@ -323,67 +329,55 @@ class PDF_Builder_GDPR_Manager {
         }
 
         .privacy-notice {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-            border-left: 5px solid #ffc107;
-            padding: 25px 30px;
-            margin: 30px;
-            border-radius: 10px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 20px 30px;
+            margin: 0;
         }
 
         .privacy-notice h3 {
             color: #856404;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
         }
 
         .content {
-            padding: 0 30px 40px;
+            padding: 0 30px 30px;
         }
 
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             background: #f8f9fa;
-            border-radius: 15px;
+            border-radius: 6px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef;
         }
 
         .section h2 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #fff;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
             margin: 0;
-            padding: 20px 25px;
-            font-size: 1.3em;
-            font-weight: 400;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            padding: 15px 20px;
+            font-size: 1.2em;
+            font-weight: 600;
         }
 
         .section-content {
-            padding: 25px;
+            padding: 20px;
         }
 
         .data-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 15px;
         }
 
         .data-item {
             background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 4px;
+            padding: 15px;
             border: 1px solid #e9ecef;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .data-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
 
         .data-label {
@@ -393,32 +387,32 @@ class PDF_Builder_GDPR_Manager {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.95em;
+            font-size: 0.9em;
         }
 
         .data-value {
             background: #f8f9fa;
-            padding: 12px 16px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+            padding: 10px 12px;
+            border-radius: 3px;
+            border-left: 3px solid #007cba;
             word-wrap: break-word;
             font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
-            font-size: 0.9em;
+            font-size: 0.85em;
             line-height: 1.4;
         }
 
         .array-value {
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #28a745;
+            padding: 12px;
+            border-radius: 3px;
+            border-left: 3px solid #28a745;
         }
 
         .array-item {
-            margin-bottom: 10px;
-            padding: 10px 12px;
+            margin-bottom: 8px;
+            padding: 8px 10px;
             background: white;
-            border-radius: 6px;
+            border-radius: 3px;
             border: 1px solid #dee2e6;
             display: flex;
             justify-content: space-between;
@@ -432,52 +426,57 @@ class PDF_Builder_GDPR_Manager {
         .array-key {
             font-weight: 600;
             color: #495057;
+            font-size: 0.85em;
         }
 
         .array-value {
             color: #6c757d;
             font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
+            font-size: 0.8em;
         }
 
         .empty-notice {
             text-align: center;
             color: #6c757d;
             font-style: italic;
-            padding: 20px;
+            padding: 15px;
         }
 
         .footer {
             background: #2c3e50;
             color: white;
-            padding: 30px;
+            padding: 25px 30px;
             text-align: center;
-            margin-top: 40px;
+            margin-top: 30px;
         }
 
         .footer h3 {
-            margin-bottom: 15px;
-            font-weight: 300;
+            margin-bottom: 10px;
+            font-weight: 400;
+            font-size: 1.1em;
         }
 
         .footer p {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             opacity: 0.8;
+            font-size: 0.9em;
         }
 
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 15px;
             flex-wrap: wrap;
         }
 
         .footer-link {
             color: #3498db;
             text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 4px;
             background: rgba(255,255,255,0.1);
+            font-size: 0.85em;
             transition: background 0.2s ease;
         }
 
@@ -488,7 +487,7 @@ class PDF_Builder_GDPR_Manager {
 
         @media (max-width: 768px) {
             .header h1 {
-                font-size: 2em;
+                font-size: 1.8em;
             }
 
             .user-info {
@@ -508,36 +507,34 @@ class PDF_Builder_GDPR_Manager {
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📋 Mes Données Personnelles</h1>
-            <div class="subtitle">Export RGPD - Document officiel</div>
-            <div>Généré le ' . $export_date . '</div>
-        </div>
-
-        <div class="user-info">
-            <div class="user-info-item">
-                <div class="user-info-label">Utilisateur</div>
-                <div class="user-info-value">' . esc_html($user_info->display_name) . '</div>
+        <div class="container">
+            <div class="header">
+                <h1>Mes Données Personnelles</h1>
+                <div class="subtitle">Export RGPD - Document officiel</div>
+                <div class="date">Généré le ' . $export_date . '</div>
             </div>
-            <div class="user-info-item">
-                <div class="user-info-label">Email</div>
-                <div class="user-info-value">' . esc_html($user_info->user_email) . '</div>
+
+            <div class="user-info">
+                <div class="user-info-item">
+                    <div class="user-info-label">Utilisateur</div>
+                    <div class="user-info-value">' . esc_html($user_info->display_name) . '</div>
+                </div>
+                <div class="user-info-item">
+                    <div class="user-info-label">Email</div>
+                    <div class="user-info-value">' . esc_html($user_info->user_email) . '</div>
+                </div>
+                <div class="user-info-item">
+                    <div class="user-info-label">ID Utilisateur</div>
+                    <div class="user-info-value">#' . esc_html($user_info->ID) . '</div>
+                </div>
             </div>
-            <div class="user-info-item">
-                <div class="user-info-label">ID Utilisateur</div>
-                <div class="user-info-value">#' . esc_html($user_info->ID) . '</div>
+
+            <div class="privacy-notice">
+                <h3>Protection de vos données</h3>
+                <p>Ce document contient toutes les données personnelles que nous détenons à votre sujet, conformément au Règlement Général sur la Protection des Données (RGPD). Vous avez le droit de consulter, rectifier ou supprimer ces données à tout moment.</p>
             </div>
-        </div>
 
-        <div class="privacy-notice">
-            <h3>🔒 🛡️ Protection de vos données</h3>
-            <p>Ce document contient toutes les données personnelles que nous détenons à votre sujet, conformément au Règlement Général sur la Protection des Données (RGPD). Vous avez le droit de consulter, rectifier ou supprimer ces données à tout moment.</p>
-        </div>
-
-        <div class="content">';
-
-        // Fonction récursive pour formater les données
+            <div class="content">';        // Fonction récursive pour formater les données
         $format_data = function($data, $prefix = '') use (&$format_data) {
             $result = '';
 
@@ -548,12 +545,12 @@ class PDF_Builder_GDPR_Manager {
                 if (is_array($value) || is_object($value)) {
                     if (empty($value)) {
                         $result .= '<div class="data-item">
-                            <div class="data-label">📁 ' . esc_html($display_key) . '</div>
+                            <div class="data-label">' . esc_html($display_key) . '</div>
                             <div class="data-value empty-notice">(Aucune donnée)</div>
                         </div>';
                     } else {
                         $result .= '<div class="data-item">
-                            <div class="data-label">📁 ' . esc_html($display_key) . '</div>
+                            <div class="data-label">' . esc_html($display_key) . '</div>
                             <div class="array-value">';
 
                         if (is_object($value)) {
@@ -572,7 +569,7 @@ class PDF_Builder_GDPR_Manager {
                     }
                 } else {
                     $result .= '<div class="data-item">
-                        <div class="data-label">📄 ' . esc_html($display_key) . '</div>
+                        <div class="data-label">' . esc_html($display_key) . '</div>
                         <div class="data-value">' . esc_html($value) . '</div>
                     </div>';
                 }
@@ -581,29 +578,29 @@ class PDF_Builder_GDPR_Manager {
             return $result;
         };
 
-        // Grouper les données par catégories avec icônes
+        // Grouper les données par catégories
         $sections = [
-            '👤 Informations de base' => [],
-            '⚙️ Métadonnées utilisateur' => [],
-            '🎛️ Préférences et paramètres' => [],
-            '📊 Historique et activité' => [],
-            '🔒 Données RGPD' => [],
-            '📦 Autre' => []
+            'Informations de base' => [],
+            'Métadonnées utilisateur' => [],
+            'Préférences et paramètres' => [],
+            'Historique et activité' => [],
+            'Données RGPD' => [],
+            'Autre' => []
         ];
 
         foreach ($user_data as $key => $value) {
             if (strpos($key, 'user_') === 0 || in_array($key, ['ID', 'user_login', 'user_email', 'display_name'])) {
-                $sections['👤 Informations de base'][$key] = $value;
+                $sections['Informations de base'][$key] = $value;
             } elseif (strpos($key, 'meta_') === 0 || strpos($key, 'wp_') === 0) {
-                $sections['⚙️ Métadonnées utilisateur'][$key] = $value;
+                $sections['Métadonnées utilisateur'][$key] = $value;
             } elseif (strpos($key, 'pref') === 0 || strpos($key, 'setting') === 0 || strpos($key, 'option') === 0) {
-                $sections['🎛️ Préférences et paramètres'][$key] = $value;
+                $sections['Préférences et paramètres'][$key] = $value;
             } elseif (strpos($key, 'consent') !== false || strpos($key, 'gdpr') !== false) {
-                $sections['🔒 Données RGPD'][$key] = $value;
+                $sections['Données RGPD'][$key] = $value;
             } elseif (strpos($key, 'last_') === 0 || strpos($key, 'date') !== false || strpos($key, 'time') !== false) {
-                $sections['📊 Historique et activité'][$key] = $value;
+                $sections['Historique et activité'][$key] = $value;
             } else {
-                $sections['📦 Autre'][$key] = $value;
+                $sections['Autre'][$key] = $value;
             }
         }
 
@@ -624,13 +621,13 @@ class PDF_Builder_GDPR_Manager {
         $html .= '</div>
 
         <div class="footer">
-            <h3>🛡️ PDF Builder Pro - Protection RGPD</h3>
+            <h3>PDF Builder Pro - Protection RGPD</h3>
             <p>Conformément au Règlement UE 2016/679 - Règlement Général sur la Protection des Données</p>
-            <p>📧 Pour toute question concernant vos données, contactez l\'administrateur du site</p>
+            <p>Pour toute question concernant vos données, contactez l\'administrateur du site</p>
             <div class="footer-links">
-                <a href="#" class="footer-link">📋 Demander rectification</a>
-                <a href="#" class="footer-link">🗑️ Demander suppression</a>
-                <a href="#" class="footer-link">📞 Contacter le DPO</a>
+                <a href="#" class="footer-link">Demander rectification</a>
+                <a href="#" class="footer-link">Demander suppression</a>
+                <a href="#" class="footer-link">Contacter le DPO</a>
             </div>
         </div>
     </div>
