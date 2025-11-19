@@ -362,9 +362,11 @@ function pdf_builder_save_canvas_settings_handler() {
             if ($saved) {
                 send_ajax_response(true, 'Paramètres canvas sauvegardés avec succès.', ['saved' => $settings]);
             } else {
+                error_log('Canvas Manager saveSettings failed for settings: ' . print_r($settings, true));
                 send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres canvas.');
             }
         } catch (Exception $e) {
+            error_log('Canvas Manager exception: ' . $e->getMessage());
             send_ajax_response(false, 'Canvas_Manager non disponible: ' . $e->getMessage());
         }
     } else {

@@ -373,13 +373,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Canvas save response:', data);
                     if (data.success) {
                         // Close modal
                         modal.style.display = 'none';
                         // Show success message
                         showCanvasNotification('Paramètres sauvegardés avec succès!', 'success');
                     } else {
-                        showCanvasNotification('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'), 'error');
+                        console.error('Canvas save error:', data);
+                        let errorMessage = data.data && data.data.message ? data.data.message : (data.data || 'Erreur inconnue');
+                        showCanvasNotification('Erreur lors de la sauvegarde: ' + errorMessage, 'error');
                     }
                 })
                 .catch(error => {

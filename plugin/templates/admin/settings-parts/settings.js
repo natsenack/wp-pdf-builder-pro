@@ -1483,12 +1483,18 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Faire l'appel AJAX
+            console.log('Envoi sauvegarde canvas - Catégorie:', category);
+            console.log('FormData envoyé:', Array.from(formData.entries()));
             fetch(pdf_builder_ajax.ajax_url, {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Réponse HTTP:', response.status, response.statusText);
+                return response.json();
+            })
             .then(data => {
+                console.log('Réponse JSON complète:', data);
                 if (data.success) {
                     button.textContent = '✅ Sauvegardé';
                     button.classList.add('saved');
