@@ -675,10 +675,6 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     setCanvas({ showGrid: !state.canvas.showGrid });
   };
 
-  const toggleGuides = () => {
-    dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: { showGuides: !state.template.showGuides } });
-  };
-
   const value: BuilderContextType = {
     state,
     dispatch,
