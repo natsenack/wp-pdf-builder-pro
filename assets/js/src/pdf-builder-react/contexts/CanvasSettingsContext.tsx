@@ -167,38 +167,38 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       showMargins: (windowSettings.show_margins as boolean) === true || (windowSettings.show_margins as string) === '1',
       
       // Grille
-      gridShow: (windowSettings.show_grid as boolean) !== false,
+      gridShow: windowSettings.show_grid === true || windowSettings.show_grid === '1',
       gridSize: (windowSettings.grid_size as number) ?? DEFAULT_SETTINGS.gridSize,
       gridColor: (windowSettings.grid_color as string) ?? DEFAULT_SETTINGS.gridColor,
-      gridSnapEnabled: (windowSettings.snap_to_grid as boolean) !== false,
+      gridSnapEnabled: windowSettings.snap_to_grid === true || windowSettings.snap_to_grid === '1',
       gridSnapTolerance: (windowSettings.snap_tolerance as number) ?? DEFAULT_SETTINGS.gridSnapTolerance,
-      guidesEnabled: (windowSettings.show_guides as boolean) !== false,
+      guidesEnabled: windowSettings.show_guides === true || windowSettings.show_guides === '1',
       
       // Zoom
       zoomDefault: (windowSettings.default_zoom as number) ?? DEFAULT_SETTINGS.zoomDefault,
       zoomMin: (windowSettings.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin,
       zoomMax: (windowSettings.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax,
       zoomStep: (windowSettings.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep,
-      zoomWheelSupport: (windowSettings.zoom_with_wheel as boolean) !== false,
+      zoomWheelSupport: windowSettings.zoom_with_wheel === true || windowSettings.zoom_with_wheel === '1',
       
       // Sélection
-      selectionMultiSelectEnabled: (windowSettings.multi_select as boolean) !== false,
-      selectionRotationEnabled: (windowSettings.enable_rotation as boolean) !== false,
-      selectionCopyPasteEnabled: (windowSettings.copy_paste_enabled as boolean) !== false,
-      selectionShowHandles: (windowSettings.show_resize_handles as boolean) !== false,
+      selectionMultiSelectEnabled: windowSettings.multi_select === true || windowSettings.multi_select === '1',
+      selectionRotationEnabled: windowSettings.enable_rotation === true || windowSettings.enable_rotation === '1',
+      selectionCopyPasteEnabled: windowSettings.copy_paste_enabled === true || windowSettings.copy_paste_enabled === '1',
+      selectionShowHandles: windowSettings.show_resize_handles === true || windowSettings.show_resize_handles === '1',
       selectionHandleSize: (windowSettings.handle_size as number) ?? DEFAULT_SETTINGS.selectionHandleSize,
       selectionHandleColor: (windowSettings.handle_color as string) ?? DEFAULT_SETTINGS.selectionHandleColor,
       
       // Export
       exportQuality: (windowSettings.image_quality as number) ?? DEFAULT_SETTINGS.exportQuality,
       exportFormat: (windowSettings.export_format as 'pdf' | 'png' | 'jpg') ?? DEFAULT_SETTINGS.exportFormat,
-      exportCompression: (windowSettings.compress_images as boolean) !== false,
-      exportIncludeMetadata: (windowSettings.include_metadata as boolean) !== false,
+      exportCompression: windowSettings.compress_images === true || windowSettings.compress_images === '1',
+      exportIncludeMetadata: windowSettings.include_metadata === true || windowSettings.include_metadata === '1',
       
       // Historique
       historyUndoLevels: (windowSettings.history_undo_levels as number) ?? DEFAULT_SETTINGS.historyUndoLevels,
       historyRedoLevels: (windowSettings.history_redo_levels as number) ?? DEFAULT_SETTINGS.historyRedoLevels,
-      historyAutoSaveEnabled: (windowSettings.history_auto_save_enabled as boolean) !== false,
+      historyAutoSaveEnabled: windowSettings.history_auto_save_enabled === true || windowSettings.history_auto_save_enabled === '1',
       historyAutoSaveInterval: (windowSettings.history_auto_save_interval as number) ?? DEFAULT_SETTINGS.historyAutoSaveInterval,
       
       isLoading: false,
@@ -270,12 +270,12 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             showMargins: data.data.show_margins === true || data.data.show_margins === '1',
             
             // Grille
-            gridShow: data.data.show_grid !== false,
+            gridShow: data.data.show_grid === true || data.data.show_grid === '1',
             gridSize: data.data.grid_size ?? DEFAULT_SETTINGS.gridSize,
             gridColor: data.data.grid_color ?? DEFAULT_SETTINGS.gridColor,
-            gridSnapEnabled: data.data.snap_to_grid !== false,
+            gridSnapEnabled: data.data.snap_to_grid === true || data.data.snap_to_grid === '1',
             gridSnapTolerance: data.data.snap_tolerance ?? DEFAULT_SETTINGS.gridSnapTolerance,
-            guidesEnabled: data.data.show_guides !== false,
+            guidesEnabled: data.data.show_guides === true || data.data.show_guides === '1',
             
             // Autres paramètres...
             isLoading: false,
