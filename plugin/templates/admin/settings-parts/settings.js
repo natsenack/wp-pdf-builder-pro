@@ -949,42 +949,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const pdfQuality = document.getElementById('pdf_quality')?.value || 'high';
         const pdfPageSize = document.getElementById('pdf_page_size')?.value || 'A4';
         const pdfOrientation = document.getElementById('pdf_orientation')?.value || 'portrait';
-        const pdfCompression = document.getElementById('pdf_compression')?.value || 'medium';
         const pdfCacheEnabled = document.getElementById('pdf_cache_enabled')?.checked || true;
-        const pdfMarginTop = document.getElementById('pdf_margin_top')?.value || '15';
-        const pdfMarginRight = document.getElementById('pdf_margin_right')?.value || '15';
-        const pdfMarginBottom = document.getElementById('pdf_margin_bottom')?.value || '15';
-        const pdfMarginLeft = document.getElementById('pdf_margin_left')?.value || '15';
+        const pdfCompression = document.getElementById('pdf_compression')?.value || 'medium';
         const pdfMetadataEnabled = document.getElementById('pdf_metadata_enabled')?.checked || true;
-        const pdfAuthor = document.getElementById('pdf_author')?.value || '';
-        const pdfSubject = document.getElementById('pdf_subject')?.value || '';
-        const pdfProtectionEnabled = document.getElementById('pdf_protection_enabled')?.checked || false;
-        const pdfDefaultTemplate = document.getElementById('pdf_default_template')?.value || 'default';
-        const pdfCustomCss = document.getElementById('pdf_custom_css')?.value || '';
-        const pdfHeaderFooterEnabled = document.getElementById('pdf_header_footer_enabled')?.checked || true;
         const pdfPrintOptimized = document.getElementById('pdf_print_optimized')?.checked || true;
-        const pdfAccessibilityEnabled = document.getElementById('pdf_accessibility_enabled')?.checked || false;
-        const pdfBookmarksEnabled = document.getElementById('pdf_bookmarks_enabled')?.checked || true;
 
         formData.append('pdf_quality', pdfQuality);
         formData.append('pdf_page_size', pdfPageSize);
         formData.append('pdf_orientation', pdfOrientation);
-        formData.append('pdf_compression', pdfCompression);
         formData.append('pdf_cache_enabled', pdfCacheEnabled ? '1' : '0');
-        formData.append('pdf_margin_top', pdfMarginTop);
-        formData.append('pdf_margin_right', pdfMarginRight);
-        formData.append('pdf_margin_bottom', pdfMarginBottom);
-        formData.append('pdf_margin_left', pdfMarginLeft);
+        formData.append('pdf_compression', pdfCompression);
         formData.append('pdf_metadata_enabled', pdfMetadataEnabled ? '1' : '0');
-        formData.append('pdf_author', pdfAuthor);
-        formData.append('pdf_subject', pdfSubject);
-        formData.append('pdf_protection_enabled', pdfProtectionEnabled ? '1' : '0');
-        formData.append('pdf_default_template', pdfDefaultTemplate);
-        formData.append('pdf_custom_css', pdfCustomCss);
-        formData.append('pdf_header_footer_enabled', pdfHeaderFooterEnabled ? '1' : '0');
         formData.append('pdf_print_optimized', pdfPrintOptimized ? '1' : '0');
-        formData.append('pdf_accessibility_enabled', pdfAccessibilityEnabled ? '1' : '0');
-        formData.append('pdf_bookmarks_enabled', pdfBookmarksEnabled ? '1' : '0');
     }
 
     function collectContenuSettings(formData) {
