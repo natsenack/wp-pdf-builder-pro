@@ -707,12 +707,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Ajouter l'action AJAX
         formData.append('action', 'pdf_builder_save_settings');
-        formData.append('nonce', pdf_builder_ajax.nonce);
+        if (ajaxNonce) {
+            formData.append('nonce', ajaxNonce);
+        }
         formData.append('current_tab', 'all');
 
         console.log('DEBUG: pdf_builder_ajax available:', typeof pdf_builder_ajax !== 'undefined');
         console.log('DEBUG: ajax_url:', pdf_builder_ajax?.ajax_url);
         console.log('DEBUG: nonce:', pdf_builder_ajax?.nonce);
+
+        // Utiliser ajaxurl si pdf_builder_ajax n'est pas disponible
+        const ajaxUrl = (typeof pdf_builder_ajax !== 'undefined' && pdf_builder_ajax.ajax_url) 
+            ? pdf_builder_ajax.ajax_url 
+            : (typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php');
+        const ajaxNonce = (typeof pdf_builder_ajax !== 'undefined' && pdf_builder_ajax.nonce) 
+            ? pdf_builder_ajax.nonce 
+            : '';
+
+        console.log('DEBUG: Using ajax_url:', ajaxUrl);
+        console.log('DEBUG: Using nonce:', ajaxNonce);
 
         // Collecter les données de tous les onglets
         collectGeneralSettings(formData);
@@ -736,7 +749,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Envoyer la requête AJAX
-        fetch(pdf_builder_ajax.ajax_url, {
+        fetch(ajaxUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
