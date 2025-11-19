@@ -164,12 +164,14 @@ function pdf_builder_save_settings_handler() {
                     update_option('pdf_builder_pdf_orientation', sanitize_text_field($_POST['pdf_orientation']));
                 }
                 if (isset($_POST['pdf_cache_enabled'])) {
+                    global $wpdb;
                     $current_value = get_option('pdf_builder_pdf_cache_enabled', 'not_set');
                     error_log('Before save: pdf_cache_enabled current value: ' . ($current_value === 'not_set' ? 'not_set' : ($current_value ? 'true' : 'false')));
                     error_log('POST pdf_cache_enabled: ' . $_POST['pdf_cache_enabled']);
                     $new_value = $_POST['pdf_cache_enabled'] === '1';
                     $update_result = update_option('pdf_builder_pdf_cache_enabled', $new_value);
                     error_log('Update result: ' . ($update_result ? 'success' : 'failed'));
+                    error_log('DB last error: ' . $wpdb->last_error);
                     $after_value = get_option('pdf_builder_pdf_cache_enabled', 'not_set');
                     error_log('After save: pdf_cache_enabled value: ' . ($after_value === 'not_set' ? 'not_set' : ($after_value ? 'true' : 'false')));
                 }
