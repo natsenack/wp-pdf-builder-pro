@@ -1021,7 +1021,7 @@ export const Header = memo(function Header({
                   Annuler
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     // Sauvegarder les paramètres du template
                     onUpdateTemplateSettings({
                       name: editedTemplateName,
@@ -1033,8 +1033,8 @@ export const Header = memo(function Header({
                       snapToGrid: editedSnapToGrid
                     });
                     
-                    // Mettre à jour les paramètres de grille
-                    canvasSettings.updateGridSettings({
+                    // Sauvegarder les paramètres de grille côté serveur
+                    await canvasSettings.saveGridSettings({
                       gridShow: editedGridShow,
                       gridSize: editedGridSize,
                       gridSnapEnabled: editedGridSnapEnabled

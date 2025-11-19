@@ -68,6 +68,7 @@ export interface CanvasSettingsContextType {
   
   // Fonctions pour mettre à jour les paramètres
   updateGridSettings: (settings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => void;
+  saveGridSettings: (settings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => Promise<void>;
   refreshSettings: () => void;
 }
 
@@ -340,6 +341,54 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     ...settings,
     updateGridSettings: (newSettings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => {
       setSettings(prev => ({ ...prev, ...newSettings }));
+    },
+    saveGridSettings: async (newSettings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => {
+      try {
+        // Appliquer la synchronisation automatique
+        const syncedSettings = { ...newSettings };
+        if (newSettings.gridShow === false) {
+          syncedSettings.gridSize = 0;
+          syncedSettings.gridSnapEnabled = false;
+        }
+
+        // Préparer les données pour l'AJAX
+        const formData = new URLSearchParams();
+        formData.append('action', 'pdf_builder_save_canvas_settings');
+        formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+        
+        if (syncedSettings.gridShow !== undefined) {
+          formData.append('canvas_grid_enabled', syncedSettings.gridShow ? '1' : '0');
+        }
+        if (syncedSettings.gridSize !== undefined) {
+          formData.append('canvas_grid_size', syncedSettings.gridSize.toString());
+        }
+        if (syncedSettings.gridSnapEnabled !== undefined) {
+          formData.append('canvas_snap_to_grid', syncedSettings.gridSnapEnabled ? '1' : '0');
+        }
+
+        // Sauvegarder côté serveur
+        const response = await fetch(window.pdfBuilderAjax?.ajax_url || '/wp-admin/admin-ajax.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formData
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            // Mettre à jour l'état local
+            setSettings(prev => ({ ...prev, ...syncedSettings }));
+          } else {
+            console.error('Erreur lors de la sauvegarde des paramètres de grille:', result.message);
+          }
+        } else {
+          console.error('Erreur HTTP lors de la sauvegarde des paramètres de grille');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la sauvegarde des paramètres de grille:', error);
+      }
     },
     refreshSettings: handleRefresh
   };
