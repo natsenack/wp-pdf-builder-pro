@@ -2497,7 +2497,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
           border: borderStyle,
           cursor: 'crosshair',
           backgroundColor: '#ffffff',
-          transition: 'border-color 0.2s ease'
+          boxShadow: canvasSettings.shadowEnabled ? '0 4px 8px rgba(0, 0, 0, 0.1)' : 'none',
+          transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
         }}
       />
       {contextMenu.isVisible && (

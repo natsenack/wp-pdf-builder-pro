@@ -18,6 +18,7 @@ export interface CanvasSettingsContextType {
   containerBackgroundColor: string;
   borderColor: string;
   borderWidth: number;
+  shadowEnabled: boolean;
   
   // Marges
   marginTop: number;
@@ -81,6 +82,7 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   containerBackgroundColor: '#f8f9fa',
   borderColor: '#cccccc',
   borderWidth: 1,
+  shadowEnabled: false,
   
   marginTop: 20,
   marginRight: 20,
@@ -153,6 +155,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       containerBackgroundColor: (windowSettings.container_background_color as string) ?? DEFAULT_SETTINGS.containerBackgroundColor,
       borderColor: (windowSettings.border_color as string) ?? DEFAULT_SETTINGS.borderColor,
       borderWidth: (windowSettings.border_width as number) ?? DEFAULT_SETTINGS.borderWidth,
+      shadowEnabled: (windowSettings.shadow_enabled as boolean) !== false,
       
       // Marges
       marginTop: (windowSettings.margin_top as number) ?? DEFAULT_SETTINGS.marginTop,
@@ -258,6 +261,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             containerBackgroundColor: data.data.container_background_color ?? DEFAULT_SETTINGS.containerBackgroundColor,
             borderColor: data.data.border_color ?? DEFAULT_SETTINGS.borderColor,
             borderWidth: data.data.border_width ?? DEFAULT_SETTINGS.borderWidth,
+            shadowEnabled: data.data.shadow_enabled !== false,
             
             // Marges
             marginTop: data.data.margin_top ?? DEFAULT_SETTINGS.marginTop,
