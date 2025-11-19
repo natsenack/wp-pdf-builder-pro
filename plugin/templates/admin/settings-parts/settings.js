@@ -710,6 +710,10 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('nonce', pdf_builder_ajax.nonce);
         formData.append('current_tab', 'all');
 
+        console.log('DEBUG: pdf_builder_ajax available:', typeof pdf_builder_ajax !== 'undefined');
+        console.log('DEBUG: ajax_url:', pdf_builder_ajax?.ajax_url);
+        console.log('DEBUG: nonce:', pdf_builder_ajax?.nonce);
+
         // Collecter les données de tous les onglets
         collectGeneralSettings(formData);
         collectLicenceSettings(formData);
@@ -724,6 +728,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const params = new URLSearchParams();
         for (let [key, value] of formData.entries()) {
             params.append(key, value);
+        }
+
+        console.log('DEBUG: FormData contents:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`  ${key}: ${value}`);
         }
 
         // Envoyer la requête AJAX

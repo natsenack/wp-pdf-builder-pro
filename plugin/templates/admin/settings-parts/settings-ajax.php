@@ -69,15 +69,31 @@ function pdf_builder_clear_cache_handler() {
 }
 
 function pdf_builder_save_settings_handler() {
-    if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
-        $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
+    error_log('[DEBUG] pdf_builder_save_settings_handler called');
+    error_log('[DEBUG] POST data: ' . print_r($_POST, true));
+    error_log('[DEBUG] REQUEST data: ' . print_r($_REQUEST, true));
 
-        // Traiter directement selon l'onglet
-        switch ($current_tab) {
-            case 'all':
-                // Traitement de tous les paramètres (bouton flottant de sauvegarde)
-                error_log('[DEBUG] Traitement de tous les paramètres (bouton flottant)');
-                error_log('[DEBUG] POST data: ' . print_r($_POST, true));
+    if (!isset($_POST['nonce'])) {
+        error_log('[DEBUG] No nonce in POST data');
+        send_ajax_response(false, 'Nonce manquant.');
+        return;
+    }
+
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+        error_log('[DEBUG] Nonce verification failed. Received: ' . $_POST['nonce']);
+        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
+        return;
+    }
+
+    error_log('[DEBUG] Nonce verified successfully');
+    $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
+
+    // Traiter directement selon l'onglet
+    switch ($current_tab) {
+        case 'all':
+            // Traitement de tous les paramètres (bouton flottant de sauvegarde)
+            error_log('[DEBUG] Traitement de tous les paramètres (bouton flottant)');
+            error_log('[DEBUG] POST data: ' . print_r($_POST, true));
 
                 // Paramètres généraux
                 if (isset($_POST['debug_mode'])) {
@@ -201,9 +217,6 @@ function pdf_builder_save_settings_handler() {
                 send_ajax_response(false, 'Onglet non reconnu.');
                 break;
         }
-    } else {
-        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
-    }
 }
 
 // Hook AJAX actions - MOVED to pdf-builder-pro.php for global registration
