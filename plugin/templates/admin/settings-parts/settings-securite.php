@@ -151,7 +151,6 @@
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <select id="export-format" style="min-width: 100px;">
                                     <option value="html">📄 HTML (Lisible)</option>
-                                    <option value="pdf">📕 PDF (Impression)</option>
                                     <option value="csv">📊 CSV (Excel)</option>
                                     <option value="json">⚙️ JSON (Technique)</option>
                                     <option value="xml">🔧 XML (Technique)</option>
