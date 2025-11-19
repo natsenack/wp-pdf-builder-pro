@@ -356,7 +356,11 @@ function pdf_builder_save_canvas_settings_handler() {
             // Convertir les checkboxes
             $checkboxes = ['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_pan_enabled', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts', 'canvas_auto_save', 'canvas_export_transparent', 'canvas_lazy_loading'];
             foreach ($checkboxes as $checkbox) {
-                $settings[str_replace('canvas_', '', $checkbox)] = isset($_POST[$checkbox]) && $_POST[$checkbox] === '1' ? 1 : 0;
+                $value = isset($_POST[$checkbox]) && $_POST[$checkbox] === '1' ? 1 : 0;
+                $settings[str_replace('canvas_', '', $checkbox)] = $value;
+                if ($checkbox === 'canvas_shadow_enabled') {
+                    error_log('DEBUG: canvas_shadow_enabled - POST value: ' . (isset($_POST[$checkbox]) ? $_POST[$checkbox] : 'NOT SET') . ', computed value: ' . $value);
+                }
             }
 
             // Traiter les selects
@@ -407,7 +411,7 @@ function pdf_builder_get_canvas_settings_handler() {
             'container_show_transparency' => get_option('pdf_builder_canvas_container_show_transparency', false) == '1',
             'border_color' => get_option('pdf_builder_canvas_border_color', '#cccccc'),
             'border_width' => intval(get_option('pdf_builder_canvas_border_width', 1)),
-            'shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', false) == '1',
+            'shadow_enabled' => ($shadow_enabled_raw = get_option('pdf_builder_canvas_shadow_enabled', '0')) == '1',
             'margin_top' => intval(get_option('pdf_builder_canvas_margin_top', 28)),
             'margin_right' => intval(get_option('pdf_builder_canvas_margin_right', 28)),
             'margin_bottom' => intval(get_option('pdf_builder_canvas_margin_bottom', 10)),
@@ -457,7 +461,16 @@ function pdf_builder_get_canvas_settings_handler() {
             'show_fps' => get_option('pdf_builder_canvas_show_fps', false) == '1'
         ];
         
-        send_ajax_response(true, 'Paramètres récupérés avec succès.', $settings);
+        // Debug info for shadow_enabled
+        $debug_info = [
+            'shadow_enabled_raw' => get_option('pdf_builder_canvas_shadow_enabled', '0'),
+            'shadow_enabled_computed' => $settings['shadow_enabled'],
+            'all_options' => [
+                'pdf_builder_canvas_shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', 'NOT_SET')
+            ]
+        ];
+        
+        send_ajax_response(true, 'Paramètres récupérés avec succès.', array_merge($settings, ['debug' => $debug_info]));
     } catch (Exception $e) {
         error_log('Erreur récupération paramètres canvas: ' . $e->getMessage());
         send_ajax_response(false, 'Erreur: ' . $e->getMessage());
