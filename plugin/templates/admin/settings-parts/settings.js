@@ -749,6 +749,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveBtn.classList.remove('saving');
                 saveBtn.classList.add('saved');
                 saveBtn.textContent = '✅ Sauvegardé !';
+                console.log('Button text set to:', saveBtn.textContent);
 
                 // Mettre à jour les badges de statut en temps réel
                 updateStatusBadges();
