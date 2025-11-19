@@ -185,19 +185,19 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
+                            <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
                             <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_guides_enabled" name="canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', '1'), '1'); ?>>
+                                <label class="toggle-switch <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?>">
+                                    <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', '1'), '1'); ?> <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
+                            <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
                             <td>
-                                <label class="toggle-switch <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?>">
-                                    <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', '1'), '1'); ?> <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?>>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_guides_enabled" name="canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
