@@ -349,87 +349,87 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle modal save buttons
-    const saveButtons = document.querySelectorAll('.canvas-modal-save');
-    saveButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
-            const modal = this.closest('.canvas-modal');
-            const form = modal.querySelector('form');
-            
-            if (form) {
-                const formData = new FormData(form);
-                formData.append('action', 'pdf_builder_save_canvas_settings');
-                formData.append('category', category);
-                formData.append('nonce', '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>');
+    // Handle modal save buttons - REMOVED: Duplicate handler, using settings.js instead
+    // const saveButtons = document.querySelectorAll('.canvas-modal-save');
+    // saveButtons.forEach(function(button) {
+    //     button.addEventListener('click', function() {
+    //         const category = this.getAttribute('data-category');
+    //         const modal = this.closest('.canvas-modal');
+    //         const form = modal.querySelector('form');
+    //
+    //         if (form) {
+    //             const formData = new FormData(form);
+    //             formData.append('action', 'pdf_builder_save_canvas_settings');
+    //             formData.append('category', category);
+    //             formData.append('nonce', '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>');
+    //
+    //             // Show loading state
+    //             this.textContent = 'Sauvegarde...';
+    //             this.disabled = true;
+    //
+    //             fetch(ajaxurl, {
+    //                 method: 'POST',
+    //                 body: formData
+    //             })
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 console.log('Canvas save response:', data);
+    //                 if (data.success) {
+    //                         // Close modal
+    //                         modal.style.display = 'none';
+    //                         // Show success message
+    //                         showCanvasNotification('Paramètres sauvegardés avec succès!', 'success');
+    //                     } else {
+    //                         console.error('Canvas save error:', data);
+    //                         let errorMessage = data.data && data.data.message ? data.data.message : (data.data || 'Erreur inconnue');
+    //                         showCanvasNotification('Erreur lors de la sauvegarde: ' + errorMessage, 'error');
+    //                     }
+    //                 })
+    //                 .catch(error => {
+    //                     showCanvasNotification('Erreur réseau: ' + error.message, 'error');
+    //                 })
+    //                 .finally(() => {
+    //                     // Reset button state
+    //                     this.textContent = 'Sauvegarder';
+    //                     this.disabled = false;
+    //                 });
+    //             }
+    //         });
+    // });
 
-                // Show loading state
-                this.textContent = 'Sauvegarde...';
-                this.disabled = true;
-
-                fetch(ajaxurl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Canvas save response:', data);
-                    if (data.success) {
-                        // Close modal
-                        modal.style.display = 'none';
-                        // Show success message
-                        showCanvasNotification('Paramètres sauvegardés avec succès!', 'success');
-                    } else {
-                        console.error('Canvas save error:', data);
-                        let errorMessage = data.data && data.data.message ? data.data.message : (data.data || 'Erreur inconnue');
-                        showCanvasNotification('Erreur lors de la sauvegarde: ' + errorMessage, 'error');
-                    }
-                })
-                .catch(error => {
-                    showCanvasNotification('Erreur réseau: ' + error.message, 'error');
-                })
-                .finally(() => {
-                    // Reset button state
-                    this.textContent = 'Sauvegarder';
-                    this.disabled = false;
-                });
-            }
-        });
-    });
-
-    function showCanvasNotification(message, type) {
-        // Remove existing notifications
-        const existingNotifications = document.querySelectorAll('.canvas-notification');
-        existingNotifications.forEach(function(notification) {
-            notification.remove();
-        });
-
-        // Create new notification
-        const notification = document.createElement('div');
-        notification.className = 'canvas-notification ' + (type === 'success' ? 'success' : 'error');
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: ${type === 'success' ? '#28a745' : '#dc3545'};
-            color: white;
-            padding: 15px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 10001;
-            font-weight: bold;
-            max-width: 400px;
-        `;
-        notification.textContent = message;
-
-        document.body.appendChild(notification);
-
-        // Auto remove after 5 seconds
-        setTimeout(function() {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 5000);
-    }
+    // function showCanvasNotification(message, type) { // REMOVED: Not used anymore, using settings.js notifications
+    //     // Remove existing notifications
+    //     const existingNotifications = document.querySelectorAll('.canvas-notification');
+    //     existingNotifications.forEach(function(notification) {
+    //         notification.remove();
+    //     });
+    //
+    //     // Create new notification
+    //     const notification = document.createElement('div');
+    //     notification.className = 'canvas-notification ' + (type === 'success' ? 'success' : 'error');
+    //     notification.style.cssText = `
+    //         position: fixed;
+    //         top: 20px;
+    //         right: 20px;
+    //         background: ${type === 'success' ? '#28a745' : '#dc3545'};
+    //         color: white;
+    //         padding: 15px 20px;
+    //         border-radius: 5px;
+    //         box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    //         z-index: 10001;
+    //         font-weight: bold;
+    //         max-width: 400px;
+    //     `;
+    //     notification.textContent = message;
+    //
+    //     document.body.appendChild(notification);
+    //
+    //     // Auto remove after 5 seconds
+    //     setTimeout(function() {
+    //         if (notification.parentNode) {
+    //             notification.remove();
+    //         }
+    //     }, 5000);
+    // }
 });
 </script>
