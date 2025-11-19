@@ -2,15 +2,16 @@
 
             <h2>📄 Configuration PDF</h2>
 
-            <!-- Section Principale -->
-            <section class="pdf-section">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #007cba; padding-bottom: 10px;">
-                    ⚙️ Paramètres principaux
-                </h3>
+            <!-- Formulaire unique pour tout l'onglet PDF -->
+            <form id="pdf-settings-form" method="post" action="">
+                <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_pdf_nonce'); ?>
+                <input type="hidden" name="current_tab" value="pdf">
 
-                <form method="post" action="">
-                    <?php wp_nonce_field('pdf_builder_pdf_settings', 'pdf_builder_pdf_settings_nonce'); ?>
-                    <input type="hidden" name="current_tab" value="pdf">
+                <!-- Section Principale -->
+                <section class="pdf-section">
+                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #007cba; padding-bottom: 10px;">
+                        ⚙️ Paramètres principaux
+                    </h3>
 
                     <table class="form-table">
                         <tr>
@@ -53,17 +54,15 @@
                             </td>
                         </tr>
                     </table>
-                </form>
-            </section>
+                </section>
 
-            <!-- Section Avancée (repliable) -->
-            <section class="pdf-section">
-                <h3 style="color: #495057; margin-top: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px; cursor: pointer;" onclick="toggleAdvancedSection()">
-                    🔧 Options avancées <span id="advanced-toggle" style="float: right;">▼</span>
-                </h3>
+                <!-- Section Avancée (repliable) -->
+                <section class="pdf-section">
+                    <h3 style="color: #495057; margin-top: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px; cursor: pointer;" onclick="toggleAdvancedSection()">
+                        🔧 Options avancées <span id="advanced-toggle" style="float: right;">▼</span>
+                    </h3>
 
-                <div id="advanced-section" style="display: none;">
-                    <form method="post" action="">
+                    <div id="advanced-section" style="display: none;">
                         <table class="form-table">
                             <tr>
                                 <th scope="row"><label for="pdf_compression">Compression</label></th>
@@ -97,9 +96,9 @@
                                 </td>
                             </tr>
                         </table>
-                    </form>
-                </div>
-            </section>
+                    </div>
+                </section>
+            </form>
 
             <script>
             function toggleAdvancedSection() {
