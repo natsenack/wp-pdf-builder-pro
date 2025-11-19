@@ -92,7 +92,7 @@ export function Toolbar({ className }: ToolbarProps) {
       borderRadius: '4px',
       maxHeight: '120px' // Limite à 2 lignes max
     }}>
-      {/* Première ligne : Outils + Actions principales */}
+      {/* Première ligne : Outils + Actions principales + Informations */}
       <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
         {/* Outils de création */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' }}>
@@ -231,11 +231,9 @@ export function Toolbar({ className }: ToolbarProps) {
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Deuxième ligne : Informations */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '150px' }}>
+        {/* Informations - intégrées dans la première ligne */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '150px', marginLeft: 'auto' }}>
           <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>
             Infos
           </h4>
