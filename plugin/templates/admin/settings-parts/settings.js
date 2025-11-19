@@ -965,8 +965,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const pdfOrientation = document.getElementById('pdf_orientation')?.value || 'portrait';
         const pdfCacheEnabled = document.getElementById('pdf_cache_enabled')?.checked || false;
         const pdfCompression = document.getElementById('pdf_compression')?.value || 'medium';
-        const pdfMetadataEnabled = document.getElementById('pdf_metadata_enabled')?.checked || true;
-        const pdfPrintOptimized = document.getElementById('pdf_print_optimized')?.checked || true;
+        // Use false as default when checkbox not found or unchecked
+        const pdfMetadataEnabled = document.getElementById('pdf_metadata_enabled')?.checked || false;
+        const pdfPrintOptimized = document.getElementById('pdf_print_optimized')?.checked || false;
 
         formData.append('pdf_quality', pdfQuality);
         formData.append('pdf_page_size', pdfPageSize);
@@ -975,6 +976,12 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('pdf_compression', pdfCompression);
         formData.append('pdf_metadata_enabled', pdfMetadataEnabled ? '1' : '0');
         formData.append('pdf_print_optimized', pdfPrintOptimized ? '1' : '0');
+        // Debugging: ensure keys are appended correctly (only when debugging is enabled)
+        try {
+            console.debug('[DEBUG] PDF settings saved', { pdfQuality, pdfPageSize, pdfOrientation, pdfCacheEnabled, pdfCompression, pdfMetadataEnabled, pdfPrintOptimized });
+        } catch (e) {
+            // ignore
+        }
     }
 
     function collectContenuSettings(formData) {
