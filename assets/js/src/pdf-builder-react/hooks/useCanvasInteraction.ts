@@ -66,7 +66,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // ✅ AJOUT: Logique d'accrochage à la grille
     if (lastState.canvas.snapToGrid && lastState.canvas.gridSize > 0) {
       const gridSize = lastState.canvas.gridSize;
-      const snapTolerance = 8; // Tolérance de 8px pour l'accrochage
+      const snapTolerance = 5; // Tolérance de 5px pour l'accrochage
 
       // Calculer la distance à la grille la plus proche
       const nearestGridX = Math.round(finalX / gridSize) * gridSize;
@@ -578,7 +578,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // ✅ AJOUT: Appliquer le snap à la grille pour les positions lors du redimensionnement
     if (state.canvas.snapToGrid && state.canvas.gridSize > 0) {
       const gridSize = state.canvas.gridSize;
-      const snapTolerance = 8;
+      const snapTolerance = 5;
 
       if (updates.x !== undefined) {
         const nearestGridX = Math.round(updates.x / gridSize) * gridSize;
