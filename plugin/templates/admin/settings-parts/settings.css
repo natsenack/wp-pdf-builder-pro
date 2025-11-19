@@ -176,16 +176,28 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 .canvas-card-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-bottom: 16px;
     position: relative;
     z-index: 2;
+    gap: 8px;
 }
 
 .canvas-card-icon {
     font-size: 20px;
-    margin-right: 12px;
+    margin-right: 0;
     opacity: 0.8;
+    flex-shrink: 0;
+}
+
+.canvas-card-status {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
 }
 
 .canvas-card-header h4 {
