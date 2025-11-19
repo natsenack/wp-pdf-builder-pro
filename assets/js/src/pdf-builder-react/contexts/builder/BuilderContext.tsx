@@ -454,6 +454,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         elements: clampedElements,
         canvas: canvasData,
         template: {
+          ...state.template, // ✅ Preserve existing template properties like showGuides
           id: (action.payload as Record<string, unknown>).id as string,
           name: (action.payload as Record<string, unknown>).name as string,
           isNew: false,
@@ -676,9 +677,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   };
 
   const toggleGuides = () => {
-    console.log('🔄 BuilderContext: toggleGuides called, current showGuides:', state.template.showGuides);
     dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: { showGuides: !state.template.showGuides } });
-    console.log('🔄 BuilderContext: dispatched UPDATE_TEMPLATE_SETTINGS with showGuides:', !state.template.showGuides);
   };
 
   const value: BuilderContextType = {

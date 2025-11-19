@@ -71,14 +71,8 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleToggleGuides = () => {
-    console.log('🔧 Toolbar: handleToggleGuides called');
-    console.log('🔧 Toolbar: canvasSettings.guidesEnabled =', canvasSettings.guidesEnabled);
-    console.log('🔧 Toolbar: state.template.showGuides =', state.template.showGuides);
     if (toggleGuides && canvasSettings.guidesEnabled) {
-      console.log('🔧 Toolbar: calling toggleGuides()');
       toggleGuides();
-    } else {
-      console.log('🔧 Toolbar: toggleGuides not called - toggleGuides exists:', !!toggleGuides, 'guidesEnabled:', canvasSettings.guidesEnabled);
     }
   };
 
