@@ -2306,19 +2306,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     ctx.fillStyle = canvasBgColor;
     ctx.fillRect(0, 0, width, height);
 
-    // Draw canvas border if border width > 0
-    const borderWidth = canvasSettings.borderWidth || 0;
-    const borderColor = canvasSettings.borderColor || '#cccccc';
-    console.log('Canvas border - borderWidth:', borderWidth, 'borderColor:', borderColor);
-    console.log('Canvas settings object:', canvasSettings);
-    if (borderWidth > 0) {
-      console.log('Drawing border with width > 0');
-      ctx.strokeStyle = borderColor;
-      ctx.lineWidth = borderWidth;
-      ctx.strokeRect(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth);
-    } else {
-      console.log('Not drawing border because borderWidth is 0 or falsy');
-    }
+    // Note: Canvas border is now handled by CSS styling based on settings
 
     // DEBUG: Log elements
     if (state.elements.length === 0) {
