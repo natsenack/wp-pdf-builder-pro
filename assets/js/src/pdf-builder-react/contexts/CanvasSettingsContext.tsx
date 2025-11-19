@@ -219,6 +219,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   const [settings, setSettings] = useState<CanvasSettingsContextType>(() => loadSettingsFromWindowObj());
 
   const handleRefresh = async () => {
+    console.log('CanvasSettingsContext - handleRefresh called');
     try {
       // Faire un appel AJAX pour récupérer les paramètres mis à jour
       const response = await fetch(window.pdfBuilderAjax?.ajax_url || '/wp-admin/admin-ajax.php', {
@@ -234,21 +235,23 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
 
       if (response.ok) {
         const data = await response.json();
+        console.log('CanvasSettingsContext - AJAX response:', data);
         if (data.success && data.data) {
+          console.log('CanvasSettingsContext - border_color from server:', data.data.settings?.border_color, 'border_width:', data.data.settings?.border_width);
           // Mapper les données reçues vers le format du contexte
           const newSettings: CanvasSettingsContextType = {
             ...DEFAULT_SETTINGS,
             // Dimensions
-            canvasWidth: data.data.canvas_width ?? DEFAULT_SETTINGS.canvasWidth,
-            canvasHeight: data.data.canvas_height ?? DEFAULT_SETTINGS.canvasHeight,
-            canvasUnit: data.data.canvas_unit ?? DEFAULT_SETTINGS.canvasUnit,
-            canvasOrientation: data.data.canvas_orientation ?? DEFAULT_SETTINGS.canvasOrientation,
+            canvasWidth: data.data.settings?.canvas_width ?? DEFAULT_SETTINGS.canvasWidth,
+            canvasHeight: data.data.settings?.canvas_height ?? DEFAULT_SETTINGS.canvasHeight,
+            canvasUnit: data.data.settings?.canvas_unit ?? DEFAULT_SETTINGS.canvasUnit,
+            canvasOrientation: data.data.settings?.canvas_orientation ?? DEFAULT_SETTINGS.canvasOrientation,
             
             // Couleurs
-            canvasBackgroundColor: data.data.canvas_background_color ?? DEFAULT_SETTINGS.canvasBackgroundColor,
-            containerBackgroundColor: data.data.container_background_color ?? DEFAULT_SETTINGS.containerBackgroundColor,
-            borderColor: data.data.border_color ?? DEFAULT_SETTINGS.borderColor,
-            borderWidth: data.data.border_width ?? DEFAULT_SETTINGS.borderWidth,
+            canvasBackgroundColor: data.data.settings?.canvas_background_color ?? DEFAULT_SETTINGS.canvasBackgroundColor,
+            containerBackgroundColor: data.data.settings?.container_background_color ?? DEFAULT_SETTINGS.containerBackgroundColor,
+            borderColor: data.data.settings?.border_color ?? DEFAULT_SETTINGS.borderColor,
+            borderWidth: data.data.settings?.border_width ?? DEFAULT_SETTINGS.borderWidth,
             
             // Marges
             marginTop: data.data.margin_top ?? DEFAULT_SETTINGS.marginTop,
@@ -267,6 +270,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
           };
           
           setSettings(newSettings);
+          console.log('CanvasSettingsContext - new settings applied:', newSettings.borderColor, newSettings.borderWidth);
         }
       }
     } catch (error) {
