@@ -48,8 +48,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Vérifier l'état final
                 console.log(`Settings.js - Final state for ${checkboxId}: checked=${checkbox.checked}, hasAttribute=${checkbox.hasAttribute('checked')}`);
                 
-                // Forcer la mise à jour visuelle pour les checkboxes stylisées
-                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                // Forcer la mise à jour visuelle avec un petit délai pour la transition CSS
+                setTimeout(() => {
+                    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                    
+                    // Vérifier la position du toggle-slider après la transition
+                    setTimeout(() => {
+                        const toggleSlider = checkbox.nextElementSibling;
+                        if (toggleSlider && toggleSlider.classList.contains('toggle-slider')) {
+                            const beforePseudo = window.getComputedStyle(toggleSlider, ':before');
+                            console.log(`Settings.js - Toggle slider position for ${checkboxId}:`, beforePseudo.transform);
+                        }
+                    }, 350); // Après la transition de 0.3s
+                }, 50);
             }
         });
     }
