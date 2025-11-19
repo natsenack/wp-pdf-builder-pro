@@ -140,10 +140,10 @@
                         </tr>
                     </table>
                     
-                    <h4 style="margin-top: 25px; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">📦 Container</h4>
+                    <h4 style="margin-top: 25px; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">📦 Éditeur</h4>
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><label for="canvas_container_bg_color">Arrière-plan du container</label></th>
+                            <th scope="row"><label for="canvas_container_bg_color">Arrière-plan de l'éditeur</label></th>
                             <td>
                                 <input type="color" id="canvas_container_bg_color" name="canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa')); ?>" />
                             </td>
