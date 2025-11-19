@@ -120,6 +120,15 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     display: block;
 }
 
+/* Masquer le menu hamburger sur desktop */
+.mobile-menu-toggle {
+    display: none;
+}
+
+.nav-tabs-container {
+    display: flex !important;
+}
+
 /* Responsive pour les onglets sur mobile */
 @media (max-width: 768px) {
     .nav-tab-wrapper {
