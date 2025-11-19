@@ -163,6 +163,24 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             }
         }
         $settings = get_option('pdf_builder_settings', []);
+        // Also update the standalone PDF options so that other parts of the plugin
+        // which read from individual options get updated when the non-AJAX form is used
+        if (isset($_POST['pdf_quality'])) {
+            update_option('pdf_builder_pdf_quality', sanitize_text_field($_POST['pdf_quality']));
+        }
+        if (isset($_POST['pdf_page_size'])) {
+            update_option('pdf_builder_pdf_page_size', sanitize_text_field($_POST['pdf_page_size']));
+        }
+        if (isset($_POST['pdf_orientation'])) {
+            update_option('pdf_builder_pdf_orientation', sanitize_text_field($_POST['pdf_orientation']));
+        }
+        // Checkboxes
+        update_option('pdf_builder_pdf_cache_enabled', isset($_POST['pdf_cache_enabled']) ? 1 : 0);
+        if (isset($_POST['pdf_compression'])) {
+            update_option('pdf_builder_pdf_compression', sanitize_text_field($_POST['pdf_compression']));
+        }
+        update_option('pdf_builder_pdf_metadata_enabled', isset($_POST['pdf_metadata_enabled']) ? 1 : 0);
+        update_option('pdf_builder_pdf_print_optimized', isset($_POST['pdf_print_optimized']) ? 1 : 0);
     } else {
         $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
     }
