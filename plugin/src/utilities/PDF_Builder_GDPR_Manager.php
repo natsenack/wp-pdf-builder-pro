@@ -548,9 +548,16 @@ class PDF_Builder_GDPR_Manager {
         // Générer d'abord le HTML
         $html_content = $this->convert_to_html($user_data);
 
+        // Vérifier que DomPDF est disponible
+        $dompdf_path = plugin_dir_path(dirname(__FILE__, 2)) . 'vendor/dompdf/autoload.inc.php';
+        if (!file_exists($dompdf_path)) {
+            error_log('PDF Builder GDPR: DomPDF autoload not found at: ' . $dompdf_path);
+            return $html_content; // Retourner le HTML en cas d'erreur
+        }
+
         // Utiliser DomPDF pour convertir en PDF
         try {
-            require_once plugin_dir_path(dirname(__FILE__, 2)) . 'vendor/dompdf/autoload.inc.php';
+            require_once $dompdf_path;
 
             $dompdf = new \Dompdf\Dompdf();
             $dompdf->set_option('isHtml5ParserEnabled', true);
@@ -563,6 +570,7 @@ class PDF_Builder_GDPR_Manager {
 
             return $dompdf->output();
         } catch (Exception $e) {
+            error_log('PDF Builder GDPR: PDF generation error: ' . $e->getMessage());
             // En cas d'erreur, retourner le HTML brut
             return $html_content;
         }
@@ -596,6 +604,11 @@ class PDF_Builder_GDPR_Manager {
 
         // Créer un export dans le format demandé
         $export_data = $this->get_user_data_portable($user_id, $format);
+
+        if (is_wp_error($export_data)) {
+            wp_send_json_error(['message' => $export_data->get_error_message()]);
+            return;
+        }
 
         // Logger l'action
         $this->log_audit_action($user_id, 'data_portability_requested', 'user_data', $format);
