@@ -177,17 +177,21 @@ class PDF_Builder_GDPR_Manager {
         $export_result = $this->create_user_data_export($user_data, $user_id, $format);
 
         if (is_wp_error($export_result)) {
+            error_log('PDF Builder GDPR: Export error for format ' . $format . ': ' . $export_result->get_error_message());
             wp_send_json_error(['message' => $export_result->get_error_message()]);
             return;
         }
 
-        // Logger l'action
-        $this->log_audit_action($user_id, 'data_exported', 'user_data', $format);
+        // Logger l'action avec plus de détails
+        $this->log_audit_action($user_id, 'data_exported', 'user_data', $format . ' (' . $export_result['mime_type'] . ')');
+
+        error_log('PDF Builder GDPR: Export successful - Format: ' . $format . ', MIME: ' . $export_result['mime_type'] . ', File: ' . $export_result['filename']);
 
         wp_send_json_success([
             'message' => sprintf(__('Données exportées avec succès au format %s.', 'pdf-builder-pro'), strtoupper($format)),
             'download_url' => $export_result['download_url'],
-            'filename' => $export_result['filename']
+            'filename' => $export_result['filename'],
+            'mime_type' => $export_result['mime_type']
         ]);
     }
 
@@ -230,8 +234,23 @@ class PDF_Builder_GDPR_Manager {
                 break;
 
             case 'pdf':
-                $content = $this->convert_to_pdf($user_data);
-                $mime_type = 'application/pdf';
+                $pdf_result = $this->convert_to_pdf($user_data);
+                if (is_array($pdf_result) && isset($pdf_result['type'])) {
+                    if ($pdf_result['type'] === 'pdf') {
+                        $content = $pdf_result['content'];
+                        $mime_type = 'application/pdf';
+                    } else {
+                        // Fallback vers HTML
+                        $content = $pdf_result['content'];
+                        $mime_type = 'text/html';
+                        $filename = str_replace('.pdf', '.html', $filename);
+                        $file_path = str_replace('.pdf', '.html', $file_path);
+                    }
+                } else {
+                    // Ancien comportement - traiter comme PDF
+                    $content = $pdf_result;
+                    $mime_type = 'application/pdf';
+                }
                 break;
 
             default:
@@ -247,7 +266,8 @@ class PDF_Builder_GDPR_Manager {
             'filename' => $filename,
             'file_path' => $file_path,
             'download_url' => $upload_dir['baseurl'] . '/pdf-builder-exports/' . $filename,
-            'mime_type' => $mime_type
+            'mime_type' => $mime_type,
+            'format' => $format
         ];
     }
 
@@ -552,7 +572,11 @@ class PDF_Builder_GDPR_Manager {
         $dompdf_path = plugin_dir_path(dirname(__FILE__, 2)) . 'vendor/dompdf/autoload.inc.php';
         if (!file_exists($dompdf_path)) {
             error_log('PDF Builder GDPR: DomPDF autoload not found at: ' . $dompdf_path);
-            return $html_content; // Retourner le HTML en cas d'erreur
+            return [
+                'type' => 'html',
+                'content' => $html_content,
+                'error' => 'DomPDF not found'
+            ];
         }
 
         // Utiliser DomPDF pour convertir en PDF
@@ -578,15 +602,26 @@ class PDF_Builder_GDPR_Manager {
 
             // Vérifier que le PDF n'est pas vide
             if (empty($output) || strlen($output) < 100) {
-                error_log('PDF Builder GDPR: PDF output is empty or too small');
-                return $html_content;
+                error_log('PDF Builder GDPR: PDF output is empty or too small, length: ' . strlen($output));
+                return [
+                    'type' => 'html',
+                    'content' => $html_content,
+                    'error' => 'PDF output empty'
+                ];
             }
 
-            return $output;
+            return [
+                'type' => 'pdf',
+                'content' => $output
+            ];
         } catch (Exception $e) {
             error_log('PDF Builder GDPR: PDF generation error: ' . $e->getMessage());
             // En cas d'erreur, retourner le HTML brut
-            return $html_content;
+            return [
+                'type' => 'html',
+                'content' => $html_content,
+                'error' => $e->getMessage()
+            ];
         }
     }
 
