@@ -767,6 +767,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+    }
+
     // Fonction pour mettre à jour les badges de statut après sauvegarde
     function updateStatusBadges() {
         // Badge Cache & Performance
