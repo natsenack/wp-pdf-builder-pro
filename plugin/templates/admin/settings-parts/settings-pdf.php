@@ -45,8 +45,11 @@
                         <tr>
                             <th scope="row"><label for="pdf_cache_enabled">Cache activé</label></th>
                             <td>
-                                <input type="checkbox" id="pdf_cache_enabled" name="pdf_cache_enabled" value="1" <?php checked(get_option('pdf_builder_pdf_cache_enabled', true)); ?>>
-                                <label for="pdf_cache_enabled">Améliorer les performances en mettant en cache les PDF</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="pdf_cache_enabled" name="pdf_cache_enabled" value="1" <?php checked(get_option('pdf_builder_pdf_cache_enabled', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Améliorer les performances en mettant en cache les PDF</p>
                             </td>
                         </tr>
                     </table>
@@ -76,15 +79,21 @@
                             <tr>
                                 <th scope="row"><label for="pdf_metadata_enabled">Métadonnées</label></th>
                                 <td>
-                                    <input type="checkbox" id="pdf_metadata_enabled" name="pdf_metadata_enabled" value="1" <?php checked(get_option('pdf_builder_pdf_metadata_enabled', true)); ?>>
-                                    <label for="pdf_metadata_enabled">Inclure titre, auteur et sujet dans les propriétés PDF</label>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="pdf_metadata_enabled" name="pdf_metadata_enabled" value="1" <?php checked(get_option('pdf_builder_pdf_metadata_enabled', true)); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="description">Inclure titre, auteur et sujet dans les propriétés PDF</p>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="pdf_print_optimized">Optimisé impression</label></th>
                                 <td>
-                                    <input type="checkbox" id="pdf_print_optimized" name="pdf_print_optimized" value="1" <?php checked(get_option('pdf_builder_pdf_print_optimized', true)); ?>>
-                                    <label for="pdf_print_optimized">Ajuster les couleurs et la résolution pour l'impression</label>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="pdf_print_optimized" name="pdf_print_optimized" value="1" <?php checked(get_option('pdf_builder_pdf_print_optimized', true)); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="description">Ajuster les couleurs et la résolution pour l'impression</p>
                                 </td>
                             </tr>
                         </table>
