@@ -579,7 +579,7 @@ JS;
         }
 
         // Booleans
-        foreach (['canvas_show_transparency', 'container_show_transparency', 'show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles', 'enable_rotation', 'multi_select', 'copy_paste_enabled', 'compress_images', 'include_metadata', 'auto_crop', 'embed_fonts', 'optimize_for_web', 'enable_hardware_acceleration', 'limit_fps', 'auto_save_enabled', 'enable_keyboard_shortcuts', 'debug_mode', 'show_fps'] as $key) {
+        foreach (['shadow_enabled', 'canvas_show_transparency', 'container_show_transparency', 'show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles', 'enable_rotation', 'multi_select', 'copy_paste_enabled', 'compress_images', 'include_metadata', 'auto_crop', 'embed_fonts', 'optimize_for_web', 'enable_hardware_acceleration', 'limit_fps', 'auto_save_enabled', 'enable_keyboard_shortcuts', 'debug_mode', 'show_fps'] as $key) {
             if (isset($settings[$key])) {
                 $validated[$key] = (bool) $settings[$key];
             }
