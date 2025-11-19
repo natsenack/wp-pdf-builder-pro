@@ -429,25 +429,17 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       };
 
     case 'LOAD_TEMPLATE': {
-      console.log('[BuilderContext] LOAD_TEMPLATE action received:', action);
-      console.log('[BuilderContext] Action payload:', action.payload);
-
       const rawElements = (action.payload as Record<string, unknown>).elements as Element[] || [];
-      console.log('[BuilderContext] Raw elements from payload:', rawElements);
-      console.log('[BuilderContext] Raw elements count:', rawElements.length);
 
       const repairedElements = repairProductTableProperties(rawElements);
-      console.log('[BuilderContext] Elements after repair:', repairedElements.length);
 
       // Ne pas convertir, garder les PX directement
       const clampedElements = clampElementPositions(repairedElements);
-      console.log('[BuilderContext] Elements after clamping:', clampedElements.length);
 
       // Garder les dimensions du canvas si présentes
       const canvasData = (action.payload as Record<string, unknown>).canvas ?
         { ...state.canvas, ...(action.payload as Record<string, unknown>).canvas as Partial<CanvasState> } :
         state.canvas;
-      console.log('[BuilderContext] Canvas data:', canvasData);
 
       const newState = {
         ...state,
@@ -596,33 +588,19 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   // Écouteur pour le chargement de template via API globale
   useEffect(() => {
     const handleLoadTemplate = (event: CustomEvent) => {
-      console.log('[BuilderContext] pdfBuilderLoadTemplate event received:', event);
-      console.log('[BuilderContext] Event detail:', event.detail);
-
       const templateData = event.detail;
       if (templateData) {
-        console.log('[BuilderContext] Template data received:', templateData);
-        console.log('[BuilderContext] Template has elements:', templateData.elements ? 'YES' : 'NO');
-
-        if (templateData.elements) {
-          console.log('[BuilderContext] Elements count:', templateData.elements.length);
-        }
-
-        console.log('[BuilderContext] Dispatching LOAD_TEMPLATE action');
         dispatch({
           type: 'LOAD_TEMPLATE',
           payload: templateData
         });
-        console.log('[BuilderContext] LOAD_TEMPLATE action dispatched');
       } else {
         console.warn('[BuilderContext] No template data in event detail');
       }
     };
 
-    console.log('[BuilderContext] Adding pdfBuilderLoadTemplate event listener');
     document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
     return () => {
-      console.log('[BuilderContext] Removing pdfBuilderLoadTemplate event listener');
       document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
     };
   }, []);

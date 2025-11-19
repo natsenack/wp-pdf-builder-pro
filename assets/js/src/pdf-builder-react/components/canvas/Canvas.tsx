@@ -1141,8 +1141,6 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
-  console.log('Canvas render - canvasSettings:', canvasSettings);
-
   // État pour le menu contextuel
   const [contextMenu, setContextMenu] = React.useState<{
     isVisible: boolean;
@@ -2502,9 +2500,6 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     : (canvasSettings.borderWidth && canvasSettings.borderWidth > 0) 
       ? `${canvasSettings.borderWidth}px solid ${canvasSettings.borderColor || '#cccccc'}` 
       : 'none';
-  
-  console.log('Canvas borderStyle:', borderStyle, 'borderWidth:', canvasSettings.borderWidth, 'borderColor:', canvasSettings.borderColor);
-  console.log('Canvas shadowEnabled:', canvasSettings.shadowEnabled);
 
   return (
     <>
