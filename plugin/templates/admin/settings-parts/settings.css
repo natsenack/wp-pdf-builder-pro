@@ -289,21 +289,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     transform: translateY(0);
 }
 
-/* Indicateur d'interactivité */
-.canvas-card::after {
-    content: '⚙️';
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    font-size: 14px;
-}
-
-.canvas-card:hover::after {
-    opacity: 0.6;
-}
-
 /* Aperçus spécifiques améliorés */
 .preview-format {
     font-weight: 600;
