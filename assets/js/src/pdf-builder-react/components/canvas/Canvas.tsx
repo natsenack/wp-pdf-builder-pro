@@ -2416,7 +2416,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       renderCanvas();
     }, 0);
     return () => clearTimeout(timer);
-  }, [state, imageLoadCount]);  // ✅ BUGFIX: Removed renderCanvas from deps to avoid instability
+  }, [state, imageLoadCount, canvasSettings]);  // ✅ BUGFIX: Removed renderCanvas from deps to avoid instability
 
   // ✅ Force initial render when elements first load (for cached images)
   useEffect(() => {
