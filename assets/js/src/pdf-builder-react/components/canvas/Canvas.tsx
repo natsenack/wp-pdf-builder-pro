@@ -703,7 +703,7 @@ const drawCustomerInfo = (ctx: CanvasRenderingContext2D, element: Element, state
   }
 };
 
-const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
+const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element, canvasSettings: any) => {
   const props = element as CompanyInfoElementProperties;
 
   const fontSize = props.fontSize || 12;
@@ -1797,7 +1797,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         drawCustomerInfo(ctx, element, currentState);
         break;
       case 'company_info':
-        drawCompanyInfo(ctx, element);
+        drawCompanyInfo(ctx, element, canvasSettings);
         break;
       case 'company_logo':
 
