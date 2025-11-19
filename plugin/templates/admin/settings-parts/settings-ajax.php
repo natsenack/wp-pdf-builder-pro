@@ -375,6 +375,9 @@ function pdf_builder_save_canvas_settings_handler() {
 
             $saved = $canvas_manager->saveSettings($settings);
             if ($saved) {
+                // Debug temporaire - vérifier la valeur sauvegardée
+                $saved_value = get_option('pdf_builder_canvas_shadow_enabled', 'NOT_SET');
+                error_log('DEBUG SAVE: canvas_shadow_enabled saved as: ' . $saved_value . ' (type: ' . gettype($saved_value) . ')');
                 send_ajax_response(true, 'Paramètres canvas sauvegardés avec succès.', ['saved' => $settings]);
             } else {
                 send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres canvas.');
