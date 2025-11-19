@@ -173,7 +173,7 @@
                             <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_grid_enabled" name="canvas_grid_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_grid_enabled', true)); ?>>
+                                    <input type="checkbox" id="canvas_grid_enabled" name="canvas_grid_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_grid_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -188,7 +188,7 @@
                             <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_guides_enabled" name="canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', true)); ?>>
+                                    <input type="checkbox" id="canvas_guides_enabled" name="canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -197,7 +197,7 @@
                             <th scope="row"><label for="canvas_snap_to_grid">Accrochage à la grille</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', true)); ?>>
+                                    <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
