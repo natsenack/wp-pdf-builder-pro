@@ -2306,6 +2306,15 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     ctx.fillStyle = canvasBgColor;
     ctx.fillRect(0, 0, width, height);
 
+    // Draw canvas border if border width > 0
+    const borderWidth = canvasSettings.borderWidth || 0;
+    if (borderWidth > 0) {
+      const borderColor = normalizeColor(canvasSettings.borderColor || '#cccccc');
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = borderWidth;
+      ctx.strokeRect(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth);
+    }
+
     // DEBUG: Log elements
     if (state.elements.length === 0) {
 
