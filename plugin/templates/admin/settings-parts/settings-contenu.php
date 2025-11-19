@@ -14,11 +14,11 @@
                     <!-- Carte Dimensions & Format -->
                     <div class="canvas-card" data-category="dimensions">
                         <div class="canvas-card-header">
-                            <span class="canvas-card-icon">📐</span>
-                            <span class="canvas-card-status ACTIF">ACTIF</span>
-                            <div>
-                                <h4>Dimensions & Format</h4>
+                            <div class="canvas-card-header-left">
+                                <span class="canvas-card-icon">📐</span>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
                             </div>
+                            <h4>Dimensions & Format</h4>
                         </div>
                         <div class="canvas-card-content">
                             <p>Définissez la taille, la résolution et le format de votre canvas de conception.</p>
@@ -39,11 +39,11 @@
                     <!-- Carte Apparence -->
                     <div class="canvas-card" data-category="apparence">
                         <div class="canvas-card-header">
-                            <span class="canvas-card-icon">🎨</span>
-                            <span class="canvas-card-status ACTIF">ACTIF</span>
-                            <div>
-                                <h4>Apparence</h4>
+                            <div class="canvas-card-header-left">
+                                <span class="canvas-card-icon">🎨</span>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
                             </div>
+                            <h4>Apparence</h4>
                         </div>
                         <div class="canvas-card-content">
                             <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
@@ -62,11 +62,11 @@
                     <!-- Carte Grille & Guides -->
                     <div class="canvas-card" data-category="grille">
                         <div class="canvas-card-header">
-                            <span class="canvas-card-icon">📏</span>
-                            <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_grid_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_grid_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
-                            <div>
-                                <h4>Grille & Guides</h4>
+                            <div class="canvas-card-header-left">
+                                <span class="canvas-card-icon">📏</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_grid_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_grid_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
+                            <h4>Grille & Guides</h4>
                         </div>
                         <div class="canvas-card-content">
                             <p>Configurez l'affichage et l'alignement sur la grille de conception.</p>
@@ -88,11 +88,11 @@
                     <!-- Carte Zoom & Navigation -->
                     <div class="canvas-card" data-category="zoom">
                         <div class="canvas-card-header">
-                            <span class="canvas-card-icon">🔍</span>
-                            <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
-                            <div>
-                                <h4>Zoom & Navigation</h4>
+                            <div class="canvas-card-header-left">
+                                <span class="canvas-card-icon">🔍</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
+                            <h4>Zoom & Navigation</h4>
                         </div>
                         <div class="canvas-card-content">
                             <p>Contrôlez les niveaux de zoom et les options de navigation.</p>
@@ -114,11 +114,11 @@
                     <!-- Carte Éléments Interactifs -->
                     <div class="canvas-card" data-category="interaction">
                         <div class="canvas-card-header">
-                            <span class="canvas-card-icon">👆</span>
-                            <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_drag_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_drag_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
-                            <div>
-                                <h4>Éléments Interactifs</h4>
+                            <div class="canvas-card-header-left">
+                                <span class="canvas-card-icon">👆</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_drag_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_drag_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
+                            <h4>Éléments Interactifs</h4>
                         </div>
                         <div class="canvas-card-content">
                             <p>Activez les interactions comme glisser-déposer et redimensionnement.</p>
@@ -140,11 +140,11 @@
                     <!-- Carte Comportement -->
                     <div class="canvas-card" data-category="comportement">
                         <div class="canvas-card-header">
-                            <span class="canvas-card-icon">⚙️</span>
-                            <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_keyboard_shortcuts', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_keyboard_shortcuts', true) ? 'ACTIF' : 'INACTIF'; ?></span>
-                            <div>
-                                <h4>Comportement</h4>
+                            <div class="canvas-card-header-left">
+                                <span class="canvas-card-icon">⚙️</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_keyboard_shortcuts', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_keyboard_shortcuts', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
+                            <h4>Comportement</h4>
                         </div>
                         <div class="canvas-card-content">
                             <p>Définissez la sélection multiple et les raccourcis clavier.</p>
@@ -165,11 +165,11 @@
                     <!-- Carte Export & Qualité -->
                     <div class="canvas-card" data-category="export">
                         <div class="canvas-card-header">
-                            <span class="canvas-card-icon">📤</span>
-                            <span class="canvas-card-status ACTIF">ACTIF</span>
-                            <div>
-                                <h4>Export & Qualité</h4>
+                            <div class="canvas-card-header-left">
+                                <span class="canvas-card-icon">📤</span>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
                             </div>
+                            <h4>Export & Qualité</h4>
                         </div>
                         <div class="canvas-card-content">
                             <p>Configurez les formats et la qualité d'export des designs.</p>
@@ -190,11 +190,11 @@
                     <!-- Carte Performance -->
                     <div class="canvas-card" data-category="performance">
                         <div class="canvas-card-header">
-                            <span class="canvas-card-icon">⚡</span>
-                            <span class="canvas-card-status ACTIF">ACTIF</span>
-                            <div>
-                                <h4>Performance</h4>
+                            <div class="canvas-card-header-left">
+                                <span class="canvas-card-icon">⚡</span>
+                                <span class="canvas-card-status ACTIF">ACTIF</span>
                             </div>
+                            <h4>Performance</h4>
                         </div>
                         <div class="canvas-card-content">
                             <p>Optimisez les FPS et la gestion mémoire du canvas.</p>
@@ -215,11 +215,11 @@
                     <!-- Carte Sauvegarde Auto -->
                     <div class="canvas-card" data-category="autosave">
                         <div class="canvas-card-header">
-                            <span class="canvas-card-icon">💾</span>
-                            <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
-                            <div>
-                                <h4>Sauvegarde Auto</h4>
+                            <div class="canvas-card-header-left">
+                                <span class="canvas-card-icon">💾</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
+                            <h4>Sauvegarde Auto</h4>
                         </div>
                         <div class="canvas-card-content">
                             <p>Gérez la sauvegarde automatique et l'historique des versions.</p>
@@ -240,11 +240,11 @@
                     <!-- Carte Debug -->
                     <div class="canvas-card" data-category="debug">
                         <div class="canvas-card-header">
-                            <span class="canvas-card-icon">🐛</span>
-                            <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_debug_enabled', false) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_debug_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
-                            <div>
-                                <h4>Debug</h4>
+                            <div class="canvas-card-header-left">
+                                <span class="canvas-card-icon">🐛</span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_debug_enabled', false) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_debug_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
+                            <h4>Debug</h4>
                         </div>
                         <div class="canvas-card-content">
                             <p>Outils de débogage et monitoring des performances.</p>
