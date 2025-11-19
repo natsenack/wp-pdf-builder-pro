@@ -374,13 +374,10 @@ JS;
     {
         // Valider les paramètres
         $validated = $this->validateSettings($settings);
-        error_log('Canvas Manager validated settings: ' . print_r($validated, true));
 // Fusionner avec les paramètres existants
         $this->settings = array_merge($this->settings, $validated);
-        error_log('Canvas Manager merged settings: ' . print_r($this->settings, true));
 // Sauvegarder dans WordPress
         $saved = update_option('pdf_builder_canvas_settings', $this->settings);
-        error_log('Canvas Manager update_option result: ' . ($saved ? 'true' : 'false'));
 
         // update_option retourne false si la valeur n'a pas changé, ce n'est pas une erreur
         // Vérifions si les paramètres ont été correctement sauvegardés
@@ -398,7 +395,6 @@ JS;
             do_action('pdf_builder_canvas_settings_updated', $this->settings);
             return true;
         } else {
-            error_log('Canvas Manager: Settings were not properly saved to database');
             return false;
         }
     }
