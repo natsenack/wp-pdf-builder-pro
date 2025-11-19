@@ -5,6 +5,40 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Fonction pour mettre à jour les checkboxes du formulaire avec les nouvelles valeurs
+    function updateFormCheckboxes(settings) {
+        console.log('Settings.js - Updating form checkboxes with:', settings);
+
+        // Mapping des paramètres vers les IDs des checkboxes
+        const checkboxMappings = {
+            'shadow_enabled': 'canvas_shadow_enabled',
+            'grid_enabled': 'canvas_grid_enabled',
+            'guides_enabled': 'canvas_guides_enabled',
+            'snap_to_grid': 'canvas_snap_to_grid',
+            'pan_enabled': 'canvas_pan_enabled',
+            'drag_enabled': 'canvas_drag_enabled',
+            'resize_enabled': 'canvas_resize_enabled',
+            'rotate_enabled': 'canvas_rotate_enabled',
+            'multi_select': 'canvas_multi_select',
+            'keyboard_shortcuts': 'canvas_keyboard_shortcuts',
+            'auto_save': 'canvas_auto_save',
+            'export_transparent': 'canvas_export_transparent',
+            'lazy_loading': 'canvas_lazy_loading'
+        };
+
+        // Mettre à jour chaque checkbox
+        Object.keys(checkboxMappings).forEach(settingKey => {
+            const checkboxId = checkboxMappings[settingKey];
+            const checkbox = document.getElementById(checkboxId);
+
+            if (checkbox && settings[settingKey] !== undefined) {
+                const shouldBeChecked = settings[settingKey] === true || settings[settingKey] === '1';
+                console.log(`Settings.js - Setting ${checkboxId} to ${shouldBeChecked} (value: ${settings[settingKey]})`);
+                checkbox.checked = shouldBeChecked;
+            }
+        });
+    }
+
     // Gestion du menu hamburger mobile
     const mobileMenuButton = document.querySelector('.mobile-menu-button');
     const navTabsContainer = document.querySelector('.nav-tabs-container');
@@ -1505,6 +1539,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         detail: { category: category }
                     });
                     window.dispatchEvent(settingsUpdateEvent);
+
+                    // Mettre à jour les checkboxes HTML du formulaire avec les nouvelles valeurs
+                    updateFormCheckboxes(data.data);
 
                     // Fermer la modale après un court délai
                     setTimeout(() => {
