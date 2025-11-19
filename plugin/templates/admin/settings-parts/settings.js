@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (widthDisplay) widthDisplay.textContent = a4WidthPx;
             if (heightDisplay) heightDisplay.textContent = a4HeightPx;
             if (mmDisplay) {
-                mmDisplay.textContent = `${dimensions.width}×${dimensions.height}mm`;
+                mmDisplay.textContent = `210×297mm`; // Dimensions standard A4
             }
 
             // Mettre à jour les valeurs cachées
@@ -101,8 +101,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        let dimensions = formatDimensions[format] || formatDimensions['A4'];
-
         // Appliquer l'orientation
         if (orientation === 'landscape') {
             dimensions = { width: dimensions.height, height: dimensions.width };
@@ -112,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const widthPx = Math.round((dimensions.width / 25.4) * dpi);
         const heightPx = Math.round((dimensions.height / 25.4) * dpi);
 
-        // Mettre à jour l'affichage
+        // Afficher les dimensions
         const widthDisplay = document.getElementById('canvas-width-display');
         const heightDisplay = document.getElementById('canvas-height-display');
         const mmDisplay = document.getElementById('canvas-mm-display');

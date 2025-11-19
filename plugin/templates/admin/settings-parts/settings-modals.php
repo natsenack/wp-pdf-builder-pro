@@ -52,9 +52,16 @@
                                     <br>
                                     <small id="canvas-mm-display" style="color: #666;">
                                         <?php
-                                        $width_mm = round(get_option('pdf_builder_canvas_width', 800) * 25.4 / get_option('pdf_builder_canvas_dpi', 150), 1);
-                                        $height_mm = round(get_option('pdf_builder_canvas_height', 600) * 25.4 / get_option('pdf_builder_canvas_dpi', 150), 1);
-                                        echo "{$width_mm}×{$height_mm}mm";
+                                        $format = get_option('pdf_builder_canvas_format', 'A4');
+                                        $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
+                                        
+                                        if ($format === 'A4' && $orientation === 'portrait') {
+                                            echo '210×297mm';
+                                        } else {
+                                            $width_mm = round(get_option('pdf_builder_canvas_width', 800) * 25.4 / get_option('pdf_builder_canvas_dpi', 150), 1);
+                                            $height_mm = round(get_option('pdf_builder_canvas_height', 600) * 25.4 / get_option('pdf_builder_canvas_dpi', 150), 1);
+                                            echo "{$width_mm}×{$height_mm}mm";
+                                        }
                                         ?>
                                     </small>
                                 </div>
