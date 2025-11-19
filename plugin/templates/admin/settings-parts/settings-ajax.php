@@ -210,6 +210,7 @@ function pdf_builder_save_settings_handler() {
                     update_option('pdf_builder_template_library_enabled', $_POST['template_library_enabled'] === '1');
                 }
 
+                error_log('[DEBUG] About to send success response');
                 send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.');
                 break;
 
