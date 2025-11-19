@@ -2495,7 +2495,11 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         style={{
-          border: `2px solid ${isDragOver ? '#007acc' : '#ccc'}`,
+          border: isDragOver 
+            ? '2px solid #007acc' 
+            : (canvasSettings.borderWidth && canvasSettings.borderWidth > 0) 
+              ? `${canvasSettings.borderWidth}px solid ${canvasSettings.borderColor || '#cccccc'}` 
+              : 'none',
           cursor: 'crosshair',
           backgroundColor: '#ffffff',
           transition: 'border-color 0.2s ease'
