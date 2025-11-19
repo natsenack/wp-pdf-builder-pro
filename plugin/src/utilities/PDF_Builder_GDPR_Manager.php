@@ -560,20 +560,50 @@ class PDF_Builder_GDPR_Manager {
             require_once $dompdf_path;
 
             $dompdf = new \Dompdf\Dompdf();
-            $dompdf->set_option('isHtml5ParserEnabled', true);
+
+            // Options simplifiées pour éviter les problèmes
+            $dompdf->set_option('isHtml5ParserEnabled', false);
             $dompdf->set_option('isRemoteEnabled', false);
             $dompdf->set_option('defaultFont', 'Arial');
+            $dompdf->set_option('isFontSubsettingEnabled', false);
+
+            // Nettoyer le HTML pour DomPDF
+            $html_content = $this->clean_html_for_pdf($html_content);
 
             $dompdf->loadHtml($html_content);
             $dompdf->setPaper('A4', 'portrait');
             $dompdf->render();
 
-            return $dompdf->output();
+            $output = $dompdf->output();
+
+            // Vérifier que le PDF n'est pas vide
+            if (empty($output) || strlen($output) < 100) {
+                error_log('PDF Builder GDPR: PDF output is empty or too small');
+                return $html_content;
+            }
+
+            return $output;
         } catch (Exception $e) {
             error_log('PDF Builder GDPR: PDF generation error: ' . $e->getMessage());
             // En cas d'erreur, retourner le HTML brut
             return $html_content;
         }
+    }
+
+    /**
+     * Nettoyer le HTML pour DomPDF
+     */
+    private function clean_html_for_pdf($html) {
+        // Supprimer les styles complexes qui peuvent poser problème
+        $html = preg_replace('/<style[^>]*>.*?<\/style>/is', '<style>body{font-family:Arial,sans-serif;font-size:12px;line-height:1.4;color:#333;} h1,h2,h3{font-weight:bold;} h1{font-size:18px;} h2{font-size:16px;} h3{font-size:14px;}</style>', $html);
+
+        // Supprimer les propriétés CSS complexes
+        $html = preg_replace('/(box-shadow|border-radius|flex|grid|transform|transition|animation|position:\s*(absolute|fixed|sticky))[^;]*;/i', '', $html);
+
+        // S'assurer que les images sont supprimées (pas de remote enabled)
+        $html = preg_replace('/<img[^>]*>/i', '', $html);
+
+        return $html;
     }
 
     /**
