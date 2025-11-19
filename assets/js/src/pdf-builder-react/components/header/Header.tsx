@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, memo, useDeferredValue } from 
 import { TemplateState } from '../../types/elements';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
 import { usePreview } from '../../hooks/usePreview';
+import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
 
 // Extension de Window pour l'API Preview
 declare global {
@@ -63,6 +64,7 @@ export const Header = memo(function Header({
 
 
   const { state } = useBuilder();
+  const canvasSettings = useCanvasSettings();
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showJsonModal, setShowJsonModal] = useState(false);
@@ -135,6 +137,13 @@ export const Header = memo(function Header({
   useEffect(() => {
     setEditedShowGuides(showGuides);
   }, [showGuides]);
+
+  useEffect(() => {
+    // Si les guides sont désactivés globalement, forcer l'état local à false
+    if (!canvasSettings.guidesEnabled) {
+      setEditedShowGuides(false);
+    }
+  }, [canvasSettings.guidesEnabled]);
 
   useEffect(() => {
     setEditedSnapToGrid(snapToGrid);
@@ -821,14 +830,28 @@ export const Header = memo(function Header({
                 </div>
 
                 <div style={{ marginTop: '12px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '500', color: '#555' }}>
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px', 
+                    fontSize: '12px', 
+                    fontWeight: '500', 
+                    color: canvasSettings.guidesEnabled ? '#555' : '#999',
+                    opacity: canvasSettings.guidesEnabled ? 1 : 0.6
+                  }}>
                     <input
                       type="checkbox"
                       checked={editedShowGuides}
                       onChange={(e) => setEditedShowGuides(e.target.checked)}
+                      disabled={!canvasSettings.guidesEnabled}
                       style={{ margin: 0 }}
                     />
                     Afficher les guides d&apos;alignement
+                    {!canvasSettings.guidesEnabled && (
+                      <span style={{ fontSize: '10px', color: '#999', fontStyle: 'italic' }}>
+                        (désactivé dans les paramètres)
+                      </span>
+                    )}
                   </label>
                 </div>
 
