@@ -120,6 +120,36 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     display: block;
 }
 
+/* Responsive pour les onglets sur mobile */
+@media (max-width: 768px) {
+    .nav-tab-wrapper {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .nav-tab-wrapper::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-tab {
+        display: inline-block;
+        white-space: nowrap;
+        padding: 10px 12px;
+        font-size: 14px;
+        margin-right: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-tab {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+}
+
 .hidden-tab {
     display: none !important;
 }
