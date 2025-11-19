@@ -965,13 +965,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function collectPdfSettings(formData) {
         // Collecter les données de l'onglet PDF
-        const pdfQuality = document.querySelector('#pdf select[name="pdf_quality"]')?.value || 'high';
-        const pdfPageSize = document.querySelector('#pdf select[name="pdf_page_size"]')?.value || 'A4';
-        const pdfOrientation = document.querySelector('#pdf select[name="pdf_orientation"]')?.value || 'portrait';
-        const pdfCacheEnabled = document.querySelector('#pdf input[name="pdf_cache_enabled"]')?.checked || false;
-        const pdfCompression = document.querySelector('#pdf select[name="pdf_compression"]')?.value || 'medium';
-        const pdfMetadataEnabled = document.querySelector('#pdf input[name="pdf_metadata_enabled"]')?.checked || true;
-        const pdfPrintOptimized = document.querySelector('#pdf input[name="pdf_print_optimized"]')?.checked || true;
+        const pdfQuality = document.getElementById('pdf_quality')?.value || 'high';
+        const pdfPageSize = document.getElementById('pdf_page_size')?.value || 'A4';
+        const pdfOrientation = document.getElementById('pdf_orientation')?.value || 'portrait';
+        const pdfCacheEnabled = document.getElementById('pdf_cache_enabled')?.checked || false;
+        const pdfCompression = document.getElementById('pdf_compression')?.value || 'medium';
+        const pdfMetadataEnabled = document.getElementById('pdf_metadata_enabled')?.checked || true;
+        const pdfPrintOptimized = document.getElementById('pdf_print_optimized')?.checked || true;
 
         formData.append('pdf_quality', pdfQuality);
         formData.append('pdf_page_size', pdfPageSize);
