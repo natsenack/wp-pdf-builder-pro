@@ -1321,7 +1321,8 @@ class PDF_Builder_GDPR_Manager {
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
+            return;
         }
 
         $start_date = sanitize_text_field($_GET['start_date'] ?? '');
@@ -1349,8 +1350,16 @@ class PDF_Builder_GDPR_Manager {
             ORDER BY created_at DESC
         ", $params), ARRAY_A);
 
+        // Créer le répertoire d'export s'il n'existe pas
+        $upload_dir = wp_upload_dir();
+        $export_dir = $upload_dir['basedir'] . '/pdf-builder-exports';
+        wp_mkdir_p($export_dir);
+
         // Créer un fichier CSV
-        $filename = 'audit-log-' . date('Y-m-d') . '.csv';
+        $timestamp = date('Y-m-d-H-i-s');
+        $filename = "audit-log-{$timestamp}.csv";
+        $file_path = $export_dir . '/' . $filename;
+
         $csv_content = "Date,Utilisateur,Action,Données concernées,IP\n";
 
         foreach ($audit_logs as $log) {
@@ -1364,12 +1373,20 @@ class PDF_Builder_GDPR_Manager {
             );
         }
 
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Content-Length: ' . strlen($csv_content));
+        // Écrire le fichier
+        if (file_put_contents($file_path, $csv_content) === false) {
+            wp_send_json_error(['message' => __('Erreur lors de la création du fichier d\'export.', 'pdf-builder-pro')]);
+            return;
+        }
 
-        echo $csv_content;
-        exit;
+        // Logger l'action
+        $this->log_audit_action(get_current_user_id(), 'audit_log_exported', 'audit_logs', 'csv');
+
+        wp_send_json_success([
+            'message' => __('Logs d\'audit exportés avec succès.', 'pdf-builder-pro'),
+            'download_url' => $upload_dir['baseurl'] . '/pdf-builder-exports/' . $filename,
+            'filename' => $filename
+        ]);
     }
 
     /**
