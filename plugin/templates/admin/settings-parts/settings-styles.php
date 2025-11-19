@@ -10,6 +10,6 @@ wp_enqueue_style(
     'pdf-builder-settings-css',
     plugins_url('settings-parts/settings.css', dirname(__FILE__)),
     array(),
-    PDF_BUILDER_VERSION
+    PDF_BUILDER_VERSION . '-mobile-fix-' . time()
 );
 ?>
