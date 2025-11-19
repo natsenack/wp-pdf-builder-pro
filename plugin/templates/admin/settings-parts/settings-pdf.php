@@ -29,9 +29,10 @@
                             <td>
                                 <select id="pdf_page_size" name="pdf_page_size">
                                     <option value="A4" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'A4'); ?>>A4</option>
-                                    <option value="A3" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'A3'); ?>>A3</option>
-                                    <option value="Letter" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'Letter'); ?>>Letter</option>
+                                    <option value="A3" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'A3'); ?> disabled title="Bientôt disponible">A3 (soon)</option>
+                                    <option value="Letter" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'Letter'); ?> disabled title="Bientôt disponible">Letter (soon)</option>
                                 </select>
+                                <p class="description" style="margin-top:6px; color:#6c757d; font-size:12px;">Les formats A3 et Letter sont prévus; sélection désactivée pour l'instant.</p>
                             </td>
                         </tr>
                         <tr>
