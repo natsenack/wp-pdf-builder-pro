@@ -13,6 +13,10 @@ export interface CanvasSettingsContextType {
   canvasUnit: 'px' | 'mm' | 'cm' | 'in';
   canvasOrientation: 'portrait' | 'landscape';
   
+  // Couleurs
+  canvasBackgroundColor: string;
+  containerBackgroundColor: string;
+  
   // Marges
   marginTop: number;
   marginRight: number;
@@ -70,6 +74,9 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   canvasHeight: 297,
   canvasUnit: 'mm',
   canvasOrientation: 'portrait',
+  
+  canvasBackgroundColor: '#ffffff',
+  containerBackgroundColor: '#f8f9fa',
   
   marginTop: 20,
   marginRight: 20,
@@ -136,6 +143,10 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       canvasHeight: (windowSettings.canvas_height as number) ?? DEFAULT_SETTINGS.canvasHeight,
       canvasUnit: (windowSettings.canvas_unit as 'px' | 'mm' | 'cm' | 'in') ?? DEFAULT_SETTINGS.canvasUnit,
       canvasOrientation: (windowSettings.canvas_orientation as 'portrait' | 'landscape') ?? DEFAULT_SETTINGS.canvasOrientation,
+      
+      // Couleurs
+      canvasBackgroundColor: (windowSettings.canvas_background_color as string) ?? DEFAULT_SETTINGS.canvasBackgroundColor,
+      containerBackgroundColor: (windowSettings.container_background_color as string) ?? DEFAULT_SETTINGS.containerBackgroundColor,
       
       // Marges
       marginTop: (windowSettings.margin_top as number) ?? DEFAULT_SETTINGS.marginTop,

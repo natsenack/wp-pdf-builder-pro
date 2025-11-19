@@ -769,8 +769,8 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element) => {
 
   const currentTheme = themes[theme] || themes.corporate;
 
-  // Utiliser les couleurs personnalisées si définies, sinon utiliser le thème
-  const bgColor = normalizeColor(props.backgroundColor || currentTheme.backgroundColor);
+  // Utiliser les couleurs depuis les paramètres canvas, sinon utiliser les props ou le thème
+  const bgColor = normalizeColor(canvasSettings.canvasBackgroundColor || props.backgroundColor || currentTheme.backgroundColor);
   const borderCol = normalizeColor(props.borderColor || currentTheme.borderColor);
   const txtColor = normalizeColor(props.textColor || currentTheme.textColor);
   const headerTxtColor = normalizeColor(props.headerTextColor || currentTheme.headerTextColor);
@@ -1202,6 +1202,21 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     
     return () => clearInterval(interval);
   }, [cleanupImageCache]);
+
+  // Écouter les changements de couleur de fond depuis les paramètres
+  useEffect(() => {
+    const handleBgColorChange = (event: CustomEvent) => {
+      // Forcer le re-rendu du canvas avec la nouvelle couleur
+      renderCountRef.current += 1;
+      // Le canvas se re-rendra automatiquement grâce aux dépendances du useEffect principal
+    };
+
+    window.addEventListener('pdfBuilderCanvasBgColorChanged', handleBgColorChange as EventListener);
+
+    return () => {
+      window.removeEventListener('pdfBuilderCanvasBgColorChanged', handleBgColorChange as EventListener);
+    };
+  }, []);
 
   // Utiliser les hooks pour les interactions
   const { handleDrop, handleDragOver, handleDragLeave, isDragOver } = useCanvasDrop({

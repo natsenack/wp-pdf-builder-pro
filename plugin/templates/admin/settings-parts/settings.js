@@ -197,6 +197,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (borderColorInput && borderPreview) {
             borderPreview.style.backgroundColor = borderColorInput.value;
         }
+
+        // Notifier l'éditeur PDF du changement de couleur de fond
+        if (bgColorInput) {
+            const event = new CustomEvent('pdfBuilderCanvasBgColorChanged', {
+                detail: { color: bgColorInput.value }
+            });
+            window.dispatchEvent(event);
+        }
     }
 
     // Écouteurs pour la mise à jour en temps réel des couleurs d'apparence
