@@ -392,7 +392,7 @@ JS;
         }
 
         if ($settings_saved) {
-            do_action('pdf_builder_canvas_settings_updated', $this->settings);
+            do_action('pdfBuilderCanvasSettingsUpdated', $this->settings);
             return true;
         } else {
             return false;

@@ -360,8 +360,10 @@ function pdf_builder_save_canvas_settings_handler() {
 
             $saved = $canvas_manager->saveSettings($settings);
             if ($saved) {
+                error_log('Settings AJAX - Canvas settings saved successfully: ' . print_r($settings, true));
                 send_ajax_response(true, 'Paramètres canvas sauvegardés avec succès.', ['saved' => $settings]);
             } else {
+                error_log('Settings AJAX - Failed to save canvas settings');
                 send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres canvas.');
             }
         } catch (Exception $e) {
