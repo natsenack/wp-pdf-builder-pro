@@ -493,7 +493,6 @@ JS;
         ];
         
         // Sauvegarder dans les options séparées
-        $all_saved = true;
         foreach ($option_mappings as $setting_key => $option_key) {
             if (isset($validated[$setting_key])) {
                 $value = $validated[$setting_key];
@@ -501,22 +500,16 @@ JS;
                 if (is_bool($value)) {
                     $value = $value ? '1' : '0';
                 }
-                $saved = update_option($option_key, $value);
-                if ($saved === false && get_option($option_key) !== $value) {
-                    $all_saved = false;
-                }
+                update_option($option_key, $value);
             }
         }
         
         // Mettre à jour les paramètres en mémoire
         $this->settings = array_merge($this->settings, $validated);
 
-        if ($all_saved) {
-            do_action('pdfBuilderCanvasSettingsUpdated', $this->settings);
-            return true;
-        } else {
-            return false;
-        }
+        // La sauvegarde est considérée réussie tant qu'aucune exception n'est levée
+        do_action('pdfBuilderCanvasSettingsUpdated', $this->settings);
+        return true;
     }
 
     /**

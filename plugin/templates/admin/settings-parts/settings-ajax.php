@@ -376,41 +376,6 @@ function pdf_builder_save_canvas_settings_handler() {
 
             $saved = $canvas_manager->saveSettings($settings);
             if ($saved) {
-                // Synchroniser avec les options séparées pour cohérence avec les modales
-                $option_mappings = [
-                    'canvas_background_color' => 'pdf_builder_canvas_bg_color',
-                    'border_color' => 'pdf_builder_canvas_border_color',
-                    'border_width' => 'pdf_builder_canvas_border_width',
-                    'shadow_enabled' => 'pdf_builder_canvas_shadow_enabled',
-                    'show_grid' => 'pdf_builder_canvas_grid_enabled',
-                    'grid_size' => 'pdf_builder_canvas_grid_size',
-                    'show_guides' => 'pdf_builder_canvas_guides_enabled',
-                    'snap_to_grid' => 'pdf_builder_canvas_snap_to_grid',
-                    'min_zoom' => 'pdf_builder_canvas_zoom_min',
-                    'max_zoom' => 'pdf_builder_canvas_zoom_max',
-                    'default_zoom' => 'pdf_builder_canvas_zoom_default',
-                    'pan_with_mouse' => 'pdf_builder_canvas_pan_enabled',
-                    'drag_enabled' => 'pdf_builder_canvas_drag_enabled',
-                    'resize_enabled' => 'pdf_builder_canvas_resize_enabled',
-                    'rotate_enabled' => 'pdf_builder_canvas_rotate_enabled',
-                    'multi_select' => 'pdf_builder_canvas_multi_select',
-                    'keyboard_shortcuts' => 'pdf_builder_canvas_keyboard_shortcuts',
-                    'auto_save' => 'pdf_builder_canvas_auto_save',
-                    'selection_mode' => 'pdf_builder_canvas_selection_mode',
-                    'export_format' => 'pdf_builder_canvas_export_format',
-                    'export_quality' => 'pdf_builder_canvas_export_quality',
-                    'export_transparent' => 'pdf_builder_canvas_export_transparent',
-                    'fps_target' => 'pdf_builder_canvas_fps_target',
-                    'memory_limit' => 'pdf_builder_canvas_memory_limit',
-                    'lazy_loading' => 'pdf_builder_canvas_lazy_loading'
-                ];
-                
-                foreach ($option_mappings as $setting_key => $option_key) {
-                    if (isset($settings[$setting_key])) {
-                        update_option($option_key, $settings[$setting_key]);
-                    }
-                }
-                
                 error_log('Settings AJAX - Canvas settings saved successfully: ' . print_r($settings, true));
                 send_ajax_response(true, 'Paramètres canvas sauvegardés avec succès.', ['saved' => $settings]);
             } else {
