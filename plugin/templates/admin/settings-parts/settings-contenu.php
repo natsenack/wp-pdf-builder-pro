@@ -21,14 +21,18 @@
                             </div>
                         </div>
                         <div class="canvas-card-content">
-                            <p>Configurez la taille, le format et la résolution de votre canvas.</p>
+                            <p>Définissez la taille, la résolution et le format de votre canvas de conception.</p>
                         </div>
                         <div class="canvas-card-preview">
-                            <div class="preview-format">800×600px</div>
-                            <div class="preview-size">150 DPI</div>
+                            <div class="preview-format">
+                                <span>800×600px</span>
+                                <span class="preview-size">150 DPI</span>
+                            </div>
                         </div>
                         <div class="canvas-card-actions">
-                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                            <button type="button" class="canvas-configure-btn">
+                                <span>⚙️</span> Configurer
+                            </button>
                         </div>
                     </div>
 
@@ -42,14 +46,16 @@
                             </div>
                         </div>
                         <div class="canvas-card-content">
-                            <p>Personnalisez les couleurs, bordures et effets visuels.</p>
+                            <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
                         </div>
                         <div class="canvas-card-preview">
-                            <div class="color-preview bg" style="background-color: #ffffff;"></div>
-                            <div class="color-preview border" style="background-color: #cccccc;"></div>
+                            <div class="color-preview bg" style="background-color: #ffffff;" title="Fond"></div>
+                            <div class="color-preview border" style="background-color: #007cba;" title="Bordure"></div>
                         </div>
                         <div class="canvas-card-actions">
-                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                            <button type="button" class="canvas-configure-btn">
+                                <span>🎨</span> Configurer
+                            </button>
                         </div>
                     </div>
 
@@ -63,7 +69,7 @@
                             </div>
                         </div>
                         <div class="canvas-card-content">
-                            <p>Gérez l'affichage et l'alignement sur la grille.</p>
+                            <p>Configurez l'affichage et l'alignement sur la grille de conception.</p>
                         </div>
                         <div class="canvas-card-preview">
                             <div class="grid-preview">
@@ -73,7 +79,9 @@
                             </div>
                         </div>
                         <div class="canvas-card-actions">
-                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                            <button type="button" class="canvas-configure-btn">
+                                <span>📏</span> Configurer
+                            </button>
                         </div>
                     </div>
 
@@ -87,7 +95,7 @@
                             </div>
                         </div>
                         <div class="canvas-card-content">
-                            <p>Contrôlez les niveaux de zoom et la navigation.</p>
+                            <p>Contrôlez les niveaux de zoom et les options de navigation.</p>
                         </div>
                         <div class="canvas-card-preview">
                             <div class="zoom-preview">
@@ -97,7 +105,9 @@
                             </div>
                         </div>
                         <div class="canvas-card-actions">
-                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                            <button type="button" class="canvas-configure-btn">
+                                <span>🔍</span> Configurer
+                            </button>
                         </div>
                     </div>
 
@@ -111,17 +121,19 @@
                             </div>
                         </div>
                         <div class="canvas-card-content">
-                            <p>Activez le glisser-déposer, redimensionnement et rotation.</p>
+                            <p>Activez les interactions comme glisser-déposer et redimensionnement.</p>
                         </div>
                         <div class="canvas-card-preview">
                             <div class="interaction-preview">
-                                <span class="element-handle">↔</span>
-                                <span class="element-handle">↕</span>
-                                <span class="element-handle">↻</span>
+                                <span class="element-handle" title="Redimensionner">↔</span>
+                                <span class="element-handle" title="Déplacer">↕</span>
+                                <span class="element-handle" title="Pivoter">↻</span>
                             </div>
                         </div>
                         <div class="canvas-card-actions">
-                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                            <button type="button" class="canvas-configure-btn">
+                                <span>👆</span> Configurer
+                            </button>
                         </div>
                     </div>
 
@@ -135,16 +147,18 @@
                             </div>
                         </div>
                         <div class="canvas-card-content">
-                            <p>Définissez la sélection et les raccourcis clavier.</p>
+                            <p>Définissez la sélection multiple et les raccourcis clavier.</p>
                         </div>
                         <div class="canvas-card-preview">
                             <div class="behavior-preview">
-                                <span class="behavior-icon">👆</span>
-                                <span class="behavior-icon">⌨️</span>
+                                <span class="behavior-icon" title="Sélection">👆</span>
+                                <span class="behavior-icon" title="Raccourcis">⌨️</span>
                             </div>
                         </div>
                         <div class="canvas-card-actions">
-                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                            <button type="button" class="canvas-configure-btn">
+                                <span>⚙️</span> Configurer
+                            </button>
                         </div>
                     </div>
 
@@ -158,7 +172,7 @@
                             </div>
                         </div>
                         <div class="canvas-card-content">
-                            <p>Configurez les formats et la qualité d'export.</p>
+                            <p>Configurez les formats et la qualité d'export des designs.</p>
                         </div>
                         <div class="canvas-card-preview">
                             <div class="export-preview">
@@ -167,7 +181,9 @@
                             </div>
                         </div>
                         <div class="canvas-card-actions">
-                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                            <button type="button" class="canvas-configure-btn">
+                                <span>📤</span> Configurer
+                            </button>
                         </div>
                     </div>
 
@@ -181,7 +197,7 @@
                             </div>
                         </div>
                         <div class="canvas-card-content">
-                            <p>Optimisez les FPS et la gestion mémoire.</p>
+                            <p>Optimisez les FPS et la gestion mémoire du canvas.</p>
                         </div>
                         <div class="canvas-card-preview">
                             <div class="performance-bar">
@@ -190,7 +206,9 @@
                             <div class="performance-fps">60 FPS</div>
                         </div>
                         <div class="canvas-card-actions">
-                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                            <button type="button" class="canvas-configure-btn">
+                                <span>⚡</span> Configurer
+                            </button>
                         </div>
                     </div>
 
@@ -204,7 +222,7 @@
                             </div>
                         </div>
                         <div class="canvas-card-content">
-                            <p>Gérez la sauvegarde automatique et l'historique.</p>
+                            <p>Gérez la sauvegarde automatique et l'historique des versions.</p>
                         </div>
                         <div class="canvas-card-preview">
                             <div class="autosave-preview">
@@ -213,7 +231,9 @@
                             </div>
                         </div>
                         <div class="canvas-card-actions">
-                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                            <button type="button" class="canvas-configure-btn">
+                                <span>💾</span> Configurer
+                            </button>
                         </div>
                     </div>
 
@@ -227,7 +247,7 @@
                             </div>
                         </div>
                         <div class="canvas-card-content">
-                            <p>Outils de débogage et monitoring performance.</p>
+                            <p>Outils de débogage et monitoring des performances.</p>
                         </div>
                         <div class="canvas-card-preview">
                             <div class="debug-preview">
@@ -236,7 +256,9 @@
                             </div>
                         </div>
                         <div class="canvas-card-actions">
-                            <button type="button" class="canvas-configure-btn">Configurer</button>
+                            <button type="button" class="canvas-configure-btn">
+                                <span>🐛</span> Configurer
+                            </button>
                         </div>
                     </div>
                 </div>
