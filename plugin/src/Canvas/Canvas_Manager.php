@@ -136,6 +136,16 @@ class Canvas_Manager
     }
 
     /**
+     * Récupère les paramètres actuels du canvas
+     *
+     * @return array
+     */
+    public function getSettings()
+    {
+        return $this->settings;
+    }
+
+    /**
      * Enregistre les hooks WordPress
      */
     private function registerHooks()
