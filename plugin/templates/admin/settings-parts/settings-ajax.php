@@ -206,6 +206,6 @@ function pdf_builder_save_settings_handler() {
     }
 }
 
-// Hook AJAX actions
-add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
-add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
+// Hook AJAX actions - MOVED to pdf-builder-pro.php for global registration
+// add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
+// add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
