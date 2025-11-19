@@ -355,10 +355,6 @@ function pdf_builder_save_canvas_settings_handler() {
             foreach ($checkboxes as $checkbox) {
                 $value = isset($_POST[$checkbox]) && $_POST[$checkbox] === '1';
                 $settings[str_replace('canvas_', '', $checkbox)] = $value;
-                // Debug temporaire pour shadow_enabled
-                if ($checkbox === 'canvas_shadow_enabled') {
-                    error_log('DEBUG SAVE: canvas_shadow_enabled - POST value: ' . (isset($_POST[$checkbox]) ? $_POST[$checkbox] : 'NOT SET') . ', computed value: ' . ($value ? 'true' : 'false') . ', will save to option: pdf_builder_canvas_shadow_enabled');
-                }
             }
 
             // Traiter les selects
