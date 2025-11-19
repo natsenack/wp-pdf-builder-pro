@@ -2477,6 +2477,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       : 'none';
   
   console.log('Canvas borderStyle:', borderStyle, 'borderWidth:', canvasSettings.borderWidth, 'borderColor:', canvasSettings.borderColor);
+  console.log('Canvas shadowEnabled:', canvasSettings.shadowEnabled);
 
   return (
     <>
@@ -2497,7 +2498,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
           border: borderStyle,
           cursor: 'crosshair',
           backgroundColor: '#ffffff',
-          boxShadow: canvasSettings.shadowEnabled ? '0 4px 8px rgba(0, 0, 0, 0.1)' : 'none',
+          boxShadow: canvasSettings.shadowEnabled ? '0 6px 12px rgba(0, 0, 0, 0.25)' : 'none',
           transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
         }}
       />

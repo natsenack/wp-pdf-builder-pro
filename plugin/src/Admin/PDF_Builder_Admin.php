@@ -1733,7 +1733,7 @@ class PdfBuilderAdmin
         // Construire les styles du conteneur
         $container_bg = "background: {$canvas_bg_color};";
         $container_border = $canvas_border_width > 0 ? "border: {$canvas_border_width}px solid {$canvas_border_color};" : "border: none;";
-        $container_shadow = $canvas_shadow_enabled ? "box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" : "box-shadow: none;";
+        $container_shadow = $canvas_shadow_enabled ? "box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);" : "box-shadow: none;";
 
         $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . ($order ? 'Order #' . $order->get_id() : 'PDF') . '</title>';
 // Gestion des marges d'impression - utiliser la première page
