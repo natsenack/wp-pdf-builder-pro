@@ -601,9 +601,7 @@ if ($is_ajax && isset($_POST['action'])) {
 
 // Handler pour la sauvegarde globale de tous les paramètres
 if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_save_all_settings') {
-    error_log('[DEBUG] AJAX save handler reached');
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
-        error_log('[DEBUG] Nonce verified successfully');
         try {
             // Collecter et sauvegarder tous les paramètres
 
