@@ -34,7 +34,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (checkbox && settings[settingKey] !== undefined) {
                 const shouldBeChecked = settings[settingKey] === true || settings[settingKey] === '1';
                 console.log(`Settings.js - Setting ${checkboxId} to ${shouldBeChecked} (value: ${settings[settingKey]})`);
+                
+                // Mettre à jour à la fois la propriété JavaScript et l'attribut HTML
                 checkbox.checked = shouldBeChecked;
+                if (shouldBeChecked) {
+                    checkbox.setAttribute('checked', 'checked');
+                } else {
+                    checkbox.removeAttribute('checked');
+                }
                 
                 // Forcer la mise à jour visuelle pour les checkboxes stylisées
                 checkbox.dispatchEvent(new Event('change', { bubbles: true }));
