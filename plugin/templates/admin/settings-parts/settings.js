@@ -1369,5 +1369,96 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.target.textContent = 'Révoquer';
             });
         }
+
+        // Gestion des boutons de sauvegarde des modales canvas
+        if (event.target.classList.contains('canvas-modal-save')) {
+            event.preventDefault();
+            const button = event.target;
+            const category = button.getAttribute('data-category');
+            const modal = button.closest('.modal');
+            const form = modal ? modal.querySelector('form') : null;
+
+            if (!category || !form) {
+                console.error('Catégorie ou formulaire manquant pour la sauvegarde canvas');
+                return;
+            }
+
+            // Désactiver le bouton et changer son texte
+            button.disabled = true;
+            button.textContent = '⏳ Sauvegarde...';
+
+            // Collecter les données du formulaire
+            const formData = new FormData();
+            formData.append('action', 'pdf_builder_save_canvas_settings');
+            formData.append('nonce', pdf_builder_ajax.nonce);
+            formData.append('category', category);
+
+            // Ajouter tous les champs du formulaire
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.name) {
+                    if (input.type === 'checkbox') {
+                        formData.append(input.name, input.checked ? '1' : '0');
+                    } else {
+                        formData.append(input.name, input.value);
+                    }
+                }
+            });
+
+            // Faire l'appel AJAX
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    button.textContent = '✅ Sauvegardé';
+                    button.classList.add('saved');
+
+                    // Fermer la modale après un court délai
+                    setTimeout(() => {
+                        // Fermer la modale (supposant qu'il y a un bouton de fermeture)
+                        const closeBtn = modal.querySelector('.modal-close, .close-modal');
+                        if (closeBtn) {
+                            closeBtn.click();
+                        } else {
+                            modal.style.display = 'none';
+                        }
+                    }, 1500);
+
+                    // Réactiver le bouton après 3 secondes
+                    setTimeout(() => {
+                        button.disabled = false;
+                        button.textContent = 'Sauvegarder';
+                        button.classList.remove('saved');
+                    }, 3000);
+
+                } else {
+                    button.textContent = '❌ Erreur';
+                    button.classList.add('error');
+                    console.error('Erreur sauvegarde canvas:', data.data);
+
+                    // Réactiver le bouton après 3 secondes
+                    setTimeout(() => {
+                        button.disabled = false;
+                        button.textContent = 'Sauvegarder';
+                        button.classList.remove('error');
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                button.textContent = '❌ Erreur réseau';
+                button.classList.add('error');
+                console.error('Erreur AJAX sauvegarde canvas:', error);
+
+                // Réactiver le bouton après 3 secondes
+                setTimeout(() => {
+                    button.disabled = false;
+                    button.textContent = 'Sauvegarder';
+                    button.classList.remove('error');
+                }, 3000);
+            });
+        }
     });
 });
