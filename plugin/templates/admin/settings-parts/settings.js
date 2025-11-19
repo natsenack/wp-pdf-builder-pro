@@ -1499,6 +1499,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     button.textContent = '✅ Sauvegardé';
                     button.classList.add('saved');
 
+                    // Notifier l'éditeur React que les paramètres ont été mis à jour
+                    const settingsUpdateEvent = new CustomEvent('pdfBuilderCanvasSettingsUpdated', {
+                        detail: { category: category }
+                    });
+                    window.dispatchEvent(settingsUpdateEvent);
+
                     // Fermer la modale après un court délai
                     setTimeout(() => {
                         // Fermer la modale (supposant qu'il y a un bouton de fermeture)

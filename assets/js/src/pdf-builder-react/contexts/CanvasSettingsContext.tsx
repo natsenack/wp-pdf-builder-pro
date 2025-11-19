@@ -212,8 +212,60 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
 export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps) {
   const [settings, setSettings] = useState<CanvasSettingsContextType>(() => loadSettingsFromWindowObj());
 
-  const handleRefresh = () => {
-    setSettings(loadSettingsFromWindowObj());
+  const handleRefresh = async () => {
+    try {
+      // Faire un appel AJAX pour récupérer les paramètres mis à jour
+      const response = await fetch(window.pdfBuilderAjax?.ajax_url || '/wp-admin/admin-ajax.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          action: 'pdf_builder_get_canvas_settings',
+          nonce: window.pdfBuilderAjax?.nonce || ''
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          // Mapper les données reçues vers le format du contexte
+          const newSettings: CanvasSettingsContextType = {
+            ...DEFAULT_SETTINGS,
+            // Dimensions
+            canvasWidth: data.data.canvas_width ?? DEFAULT_SETTINGS.canvasWidth,
+            canvasHeight: data.data.canvas_height ?? DEFAULT_SETTINGS.canvasHeight,
+            canvasUnit: data.data.canvas_unit ?? DEFAULT_SETTINGS.canvasUnit,
+            canvasOrientation: data.data.canvas_orientation ?? DEFAULT_SETTINGS.canvasOrientation,
+            
+            // Couleurs
+            canvasBackgroundColor: data.data.canvas_background_color ?? DEFAULT_SETTINGS.canvasBackgroundColor,
+            containerBackgroundColor: data.data.container_background_color ?? DEFAULT_SETTINGS.containerBackgroundColor,
+            
+            // Marges
+            marginTop: data.data.margin_top ?? DEFAULT_SETTINGS.marginTop,
+            marginRight: data.data.margin_right ?? DEFAULT_SETTINGS.marginRight,
+            marginBottom: data.data.margin_bottom ?? DEFAULT_SETTINGS.marginBottom,
+            marginLeft: data.data.margin_left ?? DEFAULT_SETTINGS.marginLeft,
+            showMargins: data.data.show_margins === true || data.data.show_margins === '1',
+            
+            // Grille
+            gridShow: data.data.show_grid !== false,
+            gridSize: data.data.grid_size ?? DEFAULT_SETTINGS.gridSize,
+            
+            // Autres paramètres...
+            isLoading: false,
+            isReady: true
+          };
+          
+          setSettings(newSettings);
+        }
+      }
+    } catch (error) {
+      console.warn('Erreur lors du rechargement des paramètres canvas:', error);
+      // Fallback: recharger depuis la variable globale
+      setSettings(loadSettingsFromWindowObj());
+    }
   };
 
   // Écouter les événements custom pour les mises à jour

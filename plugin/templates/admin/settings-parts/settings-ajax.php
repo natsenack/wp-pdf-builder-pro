@@ -374,7 +374,25 @@ function pdf_builder_save_canvas_settings_handler() {
     }
 }
 
+// Handler pour récupérer les paramètres canvas
+function pdf_builder_get_canvas_settings_handler() {
+    try {
+        $canvas_manager = WP_PDF_Builder_Pro\Canvas\Canvas_Manager::get_instance();
+        $settings = $canvas_manager->getSettings();
+        
+        if ($settings) {
+            send_ajax_response(true, 'Paramètres récupérés avec succès.', $settings);
+        } else {
+            send_ajax_response(false, 'Erreur lors de la récupération des paramètres.');
+        }
+    } catch (Exception $e) {
+        error_log('Erreur récupération paramètres canvas: ' . $e->getMessage());
+        send_ajax_response(false, 'Erreur: ' . $e->getMessage());
+    }
+}
+
 // Hook AJAX actions - MOVED to pdf-builder-pro.php for global registration
 // add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
 // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
 // add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
+// add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
