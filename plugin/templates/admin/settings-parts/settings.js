@@ -743,6 +743,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Mettre à jour les badges de statut en temps réel
                 updateStatusBadges();
 
+                // Changer l'état du bouton à sauvegardé
+                saveBtn.classList.remove('saving');
+                saveBtn.classList.add('saved');
+                saveBtn.textContent = '✅ Sauvegardé';
+
                 // Remettre le bouton normal après 3 secondes
                 setTimeout(() => {
                     saveBtn.classList.remove('saved');
@@ -761,6 +766,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 3000);
             }
         })
+        .catch(error => {
+            console.error('Erreur AJAX:', error);
+            saveBtn.classList.remove('saving');
+            saveBtn.classList.add('error');
+            saveBtn.textContent = '❌ Erreur réseau';
+
+            setTimeout(() => {
+                saveBtn.classList.remove('error');
+                saveBtn.textContent = '💾 Sauvegarder';
+                saveBtn.disabled = false;
+            }, 3000);
+        });
         .catch(error => {
             console.error('Erreur lors de la sauvegarde:', error);
             saveBtn.classList.remove('saving');
