@@ -23,7 +23,6 @@
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">📐</span>
-                                <span class="canvas-card-status ACTIF">ACTIF</span>
                             </div>
                             <h4>Dimensions & Format</h4>
                         </div>
@@ -48,7 +47,6 @@
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">🎨</span>
-                                <span class="canvas-card-status ACTIF">ACTIF</span>
                             </div>
                             <h4>Apparence</h4>
                         </div>
@@ -123,7 +121,6 @@
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">👆</span>
-                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_drag_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_drag_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                             <h4>Éléments Interactifs</h4>
                         </div>
@@ -149,7 +146,6 @@
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">⚙️</span>
-                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_keyboard_shortcuts', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_keyboard_shortcuts', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                             <h4>Comportement</h4>
                         </div>
@@ -174,7 +170,6 @@
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">📤</span>
-                                <span class="canvas-card-status ACTIF">ACTIF</span>
                             </div>
                             <h4>Export & Qualité</h4>
                         </div>
@@ -199,7 +194,6 @@
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">⚡</span>
-                                <span class="canvas-card-status ACTIF">ACTIF</span>
                             </div>
                             <h4>Performance</h4>
                         </div>
