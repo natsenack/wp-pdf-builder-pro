@@ -92,16 +92,6 @@
                 </div>
             </section>
 
-            <!-- Boutons de sauvegarde -->
-            <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; text-align: center;">
-                <button type="button" name="submit_pdf_settings" class="button button-primary button-large floating-save-btn" style="margin-right: 10px;">
-                    💾 Sauvegarder la configuration PDF
-                </button>
-                <button type="button" onclick="if(confirm('Réinitialiser tous les paramètres PDF ?')) { document.querySelectorAll('form').forEach(form => form.reset()); }" class="button button-secondary">
-                    🔄 Réinitialiser
-                </button>
-            </div>
-
             <script>
             function toggleAdvancedSection() {
                 const section = document.getElementById('advanced-section');
