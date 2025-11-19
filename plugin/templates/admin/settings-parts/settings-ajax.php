@@ -353,8 +353,13 @@ function pdf_builder_save_canvas_settings_handler() {
             // Convertir les checkboxes
             $checkboxes = ['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_pan_enabled', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts', 'canvas_auto_save', 'canvas_export_transparent', 'canvas_lazy_loading'];
             foreach ($checkboxes as $checkbox) {
+                $raw_value = isset($_POST[$checkbox]) ? $_POST[$checkbox] : 'NOT_SET';
                 $value = isset($_POST[$checkbox]) && $_POST[$checkbox] === '1';
                 $settings[str_replace('canvas_', '', $checkbox)] = $value;
+                // Debug temporaire pour shadow_enabled
+                if ($checkbox === 'canvas_shadow_enabled') {
+                    error_log("DEBUG CHECKBOX: $checkbox - RAW: '$raw_value', PROCESSED: " . ($value ? 'true' : 'false'));
+                }
             }
 
             // Traiter les selects
@@ -375,9 +380,6 @@ function pdf_builder_save_canvas_settings_handler() {
 
             $saved = $canvas_manager->saveSettings($settings);
             if ($saved) {
-                // Debug temporaire - vérifier la valeur sauvegardée
-                $saved_value = get_option('pdf_builder_canvas_shadow_enabled', 'NOT_SET');
-                error_log('DEBUG SAVE: canvas_shadow_enabled saved as: ' . $saved_value . ' (type: ' . gettype($saved_value) . ')');
                 send_ajax_response(true, 'Paramètres canvas sauvegardés avec succès.', ['saved' => $settings]);
             } else {
                 send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres canvas.');

@@ -1529,6 +1529,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Faire l'appel AJAX
+            console.log('Envoi sauvegarde canvas - Catégorie:', category);
+            console.log('FormData envoyé:', Array.from(formData.entries()));
             fetch(pdf_builder_ajax.ajax_url, {
                 method: 'POST',
                 body: formData
