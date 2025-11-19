@@ -199,6 +199,7 @@ function pdf_builder_register_ajax_handlers() {
     // Settings handlers from settings-ajax.php
     add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
     add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
+    add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
 
     // Test AJAX handler
     add_action('wp_ajax_test_ajax', 'pdf_builder_test_ajax_handler');
