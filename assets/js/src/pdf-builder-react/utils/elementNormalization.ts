@@ -81,12 +81,6 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
 
     // CRITICAL: Log les propriétés order_number avant sauvegarde
     if (normalized.type === 'order_number') {
-      console.log(`🔍 [SAVE NORMALIZE] order_number element ${normalized.id}:`, {
-        contentAlign: normalized.contentAlign,
-        labelPosition: normalized.labelPosition,
-        showLabel: normalized.showLabel,
-        labelText: normalized.labelText
-      });
     }
 
     // Filtrer les propriétés non sérialisables (Date, Function, etc)
@@ -131,8 +125,6 @@ export function validateElementIntegrity(elements: Element[], elementType: strin
     return true; // Pas d'éléments de ce type
   }
 
-  console.log(`🔍 [VALIDATE] Checking ${elementType} elements (${elementsOfType.length} found)`);
-
   let allValid = true;
   elementsOfType.forEach((el, idx) => {
     const required: (keyof Element)[] = ['id', 'type', 'x', 'y', 'width', 'height'];
@@ -146,7 +138,6 @@ export function validateElementIntegrity(elements: Element[], elementType: strin
     if (elementType === 'order_number') {
       const hasContentAlign = 'contentAlign' in el;
       const hasLabelPosition = 'labelPosition' in el;
-      console.log(`   order_number ${el.id}: contentAlign=${hasContentAlign ? '✅' : '❌'}, labelPosition=${hasLabelPosition ? '✅' : '❌'}`);
 
       if (!hasContentAlign || !hasLabelPosition) {
         allValid = false;
@@ -161,34 +152,5 @@ export function validateElementIntegrity(elements: Element[], elementType: strin
  * Debug helper: affiche un rapport complet
  */
 export function debugElementState(elements: Element[], label: string): void {
-  console.group(`📋 [DEBUG] ${label}`);
-  console.log(`Total elements: ${elements.length}`);
-
-  // Compter par type
-  const byType = new Map<string, number>();
-  elements.forEach(el => {
-    const type = el.type as string;
-    byType.set(type, (byType.get(type) || 0) + 1);
-  });
-
-  console.log('Elements par type:');
-  byType.forEach((count, type) => {
-    console.log(`  - ${type}: ${count}`);
-  });
-
-  // Focus sur order_number
-  const orderNumbers = elements.filter(el => el.type === 'order_number');
-  if (orderNumbers.length > 0) {
-    console.log(`order_number elements (${orderNumbers.length}):`);
-    orderNumbers.forEach((el, idx) => {
-      console.log(`  [${idx}] ${el.id}:`, {
-        contentAlign: el.contentAlign || 'MISSING',
-        labelPosition: el.labelPosition || 'MISSING',
-        showLabel: el.showLabel,
-        allProps: Object.keys(el).filter(k => !['x', 'y', 'width', 'height', 'id', 'type'].includes(k))
-      });
-    });
-  }
-
-  console.groupEnd();
+  // Debug function - logs removed for production
 }

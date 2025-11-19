@@ -35,8 +35,6 @@ export function useTemplate() {
 
   // Charger un template existant
   const loadExistingTemplate = useCallback(async (templateId: string) => {
-    console.log('[useTemplate] Loading template with ID:', templateId);
-
     try {
       // ✅ CRITICAL: Add timestamp to AJAX URL to prevent caching
       // This ensures F5 and Ctrl+F5 load fresh data from server
@@ -77,24 +75,17 @@ export function useTemplate() {
         // Chrome peut avoir besoin d'un mode plus permissif
         fetchOptions.mode = 'cors';
         fetchOptions.cache = 'no-cache';
-        console.log('[useTemplate] Chrome détecté - Utilisation du mode CORS avec cache désactivé');
       } else if (isFirefox) {
         // Firefox gère bien le cache par défaut
         fetchOptions.cache = 'no-cache';
-        console.log('[useTemplate] Firefox détecté - Cache désactivé');
       } else if (isSafari) {
         // Safari peut avoir des problèmes avec certains modes
         fetchOptions.mode = 'cors';
-        console.log('[useTemplate] Safari détecté - Mode CORS forcé');
       }
 
       const url = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&t=${cacheBreaker}`;
-      console.log('[useTemplate] Fetch URL:', url);
-      console.log('[useTemplate] Fetch options:', fetchOptions);
 
       const response = await fetch(url, fetchOptions);
-      console.log('[useTemplate] AJAX response status:', response.status);
-      console.log('[useTemplate] AJAX response headers:', [...response.headers.entries()]);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -103,22 +94,10 @@ export function useTemplate() {
       }
 
       const result = await response.json();
-      console.log('[useTemplate] AJAX result success:', result.success);
-      console.log('🔍 [TEMPLATE LOAD] Full AJAX response:', result);
-      console.log('🔍 [TEMPLATE LOAD] Response keys:', Object.keys(result));
-      console.log('🔍 [TEMPLATE LOAD] result.data:', result.data);
-      console.log('🔍 [TEMPLATE LOAD] result.data keys:', result.data ? Object.keys(result.data) : 'NO DATA');
       
       // Log debug info from server
       if (result.data && result.data.debug) {
-        console.log('🔍 [TEMPLATE LOAD] SERVER DEBUG INFO:', result.data.debug);
         if (result.data.debug.order_element) {
-          console.log('🔍 [TEMPLATE LOAD] ORDER ELEMENT FROM SERVER:', result.data.debug.order_element);
-          console.log('🔍 [TEMPLATE LOAD] ORDER ELEMENT JSON:', result.data.debug.order_element_json);
-          console.log('🔍 [TEMPLATE LOAD] HAS contentAlign:', result.data.debug.has_contentAlign);
-          console.log('🔍 [TEMPLATE LOAD] HAS labelPosition:', result.data.debug.has_labelPosition);
-          console.log('🔍 [TEMPLATE LOAD] contentAlign VALUE:', result.data.debug.contentAlign_value);
-          console.log('🔍 [TEMPLATE LOAD] labelPosition VALUE:', result.data.debug.labelPosition_value);
         }
       }
 
@@ -128,29 +107,12 @@ export function useTemplate() {
 
       const templateData = result.data ? result.data.template : result.template;
       const templateName = result.data ? (result.data.template_name || result.data.name) : (result.name || result.template_name);
-      console.log('🔍 [TEMPLATE LOAD] Extracted templateData:', templateData);
-      console.log('🔍 [TEMPLATE LOAD] Extracted templateName:', templateName);
-      console.log('🔍 [TEMPLATE LOAD] templateData type:', typeof templateData);
-      console.log('🔍 [TEMPLATE LOAD] templateData keys:', templateData ? Object.keys(templateData) : 'NULL');
-      console.log('🔍 [TEMPLATE LOAD] templateData.elements:', templateData?.elements);
-      console.log('🔍 [TEMPLATE LOAD] templateData.elements type:', typeof templateData?.elements);
-      console.log('[useTemplate] Template loaded - elements count:', templateData.elements ? templateData.elements.length : 0);
-      console.log('[useTemplate] Template name:', templateName);
 
       
       // 🔍 Tracer les éléments reçus du serveur
       if (templateData.elements) {
-        console.log('🔍 [TEMPLATE LOAD] Raw elements from server:', templateData.elements);
-        console.log('🔍 [TEMPLATE LOAD] First element from server:', templateData.elements[0]);
-        
         // 🔍 Vérifier spécifiquement les éléments order_number
         const orderNumberElements = templateData.elements.filter(el => el.type === 'order_number');
-        console.log('🔍 [TEMPLATE LOAD] Order number elements found:', orderNumberElements.length);
-        if (orderNumberElements.length > 0) {
-          console.log('🔍 [TEMPLATE LOAD] First order_number element properties:', orderNumberElements[0].properties);
-          console.log('🔍 [TEMPLATE LOAD] First order_number element contentAlign:', orderNumberElements[0].properties?.contentAlign);
-          console.log('🔍 [TEMPLATE LOAD] First order_number element labelPosition:', orderNumberElements[0].properties?.labelPosition);
-        }
       }
 
       // Parse JSON strings
@@ -262,17 +224,6 @@ export function useTemplate() {
 
       // 🔍 Log final des éléments order_number avant envoi au contexte
       const finalOrderNumberElements = enrichedElements.filter((el: Record<string, unknown>) => el.type === 'order_number');
-      console.log('🔍 [TEMPLATE LOAD] Final order number elements before dispatch:', finalOrderNumberElements.length);
-      finalOrderNumberElements.forEach((el: Record<string, unknown>, index: number) => {
-        console.log(`🔍 [TEMPLATE LOAD] Final order element ${index} before dispatch:`, {
-          id: el.id,
-          contentAlign: el.contentAlign || 'NOT SET',
-          labelPosition: el.labelPosition || 'NOT SET',
-          showLabel: el.showLabel,
-          labelText: el.labelText || 'NOT SET',
-          allProperties: Object.keys(el)
-        });
-      });
 
       dispatch({
         type: 'LOAD_TEMPLATE',
@@ -332,13 +283,10 @@ export function useTemplate() {
           };
 
           const fallbackUrl = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&fallback=1&t=${Date.now()}`;
-          console.log('🔄 [LOAD TEMPLATE] Tentative fallback URL:', fallbackUrl);
 
           const fallbackResponse = await fetch(fallbackUrl, fallbackOptions);
-          console.log('🔄 [LOAD TEMPLATE] Fallback response status:', fallbackResponse.status);
 
           if (fallbackResponse.ok || fallbackResponse.status === 0) { // no-cors peut retourner status 0
-            console.log('✅ [LOAD TEMPLATE] Fallback réussi !');
             // Traiter la réponse même si elle est opaque
             return true;
           }
@@ -366,22 +314,16 @@ export function useTemplate() {
   // ✅ Dépendance vide: charger une seule fois au montage du composant
   useEffect(() => {
     const templateId = getTemplateIdFromUrl();
-    console.log('[useTemplate] useEffect - templateId:', templateId);
-    console.log('[useTemplate] useEffect - state.template:', state.template);
 
     if (templateId) {
-      console.log('[useTemplate] Loading existing template:', templateId);
       loadExistingTemplate(templateId);
     } else {
-      console.log('[useTemplate] No template ID found, creating new template');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Sauvegarder un template manuellement
   const saveTemplate = useCallback(async () => {
-    console.log('🔍 [TEMPLATE SAVE] Starting manual save...');
-
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
@@ -390,9 +332,6 @@ export function useTemplate() {
       if (!templateId) {
         throw new Error('Aucun template chargé pour la sauvegarde');
       }
-
-      console.log('🔍 [TEMPLATE SAVE] Template ID:', templateId);
-      console.log('🔍 [TEMPLATE SAVE] Elements count:', state.elements.length);
 
       // ✅ NORMALISER LES ÉLÉMENTS AVANT SAUVEGARDE
       // Cela garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
@@ -406,24 +345,8 @@ export function useTemplate() {
         canvasHeight: canvasHeight,
         version: '1.0'
       };
-
-      console.log('🔍 [TEMPLATE SAVE] About to send templateData:', templateData);
-      console.log('🔍 [TEMPLATE SAVE] templateData.elements length:', templateData.elements.length);
-      console.log('🔍 [TEMPLATE SAVE] First element keys:', Object.keys(templateData.elements[0] || {}));
-
       // Log détaillé des éléments order_number
       const orderNumberElements = templateData.elements.filter((el: Record<string, unknown>) => el.type === 'order_number');
-      console.log('🔍 [TEMPLATE SAVE] Order number elements:', orderNumberElements.length);
-      orderNumberElements.forEach((el: Record<string, unknown>, index: number) => {
-        console.log(`🔍 [TEMPLATE SAVE] Order element ${index}:`, {
-          id: el.id,
-          contentAlign: el.contentAlign || 'NOT SET',
-          labelPosition: el.labelPosition || 'NOT SET',
-          showLabel: el.showLabel,
-          labelText: el.labelText || 'NOT SET',
-          allProperties: Object.keys(el)
-        });
-      });
 
       const formData = new FormData();
       formData.append('action', 'pdf_builder_save_template');
@@ -432,27 +355,20 @@ export function useTemplate() {
       formData.append('template_data', JSON.stringify(templateData));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
-      console.log('[useTemplate] SAVE - Sending request...');
-
       const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
         method: 'POST',
         body: formData
       });
-
-      console.log('[useTemplate] SAVE - Response status:', response.status);
 
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
-      console.log('[useTemplate] SAVE - Server response:', result);
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors de la sauvegarde');
       }
-
-      console.log('[useTemplate] SAVE - Save successful, updating state');
 
       dispatch({
         type: 'SAVE_TEMPLATE',
@@ -461,8 +377,6 @@ export function useTemplate() {
           name: result.data.name
         }
       });
-
-      console.log('[useTemplate] SAVE - State updated, save complete');
 
     } catch (error) {
       console.error('[useTemplate] SAVE - Error:', error);
