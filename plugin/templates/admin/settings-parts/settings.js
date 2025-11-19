@@ -757,8 +757,13 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: params.toString()
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('DEBUG: Fetch response status:', response.status);
+            console.log('DEBUG: Fetch response ok:', response.ok);
+            return response.json();
+        })
         .then(data => {
+            console.log('DEBUG: Response data:', data);
             if (data.success) {
                 saveBtn.classList.remove('saving');
                 saveBtn.classList.add('saved');
