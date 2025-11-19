@@ -216,7 +216,13 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
 }
 
 export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps) {
-  const [settings, setSettings] = useState<CanvasSettingsContextType>(() => loadSettingsFromWindowObj());
+  const [settings, setSettings] = useState<CanvasSettingsContextType>(() => DEFAULT_SETTINGS);
+
+  // Load settings from server on mount
+  useEffect(() => {
+    console.log('CanvasSettingsContext - Loading initial settings from server');
+    handleRefresh();
+  }, []);
 
   const handleRefresh = async () => {
     console.log('CanvasSettingsContext - handleRefresh called');
