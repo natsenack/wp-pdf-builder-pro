@@ -1451,8 +1451,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target.classList.contains('canvas-modal-save')) {
             event.preventDefault();
             const button = event.target;
-            const category = button.getAttribute('data-category');
-            const modal = button.closest('.modal');
+            const modal = button.closest('.canvas-modal');
+            const category = modal.id.replace('canvas-', '').replace('-modal', '');
             const form = modal ? modal.querySelector('form') : null;
 
             if (!category || !form) {
