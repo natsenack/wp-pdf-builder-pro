@@ -12,15 +12,25 @@
                 <form id="canvas-dimensions-form">
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><label for="canvas_width">Largeur (px)</label></th>
+                            <th scope="row"><label for="canvas_format">Format du document</label></th>
                             <td>
-                                <input type="number" id="canvas_width" name="canvas_width" value="<?php echo intval(get_option('pdf_builder_canvas_width', 800)); ?>" min="400" max="2000" />
+                                <select id="canvas_format" name="canvas_format">
+                                    <option value="A4" <?php selected(get_option('pdf_builder_canvas_format', 'A4'), 'A4'); ?>>A4 (210×297mm)</option>
+                                    <option value="A3" <?php selected(get_option('pdf_builder_canvas_format', 'A4'), 'A3'); ?>>A3 (297×420mm)</option>
+                                    <option value="A5" <?php selected(get_option('pdf_builder_canvas_format', 'A4'), 'A5'); ?>>A5 (148×210mm)</option>
+                                    <option value="Letter" <?php selected(get_option('pdf_builder_canvas_format', 'A4'), 'Letter'); ?>>Letter (8.5×11")</option>
+                                    <option value="Legal" <?php selected(get_option('pdf_builder_canvas_format', 'A4'), 'Legal'); ?>>Legal (8.5×14")</option>
+                                    <option value="Tabloid" <?php selected(get_option('pdf_builder_canvas_format', 'A4'), 'Tabloid'); ?>>Tabloid (11×17")</option>
+                                </select>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_height">Hauteur (px)</label></th>
+                            <th scope="row"><label for="canvas_orientation">Orientation</label></th>
                             <td>
-                                <input type="number" id="canvas_height" name="canvas_height" value="<?php echo intval(get_option('pdf_builder_canvas_height', 600)); ?>" min="300" max="2000" />
+                                <select id="canvas_orientation" name="canvas_orientation">
+                                    <option value="portrait" <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
+                                    <option value="landscape" <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
+                                </select>
                             </td>
                         </tr>
                         <tr>
@@ -31,6 +41,23 @@
                                     <option value="150" <?php selected(get_option('pdf_builder_canvas_dpi', 150), '150'); ?>>150 DPI (Impression)</option>
                                     <option value="300" <?php selected(get_option('pdf_builder_canvas_dpi', 150), '300'); ?>>300 DPI (Haute qualité)</option>
                                 </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label>Dimensions calculées</label></th>
+                            <td>
+                                <div id="canvas-dimensions-display" style="padding: 10px; background: #f8f9fa; border-radius: 4px; font-family: monospace;">
+                                    <span id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_width', 800)); ?></span> ×
+                                    <span id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_height', 600)); ?></span> px
+                                    <br>
+                                    <small id="canvas-mm-display" style="color: #666;">
+                                        <?php
+                                        $width_mm = round(get_option('pdf_builder_canvas_width', 800) * 25.4 / get_option('pdf_builder_canvas_dpi', 150), 1);
+                                        $height_mm = round(get_option('pdf_builder_canvas_height', 600) * 25.4 / get_option('pdf_builder_canvas_dpi', 150), 1);
+                                        echo "{$width_mm}×{$height_mm}mm";
+                                        ?>
+                                    </small>
+                                </div>
                             </td>
                         </tr>
                     </table>

@@ -46,6 +46,137 @@ document.addEventListener('DOMContentLoaded', function() {
         currentTabText.textContent = activeTab.textContent;
     }
 
+    // Gestion du calcul automatique des dimensions du canvas
+    function updateCanvasDimensions() {
+        const format = document.getElementById('canvas_format')?.value || 'A4';
+        const orientation = document.getElementById('canvas_orientation')?.value || 'portrait';
+        const dpi = parseInt(document.getElementById('canvas_dpi')?.value) || 150;
+
+        // Dimensions en mm selon le format (valeurs standard)
+        const formatDimensions = {
+            'A4': { width: 210, height: 297 },
+            'A3': { width: 297, height: 420 },
+            'A5': { width: 148, height: 210 },
+            'Letter': { width: 215.9, height: 279.4 }, // 8.5" x 11"
+            'Legal': { width: 215.9, height: 355.6 },  // 8.5" x 14"
+            'Tabloid': { width: 279.4, height: 431.8 } // 11" x 17"
+        };
+
+        // Dimensions spéciales pour A4 selon les spécifications utilisateur
+        if (format === 'A4' && orientation === 'portrait') {
+            const a4WidthPx = 794;
+            const a4HeightPx = 1123;
+            
+            const widthDisplay = document.getElementById('canvas-width-display');
+            const heightDisplay = document.getElementById('canvas-height-display');
+            const mmDisplay = document.getElementById('canvas-mm-display');
+
+            if (widthDisplay) widthDisplay.textContent = a4WidthPx;
+            if (heightDisplay) heightDisplay.textContent = a4HeightPx;
+            if (mmDisplay) {
+                mmDisplay.textContent = `${dimensions.width}×${dimensions.height}mm`;
+            }
+
+            // Mettre à jour les valeurs cachées
+            let hiddenWidth = document.getElementById('canvas_width');
+            let hiddenHeight = document.getElementById('canvas_height');
+
+            if (!hiddenWidth) {
+                hiddenWidth = document.createElement('input');
+                hiddenWidth.type = 'hidden';
+                hiddenWidth.id = 'canvas_width';
+                hiddenWidth.name = 'canvas_width';
+                document.getElementById('canvas-dimensions-form').appendChild(hiddenWidth);
+            }
+            if (!hiddenHeight) {
+                hiddenHeight = document.createElement('input');
+                hiddenHeight.type = 'hidden';
+                hiddenHeight.id = 'canvas_height';
+                hiddenHeight.name = 'canvas_height';
+                document.getElementById('canvas-dimensions-form').appendChild(hiddenHeight);
+            }
+
+            hiddenWidth.value = a4WidthPx;
+            hiddenHeight.value = a4HeightPx;
+            return;
+        }
+
+        let dimensions = formatDimensions[format] || formatDimensions['A4'];
+
+        // Appliquer l'orientation
+        if (orientation === 'landscape') {
+            dimensions = { width: dimensions.height, height: dimensions.width };
+        }
+
+        // Calculer les dimensions en pixels
+        const widthPx = Math.round((dimensions.width / 25.4) * dpi);
+        const heightPx = Math.round((dimensions.height / 25.4) * dpi);
+
+        // Mettre à jour l'affichage
+        const widthDisplay = document.getElementById('canvas-width-display');
+        const heightDisplay = document.getElementById('canvas-height-display');
+        const mmDisplay = document.getElementById('canvas-mm-display');
+
+        if (widthDisplay) widthDisplay.textContent = widthPx;
+        if (heightDisplay) heightDisplay.textContent = heightPx;
+        if (mmDisplay) {
+            mmDisplay.textContent = `${dimensions.width}×${dimensions.height}mm`;
+        }
+
+        // Mettre à jour les valeurs cachées pour la sauvegarde
+        let hiddenWidth = document.getElementById('canvas_width');
+        let hiddenHeight = document.getElementById('canvas_height');
+
+        if (!hiddenWidth) {
+            hiddenWidth = document.createElement('input');
+            hiddenWidth.type = 'hidden';
+            hiddenWidth.id = 'canvas_width';
+            hiddenWidth.name = 'canvas_width';
+            document.getElementById('canvas-dimensions-form').appendChild(hiddenWidth);
+        }
+        if (!hiddenHeight) {
+            hiddenHeight = document.createElement('input');
+            hiddenHeight.type = 'hidden';
+            hiddenHeight.id = 'canvas_height';
+            hiddenHeight.name = 'canvas_height';
+            document.getElementById('canvas-dimensions-form').appendChild(hiddenHeight);
+        }
+
+        hiddenWidth.value = widthPx;
+        hiddenHeight.value = heightPx;
+    }
+
+    // Écouteurs d'événements pour la mise à jour automatique des dimensions
+    const formatSelect = document.getElementById('canvas_format');
+    const orientationSelect = document.getElementById('canvas_orientation');
+    const dpiSelect = document.getElementById('canvas_dpi');
+
+    if (formatSelect) formatSelect.addEventListener('change', updateCanvasDimensions);
+    if (orientationSelect) orientationSelect.addEventListener('change', updateCanvasDimensions);
+    if (dpiSelect) dpiSelect.addEventListener('change', updateCanvasDimensions);
+
+    // Calcul initial des dimensions
+    updateCanvasDimensions();
+
+    // Mettre à jour la prévisualisation de la carte
+    function updateCardPreview() {
+        const format = document.getElementById('canvas_format')?.value || 'A4';
+        const dpi = parseInt(document.getElementById('canvas_dpi')?.value) || 150;
+
+        const cardWidth = document.getElementById('card-canvas-width');
+        const cardHeight = document.getElementById('card-canvas-height');
+        const cardDpi = document.getElementById('card-canvas-dpi');
+
+        if (cardWidth) cardWidth.textContent = document.getElementById('canvas-width-display')?.textContent || '800';
+        if (cardHeight) cardHeight.textContent = document.getElementById('canvas-height-display')?.textContent || '600';
+        if (cardDpi) cardDpi.textContent = `${dpi} DPI - ${format}`;
+    }
+
+    // Écouteurs pour mettre à jour la prévisualisation
+    if (formatSelect) formatSelect.addEventListener('change', updateCardPreview);
+    if (orientationSelect) orientationSelect.addEventListener('change', updateCardPreview);
+    if (dpiSelect) dpiSelect.addEventListener('change', updateCardPreview);
+
     // Gestion des toggles dans l'onglet développeur
     const toggles = document.querySelectorAll('#developpeur .toggle-switch input[type="checkbox"]');
     toggles.forEach(function(toggle) {

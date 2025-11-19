@@ -31,8 +31,16 @@
                         </div>
                         <div class="canvas-card-preview">
                             <div class="preview-format">
-                                <span>800×600px</span>
-                                <span class="preview-size">150 DPI</span>
+                                <span id="card-canvas-width"><?php echo intval(get_option('pdf_builder_canvas_width', 800)); ?></span>×
+                                <span id="card-canvas-height"><?php echo intval(get_option('pdf_builder_canvas_height', 600)); ?></span>px
+                                <br>
+                                <span class="preview-size" id="card-canvas-dpi">
+                                    <?php
+                                    $dpi = get_option('pdf_builder_canvas_dpi', 150);
+                                    $format = get_option('pdf_builder_canvas_format', 'A4');
+                                    echo "{$dpi} DPI - {$format}";
+                                    ?>
+                                </span>
                             </div>
                         </div>
                         <div class="canvas-card-actions">
