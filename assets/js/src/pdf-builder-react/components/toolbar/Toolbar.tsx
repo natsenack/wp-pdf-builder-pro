@@ -76,6 +76,13 @@ export function Toolbar({ className }: ToolbarProps) {
     }
   };
 
+  const handleToggleSnapToGrid = () => {
+    // Toggle snap to grid via template settings
+    const newSnapToGrid = !state.canvas.snapToGrid;
+    // Dispatch action to update template settings
+    builder.dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: { snapToGrid: newSnapToGrid } });
+  };
+
   return (
     <div className={`pdf-builder-toolbar ${className || ''}`} style={{
       display: 'flex',
@@ -200,6 +207,22 @@ export function Toolbar({ className }: ToolbarProps) {
             }}
           >
             {state.template.showGuides ? '📏 Guides ON' : '📐 Guides OFF'}
+          </button>
+          <button
+            onClick={handleToggleSnapToGrid}
+            disabled={!canvasSettings.gridShow}
+            style={{
+              padding: '6px 12px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              backgroundColor: !canvasSettings.gridShow ? '#f0f0f0' : (state.canvas.snapToGrid ? '#007acc' : '#ffffff'),
+              color: !canvasSettings.gridShow ? '#999' : (state.canvas.snapToGrid ? '#ffffff' : '#000000'),
+              cursor: !canvasSettings.gridShow ? 'not-allowed' : 'pointer',
+              fontSize: '12px',
+              opacity: !canvasSettings.gridShow ? 0.6 : 1
+            }}
+          >
+            {state.canvas.snapToGrid ? '📏 Snap ON' : '📐 Snap OFF'}
           </button>
         </div>
       </div>
