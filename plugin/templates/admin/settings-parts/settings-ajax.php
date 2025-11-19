@@ -187,7 +187,18 @@ function pdf_builder_save_settings_handler() {
                     update_option('pdf_builder_template_library_enabled', $_POST['template_library_enabled'] === '1' ? 1 : 0);
                 }
 
-                send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.');
+                // Return the new PDF options to the client for verification
+                $saved = [
+                    'pdf_metadata_enabled' => get_option('pdf_builder_pdf_metadata_enabled', 0) ? '1' : '0',
+                    'pdf_print_optimized' => get_option('pdf_builder_pdf_print_optimized', 0) ? '1' : '0',
+                    'pdf_cache_enabled' => get_option('pdf_builder_pdf_cache_enabled', 0) ? '1' : '0',
+                    'pdf_quality' => get_option('pdf_builder_pdf_quality', 'high'),
+                    'pdf_page_size' => get_option('pdf_builder_pdf_page_size', 'A4'),
+                    'pdf_orientation' => get_option('pdf_builder_pdf_orientation', 'portrait'),
+                    'pdf_compression' => get_option('pdf_builder_pdf_compression', 'medium')
+                ];
+
+                send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.', ['saved_options' => $saved]);
                 break;
 
             default:

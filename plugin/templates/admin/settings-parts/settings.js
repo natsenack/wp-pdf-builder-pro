@@ -40,9 +40,10 @@ document.addEventListener('DOMContentLoaded', function() {
     pdfSelects.forEach(function(select) {
         select.addEventListener('change', function() {
             // Animation visuelle pour confirmer le changement
-            this.style.borderColor = '#28a745';
+            const el = this;
+            el.style.borderColor = '#28a745';
             setTimeout(function() {
-                this.style.borderColor = '#ddd';
+                el.style.borderColor = '#ddd';
             }, 300);
         });
     });
@@ -770,7 +771,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Mettre à jour les badges de statut en temps réel
                 updateStatusBadges();
 
-                console.log('Paramètres sauvegardés. Rechargez la page pour voir les changements appliqués.');
+                console.log('Paramètres sauvegardés. Vérification des valeurs retournées par le serveur...');
+
+                // Si le serveur renvoie les options sauvegardées, appliquer immédiatement
+                if (data.data && data.data.saved_options) {
+                    const s = data.data.saved_options;
+                    console.log('[DEBUG] Options serveur:', s);
+                    try {
+                        const meta = document.getElementById('pdf_metadata_enabled');
+                        if (meta) meta.checked = s.pdf_metadata_enabled === '1';
+                        const printOpt = document.getElementById('pdf_print_optimized');
+                        if (printOpt) printOpt.checked = s.pdf_print_optimized === '1';
+                        const cacheOpt = document.getElementById('pdf_cache_enabled');
+                        if (cacheOpt) cacheOpt.checked = s.pdf_cache_enabled === '1';
+                        const quality = document.getElementById('pdf_quality');
+                        if (quality) quality.value = s.pdf_quality;
+                        const pageSize = document.getElementById('pdf_page_size');
+                        if (pageSize) pageSize.value = s.pdf_page_size;
+                        const orientation = document.getElementById('pdf_orientation');
+                        if (orientation) orientation.value = s.pdf_orientation;
+                        const compression = document.getElementById('pdf_compression');
+                        if (compression) compression.value = s.pdf_compression;
+                    } catch (e) {
+                        console.warn('Erreur lors de l\'application des options serveur', e);
+                    }
+                    // Mettre à jour les badges et feedback visuel
+                    updateStatusBadges();
+                }
 
                 // Changer l'état du bouton à sauvegardé
                 saveBtn.classList.remove('saving');
