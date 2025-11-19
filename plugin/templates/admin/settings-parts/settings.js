@@ -952,6 +952,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const pdfMetadataEnabled = document.querySelector('#pdf_metadata_enabled')?.checked || true;
         const pdfPrintOptimized = document.querySelector('#pdf_print_optimized')?.checked || true;
 
+        console.log('Collected PDF settings:', {
+            pdfQuality,
+            pdfPageSize,
+            pdfOrientation,
+            pdfCacheEnabled,
+            pdfCompression,
+            pdfMetadataEnabled,
+            pdfPrintOptimized
+        });
+
         formData.append('pdf_quality', pdfQuality);
         formData.append('pdf_page_size', pdfPageSize);
         formData.append('pdf_orientation', pdfOrientation);
