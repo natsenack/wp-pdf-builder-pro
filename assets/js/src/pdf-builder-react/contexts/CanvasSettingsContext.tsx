@@ -155,7 +155,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       containerBackgroundColor: (windowSettings.container_background_color as string) ?? DEFAULT_SETTINGS.containerBackgroundColor,
       borderColor: (windowSettings.border_color as string) ?? DEFAULT_SETTINGS.borderColor,
       borderWidth: (windowSettings.border_width as number) ?? DEFAULT_SETTINGS.borderWidth,
-      shadowEnabled: (windowSettings.shadow_enabled as boolean) !== false,
+      shadowEnabled: (windowSettings.shadow_enabled as boolean) === true || (windowSettings.shadow_enabled as string) === '1',
       
       // Marges
       marginTop: (windowSettings.margin_top as number) ?? DEFAULT_SETTINGS.marginTop,

@@ -16,6 +16,7 @@ $canvas_settings_js = [
     'container_show_transparency' => get_option('pdf_builder_canvas_container_show_transparency', false),
     'border_color' => get_option('pdf_builder_canvas_border_color', '#cccccc'),
     'border_width' => intval(get_option('pdf_builder_canvas_border_width', 1)),
+    'shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', '0') == '1',
     'margin_top' => intval(get_option('pdf_builder_canvas_margin_top', 28)),
     'margin_right' => intval(get_option('pdf_builder_canvas_margin_right', 28)),
     'margin_bottom' => intval(get_option('pdf_builder_canvas_margin_bottom', 10)),
