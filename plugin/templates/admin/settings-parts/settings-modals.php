@@ -136,7 +136,12 @@
                                     <input type="checkbox" id="canvas_shadow_enabled" name="canvas_shadow_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_shadow_enabled', '0'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <?php /* Debug: Option value: ' . get_option('pdf_builder_canvas_shadow_enabled', 'NOT_SET') . ', Checked result: ' . (get_option('pdf_builder_canvas_shadow_enabled', '0') == '1' ? 'YES' : 'NO'); */ ?>
+                                <?php 
+                                // Debug temporaire
+                                $option_value = get_option('pdf_builder_canvas_shadow_enabled', 'NOT_SET');
+                                $is_checked = $option_value == '1';
+                                echo "<!-- DEBUG: Option value: '$option_value', Is checked: " . ($is_checked ? 'YES' : 'NO') . " -->";
+                                ?>
                             </td>
                         </tr>
                     </table>
