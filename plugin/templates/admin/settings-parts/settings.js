@@ -743,6 +743,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+            console.log('DEBUG: AJAX response received:', data);
             if (data.success) {
                 saveBtn.classList.remove('saving');
                 saveBtn.classList.add('saved');
