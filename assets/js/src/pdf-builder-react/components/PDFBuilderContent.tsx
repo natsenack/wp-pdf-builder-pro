@@ -7,6 +7,7 @@ import { ElementLibrary } from './element-library/ElementLibrary.tsx';
 import { SaveIndicator } from './ui/SaveIndicatorSimple.tsx';
 import { useTemplate } from '../hooks/useTemplate.ts';
 import { useAutoSave } from '../hooks/useAutoSave.ts';
+import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas.ts';
 
 // ✅ Add spin animation
@@ -68,6 +69,9 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     triggerSave,
     progress
   } = useAutoSave();
+
+  // Hook pour les paramètres du canvas
+  const canvasSettings = useCanvasSettings();
 
   // Effet pour gérer le scroll et ajuster le padding
   useEffect(() => {
@@ -153,7 +157,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: '#f8f8f8',
+                backgroundColor: canvasSettings.containerBackgroundColor || '#f8f8f8',
                 border: '1px solid #e0e0e0',
                 borderRadius: '4px',
                 overflow: 'visible',

@@ -109,9 +109,10 @@
 ?>
 
                 <form id="canvas-apparence-form">
+                    <h4 style="margin-top: 0; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">🎨 Canvas</h4>
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><label for="canvas_bg_color">Couleur de fond</label></th>
+                            <th scope="row"><label for="canvas_bg_color">Couleur de fond du canvas</label></th>
                             <td>
                                 <input type="color" id="canvas_bg_color" name="canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>" />
                             </td>
@@ -128,6 +129,17 @@
                                 <input type="number" id="canvas_border_width" name="canvas_border_width" value="<?php echo intval(get_option('pdf_builder_canvas_border_width', 1)); ?>" min="0" max="10" />
                             </td>
                         </tr>
+                    </table>
+                    
+                    <h4 style="margin-top: 25px; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">📦 Container</h4>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_container_bg_color">Couleur de fond du container</label></th>
+                            <td>
+                                <input type="color" id="canvas_container_bg_color" name="canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa')); ?>" />
+                            </td>
+                        </tr>
+                    </table>
                         <tr>
                             <th scope="row"><label for="canvas_shadow_enabled">Ombre activée</label></th>
                             <td>
