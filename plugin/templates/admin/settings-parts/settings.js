@@ -918,6 +918,7 @@ document.addEventListener('DOMContentLoaded', function() {
         collectPdfSettings(formData);
         collectContenuSettings(formData);
         collectDeveloppeurSettings(formData);
+        collectCanvasSettings(formData);
 
         // Convertir FormData en URLSearchParams pour compatibilité
         const params = new URLSearchParams();
@@ -1217,6 +1218,38 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('log_file_size', logFileSize);
         formData.append('log_retention', logRetention);
         formData.append('force_https', forceHttps ? '1' : '0');
+    }
+
+    function collectCanvasSettings(formData) {
+        // Collecter les données de toutes les modales canvas
+        const canvasForms = [
+            'canvas-dimensions-form',
+            'canvas-apparence-form',
+            'canvas-grille-form',
+            'canvas-zoom-form',
+            'canvas-interaction-form',
+            'canvas-comportement-form',
+            'canvas-export-form',
+            'canvas-performance-form',
+            'canvas-autosave-form',
+            'canvas-debug-form'
+        ];
+
+        canvasForms.forEach(formId => {
+            const form = document.getElementById(formId);
+            if (form) {
+                const inputs = form.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    if (input.name) {
+                        if (input.type === 'checkbox') {
+                            formData.append(input.name, input.checked ? '1' : '0');
+                        } else {
+                            formData.append(input.name, input.value);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     // Attacher l'événement de clic au bouton flottant
