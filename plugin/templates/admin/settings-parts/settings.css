@@ -273,6 +273,10 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 280px;
 }
 
 .canvas-card::before {
@@ -359,6 +363,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     margin-bottom: 20px;
     position: relative;
     z-index: 2;
+    flex-grow: 1;
 }
 
 .canvas-card-content p {
@@ -380,12 +385,15 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     border: 1px solid #e1e1e1;
     position: relative;
     z-index: 2;
+    flex-shrink: 0;
 }
 
 .canvas-card-actions {
     text-align: center;
     position: relative;
     z-index: 2;
+    margin-top: auto;
+    flex-shrink: 0;
 }
 
 .canvas-configure-btn {
@@ -603,6 +611,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
     .canvas-card {
         padding: 16px;
+        min-height: 240px;
     }
 
     .canvas-card-content {
@@ -624,6 +633,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
     .canvas-card {
         padding: 10px;
+        min-height: 200px;
     }
 
     .canvas-card-header h4 {
