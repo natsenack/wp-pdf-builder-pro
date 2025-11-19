@@ -182,6 +182,35 @@ document.addEventListener('DOMContentLoaded', function() {
     if (orientationSelect) orientationSelect.addEventListener('change', updateCardPreview);
     if (dpiSelect) dpiSelect.addEventListener('change', updateCardPreview);
 
+    // Mise à jour en temps réel de la prévisualisation des couleurs d'apparence
+    function updateAppearancePreview() {
+        // Couleur de fond
+        const bgColorInput = document.getElementById('canvas_bg_color');
+        const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
+        if (bgColorInput && bgPreview) {
+            bgPreview.style.backgroundColor = bgColorInput.value;
+        }
+
+        // Couleur des bordures
+        const borderColorInput = document.getElementById('canvas_border_color');
+        const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
+        if (borderColorInput && borderPreview) {
+            borderPreview.style.backgroundColor = borderColorInput.value;
+        }
+    }
+
+    // Écouteurs pour la mise à jour en temps réel des couleurs d'apparence
+    const bgColorInput = document.getElementById('canvas_bg_color');
+    const borderColorInput = document.getElementById('canvas_border_color');
+
+    if (bgColorInput) bgColorInput.addEventListener('input', updateAppearancePreview);
+    if (bgColorInput) bgColorInput.addEventListener('change', updateAppearancePreview);
+    if (borderColorInput) borderColorInput.addEventListener('input', updateAppearancePreview);
+    if (borderColorInput) borderColorInput.addEventListener('change', updateAppearancePreview);
+
+    // Initialiser la prévisualisation des couleurs d'apparence
+    updateAppearancePreview();
+
     // Gestion des toggles dans l'onglet développeur
     const toggles = document.querySelectorAll('#developpeur .toggle-switch input[type="checkbox"]');
     toggles.forEach(function(toggle) {

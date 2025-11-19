@@ -63,8 +63,8 @@
                             <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
                         </div>
                         <div class="canvas-card-preview">
-                            <div class="color-preview bg" style="background-color: #ffffff;" title="Fond"></div>
-                            <div class="color-preview border" style="background-color: #007cba;" title="Bordure"></div>
+                            <div class="color-preview bg" style="background-color: <?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>;" title="Fond"></div>
+                            <div class="color-preview border" style="background-color: <?php echo esc_attr(get_option('pdf_builder_canvas_border_color', '#007cba')); ?>;" title="Bordure"></div>
                         </div>
                         <div class="canvas-card-actions">
                             <button type="button" class="canvas-configure-btn">
