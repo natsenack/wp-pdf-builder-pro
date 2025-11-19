@@ -101,6 +101,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Récupérer les dimensions du format sélectionné
+        let dimensions = formatDimensions[format];
+        if (!dimensions) {
+            // Format par défaut si non trouvé
+            dimensions = formatDimensions['A4'];
+        }
+
         // Appliquer l'orientation
         if (orientation === 'landscape') {
             dimensions = { width: dimensions.height, height: dimensions.width };
