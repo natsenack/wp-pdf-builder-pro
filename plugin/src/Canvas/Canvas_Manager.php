@@ -83,6 +83,8 @@ class Canvas_Manager
             'canvas_show_transparency' => false,
             'container_background_color' => '#f8f9fa',
             'container_show_transparency' => false,
+            'border_color' => '#cccccc',
+            'border_width' => 1,
             'margin_top' => 28,
             'margin_right' => 28,
             'margin_bottom' => 10,
@@ -394,6 +396,9 @@ JS;
         if (isset($settings['container_background_color'])) {
             $validated['container_background_color'] = sanitize_text_field($settings['container_background_color']);
         }
+        if (isset($settings['border_color'])) {
+            $validated['border_color'] = sanitize_text_field($settings['border_color']);
+        }
         if (isset($settings['grid_color'])) {
             $validated['grid_color'] = sanitize_text_field($settings['grid_color']);
         }
@@ -402,7 +407,7 @@ JS;
         }
 
         // Marges et espacement
-        foreach (['margin_top', 'margin_right', 'margin_bottom', 'margin_left', 'grid_size', 'snap_tolerance', 'rotation_step', 'handle_size', 'max_fps'] as $key) {
+        foreach (['margin_top', 'margin_right', 'margin_bottom', 'margin_left', 'grid_size', 'snap_tolerance', 'rotation_step', 'handle_size', 'max_fps', 'border_width'] as $key) {
             if (isset($settings[$key])) {
                 $validated[$key] = intval($settings[$key]);
             }

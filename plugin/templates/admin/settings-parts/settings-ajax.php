@@ -326,7 +326,7 @@ function pdf_builder_save_canvas_settings_handler() {
                 $settings['canvas_background_color'] = sanitize_text_field($_POST['canvas_bg_color']);
             }
             if (isset($_POST['canvas_border_color'])) {
-                $settings['container_background_color'] = sanitize_text_field($_POST['canvas_border_color']);
+                $settings['border_color'] = sanitize_text_field($_POST['canvas_border_color']);
             }
             if (isset($_POST['canvas_border_width'])) {
                 $settings['border_width'] = intval($_POST['canvas_border_width']);
