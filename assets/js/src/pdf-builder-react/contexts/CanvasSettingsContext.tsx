@@ -170,7 +170,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       gridShow: windowSettings.show_grid === true || windowSettings.show_grid === '1',
       gridSize: (windowSettings.grid_size as number) ?? DEFAULT_SETTINGS.gridSize,
       gridColor: (windowSettings.grid_color as string) ?? DEFAULT_SETTINGS.gridColor,
-      gridSnapEnabled: windowSettings.snap_to_grid === true || windowSettings.snap_to_grid === '1',
+      gridSnapEnabled: (windowSettings.show_grid === true || windowSettings.show_grid === '1') && (windowSettings.snap_to_grid === true || windowSettings.snap_to_grid === '1'),
       gridSnapTolerance: (windowSettings.snap_tolerance as number) ?? DEFAULT_SETTINGS.gridSnapTolerance,
       guidesEnabled: windowSettings.show_guides === true || windowSettings.show_guides === '1',
       
@@ -273,7 +273,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             gridShow: data.data.show_grid === true || data.data.show_grid === '1',
             gridSize: data.data.grid_size ?? DEFAULT_SETTINGS.gridSize,
             gridColor: data.data.grid_color ?? DEFAULT_SETTINGS.gridColor,
-            gridSnapEnabled: data.data.snap_to_grid === true || data.data.snap_to_grid === '1',
+            gridSnapEnabled: (data.data.show_grid === true || data.data.show_grid === '1') && (data.data.snap_to_grid === true || data.data.snap_to_grid === '1'),
             gridSnapTolerance: data.data.snap_tolerance ?? DEFAULT_SETTINGS.gridSnapTolerance,
             guidesEnabled: data.data.show_guides === true || data.data.show_guides === '1',
             
