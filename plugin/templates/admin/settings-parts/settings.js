@@ -702,29 +702,12 @@ document.addEventListener('DOMContentLoaded', function() {
         saveBtn.textContent = '⏳ Sauvegarde...';
         saveBtn.disabled = true;
 
-        console.log('DEBUG: pdf_builder_ajax available:', typeof pdf_builder_ajax !== 'undefined');
-        console.log('DEBUG: ajax_url:', pdf_builder_ajax?.ajax_url);
-        console.log('DEBUG: nonce:', pdf_builder_ajax?.nonce);
-
-        // Utiliser ajaxurl si pdf_builder_ajax n'est pas disponible
-        const ajaxUrl = (typeof pdf_builder_ajax !== 'undefined' && pdf_builder_ajax.ajax_url) 
-            ? pdf_builder_ajax.ajax_url 
-            : (typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php');
-        const ajaxNonce = (typeof pdf_builder_ajax !== 'undefined' && pdf_builder_ajax.nonce) 
-            ? pdf_builder_ajax.nonce 
-            : '';
-
-        console.log('DEBUG: Using ajax_url:', ajaxUrl);
-        console.log('DEBUG: Using nonce:', ajaxNonce);
-
         // Collecter toutes les données des formulaires
         const formData = new FormData();
 
         // Ajouter l'action AJAX
         formData.append('action', 'pdf_builder_save_settings');
-        if (ajaxNonce) {
-            formData.append('nonce', ajaxNonce);
-        }
+        formData.append('nonce', pdf_builder_ajax.nonce);
         formData.append('current_tab', 'all');
 
         // Collecter les données de tous les onglets
@@ -749,7 +732,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Envoyer la requête AJAX
-        fetch(ajaxUrl, {
+        fetch(pdf_builder_ajax.ajax_url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -757,20 +740,12 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: params.toString()
         })
-        .then(response => {
-            console.log('DEBUG: Fetch response status:', response.status);
-            console.log('DEBUG: Fetch response ok:', response.ok);
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            console.log('DEBUG: Response data:', data);
-            console.log('DEBUG: data.success:', data.success);
             if (data.success) {
-                console.log('DEBUG: Success condition met, updating button');
                 saveBtn.classList.remove('saving');
                 saveBtn.classList.add('saved');
                 saveBtn.textContent = '✅ Sauvegardé !';
-                console.log('DEBUG: Button text changed to:', saveBtn.textContent);
 
                 // Mettre à jour les badges de statut en temps réel
                 updateStatusBadges();

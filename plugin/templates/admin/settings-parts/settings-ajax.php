@@ -69,31 +69,13 @@ function pdf_builder_clear_cache_handler() {
 }
 
 function pdf_builder_save_settings_handler() {
-    error_log('[DEBUG] pdf_builder_save_settings_handler called');
-    error_log('[DEBUG] POST data: ' . print_r($_POST, true));
-    error_log('[DEBUG] REQUEST data: ' . print_r($_REQUEST, true));
-
-    if (!isset($_POST['nonce'])) {
-        error_log('[DEBUG] No nonce in POST data');
-        send_ajax_response(false, 'Nonce manquant.');
-        return;
-    }
-
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
-        error_log('[DEBUG] Nonce verification failed. Received: ' . $_POST['nonce']);
-        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
-        return;
-    }
-
-    error_log('[DEBUG] Nonce verified successfully');
-    $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
+    if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+        $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
 
     // Traiter directement selon l'onglet
     switch ($current_tab) {
         case 'all':
             // Traitement de tous les paramètres (bouton flottant de sauvegarde)
-            error_log('[DEBUG] Traitement de tous les paramètres (bouton flottant)');
-            error_log('[DEBUG] POST data: ' . print_r($_POST, true));
 
                 // Paramètres généraux
                 if (isset($_POST['debug_mode'])) {
@@ -172,33 +154,25 @@ function pdf_builder_save_settings_handler() {
                 }
 
                 // Paramètres PDF
-                error_log('[DEBUG] Traitement paramètres PDF');
                 if (isset($_POST['pdf_quality'])) {
-                    error_log('[DEBUG] pdf_quality: ' . $_POST['pdf_quality']);
                     update_option('pdf_builder_pdf_quality', sanitize_text_field($_POST['pdf_quality']));
                 }
                 if (isset($_POST['pdf_page_size'])) {
-                    error_log('[DEBUG] pdf_page_size: ' . $_POST['pdf_page_size']);
                     update_option('pdf_builder_pdf_page_size', sanitize_text_field($_POST['pdf_page_size']));
                 }
                 if (isset($_POST['pdf_orientation'])) {
-                    error_log('[DEBUG] pdf_orientation: ' . $_POST['pdf_orientation']);
                     update_option('pdf_builder_pdf_orientation', sanitize_text_field($_POST['pdf_orientation']));
                 }
                 if (isset($_POST['pdf_cache_enabled'])) {
-                    error_log('[DEBUG] pdf_cache_enabled: ' . $_POST['pdf_cache_enabled']);
                     update_option('pdf_builder_pdf_cache_enabled', $_POST['pdf_cache_enabled'] === '1');
                 }
                 if (isset($_POST['pdf_compression'])) {
-                    error_log('[DEBUG] pdf_compression: ' . $_POST['pdf_compression']);
                     update_option('pdf_builder_pdf_compression', sanitize_text_field($_POST['pdf_compression']));
                 }
                 if (isset($_POST['pdf_metadata_enabled'])) {
-                    error_log('[DEBUG] pdf_metadata_enabled: ' . $_POST['pdf_metadata_enabled']);
                     update_option('pdf_builder_pdf_metadata_enabled', $_POST['pdf_metadata_enabled'] === '1');
                 }
                 if (isset($_POST['pdf_print_optimized'])) {
-                    error_log('[DEBUG] pdf_print_optimized: ' . $_POST['pdf_print_optimized']);
                     update_option('pdf_builder_pdf_print_optimized', $_POST['pdf_print_optimized'] === '1');
                 }
 
@@ -210,7 +184,6 @@ function pdf_builder_save_settings_handler() {
                     update_option('pdf_builder_template_library_enabled', $_POST['template_library_enabled'] === '1');
                 }
 
-                error_log('[DEBUG] About to send success response');
                 send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.');
                 break;
 
@@ -218,6 +191,9 @@ function pdf_builder_save_settings_handler() {
                 send_ajax_response(false, 'Onglet non reconnu.');
                 break;
         }
+    } else {
+        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
+    }
 }
 
 // Hook AJAX actions - MOVED to pdf-builder-pro.php for global registration
