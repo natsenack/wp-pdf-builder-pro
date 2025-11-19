@@ -612,16 +612,26 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     .canvas-card {
         padding: 16px;
         min-height: 240px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .canvas-card-content {
         margin-bottom: 12px;
+        flex-grow: 1;
     }
 
     .canvas-card-preview {
         margin: 12px 0;
         padding: 12px;
         min-height: 40px;
+        flex-shrink: 0;
+    }
+
+    .canvas-card-actions {
+        margin-top: auto;
+        flex-shrink: 0;
     }
 }
 
@@ -634,6 +644,9 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     .canvas-card {
         padding: 10px;
         min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .canvas-card-header h4 {
@@ -643,6 +656,19 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     .canvas-card-content p {
         font-size: 12px;
         line-height: 1.3;
+    }
+
+    .canvas-card-content {
+        flex-grow: 1;
+    }
+
+    .canvas-card-preview {
+        flex-shrink: 0;
+    }
+
+    .canvas-card-actions {
+        margin-top: auto;
+        flex-shrink: 0;
     }
 }
 
