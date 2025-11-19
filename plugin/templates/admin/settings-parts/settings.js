@@ -35,6 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const shouldBeChecked = settings[settingKey] === true || settings[settingKey] === '1';
                 console.log(`Settings.js - Setting ${checkboxId} to ${shouldBeChecked} (value: ${settings[settingKey]})`);
                 checkbox.checked = shouldBeChecked;
+                
+                // Forcer la mise à jour visuelle pour les checkboxes stylisées
+                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
             }
         });
     }
@@ -1532,13 +1535,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     button.textContent = '✅ Sauvegardé';
                     button.classList.add('saved');
-
-                    // Notifier l'éditeur React que les paramètres ont été mis à jour
-                    console.log('Settings.js - Dispatching pdfBuilderCanvasSettingsUpdated event');
-                    const settingsUpdateEvent = new CustomEvent('pdfBuilderCanvasSettingsUpdated', {
-                        detail: { category: category }
-                    });
-                    window.dispatchEvent(settingsUpdateEvent);
 
                     // Mettre à jour les checkboxes HTML du formulaire avec les nouvelles valeurs
                     updateFormCheckboxes(data.data.saved);
