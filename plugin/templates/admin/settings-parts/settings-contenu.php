@@ -31,8 +31,10 @@
                         </div>
                         <div class="canvas-card-preview">
                             <div class="preview-format">
-                                <span id="card-canvas-width"><?php echo intval(get_option('pdf_builder_canvas_width', 794)); ?></span>×
-                                <span id="card-canvas-height"><?php echo intval(get_option('pdf_builder_canvas_height', 1123)); ?></span>px
+                                <div >
+                                    <span id="card-canvas-width"><?php echo intval(get_option('pdf_builder_canvas_width', 794)); ?></span>×
+                                    <span id="card-canvas-height"><?php echo intval(get_option('pdf_builder_canvas_height', 1123)); ?></span>px
+                                </div>
                                 <br>
                                 <span class="preview-size" id="card-canvas-dpi">
                                     <?php
