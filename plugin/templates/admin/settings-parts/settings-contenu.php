@@ -3,14 +3,22 @@
             <h2>🎨 Contenu & Design</h2>
 
             <!-- Section Canvas -->
-            <p style="color: #666; margin-bottom: 20px;">Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+                    <span style="display: inline-flex; align-items: center; gap: 10px;">
+                        🎨 Canvas
+                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                    </span>
+                </h3>
 
-            <form method="post" id="canvas-form">
-                <?php wp_nonce_field('pdf_builder_canvas_nonce', 'pdf_builder_canvas_nonce'); ?>
-                <input type="hidden" name="submit_canvas" value="1">
+                <p style="color: #666; margin-bottom: 20px;">Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
 
-                <!-- Grille de cartes Canvas -->
-                <div class="canvas-settings-grid">
+                <form method="post" id="canvas-form">
+                    <?php wp_nonce_field('pdf_builder_canvas_nonce', 'pdf_builder_canvas_nonce'); ?>
+                    <input type="hidden" name="submit_canvas" value="1">
+
+                    <!-- Grille de cartes Canvas -->
+                    <div class="canvas-settings-grid">
                     <!-- Carte Dimensions & Format -->
                     <div class="canvas-card" data-category="dimensions">
                         <div class="canvas-card-header">
@@ -262,6 +270,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
                 <!-- Section Templates -->
             <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
