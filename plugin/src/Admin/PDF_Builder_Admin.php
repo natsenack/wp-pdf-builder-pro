@@ -2406,7 +2406,7 @@ class PdfBuilderAdmin
             }
 
             $html_content = $this->generateUnifiedHtml($template_data, $order);
-        // Récupérer les paramètres PDF depuis les options
+            // Récupérer les paramètres PDF depuis les options
             $pdf_quality = get_option('pdf_builder_pdf_quality', 'high');
             $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
             $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
@@ -2414,7 +2414,7 @@ class PdfBuilderAdmin
             $pdf_metadata_enabled = get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
             $pdf_print_optimized = get_option('pdf_builder_pdf_print_optimized', '1') === '1';
 
-        // Utiliser Dompdf pour générer le PDF
+            error_log('[PDF_GEN] Using PDF settings: quality=' . $pdf_quality . ', size=' . $pdf_page_size . ', orientation=' . $pdf_orientation);        // Utiliser Dompdf pour générer le PDF
             require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 
             if (class_exists('Dompdf\Dompdf')) {
