@@ -8,9 +8,8 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ className }: ToolbarProps) {
-  const builder = useBuilder();
+  const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides } = useBuilder();
   const canvasSettings = useCanvasSettings();
-  const { state, setMode, undo, redo, reset, toggleGrid, toggleGuides } = builder;
 
   // Vérifications de sécurité
   if (!state) {
@@ -80,7 +79,7 @@ export function Toolbar({ className }: ToolbarProps) {
     // Toggle snap to grid via template settings
     const newSnapToGrid = !state.canvas.snapToGrid;
     // Dispatch action to update template settings
-    builder.dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: { snapToGrid: newSnapToGrid } });
+    dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: { snapToGrid: newSnapToGrid } });
   };
 
   return (
@@ -222,7 +221,7 @@ export function Toolbar({ className }: ToolbarProps) {
               opacity: !canvasSettings.gridShow ? 0.6 : 1
             }}
           >
-            {state.canvas.snapToGrid ? '📏 Snap ON' : '📐 Snap OFF'}
+            {state.canvas.snapToGrid ? '🧲 ON' : '🧲 OFF'}
           </button>
         </div>
       </div>
