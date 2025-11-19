@@ -20,6 +20,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Gestion des toggles dans l'onglet PDF
+    const pdfToggles = document.querySelectorAll('#pdf .toggle-switch input[type="checkbox"]');
+    pdfToggles.forEach(function(toggle) {
+        toggle.addEventListener('change', function() {
+            const description = this.closest('td').querySelector('.description');
+            if (description) {
+                // Animation visuelle pour confirmer le changement
+                description.style.color = this.checked ? '#28a745' : '#333';
+                setTimeout(function() {
+                    description.style.color = '#333';
+                }, 300);
+            }
+        });
+    });
+
+    // Gestion des selects dans l'onglet PDF
+    const pdfSelects = document.querySelectorAll('#pdf select');
+    pdfSelects.forEach(function(select) {
+        select.addEventListener('change', function() {
+            // Animation visuelle pour confirmer le changement
+            this.style.borderColor = '#28a745';
+            setTimeout(function() {
+                this.style.borderColor = '#ddd';
+            }, 300);
+        });
+    });
+
     // Gestion de l'état des contrôles RGPD en fonction du toggle principal
     const gdprEnabledToggle = document.getElementById('gdpr_enabled');
     if (gdprEnabledToggle) {
@@ -756,6 +783,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     saveBtn.textContent = '💾 Sauvegarder';
                     saveBtn.disabled = false;
                 }, 3000);
+
+                // Recharger la page après 4 secondes pour afficher les changements
+                setTimeout(() => {
+                    window.location.reload();
+                }, 4000);
             } else {
                 saveBtn.classList.remove('saving');
                 saveBtn.classList.add('error');
@@ -933,13 +965,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function collectPdfSettings(formData) {
         // Collecter les données de l'onglet PDF
-        const pdfQuality = document.querySelector('#pdf_quality')?.value || 'high';
-        const pdfPageSize = document.querySelector('#pdf_page_size')?.value || 'A4';
-        const pdfOrientation = document.querySelector('#pdf_orientation')?.value || 'portrait';
-        const pdfCacheEnabled = document.querySelector('#pdf_cache_enabled')?.checked || false;
-        const pdfCompression = document.querySelector('#pdf_compression')?.value || 'medium';
-        const pdfMetadataEnabled = document.querySelector('#pdf_metadata_enabled')?.checked || true;
-        const pdfPrintOptimized = document.querySelector('#pdf_print_optimized')?.checked || true;
+        const pdfQuality = document.querySelector('#pdf #pdf_quality')?.value || 'high';
+        const pdfPageSize = document.querySelector('#pdf #pdf_page_size')?.value || 'A4';
+        const pdfOrientation = document.querySelector('#pdf #pdf_orientation')?.value || 'portrait';
+        const pdfCacheEnabled = document.querySelector('#pdf #pdf_cache_enabled')?.checked || false;
+        const pdfCompression = document.querySelector('#pdf #pdf_compression')?.value || 'medium';
+        const pdfMetadataEnabled = document.querySelector('#pdf #pdf_metadata_enabled')?.checked || true;
+        const pdfPrintOptimized = document.querySelector('#pdf #pdf_print_optimized')?.checked || true;
 
         formData.append('pdf_quality', pdfQuality);
         formData.append('pdf_page_size', pdfPageSize);
