@@ -39,14 +39,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 checkbox.checked = shouldBeChecked;
                 if (shouldBeChecked) {
                     checkbox.setAttribute('checked', 'checked');
-                    console.log(`Settings.js - Added checked attribute to ${checkboxId}`);
+                    checkbox.parentElement.classList.add('checked');
+                    console.log(`Settings.js - Added checked attribute and class to ${checkboxId}`);
                 } else {
                     checkbox.removeAttribute('checked');
-                    console.log(`Settings.js - Removed checked attribute from ${checkboxId}`);
+                    checkbox.parentElement.classList.remove('checked');
+                    console.log(`Settings.js - Removed checked attribute and class from ${checkboxId}`);
                 }
                 
                 // Vérifier l'état final
-                console.log(`Settings.js - Final state for ${checkboxId}: checked=${checkbox.checked}, hasAttribute=${checkbox.hasAttribute('checked')}`);
+                console.log(`Settings.js - Final state for ${checkboxId}: checked=${checkbox.checked}, hasAttribute=${checkbox.hasAttribute('checked')}, hasClass=${checkbox.parentElement.classList.contains('checked')}`);
                 
                 // Forcer la mise à jour visuelle avec un petit délai pour la transition CSS
                 setTimeout(() => {

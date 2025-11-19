@@ -1154,6 +1154,11 @@ input:checked + .toggle-slider:before {
     transform: translateX(26px);
 }
 
+/* Support pour la classe checked en plus de :checked */
+.toggle-switch.checked input + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
 .toggle-switch input:disabled + .toggle-slider {
     background-color: #d63384;
     cursor: not-allowed;
