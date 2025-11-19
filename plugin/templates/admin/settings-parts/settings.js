@@ -143,15 +143,20 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Créer un lien de téléchargement
-                    const link = document.createElement('a');
-                    link.href = data.data.download_url;
-                    link.download = data.data.filename;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    showGdprResult(`✅ Données exportées avec succès au format ${format.toUpperCase()}`);
+                    if (format === 'html') {
+                        // Ouvrir automatiquement le fichier HTML dans une nouvelle fenêtre
+                        window.open(data.data.download_url, '_blank');
+                        showGdprResult(`✅ Données exportées et ouvertes dans une nouvelle fenêtre`);
+                    } else {
+                        // Pour les autres formats, télécharger normalement
+                        const link = document.createElement('a');
+                        link.href = data.data.download_url;
+                        link.download = data.data.filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        showGdprResult(`✅ Données exportées avec succès au format ${format.toUpperCase()}`);
+                    }
                 } else {
                     showGdprResult('❌ Erreur lors de l\'export: ' + (data.data || 'Erreur inconnue'), 'error');
                 }
