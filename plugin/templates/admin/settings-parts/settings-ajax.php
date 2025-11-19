@@ -524,6 +524,57 @@ if ($is_ajax && isset($_POST['action'])) {
                     if (isset($_POST['pdf_page_size'])) {
                         update_option('pdf_builder_pdf_page_size', sanitize_text_field($_POST['pdf_page_size']));
                     }
+                    if (isset($_POST['pdf_orientation'])) {
+                        update_option('pdf_builder_pdf_orientation', sanitize_text_field($_POST['pdf_orientation']));
+                    }
+                    if (isset($_POST['pdf_compression'])) {
+                        update_option('pdf_builder_pdf_compression', sanitize_text_field($_POST['pdf_compression']));
+                    }
+                    if (isset($_POST['pdf_cache_enabled'])) {
+                        update_option('pdf_builder_pdf_cache_enabled', $_POST['pdf_cache_enabled'] === '1');
+                    }
+                    if (isset($_POST['pdf_margin_top'])) {
+                        update_option('pdf_builder_pdf_margin_top', intval($_POST['pdf_margin_top']));
+                    }
+                    if (isset($_POST['pdf_margin_right'])) {
+                        update_option('pdf_builder_pdf_margin_right', intval($_POST['pdf_margin_right']));
+                    }
+                    if (isset($_POST['pdf_margin_bottom'])) {
+                        update_option('pdf_builder_pdf_margin_bottom', intval($_POST['pdf_margin_bottom']));
+                    }
+                    if (isset($_POST['pdf_margin_left'])) {
+                        update_option('pdf_builder_pdf_margin_left', intval($_POST['pdf_margin_left']));
+                    }
+                    if (isset($_POST['pdf_metadata_enabled'])) {
+                        update_option('pdf_builder_pdf_metadata_enabled', $_POST['pdf_metadata_enabled'] === '1');
+                    }
+                    if (isset($_POST['pdf_author'])) {
+                        update_option('pdf_builder_pdf_author', sanitize_text_field($_POST['pdf_author']));
+                    }
+                    if (isset($_POST['pdf_subject'])) {
+                        update_option('pdf_builder_pdf_subject', sanitize_text_field($_POST['pdf_subject']));
+                    }
+                    if (isset($_POST['pdf_protection_enabled'])) {
+                        update_option('pdf_builder_pdf_protection_enabled', $_POST['pdf_protection_enabled'] === '1');
+                    }
+                    if (isset($_POST['pdf_default_template'])) {
+                        update_option('pdf_builder_pdf_default_template', sanitize_text_field($_POST['pdf_default_template']));
+                    }
+                    if (isset($_POST['pdf_custom_css'])) {
+                        update_option('pdf_builder_pdf_custom_css', sanitize_text_field($_POST['pdf_custom_css']));
+                    }
+                    if (isset($_POST['pdf_header_footer_enabled'])) {
+                        update_option('pdf_builder_pdf_header_footer_enabled', $_POST['pdf_header_footer_enabled'] === '1');
+                    }
+                    if (isset($_POST['pdf_print_optimized'])) {
+                        update_option('pdf_builder_pdf_print_optimized', $_POST['pdf_print_optimized'] === '1');
+                    }
+                    if (isset($_POST['pdf_accessibility_enabled'])) {
+                        update_option('pdf_builder_pdf_accessibility_enabled', $_POST['pdf_accessibility_enabled'] === '1');
+                    }
+                    if (isset($_POST['pdf_bookmarks_enabled'])) {
+                        update_option('pdf_builder_pdf_bookmarks_enabled', $_POST['pdf_bookmarks_enabled'] === '1');
+                    }
 
                     // Paramètres de contenu
                     if (isset($_POST['default_template'])) {
@@ -637,6 +688,57 @@ if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_sav
             }
             if (isset($_POST['pdf_page_size'])) {
                 update_option('pdf_builder_pdf_page_size', sanitize_text_field($_POST['pdf_page_size']));
+            }
+            if (isset($_POST['pdf_orientation'])) {
+                update_option('pdf_builder_pdf_orientation', sanitize_text_field($_POST['pdf_orientation']));
+            }
+            if (isset($_POST['pdf_compression'])) {
+                update_option('pdf_builder_pdf_compression', sanitize_text_field($_POST['pdf_compression']));
+            }
+            if (isset($_POST['pdf_cache_enabled'])) {
+                update_option('pdf_builder_pdf_cache_enabled', $_POST['pdf_cache_enabled'] === '1');
+            }
+            if (isset($_POST['pdf_margin_top'])) {
+                update_option('pdf_builder_pdf_margin_top', intval($_POST['pdf_margin_top']));
+            }
+            if (isset($_POST['pdf_margin_right'])) {
+                update_option('pdf_builder_pdf_margin_right', intval($_POST['pdf_margin_right']));
+            }
+            if (isset($_POST['pdf_margin_bottom'])) {
+                update_option('pdf_builder_pdf_margin_bottom', intval($_POST['pdf_margin_bottom']));
+            }
+            if (isset($_POST['pdf_margin_left'])) {
+                update_option('pdf_builder_pdf_margin_left', intval($_POST['pdf_margin_left']));
+            }
+            if (isset($_POST['pdf_metadata_enabled'])) {
+                update_option('pdf_builder_pdf_metadata_enabled', $_POST['pdf_metadata_enabled'] === '1');
+            }
+            if (isset($_POST['pdf_author'])) {
+                update_option('pdf_builder_pdf_author', sanitize_text_field($_POST['pdf_author']));
+            }
+            if (isset($_POST['pdf_subject'])) {
+                update_option('pdf_builder_pdf_subject', sanitize_text_field($_POST['pdf_subject']));
+            }
+            if (isset($_POST['pdf_protection_enabled'])) {
+                update_option('pdf_builder_pdf_protection_enabled', $_POST['pdf_protection_enabled'] === '1');
+            }
+            if (isset($_POST['pdf_default_template'])) {
+                update_option('pdf_builder_pdf_default_template', sanitize_text_field($_POST['pdf_default_template']));
+            }
+            if (isset($_POST['pdf_custom_css'])) {
+                update_option('pdf_builder_pdf_custom_css', sanitize_text_field($_POST['pdf_custom_css']));
+            }
+            if (isset($_POST['pdf_header_footer_enabled'])) {
+                update_option('pdf_builder_pdf_header_footer_enabled', $_POST['pdf_header_footer_enabled'] === '1');
+            }
+            if (isset($_POST['pdf_print_optimized'])) {
+                update_option('pdf_builder_pdf_print_optimized', $_POST['pdf_print_optimized'] === '1');
+            }
+            if (isset($_POST['pdf_accessibility_enabled'])) {
+                update_option('pdf_builder_pdf_accessibility_enabled', $_POST['pdf_accessibility_enabled'] === '1');
+            }
+            if (isset($_POST['pdf_bookmarks_enabled'])) {
+                update_option('pdf_builder_pdf_bookmarks_enabled', $_POST['pdf_bookmarks_enabled'] === '1');
             }
 
             // Paramètres de contenu

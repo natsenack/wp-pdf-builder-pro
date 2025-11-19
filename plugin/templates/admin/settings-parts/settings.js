@@ -948,9 +948,43 @@ document.addEventListener('DOMContentLoaded', function() {
         // Collecter les données de l'onglet PDF
         const pdfQuality = document.getElementById('pdf_quality')?.value || 'high';
         const pdfPageSize = document.getElementById('pdf_page_size')?.value || 'A4';
+        const pdfOrientation = document.getElementById('pdf_orientation')?.value || 'portrait';
+        const pdfCompression = document.getElementById('pdf_compression')?.value || 'medium';
+        const pdfCacheEnabled = document.getElementById('pdf_cache_enabled')?.checked || true;
+        const pdfMarginTop = document.getElementById('pdf_margin_top')?.value || '15';
+        const pdfMarginRight = document.getElementById('pdf_margin_right')?.value || '15';
+        const pdfMarginBottom = document.getElementById('pdf_margin_bottom')?.value || '15';
+        const pdfMarginLeft = document.getElementById('pdf_margin_left')?.value || '15';
+        const pdfMetadataEnabled = document.getElementById('pdf_metadata_enabled')?.checked || true;
+        const pdfAuthor = document.getElementById('pdf_author')?.value || '';
+        const pdfSubject = document.getElementById('pdf_subject')?.value || '';
+        const pdfProtectionEnabled = document.getElementById('pdf_protection_enabled')?.checked || false;
+        const pdfDefaultTemplate = document.getElementById('pdf_default_template')?.value || 'default';
+        const pdfCustomCss = document.getElementById('pdf_custom_css')?.value || '';
+        const pdfHeaderFooterEnabled = document.getElementById('pdf_header_footer_enabled')?.checked || true;
+        const pdfPrintOptimized = document.getElementById('pdf_print_optimized')?.checked || true;
+        const pdfAccessibilityEnabled = document.getElementById('pdf_accessibility_enabled')?.checked || false;
+        const pdfBookmarksEnabled = document.getElementById('pdf_bookmarks_enabled')?.checked || true;
 
         formData.append('pdf_quality', pdfQuality);
         formData.append('pdf_page_size', pdfPageSize);
+        formData.append('pdf_orientation', pdfOrientation);
+        formData.append('pdf_compression', pdfCompression);
+        formData.append('pdf_cache_enabled', pdfCacheEnabled ? '1' : '0');
+        formData.append('pdf_margin_top', pdfMarginTop);
+        formData.append('pdf_margin_right', pdfMarginRight);
+        formData.append('pdf_margin_bottom', pdfMarginBottom);
+        formData.append('pdf_margin_left', pdfMarginLeft);
+        formData.append('pdf_metadata_enabled', pdfMetadataEnabled ? '1' : '0');
+        formData.append('pdf_author', pdfAuthor);
+        formData.append('pdf_subject', pdfSubject);
+        formData.append('pdf_protection_enabled', pdfProtectionEnabled ? '1' : '0');
+        formData.append('pdf_default_template', pdfDefaultTemplate);
+        formData.append('pdf_custom_css', pdfCustomCss);
+        formData.append('pdf_header_footer_enabled', pdfHeaderFooterEnabled ? '1' : '0');
+        formData.append('pdf_print_optimized', pdfPrintOptimized ? '1' : '0');
+        formData.append('pdf_accessibility_enabled', pdfAccessibilityEnabled ? '1' : '0');
+        formData.append('pdf_bookmarks_enabled', pdfBookmarksEnabled ? '1' : '0');
     }
 
     function collectContenuSettings(formData) {
@@ -1141,5 +1175,79 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.target.textContent = 'Révoquer';
             });
         }
+    });
+
+    // Gestionnaire pour le bouton de sauvegarde PDF individuel
+    jQuery('button[name="submit_pdf_settings"]').on('click', function(e) {
+        e.preventDefault();
+
+        const saveBtn = this;
+        const originalText = saveBtn.textContent;
+
+        // Changer l'apparence du bouton pendant la sauvegarde
+        saveBtn.classList.add('saving');
+        saveBtn.textContent = '⏳ Sauvegarde...';
+        saveBtn.disabled = true;
+
+        // Collecter les données PDF
+        const formData = new FormData();
+        formData.append('action', 'pdf_builder_save_settings');
+        formData.append('nonce', pdf_builder_ajax.nonce);
+        formData.append('current_tab', 'pdf');
+
+        collectPdfSettings(formData);
+
+        // Convertir FormData en URLSearchParams pour compatibilité
+        const params = new URLSearchParams();
+        for (let [key, value] of formData.entries()) {
+            params.append(key, value);
+        }
+
+        // Envoyer la requête AJAX
+        fetch(pdf_builder_ajax.ajax_url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: params.toString()
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                saveBtn.classList.remove('saving');
+                saveBtn.classList.add('saved');
+                saveBtn.textContent = '✅ Sauvegardé !';
+
+                // Remettre le bouton normal après 3 secondes
+                setTimeout(() => {
+                    saveBtn.classList.remove('saved');
+                    saveBtn.textContent = originalText;
+                    saveBtn.disabled = false;
+                }, 3000);
+            } else {
+                saveBtn.classList.remove('saving');
+                saveBtn.classList.add('error');
+                saveBtn.textContent = '❌ Erreur';
+
+                setTimeout(() => {
+                    saveBtn.classList.remove('error');
+                    saveBtn.textContent = originalText;
+                    saveBtn.disabled = false;
+                }, 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur AJAX:', error);
+            saveBtn.classList.remove('saving');
+            saveBtn.classList.add('error');
+            saveBtn.textContent = '❌ Erreur réseau';
+
+            setTimeout(() => {
+                saveBtn.classList.remove('error');
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+            }, 3000);
+        });
     });
 });
