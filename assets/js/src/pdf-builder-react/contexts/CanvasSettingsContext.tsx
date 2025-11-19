@@ -168,7 +168,9 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       
       // Grille
       gridShow: windowSettings.show_grid === true || windowSettings.show_grid === '1',
-      gridSize: (windowSettings.grid_size as number) ?? DEFAULT_SETTINGS.gridSize,
+      gridSize: (windowSettings.show_grid === true || windowSettings.show_grid === '1') 
+        ? ((windowSettings.grid_size as number) ?? DEFAULT_SETTINGS.gridSize)
+        : 0, // Désactiver gridSize si gridShow est false
       gridColor: (windowSettings.grid_color as string) ?? DEFAULT_SETTINGS.gridColor,
       gridSnapEnabled: (windowSettings.show_grid === true || windowSettings.show_grid === '1') && (windowSettings.snap_to_grid === true || windowSettings.snap_to_grid === '1'),
       gridSnapTolerance: (windowSettings.snap_tolerance as number) ?? DEFAULT_SETTINGS.gridSnapTolerance,
@@ -271,7 +273,9 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             
             // Grille
             gridShow: data.data.show_grid === true || data.data.show_grid === '1',
-            gridSize: data.data.grid_size ?? DEFAULT_SETTINGS.gridSize,
+            gridSize: (data.data.show_grid === true || data.data.show_grid === '1')
+              ? (data.data.grid_size ?? DEFAULT_SETTINGS.gridSize)
+              : 0, // Désactiver gridSize si gridShow est false
             gridColor: data.data.grid_color ?? DEFAULT_SETTINGS.gridColor,
             gridSnapEnabled: (data.data.show_grid === true || data.data.show_grid === '1') && (data.data.snap_to_grid === true || data.data.snap_to_grid === '1'),
             gridSnapTolerance: data.data.snap_tolerance ?? DEFAULT_SETTINGS.gridSnapTolerance,
@@ -304,6 +308,31 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
       window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleCustomUpdate);
     };
   }, []);
+
+  // Synchronisation automatique : si gridShow est désactivé, désactiver gridSnapEnabled et gridSize
+  useEffect(() => {
+    if (!settings.gridShow) {
+      let needsUpdate = false;
+      const updates: Partial<CanvasSettingsContextType> = {};
+
+      if (settings.gridSnapEnabled) {
+        updates.gridSnapEnabled = false;
+        needsUpdate = true;
+      }
+
+      if (settings.gridSize !== 0) {
+        updates.gridSize = 0;
+        needsUpdate = true;
+      }
+
+      if (needsUpdate) {
+        setSettings(prev => ({
+          ...prev,
+          ...updates
+        }));
+      }
+    }
+  }, [settings.gridShow, settings.gridSnapEnabled, settings.gridSize]);
 
   // Ajouter la fonction refreshSettings au contexte final
   const contextValue: CanvasSettingsContextType = {
