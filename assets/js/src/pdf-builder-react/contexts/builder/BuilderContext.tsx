@@ -551,6 +551,7 @@ interface BuilderContextType {
   redo: () => void;
   reset: () => void;
   toggleGrid: () => void;
+  toggleGuides: () => void;
 }
 
 const BuilderContext = createContext<BuilderContextType | undefined>(undefined);
@@ -674,6 +675,10 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     setCanvas({ showGrid: !state.canvas.showGrid });
   };
 
+  const toggleGuides = () => {
+    dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: { showGuides: !state.template.showGuides } });
+  };
+
   const value: BuilderContextType = {
     state,
     dispatch,
@@ -756,6 +761,7 @@ export function useCanvas() {
     setZoom: (zoom: number) => setCanvas({ zoom: Math.max(canvasSettings.zoomMin, Math.min(zoom, canvasSettings.zoomMax)) }),
     resetZoom: () => setCanvas({ zoom: canvasSettings.zoomDefault }),
     toggleGrid: () => setCanvas({ showGrid: !state.canvas.showGrid }),
+    toggleGuides: () => dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: { showGuides: !state.template.showGuides } }),
     setBackgroundColor: (color: string) => setCanvas({ backgroundColor: color })
   };
 }

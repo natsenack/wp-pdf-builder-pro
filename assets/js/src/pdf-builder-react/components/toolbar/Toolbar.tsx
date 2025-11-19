@@ -10,7 +10,7 @@ interface ToolbarProps {
 export function Toolbar({ className }: ToolbarProps) {
   const builder = useBuilder();
   const canvasSettings = useCanvasSettings();
-  const { state, setMode, undo, redo, reset, toggleGrid } = builder;
+  const { state, setMode, undo, redo, reset, toggleGrid, toggleGuides } = builder;
 
   // Vérifications de sécurité
   if (!state) {
@@ -67,6 +67,12 @@ export function Toolbar({ className }: ToolbarProps) {
   const handleToggleGrid = () => {
     if (toggleGrid && canvasSettings.gridShow) {
       toggleGrid();
+    }
+  };
+
+  const handleToggleGuides = () => {
+    if (toggleGuides && canvasSettings.guidesEnabled) {
+      toggleGuides();
     }
   };
 
@@ -178,6 +184,22 @@ export function Toolbar({ className }: ToolbarProps) {
             }}
           >
             {state.canvas.showGrid ? '⬜ Grille ON' : '▦ Grille OFF'}
+          </button>
+          <button
+            onClick={handleToggleGuides}
+            disabled={!canvasSettings.guidesEnabled}
+            style={{
+              padding: '6px 12px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              backgroundColor: !canvasSettings.guidesEnabled ? '#f0f0f0' : (state.template.showGuides ? '#007acc' : '#ffffff'),
+              color: !canvasSettings.guidesEnabled ? '#999' : (state.template.showGuides ? '#ffffff' : '#000000'),
+              cursor: !canvasSettings.guidesEnabled ? 'not-allowed' : 'pointer',
+              fontSize: '12px',
+              opacity: !canvasSettings.guidesEnabled ? 0.6 : 1
+            }}
+          >
+            {state.template.showGuides ? '📏 Guides ON' : '📐 Guides OFF'}
           </button>
         </div>
       </div>
