@@ -53,26 +53,6 @@
                                 <p class="description">Améliorer les performances en mettant en cache les PDF</p>
                             </td>
                         </tr>
-                        <tr>
-                            <th scope="row"><label for="pdf_metadata_enabled">Métadonnées</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="pdf_metadata_enabled" name="pdf_metadata_enabled" value="1" <?php checked(get_option('pdf_builder_pdf_metadata_enabled', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Inclure titre, auteur et sujet dans les propriétés PDF</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="pdf_print_optimized">Optimisé impression</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="pdf_print_optimized" name="pdf_print_optimized" value="1" <?php checked(get_option('pdf_builder_pdf_print_optimized', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Ajuster les couleurs et la résolution pour l'impression</p>
-                            </td>
-                        </tr>
                     </table>
                 </section>
 
@@ -93,6 +73,26 @@
                                         <option value="high" <?php selected(get_option('pdf_builder_pdf_compression', 'medium'), 'high'); ?>>Élevée</option>
                                     </select>
                                     <p class="description">Réduit la taille des fichiers PDF</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="pdf_metadata_enabled">Métadonnées</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="pdf_metadata_enabled" name="pdf_metadata_enabled" value="1" <?php checked(get_option('pdf_builder_pdf_metadata_enabled', true)); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="description">Inclure titre, auteur et sujet dans les propriétés PDF</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="pdf_print_optimized">Optimisé impression</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="pdf_print_optimized" name="pdf_print_optimized" value="1" <?php checked(get_option('pdf_builder_pdf_print_optimized', true)); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="description">Ajuster les couleurs et la résolution pour l'impression</p>
                                 </td>
                             </tr>
                         </table>
