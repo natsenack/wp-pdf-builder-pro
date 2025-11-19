@@ -350,11 +350,23 @@ function pdf_builder_save_canvas_settings_handler() {
                 $settings['zoom_default'] = intval($_POST['canvas_zoom_default']);
             }
 
-            // Convertir les checkboxes
-            $checkboxes = ['canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid', 'canvas_pan_enabled', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts', 'canvas_auto_save', 'canvas_export_transparent', 'canvas_lazy_loading'];
-            foreach ($checkboxes as $checkbox) {
+            // Convertir les checkboxes avec mapping correct
+            $checkboxMappings = [
+                'canvas_shadow_enabled' => 'shadow_enabled',
+                'canvas_grid_enabled' => 'show_grid',
+                'canvas_guides_enabled' => 'show_guides',
+                'canvas_snap_to_grid' => 'snap_to_grid',
+                'canvas_pan_enabled' => 'pan_with_mouse',
+                'canvas_resize_enabled' => 'show_resize_handles',
+                'canvas_rotate_enabled' => 'enable_rotation',
+                'canvas_multi_select' => 'multi_select',
+                'canvas_keyboard_shortcuts' => 'enable_keyboard_shortcuts',
+                'canvas_auto_save' => 'auto_save_enabled'
+            ];
+            
+            foreach ($checkboxMappings as $checkbox => $settingKey) {
                 $value = isset($_POST[$checkbox]) && $_POST[$checkbox] === '1';
-                $settings[str_replace('canvas_', '', $checkbox)] = $value;
+                $settings[$settingKey] = $value;
             }
 
             // Traiter les selects
