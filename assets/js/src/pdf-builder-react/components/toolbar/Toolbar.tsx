@@ -169,32 +169,28 @@ export function Toolbar({ className }: ToolbarProps) {
             {/* Grille */}
             <button
               onClick={handleToggleGrid}
-              disabled={!canvasSettings.gridShow}
               style={{
                 padding: '6px 12px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
-                backgroundColor: !canvasSettings.gridShow ? '#f0f0f0' : (state.canvas.showGrid ? '#007acc' : '#ffffff'),
-                color: !canvasSettings.gridShow ? '#999' : (state.canvas.showGrid ? '#ffffff' : '#000000'),
-                cursor: !canvasSettings.gridShow ? 'not-allowed' : 'pointer',
-                fontSize: '12px',
-                opacity: !canvasSettings.gridShow ? 0.6 : 1
+                backgroundColor: state.canvas.showGrid ? '#007acc' : '#ffffff',
+                color: state.canvas.showGrid ? '#ffffff' : '#000000',
+                cursor: 'pointer',
+                fontSize: '12px'
               }}
             >
               {state.canvas.showGrid ? '⬜ Grille' : '▦ Grille'}
             </button>
             <button
               onClick={handleToggleSnapToGrid}
-              disabled={!canvasSettings.gridShow}
               style={{
                 padding: '6px 12px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
-                backgroundColor: !canvasSettings.gridShow ? '#f0f0f0' : (state.canvas.snapToGrid ? '#007acc' : '#ffffff'),
-                color: !canvasSettings.gridShow ? '#999' : (state.canvas.snapToGrid ? '#ffffff' : '#000000'),
-                cursor: !canvasSettings.gridShow ? 'not-allowed' : 'pointer',
-                fontSize: '12px',
-                opacity: !canvasSettings.gridShow ? 0.6 : 1
+                backgroundColor: state.canvas.snapToGrid ? '#007acc' : '#ffffff',
+                color: state.canvas.snapToGrid ? '#ffffff' : '#000000',
+                cursor: 'pointer',
+                fontSize: '12px'
               }}
             >
               🧲 Snap
