@@ -719,6 +719,63 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
+    // AJAX handling for canvas modal saves
+    const modalSaveButtons = document.querySelectorAll('.canvas-modal-save');
+    modalSaveButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            const modal = this.closest('.canvas-modal');
+            const form = modal.querySelector('form');
+
+            if (!form) {
+                console.error('No form found in modal for category:', category);
+                return;
+            }
+
+            // Collect form data
+            const formData = new FormData(form);
+            formData.append('action', 'pdf_builder_save_canvas_settings');
+            formData.append('nonce', pdf_builder_ajax.nonce);
+
+            // Disable button during save
+            const originalText = this.textContent;
+            this.disabled = true;
+            this.textContent = '⏳ Sauvegarde...';
+
+            // Send AJAX request
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close modal
+                    modal.style.display = 'none';
+
+                    // Update form checkboxes with new values
+                    if (data.data && data.data.saved) {
+                        updateFormCheckboxes(data.data.saved);
+                    }
+
+                    // Show success message
+                    showCanvasSaveResult('✅ Paramètres sauvegardés avec succès', 'success');
+                } else {
+                    showCanvasSaveResult('❌ Erreur: ' + (data.data || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('AJAX error:', error);
+                showCanvasSaveResult('❌ Erreur réseau lors de la sauvegarde', 'error');
+            })
+            .finally(() => {
+                // Re-enable button
+                this.disabled = false;
+                this.textContent = originalText;
+            });
+        });
+    });
+
     // Gestionnaire pour générer une clé de test
     const generateBtn = document.getElementById('generate-test-key-btn');
     if (generateBtn) {
