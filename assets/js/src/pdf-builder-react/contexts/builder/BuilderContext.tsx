@@ -428,6 +428,16 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         }
       };
 
+    case 'TOGGLE_GUIDES':
+      return {
+        ...state,
+        template: {
+          ...state.template,
+          showGuides: !state.template.showGuides
+          // Note: isModified is NOT set to true for guides toggle
+        }
+      };
+
     case 'LOAD_TEMPLATE': {
       const rawElements = (action.payload as Record<string, unknown>).elements as Element[] || [];
 
@@ -680,7 +690,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   };
 
   const toggleGuides = () => {
-    dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: { showGuides: !state.template.showGuides } });
+    dispatch({ type: 'TOGGLE_GUIDES' });
   };
 
   const value: BuilderContextType = {
