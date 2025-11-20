@@ -510,11 +510,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Listen for changes on the pan enabled checkbox
+    // Listen for changes on the pan enabled toggle (using event delegation for dynamic content)
     document.addEventListener('change', function(e) {
         if (e.target && e.target.id === 'canvas_pan_enabled') {
             const isChecked = e.target.checked;
+            console.log('Toggle changed:', isChecked); // Debug log
             updateZoomNavigationStatus(isChecked);
+        }
+    });
+
+    // Also listen for clicks on the toggle label for immediate feedback
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('toggle-switch')) {
+            // Small delay to let the checkbox state update
+            setTimeout(function() {
+                const checkbox = document.getElementById('canvas_pan_enabled');
+                if (checkbox) {
+                    const isChecked = checkbox.checked;
+                    console.log('Toggle clicked, state:', isChecked); // Debug log
+                    updateZoomNavigationStatus(isChecked);
+                }
+            }, 10);
         }
     });
 
