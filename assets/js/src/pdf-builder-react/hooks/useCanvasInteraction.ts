@@ -211,6 +211,25 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         if (normalizedRotation > 180) normalizedRotation -= 360;
         if (normalizedRotation < -180) normalizedRotation += 360;
 
+        // Trouver l'angle cible le plus proche
+        let closestAngle = 0;
+        let minDistance = 360;
+
+        for (const targetAngle of snappedAngles) {
+          let distance = Math.abs(normalizedRotation - targetAngle);
+          distance = Math.min(distance, 360 - distance); // Distance minimale sur le cercle
+
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestAngle = targetAngle;
+          }
+        }
+
+        // Appliquer le snap progressif si on est dans la zone de tolérance
+        // Pour 0°, utiliser une tolérance plus grande
+        const distanceToZero = Math.abs(normalizedRotation); // normalizedRotation est déjà entre -180 et 180
+        const isNearZero = distanceToZero <= zeroSnapTolerance;
+
         // DEBUG: Log des valeurs pour déboguer le snap
         console.log('🔄 ROTATION DEBUG:', {
           elementId,
@@ -225,12 +244,13 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         console.log('🎯 SNAP DEBUG:', {
           isNearZero,
           willSnap: minDistance <= snapTolerance || isNearZero
-        });        if (minDistance <= snapTolerance || isNearZero) {
+        });
+
+        if (minDistance <= snapTolerance || isNearZero) {
           let effectiveSnapStrength;
           let snapFactor;
 
           if (isNearZero) {
-            // Snap spécial pour 0° avec tolérance et force plus grandes
             snapFactor = 1 - (distanceToZero / zeroSnapTolerance);
             effectiveSnapStrength = zeroSnapStrength * Math.max(0, snapFactor);
           } else {
@@ -256,7 +276,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
             snapAdjustment,
             finalRotation: newRotation
           });
-        }        dispatch({
+        }
+
+        dispatch({
           type: 'UPDATE_ELEMENT',
           payload: {
             id: elementId,
