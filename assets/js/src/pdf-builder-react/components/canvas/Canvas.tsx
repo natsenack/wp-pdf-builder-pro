@@ -1751,10 +1751,16 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     ctx.save();
 
     // Appliquer transformation de l'élément
-    ctx.translate(element.x, element.y);
-    
     if (element.rotation) {
+      // Rotation autour du centre de l'élément
+      const centerX = element.width / 2;
+      const centerY = element.height / 2;
+      ctx.translate(element.x + centerX, element.y + centerY);
       ctx.rotate((element.rotation * Math.PI) / 180);
+      ctx.translate(-centerX, -centerY);
+    } else {
+      // Pas de rotation, translation normale
+      ctx.translate(element.x, element.y);
     }
 
     // Dessiner selon le type d'élément
