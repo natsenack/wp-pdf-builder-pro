@@ -99,7 +99,7 @@ export function Toolbar({ className }: ToolbarProps) {
       {/* Première ligne : Outils + Actions principales + Informations */}
       <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
         {/* Outils de création */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '220px' }}>
+        <section style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '220px' }}>
           <div style={{
             fontSize: '13px',
             fontWeight: '600',
@@ -157,10 +157,10 @@ export function Toolbar({ className }: ToolbarProps) {
               </button>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Actions principales */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+        <section style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
           <div style={{
             fontSize: '13px',
             fontWeight: '600',
@@ -364,10 +364,10 @@ export function Toolbar({ className }: ToolbarProps) {
               🔄 Reset
             </button>
           </div>
-        </div>
+        </section>
 
         {/* Informations - intégrées dans la première ligne */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '160px', marginLeft: 'auto' }}>
+        <section style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '160px', marginLeft: 'auto' }}>
           <div style={{
             fontSize: '13px',
             fontWeight: '600',
@@ -407,7 +407,7 @@ export function Toolbar({ className }: ToolbarProps) {
               <span style={{ fontWeight: '600', color: '#374151' }}>{state.canvas.zoom}%</span>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
