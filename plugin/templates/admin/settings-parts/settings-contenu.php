@@ -384,6 +384,18 @@ input:checked + .toggle-slider:before {
 <script>
 // Canvas configuration modals functionality
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize zoom navigation status on page load
+    const contentTab = document.getElementById('contenu');
+    const activeTab = document.querySelector('.nav-tab-active');
+
+    if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
+        const checkbox = document.getElementById('canvas_pan_enabled');
+        if (checkbox) {
+            console.log('Initializing zoom navigation status on page load:', checkbox.checked);
+            updateZoomNavigationStatus(checkbox.checked);
+        }
+    }
+
     // Handle canvas configure buttons
     const configureButtons = document.querySelectorAll('.canvas-configure-btn');
     configureButtons.forEach(function(button) {
@@ -503,10 +515,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // 🔄 Dynamic status updates for cards
     function updateZoomNavigationStatus(enabled) {
         const statusElement = document.getElementById('zoom-navigation-status');
+        const cardElement = document.getElementById('zoom-navigation-card');
+
+        console.log('Updating zoom navigation status:', enabled, 'Element:', statusElement);
 
         if (statusElement) {
             statusElement.textContent = enabled ? 'ACTIF' : 'INACTIF';
             statusElement.className = 'canvas-card-status ' + (enabled ? 'active' : 'inactive');
+            console.log('Status updated to:', statusElement.textContent, statusElement.className);
+        }
+
+        if (cardElement) {
+            if (enabled) {
+                cardElement.classList.remove('disabled');
+            } else {
+                cardElement.classList.add('disabled');
+            }
         }
     }
 
@@ -514,23 +538,43 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('change', function(e) {
         if (e.target && e.target.id === 'canvas_pan_enabled') {
             const isChecked = e.target.checked;
-            console.log('Toggle changed:', isChecked); // Debug log
-            updateZoomNavigationStatus(isChecked);
+            console.log('Toggle changed - ID:', e.target.id, 'Checked:', isChecked, 'Value:', e.target.value);
+
+            // Check if we're on the content tab
+            const contentTab = document.getElementById('contenu');
+            const activeTab = document.querySelector('.nav-tab-active');
+
+            console.log('Content tab element:', contentTab);
+            console.log('Active tab element:', activeTab);
+            console.log('Active tab data-tab:', activeTab ? activeTab.getAttribute('data-tab') : 'none');
+
+            if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
+                console.log('On content tab, updating status');
+                updateZoomNavigationStatus(isChecked);
+            } else {
+                console.log('Not on content tab, skipping status update');
+            }
         }
     });
 
     // Also listen for clicks on the toggle label for immediate feedback
     document.addEventListener('click', function(e) {
         if (e.target && (e.target.classList.contains('toggle-switch') || e.target.classList.contains('toggle-slider'))) {
-            // Small delay to let the checkbox state update
-            setTimeout(function() {
-                const checkbox = document.getElementById('canvas_pan_enabled');
-                if (checkbox) {
-                    const isChecked = checkbox.checked;
-                    console.log('Toggle clicked, state:', isChecked); // Debug log
-                    updateZoomNavigationStatus(isChecked);
-                }
-            }, 10);
+            // Check if we're on the content tab
+            const contentTab = document.getElementById('contenu');
+            const activeTab = document.querySelector('.nav-tab-active');
+
+            if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
+                // Small delay to let the checkbox state update
+                setTimeout(function() {
+                    const checkbox = document.getElementById('canvas_pan_enabled');
+                    if (checkbox) {
+                        const isChecked = checkbox.checked;
+                        console.log('Toggle clicked - Checked:', isChecked);
+                        updateZoomNavigationStatus(isChecked);
+                    }
+                }, 10);
+            }
         }
     });
 
