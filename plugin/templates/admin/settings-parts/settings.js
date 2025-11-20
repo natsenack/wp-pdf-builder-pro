@@ -72,6 +72,101 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.value = settings[settingKey];
             }
         });
+
+        // Revalider après mise à jour
+        setTimeout(validateZoomSettings, 100);
+    }
+
+    // Validation en temps réel pour les paramètres de zoom
+    function validateZoomSettings() {
+        const zoomMinInput = document.getElementById('zoom_min');
+        const zoomMaxInput = document.getElementById('zoom_max');
+        const zoomDefaultInput = document.getElementById('zoom_default');
+        const zoomStepInput = document.getElementById('zoom_step');
+
+        if (!zoomMinInput || !zoomMaxInput || !zoomDefaultInput || !zoomStepInput) {
+            return;
+        }
+
+        const min = parseInt(zoomMinInput.value) || 0;
+        const max = parseInt(zoomMaxInput.value) || 0;
+        const def = parseInt(zoomDefaultInput.value) || 0;
+        const step = parseInt(zoomStepInput.value) || 0;
+
+        // Supprimer les messages d'erreur existants
+        document.querySelectorAll('.zoom-validation-error').forEach(el => el.remove());
+
+        let hasErrors = false;
+
+        // Validation: min < max
+        if (min >= max) {
+            showZoomError(zoomMaxInput, 'Le zoom maximum doit être supérieur au zoom minimum');
+            hasErrors = true;
+        }
+
+        // Validation: default entre min et max
+        if (def < min || def > max) {
+            showZoomError(zoomDefaultInput, `Le zoom par défaut doit être entre ${min}% et ${max}%`);
+            hasErrors = true;
+        }
+
+        // Validation: step > 0
+        if (step <= 0) {
+            showZoomError(zoomStepInput, 'Le pas de zoom doit être supérieur à 0');
+            hasErrors = true;
+        }
+
+        // Activer/désactiver le bouton de sauvegarde
+        const saveButton = document.querySelector('.canvas-modal-save[data-category="zoom"]');
+        if (saveButton) {
+            saveButton.disabled = hasErrors;
+            if (hasErrors) {
+                saveButton.textContent = 'Corriger les erreurs';
+            } else {
+                saveButton.textContent = 'Sauvegarder';
+            }
+        }
+    }
+
+    function showZoomError(input, message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'zoom-validation-error';
+        errorDiv.style.color = '#dc3545';
+        errorDiv.style.fontSize = '12px';
+        errorDiv.style.marginTop = '5px';
+        errorDiv.textContent = message;
+
+        input.parentNode.appendChild(errorDiv);
+    }
+
+    // Attacher les validateurs aux inputs de zoom
+    function attachZoomValidators() {
+        const zoomInputs = ['zoom_min', 'zoom_max', 'zoom_default', 'zoom_step'];
+        zoomInputs.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', validateZoomSettings);
+                input.addEventListener('change', validateZoomSettings);
+            }
+        });
+    }
+
+    // Attacher les validateurs quand la modale zoom s'ouvre
+    const zoomModal = document.getElementById('canvas-zoom-modal');
+    if (zoomModal) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const display = zoomModal.style.display;
+                    if (display === 'flex' || display === 'block') {
+                        // Modale ouverte, attacher les validateurs
+                        setTimeout(attachZoomValidators, 100);
+                        setTimeout(validateZoomSettings, 200);
+                    }
+                }
+            });
+        });
+        observer.observe(zoomModal, { attributes: true });
     }
 
     // Gestion du menu hamburger mobile
@@ -785,6 +880,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Notify React context to refresh settings
                     window.dispatchEvent(new Event('canvasSettingsUpdated'));
+
+                    // Close modal after a short delay
+                    setTimeout(() => {
+                        const modal = document.querySelector('.canvas-modal[style*="display: flex"]');
+                        if (modal) {
+                            modal.style.display = 'none';
+                        }
+                    }, 2000);
                 } else {
                     showErrorMessage('Erreur: ' + (data.data || 'Erreur inconnue'));
                 }
