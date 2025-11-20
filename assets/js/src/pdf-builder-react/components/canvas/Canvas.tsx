@@ -1232,48 +1232,6 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     canvasHeight: height
   });
 
-  // ✅ BUGFIX-007: Memoize drawGrid to prevent recreation on every render
-  const drawGrid = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number, size: number, color: string) => {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-
-    for (let x = 0; x <= w; x += size) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-      ctx.stroke();
-    }
-
-    for (let y = 0; y <= h; y += size) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-    }
-  }, []);  // No deps - pure function
-
-  // ✅ Fonction pour dessiner les guides d'alignement
-  const drawGuides = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number) => {
-    ctx.strokeStyle = '#007acc'; // Couleur bleue pour les guides
-    ctx.lineWidth = 1;
-    ctx.setLineDash([5, 5]); // Ligne pointillée
-
-    // Guide vertical au centre
-    ctx.beginPath();
-    ctx.moveTo(w / 2, 0);
-    ctx.lineTo(w / 2, h);
-    ctx.stroke();
-
-    // Guide horizontal au centre
-    ctx.beginPath();
-    ctx.moveTo(0, h / 2);
-    ctx.lineTo(w, h / 2);
-    ctx.stroke();
-
-    // Remettre les lignes continues pour les autres dessins
-    ctx.setLineDash([]);
-  }, []);  // No deps - pure function
-
   // Fonctions de rendu WooCommerce avec données fictives ou réelles selon le mode
 
   // Fonction helper pour dessiner un placeholder de logo
@@ -2298,6 +2256,48 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     return items;
   }, [state.elements, handleContextMenuAction, dispatch]);
+
+  // Fonction pour dessiner la grille
+  const drawGrid = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number, size: number, color: string) => {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+
+    for (let x = 0; x <= w; x += size) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+
+    for (let y = 0; y <= h; y += size) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+  }, []); // No deps - pure function
+
+  // Fonction pour dessiner les guides
+  const drawGuides = useCallback((ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) => {
+    ctx.save();
+    ctx.strokeStyle = '#007acc';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+
+    // Guide horizontal au milieu
+    ctx.beginPath();
+    ctx.moveTo(0, canvasHeight / 2);
+    ctx.lineTo(canvasWidth, canvasHeight / 2);
+    ctx.stroke();
+
+    // Guide vertical au milieu
+    ctx.beginPath();
+    ctx.moveTo(canvasWidth / 2, 0);
+    ctx.lineTo(canvasWidth / 2, canvasHeight);
+    ctx.stroke();
+
+    ctx.restore();
+  }, []);
 
   // Gestionnaire de clic droit pour le canvas
   const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
