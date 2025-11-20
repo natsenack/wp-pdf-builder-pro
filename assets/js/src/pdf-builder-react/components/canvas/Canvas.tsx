@@ -2344,7 +2344,13 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
     
     const zoomScale = state.canvas.zoom / 100;
+    console.log('🎨 ZOOM DEBUG: zoom =', state.canvas.zoom, 'zoomScale =', zoomScale, 'canvas size:', width, 'x', height);
     ctx.scale(zoomScale, zoomScale);
+
+    // DEBUG: Dessiner un rectangle pour voir la zone zoomée
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 2 / zoomScale; // Ajuster l'épaisseur selon le zoom
+    ctx.strokeRect(10, 10, width / zoomScale - 20, height / zoomScale - 20);
 
     // NOTE: Les marges seront réactivées après que le rendu des éléments soit fixé
     // const showMargins = canvasSettings.showMargins;
