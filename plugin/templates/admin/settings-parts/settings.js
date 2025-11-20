@@ -53,6 +53,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Fonction pour mettre à jour les inputs du formulaire avec les nouvelles valeurs
+    function updateFormInputs(settings) {
+        // Mapping des paramètres vers les IDs des inputs
+        const inputMappings = {
+            'zoom_min': 'zoom_min',
+            'zoom_max': 'zoom_max',
+            'zoom_default': 'zoom_default',
+            'zoom_step': 'zoom_step'
+        };
+
+        // Mettre à jour chaque input
+        Object.keys(inputMappings).forEach(settingKey => {
+            const inputId = inputMappings[settingKey];
+            const input = document.getElementById(inputId);
+
+            if (input && settings[settingKey] !== undefined) {
+                input.value = settings[settingKey];
+            }
+        });
+    }
+
     // Gestion du menu hamburger mobile
     const mobileMenuButton = document.querySelector('.mobile-menu-button');
     const navTabsContainer = document.querySelector('.nav-tabs-container');
@@ -756,6 +777,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Update form checkboxes with new values
                     if (data.data && data.data.saved) {
                         updateFormCheckboxes(data.data.saved);
+                        updateFormInputs(data.data.saved);
                     }
 
                     // Show success message
