@@ -188,11 +188,14 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     while (angleDelta > Math.PI) angleDelta -= 2 * Math.PI;
     while (angleDelta < -Math.PI) angleDelta += 2 * Math.PI;
     
+    // Augmenter la sensibilité de la rotation
+    angleDelta *= 2; // Multiplier par 2 pour rotation plus sensible
+    
     // Convertir en degrés
     let totalRotationDegrees = (angleDelta * 180) / Math.PI;
 
     // ✅ AJOUT: Snap magnétique ULTRA SIMPLE - forcer à 0° quand proche
-    const zeroSnapTolerance = 10 * (Math.PI / 180); // 10 degrés en radians
+    const zeroSnapTolerance = 10; // 10 degrees
 
     // Calculer la rotation actuelle pour chaque élément
     selectedIds.forEach(elementId => {
@@ -654,7 +657,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           if (normalizedRotation < -180) normalizedRotation += 360;
 
           // Si dans les 15°, forcer à 0°
-          const finalSnapThreshold = 15 * (Math.PI / 180);
+          const finalSnapThreshold = 15; // 15 degrees
           if (Math.abs(normalizedRotation) <= finalSnapThreshold) {
             console.log('🎯 FINAL FORCE TO ZERO:', { currentRotation, normalizedRotation, willDispatch: true });
             dispatch({
