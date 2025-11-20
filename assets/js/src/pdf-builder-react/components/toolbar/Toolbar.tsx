@@ -367,7 +367,7 @@ export function Toolbar({ className }: ToolbarProps) {
         </div>
 
         {/* Informations - intégrées dans la première ligne */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '160px', marginLeft: 'auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '160px', marginLeft: 'auto' }}>
           <div style={{
             fontSize: '13px',
             fontWeight: '600',
@@ -384,9 +384,9 @@ export function Toolbar({ className }: ToolbarProps) {
             color: '#6b7280',
             display: 'flex',
             flexDirection: 'column',
-            gap: '4px',
+            gap: '2px',
             backgroundColor: '#f9fafb',
-            padding: '8px',
+            padding: '6px',
             borderRadius: '6px',
             border: '1px solid #e5e7eb'
           }}>
