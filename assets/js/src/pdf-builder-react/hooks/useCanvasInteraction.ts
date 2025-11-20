@@ -195,7 +195,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     let totalRotationDegrees = (angleDelta * 180) / Math.PI;
 
     // ✅ AJOUT: Snap magnétique ULTRA SIMPLE - forcer à 0° quand proche
-    const zeroSnapTolerance = 12; // 12 degrees (légèrement plus tolérant)
+    const zeroSnapTolerance = 8; // 8 degrees (moins agressif)
 
     // Calculer la rotation actuelle pour chaque élément
     selectedIds.forEach(elementId => {
@@ -656,8 +656,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           if (normalizedRotation > 180) normalizedRotation -= 360;
           if (normalizedRotation < -180) normalizedRotation += 360;
 
-          // Si dans les 17°, forcer à 0°
-          const finalSnapThreshold = 17; // 17 degrees (cohérent avec le snap pendant le drag)
+          // Si dans les 10°, forcer à 0°
+          const finalSnapThreshold = 10; // 10 degrees (moins agressif)
           if (Math.abs(normalizedRotation) <= finalSnapThreshold) {
             console.log('🎯 FINAL FORCE TO ZERO:', { currentRotation, normalizedRotation, willDispatch: true });
             dispatch({
