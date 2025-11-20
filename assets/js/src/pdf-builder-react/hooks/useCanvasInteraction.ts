@@ -32,6 +32,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const dragMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début du drag
   const resizeMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début du resize
   const rotationMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début de la rotation
+  const rotationStartRef = useRef<Record<string, number>>({});  // Rotations initiales des éléments
   const selectedElementRef = useRef<string | null>(null);
   const selectedElementsRef = useRef<string[]>([]);  // ✅ Track locally instead of relying on stale state
   const resizeHandleRef = useRef<string | null>(null);
@@ -495,6 +496,17 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         if (distance <= rotationHandleSize / 2) {
           isRotatingRef.current = true;
           rotationMouseStartRef.current = { x, y };
+          
+          // Stocker les rotations initiales de tous les éléments sélectionnés
+          const initialRotations: Record<string, number> = {};
+          state.selection.selectedElements.forEach(elementId => {
+            const element = state.elements.find(el => el.id === elementId);
+            if (element) {
+              initialRotations[elementId] = (element as any).rotation || 0;
+            }
+          });
+          rotationStartRef.current = initialRotations;
+          
           event.preventDefault();
           return;
         }
@@ -526,6 +538,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     isRotatingRef.current = false;
     resizeHandleRef.current = null;
     selectedElementRef.current = null;
+    rotationStartRef.current = {};
   }, [performDragUpdate]);
 
   // Fonction pour obtenir le curseur de redimensionnement selon la poignée
@@ -778,36 +791,62 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         // Calculer l'angle de rotation basé sur la position de la souris
         const startAngle = Math.atan2(rotationMouseStartRef.current.y - centerY, rotationMouseStartRef.current.x - centerX);
         const currentAngle = Math.atan2(y - centerY, x - centerX);
-        const angleDelta = currentAngle - startAngle;
-
-        // Convertir en degrés et normaliser
-        const rotationDegrees = (angleDelta * 180) / Math.PI;
+        
+        // Calculer la différence angulaire avec gestion du wrap-around
+        let angleDelta = currentAngle - startAngle;
+        
+        // Normaliser l'angle entre -π et π pour éviter les sauts
+        while (angleDelta > Math.PI) angleDelta -= 2 * Math.PI;
+        while (angleDelta < -Math.PI) angleDelta += 2 * Math.PI;
+        
+        // Convertir en degrés
+        const totalRotationDegrees = (angleDelta * 180) / Math.PI;
 
         // Mettre à jour la rotation de tous les éléments sélectionnés
         state.selection.selectedElements.forEach(elementId => {
           const element = state.elements.find(el => el.id === elementId);
           if (element) {
-            const currentRotation = (element as any).rotation || 0;
-            let newRotation = currentRotation + rotationDegrees;
+            const initialRotation = rotationStartRef.current[elementId] || 0;
+            let newRotation = initialRotation + totalRotationDegrees;
 
-            // ✅ AJOUT: Snap magnétique aux angles cardinaux (0°, 90°, 180°, 270°)
-            const snapTolerance = 5; // Tolérance de 5 degrés pour le snap
+            // ✅ AJOUT: Snap magnétique progressif aux angles cardinaux (0°, 90°, 180°, 270°)
+            const snapTolerance = 8; // Tolérance de 8 degrés pour commencer le snap
+            const snapStrength = 0.3; // Force d'attraction (0.3 = 30% vers l'angle cible)
             const snappedAngles = [0, 90, 180, 270, -90, -180, -270];
 
+            // Normaliser l'angle entre -180° et 180°
+            let normalizedRotation = newRotation % 360;
+            if (normalizedRotation > 180) normalizedRotation -= 360;
+            if (normalizedRotation < -180) normalizedRotation += 360;
+
+            // Trouver l'angle cible le plus proche
+            let closestAngle = 0;
+            let minDistance = 360;
+            
             for (const targetAngle of snappedAngles) {
-              // Normaliser l'angle entre -180° et 180°
-              let normalizedRotation = newRotation % 360;
-              if (normalizedRotation > 180) normalizedRotation -= 360;
-              if (normalizedRotation < -180) normalizedRotation += 360;
-
-              // Calculer la distance angulaire (en tenant compte du wrap-around)
-              let angleDiff = Math.abs(normalizedRotation - targetAngle);
-              angleDiff = Math.min(angleDiff, 360 - angleDiff); // Distance minimale sur le cercle
-
-              if (angleDiff <= snapTolerance) {
-                newRotation = targetAngle;
-                break;
+              let distance = Math.abs(normalizedRotation - targetAngle);
+              distance = Math.min(distance, 360 - distance); // Distance minimale sur le cercle
+              
+              if (distance < minDistance) {
+                minDistance = distance;
+                closestAngle = targetAngle;
               }
+            }
+
+            // Appliquer le snap progressif si on est dans la zone de tolérance
+            if (minDistance <= snapTolerance) {
+              const snapFactor = 1 - (minDistance / snapTolerance); // 0 à 1, plus on est proche plus le snap est fort
+              const effectiveSnapStrength = snapStrength * snapFactor;
+              
+              // Calculer l'angle snappé
+              let snappedRotation = closestAngle;
+              
+              // Normaliser la différence pour éviter les sauts
+              let diff = snappedRotation - normalizedRotation;
+              if (diff > 180) diff -= 360;
+              if (diff < -180) diff += 360;
+              
+              newRotation += diff * effectiveSnapStrength;
             }
 
             dispatch({
