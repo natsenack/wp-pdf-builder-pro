@@ -349,6 +349,9 @@ function pdf_builder_save_canvas_settings_handler() {
             if (isset($_POST['canvas_zoom_default'])) {
                 $settings['zoom_default'] = intval($_POST['canvas_zoom_default']);
             }
+            if (isset($_POST['canvas_zoom_step'])) {
+                $settings['zoom_step'] = intval($_POST['canvas_zoom_step']);
+            }
 
             // Convertir les checkboxes avec mapping correct
             $checkboxMappings = [

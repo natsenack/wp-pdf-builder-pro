@@ -105,7 +105,7 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   zoomDefault: 100,
   zoomMin: 10,
   zoomMax: 500,
-  zoomStep: 10,
+  zoomStep: 25,
   
   selectionMultiSelectEnabled: true,
   selectionRotationEnabled: false,
