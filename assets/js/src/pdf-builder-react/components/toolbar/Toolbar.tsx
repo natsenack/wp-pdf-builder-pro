@@ -8,7 +8,7 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ className }: ToolbarProps) {
-  const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides } = useBuilder();
+  const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides, setCanvas } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
   // Vérifications de sécurité
