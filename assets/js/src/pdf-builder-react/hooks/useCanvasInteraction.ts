@@ -200,7 +200,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
         // ✅ AJOUT: Snap magnétique progressif aux angles cardinaux (0°, 90°, 180°, 270°)
         // Snap plus fort à 0° pour un alignement parfait
-        const snapTolerance = 8; // Tolérance de 8 degrés pour commencer le snap
+        const snapTolerance = 8; // Tolérance de 8 degrés pour commencer le snap normal
         const snapStrength = 0.3; // Force d'attraction normale (0.3 = 30% vers l'angle cible)
         const zeroSnapTolerance = 12; // Tolérance plus grande pour 0° (12 degrés)
         const zeroSnapStrength = 0.6; // Force d'attraction plus forte pour 0° (0.6 = 60%)
@@ -226,21 +226,22 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         }
 
         // Appliquer le snap progressif si on est dans la zone de tolérance
-        if (minDistance <= snapTolerance) {
-          const snapFactor = 1 - (minDistance / snapTolerance); // 0 à 1, plus on est proche plus le snap est fort
+        // Pour 0°, utiliser une tolérance plus grande
+        const isNearZero = Math.abs(normalizedRotation) <= zeroSnapTolerance ||
+                          Math.abs(Math.abs(normalizedRotation) - 360) <= zeroSnapTolerance;
 
-          // Snap plus fort pour 0°
-          let effectiveSnapStrength = snapStrength;
-          let effectiveTolerance = snapTolerance;
+        if (minDistance <= snapTolerance || (isNearZero && closestAngle === 0)) {
+          let effectiveSnapStrength;
+          let snapFactor;
 
-          if (closestAngle === 0 || closestAngle === 360 || closestAngle === -360) {
-            effectiveSnapStrength = zeroSnapStrength;
-            effectiveTolerance = zeroSnapTolerance;
-            // Recalculer le snapFactor avec la tolérance plus grande pour 0°
-            const zeroSnapFactor = Math.max(0, 1 - (minDistance / zeroSnapTolerance));
-            effectiveSnapStrength = zeroSnapStrength * zeroSnapFactor;
+          if (isNearZero && closestAngle === 0) {
+            // Snap spécial pour 0° avec tolérance et force plus grandes
+            snapFactor = 1 - (Math.min(minDistance, Math.abs(normalizedRotation), Math.abs(Math.abs(normalizedRotation) - 360)) / zeroSnapTolerance);
+            effectiveSnapStrength = zeroSnapStrength * Math.max(0, snapFactor);
           } else {
-            effectiveSnapStrength = snapStrength * snapFactor;
+            // Snap normal pour les autres angles
+            snapFactor = 1 - (minDistance / snapTolerance);
+            effectiveSnapStrength = snapStrength * Math.max(0, snapFactor);
           }
 
           // Calculer l'angle snappé
@@ -252,9 +253,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           if (diff < -180) diff += 360;
 
           newRotation += diff * effectiveSnapStrength;
-        }
-
-        dispatch({
+        }        dispatch({
           type: 'UPDATE_ELEMENT',
           payload: {
             id: elementId,
