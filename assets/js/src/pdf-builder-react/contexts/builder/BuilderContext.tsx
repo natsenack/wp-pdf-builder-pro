@@ -578,8 +578,9 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   // Appliquer les paramètres de zoom depuis Canvas Settings au démarrage
   useEffect(() => {
     // Appliquer le zoom par défaut depuis les paramètres UNIQUEMENT au démarrage
-    // Ne pas surveiller state.canvas.zoom pour éviter de forcer le zoom à 100
-    if (canvasSettings.zoomDefault && canvasSettings.zoomDefault !== 100) { // 100 est la valeur initiale
+    // Le zoom initial du state est 100, donc appliquer seulement si différent et prêt
+    const initialZoom = 100; // Valeur initiale du state
+    if (canvasSettings.isReady && canvasSettings.zoomDefault !== initialZoom) {
       dispatch({
         type: 'SET_CANVAS',
         payload: {
@@ -587,7 +588,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
         }
       });
     }
-  }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin]); // Retiré state.canvas.zoom
+  }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin, canvasSettings.isReady]); // Retiré state.canvas.zoom
 
   // Synchroniser les paramètres de grille depuis CanvasSettingsContext (uniquement à l'initialisation)
   useEffect(() => {

@@ -509,6 +509,9 @@ JS;
         
         // Mettre à jour les paramètres en mémoire
         $this->settings = array_merge($this->settings, $validated);
+        
+        // Mettre à jour l'option globale pour la synchronisation avec l'éditeur React
+        update_option('pdf_builder_canvas_settings', $this->settings);
 
         // La sauvegarde est considérée réussie tant qu'aucune exception n'est levée
         do_action('pdfBuilderCanvasSettingsUpdated', $this->settings);
