@@ -200,10 +200,10 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
         // ✅ AJOUT: Snap magnétique progressif aux angles cardinaux (0°, 90°, 180°, 270°)
         // Snap plus fort à 0° pour un alignement parfait
-        const snapTolerance = 8 * (Math.PI / 180); // Tolérance de 8 degrés pour commencer le snap normal (converti en radians)
-        const snapStrength = 0.3; // Force d'attraction normale (0.3 = 30% vers l'angle cible)
-        const zeroSnapTolerance = 25 * (Math.PI / 180); // Tolérance plus grande pour 0° (25 degrés converti en radians)
-        const zeroSnapStrength = 0.95; // Force d'attraction très forte pour 0° (0.95 = 95%)
+        const snapTolerance = 12 * (Math.PI / 180); // Tolérance de 12 degrés pour commencer le snap normal (converti en radians) - augmenté pour snap plus tôt
+        const snapStrength = 0.6; // Force d'attraction normale (0.6 = 60% vers l'angle cible) - augmenté pour snap plus fort
+        const zeroSnapTolerance = 30 * (Math.PI / 180); // Tolérance plus grande pour 0° (30 degrés converti en radians) - augmenté
+        const zeroSnapStrength = 0.98; // Force d'attraction très forte pour 0° (0.98 = 98%) - augmenté
         const snappedAngles = [0, 90, 180, 270, -90, -180, -270];
 
         // Normaliser l'angle entre -180° et 180°
