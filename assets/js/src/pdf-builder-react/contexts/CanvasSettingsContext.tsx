@@ -35,13 +35,13 @@ export interface CanvasSettingsContextType {
   gridSnapTolerance: number;
   guidesEnabled: boolean;
   
-  // Zoom
+  // 🔍 Zoom & Navigation
+  navigationEnabled: boolean;
   zoomDefault: number;
   zoomMin: number;
   zoomMax: number;
   zoomStep: number;
   zoomWheelSupport: boolean;
-  navigationEnabled: boolean;
   
   // Sélection
   selectionMultiSelectEnabled: boolean;
@@ -101,12 +101,13 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   gridSnapTolerance: 8,
   guidesEnabled: true,
   
+  // 🔍 Zoom & Navigation
+  navigationEnabled: true,
   zoomDefault: 100,
   zoomMin: 10,
   zoomMax: 500,
   zoomStep: 10,
   zoomWheelSupport: true,
-  navigationEnabled: true,
   
   selectionMultiSelectEnabled: true,
   selectionRotationEnabled: false,
@@ -180,13 +181,13 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       gridSnapTolerance: (windowSettings.snap_tolerance as number) ?? DEFAULT_SETTINGS.gridSnapTolerance,
       guidesEnabled: windowSettings.show_guides === true || windowSettings.show_guides === '1',
       
-      // Zoom
+      // 🔍 Zoom & Navigation
+      navigationEnabled: windowSettings.navigation_enabled === true || windowSettings.navigation_enabled === '1',
       zoomDefault: (windowSettings.default_zoom as number) ?? DEFAULT_SETTINGS.zoomDefault,
       zoomMin: (windowSettings.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin,
       zoomMax: (windowSettings.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax,
       zoomStep: (windowSettings.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep,
       zoomWheelSupport: windowSettings.zoom_with_wheel === true || windowSettings.zoom_with_wheel === '1',
-      navigationEnabled: windowSettings.navigation_enabled === true || windowSettings.navigation_enabled === '1',
       
       // Sélection
       selectionMultiSelectEnabled: windowSettings.multi_select === true || windowSettings.multi_select === '1',

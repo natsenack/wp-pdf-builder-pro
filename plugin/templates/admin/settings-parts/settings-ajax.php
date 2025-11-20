@@ -346,8 +346,14 @@ function pdf_builder_save_canvas_settings_handler() {
             if (isset($_POST['canvas_zoom_max'])) {
                 $settings['zoom_max'] = intval($_POST['canvas_zoom_max']);
             }
-            if (isset($_POST['canvas_zoom_default'])) {
-                $settings['zoom_default'] = intval($_POST['canvas_zoom_default']);
+            if (isset($_POST['canvas_zoom_step'])) {
+                $settings['zoom_step'] = intval($_POST['canvas_zoom_step']);
+            }
+            if (isset($_POST['canvas_navigation_enabled'])) {
+                $settings['navigation_enabled'] = $_POST['canvas_navigation_enabled'] === '1';
+            }
+            if (isset($_POST['canvas_zoom_with_wheel'])) {
+                $settings['zoom_with_wheel'] = $_POST['canvas_zoom_with_wheel'] === '1';
             }
 
             // Convertir les checkboxes avec mapping correct
@@ -361,7 +367,9 @@ function pdf_builder_save_canvas_settings_handler() {
                 'canvas_rotate_enabled' => 'enable_rotation',
                 'canvas_multi_select' => 'multi_select',
                 'canvas_keyboard_shortcuts' => 'enable_keyboard_shortcuts',
-                'canvas_auto_save' => 'auto_save_enabled'
+                'canvas_auto_save' => 'auto_save_enabled',
+                'canvas_navigation_enabled' => 'navigation_enabled',
+                'canvas_zoom_with_wheel' => 'zoom_with_wheel'
             ];
             
             foreach ($checkboxMappings as $checkbox => $settingKey) {
