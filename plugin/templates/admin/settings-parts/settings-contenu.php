@@ -21,11 +21,6 @@
     font-weight: bold;
     text-transform: uppercase;
 }
-
-.canvas-card.disabled {
-    opacity: 0.6;
-    pointer-events: none;
-}
 </style>
 
             <h2>🎨 Contenu & Design</h2>
@@ -462,19 +457,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // 🔄 Dynamic status updates for cards
     function updateZoomNavigationStatus(enabled) {
         const statusElement = document.getElementById('zoom-navigation-status');
-        const cardElement = document.getElementById('zoom-navigation-card');
 
         if (statusElement) {
             statusElement.textContent = enabled ? 'ACTIF' : 'INACTIF';
             statusElement.className = 'canvas-card-status ' + (enabled ? 'active' : 'inactive');
-        }
-
-        if (cardElement) {
-            if (enabled) {
-                cardElement.classList.remove('disabled');
-            } else {
-                cardElement.classList.add('disabled');
-            }
         }
     }
 
