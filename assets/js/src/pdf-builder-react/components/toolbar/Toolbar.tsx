@@ -355,7 +355,7 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Zoom out
-                  const newZoom = Math.max(10, state.canvas.zoom - 25);
+                  const newZoom = Math.max(canvasSettings.zoomMin, state.canvas.zoom - canvasSettings.zoomStep);
                   if (setCanvas) {
                     setCanvas({ zoom: newZoom });
                   }
@@ -387,7 +387,7 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Zoom in
-                  const newZoom = Math.min(500, state.canvas.zoom + 25);
+                  const newZoom = Math.min(canvasSettings.zoomMax, state.canvas.zoom + canvasSettings.zoomStep);
                   if (setCanvas) {
                     setCanvas({ zoom: newZoom });
                   }
