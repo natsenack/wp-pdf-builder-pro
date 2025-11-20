@@ -295,7 +295,7 @@ input:checked + .toggle-slider:before {
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">💾</span>
-                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>" id="autosave-status"><?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                             <h4>Sauvegarde Auto</h4>
                         </div>
@@ -320,7 +320,7 @@ input:checked + .toggle-slider:before {
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">🐛</span>
-                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_debug_enabled', false) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_debug_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_debug_enabled', false) ? 'ACTIF' : 'INACTIF'; ?>" id="debug-status"><?php echo get_option('pdf_builder_canvas_debug_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                             <h4>Debug</h4>
                         </div>
@@ -415,21 +415,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = this.closest('.canvas-modal');
             modal.style.display = 'none';
 
-            // Update zoom navigation status when zoom modal closes
-            if (modal.id === 'canvas-zoom-modal') {
-                const contentTab = document.getElementById('contenu');
-                const activeTab = document.querySelector('.nav-tab-active');
-
-                if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
-                    // Small delay to ensure any updates are complete
-                    setTimeout(function() {
-                        const checkbox = document.getElementById('canvas_pan_enabled');
-                        if (checkbox) {
-                            updateZoomNavigationStatus(checkbox.checked);
-                        }
-                    }, 100);
-                }
-            }
+            // Update status indicators when modals close
+            updateModalStatusIndicators(modal.id);
         });
     });
 
@@ -441,24 +428,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 const modal = this.closest('.canvas-modal');
                 modal.style.display = 'none';
 
-                // Update zoom navigation status when zoom modal closes
-                if (modal.id === 'canvas-zoom-modal') {
-                    const contentTab = document.getElementById('contenu');
-                    const activeTab = document.querySelector('.nav-tab-active');
-
-                    if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
-                        // Small delay to ensure any updates are complete
-                        setTimeout(function() {
-                            const checkbox = document.getElementById('canvas_pan_enabled');
-                            if (checkbox) {
-                                updateZoomNavigationStatus(checkbox.checked);
-                            }
-                        }, 100);
-                    }
-                }
+                // Update status indicators when modals close
+                updateModalStatusIndicators(modal.id);
             }
         });
     });
+
+    // Function to update status indicators based on modal ID
+    function updateModalStatusIndicators(modalId) {
+        const contentTab = document.getElementById('contenu');
+        const activeTab = document.querySelector('.nav-tab-active');
+
+        if (!contentTab || !activeTab || activeTab.getAttribute('data-tab') !== 'contenu') {
+            return;
+        }
+
+        // Small delay to ensure any updates are complete
+        setTimeout(function() {
+            switch(modalId) {
+                case 'canvas-zoom-modal':
+                    const zoomCheckbox = document.getElementById('canvas_pan_enabled');
+                    if (zoomCheckbox) {
+                        updateZoomNavigationStatus(zoomCheckbox.checked);
+                    }
+                    break;
+                case 'canvas-autosave-modal':
+                    const autosaveCheckbox = document.getElementById('canvas_auto_save');
+                    if (autosaveCheckbox) {
+                        updateAutosaveStatus(autosaveCheckbox.checked);
+                    }
+                    break;
+                case 'canvas-debug-modal':
+                    const debugCheckbox = document.getElementById('canvas_debug_enabled');
+                    if (debugCheckbox) {
+                        updateDebugStatus(debugCheckbox.checked);
+                    }
+                    break;
+            }
+        }, 100);
+    }
 
     // Handle modal save buttons - REMOVED: Duplicate handler, using settings.js instead
     // const saveButtons = document.querySelectorAll('.canvas-modal-save');
@@ -546,6 +554,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // 🔄 Dynamic status updates for cards
     function updateZoomNavigationStatus(enabled) {
         const statusElement = document.getElementById('zoom-navigation-status');
+
+        if (statusElement) {
+            statusElement.textContent = enabled ? 'ACTIF' : 'INACTIF';
+            statusElement.className = 'canvas-card-status ' + (enabled ? 'active' : 'inactive');
+        }
+    }
+
+    function updateAutosaveStatus(enabled) {
+        const statusElement = document.getElementById('autosave-status');
+
+        if (statusElement) {
+            statusElement.textContent = enabled ? 'ACTIF' : 'INACTIF';
+            statusElement.className = 'canvas-card-status ' + (enabled ? 'active' : 'inactive');
+        }
+    }
+
+    function updateDebugStatus(enabled) {
+        const statusElement = document.getElementById('debug-status');
 
         if (statusElement) {
             statusElement.textContent = enabled ? 'ACTIF' : 'INACTIF';
