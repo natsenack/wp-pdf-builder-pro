@@ -2417,6 +2417,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // Dessiner les éléments
     state.elements.forEach((element) => {
+      console.log('🎨 RENDERING ELEMENT:', { id: element.id, rotation: element.rotation });
       drawElement(ctx, element, state);  // ✅ BUGFIX-001/004: Pass state as parameter
     });
 
