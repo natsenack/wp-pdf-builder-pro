@@ -254,6 +254,15 @@
                 <form id="canvas-zoom-form">
                     <table class="form-table">
                         <tr>
+                            <th scope="row"><label for="canvas_pan_enabled">Navigation activée</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
                             <th scope="row"><label for="canvas_zoom_min">Zoom minimum (%)</label></th>
                             <td>
                                 <input type="number" id="canvas_zoom_min" name="canvas_zoom_min" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>" min="5" max="50" />
@@ -269,15 +278,6 @@
                             <th scope="row"><label for="canvas_zoom_default">Zoom par défaut (%)</label></th>
                             <td>
                                 <input type="number" id="canvas_zoom_default" name="canvas_zoom_default" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>" min="10" max="500" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_pan_enabled">Navigation activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
                             </td>
                         </tr>
                     </table>
