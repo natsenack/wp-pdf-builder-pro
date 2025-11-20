@@ -1863,10 +1863,15 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       const rotationHandleDistance = 20;
 
       // Vérifier si au moins un élément a une rotation proche de 0°
+      // Utiliser la même logique de normalisation que dans useCanvasInteraction.ts
       const hasZeroRotation = selectedElements.some(el => {
         const rotation = (el as any).rotation || 0;
-        const normalizedRotation = Math.abs(rotation % 360);
-        return Math.min(normalizedRotation, 360 - normalizedRotation) <= 2; // Tolérance de 2°
+        // Normaliser l'angle entre -180° et 180° (même logique que le snap)
+        let normalizedRotation = rotation % 360;
+        if (normalizedRotation > 180) normalizedRotation -= 360;
+        if (normalizedRotation < -180) normalizedRotation += 360;
+        // Utiliser la même tolérance que le snap (8°) pour cohérence
+        return Math.abs(normalizedRotation - 0) <= 8;
       });
 
       // Couleur différente pour indiquer le snap à 0°
