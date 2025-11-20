@@ -1870,8 +1870,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         let normalizedRotation = rotation % 360;
         if (normalizedRotation > 180) normalizedRotation -= 360;
         if (normalizedRotation < -180) normalizedRotation += 360;
-        // Utiliser la tolérance plus grande pour 0° (30°) pour cohérence avec le snap renforcé
-        return Math.abs(normalizedRotation - 0) <= 30;
+        // Utiliser la tolérance pour 0° (8°) pour cohérence avec le snap immédiat
+        return Math.abs(normalizedRotation - 0) <= 8;
       });
 
       // Couleur différente pour indiquer le snap à 0°
