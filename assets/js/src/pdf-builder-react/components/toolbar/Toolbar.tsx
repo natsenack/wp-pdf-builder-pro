@@ -239,7 +239,7 @@ export function Toolbar({ className }: ToolbarProps) {
             <div>Éléments: {state.elements.length}</div>
             <div>Sélectionnés: {state.selection.selectedElements.length}</div>
             <div>Mode: {state.mode}</div>
-            <div>Zoom: {Math.round(state.canvas.zoom * 100)}%</div>
+            <div>Zoom: {state.canvas.zoom}%</div>
           </div>
         </div>
       </div>
