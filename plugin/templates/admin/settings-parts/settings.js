@@ -736,7 +736,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Dispatch custom event for status indicator updates
                     const event = new CustomEvent('modalSaved', {
                         detail: {
-                            category: 'canvas',
+                            category: category,  // Use the actual category from button
                             settings: data.data.saved
                         }
                     });
