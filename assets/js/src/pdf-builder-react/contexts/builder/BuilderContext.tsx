@@ -775,7 +775,7 @@ export function useCanvas() {
     zoomIn: () => setCanvas({ zoom: Math.min(state.canvas.zoom * 1.2, canvasSettings.zoomMax) }),
     zoomOut: () => setCanvas({ zoom: Math.max(state.canvas.zoom / 1.2, canvasSettings.zoomMin) }),
     setZoom: (zoom: number) => setCanvas({ zoom: Math.max(canvasSettings.zoomMin, Math.min(zoom, canvasSettings.zoomMax)) }),
-    resetZoom: () => setCanvas({ zoom: canvasSettings.zoomDefault }),
+    resetZoom: () => setCanvas({ zoom: Math.max(canvasSettings.zoomMin, Math.min(canvasSettings.zoomDefault, canvasSettings.zoomMax)) }),
     toggleGrid: () => setCanvas({ showGrid: !state.canvas.showGrid }),
     setBackgroundColor: (color: string) => setCanvas({ backgroundColor: color })
   };

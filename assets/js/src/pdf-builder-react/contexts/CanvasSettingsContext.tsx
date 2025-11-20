@@ -181,10 +181,19 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       
       // 🔍 Zoom & Navigation
       navigationEnabled: windowSettings.navigation_enabled === true || windowSettings.navigation_enabled === '1',
-      zoomDefault: (windowSettings.default_zoom as number) ?? DEFAULT_SETTINGS.zoomDefault,
+      zoomDefault: (() => {
+        const minZoom = (windowSettings.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin;
+        const maxZoom = (windowSettings.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax;
+        const defaultZoom = (windowSettings.default_zoom as number) ?? DEFAULT_SETTINGS.zoomDefault;
+        return Math.max(minZoom, Math.min(maxZoom, defaultZoom));
+      })(),
       zoomMin: (windowSettings.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin,
-      zoomMax: (windowSettings.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax,
-      zoomStep: (windowSettings.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep,
+      zoomMax: (() => {
+        const minZoom = (windowSettings.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin;
+        const maxZoom = (windowSettings.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax;
+        return Math.max(minZoom, maxZoom);
+      })(),
+      zoomStep: Math.max(1, (windowSettings.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep),
       
       // Sélection
       selectionMultiSelectEnabled: windowSettings.multi_select === true || windowSettings.multi_select === '1',

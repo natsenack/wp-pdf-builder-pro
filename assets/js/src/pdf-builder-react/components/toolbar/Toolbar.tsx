@@ -412,7 +412,8 @@ export function Toolbar({ className }: ToolbarProps) {
                 onClick={() => {
                   // Fit to screen (zoom to fit canvas)
                   if (setCanvas) {
-                    setCanvas({ zoom: 100 }); // Or calculate fit zoom
+                    const fitZoom = Math.max(canvasSettings.zoomMin, Math.min(100, canvasSettings.zoomMax));
+                    setCanvas({ zoom: fitZoom });
                   }
                 }}
                 style={{
