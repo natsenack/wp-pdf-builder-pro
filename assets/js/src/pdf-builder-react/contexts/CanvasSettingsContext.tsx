@@ -302,6 +302,22 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             gridSnapTolerance: data.data.snap_tolerance ?? DEFAULT_SETTINGS.gridSnapTolerance,
             guidesEnabled: data.data.show_guides === true || data.data.show_guides === '1',
             
+            // 🔍 Zoom & Navigation
+            navigationEnabled: data.data.navigation_enabled === true || data.data.navigation_enabled === '1',
+            zoomDefault: (() => {
+              const minZoom = Math.max(1, (data.data.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin);
+              const maxZoom = Math.max(minZoom, (data.data.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax);
+              const defaultZoom = (data.data.default_zoom as number) ?? DEFAULT_SETTINGS.zoomDefault;
+              return Math.max(minZoom, Math.min(maxZoom, defaultZoom));
+            })(),
+            zoomMin: Math.max(1, (data.data.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin),
+            zoomMax: (() => {
+              const minZoom = Math.max(1, (data.data.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin);
+              const maxZoom = (data.data.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax;
+              return Math.max(minZoom, maxZoom);
+            })(),
+            zoomStep: Math.max(1, (data.data.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep),
+            
             // Autres paramètres...
             isLoading: false,
             isReady: true
