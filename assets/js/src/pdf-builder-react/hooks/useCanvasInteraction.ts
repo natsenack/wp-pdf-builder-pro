@@ -199,8 +199,11 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         let newRotation = initialRotation + totalRotationDegrees;
 
         // ✅ AJOUT: Snap magnétique progressif aux angles cardinaux (0°, 90°, 180°, 270°)
+        // Snap plus fort à 0° pour un alignement parfait
         const snapTolerance = 8; // Tolérance de 8 degrés pour commencer le snap
-        const snapStrength = 0.3; // Force d'attraction (0.3 = 30% vers l'angle cible)
+        const snapStrength = 0.3; // Force d'attraction normale (0.3 = 30% vers l'angle cible)
+        const zeroSnapTolerance = 12; // Tolérance plus grande pour 0° (12 degrés)
+        const zeroSnapStrength = 0.6; // Force d'attraction plus forte pour 0° (0.6 = 60%)
         const snappedAngles = [0, 90, 180, 270, -90, -180, -270];
 
         // Normaliser l'angle entre -180° et 180°
@@ -211,11 +214,11 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         // Trouver l'angle cible le plus proche
         let closestAngle = 0;
         let minDistance = 360;
-        
+
         for (const targetAngle of snappedAngles) {
           let distance = Math.abs(normalizedRotation - targetAngle);
           distance = Math.min(distance, 360 - distance); // Distance minimale sur le cercle
-          
+
           if (distance < minDistance) {
             minDistance = distance;
             closestAngle = targetAngle;
@@ -225,16 +228,29 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         // Appliquer le snap progressif si on est dans la zone de tolérance
         if (minDistance <= snapTolerance) {
           const snapFactor = 1 - (minDistance / snapTolerance); // 0 à 1, plus on est proche plus le snap est fort
-          const effectiveSnapStrength = snapStrength * snapFactor;
-          
+
+          // Snap plus fort pour 0°
+          let effectiveSnapStrength = snapStrength;
+          let effectiveTolerance = snapTolerance;
+
+          if (closestAngle === 0 || closestAngle === 360 || closestAngle === -360) {
+            effectiveSnapStrength = zeroSnapStrength;
+            effectiveTolerance = zeroSnapTolerance;
+            // Recalculer le snapFactor avec la tolérance plus grande pour 0°
+            const zeroSnapFactor = Math.max(0, 1 - (minDistance / zeroSnapTolerance));
+            effectiveSnapStrength = zeroSnapStrength * zeroSnapFactor;
+          } else {
+            effectiveSnapStrength = snapStrength * snapFactor;
+          }
+
           // Calculer l'angle snappé
           let snappedRotation = closestAngle;
-          
+
           // Normaliser la différence pour éviter les sauts
           let diff = snappedRotation - normalizedRotation;
           if (diff > 180) diff -= 360;
           if (diff < -180) diff += 360;
-          
+
           newRotation += diff * effectiveSnapStrength;
         }
 
