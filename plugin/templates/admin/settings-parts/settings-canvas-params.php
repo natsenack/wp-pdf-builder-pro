@@ -35,6 +35,7 @@ $canvas_settings_js = [
     'max_zoom' => intval(get_option('pdf_builder_canvas_zoom_max', 500)),
     'zoom_with_wheel' => get_option('pdf_builder_canvas_zoom_with_wheel', true) == '1',
     'pan_with_mouse' => get_option('pdf_builder_canvas_pan_enabled', true) == '1',
+    'navigation_enabled' => get_option('pdf_builder_canvas_navigation_enabled', true) == '1',
     'show_resize_handles' => get_option('pdf_builder_canvas_show_resize_handles', true) == '1',
     'handle_size' => intval(get_option('pdf_builder_canvas_handle_size', 8)),
     'handle_color' => get_option('pdf_builder_canvas_handle_color', '#007cba'),

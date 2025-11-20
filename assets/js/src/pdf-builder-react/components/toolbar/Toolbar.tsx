@@ -340,8 +340,9 @@ export function Toolbar({ className }: ToolbarProps) {
               {state.template.showGuides ? '📏 Guides' : '📐 Guides'}
             </button>
 
-            {/* Zoom */}
-            <div style={{
+            {/* Zoom - Seulement si navigation activée */}
+            {canvasSettings.navigationEnabled && (
+              <div style={{
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
@@ -429,6 +430,7 @@ export function Toolbar({ className }: ToolbarProps) {
                 🔄
               </button>
             </div>
+            )}
           </div>
         </section>
 

@@ -41,6 +41,7 @@ export interface CanvasSettingsContextType {
   zoomMax: number;
   zoomStep: number;
   zoomWheelSupport: boolean;
+  navigationEnabled: boolean;
   
   // Sélection
   selectionMultiSelectEnabled: boolean;
@@ -105,6 +106,7 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   zoomMax: 500,
   zoomStep: 10,
   zoomWheelSupport: true,
+  navigationEnabled: true,
   
   selectionMultiSelectEnabled: true,
   selectionRotationEnabled: false,
@@ -184,6 +186,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       zoomMax: (windowSettings.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax,
       zoomStep: (windowSettings.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep,
       zoomWheelSupport: windowSettings.zoom_with_wheel === true || windowSettings.zoom_with_wheel === '1',
+      navigationEnabled: windowSettings.navigation_enabled === true || windowSettings.navigation_enabled === '1',
       
       // Sélection
       selectionMultiSelectEnabled: windowSettings.multi_select === true || windowSettings.multi_select === '1',
