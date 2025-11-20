@@ -22,6 +22,7 @@ interface UseCanvasInteractionProps {
 
 export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeight = 1123 }: UseCanvasInteractionProps) => {
   const { state, dispatch } = useBuilder();
+  const canvasSettings = useCanvasSettings();
 
   // États pour le drag et resize
   const isDraggingRef = useRef(false);
@@ -459,7 +460,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     }
 
     // Vérifier si on clique sur une poignée de rotation
-    if (canvasSettings.selectionRotationEnabled && state.selection.selectedElements.length > 0) {
+    if (canvasSettings?.selectionRotationEnabled && state.selection.selectedElements.length > 0) {
       const selectedElements = state.elements.filter(el => state.selection.selectedElements.includes(el.id));
       if (selectedElements.length > 0) {
         // Calculer les bounds de sélection
@@ -550,7 +551,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     }
 
     // Vérifier si on est sur une poignée de rotation
-    if (canvasSettings.selectionRotationEnabled && state.selection.selectedElements.length > 0) {
+    if (canvasSettings?.selectionRotationEnabled && state.selection.selectedElements.length > 0) {
       const selectedElements = state.elements.filter(el => state.selection.selectedElements.includes(el.id));
       if (selectedElements.length > 0) {
         // Calculer les bounds de sélection

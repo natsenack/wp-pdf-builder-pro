@@ -1224,7 +1224,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     canvasWidth: width,
     canvasHeight: height,
     elements: state.elements || [],
-    dragEnabled: canvasSettings.selectionDragEnabled
+    dragEnabled: canvasSettings?.selectionDragEnabled ?? true
   });
 
   const { handleCanvasClick, handleMouseDown, handleMouseMove, handleMouseUp, handleContextMenu } = useCanvasInteraction({
@@ -1831,7 +1831,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     ctx.strokeRect(minX - 2, minY - 2, maxX - minX + 4, maxY - minY + 4);
 
     // Poignées de redimensionnement (conditionnées par les settings)
-    if (canvasSettings.selectionShowHandles) {
+    if (canvasSettings?.selectionShowHandles) {
       const handleSize = 6;
       ctx.fillStyle = '#007acc';
       ctx.setLineDash([]);
@@ -1852,7 +1852,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     }
 
     // Poignées de rotation (conditionnées par les settings)
-    if (canvasSettings.selectionRotationEnabled) {
+    if (canvasSettings?.selectionRotationEnabled) {
       const rotationHandleSize = 8;
       const rotationHandleDistance = 20;
       ctx.fillStyle = '#007acc';
@@ -2356,7 +2356,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     }
 
     // Clear canvas with background color from settings (matching PDF background)
-    const canvasBgColor = normalizeColor(canvasSettings.canvasBackgroundColor || '#ffffff');
+    const canvasBgColor = normalizeColor(canvasSettings?.canvasBackgroundColor || '#ffffff');
     ctx.fillStyle = canvasBgColor;
     ctx.fillRect(0, 0, width, height);
 
@@ -2385,12 +2385,12 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     // }
 
     // Dessiner la grille si activée (utiliser les paramètres Canvas Settings et l'état du toggle)
-    if (canvasSettings.gridShow && state.canvas.showGrid) {
-      drawGrid(ctx, width, height, canvasSettings.gridSize, canvasSettings.gridColor);
+    if (canvasSettings?.gridShow && state.canvas.showGrid) {
+      drawGrid(ctx, width, height, canvasSettings?.gridSize || 20, canvasSettings?.gridColor || '#e0e0e0');
     }
 
     // Dessiner les guides si activés (utiliser les paramètres Canvas Settings et l'état du template)
-    if (canvasSettings.guidesEnabled && state.template.showGuides) {
+    if (canvasSettings?.guidesEnabled && state.template.showGuides) {
       drawGuides(ctx, width, height);
     }
 
@@ -2537,8 +2537,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // Calculate border style based on canvas settings
   const borderStyle = isDragOver 
     ? '2px solid #007acc' 
-    : (canvasSettings.borderWidth && canvasSettings.borderWidth > 0) 
-      ? `${canvasSettings.borderWidth}px solid ${canvasSettings.borderColor || '#cccccc'}` 
+    : (canvasSettings?.borderWidth && canvasSettings.borderWidth > 0) 
+      ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || '#cccccc'}` 
       : 'none';
 
   // Calculate canvas display size based on zoom
@@ -2567,7 +2567,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
           border: borderStyle,
           cursor: 'crosshair',
           backgroundColor: '#ffffff',
-          boxShadow: canvasSettings.shadowEnabled ? '2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)' : 'none',
+          boxShadow: canvasSettings?.shadowEnabled ? '2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)' : 'none',
           transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
         }}
       />
