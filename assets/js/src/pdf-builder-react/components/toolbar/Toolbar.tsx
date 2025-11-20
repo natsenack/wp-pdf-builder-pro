@@ -354,9 +354,13 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Zoom out
-                  const newZoom = Math.max(10, state.canvas.zoom - 25);
+                  const currentZoom = state.canvas.zoom;
+                  const newZoom = Math.max(10, currentZoom - 25);
+                  console.log('🔍 ZOOM OUT: current =', currentZoom, '-> new =', newZoom);
                   if (setCanvas) {
                     setCanvas({ zoom: newZoom });
+                    // Vérifier immédiatement après
+                    setTimeout(() => console.log('🔍 AFTER setCanvas, state.zoom =', state.canvas.zoom), 0);
                   }
                 }}
                 style={{

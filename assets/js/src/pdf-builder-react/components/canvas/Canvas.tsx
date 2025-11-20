@@ -2339,11 +2339,12 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // Appliquer transformation (zoom, pan)
     // Note: zoom est en pourcentage (100 = 100%), donc diviser par 100
+    const zoomScale = state.canvas.zoom / 100;
+    console.log('🎨 APPLYING ZOOM: zoom =', state.canvas.zoom, 'zoomScale =', zoomScale);
     ctx.save();
     
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
     
-    const zoomScale = state.canvas.zoom / 100;
     ctx.scale(zoomScale, zoomScale);
 
     // NOTE: Les marges seront réactivées après que le rendu des éléments soit fixé
@@ -2380,6 +2381,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // Redessiner quand l'état change
   useEffect(() => {
+    console.log('🎨 CANVAS useEffect triggered - zoom:', state.canvas.zoom, 'pan:', state.canvas.pan);
 
     // ✅ BUGFIX: Include ALL essential visual properties in hash
     // This ensures canvas re-renders when ANY visual property changes
