@@ -521,7 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Also listen for clicks on the toggle label for immediate feedback
     document.addEventListener('click', function(e) {
-        if (e.target && e.target.classList.contains('toggle-switch')) {
+        if (e.target && (e.target.classList.contains('toggle-switch') || e.target.classList.contains('toggle-slider'))) {
             // Small delay to let the checkbox state update
             setTimeout(function() {
                 const checkbox = document.getElementById('canvas_pan_enabled');
