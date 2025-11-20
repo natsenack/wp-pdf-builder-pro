@@ -257,7 +257,7 @@
                             <th scope="row"><label for="canvas_pan_enabled">Navigation activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', true)); ?>>
+                                    <input type="checkbox" id="canvas_pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -305,7 +305,7 @@
                             <th scope="row"><label for="canvas_drag_enabled">Glisser-déposer activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_drag_enabled" name="canvas_drag_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_drag_enabled', true)); ?>>
+                                    <input type="checkbox" id="canvas_drag_enabled" name="canvas_drag_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_drag_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -314,7 +314,7 @@
                             <th scope="row"><label for="canvas_resize_enabled">Redimensionnement activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_resize_enabled" name="canvas_resize_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_resize_enabled', true)); ?>>
+                                    <input type="checkbox" id="canvas_resize_enabled" name="canvas_resize_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_resize_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -323,7 +323,7 @@
                             <th scope="row"><label for="canvas_rotate_enabled">Rotation activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_rotate_enabled" name="canvas_rotate_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_rotate_enabled', true)); ?>>
+                                    <input type="checkbox" id="canvas_rotate_enabled" name="canvas_rotate_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_rotate_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -332,7 +332,7 @@
                             <th scope="row"><label for="canvas_multi_select">Sélection multiple</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_multi_select" name="canvas_multi_select" value="1" <?php checked(get_option('pdf_builder_canvas_multi_select', true)); ?>>
+                                    <input type="checkbox" id="canvas_multi_select" name="canvas_multi_select" value="1" <?php checked(get_option('pdf_builder_canvas_multi_select', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -372,7 +372,7 @@
                             <th scope="row"><label for="canvas_keyboard_shortcuts">Raccourcis clavier</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_keyboard_shortcuts" name="canvas_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_shortcuts', true)); ?>>
+                                    <input type="checkbox" id="canvas_keyboard_shortcuts" name="canvas_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_shortcuts', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -381,7 +381,7 @@
                             <th scope="row"><label for="canvas_auto_save">Sauvegarde automatique</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_auto_save" name="canvas_auto_save" value="1" <?php checked(get_option('pdf_builder_canvas_auto_save', true)); ?>>
+                                    <input type="checkbox" id="canvas_auto_save" name="canvas_auto_save" value="1" <?php checked(get_option('pdf_builder_canvas_auto_save', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -427,7 +427,7 @@
                             <th scope="row"><label for="canvas_export_transparent">Fond transparent</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_export_transparent" name="canvas_export_transparent" value="1" <?php checked(get_option('pdf_builder_canvas_export_transparent', false)); ?>>
+                                    <input type="checkbox" id="canvas_export_transparent" name="canvas_export_transparent" value="1" <?php checked(get_option('pdf_builder_canvas_export_transparent', '0'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -469,7 +469,7 @@
                             <th scope="row"><label for="canvas_lazy_loading">Chargement paresseux</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_lazy_loading" name="canvas_lazy_loading" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading', true)); ?>>
+                                    <input type="checkbox" id="canvas_lazy_loading" name="canvas_lazy_loading" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -499,7 +499,7 @@
                             <th scope="row"><label for="canvas_autosave_enabled">Sauvegarde automatique activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_autosave_enabled" name="canvas_autosave_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_autosave_enabled', true)); ?>>
+                                    <input type="checkbox" id="canvas_autosave_enabled" name="canvas_autosave_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_autosave_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -514,7 +514,7 @@
                             <th scope="row"><label for="canvas_history_enabled">Historique activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_history_enabled" name="canvas_history_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_history_enabled', true)); ?>>
+                                    <input type="checkbox" id="canvas_history_enabled" name="canvas_history_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_history_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -550,7 +550,7 @@
                             <th scope="row"><label for="canvas_debug_enabled">Debug activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_debug_enabled" name="canvas_debug_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_debug_enabled', false)); ?>>
+                                    <input type="checkbox" id="canvas_debug_enabled" name="canvas_debug_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_debug_enabled', '0'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -559,7 +559,7 @@
                             <th scope="row"><label for="canvas_performance_monitoring">Monitoring performance</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_performance_monitoring" name="canvas_performance_monitoring" value="1" <?php checked(get_option('pdf_builder_canvas_performance_monitoring', false)); ?>>
+                                    <input type="checkbox" id="canvas_performance_monitoring" name="canvas_performance_monitoring" value="1" <?php checked(get_option('pdf_builder_canvas_performance_monitoring', '0'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
@@ -568,7 +568,7 @@
                             <th scope="row"><label for="canvas_error_reporting">Rapport d'erreurs</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_error_reporting" name="canvas_error_reporting" value="1" <?php checked(get_option('pdf_builder_canvas_error_reporting', false)); ?>>
+                                    <input type="checkbox" id="canvas_error_reporting" name="canvas_error_reporting" value="1" <?php checked(get_option('pdf_builder_canvas_error_reporting', '0'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </td>
