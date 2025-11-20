@@ -384,16 +384,14 @@ input:checked + .toggle-slider:before {
 <script>
 // Canvas configuration modals functionality
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize zoom navigation status on page load
+    // Initialize zoom navigation status on page load - use PHP option value
     const contentTab = document.getElementById('contenu');
     const activeTab = document.querySelector('.nav-tab-active');
 
     if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
-        const checkbox = document.getElementById('canvas_pan_enabled');
-        if (checkbox) {
-            console.log('Initializing zoom navigation status on page load:', checkbox.checked);
-            updateZoomNavigationStatus(checkbox.checked);
-        }
+        // Initialize with the current option value (already set in PHP)
+        const initialStatus = '<?php echo get_option('pdf_builder_canvas_pan_enabled', '1') === '1' ? 'true' : 'false'; ?>';
+        updateZoomNavigationStatus(initialStatus === 'true');
     }
 
     // Handle canvas configure buttons
@@ -549,8 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(function() {
                     const checkbox = document.getElementById('canvas_pan_enabled');
                     if (checkbox) {
-                        const isChecked = checkbox.checked;
-                        updateZoomNavigationStatus(isChecked);
+                        updateZoomNavigationStatus(checkbox.checked);
                     }
                 }, 10);
             }
@@ -567,11 +564,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const activeTab = document.querySelector('.nav-tab-active');
 
             if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
-                // Small delay to allow save to complete
-                setTimeout(function() {
-                    // Refresh the page or reload the status from server
-                    location.reload();
-                }, 500);
+                // Instead of reloading, just update the status indicator
+                // The status will be updated when the user reopens the modal or changes tabs
+                // This prevents issues with rapid clicking
             }
         }
     });
@@ -580,7 +575,19 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(e) {
         if (e.target && e.target.classList.contains('canvas-modal-save') &&
             e.target.getAttribute('data-category') === 'zoom') {
-            // The save will happen, status will be updated when modal closes
+            // Check if we're on the content tab
+            const contentTab = document.getElementById('contenu');
+            const activeTab = document.querySelector('.nav-tab-active');
+
+            if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
+                // Update status after save completes
+                setTimeout(function() {
+                    const checkbox = document.getElementById('canvas_pan_enabled');
+                    if (checkbox) {
+                        updateZoomNavigationStatus(checkbox.checked);
+                    }
+                }, 100);
+            }
         }
     });
 });
