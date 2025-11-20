@@ -210,6 +210,7 @@ function pdf_builder_save_settings_handler() {
                     'canvas_zoom_max' => 'pdf_builder_canvas_zoom_max',
                     'canvas_zoom_default' => 'pdf_builder_canvas_zoom_default',
                     'canvas_pan_enabled' => 'pdf_builder_canvas_pan_enabled',
+                    'canvas_navigation_enabled' => 'pdf_builder_canvas_navigation_enabled',
                     
                     // Interaction
                     'canvas_drag_enabled' => 'pdf_builder_canvas_drag_enabled',
@@ -250,7 +251,7 @@ function pdf_builder_save_settings_handler() {
                         // Convert checkbox values
                         $checkbox_fields = [
                             'canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid',
-                            'canvas_pan_enabled', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled',
+                            'canvas_pan_enabled', 'canvas_navigation_enabled', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled',
                             'canvas_multi_select', 'canvas_keyboard_shortcuts', 'canvas_auto_save', 'canvas_export_transparent',
                             'canvas_lazy_loading', 'canvas_autosave_enabled', 'canvas_history_enabled', 'canvas_debug_enabled',
                             'canvas_performance_monitoring', 'canvas_error_reporting'
@@ -461,7 +462,8 @@ function pdf_builder_get_canvas_settings_handler() {
             'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
             'enable_keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1') == '1',
             'debug_mode' => get_option('pdf_builder_canvas_debug_mode', false) == '1',
-            'show_fps' => get_option('pdf_builder_canvas_show_fps', false) == '1'
+            'show_fps' => get_option('pdf_builder_canvas_show_fps', false) == '1',
+            'navigation_enabled' => get_option('pdf_builder_canvas_navigation_enabled', '1') == '1'
         ];
         
         send_ajax_response(true, 'Paramètres récupérés avec succès.', $settings);

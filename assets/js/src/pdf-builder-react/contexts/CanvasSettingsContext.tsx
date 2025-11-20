@@ -287,6 +287,9 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             gridSnapTolerance: data.data.snap_tolerance ?? DEFAULT_SETTINGS.gridSnapTolerance,
             guidesEnabled: data.data.show_guides === true || data.data.show_guides === '1',
             
+            // 🔍 Zoom & Navigation
+            navigationEnabled: data.data.navigation_enabled === true || data.data.navigation_enabled === '1',
+            
             // Autres paramètres...
             isLoading: false,
             isReady: true
