@@ -534,16 +534,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Refresh status when modal closes (after potential save)
+    // Refresh status when modal closes (after potential save) - only on content tab
     document.addEventListener('click', function(e) {
         if (e.target && (e.target.classList.contains('canvas-modal-close') ||
                         e.target.classList.contains('canvas-modal-cancel') ||
                         e.target.classList.contains('canvas-modal-overlay'))) {
-            // Small delay to allow save to complete
-            setTimeout(function() {
-                // Refresh the page or reload the status from server
-                location.reload();
-            }, 500);
+            // Check if we're on the content tab
+            const contentTab = document.getElementById('contenu');
+            const activeTab = document.querySelector('.nav-tab-active');
+
+            if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
+                // Small delay to allow save to complete
+                setTimeout(function() {
+                    // Refresh the page or reload the status from server
+                    location.reload();
+                }, 500);
+            }
         }
     });
 
