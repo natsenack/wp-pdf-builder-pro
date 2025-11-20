@@ -350,13 +350,13 @@ function pdf_builder_save_canvas_settings_handler() {
                 $settings['default_canvas_height'] = intval($_POST['canvas_height']);
             }
             if (isset($_POST['canvas_zoom_min'])) {
-                $settings['zoom_min'] = intval($_POST['canvas_zoom_min']);
+                $settings['min_zoom'] = intval($_POST['canvas_zoom_min']);
             }
             if (isset($_POST['canvas_zoom_max'])) {
-                $settings['zoom_max'] = intval($_POST['canvas_zoom_max']);
+                $settings['max_zoom'] = intval($_POST['canvas_zoom_max']);
             }
             if (isset($_POST['canvas_zoom_default'])) {
-                $settings['zoom_default'] = intval($_POST['canvas_zoom_default']);
+                $settings['default_zoom'] = intval($_POST['canvas_zoom_default']);
             }
             if (isset($_POST['canvas_zoom_step'])) {
                 $settings['zoom_step'] = intval($_POST['canvas_zoom_step']);

@@ -57,9 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateFormInputs(settings) {
         // Mapping des paramètres vers les IDs des inputs
         const inputMappings = {
-            'zoom_min': 'zoom_min',
-            'zoom_max': 'zoom_max',
-            'zoom_default': 'zoom_default',
+            'min_zoom': 'zoom_min',
+            'max_zoom': 'zoom_max',
+            'default_zoom': 'zoom_default',
             'zoom_step': 'zoom_step'
         };
 
