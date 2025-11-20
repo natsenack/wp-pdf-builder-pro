@@ -189,7 +189,42 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     while (angleDelta < -Math.PI) angleDelta += 2 * Math.PI;
     
     // Convertir en degrés
-    const totalRotationDegrees = (angleDelta * 180) / Math.PI;
+    let totalRotationDegrees = (angleDelta * 180) / Math.PI;
+
+    // ✅ AJOUT: Snap magnétique ULTRA SIMPLE - forcer à 0° quand proche
+    const zeroSnapTolerance = 10 * (Math.PI / 180); // 10 degrés en radians
+
+    // Calculer la rotation actuelle pour chaque élément
+    selectedIds.forEach(elementId => {
+      const element = lastState.elements.find(el => el.id === elementId);
+      if (element) {
+        const initialRotation = rotationStartRef.current[elementId] || 0;
+        let currentRotation = initialRotation + totalRotationDegrees;
+
+        // Normaliser l'angle entre -180° et 180°
+        let normalizedRotation = currentRotation % 360;
+        if (normalizedRotation > 180) normalizedRotation -= 360;
+        if (normalizedRotation < -180) normalizedRotation += 360;
+
+        // Distance à 0°
+        const distanceToZero = Math.abs(normalizedRotation);
+
+        // SI PROCHE DE 0°, FORCER totalRotationDegrees pour que la rotation finale soit 0°
+        if (distanceToZero <= zeroSnapTolerance) {
+          console.log('🚀 FORCE SNAP TO ZERO:', {
+            elementId,
+            currentRotation,
+            normalizedRotation,
+            distance: distanceToZero * 180 / Math.PI,
+            initialRotation,
+            totalRotationDegrees,
+            willForceToZero: true
+          });
+          // Forcer totalRotationDegrees pour que newRotation = 0
+          totalRotationDegrees = -initialRotation;
+        }
+      }
+    });
 
     // Mettre à jour la rotation de tous les éléments sélectionnés
     selectedIds.forEach(elementId => {
@@ -198,29 +233,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         const initialRotation = rotationStartRef.current[elementId] || 0;
         let newRotation = initialRotation + totalRotationDegrees;
 
-        // ✅ AJOUT: Snap magnétique ULTRA SIMPLE - forcer à 0° quand proche
-        const zeroSnapTolerance = 10 * (Math.PI / 180); // 10 degrés en radians
-
-        // Normaliser l'angle entre -180° et 180°
-        let normalizedRotation = newRotation % 360;
-        if (normalizedRotation > 180) normalizedRotation -= 360;
-        if (normalizedRotation < -180) normalizedRotation += 360;
-
-        // Distance à 0°
-        const distanceToZero = Math.abs(normalizedRotation);
-
-        // SI PROCHE DE 0°, FORCER DIRECTEMENT À 0°
-        if (distanceToZero <= zeroSnapTolerance) {
-          console.log('🚀 FORCE SNAP TO ZERO:', {
-            before: newRotation,
-            after: 0,
-            distance: distanceToZero * 180 / Math.PI,
-            willDispatch: true
-          });
-          newRotation = 0;
-        }
-
-        console.log('📤 DISPATCHING ROTATION:', { elementId, newRotation });
+        console.log('📤 DISPATCHING ROTATION:', { elementId, initialRotation, totalRotationDegrees, newRotation });
 
         dispatch({
           type: 'UPDATE_ELEMENT',
