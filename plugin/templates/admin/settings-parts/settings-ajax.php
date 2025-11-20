@@ -313,10 +313,19 @@ function pdf_builder_save_settings_handler() {
 
 // Canvas settings AJAX handler
 function pdf_builder_save_canvas_settings_handler() {
+    // Debug: Log that the function is called
+    error_log('PDF Builder: save_canvas_settings_handler called');
+
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+        // Debug: Log successful nonce verification
+        error_log('PDF Builder: nonce verified successfully');
+
         // Utiliser le Canvas_Manager pour la sauvegarde centralisée
         try {
             $canvas_manager = WP_PDF_Builder_Pro\Canvas\Canvas_Manager::get_instance();
+            // Debug: Log received POST data
+            error_log('PDF Builder: received POST data: ' . print_r($_POST, true));
+
             // Mapper les champs du formulaire vers les noms attendus par le Canvas_Manager
             $settings = [];
             if (isset($_POST['canvas_bg_color'])) {
@@ -389,6 +398,10 @@ function pdf_builder_save_canvas_settings_handler() {
             }
 
             $saved = $canvas_manager->saveSettings($settings);
+            // Debug: Log save result
+            error_log('PDF Builder: saveSettings called with: ' . print_r($settings, true));
+            error_log('PDF Builder: saveSettings result: ' . ($saved ? 'SUCCESS' : 'FAILED'));
+
             if ($saved) {
                 send_ajax_response(true, 'Paramètres canvas sauvegardés avec succès.', ['saved' => $settings]);
             } else {

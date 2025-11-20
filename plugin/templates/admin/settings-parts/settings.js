@@ -744,6 +744,8 @@ document.addEventListener('DOMContentLoaded', function() {
             this.textContent = '⏳ Sauvegarde...';
 
             // Send AJAX request
+            console.log('PDF Builder: Sending AJAX request for category:', category);
+            console.log('PDF Builder: Form data:', Object.fromEntries(formData));
             fetch(pdf_builder_ajax.ajax_url, {
                 method: 'POST',
                 body: formData
