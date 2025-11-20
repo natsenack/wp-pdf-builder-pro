@@ -1,5 +1,33 @@
 <?php // Content tab content - Updated: 2025-11-18 20:20:00 ?>
 
+<style>
+/* Dynamic status indicators for canvas cards */
+.canvas-card-status.active {
+    background: #28a745;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.canvas-card-status.inactive {
+    background: #dc3545;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.canvas-card.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+</style>
+
             <h2>🎨 Contenu & Design</h2>
 
             <!-- Section Canvas -->
@@ -99,11 +127,11 @@
                     </div>
 
                     <!-- Carte Zoom & Navigation -->
-                    <div class="canvas-card" data-category="zoom">
+                    <div class="canvas-card" id="zoom-navigation-card" data-category="zoom">
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">🔍</span>
-                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'active' : 'inactive'; ?>" id="zoom-navigation-status"><?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                             <h4>Zoom & Navigation</h4>
                         </div>
@@ -430,5 +458,53 @@ document.addEventListener('DOMContentLoaded', function() {
     //         }
     //     }, 5000);
     // }
+
+    // 🔄 Dynamic status updates for cards
+    function updateZoomNavigationStatus(enabled) {
+        const statusElement = document.getElementById('zoom-navigation-status');
+        const cardElement = document.getElementById('zoom-navigation-card');
+
+        if (statusElement) {
+            statusElement.textContent = enabled ? 'ACTIF' : 'INACTIF';
+            statusElement.className = 'canvas-card-status ' + (enabled ? 'active' : 'inactive');
+        }
+
+        if (cardElement) {
+            if (enabled) {
+                cardElement.classList.remove('disabled');
+            } else {
+                cardElement.classList.add('disabled');
+            }
+        }
+    }
+
+    // Listen for changes on the pan enabled checkbox
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.id === 'canvas_pan_enabled') {
+            const isChecked = e.target.checked;
+            updateZoomNavigationStatus(isChecked);
+        }
+    });
+
+    // Refresh status when modal closes (after potential save)
+    document.addEventListener('click', function(e) {
+        if (e.target && (e.target.classList.contains('canvas-modal-close') ||
+                        e.target.classList.contains('canvas-modal-cancel') ||
+                        e.target.classList.contains('canvas-modal-overlay'))) {
+            // Small delay to allow save to complete
+            setTimeout(function() {
+                // Refresh the page or reload the status from server
+                location.reload();
+            }, 500);
+        }
+    });
+
+    // Also listen for modal save button clicks
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('canvas-modal-save') &&
+            e.target.getAttribute('data-category') === 'zoom') {
+            // The save will happen, status will be updated when modal closes
+        }
+    });
 });
 </script>

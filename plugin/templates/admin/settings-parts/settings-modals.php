@@ -254,13 +254,12 @@
                 <form id="canvas-zoom-form">
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><label for="canvas_navigation_enabled">Navigation activée</label></th>
+                            <th scope="row"><label for="canvas_pan_enabled">Navigation activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_navigation_enabled" name="canvas_navigation_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_navigation_enabled', true)); ?>>
+                                    <input type="checkbox" id="canvas_pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', true)); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Active/désactive les contrôles de zoom et de navigation</p>
                             </td>
                         </tr>
                         <tr>
