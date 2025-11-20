@@ -201,9 +201,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         // ✅ AJOUT: Snap magnétique progressif aux angles cardinaux (0°, 90°, 180°, 270°)
         // Snap plus fort à 0° pour un alignement parfait
         const snapTolerance = 12 * (Math.PI / 180); // Tolérance de 12 degrés pour commencer le snap normal (converti en radians) - augmenté pour snap plus tôt
-        const snapStrength = 0.6; // Force d'attraction normale (0.6 = 60% vers l'angle cible) - augmenté pour snap plus fort
+        const snapStrength = 0.8; // Force d'attraction normale (0.8 = 80% vers l'angle cible) - augmenté pour snap plus fort
         const zeroSnapTolerance = 30 * (Math.PI / 180); // Tolérance plus grande pour 0° (30 degrés converti en radians) - augmenté
-        const zeroSnapStrength = 0.98; // Force d'attraction très forte pour 0° (0.98 = 98%) - augmenté
+        const zeroSnapStrength = 1.0; // Force d'attraction très forte pour 0° (1.0 = 100%) - snap complet
         const snappedAngles = [0, 90, 180, 270, -90, -180, -270];
 
         // Normaliser l'angle entre -180° et 180°
@@ -688,6 +688,39 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       }
     }
 
+    // ✅ AJOUT: Snap final à 0° lors du relâchement de la souris
+    const lastState = lastKnownStateRef.current;
+    const selectedIds = lastState.selection.selectedElements;
+    if (selectedIds.length > 0 && isRotatingRef.current) {
+      selectedIds.forEach(elementId => {
+        const element = lastState.elements.find(el => el.id === elementId);
+        if (element) {
+          let currentRotation = element.rotation || 0;
+          
+          // Normaliser l'angle entre -180° et 180°
+          let normalizedRotation = currentRotation % 360;
+          if (normalizedRotation > 180) normalizedRotation -= 360;
+          if (normalizedRotation < -180) normalizedRotation += 360;
+          
+          // Distance à 0°
+          const distanceToZero = Math.abs(normalizedRotation);
+          
+          // Snap final si très proche de 0° (dans les 5°)
+          const finalSnapThreshold = 5 * (Math.PI / 180); // 5 degrés en radians
+          if (distanceToZero <= finalSnapThreshold) {
+            console.log('🎯 FINAL SNAP TO ZERO:', { currentRotation, normalizedRotation, distanceToZero });
+            dispatch({
+              type: 'UPDATE_ELEMENT',
+              payload: {
+                id: elementId,
+                updates: { rotation: 0 }
+              }
+            });
+          }
+        }
+      });
+    }
+
     isDraggingRef.current = false;
     isResizingRef.current = false;
     isRotatingRef.current = false;
@@ -695,7 +728,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     selectedElementRef.current = null;
     rotationStartRef.current = {};
     pendingRotationUpdateRef.current = null;
-  }, [performDragUpdate, performRotationUpdate]);
+  }, [performDragUpdate, performRotationUpdate, dispatch]);
 
   // Fonction pour obtenir le curseur de redimensionnement selon la poignée
   const getResizeCursor = (handle: string | null): string => {
