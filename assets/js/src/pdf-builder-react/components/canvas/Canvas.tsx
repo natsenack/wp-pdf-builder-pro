@@ -1861,8 +1861,18 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     if (canvasSettings?.selectionRotationEnabled) {
       const rotationHandleSize = 8;
       const rotationHandleDistance = 20;
-      ctx.fillStyle = '#007acc';
-      ctx.strokeStyle = '#007acc';
+
+      // Vérifier si au moins un élément a une rotation proche de 0°
+      const hasZeroRotation = selectedElements.some(el => {
+        const rotation = (el as any).rotation || 0;
+        const normalizedRotation = Math.abs(rotation % 360);
+        return Math.min(normalizedRotation, 360 - normalizedRotation) <= 2; // Tolérance de 2°
+      });
+
+      // Couleur différente pour indiquer le snap à 0°
+      const handleColor = hasZeroRotation ? '#00cc44' : '#007acc';
+      ctx.fillStyle = handleColor;
+      ctx.strokeStyle = handleColor;
       ctx.lineWidth = 2;
       ctx.setLineDash([]);
 

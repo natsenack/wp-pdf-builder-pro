@@ -788,7 +788,27 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           const element = state.elements.find(el => el.id === elementId);
           if (element) {
             const currentRotation = (element as any).rotation || 0;
-            const newRotation = currentRotation + rotationDegrees;
+            let newRotation = currentRotation + rotationDegrees;
+
+            // ✅ AJOUT: Snap magnétique aux angles cardinaux (0°, 90°, 180°, 270°)
+            const snapTolerance = 5; // Tolérance de 5 degrés pour le snap
+            const snappedAngles = [0, 90, 180, 270, -90, -180, -270];
+
+            for (const targetAngle of snappedAngles) {
+              // Normaliser l'angle entre -180° et 180°
+              let normalizedRotation = newRotation % 360;
+              if (normalizedRotation > 180) normalizedRotation -= 360;
+              if (normalizedRotation < -180) normalizedRotation += 360;
+
+              // Calculer la distance angulaire (en tenant compte du wrap-around)
+              let angleDiff = Math.abs(normalizedRotation - targetAngle);
+              angleDiff = Math.min(angleDiff, 360 - angleDiff); // Distance minimale sur le cercle
+
+              if (angleDiff <= snapTolerance) {
+                newRotation = targetAngle;
+                break;
+              }
+            }
 
             dispatch({
               type: 'UPDATE_ELEMENT',
