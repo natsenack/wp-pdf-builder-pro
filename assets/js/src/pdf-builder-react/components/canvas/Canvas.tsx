@@ -2337,14 +2337,12 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     }
 
-    // Appliquer transformation (zoom, pan)
-    // Note: zoom est en pourcentage (100 = 100%), donc diviser par 100
+    // Appliquer transformation (pan uniquement - zoom géré par CSS)
     ctx.save();
     
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
     
-    const zoomScale = state.canvas.zoom / 100;
-    ctx.scale(zoomScale, zoomScale);
+    // Note: Zoom is now handled by CSS display size, no need for ctx.scale()
 
     // NOTE: Les marges seront réactivées après que le rendu des éléments soit fixé
     // const showMargins = canvasSettings.showMargins;
