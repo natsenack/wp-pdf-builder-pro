@@ -196,6 +196,16 @@
                 <form id="canvas-grille-form">
                     <table class="form-table">
                         <tr>
+                            <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_guides_enabled" name="canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Affiche des guides d'alignement temporaires</p>
+                            </td>
+                        </tr>
+                        <tr>
                             <th scope="row"><label for="canvas_grid_enabled">Grille activée</label></th>
                             <td>
                                 <label class="toggle-switch">
@@ -220,16 +230,6 @@
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Les éléments s'alignent automatiquement sur la grille</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_guides_enabled" name="canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Affiche des guides d'alignement temporaires</p>
                             </td>
                         </tr>
                     </table>
@@ -579,117 +579,6 @@
             <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="debug">Sauvegarder</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Zoom & Navigation Modal -->
-<div id="canvas-zoom-modal" class="canvas-modal" style="display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">🔍 Zoom & Navigation</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
-                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
-                        <strong>💡 Comment ça marche :</strong> Contrôlez les niveaux de zoom et activez/désactivez les fonctionnalités de navigation.
-                        Ces paramètres affectent l'interface d'édition du PDF.
-                    </p>
-                </div>
-
-                <!-- Contrôles de zoom interactifs -->
-                <div style="margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; text-align: center;">
-                    <h4 style="margin: 0 0 15px 0; color: #495057;">🎛️ Contrôles de Zoom</h4>
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
-                        <button type="button" id="zoom-out-btn" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #ffffff; color: #374151; cursor: pointer; font-size: 16px; font-weight: 600; min-width: 40px;">➖</button>
-                        <span id="zoom-display" style="font-size: 18px; font-weight: 700; color: #1f2937; min-width: 80px; display: inline-block; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #e5e7eb;">
-                            <?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>%
-                        </span>
-                        <button type="button" id="zoom-in-btn" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #ffffff; color: #374151; cursor: pointer; font-size: 16px; font-weight: 600; min-width: 40px;">➕</button>
-                        <span style="font-size: 12px; color: #94a3b8; margin: 0 5px;">|</span>
-                        <button type="button" id="zoom-reset-btn" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #ffffff; color: #374151; cursor: pointer; font-size: 14px;">🔍</button>
-                    </div>
-                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Testez les contrôles de zoom (simulation)</p>
-                </div>
-
-                <form id="canvas-zoom-form">
-                    <h4 style="margin-top: 25px; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">⚙️ Paramètres de Zoom</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_navigation_enabled">Navigation activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_navigation_enabled" name="canvas_navigation_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_navigation_enabled', true), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Active/désactive tous les contrôles de zoom et navigation</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_zoom_default">Zoom par défaut (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_zoom_default" name="canvas_zoom_default" min="10" max="500" step="5"
-                                       value="<?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Niveau de zoom au démarrage (10-500%)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_zoom_min">Zoom minimum (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_zoom_min" name="canvas_zoom_min" min="1" max="100" step="5"
-                                       value="<?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Zoom minimum autorisé</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_zoom_max">Zoom maximum (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_zoom_max" name="canvas_zoom_max" min="100" max="1000" step="25"
-                                       value="<?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Zoom maximum autorisé</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_zoom_step">Pas de zoom (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_zoom_step" name="canvas_zoom_step" min="1" max="50" step="1"
-                                       value="<?php echo intval(get_option('pdf_builder_canvas_zoom_step', 25)); ?>" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Incrément de zoom par clic (+/- 25% par défaut)</p>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <h4 style="margin-top: 25px; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">🖱️ Contrôles de Navigation</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_zoom_with_wheel">Zoom avec molette</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_zoom_with_wheel" name="canvas_zoom_with_wheel" value="1" <?php checked(get_option('pdf_builder_canvas_zoom_with_wheel', true), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Permet de zoomer avec la molette de la souris</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_pan_enabled">Déplacement activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', true), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Permet de déplacer le canvas en maintenant le clic droit</p>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="zoom">Sauvegarder</button>
             </div>
         </div>
     </div>

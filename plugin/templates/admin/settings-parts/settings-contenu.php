@@ -103,7 +103,7 @@
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">🔍</span>
-                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_navigation_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_navigation_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
+                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                             <h4>Zoom & Navigation</h4>
                         </div>

@@ -1494,42 +1494,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Gestion des boutons de configuration des cartes canvas (ouverture des modals)
-        if (event.target.classList.contains('canvas-configure-btn') || event.target.closest('.canvas-configure-btn')) {
-            event.preventDefault();
-            const card = event.target.closest('.canvas-card');
-            if (card) {
-                const category = card.getAttribute('data-category');
-                if (category) {
-                    const modal = document.getElementById(`canvas-${category}-modal`);
-                    if (modal) {
-                        modal.style.display = 'block';
-                        // Focus sur le modal pour la navigation clavier
-                        modal.setAttribute('tabindex', '-1');
-                        modal.focus();
-                    }
-                }
-            }
-        }
-
-        // Gestion de la fermeture des modals canvas
-        if (event.target.classList.contains('canvas-modal-close') || event.target.classList.contains('canvas-modal-cancel')) {
-            event.preventDefault();
-            const modal = event.target.closest('.canvas-modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        // Fermeture des modals en cliquant sur l'overlay
-        if (event.target.classList.contains('canvas-modal-overlay')) {
-            event.preventDefault();
-            const modal = event.target.closest('.canvas-modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
         // Gestion des boutons de sauvegarde des modales canvas
         if (event.target.classList.contains('canvas-modal-save')) {
             event.preventDefault();
@@ -1674,73 +1638,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Aussi initialiser au chargement de la page si le modal est déjà ouvert
     setupGridSynchronization();
-
-    // Gestion des contrôles de zoom interactifs dans la modal Zoom & Navigation
-    function setupZoomControls() {
-        const zoomOutBtn = document.getElementById('zoom-out-btn');
-        const zoomInBtn = document.getElementById('zoom-in-btn');
-        const zoomResetBtn = document.getElementById('zoom-reset-btn');
-        const zoomDisplay = document.getElementById('zoom-display');
-        const zoomDefaultInput = document.getElementById('canvas_zoom_default');
-
-        if (!zoomOutBtn || !zoomInBtn || !zoomResetBtn || !zoomDisplay || !zoomDefaultInput) {
-            return;
-        }
-
-        let currentZoom = parseInt(zoomDefaultInput.value) || 100;
-
-        function updateZoomDisplay() {
-            zoomDisplay.textContent = currentZoom + '%';
-            zoomDefaultInput.value = currentZoom;
-        }
-
-        function clampZoom(value) {
-            const minZoom = parseInt(document.getElementById('canvas_zoom_min')?.value) || 10;
-            const maxZoom = parseInt(document.getElementById('canvas_zoom_max')?.value) || 500;
-            return Math.max(minZoom, Math.min(maxZoom, value));
-        }
-
-        zoomOutBtn.addEventListener('click', function() {
-            const step = parseInt(document.getElementById('canvas_zoom_step')?.value) || 25;
-            currentZoom = clampZoom(currentZoom - step);
-            updateZoomDisplay();
-        });
-
-        zoomInBtn.addEventListener('click', function() {
-            const step = parseInt(document.getElementById('canvas_zoom_step')?.value) || 25;
-            currentZoom = clampZoom(currentZoom + step);
-            updateZoomDisplay();
-        });
-
-        zoomResetBtn.addEventListener('click', function() {
-            currentZoom = 100;
-            updateZoomDisplay();
-        });
-
-        // Mettre à jour l'affichage initial
-        updateZoomDisplay();
-
-        // Synchroniser avec les changements des inputs min/max/step
-        ['canvas_zoom_min', 'canvas_zoom_max', 'canvas_zoom_step'].forEach(id => {
-            const input = document.getElementById(id);
-            if (input) {
-                input.addEventListener('input', function() {
-                    currentZoom = clampZoom(currentZoom);
-                    updateZoomDisplay();
-                });
-            }
-        });
-    }
-
-    // Initialiser les contrôles de zoom quand la modal est ouverte
-    const zoomCard = document.querySelector('.canvas-card[data-category="zoom"]');
-    if (zoomCard) {
-        zoomCard.addEventListener('click', function() {
-            // Attendre que le modal soit ouvert avant d'initialiser
-            setTimeout(setupZoomControls, 100);
-        });
-    }
-
-    // Aussi initialiser au chargement de la page si le modal est déjà ouvert
-    setupZoomControls();
 });
