@@ -101,7 +101,13 @@ export function Toolbar({ className }: ToolbarProps) {
           <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>
             Outils
           </h4>
-          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '4px',
+            maxHeight: '80px', // Force le wrap sur 2 lignes max
+            alignContent: 'flex-start'
+          }}>
             {tools.map(tool => (
               <button
                 key={tool.mode}
@@ -133,7 +139,13 @@ export function Toolbar({ className }: ToolbarProps) {
           <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>
             Actions
           </h4>
-          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '4px',
+            maxHeight: '80px', // Force le wrap sur 2 lignes max
+            alignContent: 'flex-start'
+          }}>
             {/* Historique */}
             <button
               onClick={handleUndo}
