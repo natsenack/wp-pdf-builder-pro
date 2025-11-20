@@ -28,7 +28,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const isDraggingRef = useRef(false);
   const isResizingRef = useRef(false);
   const isRotatingRef = useRef(false);
-  const dragStartRef = useRef({ x: 0, y: 0 });  // Pour drag : position élément initial
+  const dragStartRef = useRef<Record<string, { x: number; y: number }>>({});  // Pour drag multiple : positions initiales de tous les éléments
   const dragMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début du drag
   const resizeMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début du resize
   const rotationMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début de la rotation
@@ -51,7 +51,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       return;
     }
 
-    const { x: newX, y: newY } = pendingDragUpdateRef.current;
+    const { x: currentMouseX, y: currentMouseY } = pendingDragUpdateRef.current;
     const lastState = lastKnownStateRef.current;
 
     // ✅ MODIFICATION: Gérer le drag multiple
@@ -61,18 +61,22 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       return;
     }
 
-    // Calculer le delta de déplacement depuis le début du drag
-    const deltaX = newX - dragStartRef.current.x;
-    const deltaY = newY - dragStartRef.current.y;
+    // Calculer le delta de déplacement de la souris depuis le début du drag
+    const mouseDeltaX = currentMouseX - dragMouseStartRef.current.x;
+    const mouseDeltaY = currentMouseY - dragMouseStartRef.current.y;
 
     // Mettre à jour tous les éléments sélectionnés
     selectedIds.forEach(elementId => {
       const element = lastState.elements.find(el => el.id === elementId);
       if (!element) return;
 
-      // Calculer la nouvelle position
-      let finalX = element.x + deltaX;
-      let finalY = element.y + deltaY;
+      // Récupérer la position de départ de cet élément spécifique
+      const elementStartPos = dragStartRef.current[elementId];
+      if (!elementStartPos) return;
+
+      // Calculer la nouvelle position en appliquant le delta de la souris à la position de départ
+      let finalX = elementStartPos.x + mouseDeltaX;
+      let finalY = elementStartPos.y + mouseDeltaY;
 
       // ✅ AJOUT: Logique d'accrochage à la grille
       if (lastState.canvas.snapToGrid && lastState.canvas.gridSize > 0) {
@@ -431,7 +435,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
           // ✅ CORRECTION: Préparer le drag immédiatement pour permettre drag après sélection
           isDraggingRef.current = true;
-          dragStartRef.current = { x: clickedElement.x, y: clickedElement.y };  // Position élément
+          // Stocker les positions de départ de tous les éléments sélectionnés
+          dragStartRef.current = { [clickedElement.id]: { x: clickedElement.x, y: clickedElement.y } };
           dragMouseStartRef.current = { x, y };  // Position souris
           selectedElementRef.current = clickedElement.id;
           event.preventDefault();
@@ -440,7 +445,15 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
         // ✅ L'élément est déjà sélectionné - préparer le drag
         isDraggingRef.current = true;
-        dragStartRef.current = { x: clickedElement.x, y: clickedElement.y };  // Position élément
+        // Stocker les positions de départ de tous les éléments sélectionnés
+        const startPositions: Record<string, { x: number; y: number }> = {};
+        state.selection.selectedElements.forEach(id => {
+          const element = state.elements.find(el => el.id === id);
+          if (element) {
+            startPositions[id] = { x: element.x, y: element.y };
+          }
+        });
+        dragStartRef.current = startPositions;
         dragMouseStartRef.current = { x, y };  // Position souris
         selectedElementRef.current = clickedElement.id;
         event.preventDefault();
@@ -712,14 +725,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     updateCursor(cursor);
 
     if (isDraggingRef.current && selectedElementRef.current) {
-      // ✅ OPTIMISATION FLUIDITÉ: Calculer la nouvelle position
-      const deltaX = x - dragMouseStartRef.current.x;
-      const deltaY = y - dragMouseStartRef.current.y;
-      const newX = dragStartRef.current.x + deltaX;
-      const newY = dragStartRef.current.y + deltaY;
-
-      // Stocker la position calculée pour l'update RAF
-      pendingDragUpdateRef.current = { x: newX, y: newY };
+      // ✅ OPTIMISATION FLUIDITÉ: Pour le drag multiple, passer directement les coordonnées actuelles de la souris
+      // performDragUpdate calculera la nouvelle position pour chaque élément individuellement
+      pendingDragUpdateRef.current = { x, y };
 
       // Programmer l'update avec RAF si pas déjà programmé
       if (rafIdRef.current === null) {
