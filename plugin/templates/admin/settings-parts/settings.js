@@ -725,20 +725,20 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function showSuccessMessage(message) {
         hideMessages();
-        const notice = $('<div class="admin-notice success-message"><p>' + message + '</p></div>');
-        $('body').append(notice);
+        const notice = jQuery('<div class="admin-notice success-message"><p>' + message + '</p></div>');
+        jQuery('body').append(notice);
         setTimeout(() => notice.fadeOut(() => notice.remove()), 5000);
     }
 
     function showErrorMessage(message) {
         hideMessages();
-        const notice = $('<div class="admin-notice error-message"><p>' + message + '</p></div>');
-        $('body').append(notice);
+        const notice = jQuery('<div class="admin-notice error-message"><p>' + message + '</p></div>');
+        jQuery('body').append(notice);
         setTimeout(() => notice.fadeOut(() => notice.remove()), 5000);
     }
 
     function hideMessages() {
-        $('.admin-notice').remove();
+        jQuery('.admin-notice').remove();
     }
 
     // AJAX handling for canvas modal saves
