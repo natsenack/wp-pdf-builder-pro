@@ -7,6 +7,7 @@ interface UseCanvasDropProps {
   canvasWidth: number;
   canvasHeight: number;
   elements: Element[];
+  dragEnabled?: boolean;
 }
 
 interface DragData {
@@ -15,7 +16,7 @@ interface DragData {
   defaultProps: Record<string, unknown>;
 }
 
-export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }: UseCanvasDropProps) => {
+export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, dragEnabled = true }: UseCanvasDropProps) => {
   const { state, dispatch } = useBuilder();
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -118,6 +119,8 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
   }, [generateElementId]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
+    if (!dragEnabled) return;
+    
     e.preventDefault();
     setIsDragOver(false);
 
@@ -170,21 +173,25 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements }
   }, [validateDragData, calculateDropPosition, createElementFromDragData, elements, dispatch, generateElementId]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
+    if (!dragEnabled) return;
+    
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
 
     if (!isDragOver) {
       setIsDragOver(true);
     }
-  }, [isDragOver]);
+  }, [isDragOver, dragEnabled]);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
+    if (!dragEnabled) return;
+    
     // Simple check - if we have a relatedTarget, assume drag is leaving
     // This is a simplified approach to avoid DOM type issues
     if (e.relatedTarget) {
       setIsDragOver(false);
     }
-  }, []);
+  }, [dragEnabled]);
 
   return {
     handleDrop,

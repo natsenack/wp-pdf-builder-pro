@@ -1223,7 +1223,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     canvasRef,
     canvasWidth: width,
     canvasHeight: height,
-    elements: state.elements || []
+    elements: state.elements || [],
+    dragEnabled: canvasSettings.selectionDragEnabled
   });
 
   const { handleCanvasClick, handleMouseDown, handleMouseMove, handleMouseUp, handleContextMenu } = useCanvasInteraction({
@@ -1829,24 +1830,26 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     ctx.setLineDash([5, 5]);
     ctx.strokeRect(minX - 2, minY - 2, maxX - minX + 4, maxY - minY + 4);
 
-    // Poignées de redimensionnement
-    const handleSize = 6;
-    ctx.fillStyle = '#007acc';
-    ctx.setLineDash([]);
+    // Poignées de redimensionnement (conditionnées par les settings)
+    if (canvasSettings.selectionShowHandles) {
+      const handleSize = 6;
+      ctx.fillStyle = '#007acc';
+      ctx.setLineDash([]);
 
-    // Coins
-    ctx.fillRect(minX - handleSize/2, minY - handleSize/2, handleSize, handleSize);
-    ctx.fillRect(maxX - handleSize/2, minY - handleSize/2, handleSize, handleSize);
-    ctx.fillRect(minX - handleSize/2, maxY - handleSize/2, handleSize, handleSize);
-    ctx.fillRect(maxX - handleSize/2, maxY - handleSize/2, handleSize, handleSize);
+      // Coins
+      ctx.fillRect(minX - handleSize/2, minY - handleSize/2, handleSize, handleSize);
+      ctx.fillRect(maxX - handleSize/2, minY - handleSize/2, handleSize, handleSize);
+      ctx.fillRect(minX - handleSize/2, maxY - handleSize/2, handleSize, handleSize);
+      ctx.fillRect(maxX - handleSize/2, maxY - handleSize/2, handleSize, handleSize);
 
-    // Centres des côtés
-    const midX = (minX + maxX) / 2;
-    const midY = (minY + maxY) / 2;
-    ctx.fillRect(midX - handleSize/2, minY - handleSize/2, handleSize, handleSize);
-    ctx.fillRect(midX - handleSize/2, maxY - handleSize/2, handleSize, handleSize);
-    ctx.fillRect(minX - handleSize/2, midY - handleSize/2, handleSize, handleSize);
-    ctx.fillRect(maxX - handleSize/2, midY - handleSize/2, handleSize, handleSize);
+      // Centres des côtés
+      const midX = (minX + maxX) / 2;
+      const midY = (minY + maxY) / 2;
+      ctx.fillRect(midX - handleSize/2, minY - handleSize/2, handleSize, handleSize);
+      ctx.fillRect(midX - handleSize/2, maxY - handleSize/2, handleSize, handleSize);
+      ctx.fillRect(minX - handleSize/2, midY - handleSize/2, handleSize, handleSize);
+      ctx.fillRect(maxX - handleSize/2, midY - handleSize/2, handleSize, handleSize);
+    }
 
     // Afficher les dimensions pour chaque élément sélectionné
     selectedElements.forEach(el => {

@@ -43,6 +43,7 @@ export interface CanvasSettingsContextType {
   zoomStep: number;
   
   // Sélection
+  selectionDragEnabled: boolean;
   selectionMultiSelectEnabled: boolean;
   selectionRotationEnabled: boolean;
   selectionCopyPasteEnabled: boolean;
@@ -107,6 +108,7 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   zoomMax: 500,
   zoomStep: 25,
   
+  selectionDragEnabled: true,
   selectionMultiSelectEnabled: true,
   selectionRotationEnabled: false,
   selectionCopyPasteEnabled: true,
@@ -196,6 +198,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       zoomStep: Math.max(1, (windowSettings.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep),
       
       // Sélection
+      selectionDragEnabled: windowSettings.drag_enabled === true || windowSettings.drag_enabled === '1',
       selectionMultiSelectEnabled: windowSettings.multi_select === true || windowSettings.multi_select === '1',
       selectionRotationEnabled: windowSettings.enable_rotation === true || windowSettings.enable_rotation === '1',
       selectionCopyPasteEnabled: windowSettings.copy_paste_enabled === true || windowSettings.copy_paste_enabled === '1',
@@ -317,6 +320,15 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
               return Math.max(minZoom, maxZoom);
             })(),
             zoomStep: Math.max(1, (data.data.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep),
+            
+            // Sélection
+            selectionDragEnabled: data.data.drag_enabled === true || data.data.drag_enabled === '1',
+            selectionMultiSelectEnabled: data.data.multi_select === true || data.data.multi_select === '1',
+            selectionRotationEnabled: data.data.enable_rotation === true || data.data.enable_rotation === '1',
+            selectionCopyPasteEnabled: data.data.copy_paste_enabled === true || data.data.copy_paste_enabled === '1',
+            selectionShowHandles: data.data.show_resize_handles === true || data.data.show_resize_handles === '1',
+            selectionHandleSize: (data.data.handle_size as number) ?? DEFAULT_SETTINGS.selectionHandleSize,
+            selectionHandleColor: (data.data.handle_color as string) ?? DEFAULT_SETTINGS.selectionHandleColor,
             
             // Autres paramètres...
             isLoading: false,

@@ -146,13 +146,13 @@ input:checked + .toggle-slider:before {
                             </div>
                         </div>
 
-                        <!-- Carte Zoom & Navigation -->
+                        <!-- Carte Zoom -->
                         <div class="canvas-card" id="zoom-navigation-card" data-category="zoom">
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🔍</span>
                                 </div>
-                                <h4>Zoom & Navigation</h4>
+                                <h4>Zoom</h4>
                             </div>
                             <div class="canvas-card-content">
                                 <p>Contrôlez les niveaux de zoom et les options de navigation.</p>
