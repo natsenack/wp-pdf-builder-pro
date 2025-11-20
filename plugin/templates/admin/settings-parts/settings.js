@@ -699,67 +699,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // AJAX handling for canvas modal saves
-    const modalSaveButtons = document.querySelectorAll('.canvas-modal-save');
-    modalSaveButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
-            const modal = this.closest('.canvas-modal');
-            const form = modal.querySelector('form');
-
-            if (!form) {
-                console.error('No form found in modal for category:', category);
-                return;
-            }
-
-            // Collect form data
-            const formData = new FormData(form);
-            formData.append('action', 'pdf_builder_save_canvas_settings');
-            formData.append('nonce', pdf_builder_ajax.nonce);
-
-            // Disable button during save
-            const originalText = this.textContent;
-            this.disabled = true;
-            this.textContent = '⏳ Sauvegarde...';
-
-            // Send AJAX request
-            fetch(pdf_builder_ajax.ajax_url, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Close modal
-                    modal.style.display = 'none';
-
-                    // Dispatch custom event for status indicator updates
-                    const event = new CustomEvent('modalSaved', {
-                        detail: {
-                            category: category,  // Use the actual category from button
-                            settings: data.data.saved
-                        }
-                    });
-                    document.dispatchEvent(event);
-
-                    // Show success message
-                    showCanvasSaveResult('✅ Paramètres sauvegardés avec succès', 'success');
-                } else {
-                    showCanvasSaveResult('❌ Erreur: ' + (data.data || 'Erreur inconnue'), 'error');
-                }
-            })
-            .catch(error => {
-                console.error('AJAX error:', error);
-                showCanvasSaveResult('❌ Erreur réseau lors de la sauvegarde', 'error');
-            })
-            .finally(() => {
-                // Re-enable button
-                this.disabled = false;
-                this.textContent = originalText;
-            });
-        });
-    });
-
     // Function to show canvas save results
     function showCanvasSaveResult(message, type = 'success') {
         // Create or find result container

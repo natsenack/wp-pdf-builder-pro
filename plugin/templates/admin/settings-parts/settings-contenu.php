@@ -1,27 +1,6 @@
 <?php // Content tab content - Updated: 2025-11-18 20:20:00 ?>
 
 <style>
-/* Dynamic status indicators for canvas cards */
-.canvas-card-status.active {
-    background: #28a745;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.canvas-card-status.inactive {
-    background: #dc3545;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
 /* Toggle switch styles */
 .toggle-switch {
     position: relative;
@@ -172,7 +151,6 @@ input:checked + .toggle-slider:before {
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🔍</span>
-                                    <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'active' : 'inactive'; ?>" id="zoom-navigation-status"><?php echo get_option('pdf_builder_canvas_pan_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                                 </div>
                                 <h4>Zoom & Navigation</h4>
                             </div>
@@ -295,7 +273,6 @@ input:checked + .toggle-slider:before {
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">💾</span>
-                                    <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>" id="autosave-status"><?php echo get_option('pdf_builder_canvas_autosave_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                                 </div>
                                 <h4>Sauvegarde Auto</h4>
                             </div>
@@ -320,7 +297,6 @@ input:checked + .toggle-slider:before {
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🐛</span>
-                                    <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_debug_enabled', false) ? 'ACTIF' : 'INACTIF'; ?>" id="debug-status"><?php echo get_option('pdf_builder_canvas_debug_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
                                 </div>
                                 <h4>Debug</h4>
                             </div>
@@ -417,84 +393,5 @@ input:checked + .toggle-slider:before {
                 }
             });
         });
-
-        // Update status indicators after modal save
-        document.addEventListener('modalSaved', function(e) {
-            const category = e.detail.category;
-            const settings = e.detail.settings;
-
-            console.log('Modal saved event received:', category, settings);
-            updateStatusIndicator(category, settings);
-        });
     });
-
-    // Function to update status indicators based on category and settings
-    function updateStatusIndicator(category, settings) {
-        console.log('Updating status indicator for category:', category, 'with settings:', settings);
-
-        if (category === 'canvas') {
-            // Handle canvas category with new unified logic
-            // Update zoom toggle indicator
-            if (settings.hasOwnProperty('pan_enabled')) {
-                console.log('Found pan_enabled in settings:', settings.pan_enabled);
-                const zoomStatus = document.getElementById('zoom-navigation-status');
-                if (zoomStatus) {
-                    const isActive = settings.pan_enabled == '1' || settings.pan_enabled === true || settings.pan_enabled === 1;
-                    zoomStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-                    zoomStatus.className = 'canvas-card-status ' + (isActive ? 'active' : 'inactive');
-                    console.log('Zoom status updated to:', zoomStatus.textContent);
-                }
-            }
-
-            // Update autosave toggle indicator
-            if (settings.hasOwnProperty('auto_save')) {
-                const autosaveStatus = document.getElementById('autosave-status');
-                if (autosaveStatus) {
-                    const isActive = settings.auto_save == '1' || settings.auto_save === true || settings.auto_save === 1;
-                    autosaveStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-                    autosaveStatus.className = 'canvas-card-status ' + (isActive ? 'active' : 'inactive');
-                }
-            }
-
-            // Update debug toggle indicator
-            if (settings.hasOwnProperty('debug_enabled')) {
-                const debugStatus = document.getElementById('debug-status');
-                if (debugStatus) {
-                    const isActive = settings.debug_enabled == '1' || settings.debug_enabled === true || settings.debug_enabled === 1;
-                    debugStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-                    debugStatus.className = 'canvas-card-status ' + (isActive ? 'active' : 'inactive');
-                }
-            }
-        } else {
-            // Handle individual categories with legacy logic
-            switch(category) {
-                case 'zoom':
-                    const zoomStatus = document.getElementById('zoom-navigation-status');
-                    if (zoomStatus && settings.pan_enabled !== undefined) {
-                        const isActive = settings.pan_enabled == '1';
-                        zoomStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-                        zoomStatus.className = 'canvas-card-status ' + (isActive ? 'active' : 'inactive');
-                    }
-                    break;
-
-                case 'autosave':
-                    const autosaveStatus = document.getElementById('autosave-status');
-                    if (autosaveStatus && settings.auto_save !== undefined) {
-                        const isActive = settings.auto_save == '1';
-                        autosaveStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-                        autosaveStatus.className = 'canvas-card-status ' + (isActive ? 'active' : 'inactive');
-                    }
-                    break;
-
-                case 'debug':
-                    const debugStatus = document.getElementById('debug-status');
-                    if (debugStatus && settings.debug_enabled !== undefined) {
-                        const isActive = settings.debug_enabled == '1';
-                        debugStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-                        debugStatus.className = 'canvas-card-status ' + (isActive ? 'active' : 'inactive');
-                    }
-                    break;
-            }
-        }
-    }
 </script>
