@@ -1555,10 +1555,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             modal.style.display = 'none';
                         }
 
-                        // Recharger la page pour mettre à jour tous les indicateurs
-                        setTimeout(() => {
-                            location.reload();
-                        }, 500);
+                        // Déclencher un événement personnalisé pour mettre à jour les indicateurs
+                        document.dispatchEvent(new CustomEvent('modalSaved', {
+                            detail: {
+                                category: category,
+                                settings: data.data.saved
+                            }
+                        }));
                     }, 1500);
 
                     // Réactiver le bouton après 3 secondes
