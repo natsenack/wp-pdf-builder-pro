@@ -160,7 +160,10 @@ input:checked + .toggle-slider:before {
                             <div class="canvas-card-preview">
                                 <div class="zoom-preview">
                                     <span class="zoom-minus">-</span>
-                                    <span class="zoom-value">10-500%</span>
+                                    <span class="zoom-value" id="zoom-preview-value">
+                                        <?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>-
+                                        <?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>%
+                                    </span>
                                     <span class="zoom-plus">+</span>
                                 </div>
                             </div>
@@ -393,5 +396,41 @@ input:checked + .toggle-slider:before {
                 }
             });
         });
+
+        // Update zoom preview
+        function updateZoomPreview() {
+            const zoomPreview = document.getElementById('zoom-preview-value');
+            if (zoomPreview) {
+                // Get current values from options (this would need AJAX in real implementation)
+                // For now, we'll update it when settings are saved
+                fetch(window.pdfBuilderAjax?.ajax_url || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'pdf_builder_get_canvas_settings',
+                        nonce: window.pdfBuilderAjax?.nonce || ''
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data) {
+                        const minZoom = data.data.min_zoom || 10;
+                        const maxZoom = data.data.max_zoom || 500;
+                        zoomPreview.textContent = minZoom + '-' + maxZoom + '%';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating zoom preview:', error);
+                });
+            }
+        }
+
+        // Update zoom preview on settings update
+        window.addEventListener('canvasSettingsUpdated', updateZoomPreview);
+
+        // Initial update
+        updateZoomPreview();
     });
 </script>
