@@ -64,7 +64,7 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleToggleGrid = () => {
-    if (toggleGrid) {
+    if (toggleGrid && canvasSettings.gridShow) {
       toggleGrid();
     }
   };
@@ -76,11 +76,12 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleToggleSnapToGrid = () => {
-    // Toggle snap to grid via canvas settings
-    const newSnapToGrid = !state.canvas.snapToGrid;
-    // Use setCanvas to update canvas state directly
-    if (setCanvas) {
-      setCanvas({ snapToGrid: newSnapToGrid });
+    // Vérifier que la grille globale est activée avant d'autoriser l'accrochage
+    if (canvasSettings.gridShow && canvasSettings.gridSnapEnabled) {
+      const newSnapToGrid = !state.canvas.snapToGrid;
+      if (setCanvas) {
+        setCanvas({ snapToGrid: newSnapToGrid });
+      }
     }
   };
 
@@ -244,27 +245,29 @@ export function Toolbar({ className }: ToolbarProps) {
             {/* Grille */}
             <button
               onClick={handleToggleGrid}
+              disabled={!canvasSettings.gridShow}
               style={{
                 padding: '8px 12px',
                 border: '1px solid #d1d5db',
                 borderRadius: '6px',
-                backgroundColor: state.canvas.showGrid ? '#3b82f6' : '#ffffff',
-                color: state.canvas.showGrid ? '#ffffff' : '#374151',
-                cursor: 'pointer',
+                backgroundColor: !canvasSettings.gridShow ? '#f9fafb' : (state.canvas.showGrid ? '#3b82f6' : '#ffffff'),
+                color: !canvasSettings.gridShow ? '#9ca3af' : (state.canvas.showGrid ? '#ffffff' : '#374151'),
+                cursor: !canvasSettings.gridShow ? 'not-allowed' : 'pointer',
                 fontSize: '13px',
                 fontWeight: '500',
                 transition: 'all 0.2s ease',
                 boxShadow: state.canvas.showGrid ? '0 1px 3px rgba(59, 130, 246, 0.3)' : 'none',
+                opacity: !canvasSettings.gridShow ? 0.6 : 1,
                 minWidth: '90px'
               }}
               onMouseEnter={(e) => {
-                if (!state.canvas.showGrid) {
+                if (canvasSettings.gridShow && !state.canvas.showGrid) {
                   e.currentTarget.style.backgroundColor = '#f8fafc';
                   e.currentTarget.style.borderColor = '#9ca3af';
                 }
               }}
               onMouseLeave={(e) => {
-                if (!state.canvas.showGrid) {
+                if (canvasSettings.gridShow && !state.canvas.showGrid) {
                   e.currentTarget.style.backgroundColor = '#ffffff';
                   e.currentTarget.style.borderColor = '#d1d5db';
                 }
@@ -274,27 +277,29 @@ export function Toolbar({ className }: ToolbarProps) {
             </button>
             <button
               onClick={handleToggleSnapToGrid}
+              disabled={!canvasSettings.gridShow || !canvasSettings.gridSnapEnabled}
               style={{
                 padding: '8px 12px',
                 border: '1px solid #d1d5db',
                 borderRadius: '6px',
-                backgroundColor: state.canvas.snapToGrid ? '#3b82f6' : '#ffffff',
-                color: state.canvas.snapToGrid ? '#ffffff' : '#374151',
-                cursor: 'pointer',
+                backgroundColor: (!canvasSettings.gridShow || !canvasSettings.gridSnapEnabled) ? '#f9fafb' : (state.canvas.snapToGrid ? '#3b82f6' : '#ffffff'),
+                color: (!canvasSettings.gridShow || !canvasSettings.gridSnapEnabled) ? '#9ca3af' : (state.canvas.snapToGrid ? '#ffffff' : '#374151'),
+                cursor: (!canvasSettings.gridShow || !canvasSettings.gridSnapEnabled) ? 'not-allowed' : 'pointer',
                 fontSize: '13px',
                 fontWeight: '500',
                 transition: 'all 0.2s ease',
                 boxShadow: state.canvas.snapToGrid ? '0 1px 3px rgba(59, 130, 246, 0.3)' : 'none',
+                opacity: (!canvasSettings.gridShow || !canvasSettings.gridSnapEnabled) ? 0.6 : 1,
                 minWidth: '90px'
               }}
               onMouseEnter={(e) => {
-                if (!state.canvas.snapToGrid) {
+                if (canvasSettings.gridShow && canvasSettings.gridSnapEnabled && !state.canvas.snapToGrid) {
                   e.currentTarget.style.backgroundColor = '#f8fafc';
                   e.currentTarget.style.borderColor = '#9ca3af';
                 }
               }}
               onMouseLeave={(e) => {
-                if (!state.canvas.snapToGrid) {
+                if (canvasSettings.gridShow && canvasSettings.gridSnapEnabled && !state.canvas.snapToGrid) {
                   e.currentTarget.style.backgroundColor = '#ffffff';
                   e.currentTarget.style.borderColor = '#d1d5db';
                 }
