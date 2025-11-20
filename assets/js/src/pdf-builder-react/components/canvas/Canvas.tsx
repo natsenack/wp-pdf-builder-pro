@@ -2419,6 +2419,14 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     const selectionHash = JSON.stringify(state.selection.selectedElements);
     elementsHash += selectionHash;
 
+    // ✅ CRITICAL: Include canvas settings (grid, guides, snap) in hash to trigger re-render when they change
+    const canvasSettingsHash = JSON.stringify({
+      showGrid: state.canvas.showGrid,
+      snapToGrid: state.canvas.snapToGrid,
+      showGuides: state.template.showGuides
+    });
+    elementsHash += `;canvasSettings:${canvasSettingsHash}`;
+
     // ✅ CRITICAL: Include imageLoadCount in hash to force re-render when images load
     elementsHash += `;imageLoadCount:${imageLoadCount}`;
     
