@@ -699,24 +699,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Function to show canvas save results
-    function showCanvasSaveResult(message, type = 'success') {
-        // Create or find result container
-        let resultDiv = document.getElementById('canvas-save-result');
-        if (!resultDiv) {
-            resultDiv = document.createElement('div');
-            resultDiv.id = 'canvas-save-result';
-            resultDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 10001; max-width: 400px;';
-            document.body.appendChild(resultDiv);
-        }
+    /**
+     * Messages de succès/erreur uniformes au plugin
+     */
+    function showSuccessMessage(message) {
+        hideMessages();
+        const notice = $('<div class="admin-notice success-message"><p>' + message + '</p></div>');
+        $('body').append(notice);
+        setTimeout(() => notice.fadeOut(() => notice.remove()), 5000);
+    }
 
-        resultDiv.innerHTML = `<div class="notice notice-${type} is-dismissible" style="margin: 0;"><p>${message}</p></div>`;
-        resultDiv.style.display = 'block';
+    function showErrorMessage(message) {
+        hideMessages();
+        const notice = $('<div class="admin-notice error-message"><p>' + message + '</p></div>');
+        $('body').append(notice);
+        setTimeout(() => notice.fadeOut(() => notice.remove()), 5000);
+    }
 
-        // Auto-hide after 3 seconds
-        setTimeout(() => {
-            resultDiv.style.display = 'none';
-        }, 3000);
+    function hideMessages() {
+        $('.admin-notice').remove();
     }
 
     // AJAX handling for canvas modal saves
@@ -756,14 +757,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     // Show success message
-                    showCanvasSaveResult('✅ Paramètres sauvegardés avec succès', 'success');
+                    showSuccessMessage('Paramètres sauvegardés avec succès');
                 } else {
-                    showCanvasSaveResult('❌ Erreur: ' + (data.data || 'Erreur inconnue'), 'error');
+                    showErrorMessage('Erreur: ' + (data.data || 'Erreur inconnue'));
                 }
             })
             .catch(error => {
                 console.error('AJAX error:', error);
-                showCanvasSaveResult('❌ Erreur réseau lors de la sauvegarde', 'error');
+                showErrorMessage('Erreur réseau lors de la sauvegarde');
             })
             .finally(() => {
                 // Re-enable button
