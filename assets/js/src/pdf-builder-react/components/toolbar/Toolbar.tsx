@@ -113,18 +113,13 @@ export function Toolbar({ className }: ToolbarProps) {
                 key={tool.mode}
                 onClick={() => handleModeChange(tool.mode)}
                 style={{
-                  padding: '8px 12px',
+                  padding: '6px 12px',
                   border: '1px solid #ccc',
                   borderRadius: '4px',
                   backgroundColor: state.mode === tool.mode ? '#007acc' : '#ffffff',
                   color: state.mode === tool.mode ? '#ffffff' : '#000000',
                   cursor: 'pointer',
-                  fontSize: '14px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  minWidth: '100px',
-                  textAlign: 'left'
+                  fontSize: '12px'
                 }}
               >
                 <span>{tool.icon}</span>
@@ -151,15 +146,13 @@ export function Toolbar({ className }: ToolbarProps) {
               onClick={handleUndo}
               disabled={!state.history.canUndo}
               style={{
-                padding: '8px 12px',
+                padding: '6px 12px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 backgroundColor: state.history.canUndo ? '#ffffff' : '#f0f0f0',
                 color: state.history.canUndo ? '#000000' : '#999999',
                 cursor: state.history.canUndo ? 'pointer' : 'not-allowed',
-                fontSize: '14px',
-                minWidth: '100px',
-                textAlign: 'left'
+                fontSize: '12px'
               }}
             >
               ↶ Annuler
@@ -168,15 +161,13 @@ export function Toolbar({ className }: ToolbarProps) {
               onClick={handleRedo}
               disabled={!state.history.canRedo}
               style={{
-                padding: '8px 12px',
+                padding: '6px 12px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 backgroundColor: state.history.canRedo ? '#ffffff' : '#f0f0f0',
                 color: state.history.canRedo ? '#000000' : '#999999',
                 cursor: state.history.canRedo ? 'pointer' : 'not-allowed',
-                fontSize: '14px',
-                minWidth: '100px',
-                textAlign: 'left'
+                fontSize: '12px'
               }}
             >
               ↷ Rétablir
@@ -186,15 +177,13 @@ export function Toolbar({ className }: ToolbarProps) {
             <button
               onClick={handleToggleGrid}
               style={{
-                padding: '8px 12px',
+                padding: '6px 12px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 backgroundColor: state.canvas.showGrid ? '#007acc' : '#ffffff',
                 color: state.canvas.showGrid ? '#ffffff' : '#000000',
                 cursor: 'pointer',
-                fontSize: '14px',
-                minWidth: '100px',
-                textAlign: 'left'
+                fontSize: '12px'
               }}
             >
               {state.canvas.showGrid ? '⬜ Grille' : '▦ Grille'}
@@ -202,15 +191,13 @@ export function Toolbar({ className }: ToolbarProps) {
             <button
               onClick={handleToggleSnapToGrid}
               style={{
-                padding: '8px 12px',
+                padding: '6px 12px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 backgroundColor: state.canvas.snapToGrid ? '#007acc' : '#ffffff',
                 color: state.canvas.snapToGrid ? '#ffffff' : '#000000',
                 cursor: 'pointer',
-                fontSize: '14px',
-                minWidth: '100px',
-                textAlign: 'left'
+                fontSize: '12px'
               }}
             >
               🧲 Snap
@@ -219,15 +206,13 @@ export function Toolbar({ className }: ToolbarProps) {
               onClick={handleToggleGuides}
               disabled={!canvasSettings.guidesEnabled}
               style={{
-                padding: '8px 12px',
+                padding: '6px 12px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 backgroundColor: !canvasSettings.guidesEnabled ? '#f0f0f0' : (state.template.showGuides ? '#007acc' : '#ffffff'),
                 color: !canvasSettings.guidesEnabled ? '#999' : (state.template.showGuides ? '#ffffff' : '#000000'),
                 cursor: !canvasSettings.guidesEnabled ? 'not-allowed' : 'pointer',
-                fontSize: '14px',
-                minWidth: '100px',
-                textAlign: 'left',
+                fontSize: '12px',
                 opacity: !canvasSettings.guidesEnabled ? 0.6 : 1
               }}
             >
@@ -238,15 +223,13 @@ export function Toolbar({ className }: ToolbarProps) {
             <button
               onClick={handleReset}
               style={{
-                padding: '8px 12px',
+                padding: '6px 12px',
                 border: '1px solid #ccc',
                 borderRadius: '4px',
                 backgroundColor: '#ffffff',
                 color: '#000000',
                 cursor: 'pointer',
-                fontSize: '14px',
-                minWidth: '100px',
-                textAlign: 'left'
+                fontSize: '12px'
               }}
             >
               🔄 Reset
