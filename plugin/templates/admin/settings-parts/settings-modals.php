@@ -3,7 +3,7 @@
 <!-- Canvas Configuration Modals -->
 <div id="canvas-dimensions-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">📐 Dimensions & Format</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -180,14 +180,14 @@
                         Personnalisez les couleurs et les effets pour un meilleur confort de travail.
                     </p>
                 </div>
-<?php
-/**
- * Paramètres canvas pour les modales
- * Définit les valeurs par défaut depuis les options séparées (synchronisées)
- */
+            <?php
+            /**
+             * Paramètres canvas pour les modales
+             * Définit les valeurs par défaut depuis les options séparées (synchronisées)
+             */
 
-// Les modales lisent depuis les options séparées pour cohérence
-?>
+            // Les modales lisent depuis les options séparées pour cohérence
+            ?>
 
                 <form id="canvas-apparence-form">
                     <h4 style="margin-top: 0; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">🎨 Canvas</h4>
