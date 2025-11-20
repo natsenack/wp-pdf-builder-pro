@@ -423,39 +423,47 @@ input:checked + .toggle-slider:before {
             const category = e.detail.category;
             const settings = e.detail.settings;
 
+            console.log('Modal saved event received:', category, settings);
             updateStatusIndicator(category, settings);
         });
     });
 
     // Function to update status indicators based on category and settings
     function updateStatusIndicator(category, settings) {
-        switch(category) {
-            case 'zoom':
+        console.log('Updating status indicator for category:', category, 'with settings:', settings);
+
+        if (category === 'canvas') {
+            // Update zoom toggle indicator
+            if (settings.hasOwnProperty('pan_enabled')) {
+                console.log('Found pan_enabled in settings:', settings.pan_enabled);
                 const zoomStatus = document.getElementById('zoom-navigation-status');
-                if (zoomStatus && settings.pan_enabled !== undefined) {
-                    const isActive = settings.pan_enabled == '1';
+                if (zoomStatus) {
+                    const isActive = settings.pan_enabled == '1' || settings.pan_enabled === true || settings.pan_enabled === 1;
                     zoomStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
                     zoomStatus.className = 'canvas-card-status ' + (isActive ? 'active' : 'inactive');
+                    console.log('Zoom status updated to:', zoomStatus.textContent);
                 }
-                break;
+            }
 
-            case 'autosave':
+            // Update autosave toggle indicator
+            if (settings.hasOwnProperty('auto_save')) {
                 const autosaveStatus = document.getElementById('autosave-status');
-                if (autosaveStatus && settings.auto_save !== undefined) {
-                    const isActive = settings.auto_save == '1';
+                if (autosaveStatus) {
+                    const isActive = settings.auto_save == '1' || settings.auto_save === true || settings.auto_save === 1;
                     autosaveStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
                     autosaveStatus.className = 'canvas-card-status ' + (isActive ? 'active' : 'inactive');
                 }
-                break;
+            }
 
-            case 'debug':
+            // Update debug toggle indicator
+            if (settings.hasOwnProperty('debug_enabled')) {
                 const debugStatus = document.getElementById('debug-status');
-                if (debugStatus && settings.debug_enabled !== undefined) {
-                    const isActive = settings.debug_enabled == '1';
+                if (debugStatus) {
+                    const isActive = settings.debug_enabled == '1' || settings.debug_enabled === true || settings.debug_enabled === 1;
                     debugStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
                     debugStatus.className = 'canvas-card-status ' + (isActive ? 'active' : 'inactive');
                 }
-                break;
+            }
         }
     }
 </script>

@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'enable_rotation': 'canvas_rotate_enabled',
             'multi_select': 'canvas_multi_select',
             'enable_keyboard_shortcuts': 'canvas_keyboard_shortcuts',
-            'auto_save_enabled': 'canvas_auto_save'
+            'auto_save_enabled': 'canvas_auto_save',
+            'debug_enabled': 'canvas_debug_enabled'
         };
 
         // Mettre à jour chaque checkbox
@@ -696,6 +697,87 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.innerHTML = '📤 Exporter les logs';
             });
         });
+    }
+
+    // AJAX handling for canvas modal saves
+    const modalSaveButtons = document.querySelectorAll('.canvas-modal-save');
+    modalSaveButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            const modal = this.closest('.canvas-modal');
+            const form = modal.querySelector('form');
+
+            if (!form) {
+                console.error('No form found in modal for category:', category);
+                return;
+            }
+
+            // Collect form data
+            const formData = new FormData(form);
+            formData.append('action', 'pdf_builder_save_canvas_settings');
+            formData.append('nonce', pdf_builder_ajax.nonce);
+
+            // Disable button during save
+            const originalText = this.textContent;
+            this.disabled = true;
+            this.textContent = '⏳ Sauvegarde...';
+
+            // Send AJAX request
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close modal
+                    modal.style.display = 'none';
+
+                    // Dispatch custom event for status indicator updates
+                    const event = new CustomEvent('modalSaved', {
+                        detail: {
+                            category: 'canvas',
+                            settings: data.data.saved
+                        }
+                    });
+                    document.dispatchEvent(event);
+
+                    // Show success message
+                    showCanvasSaveResult('✅ Paramètres sauvegardés avec succès', 'success');
+                } else {
+                    showCanvasSaveResult('❌ Erreur: ' + (data.data || 'Erreur inconnue'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('AJAX error:', error);
+                showCanvasSaveResult('❌ Erreur réseau lors de la sauvegarde', 'error');
+            })
+            .finally(() => {
+                // Re-enable button
+                this.disabled = false;
+                this.textContent = originalText;
+            });
+        });
+    });
+
+    // Function to show canvas save results
+    function showCanvasSaveResult(message, type = 'success') {
+        // Create or find result container
+        let resultDiv = document.getElementById('canvas-save-result');
+        if (!resultDiv) {
+            resultDiv = document.createElement('div');
+            resultDiv.id = 'canvas-save-result';
+            resultDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 10001; max-width: 400px;';
+            document.body.appendChild(resultDiv);
+        }
+
+        resultDiv.innerHTML = `<div class="notice notice-${type} is-dismissible" style="margin: 0;"><p>${message}</p></div>`;
+        resultDiv.style.display = 'block';
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            resultDiv.style.display = 'none';
+        }, 3000);
     }
 
     // Gestionnaire pour générer une clé de test
