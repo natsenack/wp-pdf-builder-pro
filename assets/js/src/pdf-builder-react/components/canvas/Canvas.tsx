@@ -1851,6 +1851,35 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       ctx.fillRect(maxX - handleSize/2, midY - handleSize/2, handleSize, handleSize);
     }
 
+    // Poignées de rotation (conditionnées par les settings)
+    if (canvasSettings.selectionRotationEnabled) {
+      const rotationHandleSize = 8;
+      const rotationHandleDistance = 20;
+      ctx.fillStyle = '#007acc';
+      ctx.strokeStyle = '#007acc';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([]);
+
+      // Centre de la sélection
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+
+      // Position de la poignée de rotation (au-dessus du centre)
+      const rotationHandleX = centerX;
+      const rotationHandleY = minY - rotationHandleDistance;
+
+      // Cercle pour la poignée de rotation
+      ctx.beginPath();
+      ctx.arc(rotationHandleX, rotationHandleY, rotationHandleSize / 2, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // Ligne reliant la poignée au centre
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(rotationHandleX, rotationHandleY);
+      ctx.stroke();
+    }
+
     // Afficher les dimensions pour chaque élément sélectionné
     selectedElements.forEach(el => {
       if (selectedIds.includes(el.id)) {

@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
+import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { Element } from '../types/elements';
 
 // Déclaration des APIs globales du navigateur
@@ -25,9 +26,11 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   // États pour le drag et resize
   const isDraggingRef = useRef(false);
   const isResizingRef = useRef(false);
+  const isRotatingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });  // Pour drag : position élément initial
   const dragMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début du drag
   const resizeMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début du resize
+  const rotationMouseStartRef = useRef({ x: 0, y: 0 });  // Position souris au début de la rotation
   const selectedElementRef = useRef<string | null>(null);
   const selectedElementsRef = useRef<string[]>([]);  // ✅ Track locally instead of relying on stale state
   const resizeHandleRef = useRef<string | null>(null);
@@ -42,92 +45,100 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
   // ✅ OPTIMISATION FLUIDITÉ: Fonction pour effectuer les updates de drag avec RAF
   const performDragUpdate = useCallback(() => {
-    if (!pendingDragUpdateRef.current || !selectedElementRef.current) {
+    if (!pendingDragUpdateRef.current) {
       rafIdRef.current = null;
       return;
     }
 
     const { x: newX, y: newY } = pendingDragUpdateRef.current;
     const lastState = lastKnownStateRef.current;
-    const element = lastState.elements.find(el => el.id === selectedElementRef.current);
 
-    if (!element) {
+    // ✅ MODIFICATION: Gérer le drag multiple
+    const selectedIds = lastState.selection.selectedElements;
+    if (selectedIds.length === 0) {
       rafIdRef.current = null;
       return;
     }
 
-    // S'assurer que l'élément reste dans les limites du canvas
-    const canvasWidthPx = canvasWidth;
-    const canvasHeightPx = canvasHeight;
+    // Calculer le delta de déplacement depuis le début du drag
+    const deltaX = newX - dragStartRef.current.x;
+    const deltaY = newY - dragStartRef.current.y;
 
-    let finalX = newX;
-    let finalY = newY;
+    // Mettre à jour tous les éléments sélectionnés
+    selectedIds.forEach(elementId => {
+      const element = lastState.elements.find(el => el.id === elementId);
+      if (!element) return;
 
-    // ✅ AJOUT: Logique d'accrochage à la grille
-    if (lastState.canvas.snapToGrid && lastState.canvas.gridSize > 0) {
-      const gridSize = lastState.canvas.gridSize;
-      const snapTolerance = 5; // Tolérance de 5px pour l'accrochage
+      // Calculer la nouvelle position
+      let finalX = element.x + deltaX;
+      let finalY = element.y + deltaY;
 
-      // Calculer la distance à la grille la plus proche
-      const nearestGridX = Math.round(finalX / gridSize) * gridSize;
-      const nearestGridY = Math.round(finalY / gridSize) * gridSize;
+      // ✅ AJOUT: Logique d'accrochage à la grille
+      if (lastState.canvas.snapToGrid && lastState.canvas.gridSize > 0) {
+        const gridSize = lastState.canvas.gridSize;
+        const snapTolerance = 5; // Tolérance de 5px pour l'accrochage
 
-      // Appliquer l'accrochage seulement si on est assez proche de la grille
-      if (Math.abs(finalX - nearestGridX) <= snapTolerance) {
-        finalX = nearestGridX;
+        // Calculer la distance à la grille la plus proche
+        const nearestGridX = Math.round(finalX / gridSize) * gridSize;
+        const nearestGridY = Math.round(finalY / gridSize) * gridSize;
+
+        // Appliquer l'accrochage seulement si on est assez proche de la grille
+        if (Math.abs(finalX - nearestGridX) <= snapTolerance) {
+          finalX = nearestGridX;
+        }
+        if (Math.abs(finalY - nearestGridY) <= snapTolerance) {
+          finalY = nearestGridY;
+        }
       }
-      if (Math.abs(finalY - nearestGridY) <= snapTolerance) {
-        finalY = nearestGridY;
+
+      // S'assurer que l'élément reste dans les limites du canvas
+      const canvasWidthPx = canvasWidth;
+      const canvasHeightPx = canvasHeight;
+
+      // Clamp X position (laisser au moins 20px visible)
+      const minVisibleWidth = Math.min(50, element.width * 0.3);
+      if (finalX < 0) finalX = 0;
+      if (finalX + minVisibleWidth > canvasWidthPx) finalX = canvasWidthPx - minVisibleWidth;
+
+      // Clamp Y position (laisser au moins 20px visible)
+      const minVisibleHeight = Math.min(30, element.height * 0.3);
+      if (finalY < 0) finalY = 0;
+      if (finalY + minVisibleHeight > canvasHeightPx) finalY = canvasHeightPx - minVisibleHeight;
+
+      // ✅ CORRECTION 6: Améliorer la préservation des propriétés
+      const completeUpdates: Record<string, unknown> = { x: finalX, y: finalY };
+
+      // ✅ Préserver TOUTES les propriétés
+      const elementAsRecord = element as Record<string, unknown>;
+      Object.keys(elementAsRecord).forEach(key => {
+        if (key !== 'x' && key !== 'y' && key !== 'updatedAt') {
+          completeUpdates[key] = elementAsRecord[key];
+        }
+      });
+
+      // ✅ CRITICAL: Explicitement préserver ces propriétés critiques
+      if ('src' in elementAsRecord) {
+        completeUpdates.src = elementAsRecord.src;
       }
-    }
-
-    // Clamp X position (laisser au moins 20px visible)
-    const minVisibleWidth = Math.min(50, element.width * 0.3);
-    let clampedX = finalX;
-    if (clampedX < 0) clampedX = 0;
-    if (clampedX + minVisibleWidth > canvasWidthPx) clampedX = canvasWidthPx - minVisibleWidth;
-
-    // Clamp Y position (laisser au moins 20px visible)
-    const minVisibleHeight = Math.min(30, element.height * 0.3);
-    let clampedY = finalY;
-    if (clampedY < 0) clampedY = 0;
-    if (clampedY + minVisibleHeight > canvasHeightPx) clampedY = canvasHeightPx - minVisibleHeight;
-
-    // ✅ CORRECTION 6: Améliorer la préservation des propriétés
-    const completeUpdates: Record<string, unknown> = { x: clampedX, y: clampedY };
-
-    // ✅ Préserver TOUTES les propriétés
-    const elementAsRecord = element as Record<string, unknown>;
-    Object.keys(elementAsRecord).forEach(key => {
-      if (key !== 'x' && key !== 'y' && key !== 'updatedAt') {
-        completeUpdates[key] = elementAsRecord[key];
+      if ('logoUrl' in elementAsRecord) {
+        completeUpdates.logoUrl = elementAsRecord.logoUrl;
       }
-    });
-
-    // ✅ CRITICAL: Explicitement préserver ces propriétés critiques
-    if ('src' in elementAsRecord) {
-      completeUpdates.src = elementAsRecord.src;
-    }
-    if ('logoUrl' in elementAsRecord) {
-      completeUpdates.logoUrl = elementAsRecord.logoUrl;
-    }
-    if ('alignment' in elementAsRecord) {
-      completeUpdates.alignment = elementAsRecord.alignment;
-    }
-
-    dispatch({
-      type: 'UPDATE_ELEMENT',
-      payload: {
-        id: selectedElementRef.current,
-        updates: completeUpdates
+      if ('alignment' in elementAsRecord) {
+        completeUpdates.alignment = elementAsRecord.alignment;
       }
+
+      dispatch({
+        type: 'UPDATE_ELEMENT',
+        payload: {
+          id: elementId,
+          updates: completeUpdates
+        }
+      });
     });
 
     pendingDragUpdateRef.current = null;
     rafIdRef.current = null;
-  }, [dispatch, canvasWidth, canvasHeight]);
-  
-  // ✅ CORRECTION 3: Throttling pour handleMouseMove - optimisé pour fluidité maximale
+  }, [dispatch, canvasWidth, canvasHeight]);  // ✅ CORRECTION 3: Throttling pour handleMouseMove - optimisé pour fluidité maximale
   const lastMouseMoveTimeRef = useRef<number>(0);
   const MOUSEMOVE_THROTTLE_MS = 8; // Réduit de 100ms à 8ms pour fluidité maximale (120Hz)
 
@@ -397,10 +408,36 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       // ✅ Utiliser state.selection directement (plus fiable que ref)
       const isAlreadySelected = state.selection.selectedElements.includes(clickedElement.id);
       
-      // ✅ Si ce n'est pas sélectionné, le sélectionner d'abord
-      if (!isAlreadySelected) {
-        dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
-        // ✅ CORRECTION: Préparer le drag immédiatement pour permettre drag après sélection
+      // ✅ Vérifier si la sélection multiple est activée et si Ctrl est enfoncé
+      const isMultiSelect = canvasSettings.selectionMultiSelectEnabled && event.ctrlKey;
+      
+      if (isMultiSelect) {
+        // ✅ Mode sélection multiple
+        if (isAlreadySelected) {
+          // Retirer l'élément de la sélection
+          const newSelection = state.selection.selectedElements.filter(id => id !== clickedElement.id);
+          dispatch({ type: 'SET_SELECTION', payload: newSelection });
+        } else {
+          // Ajouter l'élément à la sélection
+          const newSelection = [...state.selection.selectedElements, clickedElement.id];
+          dispatch({ type: 'SET_SELECTION', payload: newSelection });
+        }
+        event.preventDefault();
+        return;
+      } else {
+        // ✅ Mode sélection simple (comportement actuel)
+        if (!isAlreadySelected) {
+          dispatch({ type: 'SET_SELECTION', payload: [clickedElement.id] });
+          // ✅ CORRECTION: Préparer le drag immédiatement pour permettre drag après sélection
+          isDraggingRef.current = true;
+          dragStartRef.current = { x: clickedElement.x, y: clickedElement.y };  // Position élément
+          dragMouseStartRef.current = { x, y };  // Position souris
+          selectedElementRef.current = clickedElement.id;
+          event.preventDefault();
+          return;
+        }
+
+        // ✅ L'élément est déjà sélectionné - préparer le drag
         isDraggingRef.current = true;
         dragStartRef.current = { x: clickedElement.x, y: clickedElement.y };  // Position élément
         dragMouseStartRef.current = { x, y };  // Position souris
@@ -408,14 +445,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         event.preventDefault();
         return;
       }
-
-      // ✅ L'élément est déjà sélectionné - préparer le drag
-      isDraggingRef.current = true;
-      dragStartRef.current = { x: clickedElement.x, y: clickedElement.y };  // Position élément
-      dragMouseStartRef.current = { x, y };  // Position souris
-      selectedElementRef.current = clickedElement.id;
-      event.preventDefault();
-      return;
     }
 
     // Vérifier si on clique sur une poignée de redimensionnement
@@ -427,6 +456,35 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       resizeMouseStartRef.current = { x, y };  // Position souris au début du resize
       event.preventDefault();
       return;
+    }
+
+    // Vérifier si on clique sur une poignée de rotation
+    if (canvasSettings.selectionRotationEnabled && state.selection.selectedElements.length > 0) {
+      const selectedElements = state.elements.filter(el => state.selection.selectedElements.includes(el.id));
+      if (selectedElements.length > 0) {
+        // Calculer les bounds de sélection
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        selectedElements.forEach(el => {
+          minX = Math.min(minX, el.x);
+          minY = Math.min(minY, el.y);
+          maxX = Math.max(maxX, el.x + el.width);
+          maxY = Math.max(maxY, el.y + el.height);
+        });
+
+        // Position de la poignée de rotation
+        const centerX = (minX + maxX) / 2;
+        const rotationHandleY = minY - 20;
+        const rotationHandleSize = 8;
+
+        // Vérifier si on est sur la poignée de rotation
+        const distance = Math.sqrt((x - centerX) ** 2 + (y - rotationHandleY) ** 2);
+        if (distance <= rotationHandleSize / 2) {
+          isRotatingRef.current = true;
+          rotationMouseStartRef.current = { x, y };
+          event.preventDefault();
+          return;
+        }
+      }
     }
 
     // ✅ Sinon on a cliqué sur le vide - désélectionner
@@ -451,6 +509,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     isDraggingRef.current = false;
     isResizingRef.current = false;
+    isRotatingRef.current = false;
     resizeHandleRef.current = null;
     selectedElementRef.current = null;
   }, [performDragUpdate]);
@@ -486,6 +545,35 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     if (isResizingRef.current) {
       return getResizeCursor(resizeHandleRef.current);
     }
+    if (isRotatingRef.current) {
+      return 'grabbing';
+    }
+
+    // Vérifier si on est sur une poignée de rotation
+    if (canvasSettings.selectionRotationEnabled && state.selection.selectedElements.length > 0) {
+      const selectedElements = state.elements.filter(el => state.selection.selectedElements.includes(el.id));
+      if (selectedElements.length > 0) {
+        // Calculer les bounds de sélection
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        selectedElements.forEach(el => {
+          minX = Math.min(minX, el.x);
+          minY = Math.min(minY, el.y);
+          maxX = Math.max(maxX, el.x + el.width);
+          maxY = Math.max(maxY, el.y + el.height);
+        });
+
+        // Position de la poignée de rotation
+        const centerX = (minX + maxX) / 2;
+        const rotationHandleY = minY - 20;
+        const rotationHandleSize = 8;
+
+        // Vérifier si on est sur la poignée de rotation
+        const distance = Math.sqrt((x - centerX) ** 2 + (y - rotationHandleY) ** 2);
+        if (distance <= rotationHandleSize / 2) {
+          return 'grab';
+        }
+      }
+    }
 
     // Vérifier si on est sur une poignée de redimensionnement
     const resizeHandle = getResizeHandleAtPosition(x, y, state.selection.selectedElements, state.elements);
@@ -507,7 +595,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // Curseur par défaut
     return 'default';
-  }, [state.selection.selectedElements, state.elements, getResizeHandleAtPosition]);
+  }, [state.selection.selectedElements, state.elements, getResizeHandleAtPosition, canvasSettings.selectionRotationEnabled]);
 
   // Fonction pour mettre à jour le curseur du canvas
   const updateCursor = useCallback((cursor: string) => {
@@ -662,6 +750,50 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           updates: essentialUpdates as Partial<Element>
         }
       });
+    } else if (isRotatingRef.current && state.selection.selectedElements.length > 0) {
+      // Logique de rotation
+      const selectedElements = state.elements.filter(el => state.selection.selectedElements.includes(el.id));
+      if (selectedElements.length > 0) {
+        // Calculer le centre de rotation (centre de la sélection)
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        selectedElements.forEach(el => {
+          minX = Math.min(minX, el.x);
+          minY = Math.min(minY, el.y);
+          maxX = Math.max(maxX, el.x + el.width);
+          maxY = Math.max(maxY, el.y + el.height);
+        });
+
+        const centerX = (minX + maxX) / 2;
+        const centerY = (minY + maxY) / 2;
+
+        // Calculer l'angle de rotation basé sur la position de la souris
+        const startAngle = Math.atan2(rotationMouseStartRef.current.y - centerY, rotationMouseStartRef.current.x - centerX);
+        const currentAngle = Math.atan2(y - centerY, x - centerX);
+        const angleDelta = currentAngle - startAngle;
+
+        // Convertir en degrés et normaliser
+        const rotationDegrees = (angleDelta * 180) / Math.PI;
+
+        // Mettre à jour la rotation de tous les éléments sélectionnés
+        state.selection.selectedElements.forEach(elementId => {
+          const element = state.elements.find(el => el.id === elementId);
+          if (element) {
+            const currentRotation = (element as any).rotation || 0;
+            const newRotation = currentRotation + rotationDegrees;
+
+            dispatch({
+              type: 'UPDATE_ELEMENT',
+              payload: {
+                id: elementId,
+                updates: { rotation: newRotation }
+              }
+            });
+          }
+        });
+
+        // Mettre à jour la position de départ pour le prochain mouvement
+        rotationMouseStartRef.current = { x, y };
+      }
     }
   }, [dispatch, canvasRef, getCursorAtPosition, updateCursor, calculateResize, state.canvas, performDragUpdate]);
 
