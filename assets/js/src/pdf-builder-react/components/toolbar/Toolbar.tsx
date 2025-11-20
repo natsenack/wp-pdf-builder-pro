@@ -98,7 +98,7 @@ export function Toolbar({ className }: ToolbarProps) {
       <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
         {/* Outils de création */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '200px' }}>
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>
+          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold', borderBottom: 'solid 1px #000000' }}>
             Outils
           </h4>
           <div style={{
@@ -131,7 +131,7 @@ export function Toolbar({ className }: ToolbarProps) {
 
         {/* Actions principales */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>
+          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold', borderBottom: 'solid 1px #000000' }}>
             Actions
           </h4>
           <div style={{
@@ -239,10 +239,10 @@ export function Toolbar({ className }: ToolbarProps) {
 
         {/* Informations - intégrées dans la première ligne */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '150px', marginLeft: 'auto' }}>
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold' }}>
+          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 'bold', borderBottom: 'solid 1px #000000' }}>
             Infos
           </h4>
-          <div style={{ fontSize: '12px', color: '#666', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#666', display: 'flex', flexDirection: 'column', gap: '0px' }}>
             <div>Éléments: {state.elements.length}</div>
             <div>Sélectionnés: {state.selection.selectedElements.length}</div>
             <div>Mode: {state.mode}</div>
