@@ -145,16 +145,6 @@
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Incrément de zoom par étape</p>
                             </td>
                         </tr>
-                        <tr>
-                            <th scope="row"><label for="zoom_with_wheel">Zoom avec molette</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="zoom_with_wheel" name="canvas_zoom_with_wheel" value="1" <?php checked(get_option('pdf_builder_canvas_zoom_with_wheel', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Permet de zoomer avec la molette de la souris</p>
-                            </td>
-                        </tr>
                     </table>
                 </form>
             </div>
