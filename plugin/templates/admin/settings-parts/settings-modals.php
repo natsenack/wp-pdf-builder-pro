@@ -156,40 +156,6 @@
                             </td>
                         </tr>
                     </table>
-
-                    <h4 style="margin-top: 25px; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">🖱️ Navigation</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="pan_enabled">Navigation activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Permet de se déplacer dans le canvas en maintenant le clic</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="pan_with_mouse">Navigation au clic maintenu</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="pan_with_mouse" name="canvas_pan_with_mouse" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Déplace le canvas en maintenant le clic gauche</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="keyboard_navigation">Navigation clavier</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="keyboard_navigation" name="canvas_keyboard_navigation" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_navigation', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Utilise les flèches du clavier pour naviguer</p>
-                            </td>
-                        </tr>
-                    </table>
                 </form>
             </div>
             <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
