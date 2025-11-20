@@ -1,6 +1,6 @@
 <?php // Modal components - Updated: 2025-11-18 20:20:00 ?>
 
-<!-- Canvas Configuration Modals -->
+<!-- Canvas Configuration Modals Dimensions & Format -->
 <div id="canvas-dimensions-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content">
@@ -99,10 +99,10 @@
         </div>
     </div>
 </div>
-
+<!-- Canvas Configuration Modals Zoom & Navigation -->
 <div id="canvas-zoom-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">🔍 Zoom & Navigation</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -165,10 +165,10 @@
         </div>
     </div>
 </div>
-
+<!-- Canvas Configuration Modals Apparence -->
 <div id="canvas-apparence-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">🎨 Apparence</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -244,10 +244,10 @@
         </div>
     </div>
 </div>
-
+<!-- Canvas Configuration Modals Grille & Guides -->
 <div id="canvas-grille-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">📏 Grille & Guides</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -308,58 +308,10 @@
         </div>
     </div>
 </div>
-
-<div id="canvas-zoom-modal" class="canvas-modal" style="display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">🔍 Zoom & Navigation</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
-                <form id="canvas-zoom-form">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_pan_enabled">Navigation activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_zoom_min">Zoom minimum (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_zoom_min" name="canvas_zoom_min" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>" min="5" max="50" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_zoom_max">Zoom maximum (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_zoom_max" name="canvas_zoom_max" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>" min="100" max="1000" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_zoom_default">Zoom par défaut (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_zoom_default" name="canvas_zoom_default" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>" min="10" max="500" />
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="zoom">Sauvegarder</button>
-            </div>
-        </div>
-    </div>
-</div>
-
+<!-- Canvas Configuration Modals Éléments Interactifs-->
 <div id="canvas-interaction-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">👆 Éléments Interactifs</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -413,10 +365,10 @@
         </div>
     </div>
 </div>
-
+<!-- Canvas Configuration Modals Comportement -->
 <div id="canvas-comportement-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">⚙️ Comportement</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -462,10 +414,10 @@
         </div>
     </div>
 </div>
-
+<!-- Canvas Configuration Modals Export & Qualité -->
 <div id="canvas-export-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">📤 Export & Qualité</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -508,10 +460,10 @@
         </div>
     </div>
 </div>
-
+<!-- Canvas Configuration Modals Performance -->
 <div id="canvas-performance-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">⚡ Performance</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -550,10 +502,10 @@
         </div>
     </div>
 </div>
-
+<!-- Canvas Configuration Modals Sauvegarde Auto -->
 <div id="canvas-autosave-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">💾 Sauvegarde Auto</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -601,10 +553,10 @@
         </div>
     </div>
 </div>
-
+<!-- Canvas Configuration Modals Debug -->
 <div id="canvas-debug-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">🐛 Debug</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
