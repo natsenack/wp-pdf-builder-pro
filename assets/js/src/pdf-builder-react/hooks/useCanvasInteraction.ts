@@ -211,32 +211,27 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         if (normalizedRotation > 180) normalizedRotation -= 360;
         if (normalizedRotation < -180) normalizedRotation += 360;
 
-        // Trouver l'angle cible le plus proche
-        let closestAngle = 0;
-        let minDistance = 360;
+        // DEBUG: Log des valeurs pour déboguer le snap
+        console.log('🔄 ROTATION DEBUG:', {
+          elementId,
+          newRotation,
+          normalizedRotation,
+          closestAngle,
+          minDistance,
+          distanceToZero,
+          initialRotation: rotationStartRef.current[elementId] || 0
+        });
 
-        for (const targetAngle of snappedAngles) {
-          let distance = Math.abs(normalizedRotation - targetAngle);
-          distance = Math.min(distance, 360 - distance); // Distance minimale sur le cercle
-
-          if (distance < minDistance) {
-            minDistance = distance;
-            closestAngle = targetAngle;
-          }
-        }
-
-        // Appliquer le snap progressif si on est dans la zone de tolérance
-        // Pour 0°, utiliser une tolérance plus grande
-        const isNearZero = Math.abs(normalizedRotation) <= zeroSnapTolerance ||
-                          Math.abs(Math.abs(normalizedRotation) - 360) <= zeroSnapTolerance;
-
-        if (minDistance <= snapTolerance || (isNearZero && closestAngle === 0)) {
+        console.log('🎯 SNAP DEBUG:', {
+          isNearZero,
+          willSnap: minDistance <= snapTolerance || isNearZero
+        });        if (minDistance <= snapTolerance || isNearZero) {
           let effectiveSnapStrength;
           let snapFactor;
 
-          if (isNearZero && closestAngle === 0) {
+          if (isNearZero) {
             // Snap spécial pour 0° avec tolérance et force plus grandes
-            snapFactor = 1 - (Math.min(minDistance, Math.abs(normalizedRotation), Math.abs(Math.abs(normalizedRotation) - 360)) / zeroSnapTolerance);
+            snapFactor = 1 - (distanceToZero / zeroSnapTolerance);
             effectiveSnapStrength = zeroSnapStrength * Math.max(0, snapFactor);
           } else {
             // Snap normal pour les autres angles
@@ -252,7 +247,15 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           if (diff > 180) diff -= 360;
           if (diff < -180) diff += 360;
 
-          newRotation += diff * effectiveSnapStrength;
+          const snapAdjustment = diff * effectiveSnapStrength;
+          newRotation += snapAdjustment;
+
+          console.log('🎯 SNAP APPLIED:', {
+            snappedRotation,
+            diff,
+            snapAdjustment,
+            finalRotation: newRotation
+          });
         }        dispatch({
           type: 'UPDATE_ELEMENT',
           payload: {
