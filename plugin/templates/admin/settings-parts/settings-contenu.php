@@ -78,7 +78,6 @@
                         <div class="canvas-card-header">
                             <div class="canvas-card-header-left">
                                 <span class="canvas-card-icon">📏</span>
-                                <span class="canvas-card-status <?php echo get_option('pdf_builder_canvas_grid_enabled', true) ? 'ACTIF' : 'INACTIF'; ?>"><?php echo get_option('pdf_builder_canvas_grid_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </div>
                             <h4>Grille & Guides</h4>
                         </div>

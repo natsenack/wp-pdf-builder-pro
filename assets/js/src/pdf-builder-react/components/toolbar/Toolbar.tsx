@@ -340,34 +340,95 @@ export function Toolbar({ className }: ToolbarProps) {
               {state.template.showGuides ? '📏 Guides' : '📐 Guides'}
             </button>
 
-            {/* Réinitialiser */}
-            <button
-              onClick={handleReset}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                backgroundColor: '#ffffff',
+            {/* Zoom */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              padding: '6px 10px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '6px',
+              border: '1px solid #e2e8f0'
+            }}>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>🔍</span>
+              <button
+                onClick={() => {
+                  // Zoom out
+                  const newZoom = Math.max(10, state.canvas.zoom - 25);
+                  if (setCanvas) {
+                    setCanvas({ zoom: newZoom });
+                  }
+                }}
+                style={{
+                  padding: '2px 6px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  backgroundColor: '#ffffff',
+                  color: '#374151',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  minWidth: '24px'
+                }}
+                title="Zoom arrière"
+              >
+                ➖
+              </button>
+              <span style={{
+                fontSize: '12px',
+                fontWeight: '600',
                 color: '#374151',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: '500',
-                transition: 'all 0.2s ease',
-                minWidth: '90px'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#fef2f2';
-                e.currentTarget.style.borderColor = '#fca5a5';
-                e.currentTarget.style.color = '#dc2626';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff';
-                e.currentTarget.style.borderColor = '#d1d5db';
-                e.currentTarget.style.color = '#374151';
-              }}
-            >
-              🔄 Reset
-            </button>
+                minWidth: '40px',
+                textAlign: 'center'
+              }}>
+                {state.canvas.zoom}%
+              </span>
+              <button
+                onClick={() => {
+                  // Zoom in
+                  const newZoom = Math.min(500, state.canvas.zoom + 25);
+                  if (setCanvas) {
+                    setCanvas({ zoom: newZoom });
+                  }
+                }}
+                style={{
+                  padding: '2px 6px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  backgroundColor: '#ffffff',
+                  color: '#374151',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  minWidth: '24px'
+                }}
+                title="Zoom avant"
+              >
+                ➕
+              </button>
+              <span style={{ fontSize: '10px', color: '#94a3b8', margin: '0 2px' }}>|</span>
+              <button
+                onClick={() => {
+                  // Fit to screen (zoom to fit canvas)
+                  if (setCanvas) {
+                    setCanvas({ zoom: 100 }); // Or calculate fit zoom
+                  }
+                }}
+                style={{
+                  padding: '4px 8px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  backgroundColor: '#ffffff',
+                  color: '#374151',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  fontWeight: '500'
+                }}
+                title="Adapter à l'écran"
+              >
+                🔄 Fit
+              </button>
+            </div>
           </div>
         </section>
 
