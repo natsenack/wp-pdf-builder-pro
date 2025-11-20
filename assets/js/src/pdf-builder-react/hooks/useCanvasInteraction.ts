@@ -202,8 +202,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         // Snap plus fort à 0° pour un alignement parfait
         const snapTolerance = 8 * (Math.PI / 180); // Tolérance de 8 degrés pour commencer le snap normal (converti en radians)
         const snapStrength = 0.3; // Force d'attraction normale (0.3 = 30% vers l'angle cible)
-        const zeroSnapTolerance = 12 * (Math.PI / 180); // Tolérance plus grande pour 0° (12 degrés converti en radians)
-        const zeroSnapStrength = 0.6; // Force d'attraction plus forte pour 0° (0.6 = 60%)
+        const zeroSnapTolerance = 25 * (Math.PI / 180); // Tolérance plus grande pour 0° (25 degrés converti en radians)
+        const zeroSnapStrength = 0.95; // Force d'attraction très forte pour 0° (0.95 = 95%)
         const snappedAngles = [0, 90, 180, 270, -90, -180, -270];
 
         // Normaliser l'angle entre -180° et 180°
@@ -235,8 +235,15 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           let snapFactor;
 
           if (isNearZero) {
-            snapFactor = 1 - (distanceToZero / zeroSnapTolerance);
-            effectiveSnapStrength = zeroSnapStrength * Math.max(0, snapFactor);
+            // Snap spécial pour 0° avec tolérance et force plus grandes
+            const veryCloseThreshold = 2 * (Math.PI / 180); // 2 degrés en radians
+            if (distanceToZero <= veryCloseThreshold) {
+              // Snap presque instantané quand très proche de 0°
+              effectiveSnapStrength = 1.0; // 100% d'attraction
+            } else {
+              snapFactor = 1 - (distanceToZero / zeroSnapTolerance);
+              effectiveSnapStrength = zeroSnapStrength * Math.max(0, snapFactor);
+            }
           } else {
             // Snap normal pour les autres angles
             snapFactor = 1 - (minDistance / snapTolerance);
@@ -253,13 +260,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
           const snapAdjustment = diff * effectiveSnapStrength;
           newRotation += snapAdjustment;
-
-          console.log('🎯 SNAP APPLIED:', {
-            snappedRotation,
-            diff,
-            snapAdjustment,
-            finalRotation: newRotation
-          });
         }
 
         dispatch({
