@@ -114,42 +114,42 @@
                         Le zoom avec la molette de souris peut être activé/désactivé, et la navigation au clavier permet de se déplacer dans le canvas.
                     </p>
                 </div>
-                <form id="canvas-zoom-form">
+                <form id="zoom-form">
                     <h4 style="margin-top: 0; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">🔍 Zoom</h4>
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><label for="canvas_zoom_min">Zoom minimum (%)</label></th>
+                            <th scope="row"><label for="zoom_min">Zoom minimum (%)</label></th>
                             <td>
-                                <input type="number" id="canvas_zoom_min" name="canvas_zoom_min" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>" min="1" max="100" />
+                                <input type="number" id="zoom_min" name="canvas_zoom_min" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>" min="1" max="100" />
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Niveau de zoom minimum autorisé</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_zoom_max">Zoom maximum (%)</label></th>
+                            <th scope="row"><label for="zoom_max">Zoom maximum (%)</label></th>
                             <td>
-                                <input type="number" id="canvas_zoom_max" name="canvas_zoom_max" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>" min="100" max="1000" />
+                                <input type="number" id="zoom_max" name="canvas_zoom_max" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>" min="100" max="1000" />
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Niveau de zoom maximum autorisé</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_zoom_default">Zoom par défaut (%)</label></th>
+                            <th scope="row"><label for="zoom_default">Zoom par défaut (%)</label></th>
                             <td>
-                                <input type="number" id="canvas_zoom_default" name="canvas_zoom_default" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>" min="10" max="500" />
+                                <input type="number" id="zoom_default" name="canvas_zoom_default" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>" min="10" max="500" />
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Niveau de zoom au chargement du canvas</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_zoom_step">Pas de zoom (%)</label></th>
+                            <th scope="row"><label for="zoom_step">Pas de zoom (%)</label></th>
                             <td>
-                                <input type="number" id="canvas_zoom_step" name="canvas_zoom_step" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_step', 25)); ?>" min="5" max="50" />
+                                <input type="number" id="zoom_step" name="canvas_zoom_step" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_step', 25)); ?>" min="5" max="50" />
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Incrément de zoom par étape</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_zoom_with_wheel">Zoom avec molette</label></th>
+                            <th scope="row"><label for="zoom_with_wheel">Zoom avec molette</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_zoom_with_wheel" name="canvas_zoom_with_wheel" value="1" <?php checked(get_option('pdf_builder_canvas_zoom_with_wheel', '1'), '1'); ?>>
+                                    <input type="checkbox" id="zoom_with_wheel" name="canvas_zoom_with_wheel" value="1" <?php checked(get_option('pdf_builder_canvas_zoom_with_wheel', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Permet de zoomer avec la molette de la souris</p>
@@ -160,30 +160,30 @@
                     <h4 style="margin-top: 25px; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">🖱️ Navigation</h4>
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><label for="canvas_pan_enabled">Navigation activée</label></th>
+                            <th scope="row"><label for="pan_enabled">Navigation activée</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', '1'), '1'); ?>>
+                                    <input type="checkbox" id="pan_enabled" name="canvas_pan_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Permet de se déplacer dans le canvas en maintenant le clic</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_pan_with_mouse">Navigation au clic maintenu</label></th>
+                            <th scope="row"><label for="pan_with_mouse">Navigation au clic maintenu</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_pan_with_mouse" name="canvas_pan_with_mouse" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', '1'), '1'); ?>>
+                                    <input type="checkbox" id="pan_with_mouse" name="canvas_pan_with_mouse" value="1" <?php checked(get_option('pdf_builder_canvas_pan_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Déplace le canvas en maintenant le clic gauche</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="canvas_keyboard_navigation">Navigation clavier</label></th>
+                            <th scope="row"><label for="keyboard_navigation">Navigation clavier</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_keyboard_navigation" name="canvas_keyboard_navigation" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_navigation', '1'), '1'); ?>>
+                                    <input type="checkbox" id="keyboard_navigation" name="canvas_keyboard_navigation" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_navigation', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Utilise les flèches du clavier pour naviguer</p>

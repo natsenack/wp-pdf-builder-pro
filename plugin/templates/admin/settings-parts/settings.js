@@ -14,7 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
             'show_grid': 'canvas_grid_enabled',
             'show_guides': 'canvas_guides_enabled',
             'snap_to_grid': 'canvas_snap_to_grid',
-            'pan_with_mouse': 'canvas_pan_enabled',
+            'pan_with_mouse': 'pan_with_mouse',
+            'zoom_with_wheel': 'zoom_with_wheel',
+            'keyboard_navigation': 'keyboard_navigation',
             'show_resize_handles': 'canvas_resize_enabled',
             'enable_rotation': 'canvas_rotate_enabled',
             'multi_select': 'canvas_multi_select',
@@ -750,9 +752,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Close modal
-                    modal.style.display = 'none';
-
                     // Update form checkboxes with new values
                     if (data.data && data.data.saved) {
                         updateFormCheckboxes(data.data.saved);
