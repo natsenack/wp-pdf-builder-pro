@@ -200,9 +200,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
         // ✅ AJOUT: Snap magnétique progressif aux angles cardinaux (0°, 90°, 180°, 270°)
         // Snap plus fort à 0° pour un alignement parfait
-        const snapTolerance = 8; // Tolérance de 8 degrés pour commencer le snap normal
+        const snapTolerance = 8 * (Math.PI / 180); // Tolérance de 8 degrés pour commencer le snap normal (converti en radians)
         const snapStrength = 0.3; // Force d'attraction normale (0.3 = 30% vers l'angle cible)
-        const zeroSnapTolerance = 12; // Tolérance plus grande pour 0° (12 degrés)
+        const zeroSnapTolerance = 12 * (Math.PI / 180); // Tolérance plus grande pour 0° (12 degrés converti en radians)
         const zeroSnapStrength = 0.6; // Force d'attraction plus forte pour 0° (0.6 = 60%)
         const snappedAngles = [0, 90, 180, 270, -90, -180, -270];
 
@@ -229,22 +229,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         // Pour 0°, utiliser une tolérance plus grande
         const distanceToZero = Math.abs(normalizedRotation); // normalizedRotation est déjà entre -180 et 180
         const isNearZero = distanceToZero <= zeroSnapTolerance;
-
-        // DEBUG: Log des valeurs pour déboguer le snap
-        console.log('🔄 ROTATION DEBUG:', {
-          elementId,
-          newRotation,
-          normalizedRotation,
-          closestAngle,
-          minDistance,
-          distanceToZero,
-          initialRotation: rotationStartRef.current[elementId] || 0
-        });
-
-        console.log('🎯 SNAP DEBUG:', {
-          isNearZero,
-          willSnap: minDistance <= snapTolerance || isNearZero
-        });
 
         if (minDistance <= snapTolerance || isNearZero) {
           let effectiveSnapStrength;
