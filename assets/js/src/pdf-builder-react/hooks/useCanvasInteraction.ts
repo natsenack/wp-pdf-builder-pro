@@ -230,19 +230,33 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         const distanceToZero = Math.abs(normalizedRotation); // normalizedRotation est déjà entre -180 et 180
         const isNearZero = distanceToZero <= zeroSnapTolerance;
 
+        console.log('🔄 ROTATION:', {
+          newRotation,
+          normalizedRotation,
+          distanceToZero,
+          zeroSnapTolerance,
+          isNearZero,
+          minDistance,
+          snapTolerance
+        });
+
         if (minDistance <= snapTolerance || isNearZero) {
+          console.log('🎯 SNAP TRIGGERED:', { minDistance, snapTolerance, isNearZero });
           let effectiveSnapStrength;
           let snapFactor;
 
           if (isNearZero) {
+            console.log('🎯 ZERO SNAP CHECK:', { distanceToZero, veryCloseThreshold: 2 * (Math.PI / 180) });
             // Snap spécial pour 0° avec tolérance et force plus grandes
             const veryCloseThreshold = 2 * (Math.PI / 180); // 2 degrés en radians
             if (distanceToZero <= veryCloseThreshold) {
               // Snap presque instantané quand très proche de 0°
               effectiveSnapStrength = 1.0; // 100% d'attraction
+              console.log('🎯 HARD SNAP ACTIVATED');
             } else {
               snapFactor = 1 - (distanceToZero / zeroSnapTolerance);
               effectiveSnapStrength = zeroSnapStrength * Math.max(0, snapFactor);
+              console.log('🎯 SOFT SNAP ACTIVATED:', { snapFactor, effectiveSnapStrength });
             }
           } else {
             // Snap normal pour les autres angles
@@ -260,6 +274,14 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
           const snapAdjustment = diff * effectiveSnapStrength;
           newRotation += snapAdjustment;
+
+          console.log('🎯 SNAP RESULT:', {
+            diff,
+            effectiveSnapStrength,
+            snapAdjustment,
+            oldRotation: newRotation - snapAdjustment,
+            newRotation
+          });
         }
 
         dispatch({
