@@ -316,10 +316,13 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
     }
 
     case 'SET_CANVAS': {
-      return {
+      console.log('🎯 REDUCER SET_CANVAS - payload:', action.payload, 'current zoom:', state.canvas.zoom);
+      const newState = {
         ...state,
         canvas: { ...state.canvas, ...action.payload }
       };
+      console.log('🎯 REDUCER SET_CANVAS - new zoom:', newState.canvas.zoom);
+      return newState;
     }
 
     case 'SET_MODE': {

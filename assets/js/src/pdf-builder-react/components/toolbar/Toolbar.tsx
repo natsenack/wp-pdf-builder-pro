@@ -11,6 +11,8 @@ export function Toolbar({ className }: ToolbarProps) {
   const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides, setCanvas } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
+  console.log('🔧 TOOLBAR RENDER - current zoom:', state.canvas.zoom);
+
   // Vérifications de sécurité
   if (!state) {
     return <div style={{ padding: '20px', backgroundColor: '#ffcccc', border: '1px solid #ff0000' }}>
