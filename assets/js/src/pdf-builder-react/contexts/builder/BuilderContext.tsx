@@ -578,26 +578,30 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     }
   }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin, state.canvas.zoom]);
 
-  // Synchroniser les paramètres de grille depuis CanvasSettingsContext
+  // Synchroniser les paramètres de grille depuis CanvasSettingsContext (uniquement à l'initialisation)
   useEffect(() => {
     const updates: Partial<CanvasState> = {};
-    
-    if (canvasSettings.gridShow !== (state.canvas.showGrid && canvasSettings.gridShow)) {
-      updates.showGrid = canvasSettings.gridShow;
-    }
-    
+
+    // Ne synchroniser que si c'est la première fois ou si les paramètres ont changé dans les settings
+    // mais pas si l'utilisateur a changé manuellement l'état
     if (canvasSettings.gridSize !== state.canvas.gridSize) {
       updates.gridSize = canvasSettings.gridSize;
     }
-    
-    if (canvasSettings.gridSnapEnabled !== state.canvas.snapToGrid) {
+
+    // Pour showGrid et snapToGrid, ne synchroniser que si l'état actuel correspond aux paramètres par défaut
+    // (c'est-à-dire au chargement initial)
+    if (state.canvas.showGrid === canvasSettings.gridShow && canvasSettings.gridShow !== state.canvas.showGrid) {
+      updates.showGrid = canvasSettings.gridShow;
+    }
+
+    if (state.canvas.snapToGrid === canvasSettings.gridSnapEnabled && canvasSettings.gridSnapEnabled !== state.canvas.snapToGrid) {
       updates.snapToGrid = canvasSettings.gridSnapEnabled;
     }
-    
+
     if (Object.keys(updates).length > 0) {
       dispatch({ type: 'SET_CANVAS', payload: updates });
     }
-  }, [canvasSettings.gridShow, canvasSettings.gridSize, canvasSettings.gridSnapEnabled, state.canvas.showGrid, state.canvas.gridSize, state.canvas.snapToGrid]);
+  }, [canvasSettings.gridSize, canvasSettings.gridShow, canvasSettings.gridSnapEnabled]); // Retirer les dépendances d'état pour éviter la boucle
 
   // ✅ DISABLED: Template loading is now EXCLUSIVELY handled by useTemplate hook
   // which reads template_id from URL/localized data and calls AJAX GET

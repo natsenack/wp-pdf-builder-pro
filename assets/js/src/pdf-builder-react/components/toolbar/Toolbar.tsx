@@ -64,7 +64,6 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleToggleGrid = () => {
-    console.log('Toggle Grid - Current state:', state.canvas.showGrid);
     if (toggleGrid) {
       toggleGrid();
     }
@@ -77,10 +76,8 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleToggleSnapToGrid = () => {
-    console.log('Toggle Snap - Current state:', state.canvas.snapToGrid);
     // Toggle snap to grid via canvas settings
     const newSnapToGrid = !state.canvas.snapToGrid;
-    console.log('Toggle Snap - New state will be:', newSnapToGrid);
     // Use setCanvas to update canvas state directly
     if (setCanvas) {
       setCanvas({ snapToGrid: newSnapToGrid });
