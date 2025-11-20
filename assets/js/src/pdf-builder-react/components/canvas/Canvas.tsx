@@ -2419,11 +2419,13 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     const selectionHash = JSON.stringify(state.selection.selectedElements);
     elementsHash += selectionHash;
 
-    // ✅ CRITICAL: Include canvas settings (grid, guides, snap) in hash to trigger re-render when they change
+    // ✅ CRITICAL: Include canvas settings (grid, guides, snap, zoom, pan) in hash to trigger re-render when they change
     const canvasSettingsHash = JSON.stringify({
       showGrid: state.canvas.showGrid,
       snapToGrid: state.canvas.snapToGrid,
-      showGuides: state.template.showGuides
+      showGuides: state.template.showGuides,
+      zoom: state.canvas.zoom,
+      pan: state.canvas.pan
     });
     elementsHash += `;canvasSettings:${canvasSettingsHash}`;
 

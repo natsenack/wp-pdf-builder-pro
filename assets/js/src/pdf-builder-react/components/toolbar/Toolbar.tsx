@@ -426,7 +426,7 @@ export function Toolbar({ className }: ToolbarProps) {
                 }}
                 title="Adapter à l'écran"
               >
-                🔄 Fit
+                🔄
               </button>
             </div>
           </div>
