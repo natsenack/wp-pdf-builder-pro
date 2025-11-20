@@ -2496,12 +2496,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     // 🔍 REAL-TIME MONITORING: Track all element property changes
     elementChangeTracker.trackElements(state.elements);
     
-
-    const timer = setTimeout(() => {
-
-      renderCanvas();
-    }, 0);
-    return () => clearTimeout(timer);
+    // ✅ FORCE IMMEDIATE RENDER for real-time interaction
+    renderCanvas();
   }, [state, imageLoadCount, canvasSettings]);  // ✅ BUGFIX: Removed renderCanvas from deps to avoid instability
 
   // ✅ Force initial render when elements first load (for cached images)
