@@ -551,68 +551,40 @@ document.addEventListener('DOMContentLoaded', function() {
     //     }, 5000);
     // }
 
-    // 🔄 Dynamic status updates for cards
-    function updateZoomNavigationStatus(enabled) {
-        const statusElement = document.getElementById('zoom-navigation-status');
-
-        if (statusElement) {
-            statusElement.textContent = enabled ? 'ACTIF' : 'INACTIF';
-            statusElement.className = 'canvas-card-status ' + (enabled ? 'active' : 'inactive');
-        }
-    }
-
-    function updateAutosaveStatus(enabled) {
-        const statusElement = document.getElementById('autosave-status');
-
-        if (statusElement) {
-            statusElement.textContent = enabled ? 'ACTIF' : 'INACTIF';
-            statusElement.className = 'canvas-card-status ' + (enabled ? 'active' : 'inactive');
-        }
-    }
-
-    function updateDebugStatus(enabled) {
-        const statusElement = document.getElementById('debug-status');
-
-        if (statusElement) {
-            statusElement.textContent = enabled ? 'ACTIF' : 'INACTIF';
-            statusElement.className = 'canvas-card-status ' + (enabled ? 'active' : 'inactive');
-        }
-    }
-
-    // Listen for changes on the pan enabled toggle (using event delegation for dynamic content)
-    document.addEventListener('change', function(e) {
-        if (e.target && e.target.id === 'canvas_pan_enabled') {
-            const isChecked = e.target.checked;
-
-            // Check if we're on the content tab
-            const contentTab = document.getElementById('contenu');
-            const activeTab = document.querySelector('.nav-tab-active');
-
-            if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
-                updateZoomNavigationStatus(isChecked);
+<script>
+// Canvas configuration modals functionality - SIMPLIFIED VERSION
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle canvas configure buttons
+    const configureButtons = document.querySelectorAll('.canvas-configure-btn');
+    configureButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const card = this.closest('.canvas-card');
+            const category = card.getAttribute('data-category');
+            const modalId = 'canvas-' + category + '-modal';
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
             }
-        }
+        });
     });
 
-    // Also listen for clicks on the toggle label for immediate feedback
-    document.addEventListener('click', function(e) {
-        if (e.target && (e.target.classList.contains('toggle-switch') || e.target.classList.contains('toggle-slider'))) {
-            // Check if we're on the content tab
-            const contentTab = document.getElementById('contenu');
-            const activeTab = document.querySelector('.nav-tab-active');
-
-            if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
-                // Small delay to let the checkbox state update
-                setTimeout(function() {
-                    const checkbox = document.getElementById('canvas_pan_enabled');
-                    if (checkbox) {
-                        updateZoomNavigationStatus(checkbox.checked);
-                    }
-                }, 10);
-            }
-        }
+    // Handle modal close buttons
+    const closeButtons = document.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
+    closeButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.canvas-modal');
+            modal.style.display = 'none';
+        });
     });
 
-
+    // Handle modal overlay clicks
+    const modalOverlays = document.querySelectorAll('.canvas-modal-overlay');
+    modalOverlays.forEach(function(overlay) {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.closest('.canvas-modal').style.display = 'none';
+            }
+        });
+    });
 });
 </script>

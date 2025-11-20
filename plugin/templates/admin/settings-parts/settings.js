@@ -1554,6 +1554,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         } else {
                             modal.style.display = 'none';
                         }
+
+                        // Recharger la page pour mettre à jour tous les indicateurs
+                        setTimeout(() => {
+                            location.reload();
+                        }, 500);
                     }, 1500);
 
                     // Réactiver le bouton après 3 secondes
