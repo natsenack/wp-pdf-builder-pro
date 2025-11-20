@@ -41,6 +41,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   // ✅ OPTIMISATION FLUIDITÉ: requestAnimationFrame pour synchroniser avec le refresh rate
   const rafIdRef = useRef<number | null>(null);
   const pendingDragUpdateRef = useRef<{ x: number; y: number } | null>(null);
+  const pendingRotationUpdateRef = useRef<{ x: number; y: number } | null>(null);
 
   // ✅ CORRECTION 5: Dernier state connu pour éviter closure stale
   const lastKnownStateRef = useRef(state);
@@ -144,7 +145,112 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     pendingDragUpdateRef.current = null;
     rafIdRef.current = null;
-  }, [dispatch, canvasWidth, canvasHeight]);  // ✅ CORRECTION 3: Throttling pour handleMouseMove - optimisé pour fluidité maximale
+  }, [dispatch, canvasWidth, canvasHeight]);
+
+  // ✅ OPTIMISATION FLUIDITÉ: Fonction pour effectuer les updates de rotation avec RAF
+  const performRotationUpdate = useCallback(() => {
+    if (!pendingRotationUpdateRef.current) {
+      rafIdRef.current = null;
+      return;
+    }
+
+    const { x: currentMouseX, y: currentMouseY } = pendingRotationUpdateRef.current;
+    const lastState = lastKnownStateRef.current;
+
+    // ✅ MODIFICATION: Gérer la rotation multiple
+    const selectedIds = lastState.selection.selectedElements;
+    if (selectedIds.length === 0) {
+      rafIdRef.current = null;
+      return;
+    }
+
+    // Calculer le centre de rotation (centre de la sélection)
+    const selectedElements = lastState.elements.filter(el => selectedIds.includes(el.id));
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    selectedElements.forEach(el => {
+      minX = Math.min(minX, el.x);
+      minY = Math.min(minY, el.y);
+      maxX = Math.max(maxX, el.x + el.width);
+      maxY = Math.max(maxY, el.y + el.height);
+    });
+
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+
+    // Calculer l'angle de rotation basé sur la position de la souris
+    const startAngle = Math.atan2(rotationMouseStartRef.current.y - centerY, rotationMouseStartRef.current.x - centerX);
+    const currentAngle = Math.atan2(currentMouseY - centerY, currentMouseX - centerX);
+    
+    // Calculer la différence angulaire avec gestion du wrap-around
+    let angleDelta = currentAngle - startAngle;
+    
+    // Normaliser l'angle entre -π et π pour éviter les sauts
+    while (angleDelta > Math.PI) angleDelta -= 2 * Math.PI;
+    while (angleDelta < -Math.PI) angleDelta += 2 * Math.PI;
+    
+    // Convertir en degrés
+    const totalRotationDegrees = (angleDelta * 180) / Math.PI;
+
+    // Mettre à jour la rotation de tous les éléments sélectionnés
+    selectedIds.forEach(elementId => {
+      const element = lastState.elements.find(el => el.id === elementId);
+      if (element) {
+        const initialRotation = rotationStartRef.current[elementId] || 0;
+        let newRotation = initialRotation + totalRotationDegrees;
+
+        // ✅ AJOUT: Snap magnétique progressif aux angles cardinaux (0°, 90°, 180°, 270°)
+        const snapTolerance = 8; // Tolérance de 8 degrés pour commencer le snap
+        const snapStrength = 0.3; // Force d'attraction (0.3 = 30% vers l'angle cible)
+        const snappedAngles = [0, 90, 180, 270, -90, -180, -270];
+
+        // Normaliser l'angle entre -180° et 180°
+        let normalizedRotation = newRotation % 360;
+        if (normalizedRotation > 180) normalizedRotation -= 360;
+        if (normalizedRotation < -180) normalizedRotation += 360;
+
+        // Trouver l'angle cible le plus proche
+        let closestAngle = 0;
+        let minDistance = 360;
+        
+        for (const targetAngle of snappedAngles) {
+          let distance = Math.abs(normalizedRotation - targetAngle);
+          distance = Math.min(distance, 360 - distance); // Distance minimale sur le cercle
+          
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestAngle = targetAngle;
+          }
+        }
+
+        // Appliquer le snap progressif si on est dans la zone de tolérance
+        if (minDistance <= snapTolerance) {
+          const snapFactor = 1 - (minDistance / snapTolerance); // 0 à 1, plus on est proche plus le snap est fort
+          const effectiveSnapStrength = snapStrength * snapFactor;
+          
+          // Calculer l'angle snappé
+          let snappedRotation = closestAngle;
+          
+          // Normaliser la différence pour éviter les sauts
+          let diff = snappedRotation - normalizedRotation;
+          if (diff > 180) diff -= 360;
+          if (diff < -180) diff += 360;
+          
+          newRotation += diff * effectiveSnapStrength;
+        }
+
+        dispatch({
+          type: 'UPDATE_ELEMENT',
+          payload: {
+            id: elementId,
+            updates: { rotation: newRotation }
+          }
+        });
+      }
+    });
+
+    pendingRotationUpdateRef.current = null;
+    rafIdRef.current = null;
+  }, [dispatch]);  // ✅ CORRECTION 3: Throttling pour handleMouseMove - optimisé pour fluidité maximale
   const lastMouseMoveTimeRef = useRef<number>(0);
   const MOUSEMOVE_THROTTLE_MS = 8; // Réduit de 100ms à 8ms pour fluidité maximale (120Hz)
 
@@ -531,6 +637,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       if (pendingDragUpdateRef.current) {
         performDragUpdate();
       }
+      if (pendingRotationUpdateRef.current) {
+        performRotationUpdate();
+      }
     }
 
     isDraggingRef.current = false;
@@ -539,7 +648,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     resizeHandleRef.current = null;
     selectedElementRef.current = null;
     rotationStartRef.current = {};
-  }, [performDragUpdate]);
+    pendingRotationUpdateRef.current = null;
+  }, [performDragUpdate, performRotationUpdate]);
 
   // Fonction pour obtenir le curseur de redimensionnement selon la poignée
   const getResizeCursor = (handle: string | null): string => {
@@ -773,94 +883,13 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         }
       });
     } else if (isRotatingRef.current && state.selection.selectedElements.length > 0) {
-      // Logique de rotation
-      const selectedElements = state.elements.filter(el => state.selection.selectedElements.includes(el.id));
-      if (selectedElements.length > 0) {
-        // Calculer le centre de rotation (centre de la sélection)
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-        selectedElements.forEach(el => {
-          minX = Math.min(minX, el.x);
-          minY = Math.min(minY, el.y);
-          maxX = Math.max(maxX, el.x + el.width);
-          maxY = Math.max(maxY, el.y + el.height);
-        });
+      // ✅ OPTIMISATION FLUIDITÉ: Pour la rotation, passer les coordonnées actuelles de la souris
+      // performRotationUpdate calculera la rotation pour tous les éléments
+      pendingRotationUpdateRef.current = { x, y };
 
-        const centerX = (minX + maxX) / 2;
-        const centerY = (minY + maxY) / 2;
-
-        // Calculer l'angle de rotation basé sur la position de la souris
-        const startAngle = Math.atan2(rotationMouseStartRef.current.y - centerY, rotationMouseStartRef.current.x - centerX);
-        const currentAngle = Math.atan2(y - centerY, x - centerX);
-        
-        // Calculer la différence angulaire avec gestion du wrap-around
-        let angleDelta = currentAngle - startAngle;
-        
-        // Normaliser l'angle entre -π et π pour éviter les sauts
-        while (angleDelta > Math.PI) angleDelta -= 2 * Math.PI;
-        while (angleDelta < -Math.PI) angleDelta += 2 * Math.PI;
-        
-        // Convertir en degrés
-        const totalRotationDegrees = (angleDelta * 180) / Math.PI;
-
-        // Mettre à jour la rotation de tous les éléments sélectionnés
-        state.selection.selectedElements.forEach(elementId => {
-          const element = state.elements.find(el => el.id === elementId);
-          if (element) {
-            const initialRotation = rotationStartRef.current[elementId] || 0;
-            let newRotation = initialRotation + totalRotationDegrees;
-
-            // ✅ AJOUT: Snap magnétique progressif aux angles cardinaux (0°, 90°, 180°, 270°)
-            const snapTolerance = 8; // Tolérance de 8 degrés pour commencer le snap
-            const snapStrength = 0.3; // Force d'attraction (0.3 = 30% vers l'angle cible)
-            const snappedAngles = [0, 90, 180, 270, -90, -180, -270];
-
-            // Normaliser l'angle entre -180° et 180°
-            let normalizedRotation = newRotation % 360;
-            if (normalizedRotation > 180) normalizedRotation -= 360;
-            if (normalizedRotation < -180) normalizedRotation += 360;
-
-            // Trouver l'angle cible le plus proche
-            let closestAngle = 0;
-            let minDistance = 360;
-            
-            for (const targetAngle of snappedAngles) {
-              let distance = Math.abs(normalizedRotation - targetAngle);
-              distance = Math.min(distance, 360 - distance); // Distance minimale sur le cercle
-              
-              if (distance < minDistance) {
-                minDistance = distance;
-                closestAngle = targetAngle;
-              }
-            }
-
-            // Appliquer le snap progressif si on est dans la zone de tolérance
-            if (minDistance <= snapTolerance) {
-              const snapFactor = 1 - (minDistance / snapTolerance); // 0 à 1, plus on est proche plus le snap est fort
-              const effectiveSnapStrength = snapStrength * snapFactor;
-              
-              // Calculer l'angle snappé
-              let snappedRotation = closestAngle;
-              
-              // Normaliser la différence pour éviter les sauts
-              let diff = snappedRotation - normalizedRotation;
-              if (diff > 180) diff -= 360;
-              if (diff < -180) diff += 360;
-              
-              newRotation += diff * effectiveSnapStrength;
-            }
-
-            dispatch({
-              type: 'UPDATE_ELEMENT',
-              payload: {
-                id: elementId,
-                updates: { rotation: newRotation }
-              }
-            });
-          }
-        });
-
-        // Mettre à jour la position de départ pour le prochain mouvement
-        rotationMouseStartRef.current = { x, y };
+      // Programmer l'update avec RAF si pas déjà programmé
+      if (rafIdRef.current === null) {
+        rafIdRef.current = requestAnimationFrame(performRotationUpdate);
       }
     }
   }, [dispatch, canvasRef, getCursorAtPosition, updateCursor, calculateResize, state.canvas, performDragUpdate]);
