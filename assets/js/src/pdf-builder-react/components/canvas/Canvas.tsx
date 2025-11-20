@@ -2344,13 +2344,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     ctx.translate(state.canvas.pan.x, state.canvas.pan.y);
     
     const zoomScale = state.canvas.zoom / 100;
-    console.log('🎨 ZOOM DEBUG: zoom =', state.canvas.zoom, 'zoomScale =', zoomScale, 'canvas size:', width, 'x', height);
     ctx.scale(zoomScale, zoomScale);
-
-    // DEBUG: Dessiner un rectangle pour voir la zone zoomée
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 2 / zoomScale; // Ajuster l'épaisseur selon le zoom
-    ctx.strokeRect(10, 10, width / zoomScale - 20, height / zoomScale - 20);
 
     // NOTE: Les marges seront réactivées après que le rendu des éléments soit fixé
     // const showMargins = canvasSettings.showMargins;
@@ -2517,6 +2511,11 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       ? `${canvasSettings.borderWidth}px solid ${canvasSettings.borderColor || '#cccccc'}` 
       : 'none';
 
+  // Calculate canvas display size based on zoom
+  const zoomScale = state.canvas.zoom / 100;
+  const displayWidth = width * zoomScale;
+  const displayHeight = height * zoomScale;
+
   return (
     <>
       <canvas
@@ -2533,6 +2532,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         style={{
+          width: `${displayWidth}px`,
+          height: `${displayHeight}px`,
           border: borderStyle,
           cursor: 'crosshair',
           backgroundColor: '#ffffff',
