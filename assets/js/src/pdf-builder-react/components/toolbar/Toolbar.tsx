@@ -64,7 +64,7 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleToggleGrid = () => {
-    if (toggleGrid && canvasSettings.gridShow) {
+    if (toggleGrid) {
       toggleGrid();
     }
   };
@@ -76,10 +76,12 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleToggleSnapToGrid = () => {
-    // Toggle snap to grid via template settings
+    // Toggle snap to grid via canvas settings
     const newSnapToGrid = !state.canvas.snapToGrid;
-    // Dispatch action to update template settings
-    dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: { snapToGrid: newSnapToGrid } });
+    // Use setCanvas to update canvas state directly
+    if (setCanvas) {
+      setCanvas({ snapToGrid: newSnapToGrid });
+    }
   };
 
   return (
