@@ -11,8 +11,6 @@ export function Toolbar({ className }: ToolbarProps) {
   const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides, setCanvas } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
-  console.log('🔧 TOOLBAR RENDER - current zoom:', state.canvas.zoom);
-
   // Vérifications de sécurité
   if (!state) {
     return <div style={{ padding: '20px', backgroundColor: '#ffcccc', border: '1px solid #ff0000' }}>
@@ -356,13 +354,9 @@ export function Toolbar({ className }: ToolbarProps) {
               <button
                 onClick={() => {
                   // Zoom out
-                  const currentZoom = state.canvas.zoom;
-                  const newZoom = Math.max(10, currentZoom - 25);
-                  console.log('🔍 ZOOM OUT: current =', currentZoom, '-> new =', newZoom);
+                  const newZoom = Math.max(10, state.canvas.zoom - 25);
                   if (setCanvas) {
                     setCanvas({ zoom: newZoom });
-                    // Vérifier immédiatement après
-                    setTimeout(() => console.log('🔍 AFTER setCanvas, state.zoom =', state.canvas.zoom), 0);
                   }
                 }}
                 style={{

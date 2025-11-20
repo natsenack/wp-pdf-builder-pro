@@ -316,13 +316,10 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
     }
 
     case 'SET_CANVAS': {
-      console.log('🎯 REDUCER SET_CANVAS - payload:', action.payload, 'current zoom:', state.canvas.zoom);
-      const newState = {
+      return {
         ...state,
         canvas: { ...state.canvas, ...action.payload }
       };
-      console.log('🎯 REDUCER SET_CANVAS - new zoom:', newState.canvas.zoom);
-      return newState;
     }
 
     case 'SET_MODE': {
@@ -580,16 +577,17 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
 
   // Appliquer les paramètres de zoom depuis Canvas Settings au démarrage
   useEffect(() => {
-    // Appliquer le zoom par défaut depuis les paramètres
-    if (canvasSettings.zoomDefault && canvasSettings.zoomDefault !== state.canvas.zoom) {
-      dispatch({ 
-        type: 'SET_CANVAS', 
-        payload: { 
+    // Appliquer le zoom par défaut depuis les paramètres UNIQUEMENT au démarrage
+    // Ne pas surveiller state.canvas.zoom pour éviter de forcer le zoom à 100
+    if (canvasSettings.zoomDefault && canvasSettings.zoomDefault !== 100) { // 100 est la valeur initiale
+      dispatch({
+        type: 'SET_CANVAS',
+        payload: {
           zoom: Math.max(canvasSettings.zoomMin, Math.min(canvasSettings.zoomDefault, canvasSettings.zoomMax))
-        } 
+        }
       });
     }
-  }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin, state.canvas.zoom]);
+  }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin]); // Retiré state.canvas.zoom
 
   // Synchroniser les paramètres de grille depuis CanvasSettingsContext (uniquement à l'initialisation)
   useEffect(() => {
