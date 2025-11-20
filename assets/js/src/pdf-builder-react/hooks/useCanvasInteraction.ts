@@ -199,9 +199,10 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         let newRotation = initialRotation + totalRotationDegrees;
 
         // ✅ AJOUT: Snap magnétique IMMÉDIAT aux angles cardinaux (0°, 90°, 180°, 270°)
-        // Snap direct à 0° quand dans la zone
-        const snapTolerance = 15 * (Math.PI / 180); // Tolérance de 15 degrés pour commencer le snap normal
-        const zeroSnapTolerance = 8 * (Math.PI / 180); // Tolérance de 8 degrés pour 0° - snap immédiat
+        // TEMPORAIREMENT DÉSACTIVÉ POUR DIAGNOSTIC
+        /*
+        const snapTolerance = 20 * (Math.PI / 180); // Tolérance de 20 degrés pour commencer le snap normal
+        const zeroSnapTolerance = 15 * (Math.PI / 180); // Tolérance de 15 degrés pour 0° - snap immédiat et agressif
 
         // Normaliser l'angle entre -180° et 180°
         let normalizedRotation = newRotation % 360;
@@ -245,6 +246,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
             });
           }
         }
+        */
 
         dispatch({
           type: 'UPDATE_ELEMENT',
@@ -651,6 +653,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     }
 
     // ✅ AJOUT: Snap final à 0° lors du relâchement de la souris
+    // TEMPORAIREMENT DÉSACTIVÉ POUR DIAGNOSTIC
+    /*
     const lastState = lastKnownStateRef.current;
     const selectedIds = lastState.selection.selectedElements;
     if (selectedIds.length > 0 && isRotatingRef.current) {
@@ -667,8 +671,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           // Distance à 0°
           const distanceToZero = Math.abs(normalizedRotation);
           
-          // Snap final si très proche de 0° (dans les 3°)
-          const finalSnapThreshold = 3 * (Math.PI / 180); // 3 degrés en radians
+          // Snap final si très proche de 0° (dans les 10°)
+          const finalSnapThreshold = 10 * (Math.PI / 180); // 10 degrés en radians
           if (distanceToZero <= finalSnapThreshold) {
             console.log('🎯 FINAL SNAP TO ZERO:', { currentRotation, normalizedRotation, distanceToZero });
             dispatch({
@@ -682,6 +686,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         }
       });
     }
+    */
 
     isDraggingRef.current = false;
     isResizingRef.current = false;
