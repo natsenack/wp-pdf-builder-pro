@@ -414,6 +414,22 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const modal = this.closest('.canvas-modal');
             modal.style.display = 'none';
+
+            // Update zoom navigation status when zoom modal closes
+            if (modal.id === 'canvas-zoom-modal') {
+                const contentTab = document.getElementById('contenu');
+                const activeTab = document.querySelector('.nav-tab-active');
+
+                if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
+                    // Small delay to ensure any updates are complete
+                    setTimeout(function() {
+                        const checkbox = document.getElementById('canvas_pan_enabled');
+                        if (checkbox) {
+                            updateZoomNavigationStatus(checkbox.checked);
+                        }
+                    }, 100);
+                }
+            }
         });
     });
 
@@ -422,7 +438,24 @@ document.addEventListener('DOMContentLoaded', function() {
     modalOverlays.forEach(function(overlay) {
         overlay.addEventListener('click', function(e) {
             if (e.target === this) {
-                this.closest('.canvas-modal').style.display = 'none';
+                const modal = this.closest('.canvas-modal');
+                modal.style.display = 'none';
+
+                // Update zoom navigation status when zoom modal closes
+                if (modal.id === 'canvas-zoom-modal') {
+                    const contentTab = document.getElementById('contenu');
+                    const activeTab = document.querySelector('.nav-tab-active');
+
+                    if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
+                        // Small delay to ensure any updates are complete
+                        setTimeout(function() {
+                            const checkbox = document.getElementById('canvas_pan_enabled');
+                            if (checkbox) {
+                                updateZoomNavigationStatus(checkbox.checked);
+                            }
+                        }, 100);
+                    }
+                }
             }
         });
     });
@@ -554,41 +587,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Refresh status when modal closes (after potential save) - only on content tab
-    document.addEventListener('click', function(e) {
-        if (e.target && (e.target.classList.contains('canvas-modal-close') ||
-                        e.target.classList.contains('canvas-modal-cancel') ||
-                        e.target.classList.contains('canvas-modal-overlay'))) {
-            // Check if we're on the content tab
-            const contentTab = document.getElementById('contenu');
-            const activeTab = document.querySelector('.nav-tab-active');
 
-            if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
-                // Instead of reloading, just update the status indicator
-                // The status will be updated when the user reopens the modal or changes tabs
-                // This prevents issues with rapid clicking
-            }
-        }
-    });
-
-    // Also listen for modal save button clicks
-    document.addEventListener('click', function(e) {
-        if (e.target && e.target.classList.contains('canvas-modal-save') &&
-            e.target.getAttribute('data-category') === 'zoom') {
-            // Check if we're on the content tab
-            const contentTab = document.getElementById('contenu');
-            const activeTab = document.querySelector('.nav-tab-active');
-
-            if (contentTab && activeTab && activeTab.getAttribute('data-tab') === 'contenu') {
-                // Update status after save completes
-                setTimeout(function() {
-                    const checkbox = document.getElementById('canvas_pan_enabled');
-                    if (checkbox) {
-                        updateZoomNavigationStatus(checkbox.checked);
-                    }
-                }, 100);
-            }
-        }
-    });
 });
 </script>
