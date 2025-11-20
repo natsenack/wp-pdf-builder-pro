@@ -243,6 +243,15 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     handleRefresh();
   }, []);
 
+  // Listen for settings update events
+  useEffect(() => {
+    const handleSettingsUpdate = () => {
+      handleRefresh();
+    };
+    window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+    return () => window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+  }, []);
+
   const handleRefresh = async () => {
     try {
       // Faire un appel AJAX pour récupérer les paramètres mis à jour

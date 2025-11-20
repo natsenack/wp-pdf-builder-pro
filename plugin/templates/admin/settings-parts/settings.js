@@ -782,6 +782,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Show success message
                     showSuccessMessage('Paramètres sauvegardés avec succès');
+
+                    // Notify React context to refresh settings
+                    window.dispatchEvent(new Event('canvasSettingsUpdated'));
                 } else {
                     showErrorMessage('Erreur: ' + (data.data || 'Erreur inconnue'));
                 }
