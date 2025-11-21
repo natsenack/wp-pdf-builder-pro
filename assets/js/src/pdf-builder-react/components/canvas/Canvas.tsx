@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
@@ -2468,57 +2468,15 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     ctx.restore();
   }, [width, height, canvasSettings, state, drawElement, drawGrid, drawGuides, selectionState]);  // ✅ Include memoized drawGrid and drawGuides
 
-  // ✅ OPTIMIZATION: Memoize elements hash to prevent unnecessary re-renders
-  const elementsHash = useMemo(() => {
-    let hash = '';
-    for (let i = 0; i < state.elements.length; i++) {
-      const e = state.elements[i];
-      const getUpdatedAtTime = (updatedAt: unknown): number => {
-        if (updatedAt instanceof Date && !isNaN(updatedAt.getTime())) {
-          return updatedAt.getTime();
-        }
-        if (typeof updatedAt === 'string' || typeof updatedAt === 'number') {
-          const date = new Date(updatedAt);
-          if (!isNaN(date.getTime())) {
-            return date.getTime();
-          }
-        }
-        return 0;
-      };
-
-      const hashData = {
-        id: e.id,
-        updatedAt: getUpdatedAtTime(e.updatedAt),
-        x: e.x, y: e.y, width: e.width, height: e.height,
-        rotation: e.rotation || 0,
-        opacity: e.opacity || 1,
-        visible: e.visible,
-        logoUrl: 'logoUrl' in e ? (e as {logoUrl?: string}).logoUrl || '' : '',
-        src: 'src' in e ? (e as {src?: string}).src || '' : ''
-      };
-      hash += JSON.stringify(hashData) + ';';
-    }
-
-    // Include selection in hash
-    hash += JSON.stringify(state.selection.selectedElements) + ';';
-
-    // Include canvas settings (grid, guides, snap) in hash
-    const canvasSettingsHash = JSON.stringify({
-      showGrid: state.canvas.showGrid,
-      snapToGrid: state.canvas.snapToGrid,
-      showGuides: state.template.showGuides
-    });
-    hash += `canvasSettings:${canvasSettingsHash};`;
-
-    // Include imageLoadCount in hash
-    hash += `imageLoadCount:${imageLoadCount};`;
-
-    return hash;
-  }, [state.elements, state.selection.selectedElements, state.canvas.showGrid, state.canvas.snapToGrid, state.template.showGuides, imageLoadCount]);
-
   // Redessiner quand l'état change
   useEffect(() => {
-  }, [state, imageLoadCount, canvasSettings]);  // ✅ BUGFIX: Removed renderCanvas from deps to avoid instability
+    renderCanvas();
+  }, [renderCanvas, imageLoadCount]);
+
+  // Rendu initial
+  useEffect(() => {
+    renderCanvas();
+  }, []);
 
   // ✅ Force initial render when elements first load (for cached images)
   useEffect(() => {
