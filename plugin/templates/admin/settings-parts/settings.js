@@ -893,6 +893,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Notify other tabs/windows about settings change
                     try {
                         localStorage.setItem('pdfBuilderSettingsUpdated', Date.now().toString());
+                        console.log('PARAMS: localStorage updated with timestamp');
                         // Also dispatch a storage event for same-tab listeners
                         window.dispatchEvent(new StorageEvent('storage', {
                             key: 'pdfBuilderSettingsUpdated',
@@ -900,7 +901,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             storageArea: localStorage
                         }));
                     } catch (e) {
-                        // localStorage might not be available
+                        console.warn('PARAMS: localStorage not available:', e);
                     }
 
                     // Close modal after a short delay

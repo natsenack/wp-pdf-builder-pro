@@ -13,11 +13,13 @@ export const useCanvasSettings = () => {
     // Écouter les changements de paramètres
     useEffect(() => {
         const handleSettingsUpdate = () => {
+            console.log('REACT: handleSettingsUpdate called, updating settingsVersion');
             setSettingsVersion(prev => prev + 1);
         };
 
         const handleStorageChange = async (event: StorageEvent) => {
             if (event.key === 'pdfBuilderSettingsUpdated') {
+                console.log('REACT: localStorage change detected, fetching new settings...');
                 try {
                     // Fetch fresh settings from server
                     const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
@@ -31,17 +33,22 @@ export const useCanvasSettings = () => {
                     });
 
                     const data = await response.json();
+                    console.log('REACT: AJAX response:', data);
                     if (data.success && data.data) {
+                        console.log('REACT: Updating window.pdfBuilderCanvasSettings with:', data.data);
                         // Update global settings object
                         window.pdfBuilderCanvasSettings = {
                             ...window.pdfBuilderCanvasSettings,
                             ...data.data
                         };
+                        console.log('REACT: window.pdfBuilderCanvasSettings updated, triggering handleSettingsUpdate');
                         // Trigger settings update
                         handleSettingsUpdate();
+                    } else {
+                        console.warn('REACT: Invalid AJAX response:', data);
                     }
                 } catch (error) {
-                    console.warn('Failed to fetch updated settings:', error);
+                    console.warn('REACT: Failed to fetch updated settings:', error);
                     // Fallback: reload page
                     window.location.reload();
                 }
@@ -79,7 +86,11 @@ export const useCanvasSettings = () => {
 export const useCanvasSetting = (key: string, defaultValue: unknown = null) => {
     const settings = useCanvasSettings() as Record<string, unknown>;
     return useMemo(() => {
-        return key in settings ? settings[key] : defaultValue;
+        const value = key in settings ? settings[key] : defaultValue;
+        if (key === 'enable_keyboard_shortcuts') {
+            console.log(`REACT: useCanvasSetting(${key}) =`, value, 'from settings:', settings);
+        }
+        return value;
     }, [key, settings, defaultValue]);
 };
 
