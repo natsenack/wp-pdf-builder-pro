@@ -446,148 +446,6 @@
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
             </div>
             <div class="canvas-modal-body">
-                <form id="canvas-performance-form">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_fps_target">FPS cible</label></th>
-                            <td>
-                                <input type="number" id="canvas_fps_target" name="canvas_fps_target" value="<?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?>" min="10" max="120" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_memory_limit">Limite mémoire (MB)</label></th>
-                            <td>
-                                <input type="number" id="canvas_memory_limit" name="canvas_memory_limit" value="<?php echo intval(get_option('pdf_builder_canvas_memory_limit', 256)); ?>" min="64" max="1024" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_lazy_loading">Chargement paresseux</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_lazy_loading" name="canvas_lazy_loading" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-            <div class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="performance">Sauvegarder</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Canvas Configuration Modals Sauvegarde Auto -->
-<div id="canvas-autosave-modal" class="canvas-modal" style="display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">💾 Sauvegarde Auto</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
-                <form id="canvas-autosave-form">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_autosave_enabled">Sauvegarde automatique activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_autosave_enabled" name="canvas_autosave_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_autosave_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_autosave_interval">Intervalle (minutes)</label></th>
-                            <td>
-                                <input type="number" id="canvas_autosave_interval" name="canvas_autosave_interval" value="<?php echo intval(get_option('pdf_builder_canvas_autosave_interval', 5)); ?>" min="1" max="60" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_history_enabled">Historique activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_history_enabled" name="canvas_history_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_history_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_history_max">Historique max (versions)</label></th>
-                            <td>
-                                <input type="number" id="canvas_history_max" name="canvas_history_max" value="<?php echo intval(get_option('pdf_builder_canvas_history_max', 50)); ?>" min="5" max="200" />
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-            <div class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="autosave">Sauvegarder</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Canvas Configuration Modals Debug -->
-<div id="canvas-debug-modal" class="canvas-modal" style="display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">🐛 Debug</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
-                <form id="canvas-debug-form">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_debug_enabled">Debug activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_debug_enabled" name="canvas_debug_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_debug_enabled', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_performance_monitoring">Monitoring performance</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_performance_monitoring" name="canvas_performance_monitoring" value="1" <?php checked(get_option('pdf_builder_canvas_performance_monitoring', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_error_reporting">Rapport d'erreurs</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_error_reporting" name="canvas_error_reporting" value="1" <?php checked(get_option('pdf_builder_canvas_error_reporting', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-            <div class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="debug">Sauvegarder</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Canvas Configuration Modals Performance -->
-<div id="canvas-performance-modal" class="canvas-modal" style="display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">⚡ Performance</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
                 <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
                     <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
                         <strong>💡 Optimisation :</strong> Ces paramètres améliorent les performances de l'éditeur et du plugin pour une expérience plus fluide.
@@ -709,6 +567,105 @@
             <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="performance">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Canvas Configuration Modals Sauvegarde Auto -->
+<div id="canvas-autosave-modal" class="canvas-modal" style="display: none;">
+    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+        <div class="canvas-modal-content">
+            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
+                <h3 style="margin: 0; color: #495057;">💾 Sauvegarde Auto</h3>
+                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            </div>
+            <div class="canvas-modal-body">
+                <form id="canvas-autosave-form">
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_autosave_enabled">Sauvegarde automatique activée</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_autosave_enabled" name="canvas_autosave_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_autosave_enabled', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_autosave_interval">Intervalle (minutes)</label></th>
+                            <td>
+                                <input type="number" id="canvas_autosave_interval" name="canvas_autosave_interval" value="<?php echo intval(get_option('pdf_builder_canvas_autosave_interval', 5)); ?>" min="1" max="60" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_history_enabled">Historique activé</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_history_enabled" name="canvas_history_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_history_enabled', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_history_max">Historique max (versions)</label></th>
+                            <td>
+                                <input type="number" id="canvas_history_max" name="canvas_history_max" value="<?php echo intval(get_option('pdf_builder_canvas_history_max', 50)); ?>" min="5" max="200" />
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <div class="canvas-modal-footer">
+                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
+                <button type="button" class="button button-primary canvas-modal-save" data-category="autosave">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Canvas Configuration Modals Debug -->
+<div id="canvas-debug-modal" class="canvas-modal" style="display: none;">
+    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+        <div class="canvas-modal-content">
+            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
+                <h3 style="margin: 0; color: #495057;">🐛 Debug</h3>
+                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            </div>
+            <div class="canvas-modal-body">
+                <form id="canvas-debug-form">
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_debug_enabled">Debug activé</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_debug_enabled" name="canvas_debug_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_debug_enabled', '0'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_performance_monitoring">Monitoring performance</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_performance_monitoring" name="canvas_performance_monitoring" value="1" <?php checked(get_option('pdf_builder_canvas_performance_monitoring', '0'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_error_reporting">Rapport d'erreurs</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_error_reporting" name="canvas_error_reporting" value="1" <?php checked(get_option('pdf_builder_canvas_error_reporting', '0'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <div class="canvas-modal-footer">
+                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
+                <button type="button" class="button button-primary canvas-modal-save" data-category="debug">Sauvegarder</button>
             </div>
         </div>
     </div>
