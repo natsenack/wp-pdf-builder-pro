@@ -900,6 +900,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Show success message
                     showSuccessMessage('Paramètres sauvegardés avec succès');
 
+                    // Reload page after successful save to reflect new default values
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+
                     // Update window.pdfBuilderCanvasSettings with new values
                     if (data.data && data.data.saved) {
                         // Merge the saved values into the existing settings
