@@ -119,6 +119,7 @@ class Canvas_Manager
             'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
             'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
             'enable_keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1') == '1',
+            'canvas_selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'click'),
             'debug_mode' => get_option('pdf_builder_canvas_debug_mode', false) == '1',
             'show_fps' => get_option('pdf_builder_canvas_show_fps', false) == '1'
         ];
@@ -491,6 +492,7 @@ JS;
             'undo_levels' => 'pdf_builder_canvas_undo_levels',
             'redo_levels' => 'pdf_builder_canvas_redo_levels',
             'enable_keyboard_shortcuts' => 'pdf_builder_canvas_keyboard_shortcuts',
+            'canvas_selection_mode' => 'pdf_builder_canvas_selection_mode',
             'debug_mode' => 'pdf_builder_canvas_debug_mode',
             'show_fps' => 'pdf_builder_canvas_show_fps'
         ];
