@@ -192,6 +192,12 @@ add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
  * Enregistrer les handlers AJAX
  */
 function pdf_builder_register_ajax_handlers() {
+    // Include settings AJAX handlers
+    $settings_ajax_path = plugin_dir_path(__FILE__) . 'templates/admin/settings-parts/settings-ajax.php';
+    if (file_exists($settings_ajax_path)) {
+        require_once $settings_ajax_path;
+    }
+
     // Preview images
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
