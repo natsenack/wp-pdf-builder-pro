@@ -388,11 +388,24 @@ function pdf_builder_save_canvas_settings_handler() {
             }
 
             // Traiter les nombres
-            $numbers = ['canvas_export_quality', 'canvas_fps_target', 'canvas_memory_limit'];
+            $numbers = ['canvas_export_quality', 'canvas_fps_target', 'canvas_memory_limit', 'canvas_memory_limit_js', 'canvas_memory_limit_php', 'canvas_response_timeout'];
             foreach ($numbers as $number) {
                 if (isset($_POST[$number])) {
                     $settings[str_replace('canvas_', '', $number)] = intval($_POST[$number]);
                 }
+            }
+
+            // Traiter les checkboxes de performance
+            $performanceCheckboxes = [
+                'canvas_lazy_loading_editor' => 'lazy_loading_editor',
+                'canvas_preload_critical' => 'preload_critical',
+                'canvas_lazy_loading_plugin' => 'lazy_loading_plugin',
+                'canvas_cache_enabled' => 'cache_enabled'
+            ];
+            
+            foreach ($performanceCheckboxes as $checkbox => $settingKey) {
+                $value = isset($_POST[$checkbox]) && $_POST[$checkbox] === '1';
+                $settings[$settingKey] = $value;
             }
 
             $saved = $canvas_manager->saveSettings($settings);
@@ -473,7 +486,16 @@ function pdf_builder_get_canvas_settings_handler() {
             'enable_keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1') == '1',
             'canvas_selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'click'),
             'debug_mode' => get_option('pdf_builder_canvas_debug_mode', false) == '1',
-            'show_fps' => get_option('pdf_builder_canvas_show_fps', false) == '1'
+            'show_fps' => get_option('pdf_builder_canvas_show_fps', false) == '1',
+            // Paramètres de performance
+            'fps_target' => intval(get_option('pdf_builder_canvas_fps_target', 60)),
+            'memory_limit_js' => intval(get_option('pdf_builder_canvas_memory_limit_js', 256)),
+            'memory_limit_php' => intval(get_option('pdf_builder_canvas_memory_limit_php', 256)),
+            'response_timeout' => intval(get_option('pdf_builder_canvas_response_timeout', 30)),
+            'lazy_loading_editor' => get_option('pdf_builder_canvas_lazy_loading_editor', '1') == '1',
+            'preload_critical' => get_option('pdf_builder_canvas_preload_critical', '1') == '1',
+            'lazy_loading_plugin' => get_option('pdf_builder_canvas_lazy_loading_plugin', '1') == '1',
+            'cache_enabled' => get_option('pdf_builder_canvas_cache_enabled', '1') == '1'
         ];
         
         error_log('PDF Builder: get_canvas_settings returning: ' . print_r($settings, true));
