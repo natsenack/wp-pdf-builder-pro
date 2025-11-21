@@ -2053,11 +2053,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
 
-                // Fermeture en cliquant sur l'overlay
-                const overlay = modal.querySelector('.canvas-modal-overlay');
+                // Fermeture en cliquant sur l'overlay (overlay déjà défini plus haut)
                 if (overlay) {
                     console.log('🔍 DEBUG: Overlay found, adding click handler');
-                    overlay.style.display = 'flex'; // S'assurer que l'overlay est visible
                     overlay.addEventListener('click', function(event) {
                         if (event.target === overlay) {
                             console.log('🔍 DEBUG: Closing modal via overlay');
