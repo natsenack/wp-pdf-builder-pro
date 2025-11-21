@@ -82,68 +82,72 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById(modalId);
 
             if (modal) {
-                console.log('🔍 Modal found, showing canvas modal for category:', category);
+                console.log('🔍 Modal found, creating clean modal for category:', category);
 
-                // SOLUTION : Utiliser la modale existante mais la simplifier
-                modal.style.display = 'block';
-                modal.style.visibility = 'visible';
-                modal.style.opacity = '1';
-                modal.style.zIndex = '999999';
-                modal.style.position = 'fixed';
-                modal.style.top = '0';
-                modal.style.left = '0';
-                modal.style.width = '100%';
-                modal.style.height = '100%';
+                // SOLUTION FINALE : Créer une modale propre basée sur le contenu existant
+                const cleanModal = document.createElement('div');
+                cleanModal.id = modalId + '-clean';
+                cleanModal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.7);
+                    z-index: 999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
 
-                // Simplifier le contenu de l'overlay et du content
-                const overlay = modal.querySelector('.canvas-modal-overlay');
-                const content = modal.querySelector('.canvas-modal-content');
+                // Copier le contenu de la modale existante mais simplifier
+                const existingContent = modal.querySelector('.canvas-modal-content');
+                if (existingContent) {
+                    const contentClone = existingContent.cloneNode(true);
+                    contentClone.style.cssText = `
+                        background: white;
+                        border-radius: 8px;
+                        padding: 20px;
+                        max-width: 600px;
+                        width: 90%;
+                        max-height: 85vh;
+                        overflow-y: auto;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                        position: relative;
+                    `;
+                    cleanModal.appendChild(contentClone);
 
-                if (overlay) {
-                    overlay.style.position = 'absolute';
-                    overlay.style.top = '0';
-                    overlay.style.left = '0';
-                    overlay.style.width = '100%';
-                    overlay.style.height = '100%';
-                    overlay.style.background = 'rgba(0,0,0,0.7)';
-                    overlay.style.display = 'flex';
-                    overlay.style.alignItems = 'center';
-                    overlay.style.justifyContent = 'center';
-                }
-
-                if (content) {
-                    content.style.background = 'white';
-                    content.style.borderRadius = '8px';
-                    content.style.padding = '20px';
-                    content.style.maxWidth = '600px';
-                    content.style.width = '90%';
-                    content.style.maxHeight = '85vh';
-                    content.style.overflow = 'auto';
-                    content.style.boxShadow = '0 10px 40px rgba(0,0,0,0.3)';
-                    content.style.position = 'relative';
-                    content.style.zIndex = '1000000';
-                }
-
-                // Ajouter les event listeners
-                const closeButtons = modal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
-                closeButtons.forEach(function(button) {
-                    button.addEventListener('click', function() {
-                        modal.style.display = 'none';
-                        document.body.style.overflow = '';
+                    // S'assurer que les boutons de fermeture fonctionnent
+                    const closeButtons = contentClone.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
+                    closeButtons.forEach(function(button) {
+                        button.onclick = function() {
+                            cleanModal.remove();
+                            document.body.style.overflow = '';
+                        };
                     });
+                } else {
+                    // Contenu de fallback si pas trouvé
+                    cleanModal.innerHTML = `
+                        <div style="background: white; border-radius: 8px; padding: 20px; max-width: 400px; text-align: center;">
+                            <h2>Configuration ${category}</h2>
+                            <p>Contenu en cours de chargement...</p>
+                            <button onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = '';" style="background: #007cba; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Fermer</button>
+                        </div>
+                    `;
+                }
+
+                // Fermeture en cliquant sur l'overlay
+                cleanModal.addEventListener('click', function(event) {
+                    if (event.target === cleanModal) {
+                        cleanModal.remove();
+                        document.body.style.overflow = '';
+                    }
                 });
 
-                if (overlay) {
-                    overlay.addEventListener('click', function(event) {
-                        if (event.target === overlay) {
-                            modal.style.display = 'none';
-                            document.body.style.overflow = '';
-                        }
-                    });
-                }
-
+                document.body.appendChild(cleanModal);
                 document.body.style.overflow = 'hidden';
-                console.log('🔍 Canvas modal should now be visible');
+
+                console.log('🔍 Clean modal created and should be visible');
             } else {
                 console.error('Modal not found for category:', category, 'Expected ID:', modalId);
             }
