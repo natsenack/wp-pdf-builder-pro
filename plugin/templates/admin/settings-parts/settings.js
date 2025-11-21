@@ -888,12 +888,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: formData
             })
-            .then(response => {
-                console.log('PDF Builder: AJAX response status:', response.status);
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                console.log('PDF Builder: AJAX response data:', data);
                 if (data.success) {
                     // Update form checkboxes with new values
                     if (data.data && data.data.saved) {

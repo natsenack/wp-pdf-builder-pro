@@ -313,9 +313,6 @@ function pdf_builder_save_settings_handler() {
 
 // Canvas settings AJAX handler
 function pdf_builder_save_canvas_settings_handler() {
-    error_log('PDF Builder: save_canvas_settings_handler called');
-    error_log('PDF Builder: POST data: ' . print_r($_POST, true));
-
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
 
         // Utiliser le Canvas_Manager pour la sauvegarde centralisée
@@ -411,9 +408,6 @@ function pdf_builder_save_canvas_settings_handler() {
             }
 
             $saved = $canvas_manager->saveSettings($settings);
-
-            error_log('PDF Builder: Settings to save: ' . print_r($settings, true));
-            error_log('PDF Builder: Save result: ' . ($saved ? 'SUCCESS' : 'FAILED'));
 
             if ($saved) {
                 send_ajax_response(true, 'Paramètres canvas sauvegardés avec succès.', ['saved' => $settings]);

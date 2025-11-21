@@ -494,7 +494,15 @@ JS;
             'enable_keyboard_shortcuts' => 'pdf_builder_canvas_keyboard_shortcuts',
             'canvas_selection_mode' => 'pdf_builder_canvas_selection_mode',
             'debug_mode' => 'pdf_builder_canvas_debug_mode',
-            'show_fps' => 'pdf_builder_canvas_show_fps'
+            'show_fps' => 'pdf_builder_canvas_show_fps',
+            // Paramètres de performance
+            'fps_target' => 'pdf_builder_canvas_fps_target',
+            'memory_limit_js' => 'pdf_builder_canvas_memory_limit_js',
+            'memory_limit_php' => 'pdf_builder_canvas_memory_limit_php',
+            'response_timeout' => 'pdf_builder_canvas_response_timeout',
+            'lazy_loading_editor' => 'pdf_builder_canvas_lazy_loading_editor',
+            'preload_critical' => 'pdf_builder_canvas_preload_critical',
+            'lazy_loading_plugin' => 'pdf_builder_canvas_lazy_loading_plugin'
         ];
         
         // Sauvegarder dans les options séparées
