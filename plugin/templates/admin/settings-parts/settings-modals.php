@@ -578,3 +578,152 @@
         </div>
     </div>
 </div>
+
+<!-- Performance Configuration Modal -->
+<div id="performance-modal" class="canvas-modal" style="display: none;">
+    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+        <div class="canvas-modal-content" style="max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
+                <h3 style="margin: 0; color: #495057;">⚡ Configuration Performance</h3>
+                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            </div>
+            <div class="canvas-modal-body">
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
+                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                        <strong>💡 Optimisation :</strong> Ces paramètres améliorent les performances de l'éditeur PDF et du plugin WordPress.
+                        L'éditeur gère l'interface de conception, tandis que le plugin optimise la génération et les interactions serveur.
+                    </p>
+                </div>
+
+                <form id="performance-form">
+                    <!-- Section Éditeur PDF -->
+                    <div class="performance-section-editor" style="margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%); border: 2px solid #e3f2fd; border-radius: 12px;">
+                        <h4 style="margin-top: 0; color: #1976d2; border-bottom: 2px solid #1976d2; padding-bottom: 10px;">
+                            <span style="display: inline-flex; align-items: center; gap: 10px;">
+                                🎨 Éditeur PDF
+                            </span>
+                        </h4>
+                        <p style="color: #666; margin-bottom: 20px;">Paramètres pour optimiser l'interface de conception et le rendu canvas.</p>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="editor_fps_target">Cible FPS</label></th>
+                                <td>
+                                    <select id="editor_fps_target" name="editor_fps_target">
+                                        <option value="30" <?php selected(get_option('pdf_builder_editor_fps_target', '60'), '30'); ?>>30 FPS (Économie)</option>
+                                        <option value="60" <?php selected(get_option('pdf_builder_editor_fps_target', '60'), '60'); ?>>60 FPS (Standard)</option>
+                                        <option value="120" <?php selected(get_option('pdf_builder_editor_fps_target', '60'), '120'); ?>>120 FPS (Haute performance)</option>
+                                    </select>
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Fluidité du rendu canvas et animations</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="editor_memory_limit">Limite mémoire JavaScript</label></th>
+                                <td>
+                                    <select id="editor_memory_limit" name="editor_memory_limit">
+                                        <option value="50" <?php selected(get_option('pdf_builder_editor_memory_limit', '100'), '50'); ?>>50 MB</option>
+                                        <option value="100" <?php selected(get_option('pdf_builder_editor_memory_limit', '100'), '100'); ?>>100 MB</option>
+                                        <option value="200" <?php selected(get_option('pdf_builder_editor_memory_limit', '100'), '200'); ?>>200 MB</option>
+                                        <option value="500" <?php selected(get_option('pdf_builder_editor_memory_limit', '100'), '500'); ?>>500 MB (Grande conception)</option>
+                                    </select>
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Mémoire allouée pour les éléments et historique</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="editor_lazy_loading">Chargement paresseux</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="editor_lazy_loading" name="editor_lazy_loading" value="1" <?php checked(get_option('pdf_builder_editor_lazy_loading', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Charge les éléments seulement quand nécessaires</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="editor_preload_critical">Préchargement critique</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="editor_preload_critical" name="editor_preload_critical" value="1" <?php checked(get_option('pdf_builder_editor_preload_critical', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Précharge les ressources essentielles (polices, outils)</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Section Plugin WordPress -->
+                    <div class="performance-section-plugin" style="margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #fff8f8 0%, #ffffff 100%); border: 2px solid #ffebee; border-radius: 12px;">
+                        <h4 style="margin-top: 0; color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">
+                            <span style="display: inline-flex; align-items: center; gap: 10px;">
+                                🔧 Plugin WordPress
+                            </span>
+                        </h4>
+                        <p style="color: #666; margin-bottom: 20px;">Paramètres pour optimiser la génération PDF et les performances serveur.</p>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="plugin_memory_limit">Limite mémoire PHP</label></th>
+                                <td>
+                                    <select id="plugin_memory_limit" name="plugin_memory_limit">
+                                        <option value="128" <?php selected(get_option('pdf_builder_plugin_memory_limit', '256'), '128'); ?>>128 MB</option>
+                                        <option value="256" <?php selected(get_option('pdf_builder_plugin_memory_limit', '256'), '256'); ?>>256 MB</option>
+                                        <option value="512" <?php selected(get_option('pdf_builder_plugin_memory_limit', '256'), '512'); ?>>512 MB</option>
+                                        <option value="1024" <?php selected(get_option('pdf_builder_plugin_memory_limit', '256'), '1024'); ?>>1 GB (Documents complexes)</option>
+                                    </select>
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Mémoire pour génération PDF et traitement données</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="plugin_response_timeout">Timeout réponse</label></th>
+                                <td>
+                                    <select id="plugin_response_timeout" name="plugin_response_timeout">
+                                        <option value="30" <?php selected(get_option('pdf_builder_plugin_response_timeout', '60'), '30'); ?>>30 secondes</option>
+                                        <option value="60" <?php selected(get_option('pdf_builder_plugin_response_timeout', '60'), '60'); ?>>60 secondes</option>
+                                        <option value="120" <?php selected(get_option('pdf_builder_plugin_response_timeout', '60'), '120'); ?>>2 minutes</option>
+                                        <option value="300" <?php selected(get_option('pdf_builder_plugin_response_timeout', '60'), '300'); ?>>5 minutes (Documents lourds)</option>
+                                    </select>
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Délai maximum pour génération PDF</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="plugin_lazy_data">Chargement paresseux données</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="plugin_lazy_data" name="plugin_lazy_data" value="1" <?php checked(get_option('pdf_builder_plugin_lazy_data', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Charge les données WooCommerce à la demande</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="plugin_cache_enabled">Cache intelligent</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="plugin_cache_enabled" name="plugin_cache_enabled" value="1" <?php checked(get_option('pdf_builder_plugin_cache_enabled', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Met en cache templates et configurations fréquentes</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="plugin_performance_monitoring">Monitoring performance</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="plugin_performance_monitoring" name="plugin_performance_monitoring" value="1" <?php checked(get_option('pdf_builder_plugin_performance_monitoring', '0'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Surveille les métriques de performance</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div class="canvas-modal-footer">
+                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
+                <button type="button" class="button button-primary canvas-modal-save" data-category="performance">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>

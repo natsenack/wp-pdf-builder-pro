@@ -312,16 +312,53 @@ input:checked + .toggle-slider:before {
                                 <h4>Performance</h4>
                             </div>
                             <div class="canvas-card-content">
-                                <p>Optimisez les FPS et la gestion mémoire du canvas.</p>
+                                <p>Optimisez les performances de l'éditeur et du plugin.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="performance-bar">
-                                    <div class="performance-fill" style="width: 80%;"></div>
+                                <div class="performance-preview-container">
+                                    <!-- Éditeur -->
+                                    <div class="performance-section">
+                                        <div class="performance-label">Éditeur</div>
+                                        <div class="performance-metrics">
+                                            <div class="metric-item">
+                                                <span class="metric-icon">🎮</span>
+                                                <span class="metric-value">60</span>
+                                                <span class="metric-unit">FPS</span>
+                                            </div>
+                                            <div class="metric-item">
+                                                <span class="metric-icon">🧠</span>
+                                                <span class="metric-value">45</span>
+                                                <span class="metric-unit">MB</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Plugin -->
+                                    <div class="performance-section">
+                                        <div class="performance-label">Plugin</div>
+                                        <div class="performance-metrics">
+                                            <div class="metric-item">
+                                                <span class="metric-icon">⚙️</span>
+                                                <span class="metric-value">120</span>
+                                                <span class="metric-unit">ms</span>
+                                            </div>
+                                            <div class="metric-item">
+                                                <span class="metric-icon">💾</span>
+                                                <span class="metric-value">67</span>
+                                                <span class="metric-unit">MB</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Lazy Loading Status -->
+                                    <div class="performance-lazy-status">
+                                        <div class="lazy-indicator active">
+                                            <span class="lazy-icon">🚀</span>
+                                            <span class="lazy-text">Lazy Loading</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="performance-fps">60 FPS</div>
                             </div>
                             <div class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
+                                <button type="button" class="canvas-configure-btn" data-modal="performance-modal">
                                     <span>⚡</span> Configurer
                                 </button>
                             </div>
