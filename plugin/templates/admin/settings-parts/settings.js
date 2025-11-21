@@ -95,6 +95,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('🔍 Modal dimensions:', modal.offsetWidth, 'x', modal.offsetHeight);
                 console.log('🔍 Modal position:', modal.getBoundingClientRect());
 
+                // Vérifier les éléments enfants
+                const overlay = modal.querySelector('.canvas-modal-overlay');
+                const content = modal.querySelector('.canvas-modal-content');
+                console.log('🔍 Overlay dimensions:', overlay ? overlay.offsetWidth + 'x' + overlay.offsetHeight : 'not found');
+                console.log('🔍 Content dimensions:', content ? content.offsetWidth + 'x' + content.offsetHeight : 'not found');
+
+                // Forcer les dimensions des enfants aussi
+                if (overlay) {
+                    overlay.style.width = '100% !important';
+                    overlay.style.height = '100% !important';
+                    overlay.style.display = 'flex !important';
+                    overlay.style.alignItems = 'center !important';
+                    overlay.style.justifyContent = 'center !important';
+                }
+                if (content) {
+                    content.style.display = 'block !important';
+                    content.style.width = '90% !important';
+                    content.style.maxWidth = '600px !important';
+                    content.style.maxHeight = '85vh !important';
+                }
+
                 // Vérifier les styles calculés de la modale existante
                 const computedStyle = window.getComputedStyle(modal);
                 console.log('🔍 Existing modal computed display:', computedStyle.display);
