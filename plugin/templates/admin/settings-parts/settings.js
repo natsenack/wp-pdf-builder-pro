@@ -1954,13 +1954,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // === GESTION DES CARTES CANVAS (ouverture des modales) ===
     const canvasCards = document.querySelectorAll('.canvas-card');
+    console.log('Found', canvasCards.length, 'canvas cards');
     canvasCards.forEach(function(card) {
+        const category = card.getAttribute('data-category');
+        console.log('Attaching listener to card with category:', category);
         card.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
+            console.log('Canvas card clicked, category:', category);
             const modalId = 'canvas-' + category + '-modal';
             const modal = document.getElementById(modalId);
 
             if (modal) {
+                console.log('Opening modal:', modalId);
                 modal.style.display = 'block';
                 document.body.style.overflow = 'hidden'; // Empêcher le scroll du body
 
