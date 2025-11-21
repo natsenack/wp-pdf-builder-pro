@@ -1951,4 +1951,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Aussi initialiser au chargement de la page si le modal est déjà ouvert
     setupGridSynchronization();
+
+    // === GESTION DU BOUTON INFOS SYSTÈME ===
+    const systemInfoBtn = document.getElementById('system_info_btn');
+    const systemInfoResult = document.getElementById('system_info_result');
+
+    if (systemInfoBtn && systemInfoResult) {
+        systemInfoBtn.addEventListener('click', function() {
+            if (systemInfoResult.style.display === 'none' || systemInfoResult.style.display === '') {
+                systemInfoResult.style.display = 'block';
+                systemInfoBtn.innerHTML = 'ℹ️ Masquer Infos';
+                systemInfoBtn.style.backgroundColor = '#dc3545';
+                systemInfoBtn.style.borderColor = '#dc3545';
+            } else {
+                systemInfoResult.style.display = 'none';
+                systemInfoBtn.innerHTML = 'ℹ️ Infos Système';
+                systemInfoBtn.style.backgroundColor = '#28a745';
+                systemInfoBtn.style.borderColor = '#28a745';
+            }
+        });
+    }
 });
