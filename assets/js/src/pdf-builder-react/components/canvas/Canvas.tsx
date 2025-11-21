@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
+import { useCanvasSetting } from '../../hooks/useCanvasSettings.ts';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
 import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts.ts';
@@ -107,7 +108,7 @@ const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
 };
 
 // Fonction pour dessiner une image
-const drawImage = (ctx: CanvasRenderingContext2D, element: Element, imageCache: React.MutableRefObject<Map<string, HTMLImageElement>>) => {
+const drawImage = (ctx: CanvasRenderingContext2D, element: Element, imageCache: React.MutableRefObject<Map<string, { image: HTMLImageElement; size: number; lastUsed: number; }>>) => {
   const props = element as Element & { src?: string; objectFit?: string };
   const imageUrl = props.src || '';
 
@@ -127,15 +128,39 @@ const drawImage = (ctx: CanvasRenderingContext2D, element: Element, imageCache: 
   }
 
   // Vérifier si l'image est en cache
-  let img = imageCache.current.get(imageUrl);
+  let cachedImage = imageCache.current.get(imageUrl);
 
-  if (!img) {
+  if (!cachedImage) {
     // Créer une nouvelle image et la mettre en cache
-    img = document.createElement('img');
+    const img = document.createElement('img');
     img.crossOrigin = 'anonymous';
     img.src = imageUrl;
-    imageCache.current.set(imageUrl, img);
+
+    // Attendre que l'image soit chargée pour calculer sa taille mémoire
+    img.onload = () => {
+      const size = estimateImageMemorySize(img);
+      imageCache.current.set(imageUrl, {
+        image: img,
+        size: size,
+        lastUsed: Date.now()
+      });
+      // Déclencher un nettoyage après ajout
+      cleanupImageCache();
+      // Forcer un re-render pour afficher l'image
+      setImageLoadCount(prev => prev + 1);
+    };
+
+    img.onerror = () => {
+      console.warn(`[Canvas] Failed to load image: ${imageUrl}`);
+    };
+
+    // Retourner temporairement pour éviter les erreurs
+    return;
   }
+
+  const img = cachedImage.image;
+  // Mettre à jour la date d'utilisation
+  cachedImage.lastUsed = Date.now();
 
   // Si l'image est chargée, la dessiner
   if (img.complete && img.naturalHeight !== 0) {
@@ -1155,54 +1180,152 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // ✅ STATE for image loading - force redraw when images load
   const [imageLoadCount, setImageLoadCount] = React.useState(0);
 
-  // Cache pour les images chargées
-  const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
-  
+  // Récupérer la limite mémoire JavaScript depuis les paramètres
+  const memoryLimitJs = useCanvasSetting('memory_limit_js', 256) as number; // En MB, défaut 256MB
+
+  // Cache pour les images chargées avec métadonnées de mémoire
+  const imageCache = useRef<Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>>(new Map());
+
   // ✅ CORRECTION 7: Tracker les URLs rendues pour détecter changements
   const renderedLogoUrlsRef = useRef<Map<string, string>>(new Map()); // elementId -> logoUrl
-  
+
   // ✅ Flag: Track if we've done initial render check for images
   const initialImageCheckDoneRef = useRef(false);
 
-  // ✅ CORRECTION 2: Fonction pour nettoyer le cache des images
-  const cleanupImageCache = useCallback(() => {
-    const cache = imageCache.current;
-    
-    // ✅ BUGFIX-005: Fix inaccurate size calculation
-    // Limit by number of items, not by size (size calculation is unreliable)
-    // Reason: We can't accurately measure actual memory used by images
-    // - naturalWidth * naturalHeight * 4 assumes RGBA format
-    // - But images may be compressed, grayscale, different bit depths
-    // - Browser might use different encoding than expected
-    // Solution: Limit by item count and let browser's GC handle memory
-    
-    if (cache.size > MAX_CACHE_ITEMS) {
-
-      
-      // Supprimer les 10 plus anciennes entrées (FIFO)
-      const entriesToRemove = Math.min(10, Math.ceil(cache.size * 0.1));
-      let removed = 0;
-      
-      for (const [url] of cache) {
-        if (removed >= entriesToRemove) break;
-        
-        cache.delete(url);
-        removed++;
-
-      }
-      
-
-    }
+  // Fonction pour estimer la taille mémoire d'une image (approximation)
+  const estimateImageMemorySize = useCallback((img: HTMLImageElement): number => {
+    // Estimation basée sur : largeur * hauteur * 4 octets (RGBA) + overhead
+    const pixelData = img.naturalWidth * img.naturalHeight * 4;
+    const overhead = 1024; // Overhead approximatif par image
+    return pixelData + overhead;
   }, []);
 
-  // ✅ Utiliser le hook pour nettoyer le cache de temps en temps
-  useEffect(() => {
-    const interval = setInterval(() => {
-      cleanupImageCache();
-    }, 30000); // Nettoyage tous les 30 secondes
-    
-    return () => clearInterval(interval);
+  // Fonction pour calculer l'usage mémoire total du cache
+  const calculateCacheMemoryUsage = useCallback((): number => {
+    let totalSize = 0;
+    for (const [, data] of imageCache.current) {
+      totalSize += data.size;
+    }
+    return totalSize / (1024 * 1024); // Convertir en MB
+  }, []);
+
+  // Fonction pour vérifier si la limite mémoire est dépassée
+  const isMemoryLimitExceeded = useCallback((): boolean => {
+    const currentUsage = calculateCacheMemoryUsage();
+    const limit = memoryLimitJs;
+
+    // Vérifier aussi la mémoire globale du navigateur si disponible
+    if ('memory' in performance) {
+      const perfMemory = (performance as any).memory;
+      const browserMemoryUsage = perfMemory.usedJSHeapSize / (1024 * 1024); // MB
+      const browserLimit = perfMemory.jsHeapSizeLimit / (1024 * 1024); // MB
+
+      // Si le navigateur approche sa limite, être plus agressif
+      if (browserMemoryUsage > browserLimit * 0.8) {
+        console.warn(`[Canvas Memory] Browser memory usage high: ${browserMemoryUsage.toFixed(1)}MB / ${browserLimit.toFixed(1)}MB`);
+        return true;
+      }
+    }
+
+    return currentUsage > limit * 0.8; // Déclencher le nettoyage à 80% de la limite
+  }, [calculateCacheMemoryUsage, memoryLimitJs]);
+
+  // ✅ CORRECTION 2: Fonction pour nettoyer le cache des images avec gestion mémoire
+  const cleanupImageCache = useCallback(() => {
+    const cache = imageCache.current;
+    const currentMemoryUsage = calculateCacheMemoryUsage();
+    const memoryLimit = memoryLimitJs;
+
+    console.log(`[Canvas Memory] Cache size: ${cache.size} items, Memory usage: ${currentMemoryUsage.toFixed(1)}MB / ${memoryLimit}MB`);
+
+    // Nettoyer si limite dépassée ou trop d'éléments
+    if (isMemoryLimitExceeded() || cache.size > MAX_CACHE_ITEMS) {
+      // Trier par date d'utilisation (LRU - Least Recently Used)
+      const entries = Array.from(cache.entries()).sort(([, a], [, b]) => a.lastUsed - b.lastUsed);
+
+      // Calculer combien supprimer pour revenir sous 70% de la limite
+      const targetMemoryUsage = memoryLimit * 0.7;
+      let memoryToFree = Math.max(0, currentMemoryUsage - targetMemoryUsage);
+      let itemsToRemove = Math.min(20, Math.ceil(cache.size * 0.2)); // Au moins 20% des éléments ou 20 éléments max
+
+      let removed = 0;
+      let memoryFreed = 0;
+
+      for (const [url, data] of entries) {
+        if (removed >= itemsToRemove && memoryFreed >= memoryToFree) break;
+
+        cache.delete(url);
+        memoryFreed += data.size / (1024 * 1024); // MB
+        removed++;
+
+        console.log(`[Canvas Memory] Removed cached image: ${url.split('/').pop()} (${(data.size / (1024 * 1024)).toFixed(2)}MB)`);
+      }
+
+      console.log(`[Canvas Memory] Cleanup complete: removed ${removed} items, freed ${(memoryFreed).toFixed(1)}MB`);
+    }
+  }, [calculateCacheMemoryUsage, memoryLimitJs, isMemoryLimitExceeded]);
+
+  // Fonction pour forcer un nettoyage manuel (utile pour le débogage)
+  const forceCacheCleanup = useCallback(() => {
+    console.log('[Canvas Memory] Manual cache cleanup requested');
+    cleanupImageCache();
   }, [cleanupImageCache]);
+
+  // Exposer les fonctions de gestion mémoire globalement pour le débogage
+  useEffect(() => {
+    (window as any).canvasMemoryDebug = {
+      getCacheStats: () => ({
+        itemCount: imageCache.current.size,
+        memoryUsage: calculateCacheMemoryUsage(),
+        memoryLimit: memoryLimitJs,
+        items: Array.from(imageCache.current.entries()).map(([url, data]) => ({
+          url: url.split('/').pop(),
+          size: (data.size / (1024 * 1024)).toFixed(2) + 'MB',
+          lastUsed: new Date(data.lastUsed).toLocaleTimeString()
+        }))
+      }),
+      forceCleanup: forceCacheCleanup,
+      getBrowserMemory: () => {
+        if ('memory' in performance) {
+          const perfMemory = (performance as any).memory;
+          return {
+            used: (perfMemory.usedJSHeapSize / (1024 * 1024)).toFixed(1) + 'MB',
+            total: (perfMemory.totalJSHeapSize / (1024 * 1024)).toFixed(1) + 'MB',
+            limit: (perfMemory.jsHeapSizeLimit / (1024 * 1024)).toFixed(1) + 'MB'
+          };
+        }
+        return { error: 'Performance.memory not available' };
+      }
+    };
+
+    return () => {
+      delete (window as any).canvasMemoryDebug;
+    };
+  }, [calculateCacheMemoryUsage, memoryLimitJs, forceCacheCleanup]);  // Surveillance périodique de la mémoire globale du navigateur
+  useEffect(() => {
+    const memoryCheckInterval = setInterval(() => {
+      if ('memory' in performance) {
+        const perfMemory = (performance as any).memory;
+        const browserMemoryUsage = perfMemory.usedJSHeapSize / (1024 * 1024); // MB
+        const browserLimit = perfMemory.jsHeapSizeLimit / (1024 * 1024); // MB
+        const cacheMemoryUsage = calculateCacheMemoryUsage();
+
+        // Log détaillé de la mémoire si activé
+        if (canvasSettings.debug_mode) {
+          console.log(`[Canvas Memory] Browser: ${browserMemoryUsage.toFixed(1)}MB / ${browserLimit.toFixed(1)}MB (${(browserMemoryUsage/browserLimit*100).toFixed(1)}%)`);
+          console.log(`[Canvas Memory] Cache: ${cacheMemoryUsage.toFixed(1)}MB / ${memoryLimitJs}MB (${(cacheMemoryUsage/memoryLimitJs*100).toFixed(1)}%)`);
+        }
+
+        // Nettoyage d'urgence si mémoire critique
+        if (browserMemoryUsage > browserLimit * 0.9) {
+          console.warn(`[Canvas Memory] Critical memory usage! Forcing cache cleanup...`);
+          cleanupImageCache();
+        }
+      }
+    }, 10000); // Vérification toutes les 10 secondes
+
+    return () => clearInterval(memoryCheckInterval);
+  }, [calculateCacheMemoryUsage, memoryLimitJs, cleanupImageCache, canvasSettings.debug_mode]);
 
   // Écouter les changements de couleur de fond depuis les paramètres
   useEffect(() => {
@@ -1296,14 +1419,12 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     if (logoUrl) {
       // Vérifier si l'image est en cache
-      let img = imageCache.current.get(logoUrl);
+      let cachedImage = imageCache.current.get(logoUrl);
 
-      if (!img) {
-
-        img = document.createElement('img');
+      if (!cachedImage) {
+        const img = document.createElement('img');
         img.crossOrigin = 'anonymous';
         img.src = logoUrl;
-        imageCache.current.set(logoUrl, img);
 
         // Gérer les erreurs de chargement
         img.onerror = () => {
@@ -1312,13 +1433,25 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
         // ✅ CRITICAL: Quand l'image se charge, redessiner le canvas
         img.onload = () => {
-
+          const size = estimateImageMemorySize(img);
+          imageCache.current.set(logoUrl, {
+            image: img,
+            size: size,
+            lastUsed: Date.now()
+          });
+          // Déclencher un nettoyage après ajout
+          cleanupImageCache();
           // Incrémenter le counter pour forcer un redraw
           setImageLoadCount(prev => prev + 1);
         };
-      } else {
 
+        // Retourner temporairement pour éviter les erreurs
+        return;
       }
+
+      const img = cachedImage.image;
+      // Mettre à jour la date d'utilisation
+      cachedImage.lastUsed = Date.now();
 
       // ✅ APPROCHE PLUS DIRECTE: Vérifier img.complete au rendu au lieu de compter sur onload
       // Rendre l'image si elle a une URL valide, même si elle n'est pas encore complètement chargée
@@ -1497,7 +1630,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // ✅ BUGFIX-007: Memoize drawDynamicText to prevent recreation on every render
   const drawDynamicText = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
-    const props = element as DynamicTextElementProperties;
+    const props = element as TextElementProperties & { showBackground?: boolean; backgroundColor?: string };
     const text = props.text || 'Texte personnalisable';
     const fontSize = props.fontSize || 14;
     const fontFamily = props.fontFamily || 'Arial';
