@@ -263,6 +263,12 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     return windowSettings;
   });
 
+  // Function to refresh settings from window object
+  const handleRefresh = () => {
+    const windowSettings = loadSettingsFromWindowObj();
+    setSettings(windowSettings);
+  };
+
   // Load settings from server on mount - simplified
   useEffect(() => {
     // For now, just use window settings - AJAX calls can be added later if needed
