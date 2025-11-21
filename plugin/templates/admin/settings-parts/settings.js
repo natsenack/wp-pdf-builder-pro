@@ -1981,7 +1981,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (modal) {
                 console.log('🔍 DEBUG: Opening modal:', modalId);
                 modal.style.display = 'block';
-                modal.style.zIndex = '10001'; // S'assurer que la modale est au-dessus de l'overlay
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.zIndex = '10001';
                 document.body.style.overflow = 'hidden';
 
                 // Vérifier la visibilité après ouverture
@@ -1992,7 +1997,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         visibility: computedStyle.visibility,
                         opacity: computedStyle.opacity,
                         zIndex: computedStyle.zIndex,
-                        position: computedStyle.position
+                        position: computedStyle.position,
+                        top: computedStyle.top,
+                        left: computedStyle.left
                     });
                 }, 100);
 
@@ -2011,6 +2018,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const overlay = modal.querySelector('.canvas-modal-overlay');
                 if (overlay) {
                     console.log('🔍 DEBUG: Overlay found, adding click handler');
+                    overlay.style.display = 'flex'; // S'assurer que l'overlay est visible
                     overlay.addEventListener('click', function(event) {
                         if (event.target === overlay) {
                             console.log('🔍 DEBUG: Closing modal via overlay');
