@@ -27,8 +27,7 @@ class Security_Limits_Handler
      */
     public static function applySecurityLimits()
     {
-        $settings = get_option('pdf_builder_settings', []);
-// Appliquer le timeout maximum
+        // Appliquer le timeout maximum
         $max_execution_time = isset($settings['max_execution_time'])
             ? intval($settings['max_execution_time'])
             : 300;
@@ -39,18 +38,13 @@ class Security_Limits_Handler
             error_log("[PDF Builder] Security: set_time_limit({$max_execution_time})");
         }
 
-        // Appliquer la limite mémoire
-        $memory_limit = isset($settings['memory_limit'])
-            ? sanitize_text_field($settings['memory_limit'])
-            : '256M';
-// 256MB par défaut
+        // Appliquer la limite mémoire depuis les paramètres canvas
+        $memory_limit_mb = intval(get_option('pdf_builder_canvas_memory_limit_php', 256));
+        $memory_limit = $memory_limit_mb . 'M';
 
         if (!empty($memory_limit)) {
-// Valider le format (e.g. 256M, 512M, 1G)
-            if (preg_match('/^(\d+)([MG])$/', strtoupper($memory_limit), $matches)) {
-                ini_set('memory_limit', $memory_limit);
-                error_log("[PDF Builder] Security: memory_limit set to {$memory_limit}");
-            }
+            ini_set('memory_limit', $memory_limit);
+            error_log("[PDF Builder] Security: memory_limit set to {$memory_limit} from canvas settings");
         }
     }
 
@@ -113,9 +107,7 @@ class Security_Limits_Handler
             'max_execution_time' => isset($settings['max_execution_time'])
                 ? intval($settings['max_execution_time'])
                 : 300,
-            'memory_limit' => isset($settings['memory_limit'])
-                ? sanitize_text_field($settings['memory_limit'])
-                : '256M',
+            'memory_limit' => intval(get_option('pdf_builder_canvas_memory_limit_php', 256)) . 'M',
             'max_template_size' => isset($settings['max_template_size'])
                 ? intval($settings['max_template_size'])
                 : 52428800,
