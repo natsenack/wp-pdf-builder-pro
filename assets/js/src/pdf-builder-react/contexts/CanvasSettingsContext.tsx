@@ -144,12 +144,15 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
     const windowSettings = window.pdfBuilderCanvasSettings;
     
     if (!windowSettings) {
+      console.log('⚠️ No window.pdfBuilderCanvasSettings found');
       return {
         ...DEFAULT_SETTINGS,
         isLoading: false,
         isReady: true
       };
     }
+
+    console.log('📋 Window settings loaded:', windowSettings);
 
     // Mapper les paramètres depuis le format WordPress vers notre format
     const newSettings: CanvasSettingsContextType = {
@@ -228,6 +231,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       refreshSettings: () => {}
     };
 
+    console.log('🎨 Final settings - canvasSelectionMode:', newSettings.canvasSelectionMode);
     return newSettings;
   } catch (_err) {
     const errorMsg = _err instanceof Error ? _err.message : 'Unknown error';
