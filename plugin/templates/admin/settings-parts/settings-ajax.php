@@ -313,7 +313,7 @@ function pdf_builder_save_settings_handler() {
 
 // Canvas settings AJAX handler
 function pdf_builder_save_canvas_settings_handler() {
-    if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+    if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
 
         // Utiliser le Canvas_Manager pour la sauvegarde centralisée
         try {

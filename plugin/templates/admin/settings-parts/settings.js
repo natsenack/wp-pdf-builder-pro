@@ -20,7 +20,11 @@ document.addEventListener('DOMContentLoaded', function() {
             'multi_select': 'canvas_multi_select',
             'enable_keyboard_shortcuts': 'canvas_keyboard_shortcuts',
             'auto_save_enabled': 'canvas_auto_save',
-            'debug_enabled': 'canvas_debug_enabled'
+            'debug_enabled': 'canvas_debug_enabled',
+            // Paramètres de performance
+            'lazy_loading_editor': 'canvas_lazy_loading_editor',
+            'preload_critical': 'canvas_preload_critical',
+            'lazy_loading_plugin': 'canvas_lazy_loading_plugin'
         };
 
         // Mettre à jour chaque checkbox
@@ -63,6 +67,14 @@ document.addEventListener('DOMContentLoaded', function() {
             'zoom_step': 'zoom_step'
         };
 
+        // Mapping des paramètres vers les IDs des selects
+        const selectMappings = {
+            'fps_target': 'canvas_fps_target',
+            'memory_limit_js': 'canvas_memory_limit_js',
+            'memory_limit_php': 'canvas_memory_limit_php',
+            'response_timeout': 'canvas_response_timeout'
+        };
+
         // Mettre à jour chaque input
         Object.keys(inputMappings).forEach(settingKey => {
             const inputId = inputMappings[settingKey];
@@ -70,6 +82,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (input && settings[settingKey] !== undefined) {
                 input.value = settings[settingKey];
+            }
+        });
+
+        // Mettre à jour chaque select
+        Object.keys(selectMappings).forEach(settingKey => {
+            const selectId = selectMappings[settingKey];
+            const select = document.getElementById(selectId);
+
+            if (select && settings[settingKey] !== undefined) {
+                select.value = settings[settingKey];
             }
         });
 
