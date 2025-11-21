@@ -308,6 +308,9 @@ function pdf_builder_save_settings_handler() {
                 if (isset($_POST['force_https'])) {
                     update_option('pdf_builder_force_https', $_POST['force_https'] === '1' ? 1 : 0);
                 }
+                if (isset($_POST['performance_monitoring'])) {
+                    update_option('pdf_builder_performance_monitoring', $_POST['performance_monitoring'] === '1' ? 1 : 0);
+                }
 
                 // Return the new PDF options to the client for verification
                 $saved = [

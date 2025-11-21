@@ -19,8 +19,11 @@ class PdfBuilderPerformanceMonitor
      */
     public static function init()
     {
+        // Vérifier si le monitoring des performances est activé dans les paramètres
+        $performance_monitoring_enabled = get_option('pdf_builder_performance_monitoring', false);
+
         if (!defined('PDF_BUILDER_ENABLE_PERFORMANCE_MONITORING')) {
-            define('PDF_BUILDER_ENABLE_PERFORMANCE_MONITORING', false);
+            define('PDF_BUILDER_ENABLE_PERFORMANCE_MONITORING', $performance_monitoring_enabled);
         }
 
         if (!PDF_BUILDER_ENABLE_PERFORMANCE_MONITORING) {

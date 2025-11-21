@@ -60,6 +60,7 @@ $settings['log_level'] = get_option('pdf_builder_log_level', 3);
 $settings['log_file_size'] = get_option('pdf_builder_log_file_size', 10);
 $settings['log_retention'] = get_option('pdf_builder_log_retention', 30);
 $settings['force_https'] = get_option('pdf_builder_force_https', false);
+$settings['performance_monitoring'] = get_option('pdf_builder_performance_monitoring', false);
 
 // Vérifier que les valeurs sont bien définies
 $company_phone_manual = $settings['company_phone_manual'] ?? '';

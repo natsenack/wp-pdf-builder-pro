@@ -1951,4 +1951,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Aussi initialiser au chargement de la page si le modal est déjà ouvert
     setupGridSynchronization();
+
+    // === GESTION DES CARTES CANVAS (ouverture des modales) ===
+    const canvasCards = document.querySelectorAll('.canvas-card');
+    canvasCards.forEach(function(card) {
+        card.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            const modalId = 'canvas-' + category + '-modal';
+            const modal = document.getElementById(modalId);
+
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Empêcher le scroll du body
+
+                // Fermeture de la modale
+                const closeButtons = modal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
+                closeButtons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = ''; // Restaurer le scroll
+                    });
+                });
+
+                // Fermeture en cliquant sur l'overlay
+                const overlay = modal.querySelector('.canvas-modal-overlay');
+                if (overlay) {
+                    overlay.addEventListener('click', function(event) {
+                        if (event.target === overlay) {
+                            modal.style.display = 'none';
+                            document.body.style.overflow = ''; // Restaurer le scroll
+                        }
+                    });
+                }
+            } else {
+                console.error('Modal not found for category:', category, 'Expected ID:', modalId);
+            }
+        });
+    });
 });
