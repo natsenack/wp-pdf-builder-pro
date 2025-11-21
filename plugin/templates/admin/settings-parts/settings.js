@@ -181,6 +181,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('🔍 Modal HTML:', checkModal.outerHTML.substring(0, 100) + '...');
                 }
 
+                // FORCER la visibilité de la modale
+                newModal.style.display = 'block !important';
+                newModal.style.visibility = 'visible !important';
+                newModal.style.opacity = '1 !important';
+
+                // Vérifier les styles calculés
+                const computedStyle = window.getComputedStyle(newModal);
+                console.log('🔍 Modal computed display:', computedStyle.display);
+                console.log('🔍 Modal computed visibility:', computedStyle.visibility);
+                console.log('🔍 Modal computed opacity:', computedStyle.opacity);
+                console.log('🔍 Modal computed z-index:', computedStyle.zIndex);
+
                 // Ajouter les event listeners
                 const closeButtons = newModal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
                 console.log('🔍 Found close buttons:', closeButtons.length);
