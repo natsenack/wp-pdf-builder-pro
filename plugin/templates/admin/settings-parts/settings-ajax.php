@@ -271,6 +271,44 @@ function pdf_builder_save_settings_handler() {
                     }
                 }
 
+                // Paramètres développeur
+                if (isset($_POST['developer_enabled'])) {
+                    update_option('pdf_builder_developer_enabled', $_POST['developer_enabled'] === '1' ? 1 : 0);
+                }
+                if (isset($_POST['developer_password'])) {
+                    update_option('pdf_builder_developer_password', sanitize_text_field($_POST['developer_password']));
+                }
+                if (isset($_POST['debug_php_errors'])) {
+                    update_option('pdf_builder_debug_php_errors', $_POST['debug_php_errors'] === '1' ? 1 : 0);
+                }
+                if (isset($_POST['debug_javascript'])) {
+                    update_option('pdf_builder_debug_javascript', $_POST['debug_javascript'] === '1' ? 1 : 0);
+                }
+                if (isset($_POST['debug_javascript_verbose'])) {
+                    update_option('pdf_builder_debug_javascript_verbose', $_POST['debug_javascript_verbose'] === '1' ? 1 : 0);
+                }
+                if (isset($_POST['debug_ajax'])) {
+                    update_option('pdf_builder_debug_ajax', $_POST['debug_ajax'] === '1' ? 1 : 0);
+                }
+                if (isset($_POST['debug_performance'])) {
+                    update_option('pdf_builder_debug_performance', $_POST['debug_performance'] === '1' ? 1 : 0);
+                }
+                if (isset($_POST['debug_database'])) {
+                    update_option('pdf_builder_debug_database', $_POST['debug_database'] === '1' ? 1 : 0);
+                }
+                if (isset($_POST['log_level'])) {
+                    update_option('pdf_builder_log_level', intval($_POST['log_level']));
+                }
+                if (isset($_POST['log_file_size'])) {
+                    update_option('pdf_builder_log_file_size', intval($_POST['log_file_size']));
+                }
+                if (isset($_POST['log_retention'])) {
+                    update_option('pdf_builder_log_retention', intval($_POST['log_retention']));
+                }
+                if (isset($_POST['force_https'])) {
+                    update_option('pdf_builder_force_https', $_POST['force_https'] === '1' ? 1 : 0);
+                }
+
                 // Return the new PDF options to the client for verification
                 $saved = [
                     'pdf_metadata_enabled' => get_option('pdf_builder_pdf_metadata_enabled', 0) ? '1' : '0',
