@@ -885,10 +885,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             ...window.pdfBuilderCanvasSettings,
                             ...data.data.saved
                         };
+                        console.log('PARAMS: window.pdfBuilderCanvasSettings updated with:', data.data.saved);
+                        console.log('PARAMS: enable_keyboard_shortcuts =', window.pdfBuilderCanvasSettings.enable_keyboard_shortcuts);
                     }
 
                     // Notify React context to refresh settings
                     window.dispatchEvent(new Event('canvasSettingsUpdated'));
+                    console.log('PARAMS: canvasSettingsUpdated event dispatched');
 
                     // Notify other tabs/windows about settings change
                     try {
