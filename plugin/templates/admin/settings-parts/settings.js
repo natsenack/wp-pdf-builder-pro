@@ -82,80 +82,25 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById(modalId);
 
             if (modal) {
-                console.log('🔍 Modal found, trying to show existing modal for category:', category);
+                console.log('🔍 Modal found, creating SIMPLE test modal for category:', category);
 
-                // ESSAI : Au lieu de recréer, essayons de rendre visible la modale existante
-                // Utiliser une classe CSS au lieu de styles inline pour éviter les conflits
-                modal.classList.add('canvas-modal-force-visible');
-                modal.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; z-index: 2147483647 !important; position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important;';
+                // DERNIÈRE TENTATIVE : Créer une modale de test ultra-simple
+                const testModal = document.createElement('div');
+                testModal.id = 'test-modal-' + Date.now();
+                testModal.innerHTML = `
+                    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; display: flex; align-items: center; justify-content: center;">
+                        <div style="background: white; padding: 20px; border-radius: 8px; max-width: 400px; text-align: center;">
+                            <h2 style="margin: 0 0 15px 0; color: #333;">🧪 Test Modal</h2>
+                            <p style="margin: 0 0 20px 0; color: #666;">Si vous voyez ceci, les modales fonctionnent !</p>
+                            <button onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = '';" style="background: #007cba; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Fermer</button>
+                        </div>
+                    </div>
+                `;
 
-                console.log('🔍 Existing modal styles applied with force class');
-
-                // Vérifier les dimensions et position
-                console.log('🔍 Modal dimensions:', modal.offsetWidth, 'x', modal.offsetHeight);
-                console.log('🔍 Modal position:', modal.getBoundingClientRect());
-
-                // Vérifier les éléments enfants
-                const overlay = modal.querySelector('.canvas-modal-overlay');
-                const content = modal.querySelector('.canvas-modal-content');
-                console.log('🔍 Overlay dimensions:', overlay ? overlay.offsetWidth + 'x' + overlay.offsetHeight : 'not found');
-                console.log('🔍 Content dimensions:', content ? content.offsetWidth + 'x' + content.offsetHeight : 'not found');
-
-                // Forcer les dimensions des enfants aussi - VERSION ABSOLUTE POSITIONING
-                if (overlay) {
-                    overlay.style.position = 'absolute !important';
-                    overlay.style.top = '0 !important';
-                    overlay.style.left = '0 !important';
-                    overlay.style.width = '100% !important';
-                    overlay.style.height = '100% !important';
-                    overlay.style.display = 'block !important';
-                }
-                if (content) {
-                    content.style.position = 'absolute !important';
-                    content.style.top = '50% !important';
-                    content.style.left = '50% !important';
-                    content.style.transform = 'translate(-50%, -50%) !important';
-                    content.style.display = 'block !important';
-                    content.style.width = '90% !important';
-                    content.style.maxWidth = '600px !important';
-                    content.style.maxHeight = '85vh !important';
-                    content.style.background = 'white !important';
-                    content.style.borderRadius = '8px !important';
-                    content.style.boxShadow = '0 10px 40px rgba(0,0,0,0.3) !important';
-                }
-
-                // Vérifier les styles calculés de la modale existante
-                const computedStyle = window.getComputedStyle(modal);
-                console.log('🔍 Existing modal computed display:', computedStyle.display);
-                console.log('🔍 Existing modal computed visibility:', computedStyle.visibility);
-                console.log('🔍 Existing modal computed z-index:', computedStyle.zIndex);
-                console.log('🔍 Existing modal computed position:', computedStyle.position);
-
-                // Ajouter les event listeners à la modale existante
-                const closeButtons = modal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
-                console.log('🔍 Found close buttons in existing modal:', closeButtons.length);
-                closeButtons.forEach(function(button) {
-                    button.addEventListener('click', function() {
-                        console.log('🔍 Closing existing modal via button');
-                        modal.style.display = 'none';
-                        document.body.style.overflow = '';
-                    });
-                });
-
-                // Fermeture en cliquant sur l'overlay
-                console.log('🔍 Overlay found in existing modal:', !!overlay);
-                if (overlay) {
-                    overlay.addEventListener('click', function(event) {
-                        if (event.target === overlay) {
-                            console.log('🔍 Closing existing modal via overlay');
-                            modal.style.display = 'none';
-                            document.body.style.overflow = '';
-                        }
-                    });
-                }
-
+                document.body.appendChild(testModal);
                 document.body.style.overflow = 'hidden';
-                console.log('🔍 Existing modal should now be visible');
+
+                console.log('🔍 Test modal created and appended to body');
             } else {
                 console.error('Modal not found for category:', category, 'Expected ID:', modalId);
             }
