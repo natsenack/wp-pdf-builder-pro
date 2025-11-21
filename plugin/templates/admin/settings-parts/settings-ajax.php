@@ -348,6 +348,7 @@ function pdf_builder_save_canvas_settings_handler() {
                 }
             }
 
+            error_log('DEBUG: Saved values being returned: ' . print_r($saved_values, true));
             send_ajax_response(true, 'Paramètres de performance sauvegardés avec succès.', ['saved' => $saved_values]);
 
         } catch (Exception $e) {

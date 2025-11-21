@@ -101,27 +101,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction pour mettre à jour le preview de la carte performance
     function updatePerformanceCardPreview(settings) {
+        console.log('DEBUG: updatePerformanceCardPreview called with:', settings);
+
         // Mettre à jour FPS - premier metric-item
         if (settings.fps_target !== undefined) {
             const fpsElement = document.querySelector('.canvas-card[data-category="performance"] .metric-item:nth-child(1) .metric-value');
+            console.log('DEBUG: FPS element found:', fpsElement);
             if (fpsElement) {
                 fpsElement.textContent = settings.fps_target;
+                console.log('DEBUG: FPS updated to:', settings.fps_target);
             }
         }
 
         // Mettre à jour RAM JS - deuxième metric-item
         if (settings.memory_limit_js !== undefined) {
             const ramJsElement = document.querySelector('.canvas-card[data-category="performance"] .metric-item:nth-child(2) .metric-value');
+            console.log('DEBUG: RAM JS element found:', ramJsElement);
             if (ramJsElement) {
                 ramJsElement.textContent = settings.memory_limit_js + 'MB';
+                console.log('DEBUG: RAM JS updated to:', settings.memory_limit_js + 'MB');
             }
         }
 
         // Mettre à jour RAM PHP - troisième metric-item
         if (settings.memory_limit_php !== undefined) {
             const ramPhpElement = document.querySelector('.canvas-card[data-category="performance"] .metric-item:nth-child(3) .metric-value');
+            console.log('DEBUG: RAM PHP element found:', ramPhpElement);
             if (ramPhpElement) {
                 ramPhpElement.textContent = settings.memory_limit_php + 'MB';
+                console.log('DEBUG: RAM PHP updated to:', settings.memory_limit_php + 'MB');
             }
         }
 
@@ -129,8 +137,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const lazyEditor = settings.lazy_loading_editor === true || settings.lazy_loading_editor === '1';
         const lazyPlugin = settings.lazy_loading_plugin === true || settings.lazy_loading_plugin === '1';
         const lazyLoadingActive = lazyEditor && lazyPlugin;
+        console.log('DEBUG: Lazy loading - editor:', lazyEditor, 'plugin:', lazyPlugin, 'active:', lazyLoadingActive);
 
         const statusIndicator = document.querySelector('.canvas-card[data-category="performance"] .status-indicator');
+        console.log('DEBUG: Status indicator found:', statusIndicator);
         if (statusIndicator) {
             if (lazyLoadingActive) {
                 statusIndicator.classList.remove('inactive');
@@ -139,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 statusIndicator.classList.remove('active');
                 statusIndicator.classList.add('inactive');
             }
+            console.log('DEBUG: Status indicator updated');
         }
     }
 
