@@ -245,9 +245,16 @@ input:checked + .toggle-slider:before {
                                 <p>Définissez la sélection multiple et les raccourcis clavier.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="behavior-preview">
-                                    <span class="behavior-icon" title="Sélection">👆</span>
-                                    <span class="behavior-icon" title="Raccourcis">⌨️</span>
+                                <div class="behavior-preview-container">
+                                    <div class="behavior-canvas">
+                                        <div class="behavior-element selected" title="Élément sélectionné"></div>
+                                        <div class="behavior-element" title="Autre élément"></div>
+                                        <div class="behavior-element" title="Élément sélectionnable"></div>
+                                    </div>
+                                    <div class="behavior-legend">
+                                        <span class="legend-item">👆 Sélection</span>
+                                        <span class="legend-item">⌨️ Ctrl+Click</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="canvas-card-actions">
@@ -269,9 +276,16 @@ input:checked + .toggle-slider:before {
                                 <p>Configurez les formats et la qualité d'export des designs.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="export-preview">
-                                    <span class="export-format">PNG</span>
-                                    <span class="export-quality">90%</span>
+                                <div class="export-preview-container">
+                                    <div class="export-formats">
+                                        <span class="format-badge png">PNG</span>
+                                        <span class="format-badge jpg">JPG</span>
+                                        <span class="format-badge pdf">PDF</span>
+                                    </div>
+                                    <div class="export-quality-bar">
+                                        <div class="quality-fill" style="width: 90%;"></div>
+                                        <span class="quality-text">90%</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="canvas-card-actions">
@@ -317,9 +331,17 @@ input:checked + .toggle-slider:before {
                                 <p>Gérez la sauvegarde automatique et l'historique des versions.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="autosave-preview">
-                                    <span class="autosave-icon">⏰</span>
-                                    <span class="autosave-timer">5min</span>
+                                <div class="autosave-preview-container">
+                                    <div class="autosave-indicator">
+                                        <div class="autosave-icon">⏰</div>
+                                        <div class="autosave-timer">5min</div>
+                                        <div class="autosave-status active"></div>
+                                    </div>
+                                    <div class="autosave-versions">
+                                        <div class="version-dot" title="Version 1"></div>
+                                        <div class="version-dot" title="Version 2"></div>
+                                        <div class="version-dot active" title="Version actuelle"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="canvas-card-actions">
@@ -341,9 +363,22 @@ input:checked + .toggle-slider:before {
                                 <p>Outils de débogage et monitoring des performances.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="debug-preview">
-                                    <span class="debug-icon">📊</span>
-                                    <span class="debug-fps">60 FPS</span>
+                                <div class="debug-preview-container">
+                                    <div class="debug-monitor">
+                                        <div class="debug-graph">
+                                            <div class="graph-bar" style="height: 60%;"></div>
+                                            <div class="graph-bar" style="height: 80%;"></div>
+                                            <div class="graph-bar" style="height: 40%;"></div>
+                                            <div class="graph-bar" style="height: 90%;"></div>
+                                            <div class="graph-bar active" style="height: 70%;"></div>
+                                        </div>
+                                        <div class="debug-fps">60 FPS</div>
+                                    </div>
+                                    <div class="debug-tools">
+                                        <span class="debug-tool">📊</span>
+                                        <span class="debug-tool">🔍</span>
+                                        <span class="debug-tool">⚠️</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="canvas-card-actions">
