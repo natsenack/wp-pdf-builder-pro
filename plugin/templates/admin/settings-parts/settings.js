@@ -99,6 +99,53 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(validateZoomSettings, 100);
     }
 
+    // Fonction pour mettre à jour le preview de la carte performance
+    function updatePerformanceCardPreview(settings) {
+        // Mettre à jour FPS
+        if (settings.fps_target !== undefined) {
+            const fpsElement = document.querySelector('.canvas-card[data-category="performance"] .metric-item .metric-value');
+            if (fpsElement && fpsElement.previousElementSibling && fpsElement.previousElementSibling.textContent === 'FPS') {
+                fpsElement.textContent = settings.fps_target;
+            }
+        }
+
+        // Mettre à jour RAM JS
+        if (settings.memory_limit_js !== undefined) {
+            const ramJsElements = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-item .metric-value');
+            ramJsElements.forEach(element => {
+                if (element.previousElementSibling && element.previousElementSibling.textContent === 'RAM JS') {
+                    element.textContent = settings.memory_limit_js + 'MB';
+                }
+            });
+        }
+
+        // Mettre à jour RAM PHP
+        if (settings.memory_limit_php !== undefined) {
+            const ramPhpElements = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-item .metric-value');
+            ramPhpElements.forEach(element => {
+                if (element.previousElementSibling && element.previousElementSibling.textContent === 'RAM PHP') {
+                    element.textContent = settings.memory_limit_php + 'MB';
+                }
+            });
+        }
+
+        // Mettre à jour le statut Lazy Loading
+        const lazyEditor = settings.lazy_loading_editor === true || settings.lazy_loading_editor === '1';
+        const lazyPlugin = settings.lazy_loading_plugin === true || settings.lazy_loading_plugin === '1';
+        const lazyLoadingActive = lazyEditor && lazyPlugin;
+
+        const statusIndicator = document.querySelector('.canvas-card[data-category="performance"] .status-indicator');
+        if (statusIndicator) {
+            if (lazyLoadingActive) {
+                statusIndicator.classList.remove('inactive');
+                statusIndicator.classList.add('active');
+            } else {
+                statusIndicator.classList.remove('active');
+                statusIndicator.classList.add('inactive');
+            }
+        }
+    }
+
     // Validation en temps réel pour les paramètres de zoom
     function validateZoomSettings() {
         const zoomMinInput = document.getElementById('zoom_min');
@@ -893,6 +940,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data.data && data.data.saved) {
                         updateFormCheckboxes(data.data.saved);
                         updateFormInputs(data.data.saved);
+                        updatePerformanceCardPreview(data.data.saved);
                     }
 
                     // Show success message
@@ -1792,6 +1840,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Mettre à jour les checkboxes HTML du formulaire avec les nouvelles valeurs
                     updateFormCheckboxes(data.data.saved);
+                    updatePerformanceCardPreview(data.data.saved);
 
                     // Fermer la modale après un court délai
                     setTimeout(() => {
