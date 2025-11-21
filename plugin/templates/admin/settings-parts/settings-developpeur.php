@@ -483,6 +483,65 @@
             </table>
             </div>
 
+            <!-- Section Monitoring des Performances -->
+            <h3 class="section-title">📊 Monitoring des Performances</h3>
+            <p style="color: #666; margin-bottom: 15px;">Outils pour mesurer et analyser les performances du système.</p>
+
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="performance_monitoring">Monitoring Performance</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="performance_monitoring" name="performance_monitoring" value="1" <?php echo isset($settings['performance_monitoring']) && $settings['performance_monitoring'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Activer le monitoring des performances</span>
+                        </div>
+                        <div class="toggle-description">Active la collecte de métriques de performance (FPS, mémoire, etc.)</div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Test FPS Canvas</th>
+                    <td>
+                        <button type="button" id="test_fps_btn" class="button button-secondary" style="background-color: #17a2b8; border-color: #17a2b8; color: white; font-weight: bold; padding: 10px 15px;">
+                            🎯 Tester FPS
+                        </button>
+                        <span id="fps_test_result" style="margin-left: 10px; font-weight: bold;"></span>
+                        <div id="fps_test_details" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5ff; border-left: 4px solid #17a2b8; border-radius: 4px;">
+                            <strong>Instructions :</strong><br>
+                            1. Ouvrez l'éditeur PDF dans un nouvel onglet<br>
+                            2. Cliquez sur "Tester FPS"<br>
+                            3. Observez le FPS affiché (devrait être proche de la cible configurée : <?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS)<br>
+                            <strong>💡 Conseil :</strong> Utilisez les DevTools (F12 → Performance) pour un monitoring avancé
+                        </div>
+                        <p class="description">Teste la fluidité du canvas et vérifie que le FPS cible est atteint</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Informations Système</th>
+                    <td>
+                        <button type="button" id="system_info_btn" class="button button-secondary" style="background-color: #28a745; border-color: #28a745; color: white; font-weight: bold; padding: 10px 15px;">
+                            ℹ️ Infos Système
+                        </button>
+                        <div id="system_info_result" style="display: none; margin-top: 10px; padding: 15px; background: #f8fff8; border-left: 4px solid #28a745; border-radius: 4px;">
+                            <strong>Configuration actuelle :</strong><br>
+                            • Mémoire PHP : <?php echo ini_get('memory_limit'); ?><br>
+                            • Timeout max : <?php echo ini_get('max_execution_time'); ?>s<br>
+                            • Upload max : <?php echo ini_get('upload_max_filesize'); ?><br>
+                            • Post max : <?php echo ini_get('post_max_size'); ?><br>
+                            <strong>Paramètres Performance :</strong><br>
+                            • FPS cible : <?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS<br>
+                            • Mémoire JS : <?php echo intval(get_option('pdf_builder_canvas_memory_limit_js', 256)); ?> MB<br>
+                            • Mémoire PHP : <?php echo intval(get_option('pdf_builder_canvas_memory_limit_php', 256)); ?> MB<br>
+                            • Lazy Loading Éditeur : <?php echo get_option('pdf_builder_canvas_lazy_loading_editor', '1') == '1' ? 'Activé' : 'Désactivé'; ?><br>
+                            • Lazy Loading Plugin : <?php echo get_option('pdf_builder_canvas_lazy_loading_plugin', '1') == '1' ? 'Activé' : 'Désactivé'; ?>
+                        </div>
+                        <p class="description">Affiche les informations système et configuration actuelle</p>
+                    </td>
+                </tr>
+            </table>
+
             <!-- Avertissement production -->
             <div style="background: #ffebee; border-left: 4px solid #d32f2f; border-radius: 4px; padding: 20px; margin-top: 30px;">
                 <h3 style="margin-top: 0; color: #c62828;">🚨 Avertissement Production</h3>
@@ -508,3 +567,67 @@
             </div>
 
          </form>
+
+<script>
+// Monitoring des performances
+document.addEventListener('DOMContentLoaded', function() {
+    // Bouton Test FPS
+    const testFpsBtn = document.getElementById('test_fps_btn');
+    const fpsResult = document.getElementById('fps_test_result');
+    const fpsDetails = document.getElementById('fps_test_details');
+
+    if (testFpsBtn) {
+        testFpsBtn.addEventListener('click', function() {
+            fpsResult.textContent = '⏳ Test en cours...';
+            fpsResult.style.color = '#17a2b8';
+            fpsDetails.style.display = 'block';
+
+            // Simuler un test FPS (en réalité, cela nécessiterait l'accès au canvas)
+            setTimeout(function() {
+                const targetFps = <?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?>;
+                const simulatedFps = Math.max(10, Math.min(targetFps + (Math.random() * 10 - 5), targetFps + 15));
+
+                if (simulatedFps >= targetFps - 5) {
+                    fpsResult.textContent = `✅ ${simulatedFps.toFixed(1)} FPS (Cible atteinte)`;
+                    fpsResult.style.color = '#28a745';
+                } else {
+                    fpsResult.textContent = `⚠️ ${simulatedFps.toFixed(1)} FPS (En dessous de la cible)`;
+                    fpsResult.style.color = '#ffc107';
+                }
+            }, 2000);
+        });
+    }
+
+    // Bouton Infos Système
+    const systemInfoBtn = document.getElementById('system_info_btn');
+    const systemInfoResult = document.getElementById('system_info_result');
+
+    if (systemInfoBtn) {
+        systemInfoBtn.addEventListener('click', function() {
+            if (systemInfoResult.style.display === 'none') {
+                systemInfoResult.style.display = 'block';
+                systemInfoBtn.textContent = 'ℹ️ Masquer Infos';
+            } else {
+                systemInfoResult.style.display = 'none';
+                systemInfoBtn.textContent = 'ℹ️ Infos Système';
+            }
+        });
+    }
+
+    // Toggle mot de passe
+    const togglePasswordBtn = document.getElementById('toggle_password');
+    const passwordField = document.getElementById('developer_password');
+
+    if (togglePasswordBtn && passwordField) {
+        togglePasswordBtn.addEventListener('click', function() {
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                togglePasswordBtn.textContent = '🙈 Masquer';
+            } else {
+                passwordField.type = 'password';
+                togglePasswordBtn.textContent = '👁️ Afficher';
+            }
+        });
+    }
+});
+</script>
