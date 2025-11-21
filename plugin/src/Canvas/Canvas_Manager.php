@@ -603,6 +603,13 @@ JS;
         if (isset($settings['pdf_subject'])) {
             $validated['pdf_subject'] = sanitize_text_field($settings['pdf_subject']);
         }
+        if (isset($settings['canvas_selection_mode'])) {
+            $allowed_modes = ['click', 'lasso', 'rectangle'];
+            $mode = sanitize_text_field($settings['canvas_selection_mode']);
+            if (in_array($mode, $allowed_modes)) {
+                $validated['canvas_selection_mode'] = $mode;
+            }
+        }
 
         return $validated;
     }
