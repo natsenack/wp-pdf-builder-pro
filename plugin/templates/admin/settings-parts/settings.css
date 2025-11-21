@@ -1106,7 +1106,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     padding: 0;
     max-width: 600px;
     width: 90%;
-    max-height: 80vh;
+    max-height: 90vh;
     overflow: hidden;
     box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     animation: slideIn 0.3s ease-out;
@@ -1148,7 +1148,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
 .canvas-modal-body {
     padding: 24px;
-    max-height: calc(80vh - 140px);
+    max-height: calc(90vh - 140px);
     overflow-y: auto;
 }
 
