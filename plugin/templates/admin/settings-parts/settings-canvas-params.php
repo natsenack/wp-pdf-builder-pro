@@ -66,6 +66,7 @@ $canvas_settings_js = [
     'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
     'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
     'enable_keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1') == '1',
+    'canvas_selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'click'),
     'debug_mode' => get_option('pdf_builder_canvas_debug_mode', '0') == '1',
     'show_fps' => get_option('pdf_builder_canvas_show_fps', '0') == '1'
 ];
