@@ -453,115 +453,111 @@
                 </div>
                 <form id="canvas-performance-form">
                     <!-- Section Éditeur PDF -->
-                    <div style="margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%); border: 1px solid #e3f2fd; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #1976d2; border-bottom: 2px solid #1976d2; padding-bottom: 8px;">
-                            <span style="display: inline-flex; align-items: center; gap: 8px;">
-                                🎨 Éditeur PDF
-                            </span>
-                        </h4>
-                        <p style="color: #666; margin-bottom: 15px; font-size: 13px;">Paramètres de performance pour l'interface de conception</p>
-                        <table class="form-table" style="margin-top: 15px;">
-                            <tr>
-                                <th scope="row"><label for="canvas_fps_target">Cible FPS</label></th>
-                                <td>
-                                    <select id="canvas_fps_target" name="canvas_fps_target">
-                                        <option value="30" <?php selected(get_option('pdf_builder_canvas_fps_target', '60'), '30'); ?>>30 FPS (Économie)</option>
-                                        <option value="60" <?php selected(get_option('pdf_builder_canvas_fps_target', '60'), '60'); ?>>60 FPS (Standard)</option>
-                                        <option value="120" <?php selected(get_option('pdf_builder_canvas_fps_target', '60'), '120'); ?>>120 FPS (Haute performance)</option>
-                                    </select>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_memory_limit_js">Limite mémoire JavaScript</label></th>
-                                <td>
-                                    <select id="canvas_memory_limit_js" name="canvas_memory_limit_js">
-                                        <option value="128" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '128'); ?>>128 MB</option>
-                                        <option value="256" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '256'); ?>>256 MB</option>
-                                        <option value="512" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '512'); ?>>512 MB</option>
-                                        <option value="1024" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '1024'); ?>>1 GB</option>
-                                    </select>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Mémoire allouée au canvas et aux éléments</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_lazy_loading_editor">Chargement paresseux (Éditeur)</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_lazy_loading_editor" name="canvas_lazy_loading_editor" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_editor', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Charge les éléments seulement quand visibles</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_preload_critical">Préchargement ressources critiques</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_preload_critical" name="canvas_preload_critical" value="1" <?php checked(get_option('pdf_builder_canvas_preload_critical', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Précharge les polices et outils essentiels</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                    <h4 style="margin: 25px 0 15px 0; padding-bottom: 8px; border-bottom: 1px solid #dee2e6; color: #495057;">
+                        <span style="display: inline-flex; align-items: center; gap: 8px;">
+                            🎨 Éditeur PDF
+                        </span>
+                    </h4>
+                    <p style="color: #666; margin-bottom: 15px; font-size: 13px;">Paramètres de performance pour l'interface de conception</p>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_fps_target">Cible FPS</label></th>
+                            <td>
+                                <select id="canvas_fps_target" name="canvas_fps_target">
+                                    <option value="30" <?php selected(get_option('pdf_builder_canvas_fps_target', '60'), '30'); ?>>30 FPS (Économie)</option>
+                                    <option value="60" <?php selected(get_option('pdf_builder_canvas_fps_target', '60'), '60'); ?>>60 FPS (Standard)</option>
+                                    <option value="120" <?php selected(get_option('pdf_builder_canvas_fps_target', '60'), '120'); ?>>120 FPS (Haute performance)</option>
+                                </select>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_memory_limit_js">Limite mémoire JavaScript</label></th>
+                            <td>
+                                <select id="canvas_memory_limit_js" name="canvas_memory_limit_js">
+                                    <option value="128" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '128'); ?>>128 MB</option>
+                                    <option value="256" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '256'); ?>>256 MB</option>
+                                    <option value="512" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '512'); ?>>512 MB</option>
+                                    <option value="1024" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '1024'); ?>>1 GB</option>
+                                </select>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Mémoire allouée au canvas et aux éléments</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_lazy_loading_editor">Chargement paresseux (Éditeur)</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_lazy_loading_editor" name="canvas_lazy_loading_editor" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_editor', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Charge les éléments seulement quand visibles</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_preload_critical">Préchargement ressources critiques</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_preload_critical" name="canvas_preload_critical" value="1" <?php checked(get_option('pdf_builder_canvas_preload_critical', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Précharge les polices et outils essentiels</p>
+                            </td>
+                        </tr>
+                    </table>
 
                     <!-- Section Plugin WordPress -->
-                    <div style="padding: 20px; background: linear-gradient(135deg, #fff8f8 0%, #ffffff 100%); border: 1px solid #ffebee; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 8px;">
-                            <span style="display: inline-flex; align-items: center; gap: 8px;">
-                                🔧 Plugin WordPress
-                            </span>
-                        </h4>
-                        <p style="color: #666; margin-bottom: 15px; font-size: 13px;">Paramètres de performance pour le backend et génération PDF</p>
-                        <table class="form-table" style="margin-top: 15px;">
-                            <tr>
-                                <th scope="row"><label for="canvas_memory_limit_php">Limite mémoire PHP</label></th>
-                                <td>
-                                    <select id="canvas_memory_limit_php" name="canvas_memory_limit_php">
-                                        <option value="128" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '128'); ?>>128 MB</option>
-                                        <option value="256" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '256'); ?>>256 MB</option>
-                                        <option value="512" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '512'); ?>>512 MB</option>
-                                        <option value="1024" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '1024'); ?>>1 GB</option>
-                                    </select>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Mémoire pour génération PDF et traitement</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_response_timeout">Timeout réponses AJAX</label></th>
-                                <td>
-                                    <select id="canvas_response_timeout" name="canvas_response_timeout">
-                                        <option value="10" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '10'); ?>>10 secondes</option>
-                                        <option value="30" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '30'); ?>>30 secondes</option>
-                                        <option value="60" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '60'); ?>>60 secondes</option>
-                                        <option value="120" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '120'); ?>>120 secondes</option>
-                                    </select>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Délai maximum pour les requêtes serveur</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_lazy_loading_plugin">Chargement paresseux (Plugin)</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_lazy_loading_plugin" name="canvas_lazy_loading_plugin" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_plugin', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Charge les données seulement quand nécessaire</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><label for="canvas_cache_enabled">Cache intelligent</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="canvas_cache_enabled" name="canvas_cache_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_cache_enabled', '1'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Met en cache les templates et configurations</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                    <h4 style="margin: 35px 0 15px 0; padding-bottom: 8px; border-bottom: 1px solid #dee2e6; color: #495057;">
+                        <span style="display: inline-flex; align-items: center; gap: 8px;">
+                            🔧 Plugin WordPress
+                        </span>
+                    </h4>
+                    <p style="color: #666; margin-bottom: 15px; font-size: 13px;">Paramètres de performance pour le backend et génération PDF</p>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="canvas_memory_limit_php">Limite mémoire PHP</label></th>
+                            <td>
+                                <select id="canvas_memory_limit_php" name="canvas_memory_limit_php">
+                                    <option value="128" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '128'); ?>>128 MB</option>
+                                    <option value="256" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '256'); ?>>256 MB</option>
+                                    <option value="512" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '512'); ?>>512 MB</option>
+                                    <option value="1024" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '1024'); ?>>1 GB</option>
+                                </select>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Mémoire pour génération PDF et traitement</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_response_timeout">Timeout réponses AJAX</label></th>
+                            <td>
+                                <select id="canvas_response_timeout" name="canvas_response_timeout">
+                                    <option value="10" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '10'); ?>>10 secondes</option>
+                                    <option value="30" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '30'); ?>>30 secondes</option>
+                                    <option value="60" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '60'); ?>>60 secondes</option>
+                                    <option value="120" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '120'); ?>>120 secondes</option>
+                                </select>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Délai maximum pour les requêtes serveur</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_lazy_loading_plugin">Chargement paresseux (Plugin)</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_lazy_loading_plugin" name="canvas_lazy_loading_plugin" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_plugin', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Charge les données seulement quand nécessaire</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_cache_enabled">Cache intelligent</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_cache_enabled" name="canvas_cache_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_cache_enabled', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Met en cache les templates et configurations</p>
+                            </td>
+                        </tr>
+                    </table>
                 </form>
             </div>
             <div class="canvas-modal-footer">
