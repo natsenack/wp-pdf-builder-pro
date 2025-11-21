@@ -101,19 +101,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('🔍 Overlay dimensions:', overlay ? overlay.offsetWidth + 'x' + overlay.offsetHeight : 'not found');
                 console.log('🔍 Content dimensions:', content ? content.offsetWidth + 'x' + content.offsetHeight : 'not found');
 
-                // Forcer les dimensions des enfants aussi
+                // Forcer les dimensions des enfants aussi - VERSION ABSOLUTE POSITIONING
                 if (overlay) {
+                    overlay.style.position = 'absolute !important';
+                    overlay.style.top = '0 !important';
+                    overlay.style.left = '0 !important';
                     overlay.style.width = '100% !important';
                     overlay.style.height = '100% !important';
-                    overlay.style.display = 'flex !important';
-                    overlay.style.alignItems = 'center !important';
-                    overlay.style.justifyContent = 'center !important';
+                    overlay.style.display = 'block !important';
                 }
                 if (content) {
+                    content.style.position = 'absolute !important';
+                    content.style.top = '50% !important';
+                    content.style.left = '50% !important';
+                    content.style.transform = 'translate(-50%, -50%) !important';
                     content.style.display = 'block !important';
                     content.style.width = '90% !important';
                     content.style.maxWidth = '600px !important';
                     content.style.maxHeight = '85vh !important';
+                    content.style.background = 'white !important';
+                    content.style.borderRadius = '8px !important';
+                    content.style.boxShadow = '0 10px 40px rgba(0,0,0,0.3) !important';
                 }
 
                 // Vérifier les styles calculés de la modale existante
