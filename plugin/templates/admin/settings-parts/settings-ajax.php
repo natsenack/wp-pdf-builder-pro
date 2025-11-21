@@ -318,111 +318,40 @@ function pdf_builder_save_canvas_settings_handler() {
 
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
 
-        // Utiliser le Canvas_Manager pour la sauvegarde centralisée
+        // Sauvegarder directement dans les options WordPress pour les paramètres de performance
         try {
-            error_log('PDF Builder: About to get Canvas_Manager instance');
-            $canvas_manager = WP_PDF_Builder_Pro\Canvas\Canvas_Manager::get_instance();
-            error_log('PDF Builder: Canvas_Manager instance obtained successfully');
+            error_log('PDF Builder: About to save performance settings directly');
 
-            // Mapper les champs du formulaire vers les noms attendus par le Canvas_Manager
-            $settings = [];
-            if (isset($_POST['canvas_bg_color'])) {
-                $settings['canvas_background_color'] = sanitize_text_field($_POST['canvas_bg_color']);
-            }
-            if (isset($_POST['canvas_container_bg_color'])) {
-                $settings['container_background_color'] = sanitize_text_field($_POST['canvas_container_bg_color']);
-            }
-            if (isset($_POST['canvas_border_color'])) {
-                $settings['border_color'] = sanitize_text_field($_POST['canvas_border_color']);
-            }
-            if (isset($_POST['canvas_border_width'])) {
-                $settings['border_width'] = intval($_POST['canvas_border_width']);
-            }
-            if (isset($_POST['canvas_grid_size'])) {
-                $settings['grid_size'] = intval($_POST['canvas_grid_size']);
-            }
-            if (isset($_POST['canvas_width'])) {
-                $settings['default_canvas_width'] = intval($_POST['canvas_width']);
-            }
-            if (isset($_POST['canvas_height'])) {
-                $settings['default_canvas_height'] = intval($_POST['canvas_height']);
-            }
-            if (isset($_POST['canvas_zoom_min'])) {
-                $settings['min_zoom'] = intval($_POST['canvas_zoom_min']);
-            }
-            if (isset($_POST['canvas_zoom_max'])) {
-                $settings['max_zoom'] = intval($_POST['canvas_zoom_max']);
-            }
-            if (isset($_POST['canvas_zoom_default'])) {
-                $settings['default_zoom'] = intval($_POST['canvas_zoom_default']);
-            }
-            if (isset($_POST['canvas_zoom_step'])) {
-                $settings['zoom_step'] = intval($_POST['canvas_zoom_step']);
-            }
-
-            // Convertir les checkboxes avec mapping correct
-            $checkboxMappings = [
-                'canvas_shadow_enabled' => 'shadow_enabled',
-                'canvas_grid_enabled' => 'show_grid',
-                'canvas_guides_enabled' => 'show_guides',
-                'canvas_snap_to_grid' => 'snap_to_grid',
-                'canvas_pan_enabled' => 'pan_with_mouse',
-                'canvas_resize_enabled' => 'show_resize_handles',
-                'canvas_rotate_enabled' => 'enable_rotation',
-                'canvas_multi_select' => 'multi_select',
-                'canvas_keyboard_shortcuts' => 'enable_keyboard_shortcuts',
-                'canvas_auto_save' => 'auto_save_enabled'
+            // Mapper et sauvegarder les paramètres de performance
+            $performance_mappings = [
+                'canvas_fps_target' => 'pdf_builder_canvas_fps_target',
+                'canvas_memory_limit_js' => 'pdf_builder_canvas_memory_limit_js',
+                'canvas_memory_limit_php' => 'pdf_builder_canvas_memory_limit_php',
+                'canvas_response_timeout' => 'pdf_builder_canvas_response_timeout',
+                'canvas_lazy_loading_editor' => 'pdf_builder_canvas_lazy_loading_editor',
+                'canvas_preload_critical' => 'pdf_builder_canvas_preload_critical',
+                'canvas_lazy_loading_plugin' => 'pdf_builder_canvas_lazy_loading_plugin'
             ];
-            
-            foreach ($checkboxMappings as $checkbox => $settingKey) {
-                $value = isset($_POST[$checkbox]) && $_POST[$checkbox] === '1';
-                $settings[$settingKey] = $value;
-            }
 
-            // Traiter les selects
-            $selects = ['canvas_selection_mode', 'canvas_export_format'];
-            foreach ($selects as $select) {
-                if (isset($_POST[$select])) {
-                    // Pour canvas_selection_mode, garder le préfixe canvas_
-                    if ($select === 'canvas_selection_mode') {
-                        $settings[$select] = sanitize_text_field($_POST[$select]);
-                    } else {
-                        $settings[str_replace('canvas_', '', $select)] = sanitize_text_field($_POST[$select]);
+            foreach ($performance_mappings as $post_key => $option_key) {
+                if (isset($_POST[$post_key])) {
+                    $value = $_POST[$post_key];
+                    // Convertir les checkboxes en boolean
+                    if (in_array($post_key, ['canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin'])) {
+                        $value = $value === '1';
                     }
+                    update_option($option_key, $value);
+                    error_log("PDF Builder: Saved $option_key = $value");
                 }
             }
 
-            // Traiter les nombres
-            $numbers = ['canvas_export_quality', 'canvas_fps_target', 'canvas_memory_limit', 'canvas_memory_limit_js', 'canvas_memory_limit_php', 'canvas_response_timeout'];
-            foreach ($numbers as $number) {
-                if (isset($_POST[$number])) {
-                    $settings[str_replace('canvas_', '', $number)] = intval($_POST[$number]);
-                }
-            }
+            error_log('PDF Builder: Performance settings saved successfully');
+            send_ajax_response(true, 'Paramètres de performance sauvegardés avec succès.', ['saved' => []]);
 
-            // Traiter les checkboxes de performance
-            $performanceCheckboxes = [
-                'canvas_lazy_loading_editor' => 'lazy_loading_editor',
-                'canvas_preload_critical' => 'preload_critical',
-                'canvas_lazy_loading_plugin' => 'lazy_loading_plugin'
-            ];
-            
-            foreach ($performanceCheckboxes as $checkbox => $settingKey) {
-                $value = isset($_POST[$checkbox]) && $_POST[$checkbox] === '1';
-                $settings[$settingKey] = $value;
-            }
-
-            $saved = $canvas_manager->saveSettings($settings);
-
-            if ($saved) {
-                send_ajax_response(true, 'Paramètres canvas sauvegardés avec succès.', ['saved' => $settings]);
-            } else {
-                send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres canvas.');
-            }
         } catch (Exception $e) {
             error_log('PDF Builder: Exception in save_canvas_settings_handler: ' . $e->getMessage());
             error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
-            send_ajax_response(false, 'Canvas_Manager non disponible: ' . $e->getMessage());
+            send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     } else {
         send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
