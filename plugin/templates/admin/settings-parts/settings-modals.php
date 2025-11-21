@@ -307,6 +307,12 @@
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
             </div>
             <div class="canvas-modal-body">
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
+                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                        <strong>💡 Comment ça marche :</strong> Ces paramètres contrôlent les interactions disponibles sur le canvas pour manipuler les éléments 
+                        (déplacement, redimensionnement, rotation, sélection multiple).
+                    </p>
+                </div>
                 <form id="canvas-interaction-form">
                     <table class="form-table">
                         <tr>
@@ -316,6 +322,7 @@
                                     <input type="checkbox" id="canvas_drag_enabled" name="canvas_drag_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_drag_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Permet de déplacer les éléments sur le canvas</p>
                             </td>
                         </tr>
                         <tr>
@@ -325,6 +332,7 @@
                                     <input type="checkbox" id="canvas_resize_enabled" name="canvas_resize_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_resize_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Affiche les poignées pour redimensionner les éléments</p>
                             </td>
                         </tr>
                         <tr>
@@ -334,6 +342,7 @@
                                     <input type="checkbox" id="canvas_rotate_enabled" name="canvas_rotate_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_rotate_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Permet de faire pivoter les éléments avec la souris</p>
                             </td>
                         </tr>
                         <tr>
@@ -343,21 +352,10 @@
                                     <input type="checkbox" id="canvas_multi_select" name="canvas_multi_select" value="1" <?php checked(get_option('pdf_builder_canvas_multi_select', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Ctrl+Clic pour sélectionner plusieurs éléments</p>
                             </td>
                         </tr>
                     </table>
-                    
-                    <!-- Notes d'aide pour les éléments interactifs -->
-                    <div class="canvas-interaction-notes" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
-                        <h4 style="margin: 0 0 10px 0; color: #495057;">💡 Conseils d'utilisation</h4>
-                        <ul style="margin: 0; padding-left: 20px; color: #6c757d; font-size: 14px; line-height: 1.5;">
-                            <li><strong>Glisser-déposer :</strong> Cliquez et maintenez sur un élément pour le déplacer librement</li>
-                            <li><strong>Redimensionnement :</strong> Utilisez les poignées aux coins pour ajuster la taille</li>
-                            <li><strong>Rotation :</strong> Cliquez sur l'élément et faites tourner avec la souris (aimant à 0°)</li>
-                            <li><strong>Sélection multiple :</strong> Maintenez Ctrl enfoncé pour sélectionner plusieurs éléments</li>
-                            <li><strong>Raccourcis :</strong> Ctrl+Z (annuler), Ctrl+Y (rétablir), Suppr (supprimer)</li>
-                        </ul>
-                    </div>
                 </form>
             </div>
             <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
