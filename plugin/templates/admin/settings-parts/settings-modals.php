@@ -92,7 +92,7 @@
                     </table>
                 </form>
             </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+            <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="dimensions">Sauvegarder</button>
             </div>
@@ -227,7 +227,7 @@
                     </table>
                 </form>
             </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+            <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="apparence">Sauvegarder</button>
             </div>
@@ -291,7 +291,7 @@
                     </table>
                 </form>
             </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+            <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="grille">Sauvegarder</button>
             </div>
@@ -358,7 +358,7 @@
                     </table>
                 </form>
             </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+            <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="interaction">Sauvegarder</button>
             </div>
@@ -407,7 +407,7 @@
                     </table>
                 </form>
             </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+            <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="comportement">Sauvegarder</button>
             </div>
@@ -453,7 +453,7 @@
                     </table>
                 </form>
             </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+            <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="export">Sauvegarder</button>
             </div>
@@ -495,7 +495,7 @@
                     </table>
                 </form>
             </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+            <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="performance">Sauvegarder</button>
             </div>
@@ -546,7 +546,7 @@
                     </table>
                 </form>
             </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+            <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="autosave">Sauvegarder</button>
             </div>
@@ -594,7 +594,7 @@
                     </table>
                 </form>
             </div>
-            <div class="canvas-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
+            <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="debug">Sauvegarder</button>
             </div>
