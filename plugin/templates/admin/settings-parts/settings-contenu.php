@@ -133,10 +133,44 @@ input:checked + .toggle-slider:before {
                                 <p>Configurez l'affichage et l'alignement sur la grille de conception.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="grid-preview">
-                                    <div class="grid-line"></div>
-                                    <div class="grid-dot"></div>
-                                    <div class="grid-line"></div>
+                                <div class="grid-preview-container">
+                                    <div class="grid-canvas">
+                                        <!-- Quadrillage principal -->
+                                        <div class="grid-lines">
+                                            <div class="grid-line horizontal"></div>
+                                            <div class="grid-line horizontal"></div>
+                                            <div class="grid-line horizontal"></div>
+                                            <div class="grid-line vertical"></div>
+                                            <div class="grid-line vertical"></div>
+                                            <div class="grid-line vertical"></div>
+                                        </div>
+                                        <!-- Points d'intersection -->
+                                        <div class="grid-dots">
+                                            <div class="grid-dot"></div>
+                                            <div class="grid-dot"></div>
+                                            <div class="grid-dot"></div>
+                                            <div class="grid-dot"></div>
+                                            <div class="grid-dot"></div>
+                                            <div class="grid-dot"></div>
+                                            <div class="grid-dot"></div>
+                                            <div class="grid-dot"></div>
+                                            <div class="grid-dot"></div>
+                                        </div>
+                                        <!-- Guides d'alignement -->
+                                        <div class="guide-lines">
+                                            <div class="guide-line horizontal active"></div>
+                                            <div class="guide-line vertical active"></div>
+                                        </div>
+                                        <!-- Élément d'exemple -->
+                                        <div class="preview-element">
+                                            <div class="element-box"></div>
+                                        </div>
+                                    </div>
+                                    <div class="grid-legend">
+                                        <span class="legend-item">📐 Grille</span>
+                                        <span class="legend-item">📏 Guides</span>
+                                        <span class="legend-item">📦 Élément</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="canvas-card-actions">
