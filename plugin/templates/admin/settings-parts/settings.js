@@ -1310,6 +1310,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Envoyer la requête AJAX
+        console.log('[DEBUG] Sending AJAX request to:', pdf_builder_ajax.ajax_url);
+        console.log('[DEBUG] Request body length:', params.toString().length);
+
         fetch(pdf_builder_ajax.ajax_url, {
             method: 'POST',
             headers: {
@@ -1318,8 +1321,27 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: params.toString()
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('[DEBUG] Response status:', response.status);
+            console.log('[DEBUG] Response ok:', response.ok);
+            console.log('[DEBUG] Response headers:', response.headers);
+
+            // Log the raw response text first
+            return response.text().then(text => {
+                console.log('[DEBUG] Raw response text:', text.substring(0, 500) + (text.length > 500 ? '...' : ''));
+
+                // Try to parse as JSON
+                try {
+                    return JSON.parse(text);
+                } catch (jsonError) {
+                    console.error('[DEBUG] JSON parse error:', jsonError);
+                    throw new Error('Invalid JSON response: ' + text.substring(0, 200));
+                }
+            });
+        })
         .then(data => {
+            console.log('[DEBUG] Parsed response data:', data);
+
             if (data.success) {
 
                 // Mettre à jour les badges de statut en temps réel
@@ -1377,16 +1399,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
-            console.error('Erreur lors de la sauvegarde:', error);
+            console.error('[DEBUG] AJAX Error details:', {
+                message: error.message,
+                stack: error.stack,
+                name: error.name
+            });
+
             saveBtn.classList.remove('saving');
             saveBtn.classList.add('error');
-            saveBtn.textContent = '❌ Erreur réseau';
+            saveBtn.textContent = '❌ Erreur: ' + (error.message.length > 20 ? 'Serveur' : error.message);
 
             setTimeout(() => {
                 saveBtn.classList.remove('error');
                 saveBtn.textContent = '💾 Sauvegarder';
                 saveBtn.disabled = false;
-            }, 3000);
+            }, 5000); // Plus long pour voir l'erreur
         });
 
     }
