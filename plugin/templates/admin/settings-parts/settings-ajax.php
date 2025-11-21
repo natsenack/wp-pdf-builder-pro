@@ -399,8 +399,7 @@ function pdf_builder_save_canvas_settings_handler() {
             $performanceCheckboxes = [
                 'canvas_lazy_loading_editor' => 'lazy_loading_editor',
                 'canvas_preload_critical' => 'preload_critical',
-                'canvas_lazy_loading_plugin' => 'lazy_loading_plugin',
-                'canvas_cache_enabled' => 'cache_enabled'
+                'canvas_lazy_loading_plugin' => 'lazy_loading_plugin'
             ];
             
             foreach ($performanceCheckboxes as $checkbox => $settingKey) {
@@ -494,8 +493,7 @@ function pdf_builder_get_canvas_settings_handler() {
             'response_timeout' => intval(get_option('pdf_builder_canvas_response_timeout', 30)),
             'lazy_loading_editor' => get_option('pdf_builder_canvas_lazy_loading_editor', '1') == '1',
             'preload_critical' => get_option('pdf_builder_canvas_preload_critical', '1') == '1',
-            'lazy_loading_plugin' => get_option('pdf_builder_canvas_lazy_loading_plugin', '1') == '1',
-            'cache_enabled' => get_option('pdf_builder_canvas_cache_enabled', '1') == '1'
+            'lazy_loading_plugin' => get_option('pdf_builder_canvas_lazy_loading_plugin', '1') == '1'
         ];
         
         error_log('PDF Builder: get_canvas_settings returning: ' . print_r($settings, true));

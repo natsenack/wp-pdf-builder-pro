@@ -547,16 +547,6 @@
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Charge les données seulement quand nécessaire</p>
                             </td>
                         </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_cache_enabled">Cache intelligent</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_cache_enabled" name="canvas_cache_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_cache_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Met en cache les templates et configurations</p>
-                            </td>
-                        </tr>
                     </table>
                 </form>
             </div>
