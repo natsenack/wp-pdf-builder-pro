@@ -340,7 +340,15 @@ function pdf_builder_save_canvas_settings_handler() {
                 }
             }
 
-            send_ajax_response(true, 'Paramètres de performance sauvegardés avec succès.', ['saved' => []]);
+            // Retourner les valeurs sauvegardées pour mettre à jour l'interface
+            $saved_values = [];
+            foreach ($performance_mappings as $post_key => $option_key) {
+                if (isset($_POST[$post_key])) {
+                    $saved_values[$post_key] = $_POST[$post_key];
+                }
+            }
+
+            send_ajax_response(true, 'Paramètres de performance sauvegardés avec succès.', ['saved' => $saved_values]);
 
         } catch (Exception $e) {
             send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());

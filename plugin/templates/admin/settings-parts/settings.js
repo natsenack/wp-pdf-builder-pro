@@ -101,32 +101,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction pour mettre à jour le preview de la carte performance
     function updatePerformanceCardPreview(settings) {
-        // Mettre à jour FPS
+        // Mettre à jour FPS - premier metric-item
         if (settings.fps_target !== undefined) {
-            const fpsElement = document.querySelector('.canvas-card[data-category="performance"] .metric-item .metric-value');
-            if (fpsElement && fpsElement.previousElementSibling && fpsElement.previousElementSibling.textContent === 'FPS') {
+            const fpsElement = document.querySelector('.canvas-card[data-category="performance"] .metric-item:nth-child(1) .metric-value');
+            if (fpsElement) {
                 fpsElement.textContent = settings.fps_target;
             }
         }
 
-        // Mettre à jour RAM JS
+        // Mettre à jour RAM JS - deuxième metric-item
         if (settings.memory_limit_js !== undefined) {
-            const ramJsElements = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-item .metric-value');
-            ramJsElements.forEach(element => {
-                if (element.previousElementSibling && element.previousElementSibling.textContent === 'RAM JS') {
-                    element.textContent = settings.memory_limit_js + 'MB';
-                }
-            });
+            const ramJsElement = document.querySelector('.canvas-card[data-category="performance"] .metric-item:nth-child(2) .metric-value');
+            if (ramJsElement) {
+                ramJsElement.textContent = settings.memory_limit_js + 'MB';
+            }
         }
 
-        // Mettre à jour RAM PHP
+        // Mettre à jour RAM PHP - troisième metric-item
         if (settings.memory_limit_php !== undefined) {
-            const ramPhpElements = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-item .metric-value');
-            ramPhpElements.forEach(element => {
-                if (element.previousElementSibling && element.previousElementSibling.textContent === 'RAM PHP') {
-                    element.textContent = settings.memory_limit_php + 'MB';
-                }
-            });
+            const ramPhpElement = document.querySelector('.canvas-card[data-category="performance"] .metric-item:nth-child(3) .metric-value');
+            if (ramPhpElement) {
+                ramPhpElement.textContent = settings.memory_limit_php + 'MB';
+            }
         }
 
         // Mettre à jour le statut Lazy Loading
