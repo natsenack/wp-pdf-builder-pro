@@ -364,20 +364,37 @@ input:checked + .toggle-slider:before {
                             </div>
                             <div class="canvas-card-preview">
                                 <div class="debug-preview-container">
-                                    <div class="debug-monitor">
-                                        <div class="debug-graph">
-                                            <div class="graph-bar" style="height: 60%;"></div>
-                                            <div class="graph-bar" style="height: 80%;"></div>
-                                            <div class="graph-bar" style="height: 40%;"></div>
-                                            <div class="graph-bar" style="height: 90%;"></div>
-                                            <div class="graph-bar active" style="height: 70%;"></div>
+                                    <div class="debug-console">
+                                        <div class="console-line">
+                                            <span class="console-timestamp">[14:32:15]</span>
+                                            <span class="console-level info">INFO</span>
+                                            <span class="console-message">Canvas initialized</span>
                                         </div>
-                                        <div class="debug-fps">60 FPS</div>
+                                        <div class="console-line">
+                                            <span class="console-timestamp">[14:32:16]</span>
+                                            <span class="console-level warn">WARN</span>
+                                            <span class="console-message">Memory usage: 85%</span>
+                                        </div>
+                                        <div class="console-line">
+                                            <span class="console-timestamp">[14:32:17]</span>
+                                            <span class="console-level error">ERROR</span>
+                                            <span class="console-message">Failed to load image</span>
+                                        </div>
+                                        <div class="console-cursor">_</div>
                                     </div>
-                                    <div class="debug-tools">
-                                        <span class="debug-tool">📊</span>
-                                        <span class="debug-tool">🔍</span>
-                                        <span class="debug-tool">⚠️</span>
+                                    <div class="debug-stats">
+                                        <div class="stat-item">
+                                            <span class="stat-label">FPS</span>
+                                            <span class="stat-value">60</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">RAM</span>
+                                            <span class="stat-value">85MB</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Errors</span>
+                                            <span class="stat-value">2</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

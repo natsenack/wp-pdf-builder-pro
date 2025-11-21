@@ -751,45 +751,99 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     gap: 6px;
 }
 
-.debug-monitor {
+.debug-console {
+    width: 100%;
+    max-width: 120px;
+    height: 45px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 8px;
+    color: #d4d4d4;
+    overflow: hidden;
+    position: relative;
+}
+
+.console-line {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 2px;
+    align-items: center;
+}
+
+.console-timestamp {
+    color: #888;
+    font-size: 7px;
+}
+
+.console-level {
+    padding: 0 2px;
+    border-radius: 2px;
+    font-size: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.console-level.info {
+    background: #007acc;
+    color: white;
+}
+
+.console-level.warn {
+    background: #ffcc00;
+    color: black;
+}
+
+.console-level.error {
+    background: #f44747;
+    color: white;
+}
+
+.console-message {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.console-cursor {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    color: #d4d4d4;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.debug-stats {
+    display: flex;
+    gap: 8px;
+    font-size: 9px;
+}
+
+.stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 1px;
 }
 
-.debug-graph {
-    display: flex;
-    align-items: end;
-    gap: 2px;
-    height: 20px;
-}
-
-.graph-bar {
-    width: 4px;
-    background: #007cba;
-    border-radius: 1px;
-    opacity: 0.6;
-}
-
-.graph-bar.active {
-    background: #28a745;
-    opacity: 1;
-}
-
-.debug-fps {
-    font-size: 9px;
+.stat-label {
     color: #646970;
+    font-size: 7px;
+    text-transform: uppercase;
     font-weight: bold;
 }
 
-.debug-tools {
-    display: flex;
-    gap: 4px;
-}
-
-.debug-tool {
-    font-size: 10px;
+.stat-value {
+    color: #007cba;
+    font-weight: bold;
 }
 
 .zoom-preview {
