@@ -1000,7 +1000,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     .canvas-card-preview {
         margin: 12px 0;
         padding: 12px;
-        min-height: 40px;
+        min-height: 85px;
         flex-shrink: 0;
     }
 
