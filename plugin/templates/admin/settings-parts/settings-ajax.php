@@ -344,11 +344,10 @@ function pdf_builder_save_canvas_settings_handler() {
             $saved_values = [];
             foreach ($performance_mappings as $post_key => $option_key) {
                 if (isset($_POST[$post_key])) {
-                    $saved_values[$post_key] = $_POST[$post_key];
+                    $saved_values[str_replace('canvas_', '', $post_key)] = $_POST[$post_key];
                 }
             }
 
-            error_log('DEBUG: Saved values being returned: ' . print_r($saved_values, true));
             send_ajax_response(true, 'Paramètres de performance sauvegardés avec succès.', ['saved' => $saved_values]);
 
         } catch (Exception $e) {
