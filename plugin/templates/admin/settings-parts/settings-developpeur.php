@@ -298,7 +298,7 @@
                 <button type="button" id="view_logs_btn" class="button button-secondary">
                     📋 Voir Logs
                 </button>
-                <button type="button" id="system_info_btn" class="button button-secondary">
+                <button type="button" id="system_info_shortcut_btn" class="button button-secondary">
                     ℹ️ Info Système
                 </button>
             </div>
@@ -611,6 +611,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 systemInfoResult.style.display = 'none';
                 systemInfoBtn.textContent = 'ℹ️ Infos Système';
             }
+        });
+    }
+
+    // Bouton raccourci Infos Système (dans la section développeur)
+    const systemInfoShortcutBtn = document.getElementById('system_info_shortcut_btn');
+    if (systemInfoShortcutBtn && systemInfoBtn) {
+        systemInfoShortcutBtn.addEventListener('click', function() {
+            // Simule un clic sur le bouton principal
+            systemInfoBtn.click();
         });
     }
 
