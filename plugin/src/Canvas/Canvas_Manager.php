@@ -431,6 +431,8 @@ JS;
      */
     public function saveSettings($settings)
     {
+        error_log('Canvas_Manager: saveSettings called with: ' . print_r($settings, true));
+
         // Valider les paramètres
         $validated = $this->validateSettings($settings);
         
@@ -525,6 +527,7 @@ JS;
 
         // La sauvegarde est considérée réussie tant qu'aucune exception n'est levée
         do_action('pdfBuilderCanvasSettingsUpdated', $this->settings);
+        error_log('Canvas_Manager: saveSettings completed successfully');
         return true;
     }
 
