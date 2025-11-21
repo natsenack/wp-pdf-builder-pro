@@ -602,14 +602,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const systemInfoBtn = document.getElementById('system_info_btn');
     const systemInfoResult = document.getElementById('system_info_result');
 
-    if (systemInfoBtn) {
+    if (systemInfoBtn && systemInfoResult) {
         systemInfoBtn.addEventListener('click', function() {
-            if (systemInfoResult.style.display === 'none') {
+            if (systemInfoResult.style.display === 'none' || systemInfoResult.style.display === '') {
                 systemInfoResult.style.display = 'block';
-                systemInfoBtn.textContent = 'ℹ️ Masquer Infos';
+                systemInfoBtn.innerHTML = 'ℹ️ Masquer Infos';
+                systemInfoBtn.style.backgroundColor = '#dc3545';
+                systemInfoBtn.style.borderColor = '#dc3545';
             } else {
                 systemInfoResult.style.display = 'none';
-                systemInfoBtn.textContent = 'ℹ️ Infos Système';
+                systemInfoBtn.innerHTML = 'ℹ️ Infos Système';
+                systemInfoBtn.style.backgroundColor = '#28a745';
+                systemInfoBtn.style.borderColor = '#28a745';
             }
         });
     }
