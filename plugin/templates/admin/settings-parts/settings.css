@@ -387,7 +387,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     padding: 16px;
     background: #f6f7f7;
     border-radius: 6px;
-    min-height: 50px;
+    min-height: 85px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1000,7 +1000,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     .canvas-card-preview {
         margin: 12px 0;
         padding: 12px;
-        min-height: 85px;
+        min-height: 40px;
         flex-shrink: 0;
     }
 
