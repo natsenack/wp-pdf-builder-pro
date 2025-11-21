@@ -16,11 +16,35 @@ export const useCanvasSettings = () => {
             setSettingsVersion(prev => prev + 1);
         };
 
-        const handleStorageChange = (event: StorageEvent) => {
+        const handleStorageChange = async (event: StorageEvent) => {
             if (event.key === 'pdfBuilderSettingsUpdated') {
-                // Settings were updated in another tab, reload the page to get fresh settings
-                console.log('Settings updated in another tab, reloading page...');
-                window.location.reload();
+                try {
+                    // Fetch fresh settings from server
+                    const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            action: 'pdf_builder_get_canvas_settings'
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        // Update global settings object
+                        window.pdfBuilderCanvasSettings = {
+                            ...window.pdfBuilderCanvasSettings,
+                            ...data.data
+                        };
+                        // Trigger settings update
+                        handleSettingsUpdate();
+                    }
+                } catch (error) {
+                    console.warn('Failed to fetch updated settings:', error);
+                    // Fallback: reload page
+                    window.location.reload();
+                }
             }
         };
 
