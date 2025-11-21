@@ -320,7 +320,9 @@ function pdf_builder_save_canvas_settings_handler() {
 
         // Utiliser le Canvas_Manager pour la sauvegarde centralisée
         try {
+            error_log('PDF Builder: About to get Canvas_Manager instance');
             $canvas_manager = WP_PDF_Builder_Pro\Canvas\Canvas_Manager::get_instance();
+            error_log('PDF Builder: Canvas_Manager instance obtained successfully');
 
             // Mapper les champs du formulaire vers les noms attendus par le Canvas_Manager
             $settings = [];
@@ -418,6 +420,8 @@ function pdf_builder_save_canvas_settings_handler() {
                 send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres canvas.');
             }
         } catch (Exception $e) {
+            error_log('PDF Builder: Exception in save_canvas_settings_handler: ' . $e->getMessage());
+            error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
             send_ajax_response(false, 'Canvas_Manager non disponible: ' . $e->getMessage());
         }
     } else {
