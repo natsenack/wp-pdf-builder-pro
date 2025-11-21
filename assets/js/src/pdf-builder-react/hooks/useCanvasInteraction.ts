@@ -25,6 +25,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const canvasSettings = useCanvasSettings();
   const selectionMode = canvasSettings.canvasSelectionMode;
 
+  // Debug log
+  console.log('🔍 useCanvasInteraction - selectionMode:', selectionMode, 'canvasSettings:', canvasSettings);
+
   // États pour le drag et resize
   const isDraggingRef = useRef(false);
   const isResizingRef = useRef(false);
@@ -617,6 +620,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // ✅ Sinon on a cliqué sur le vide - gérer selon le mode de sélection
     if (selectionMode === 'lasso' || selectionMode === 'rectangle') {
+      console.log('🎯 Starting selection mode:', selectionMode, 'at position:', { x, y });
       // Commencer une nouvelle sélection
       isSelectingRef.current = true;
       selectionStartRef.current = { x, y };
@@ -683,6 +687,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // Finaliser la sélection lasso/rectangle si en cours
     if (isSelectingRef.current) {
+      console.log('✅ Finalizing selection, mode:', selectionMode);
       let selectedElementIds: string[] = [];
 
       if (selectionMode === 'lasso' && selectionPointsRef.current.length > 2) {
@@ -691,12 +696,15 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           .filter(element => isElementInLasso(element, selectionPointsRef.current))
           .map(element => element.id);
       } else if (selectionMode === 'rectangle' && selectionRectRef.current.width > 0 && selectionRectRef.current.height > 0) {
+        console.log('🎯 Rectangle selection - checking elements in rect:', selectionRectRef.current);
         // Sélection rectangle : vérifier quels éléments intersectent le rectangle
         selectedElementIds = state.elements
           .filter(element => isElementInRectangle(element, selectionRectRef.current))
           .map(element => element.id);
+        console.log('🎯 Selected elements:', selectedElementIds);
       }
 
+      console.log('📋 Setting selection to:', selectedElementIds);
       // Appliquer la sélection
       if (selectedElementIds.length > 0) {
         dispatch({ type: 'SET_SELECTION', payload: selectedElementIds });
@@ -917,6 +925,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // Gérer la sélection lasso/rectangle en cours
     if (isSelectingRef.current) {
+      console.log('📐 Updating selection, mode:', selectionMode, 'isSelecting:', isSelectingRef.current);
       if (selectionMode === 'lasso') {
         // Ajouter le point actuel au lasso
         selectionPointsRef.current.push({ x, y });
@@ -927,6 +936,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         const width = Math.abs(x - selectionStartRef.current.x);
         const height = Math.abs(y - selectionStartRef.current.y);
         selectionRectRef.current = { x: startX, y: startY, width, height };
+        console.log('📦 Rectangle updated:', selectionRectRef.current);
       }
       // Forcer le re-rendu pour afficher la sélection
       if (canvas) {
