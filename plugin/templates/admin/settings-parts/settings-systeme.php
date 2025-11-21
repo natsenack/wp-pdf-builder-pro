@@ -62,6 +62,16 @@
                             </td>
                         </tr>
                         <tr>
+                            <th scope="row"><label for="performance_auto_optimization">Optimisation automatique des performances</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="performance_auto_optimization" name="performance_auto_optimization" value="1" disabled>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description" style="color: #856404;">⚠️ <strong>En attente d'implémentation</strong> - Optimisation intelligente de la mémoire et des ressources basée sur l'usage</p>
+                            </td>
+                        </tr>
+                        <tr>
                             <th scope="row">Test du système</th>
                             <td>
                                 <button type="button" id="test-cache-btn" class="button button-secondary" style="background-color: #6c757d; border-color: #6c757d; color: white; font-weight: bold; padding: 10px 15px;">
