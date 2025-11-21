@@ -50,6 +50,7 @@ export interface CanvasSettingsContextType {
   selectionShowHandles: boolean;
   selectionHandleSize: number;
   selectionHandleColor: string;
+  canvasSelectionMode: 'click' | 'lasso' | 'rectangle';
   
   // Export
   exportQuality: number;
@@ -115,6 +116,7 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   selectionShowHandles: true,
   selectionHandleSize: 8,
   selectionHandleColor: '#0066cc',
+  canvasSelectionMode: 'click',
   
   exportQuality: 100,
   exportFormat: 'pdf',
@@ -205,6 +207,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       selectionShowHandles: windowSettings.show_resize_handles === true || windowSettings.show_resize_handles === '1',
       selectionHandleSize: (windowSettings.handle_size as number) ?? DEFAULT_SETTINGS.selectionHandleSize,
       selectionHandleColor: (windowSettings.handle_color as string) ?? DEFAULT_SETTINGS.selectionHandleColor,
+      canvasSelectionMode: (windowSettings.canvas_selection_mode as 'click' | 'lasso' | 'rectangle') ?? DEFAULT_SETTINGS.canvasSelectionMode,
       
       // Export
       exportQuality: (windowSettings.image_quality as number) ?? DEFAULT_SETTINGS.exportQuality,
@@ -329,6 +332,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             selectionShowHandles: data.data.show_resize_handles === true || data.data.show_resize_handles === '1',
             selectionHandleSize: (data.data.handle_size as number) ?? DEFAULT_SETTINGS.selectionHandleSize,
             selectionHandleColor: (data.data.handle_color as string) ?? DEFAULT_SETTINGS.selectionHandleColor,
+            canvasSelectionMode: (data.data.canvas_selection_mode as 'click' | 'lasso' | 'rectangle') ?? DEFAULT_SETTINGS.canvasSelectionMode,
             
             // Autres paramètres...
             isLoading: false,

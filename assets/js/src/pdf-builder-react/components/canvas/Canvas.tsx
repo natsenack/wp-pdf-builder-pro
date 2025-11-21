@@ -1228,7 +1228,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     dragEnabled: canvasSettings?.selectionDragEnabled ?? true
   });
 
-  const { handleCanvasClick, handleMouseDown, handleMouseMove, handleMouseUp, handleContextMenu } = useCanvasInteraction({
+  const { handleCanvasClick, handleMouseDown, handleMouseMove, handleMouseUp, handleContextMenu, selectionState } = useCanvasInteraction({
     canvasRef,
     canvasWidth: width,
     canvasHeight: height
@@ -2425,6 +2425,41 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       drawElement(ctx, element, state);  // ✅ BUGFIX-001/004: Pass state as parameter
     });
 
+    // Dessiner la sélection temporaire (rectangle/lasso en cours)
+    if (selectionState?.isSelecting) {
+      if (selectionState.selectionMode === 'rectangle' && selectionState.selectionRect.width > 0 && selectionState.selectionRect.height > 0) {
+        // Dessiner le rectangle de sélection
+        ctx.save();
+        ctx.strokeStyle = '#0066cc';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.strokeRect(selectionState.selectionRect.x, selectionState.selectionRect.y, selectionState.selectionRect.width, selectionState.selectionRect.height);
+        
+        // Remplir avec une couleur semi-transparente
+        ctx.fillStyle = 'rgba(0, 102, 204, 0.1)';
+        ctx.fillRect(selectionState.selectionRect.x, selectionState.selectionRect.y, selectionState.selectionRect.width, selectionState.selectionRect.height);
+        ctx.restore();
+      } else if (selectionState.selectionMode === 'lasso' && selectionState.selectionPoints.length > 1) {
+        // Dessiner le lasso
+        ctx.save();
+        ctx.strokeStyle = '#0066cc';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(selectionState.selectionPoints[0].x, selectionState.selectionPoints[0].y);
+        for (let i = 1; i < selectionState.selectionPoints.length; i++) {
+          ctx.lineTo(selectionState.selectionPoints[i].x, selectionState.selectionPoints[i].y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        
+        // Remplir avec une couleur semi-transparente
+        ctx.fillStyle = 'rgba(0, 102, 204, 0.1)';
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
 
@@ -2432,7 +2467,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     }
 
     ctx.restore();
-  }, [width, height, canvasSettings, state, drawElement, drawGrid, drawGuides]);  // ✅ Include memoized drawGrid and drawGuides
+  }, [width, height, canvasSettings, state, drawElement, drawGrid, drawGuides, selectionState]);  // ✅ Include memoized drawGrid and drawGuides
 
   // Redessiner quand l'état change
   useEffect(() => {

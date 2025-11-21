@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
-import { useCanvasSetting } from './useCanvasSettings';
 import { Element } from '../types/elements';
 
 // Déclaration des APIs globales du navigateur
@@ -24,7 +23,7 @@ interface UseCanvasInteractionProps {
 export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeight = 1123 }: UseCanvasInteractionProps) => {
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
-  const selectionMode = useCanvasSetting('canvas_selection_mode', 'click') as string;
+  const selectionMode = canvasSettings.canvasSelectionMode;
 
   // États pour le drag et resize
   const isDraggingRef = useRef(false);
@@ -1064,6 +1063,13 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    handleContextMenu
+    handleContextMenu,
+    // Informations pour le rendu visuel de la sélection
+    selectionState: {
+      isSelecting: isSelectingRef.current,
+      selectionMode,
+      selectionRect: selectionRectRef.current,
+      selectionPoints: selectionPointsRef.current
+    }
   };
 };
