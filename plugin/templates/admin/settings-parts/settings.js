@@ -1982,7 +1982,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('🔍 DEBUG: Opening modal:', modalId);
                 console.log('🔍 DEBUG: Modal HTML structure:', modal.outerHTML.substring(0, 200) + '...');
 
-                // Forcer l'affichage de la modale de manière agressive
+                // TEST ULTIME : Créer une modale de test visible
+                const testModal = document.createElement('div');
+                testModal.id = 'test-modal-debug';
+                testModal.innerHTML = `
+                    <div style="
+                        position: fixed !important;
+                        top: 50% !important;
+                        left: 50% !important;
+                        transform: translate(-50%, -50%) !important;
+                        background: red !important;
+                        color: white !important;
+                        padding: 20px !important;
+                        border-radius: 10px !important;
+                        z-index: 9999999 !important;
+                        font-size: 24px !important;
+                        font-weight: bold !important;
+                        border: 5px solid yellow !important;
+                        box-shadow: 0 0 50px rgba(255,0,0,0.8) !important;
+                    ">
+                        🚨 MODALE DE TEST 🚨<br>
+                        Si vous voyez ceci, le JS fonctionne !<br>
+                        <button onclick="this.parentElement.remove()" style="margin-top: 10px; padding: 10px; background: yellow; color: black; border: none; cursor: pointer;">Fermer</button>
+                    </div>
+                `;
+                document.body.appendChild(testModal);
+                console.log('🔍 DEBUG: Test modal created and appended to body');
+
+                // Forcer l'affichage de la modale originale
                 modal.style.cssText = `
                     display: block !important;
                     position: fixed !important;
@@ -2021,6 +2048,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         max-width: 600px !important;
                         width: 90% !important;
                         margin: 0 auto !important;
+                        border: 3px solid blue !important;
                     `;
                 }
 
