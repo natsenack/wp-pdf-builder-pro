@@ -135,7 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 // Fermeture en cliquant sur l'overlay
-                const overlay = modal.querySelector('.canvas-modal-overlay');
                 console.log('🔍 Overlay found in existing modal:', !!overlay);
                 if (overlay) {
                     overlay.addEventListener('click', function(event) {
