@@ -221,27 +221,46 @@ input:checked + .toggle-slider:before {
                             </div>
                             <div class="canvas-card-preview">
                                 <div class="interactions-preview-container">
-                                    <div class="interactions-top">
-                                        <div class="interaction-handles">
-                                            <span class="element-handle" title="Redimensionner">↔</span>
-                                            <span class="element-handle" title="Déplacer">↕</span>
-                                            <span class="element-handle" title="Pivoter">↻</span>
+                                    <!-- Canvas miniature avec éléments -->
+                                    <div class="mini-canvas">
+                                        <!-- Grille de fond -->
+                                        <div class="mini-canvas-grid"></div>
+
+                                        <!-- Éléments sur le canvas -->
+                                        <div class="mini-element text-element" style="top: 15px; left: 20px; width: 40px; height: 20px;">
+                                            <div class="mini-element-content">T</div>
                                         </div>
-                                        <div class="selection-modes">
-                                            <span class="mode-badge active" title="Clic simple">👆</span>
-                                            <span class="mode-badge" title="Lasso">🪢</span>
-                                            <span class="mode-badge" title="Rectangle">▭</span>
+                                        <div class="mini-element shape-element selected" style="top: 45px; left: 15px; width: 35px; height: 25px;">
+                                            <div class="mini-element-content">□</div>
+                                            <!-- Poignées de sélection -->
+                                            <div class="mini-handle nw"></div>
+                                            <div class="mini-handle ne"></div>
+                                            <div class="mini-handle sw"></div>
+                                            <div class="mini-handle se"></div>
+                                            <div class="mini-handle rotation" style="top: -8px; left: 50%; transform: translateX(-50%);"></div>
+                                        </div>
+                                        <div class="mini-element image-element" style="top: 20px; left: 70px; width: 30px; height: 30px;">
+                                            <div class="mini-element-content">🖼</div>
+                                        </div>
+
+                                        <!-- Sélection rectangle en cours -->
+                                        <div class="selection-rectangle" style="top: 10px; left: 10px; width: 60px; height: 40px;"></div>
+
+                                        <!-- Curseur de souris -->
+                                        <div class="mouse-cursor" style="top: 55px; left: 85px;">
+                                            <div class="cursor-icon">👆</div>
                                         </div>
                                     </div>
-                                    <div class="interactions-bottom">
-                                        <div class="keyboard-shortcuts">
-                                            <span class="shortcut-badge">⌨️</span>
-                                            <span class="shortcut-badge">💾</span>
+
+                                    <!-- Contrôles en bas -->
+                                    <div class="interactions-controls">
+                                        <div class="selection-mode-indicator">
+                                            <span class="mode-icon active" title="Rectangle">▭</span>
+                                            <span class="mode-icon" title="Lasso">🪢</span>
+                                            <span class="mode-icon" title="Clic">👆</span>
                                         </div>
-                                        <div class="behavior-elements">
-                                            <div class="behavior-element selected" title="Élément sélectionné"></div>
-                                            <div class="behavior-element" title="Autre élément"></div>
-                                            <div class="behavior-element" title="Élément sélectionnable"></div>
+                                        <div class="interaction-status">
+                                            <span class="status-indicator selecting">Sélection en cours</span>
                                         </div>
                                     </div>
                                 </div>
