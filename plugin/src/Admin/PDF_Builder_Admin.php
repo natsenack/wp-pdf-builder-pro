@@ -1143,7 +1143,7 @@ class PdfBuilderAdmin
         // Localize AJAX for settings page
         wp_localize_script('pdf-builder-settings', 'pdf_builder_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_save_settings')
+            'nonce' => wp_create_nonce('pdf_builder_ajax')
         ));
 
         ?>

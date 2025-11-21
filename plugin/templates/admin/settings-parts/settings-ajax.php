@@ -313,16 +313,10 @@ function pdf_builder_save_settings_handler() {
 
 // Canvas settings AJAX handler
 function pdf_builder_save_canvas_settings_handler() {
-    error_log('PDF Builder: save_canvas_settings_handler called');
-    error_log('PDF Builder: POST data: ' . print_r($_POST, true));
-
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        error_log('PDF Builder: Nonce is valid');
 
         // Sauvegarder directement dans les options WordPress pour les paramètres de performance
         try {
-            error_log('PDF Builder: About to save performance settings directly');
-
             // Mapper et sauvegarder les paramètres de performance
             $performance_mappings = [
                 'canvas_fps_target' => 'pdf_builder_canvas_fps_target',
@@ -342,20 +336,15 @@ function pdf_builder_save_canvas_settings_handler() {
                         $value = $value === '1';
                     }
                     update_option($option_key, $value);
-                    error_log("PDF Builder: Saved $option_key = $value");
                 }
             }
 
-            error_log('PDF Builder: Performance settings saved successfully');
             send_ajax_response(true, 'Paramètres de performance sauvegardés avec succès.', ['saved' => []]);
 
         } catch (Exception $e) {
-            error_log('PDF Builder: Exception in save_canvas_settings_handler: ' . $e->getMessage());
-            error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
             send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     } else {
-        error_log('PDF Builder: Nonce is INVALID');
         send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
     }
 }
