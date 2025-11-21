@@ -1953,38 +1953,65 @@ document.addEventListener('DOMContentLoaded', function() {
     setupGridSynchronization();
 
     // === GESTION DES CARTES CANVAS (ouverture des modales) ===
+    console.log('🔍 DEBUG: Initializing canvas cards modal handlers');
     const canvasCards = document.querySelectorAll('.canvas-card');
-    canvasCards.forEach(function(card) {
-        card.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
+    console.log('🔍 DEBUG: Found', canvasCards.length, 'canvas cards');
+
+    if (canvasCards.length === 0) {
+        console.error('🔍 DEBUG: No canvas cards found! Checking DOM...');
+        console.log('🔍 DEBUG: Current DOM:', document.body.innerHTML.substring(0, 500));
+    }
+
+    canvasCards.forEach(function(card, index) {
+        const category = card.getAttribute('data-category');
+        console.log('🔍 DEBUG: Card', index + 1, '- Category:', category, '- Element:', card);
+
+        card.addEventListener('click', function(event) {
+            console.log('🔍 DEBUG: Canvas card clicked!', {
+                category: category,
+                event: event,
+                target: event.target,
+                currentTarget: event.currentTarget
+            });
+
             const modalId = 'canvas-' + category + '-modal';
             const modal = document.getElementById(modalId);
+            console.log('🔍 DEBUG: Looking for modal:', modalId, '- Found:', !!modal);
 
             if (modal) {
+                console.log('🔍 DEBUG: Opening modal:', modalId);
                 modal.style.display = 'block';
-                document.body.style.overflow = 'hidden'; // Empêcher le scroll du body
+                document.body.style.overflow = 'hidden';
 
                 // Fermeture de la modale
                 const closeButtons = modal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
+                console.log('🔍 DEBUG: Found', closeButtons.length, 'close buttons');
                 closeButtons.forEach(function(button) {
                     button.addEventListener('click', function() {
+                        console.log('🔍 DEBUG: Closing modal via button');
                         modal.style.display = 'none';
-                        document.body.style.overflow = ''; // Restaurer le scroll
+                        document.body.style.overflow = '';
                     });
                 });
 
                 // Fermeture en cliquant sur l'overlay
                 const overlay = modal.querySelector('.canvas-modal-overlay');
                 if (overlay) {
+                    console.log('🔍 DEBUG: Overlay found, adding click handler');
                     overlay.addEventListener('click', function(event) {
                         if (event.target === overlay) {
+                            console.log('🔍 DEBUG: Closing modal via overlay');
                             modal.style.display = 'none';
-                            document.body.style.overflow = ''; // Restaurer le scroll
+                            document.body.style.overflow = '';
                         }
                     });
+                } else {
+                    console.warn('🔍 DEBUG: No overlay found for modal:', modalId);
                 }
             } else {
-                console.error('Modal not found for category:', category, 'Expected ID:', modalId);
+                console.error('🔍 DEBUG: Modal not found:', modalId, '- Available modals:');
+                const allModals = document.querySelectorAll('[id*="canvas-"][id*="-modal"]');
+                console.log('🔍 DEBUG: Available modals:', Array.from(allModals).map(m => m.id));
             }
         });
     });
