@@ -4,7 +4,24 @@
  * Updated: 2025-11-21 22:35:00 - Solution finale modales canvas
  */
 
+console.log('🔍 PDF Builder Pro JavaScript loaded successfully');
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 DOM Content Loaded - Initializing PDF Builder Pro settings');
+
+    // Test immédiat pour vérifier les cartes canvas
+    setTimeout(function() {
+        const testCards = document.querySelectorAll('.canvas-card');
+        console.log('🔍 Canvas cards check after DOM load:', testCards.length, 'found');
+        if (testCards.length > 0) {
+            console.log('🔍 First card attributes:', {
+                className: testCards[0].className,
+                dataCategory: testCards[0].getAttribute('data-category'),
+                id: testCards[0].id
+            });
+        }
+    }, 100);
+    console.log('🔍 DOM Content Loaded - Initializing PDF Builder Pro settings');
     // Fonction pour mettre à jour les checkboxes du formulaire avec les nouvelles valeurs
     function updateFormCheckboxes(settings) {
 
@@ -52,14 +69,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // === GESTION DES CARTES CANVAS (ouverture des modales) ===
+    console.log('🔍 Setting up canvas card modal handlers');
     const canvasCards = document.querySelectorAll('.canvas-card');
+    console.log('🔍 Found', canvasCards.length, 'canvas cards');
+
     canvasCards.forEach(function(card) {
         card.addEventListener('click', function() {
+            console.log('🔍 Canvas card clicked! Category:', this.getAttribute('data-category'));
+
             const category = this.getAttribute('data-category');
             const modalId = 'canvas-' + category + '-modal';
             const modal = document.getElementById(modalId);
 
             if (modal) {
+                console.log('🔍 Modal found, creating new modal for category:', category);
                 // SOLUTION : Recréer complètement la modale canvas avec des styles inline
                 const newModal = document.createElement('div');
                 newModal.id = modalId;
