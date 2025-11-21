@@ -880,15 +880,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Update window.pdfBuilderCanvasSettings with new values
                     if (data.data && data.data.saved) {
+                        console.log('PARAMS: Updating window.pdfBuilderCanvasSettings with:', data.data.saved);
                         // Merge the saved values into the existing settings
                         window.pdfBuilderCanvasSettings = {
                             ...window.pdfBuilderCanvasSettings,
                             ...data.data.saved
                         };
+                        console.log('PARAMS: Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+                        console.log('PARAMS: enable_keyboard_shortcuts =', window.pdfBuilderCanvasSettings.enable_keyboard_shortcuts);
                     }
 
                     // Notify React context to refresh settings
                     window.dispatchEvent(new Event('canvasSettingsUpdated'));
+                    console.log('PARAMS: canvasSettingsUpdated event dispatched');
 
                     // Close modal after a short delay
                     setTimeout(() => {
