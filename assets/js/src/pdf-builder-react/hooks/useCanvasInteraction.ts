@@ -222,15 +222,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
         // SI PROCHE DE 0°, FORCER totalRotationDegrees pour que la rotation finale soit 0°
         if (distanceToZero <= zeroSnapTolerance) {
-          console.log('🚀 FORCE SNAP TO ZERO:', {
-            elementId,
-            currentRotation,
-            normalizedRotation,
-            distance: distanceToZero * 180 / Math.PI,
-            initialRotation,
-            totalRotationDegrees,
-            willForceToZero: true
-          });
           // Forcer totalRotationDegrees pour que newRotation = 0
           totalRotationDegrees = -initialRotation;
         }
@@ -243,8 +234,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       if (element) {
         const initialRotation = rotationStartRef.current[elementId] || 0;
         let newRotation = initialRotation + totalRotationDegrees;
-
-        console.log('📤 DISPATCHING ROTATION:', { elementId, initialRotation, totalRotationDegrees, newRotation });
 
         dispatch({
           type: 'UPDATE_ELEMENT',
@@ -681,7 +670,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           // Si dans les 10°, forcer à 0°
           const finalSnapThreshold = 10; // 10 degrees (moins agressif)
           if (Math.abs(normalizedRotation) <= finalSnapThreshold) {
-            console.log('🎯 FINAL FORCE TO ZERO:', { currentRotation, normalizedRotation, willDispatch: true });
             dispatch({
               type: 'UPDATE_ELEMENT',
               payload: {
