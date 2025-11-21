@@ -1980,6 +1980,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (modal) {
                 console.log('🔍 DEBUG: Opening modal:', modalId);
+                console.log('🔍 DEBUG: Modal HTML structure:', modal.outerHTML.substring(0, 200) + '...');
+
                 modal.style.display = 'block';
                 modal.style.position = 'fixed';
                 modal.style.top = '0';
@@ -1992,15 +1994,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Vérifier la visibilité après ouverture
                 setTimeout(() => {
                     const computedStyle = window.getComputedStyle(modal);
+                    const content = modal.querySelector('.canvas-modal-content');
+                    const contentStyle = content ? window.getComputedStyle(content) : null;
                     console.log('🔍 DEBUG: Modal visibility check:', {
-                        display: computedStyle.display,
-                        visibility: computedStyle.visibility,
-                        opacity: computedStyle.opacity,
-                        zIndex: computedStyle.zIndex,
-                        position: computedStyle.position,
-                        top: computedStyle.top,
-                        left: computedStyle.left
+                        modal: {
+                            display: computedStyle.display,
+                            visibility: computedStyle.visibility,
+                            opacity: computedStyle.opacity,
+                            zIndex: computedStyle.zIndex,
+                            position: computedStyle.position,
+                            top: computedStyle.top,
+                            left: computedStyle.left,
+                            width: computedStyle.width,
+                            height: computedStyle.height
+                        },
+                        content: content ? {
+                            display: contentStyle.display,
+                            visibility: contentStyle.visibility,
+                            opacity: contentStyle.opacity,
+                            zIndex: contentStyle.zIndex,
+                            position: contentStyle.position
+                        } : 'NOT FOUND'
                     });
+
+                    // Forcer l'affichage si nécessaire
+                    if (content && contentStyle.display === 'none') {
+                        console.log('🔍 DEBUG: Forcing content display');
+                        content.style.display = 'flex';
+                    }
                 }, 100);
 
                 // Fermeture de la modale
