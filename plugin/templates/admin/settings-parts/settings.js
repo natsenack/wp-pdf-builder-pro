@@ -1981,7 +1981,20 @@ document.addEventListener('DOMContentLoaded', function() {
             if (modal) {
                 console.log('🔍 DEBUG: Opening modal:', modalId);
                 modal.style.display = 'block';
+                modal.style.zIndex = '10001'; // S'assurer que la modale est au-dessus de l'overlay
                 document.body.style.overflow = 'hidden';
+
+                // Vérifier la visibilité après ouverture
+                setTimeout(() => {
+                    const computedStyle = window.getComputedStyle(modal);
+                    console.log('🔍 DEBUG: Modal visibility check:', {
+                        display: computedStyle.display,
+                        visibility: computedStyle.visibility,
+                        opacity: computedStyle.opacity,
+                        zIndex: computedStyle.zIndex,
+                        position: computedStyle.position
+                    });
+                }, 100);
 
                 // Fermeture de la modale
                 const closeButtons = modal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');

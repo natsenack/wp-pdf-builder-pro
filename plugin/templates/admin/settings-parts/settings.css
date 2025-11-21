@@ -1270,6 +1270,8 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     border: 1px solid #e1e1e1;
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 10001; /* S'assurer que le contenu est au-dessus de l'overlay */
 }
 
 /* Modal Interactions & Comportement - hauteur spécifique pour afficher le footer */
