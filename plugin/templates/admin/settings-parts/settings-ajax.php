@@ -313,10 +313,8 @@ function pdf_builder_save_settings_handler() {
 
 // Canvas settings AJAX handler
 function pdf_builder_save_canvas_settings_handler() {
-    error_log('PDF Builder: SAVE HANDLER CALLED');
 
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        error_log('PDF Builder: NONCE VALID');
 
         // Sauvegarder directement dans les options WordPress pour les paramètres de performance
         try {
@@ -343,13 +341,11 @@ function pdf_builder_save_canvas_settings_handler() {
             }
 
             send_ajax_response(true, 'Paramètres de performance sauvegardés avec succès.', ['saved' => []]);
-            error_log('PDF Builder: SAVE SUCCESS RESPONSE SENT');
 
         } catch (Exception $e) {
             send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     } else {
-        error_log('PDF Builder: NONCE INVALID - Received: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NOT SET'));
         send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
     }
 }

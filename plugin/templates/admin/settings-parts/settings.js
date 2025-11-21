@@ -882,15 +882,12 @@ document.addEventListener('DOMContentLoaded', function() {
             this.textContent = '⏳ Sauvegarde...';
 
             // Send AJAX request
-            console.log('PDF Builder: Sending AJAX request for category:', category);
-            console.log('PDF Builder: Form data:', Object.fromEntries(formData));
             fetch(pdf_builder_ajax.ajax_url, {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
-                console.log('PDF Builder: AJAX response received:', data);
                 if (data.success) {
                     // Update form checkboxes with new values
                     if (data.data && data.data.saved) {
@@ -934,12 +931,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }, 2000);
                 } else {
-                    console.error('PDF Builder: AJAX response error:', data);
                     showErrorMessage('Erreur: ' + (data.data || 'Erreur inconnue'));
                 }
             })
             .catch(error => {
-                console.error('PDF Builder: AJAX network error:', error);
+                console.error('AJAX error:', error);
                 showErrorMessage('Erreur réseau lors de la sauvegarde');
             })
             .finally(() => {
