@@ -82,160 +82,53 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById(modalId);
 
             if (modal) {
-                console.log('🔍 Modal found, creating new modal for category:', category);
-                // SOLUTION : Recréer complètement la modale canvas avec des styles inline
-                const newModal = document.createElement('div');
-                newModal.id = modalId;
-                newModal.className = 'canvas-modal';
-                newModal.innerHTML = `
-                    <div class="canvas-modal-overlay" style="
-                        position: fixed !important;
-                        top: 0 !important;
-                        left: 0 !important;
-                        width: 100% !important;
-                        height: 100% !important;
-                        background: rgba(0,0,0,0.8) !important;
-                        z-index: 1000000 !important;
-                        display: flex !important;
-                        align-items: center !important;
-                        justify-content: center !important;
-                    ">
-                        <div class="canvas-modal-content" style="
-                            background: white !important;
-                            border-radius: 8px !important;
-                            padding: 20px !important;
-                            max-width: 600px !important;
-                            width: 90% !important;
-                            max-height: 85vh !important;
-                            overflow: hidden !important;
-                            box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
-                            border: 1px solid #e1e1e1 !important;
-                            position: relative !important;
-                            z-index: 1000001 !important;
-                        ">
-                            <div class="canvas-modal-header" style="
-                                display: flex !important;
-                                justify-content: space-between !important;
-                                align-items: center !important;
-                                margin-bottom: 25px !important;
-                                border-bottom: 1px solid #dee2e6 !important;
-                                padding-bottom: 15px !important;
-                            ">
-                                <h3 style="margin: 0 !important; color: #495057 !important;">📋 Configuration ${category}</h3>
-                                <button type="button" class="canvas-modal-close" style="
-                                    background: none !important;
-                                    border: none !important;
-                                    font-size: 24px !important;
-                                    cursor: pointer !important;
-                                    color: #6c757d !important;
-                                ">&times;</button>
-                            </div>
-                            <div class="canvas-modal-body" style="
-                                margin-bottom: 20px !important;
-                                padding: 15px !important;
-                                background: #f8f9fa !important;
-                                border-radius: 8px !important;
-                                border-left: 4px solid #007cba !important;
-                            ">
-                                <p style="margin: 0 !important; font-size: 14px !important; color: #495057 !important; line-height: 1.5 !important;">
-                                    <strong>💡 Configuration ${category}</strong><br>
-                                    Cette section permet de configurer les paramètres ${category} du canvas.
-                                </p>
-                            </div>
-                            <div class="canvas-modal-footer" style="
-                                display: flex !important;
-                                justify-content: flex-end !important;
-                                gap: 10px !important;
-                                padding-top: 15px !important;
-                                border-top: 1px solid #dee2e6 !important;
-                            ">
-                                <button type="button" class="canvas-modal-cancel" style="
-                                    padding: 8px 16px !important;
-                                    background: #6c757d !important;
-                                    color: white !important;
-                                    border: none !important;
-                                    border-radius: 4px !important;
-                                    cursor: pointer !important;
-                                ">Annuler</button>
-                                <button type="button" class="canvas-modal-save" style="
-                                    padding: 8px 16px !important;
-                                    background: #007cba !important;
-                                    color: white !important;
-                                    border: none !important;
-                                    border-radius: 4px !important;
-                                    cursor: pointer !important;
-                                ">Sauvegarder</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                console.log('🔍 Modal found, trying to show existing modal for category:', category);
 
-                // Remplacer l'ancienne modale
-                modal.parentNode.replaceChild(newModal, modal);
-                console.log('🔍 New modal created and added to DOM');
+                // ESSAI : Au lieu de recréer, essayons de rendre visible la modale existante
+                modal.style.display = 'block !important';
+                modal.style.visibility = 'visible !important';
+                modal.style.opacity = '1 !important';
+                modal.style.zIndex = '999999 !important';
+                modal.style.position = 'fixed !important';
+                modal.style.top = '0 !important';
+                modal.style.left = '0 !important';
+                modal.style.width = '100% !important';
+                modal.style.height = '100% !important';
 
-                // Vérifier que la modale est bien dans le DOM
-                const checkModal = document.getElementById(modalId);
-                console.log('🔍 Modal in DOM after replacement:', !!checkModal);
-                if (checkModal) {
-                    console.log('🔍 Modal HTML:', checkModal.outerHTML.substring(0, 100) + '...');
-                }
+                console.log('🔍 Existing modal styles applied');
 
-                // FORCER la visibilité de la modale
-                newModal.style.display = 'block !important';
-                newModal.style.visibility = 'visible !important';
-                newModal.style.opacity = '1 !important';
-                newModal.style.zIndex = '999999 !important';
-                newModal.style.position = 'fixed !important';
-                newModal.style.top = '0 !important';
-                newModal.style.left = '0 !important';
-                newModal.style.width = '100% !important';
-                newModal.style.height = '100% !important';
+                // Vérifier les styles calculés de la modale existante
+                const computedStyle = window.getComputedStyle(modal);
+                console.log('🔍 Existing modal computed display:', computedStyle.display);
+                console.log('🔍 Existing modal computed visibility:', computedStyle.visibility);
+                console.log('🔍 Existing modal computed z-index:', computedStyle.zIndex);
 
-                // Vérifier les styles calculés
-                const computedStyle = window.getComputedStyle(newModal);
-                console.log('🔍 Modal computed display:', computedStyle.display);
-                console.log('🔍 Modal computed visibility:', computedStyle.visibility);
-                console.log('🔍 Modal computed opacity:', computedStyle.opacity);
-                console.log('🔍 Modal computed z-index:', computedStyle.zIndex);
-                console.log('🔍 Modal computed position:', computedStyle.position);
-
-                // Vérifier si la modale est visible avec un délai
-                setTimeout(function() {
-                    const stillVisible = newModal.offsetWidth > 0 && newModal.offsetHeight > 0;
-                    console.log('🔍 Modal dimensions after timeout:', newModal.offsetWidth, 'x', newModal.offsetHeight);
-                    console.log('🔍 Modal still in DOM:', document.body.contains(newModal));
-                    if (!stillVisible) {
-                        console.log('🔍 Modal is not visible, trying to force it again');
-                        newModal.style.display = 'block';
-                        newModal.style.zIndex = '999999';
-                    }
-                }, 100);
-
-                // Ajouter les event listeners
-                const closeButtons = newModal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
-                console.log('🔍 Found close buttons:', closeButtons.length);
+                // Ajouter les event listeners à la modale existante
+                const closeButtons = modal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
+                console.log('🔍 Found close buttons in existing modal:', closeButtons.length);
                 closeButtons.forEach(function(button) {
                     button.addEventListener('click', function() {
-                        console.log('🔍 Closing modal via button');
-                        newModal.remove();
+                        console.log('🔍 Closing existing modal via button');
+                        modal.style.display = 'none';
                         document.body.style.overflow = '';
                     });
                 });
 
                 // Fermeture en cliquant sur l'overlay
-                const overlay = newModal.querySelector('.canvas-modal-overlay');
-                console.log('🔍 Overlay found:', !!overlay);
-                overlay.addEventListener('click', function(event) {
-                    if (event.target === overlay) {
-                        console.log('🔍 Closing modal via overlay');
-                        newModal.remove();
-                        document.body.style.overflow = '';
-                    }
-                });
+                const overlay = modal.querySelector('.canvas-modal-overlay');
+                console.log('🔍 Overlay found in existing modal:', !!overlay);
+                if (overlay) {
+                    overlay.addEventListener('click', function(event) {
+                        if (event.target === overlay) {
+                            console.log('🔍 Closing existing modal via overlay');
+                            modal.style.display = 'none';
+                            document.body.style.overflow = '';
+                        }
+                    });
+                }
 
                 document.body.style.overflow = 'hidden';
-                console.log('🔍 Modal setup complete, should be visible now');
+                console.log('🔍 Existing modal should now be visible');
             } else {
                 console.error('Modal not found for category:', category, 'Expected ID:', modalId);
             }
