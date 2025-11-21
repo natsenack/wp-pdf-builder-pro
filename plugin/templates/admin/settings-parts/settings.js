@@ -1,30 +1,11 @@
 /**
  * JavaScript pour la page de paramètres PDF Builder Pro
  * Gestion des interactions utilisateur et AJAX
- * Updated: 2025-11-21 22:35:00 - Solution finale modales canvas
  */
 
-console.log('🔍 PDF Builder Pro JavaScript loaded successfully');
-
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔍 DOM Content Loaded - Initializing PDF Builder Pro settings');
-
-    // Test immédiat pour vérifier les cartes canvas
-    setTimeout(function() {
-        const testCards = document.querySelectorAll('.canvas-card');
-        console.log('🔍 Canvas cards check after DOM load:', testCards.length, 'found');
-        if (testCards.length > 0) {
-            console.log('🔍 First card attributes:', {
-                className: testCards[0].className,
-                dataCategory: testCards[0].getAttribute('data-category'),
-                id: testCards[0].id
-            });
-        }
-    }, 100);
-    console.log('🔍 DOM Content Loaded - Initializing PDF Builder Pro settings');
     // Fonction pour mettre à jour les checkboxes du formulaire avec les nouvelles valeurs
     function updateFormCheckboxes(settings) {
-
         // Mapping des paramètres vers les IDs des checkboxes
         const checkboxMappings = {
             'shadow_enabled': 'canvas_shadow_enabled',
@@ -69,22 +50,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // === GESTION DES CARTES CANVAS (ouverture des modales) ===
-    console.log('🔍 Setting up canvas card modal handlers');
     const canvasCards = document.querySelectorAll('.canvas-card');
-    console.log('🔍 Found', canvasCards.length, 'canvas cards');
 
     canvasCards.forEach(function(card) {
         card.addEventListener('click', function() {
-            console.log('🔍 Canvas card clicked! Category:', this.getAttribute('data-category'));
-
             const category = this.getAttribute('data-category');
             const modalId = 'canvas-' + category + '-modal';
             const modal = document.getElementById(modalId);
 
             if (modal) {
-                console.log('🔍 Modal found, creating clean modal for category:', category);
-
-                // SOLUTION FINALE : Créer une modale propre basée sur le contenu existant
+                // Créer une modale propre basée sur le contenu existant
                 const cleanModal = document.createElement('div');
                 cleanModal.id = modalId + '-clean';
                 cleanModal.style.cssText = `
@@ -100,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     justify-content: center;
                 `;
 
-                // Copier le contenu de la modale existante mais simplifier
+                // Copier le contenu de la modale existante
                 const existingContent = modal.querySelector('.canvas-modal-content');
                 if (existingContent) {
                     const contentClone = existingContent.cloneNode(true);
@@ -146,10 +121,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 document.body.appendChild(cleanModal);
                 document.body.style.overflow = 'hidden';
-
-                console.log('🔍 Clean modal created and should be visible');
-            } else {
-                console.error('Modal not found for category:', category, 'Expected ID:', modalId);
             }
         });
     });
@@ -574,8 +545,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // === INITIALISATION ===
-    console.log('PDF Builder Pro settings page initialized');
-
     // Initialiser les accordéons (premier ouvert par défaut)
     const firstAccordion = document.querySelector('.accordion-header');
     if (firstAccordion) {
