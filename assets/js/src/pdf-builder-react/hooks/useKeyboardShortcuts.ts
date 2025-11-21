@@ -9,7 +9,6 @@ import { useCanvasSetting } from './useCanvasSettings';
 export const useKeyboardShortcuts = () => {
   const { state, dispatch } = useBuilder();
   const keyboardShortcutsEnabled = useCanvasSetting('enable_keyboard_shortcuts', true) as boolean;
-  console.log('REACT: useKeyboardShortcuts - keyboardShortcutsEnabled =', keyboardShortcutsEnabled);
 
   // Références pour éviter les closures stale
   const stateRef = useRef(state);

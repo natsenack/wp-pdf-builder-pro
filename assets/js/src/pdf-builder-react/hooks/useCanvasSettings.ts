@@ -13,7 +13,6 @@ export const useCanvasSettings = () => {
     // Écouter les changements de paramètres
     useEffect(() => {
         const fetchSettings = async () => {
-            console.log('REACT: fetching updated settings...');
             try {
                 const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
                     method: 'POST',
@@ -26,14 +25,11 @@ export const useCanvasSettings = () => {
                 });
 
                 const data = await response.json();
-                console.log('REACT: AJAX response:', data);
                 if (data.success && data.data) {
-                    console.log('REACT: Updating window.pdfBuilderCanvasSettings with:', data.data);
                     window.pdfBuilderCanvasSettings = {
                         ...window.pdfBuilderCanvasSettings,
                         ...data.data
                     };
-                    console.log('REACT: window.pdfBuilderCanvasSettings updated, setting settings');
                     setSettings(window.pdfBuilderCanvasSettings);
                 } else {
                     console.warn('REACT: Invalid AJAX response:', data);
@@ -44,13 +40,11 @@ export const useCanvasSettings = () => {
         };
 
         const handleSettingsUpdate = () => {
-            console.log('REACT: handleSettingsUpdate - updating settings from window');
             setSettings(window.pdfBuilderCanvasSettings);
         };
 
         const handleStorageChange = async (event: StorageEvent) => {
             if (event.key === 'pdfBuilderSettingsUpdated') {
-                console.log('REACT: localStorage change detected, fetching new settings...');
                 await fetchSettings();
             }
         };
@@ -60,7 +54,6 @@ export const useCanvasSettings = () => {
 
         // Check if settings were updated while this tab was closed
         if (localStorage.getItem('pdfBuilderSettingsUpdated')) {
-            console.log('REACT: localStorage has update flag on mount, fetching settings');
             fetchSettings();
         }
 
@@ -84,9 +77,6 @@ export const useCanvasSetting = (key: string, defaultValue: unknown = null) => {
     const settings = useCanvasSettings() as Record<string, unknown>;
     return useMemo(() => {
         const value = key in settings ? settings[key] : defaultValue;
-        if (key === 'enable_keyboard_shortcuts') {
-            console.log(`REACT: useCanvasSetting(${key}) =`, value, 'from settings:', settings);
-        }
         return value;
     }, [key, settings, defaultValue]);
 };
