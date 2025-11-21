@@ -890,6 +890,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
+                console.log('PDF Builder: AJAX response received:', data);
                 if (data.success) {
                     // Update form checkboxes with new values
                     if (data.data && data.data.saved) {
@@ -938,11 +939,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }, 2000);
                 } else {
+                    console.error('PDF Builder: AJAX response error:', data);
                     showErrorMessage('Erreur: ' + (data.data || 'Erreur inconnue'));
                 }
             })
             .catch(error => {
-                console.error('AJAX error:', error);
+                console.error('PDF Builder: AJAX network error:', error);
                 showErrorMessage('Erreur réseau lors de la sauvegarde');
             })
             .finally(() => {
