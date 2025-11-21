@@ -12,6 +12,37 @@ export const useCanvasSettings = () => {
 
     // Écouter les changements de paramètres
     useEffect(() => {
+        const fetchSettings = async () => {
+            console.log('REACT: fetching updated settings...');
+            try {
+                const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'pdf_builder_get_canvas_settings'
+                    })
+                });
+
+                const data = await response.json();
+                console.log('REACT: AJAX response:', data);
+                if (data.success && data.data) {
+                    console.log('REACT: Updating window.pdfBuilderCanvasSettings with:', data.data);
+                    window.pdfBuilderCanvasSettings = {
+                        ...window.pdfBuilderCanvasSettings,
+                        ...data.data
+                    };
+                    console.log('REACT: window.pdfBuilderCanvasSettings updated, setting settings');
+                    setSettings(window.pdfBuilderCanvasSettings);
+                } else {
+                    console.warn('REACT: Invalid AJAX response:', data);
+                }
+            } catch (error) {
+                console.warn('REACT: Failed to fetch updated settings:', error);
+            }
+        };
+
         const handleSettingsUpdate = () => {
             console.log('REACT: handleSettingsUpdate - updating settings from window');
             setSettings(window.pdfBuilderCanvasSettings);
@@ -20,42 +51,18 @@ export const useCanvasSettings = () => {
         const handleStorageChange = async (event: StorageEvent) => {
             if (event.key === 'pdfBuilderSettingsUpdated') {
                 console.log('REACT: localStorage change detected, fetching new settings...');
-                try {
-                    // Fetch fresh settings from server
-                    const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({
-                            action: 'pdf_builder_get_canvas_settings'
-                        })
-                    });
-
-                    const data = await response.json();
-                    console.log('REACT: AJAX response:', data);
-                    if (data.success && data.data) {
-                        console.log('REACT: Updating window.pdfBuilderCanvasSettings with:', data.data);
-                        // Update global settings object
-                        window.pdfBuilderCanvasSettings = {
-                            ...window.pdfBuilderCanvasSettings,
-                            ...data.data
-                        };
-                        console.log('REACT: window.pdfBuilderCanvasSettings updated, setting settings');
-                        setSettings(window.pdfBuilderCanvasSettings);
-                    } else {
-                        console.warn('REACT: Invalid AJAX response:', data);
-                    }
-                } catch (error) {
-                    console.warn('REACT: Failed to fetch updated settings:', error);
-                    // Fallback: reload page
-                    window.location.reload();
-                }
+                await fetchSettings();
             }
         };
 
         window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
         window.addEventListener('storage', handleStorageChange);
+
+        // Check if settings were updated while this tab was closed
+        if (localStorage.getItem('pdfBuilderSettingsUpdated')) {
+            console.log('REACT: localStorage has update flag on mount, fetching settings');
+            fetchSettings();
+        }
 
         return () => {
             window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
