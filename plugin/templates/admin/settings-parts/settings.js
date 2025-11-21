@@ -880,13 +880,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Update window.pdfBuilderCanvasSettings with new values
                     if (data.data && data.data.saved) {
-                        console.log('DEBUG: Updating window.pdfBuilderCanvasSettings with:', data.data.saved);
                         // Merge the saved values into the existing settings
                         window.pdfBuilderCanvasSettings = {
                             ...window.pdfBuilderCanvasSettings,
                             ...data.data.saved
                         };
-                        console.log('DEBUG: Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
                     }
 
                     // Notify React context to refresh settings
