@@ -24,7 +24,7 @@ interface UseCanvasInteractionProps {
 export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeight = 1123 }: UseCanvasInteractionProps) => {
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
-  const selectionMode = useCanvasSetting('canvas_selection_mode', 'click') as string;
+  const selectionMode = useCanvasSetting('selection_mode', 'click') as string;
 
   // États pour le drag et resize
   const isDraggingRef = useRef(false);
