@@ -172,11 +172,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Remplacer l'ancienne modale
                 modal.parentNode.replaceChild(newModal, modal);
+                console.log('🔍 New modal created and added to DOM');
+
+                // Vérifier que la modale est bien dans le DOM
+                const checkModal = document.getElementById(modalId);
+                console.log('🔍 Modal in DOM after replacement:', !!checkModal);
+                if (checkModal) {
+                    console.log('🔍 Modal HTML:', checkModal.outerHTML.substring(0, 100) + '...');
+                }
 
                 // Ajouter les event listeners
                 const closeButtons = newModal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
+                console.log('🔍 Found close buttons:', closeButtons.length);
                 closeButtons.forEach(function(button) {
                     button.addEventListener('click', function() {
+                        console.log('🔍 Closing modal via button');
                         newModal.remove();
                         document.body.style.overflow = '';
                     });
@@ -184,14 +194,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Fermeture en cliquant sur l'overlay
                 const overlay = newModal.querySelector('.canvas-modal-overlay');
+                console.log('🔍 Overlay found:', !!overlay);
                 overlay.addEventListener('click', function(event) {
                     if (event.target === overlay) {
+                        console.log('🔍 Closing modal via overlay');
                         newModal.remove();
                         document.body.style.overflow = '';
                     }
                 });
 
                 document.body.style.overflow = 'hidden';
+                console.log('🔍 Modal setup complete, should be visible now');
             } else {
                 console.error('Modal not found for category:', category, 'Expected ID:', modalId);
             }
