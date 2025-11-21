@@ -51,6 +51,10 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const selectionPointsRef = useRef<{ x: number; y: number }[]>([]);  // Points pour le lasso
   const selectionRectRef = useRef({ x: 0, y: 0, width: 0, height: 0 });  // Rectangle de sélection
 
+  // Refs pour les event listeners globaux pendant la sélection
+  const globalMouseMoveRef = useRef<((event: MouseEvent) => void) | null>(null);
+  const globalMouseUpRef = useRef<((event: MouseEvent) => void) | null>(null);
+
   // ✅ OPTIMISATION FLUIDITÉ: requestAnimationFrame pour synchroniser avec le refresh rate
   const rafIdRef = useRef<number | null>(null);
   const pendingDragUpdateRef = useRef<{ x: number; y: number } | null>(null);
@@ -58,6 +62,103 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
   // ✅ CORRECTION 5: Dernier state connu pour éviter closure stale
   const lastKnownStateRef = useRef(state);
+
+  // Fonctions pour gérer les événements globaux pendant la sélection
+  const startGlobalSelectionListeners = useCallback(() => {
+    if (globalMouseMoveRef.current || globalMouseUpRef.current) return; // Déjà actifs
+
+    globalMouseMoveRef.current = (event: MouseEvent) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const zoomScale = state.canvas.zoom / 100;
+
+      // Calcul des coordonnées même si la souris est hors du canvas
+      const canvasRelativeX = event.clientX - rect.left;
+      const canvasRelativeY = event.clientY - rect.top;
+      const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
+      const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
+
+      // Mettre à jour la sélection
+      if (selectionMode === 'lasso') {
+        selectionPointsRef.current.push({ x, y });
+        setSelectionUpdateTrigger(prev => prev + 1);
+      } else if (selectionMode === 'rectangle') {
+        const startX = Math.min(selectionStartRef.current.x, x);
+        const startY = Math.min(selectionStartRef.current.y, y);
+        const width = Math.abs(x - selectionStartRef.current.x);
+        const height = Math.abs(y - selectionStartRef.current.y);
+        selectionRectRef.current = { x: startX, y: startY, width, height };
+        setSelectionUpdateTrigger(prev => prev + 1);
+      }
+    };
+
+    globalMouseUpRef.current = () => {
+      stopGlobalSelectionListeners();
+      // Terminer la sélection directement ici
+      if (isSelectingRef.current) {
+        let selectedElementIds: string[] = [];
+
+        if (selectionMode === 'lasso' && selectionPointsRef.current.length > 2) {
+          // Utiliser la même logique que isElementInLasso
+          selectedElementIds = state.elements
+            .filter(element => {
+              const centerX = element.x + element.width / 2;
+              const centerY = element.y + element.height / 2;
+              // Logique de isPointInPolygon dupliquée
+              let inside = false;
+              const polygon = selectionPointsRef.current;
+              for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+                const xi = polygon[i].x, yi = polygon[i].y;
+                const xj = polygon[j].x, yj = polygon[j].y;
+                if (((yi > centerY) !== (yj > centerY)) && (centerX < (xj - xi) * (centerY - yi) / (yj - yi) + xi)) {
+                  inside = !inside;
+                }
+              }
+              return inside;
+            })
+            .map(element => element.id);
+        } else if (selectionMode === 'rectangle' && selectionRectRef.current.width > 0 && selectionRectRef.current.height > 0) {
+          // Utiliser la même logique que isElementInRectangle
+          selectedElementIds = state.elements
+            .filter(element => {
+              const elementRight = element.x + element.width;
+              const elementBottom = element.y + element.height;
+              const rectRight = selectionRectRef.current.x + selectionRectRef.current.width;
+              const rectBottom = selectionRectRef.current.y + selectionRectRef.current.height;
+              return !(element.x > rectRight || elementRight < selectionRectRef.current.x || element.y > rectBottom || elementBottom < selectionRectRef.current.y);
+            })
+            .map(element => element.id);
+        }
+
+        if (selectedElementIds.length > 0) {
+          dispatch({ type: 'SET_SELECTION', payload: selectedElementIds });
+        } else {
+          dispatch({ type: 'CLEAR_SELECTION' });
+        }
+
+        // Réinitialiser l'état de sélection
+        isSelectingRef.current = false;
+        selectionPointsRef.current = [];
+        selectionRectRef.current = { x: 0, y: 0, width: 0, height: 0 };
+      }
+    };
+
+    document.addEventListener('mousemove', globalMouseMoveRef.current);
+    document.addEventListener('mouseup', globalMouseUpRef.current);
+  }, [canvasRef, state.canvas.zoom, state.canvas.pan, state.elements, selectionMode, dispatch]);
+
+  const stopGlobalSelectionListeners = useCallback(() => {
+    if (globalMouseMoveRef.current) {
+      document.removeEventListener('mousemove', globalMouseMoveRef.current);
+      globalMouseMoveRef.current = null;
+    }
+    if (globalMouseUpRef.current) {
+      document.removeEventListener('mouseup', globalMouseUpRef.current);
+      globalMouseUpRef.current = null;
+    }
+  }, []);
 
   // ✅ OPTIMISATION FLUIDITÉ: Fonction pour effectuer les updates de drag avec RAF
   const performDragUpdate = useCallback(() => {
@@ -510,10 +611,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
     const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
 
-    // Borner les coordonnées aux limites du canvas pour éviter que la sélection dépasse
-    const boundedX = Math.max(0, Math.min(canvasWidth, x));
-    const boundedY = Math.max(0, Math.min(canvasHeight, y));
-
     // ✅ Chercher n'importe quel élément au clic (sélectionné ou pas)
     // Note: On cherche du dernier vers le premier pour sélectionner l'élément rendu au-dessus
     const clickedElement = [...state.elements].reverse().find(el => {
@@ -550,7 +647,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           isDraggingRef.current = true;
           // Stocker les positions de départ de tous les éléments sélectionnés
           dragStartRef.current = { [clickedElement.id]: { x: clickedElement.x, y: clickedElement.y } };
-          dragMouseStartRef.current = { x: boundedX, y: boundedY };  // Position souris
+          dragMouseStartRef.current = { x, y };  // Position souris
           selectedElementRef.current = clickedElement.id;
           event.preventDefault();
           return;
@@ -567,7 +664,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           }
         });
         dragStartRef.current = startPositions;
-        dragMouseStartRef.current = { x: boundedX, y: boundedY };  // Position souris
+        dragMouseStartRef.current = { x, y };  // Position souris
         selectedElementRef.current = clickedElement.id;
         event.preventDefault();
         return;
@@ -580,7 +677,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       isResizingRef.current = true;
       resizeHandleRef.current = resizeHandle.handle;
       selectedElementRef.current = resizeHandle.elementId;
-      resizeMouseStartRef.current = { x: boundedX, y: boundedY };  // Position souris au début du resize
+      resizeMouseStartRef.current = { x, y };  // Position souris au début du resize
       event.preventDefault();
       return;
     }
@@ -607,7 +704,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         const distance = Math.sqrt((x - centerX) ** 2 + (y - rotationHandleY) ** 2);
         if (distance <= rotationHandleSize / 2) {
           isRotatingRef.current = true;
-          rotationMouseStartRef.current = { x: boundedX, y: boundedY };
+          rotationMouseStartRef.current = { x, y };
           
           // Stocker les rotations initiales de tous les éléments sélectionnés
           const initialRotations: Record<string, number> = {};
@@ -629,11 +726,13 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     if (selectionMode === 'lasso' || selectionMode === 'rectangle') {
       // Commencer une nouvelle sélection
       isSelectingRef.current = true;
-      selectionStartRef.current = { x: boundedX, y: boundedY };
-      selectionPointsRef.current = [{ x: boundedX, y: boundedY }];
+      selectionStartRef.current = { x, y };
+      selectionPointsRef.current = [{ x, y }];
       if (selectionMode === 'rectangle') {
-        selectionRectRef.current = { x: boundedX, y: boundedY, width: 0, height: 0 };
+        selectionRectRef.current = { x, y, width: 0, height: 0 };
       }
+      // Démarrer les listeners globaux pour permettre la sélection hors canvas
+      startGlobalSelectionListeners();
       // Ne pas désélectionner immédiatement, attendre la fin de la sélection
       event.preventDefault();
       return;
@@ -920,17 +1019,14 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // Calcul correct des coordonnées avec zoom et pan
     const canvasRelativeX = event.clientX - rect.left;
     const canvasRelativeY = event.clientY - rect.top;
-    let x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
-    let y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
-    
-    // Borner les coordonnées aux limites du canvas pour éviter que la sélection dépasse
-    x = Math.max(0, Math.min(canvasWidth, x));
-    y = Math.max(0, Math.min(canvasHeight, y));    // Mettre à jour le curseur
+    const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
+    const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;    // Mettre à jour le curseur
     const cursor = getCursorAtPosition(x, y);
     updateCursor(cursor);
 
     // Gérer la sélection lasso/rectangle en cours
-    if (isSelectingRef.current) {
+    // Note: Si les listeners globaux sont actifs, la gestion se fait dans globalMouseMoveRef
+    if (isSelectingRef.current && !globalMouseMoveRef.current) {
       if (selectionMode === 'lasso') {
         // Ajouter le point actuel au lasso
         selectionPointsRef.current.push({ x, y });
@@ -995,6 +1091,13 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       }
     }
   }, [dispatch, canvasRef, getCursorAtPosition, updateCursor, calculateResize, state.canvas, performDragUpdate]);
+
+  // Cleanup des listeners globaux au démontage du composant
+  useEffect(() => {
+    return () => {
+      stopGlobalSelectionListeners();
+    };
+  }, [stopGlobalSelectionListeners]);
 
   // Gestionnaire de clic droit pour afficher le menu contextuel
   const handleContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>, onContextMenu: (x: number, y: number, elementId?: string) => void) => {
