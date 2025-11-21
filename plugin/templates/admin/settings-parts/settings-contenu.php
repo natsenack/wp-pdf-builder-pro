@@ -208,58 +208,47 @@ input:checked + .toggle-slider:before {
                             </div>
                         </div>
 
-                        <!-- Carte Éléments Interactifs -->
-                        <div class="canvas-card" data-category="interaction">
+                        <!-- Carte Interactions & Comportement -->
+                        <div class="canvas-card" data-category="interactions">
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">👆</span>
+                                    <span class="canvas-card-icon">🎯</span>
                                 </div>
-                                <h4>Éléments Interactifs</h4>
+                                <h4>Interactions & Comportement</h4>
                             </div>
                             <div class="canvas-card-content">
-                                <p>Activez les interactions comme glisser-déposer et redimensionnement.</p>
+                                <p>Contrôlez les interactions canvas, la sélection et les raccourcis clavier.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="interaction-preview">
-                                    <span class="element-handle" title="Redimensionner">↔</span>
-                                    <span class="element-handle" title="Déplacer">↕</span>
-                                    <span class="element-handle" title="Pivoter">↻</span>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>👆</span> Configurer
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Carte Comportement -->
-                        <div class="canvas-card" data-category="comportement">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">⚙️</span>
-                                </div>
-                                <h4>Comportement</h4>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Définissez la sélection multiple et les raccourcis clavier.</p>
-                            </div>
-                            <div class="canvas-card-preview">
-                                <div class="behavior-preview-container">
-                                    <div class="behavior-canvas">
-                                        <div class="behavior-element selected" title="Élément sélectionné"></div>
-                                        <div class="behavior-element" title="Autre élément"></div>
-                                        <div class="behavior-element" title="Élément sélectionnable"></div>
+                                <div class="interactions-preview-container">
+                                    <div class="interactions-top">
+                                        <div class="interaction-handles">
+                                            <span class="element-handle" title="Redimensionner">↔</span>
+                                            <span class="element-handle" title="Déplacer">↕</span>
+                                            <span class="element-handle" title="Pivoter">↻</span>
+                                        </div>
+                                        <div class="selection-modes">
+                                            <span class="mode-badge active" title="Clic simple">👆</span>
+                                            <span class="mode-badge" title="Lasso">🪢</span>
+                                            <span class="mode-badge" title="Rectangle">▭</span>
+                                        </div>
                                     </div>
-                                    <div class="behavior-legend">
-                                        <span class="legend-item">👆 Sélection</span>
-                                        <span class="legend-item">⌨️ Ctrl+Click</span>
+                                    <div class="interactions-bottom">
+                                        <div class="keyboard-shortcuts">
+                                            <span class="shortcut-badge">⌨️</span>
+                                            <span class="shortcut-badge">💾</span>
+                                        </div>
+                                        <div class="behavior-elements">
+                                            <div class="behavior-element selected" title="Élément sélectionné"></div>
+                                            <div class="behavior-element" title="Autre élément"></div>
+                                            <div class="behavior-element" title="Élément sélectionnable"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
-                                    <span>⚙️</span> Configurer
+                                    <span>🎯</span> Configurer
                                 </button>
                             </div>
                         </div>

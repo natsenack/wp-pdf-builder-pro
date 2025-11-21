@@ -298,22 +298,23 @@
         </div>
     </div>
 </div>
-<!-- Canvas Configuration Modals Éléments Interactifs-->
-<div id="canvas-interaction-modal" class="canvas-modal" style="display: none;">
+<!-- Canvas Configuration Modals Interactions & Comportement-->
+<div id="canvas-interactions-modal" class="canvas-modal" style="display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">👆 Éléments Interactifs</h3>
+                <h3 style="margin: 0; color: #495057;">🎯 Interactions & Comportement</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
             </div>
             <div class="canvas-modal-body">
                 <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
                     <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
-                        <strong>💡 Comment ça marche :</strong> Ces paramètres contrôlent les interactions disponibles sur le canvas pour manipuler les éléments 
-                        (déplacement, redimensionnement, rotation, sélection multiple).
+                        <strong>💡 Comment ça marche :</strong> Ces paramètres contrôlent les interactions disponibles sur le canvas pour manipuler les éléments,
+                        ainsi que le comportement général de sélection et les raccourcis clavier.
                     </p>
                 </div>
-                <form id="canvas-interaction-form">
+                <form id="canvas-interactions-form">
+                    <h4 style="margin-top: 0; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">🎯 Interactions</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_drag_enabled">Glisser-déposer activé</label></th>
@@ -356,25 +357,8 @@
                             </td>
                         </tr>
                     </table>
-                </form>
-            </div>
-            <div class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="interaction">Sauvegarder</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Canvas Configuration Modals Comportement -->
-<div id="canvas-comportement-modal" class="canvas-modal" style="display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">⚙️ Comportement</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
-                <form id="canvas-comportement-form">
+
+                    <h4 style="margin-top: 25px; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">⚙️ Comportement</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_selection_mode">Mode de sélection</label></th>
@@ -384,6 +368,7 @@
                                     <option value="lasso" <?php selected(get_option('pdf_builder_canvas_selection_mode', 'click'), 'lasso'); ?>>Lasso</option>
                                     <option value="rectangle" <?php selected(get_option('pdf_builder_canvas_selection_mode', 'click'), 'rectangle'); ?>>Rectangle</option>
                                 </select>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Méthode de sélection des éléments sur le canvas</p>
                             </td>
                         </tr>
                         <tr>
@@ -393,6 +378,7 @@
                                     <input type="checkbox" id="canvas_keyboard_shortcuts" name="canvas_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_shortcuts', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Active les raccourcis clavier (Ctrl+Z, Ctrl+Y, etc.)</p>
                             </td>
                         </tr>
                         <tr>
@@ -402,6 +388,7 @@
                                     <input type="checkbox" id="canvas_auto_save" name="canvas_auto_save" value="1" <?php checked(get_option('pdf_builder_canvas_auto_save', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Sauvegarde automatiquement les modifications</p>
                             </td>
                         </tr>
                     </table>
@@ -409,7 +396,7 @@
             </div>
             <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="comportement">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-save" data-category="interactions">Sauvegarder</button>
             </div>
         </div>
     </div>
