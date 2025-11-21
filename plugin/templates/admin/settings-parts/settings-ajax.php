@@ -385,7 +385,15 @@ function pdf_builder_save_canvas_settings_handler() {
             $selects = ['canvas_selection_mode', 'canvas_export_format'];
             foreach ($selects as $select) {
                 if (isset($_POST[$select])) {
-                    $settings[str_replace('canvas_', '', $select)] = sanitize_text_field($_POST[$select]);
+                    // Pour canvas_selection_mode, garder le préfixe canvas_
+                    if ($select === 'canvas_selection_mode') {
+                        $settings[$select] = sanitize_text_field($_POST[$select]);
+                        error_log("AJAX: canvas_selection_mode received: " . $_POST[$select]);
+                    } else {
+                        $settings[str_replace('canvas_', '', $select)] = sanitize_text_field($_POST[$select]);
+                    }
+                } else {
+                    error_log("AJAX: " . $select . " not set in POST");
                 }
             }
 

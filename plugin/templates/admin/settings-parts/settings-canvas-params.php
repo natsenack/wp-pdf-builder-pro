@@ -71,6 +71,8 @@ $canvas_settings_js = [
     'show_fps' => get_option('pdf_builder_canvas_show_fps', '0') == '1'
 ];
 
+error_log("Canvas params: canvas_selection_mode = " . get_option('pdf_builder_canvas_selection_mode', 'click'));
+
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 ?>
 <script>
