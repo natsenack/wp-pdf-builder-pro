@@ -1188,7 +1188,8 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
 /* Modal Interactions & Comportement - hauteur spécifique pour afficher le footer */
 #canvas-interactions-modal .canvas-modal-content {
-    max-height: 95vh;
+    max-height: none;
+    height: auto;
 }
 
 .canvas-modal-header {
@@ -1232,7 +1233,8 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
 /* Modal Interactions & Comportement - ajustement du body pour le footer */
 #canvas-interactions-modal .canvas-modal-body {
-    max-height: calc(95vh - 140px);
+    max-height: none;
+    height: auto;
 }
 
 .canvas-modal-footer {
