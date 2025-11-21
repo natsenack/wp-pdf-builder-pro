@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
 import { useCanvasSetting } from '../../hooks/useCanvasSettings.ts';
@@ -8,6 +8,33 @@ import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts.ts';
 import { Element, ShapeElementProperties, TextElementProperties, LineElementProperties, ProductTableElementProperties, CustomerInfoElementProperties, CompanyInfoElementProperties, ImageElementProperties, OrderNumberElementProperties, MentionsElementProperties, DocumentTypeElementProperties, BuilderState } from '../../types/elements';
 import { wooCommerceManager } from '../../utils/WooCommerceElementsManager';
 import { elementChangeTracker } from '../../utils/ElementChangeTracker';
+
+// Déclaration pour l'API Performance
+declare const performance: {
+  memory?: {
+    usedJSHeapSize: number;
+    totalJSHeapSize: number;
+    jsHeapSizeLimit: number;
+  };
+};
+
+// Fonctions utilitaires pour la gestion mémoire des images
+const estimateImageMemorySize = (img: HTMLImageElement): number => {
+  // Estimation basée sur les dimensions et le nombre de canaux (RGBA = 4 octets par pixel)
+  const bytesPerPixel = 4;
+  return img.naturalWidth * img.naturalHeight * bytesPerPixel;
+};
+
+const cleanupImageCache = (imageCache: React.MutableRefObject<Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>>) => {
+  const cache = imageCache.current;
+  if (cache.size <= 100) return; // Max 100 images
+
+  // Trier par date d'utilisation et supprimer les plus anciennes
+  const entries = Array.from(cache.entries()).sort(([, a], [, b]) => a.lastUsed - b.lastUsed);
+  const toRemove = entries.slice(0, Math.ceil(cache.size * 0.2)); // Supprimer 20%
+
+  toRemove.forEach(([url]) => cache.delete(url));
+};
 import { CanvasMonitoringDashboard } from '../../utils/CanvasMonitoringDashboard';
 import { ContextMenu, ContextMenuItem } from '../ui/ContextMenu.tsx';
 
@@ -145,9 +172,7 @@ const drawImage = (ctx: CanvasRenderingContext2D, element: Element, imageCache: 
         lastUsed: Date.now()
       });
       // Déclencher un nettoyage après ajout
-      cleanupImageCache();
-      // Forcer un re-render pour afficher l'image
-      setImageLoadCount(prev => prev + 1);
+      cleanupImageCache(imageCache);
     };
 
     img.onerror = () => {
@@ -1183,8 +1208,76 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // Récupérer la limite mémoire JavaScript depuis les paramètres
   const memoryLimitJs = useCanvasSetting('memory_limit_js', 256) as number; // En MB, défaut 256MB
 
+  // ✅ LAZY LOADING: Récupérer le paramètre depuis les settings
+  const lazyLoadingEnabled = canvasSettings.lazyLoadingEditor;
+
+  // ✅ LAZY LOADING: État pour tracker les éléments visibles
+  const [visibleElements, setVisibleElements] = useState<Set<string>>(new Set());
+  const [viewportBounds, setViewportBounds] = useState({ x: 0, y: 0, width: width, height: height });
+
+  // ✅ LAZY LOADING: Fonction pour déterminer si un élément est visible dans le viewport
+  const isElementVisible = useCallback((element: Element, viewport: { x: number; y: number; width: number; height: number }): boolean => {
+    // Calculer les bounds de l'élément (simplifié - on pourrait améliorer avec rotation, etc.)
+    const elementBounds = {
+      x: element.x,
+      y: element.y,
+      width: element.width,
+      height: element.height
+    };
+
+    // Vérifier si l'élément intersecte le viewport (avec une marge de 100px)
+    const margin = 100;
+    return !(elementBounds.x + elementBounds.width < viewportBounds.x - margin ||
+             elementBounds.x > viewportBounds.x + viewportBounds.width + margin ||
+             elementBounds.y + elementBounds.height < viewportBounds.y - margin ||
+              elementBounds.y > viewportBounds.y + viewportBounds.height + margin);
+  }, [viewportBounds]);  // ✅ LAZY LOADING: Filtrer les éléments visibles
+  const visibleElementsList = useMemo(() => {
+    if (!lazyLoadingEnabled) {
+      return state.elements; // Tous les éléments si lazy loading désactivé
+    }
+
+    // Toujours inclure les 5 premiers éléments pour éviter les sauts visuels
+    const alwaysVisible = state.elements.slice(0, 5);
+    const potentiallyVisible = state.elements.slice(5).filter(element =>
+      isElementVisible(element, viewportBounds)
+    );
+
+    return [...alwaysVisible, ...potentiallyVisible];
+  }, [state.elements, lazyLoadingEnabled, viewportBounds, isElementVisible]);
+
   // Cache pour les images chargées avec métadonnées de mémoire
   const imageCache = useRef<Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>>(new Map());
+
+  // ✅ LAZY LOADING: Hook pour mettre à jour le viewport quand le canvas change
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const updateViewport = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      setViewportBounds({
+        x: -rect.left,
+        y: -rect.top,
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    // Mettre à jour initialement
+    updateViewport();
+
+    // Écouter les changements de scroll et resize
+    window.addEventListener('scroll', updateViewport);
+    window.addEventListener('resize', updateViewport);
+
+    return () => {
+      window.removeEventListener('scroll', updateViewport);
+      window.removeEventListener('resize', updateViewport);
+    };
+  }, []);
 
   // ✅ CORRECTION 7: Tracker les URLs rendues pour détecter changements
   const renderedLogoUrlsRef = useRef<Map<string, string>>(new Map()); // elementId -> logoUrl
@@ -1216,7 +1309,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // Vérifier aussi la mémoire globale du navigateur si disponible
     if ('memory' in performance) {
-      const perfMemory = (performance as any).memory;
+      const perfMemory = performance.memory!;
       const browserMemoryUsage = perfMemory.usedJSHeapSize / (1024 * 1024); // MB
       const browserLimit = perfMemory.jsHeapSizeLimit / (1024 * 1024); // MB
 
@@ -1311,7 +1404,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         const cacheMemoryUsage = calculateCacheMemoryUsage();
 
         // Log détaillé de la mémoire si activé
-        if (canvasSettings.debug_mode) {
+        if (canvasSettings.debugMode) {
           console.log(`[Canvas Memory] Browser: ${browserMemoryUsage.toFixed(1)}MB / ${browserLimit.toFixed(1)}MB (${(browserMemoryUsage/browserLimit*100).toFixed(1)}%)`);
           console.log(`[Canvas Memory] Cache: ${cacheMemoryUsage.toFixed(1)}MB / ${memoryLimitJs}MB (${(cacheMemoryUsage/memoryLimitJs*100).toFixed(1)}%)`);
         }
@@ -1325,7 +1418,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     }, 10000); // Vérification toutes les 10 secondes
 
     return () => clearInterval(memoryCheckInterval);
-  }, [calculateCacheMemoryUsage, memoryLimitJs, cleanupImageCache, canvasSettings.debug_mode]);
+  }, [calculateCacheMemoryUsage, memoryLimitJs, cleanupImageCache, canvasSettings.debugMode]);
 
   // Écouter les changements de couleur de fond depuis les paramètres
   useEffect(() => {
@@ -1626,7 +1719,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       // Pas d'URL, dessiner un placeholder
       drawLogoPlaceholder(ctx, element, alignment, 'Company_logo');
     }
-  }, [drawLogoPlaceholder]);  // ✅ BUGFIX-008: REMOVED setImageLoadCounter
+  }, [drawLogoPlaceholder, cleanupImageCache, estimateImageMemorySize]);  // ✅ BUGFIX-008: REMOVED setImageLoadCounter
 
   // ✅ BUGFIX-007: Memoize drawDynamicText to prevent recreation on every render
   const drawDynamicText = useCallback((ctx: CanvasRenderingContext2D, element: Element) => {
@@ -1950,10 +2043,10 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         ctx.strokeRect(0, 0, element.width, element.height);
     }
     ctx.restore();
-  }, [drawCompanyLogo, drawDynamicText, drawMentions]);  // ✅ BUGFIX-007: Include memoized draw functions
+  }, [drawCompanyLogo, drawDynamicText, drawMentions, canvasSettings]);  // ✅ BUGFIX-007: Include memoized draw functions
 
   // Fonction pour dessiner la sélection
-  function drawSelection(ctx: CanvasRenderingContext2D, selectedIds: string[], elements: Element[]) {
+  const drawSelection = useCallback((ctx: CanvasRenderingContext2D, selectedIds: string[], elements: Element[]) => {
     const selectedElements = elements.filter(el => selectedIds.includes(el.id));
     if (selectedElements.length === 0) return;
 
@@ -2067,7 +2160,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         ctx.fillText(dimensionText, x + width - padding, y - 16);
       }
     });
-  };
+  }, [canvasSettings]);
 
   // Fonctions pour gérer le menu contextuel
   const showContextMenu = useCallback((x: number, y: number, elementId?: string) => {
@@ -2522,9 +2615,9 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // DEBUG: Log elements
     if (state.elements.length === 0) {
-
+      // Pas d'éléments à dessiner
     } else {
-
+      // Éléments présents
     }
 
     // Appliquer transformation (pan uniquement - zoom géré par CSS)
@@ -2553,7 +2646,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     }
 
     // Dessiner les éléments
-    state.elements.forEach((element) => {
+    visibleElementsList.forEach((element) => {
       drawElement(ctx, element, state);  // ✅ BUGFIX-001/004: Pass state as parameter
     });
 
@@ -2599,7 +2692,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     }
 
     ctx.restore();
-  }, [width, height, canvasSettings, state, drawElement, drawGrid, drawGuides, selectionState]);  // ✅ Include memoized drawGrid and drawGuides
+  }, [width, height, canvasSettings, state, drawElement, drawGrid, drawGuides, selectionState, drawSelection, visibleElementsList]);  // ✅ Include memoized drawGrid and drawGuides
 
   // Redessiner quand l'état change
   useEffect(() => {
@@ -2609,7 +2702,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // Rendu initial
   useEffect(() => {
     renderCanvas();
-  }, []);
+  }, [renderCanvas]);
 
   // ✅ Force initial render when elements first load (for cached images)
   useEffect(() => {

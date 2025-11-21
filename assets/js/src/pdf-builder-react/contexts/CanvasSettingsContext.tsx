@@ -64,6 +64,12 @@ export interface CanvasSettingsContextType {
   historyAutoSaveEnabled: boolean;
   historyAutoSaveInterval: number;
   
+  // Performance & Lazy Loading
+  lazyLoadingEditor: boolean;
+  lazyLoadingPlugin: boolean;
+  debugMode: boolean;
+  memoryLimitJs: number;
+  
   isLoading: boolean;
   isReady: boolean;
   error: string | null;
@@ -127,6 +133,12 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   historyRedoLevels: 50,
   historyAutoSaveEnabled: true,
   historyAutoSaveInterval: 30000,
+  
+  // Performance & Lazy Loading
+  lazyLoadingEditor: true,
+  lazyLoadingPlugin: true,
+  debugMode: false,
+  memoryLimitJs: 256,
   
   isLoading: true,
   isReady: false,
@@ -232,6 +244,12 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       historyAutoSaveEnabled: windowSettings.history_auto_save_enabled === true || windowSettings.history_auto_save_enabled === '1',
       historyAutoSaveInterval: (windowSettings.history_auto_save_interval as number) ?? DEFAULT_SETTINGS.historyAutoSaveInterval,
       
+      // Performance & Lazy Loading
+      lazyLoadingEditor: windowSettings.lazy_loading_editor === true || windowSettings.lazy_loading_editor === '1',
+      lazyLoadingPlugin: windowSettings.lazy_loading_plugin === true || windowSettings.lazy_loading_plugin === '1',
+      debugMode: windowSettings.debug_mode === true || windowSettings.debug_mode === '1',
+      memoryLimitJs: (windowSettings.memory_limit_js as number) ?? DEFAULT_SETTINGS.memoryLimitJs,
+      
       isLoading: false,
       isReady: true,
       error: null,
@@ -329,6 +347,39 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     ...settings,
     updateGridSettings: (newSettings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => {
       setSettings(prev => ({ ...prev, ...newSettings }));
+    },
+    saveGridSettings: async (gridSettings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => {
+      try {
+        const syncedSettings = {
+          show_grid: gridSettings.gridShow,
+          grid_size: gridSettings.gridSize,
+          snap_to_grid: gridSettings.gridSnapEnabled
+        };
+
+        const formData = new FormData();
+        formData.append('action', 'pdf_builder_save_canvas_settings');
+        formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+        formData.append('settings', JSON.stringify(syncedSettings));
+
+        const response = await fetch(window.pdfBuilderAjax?.url || '/wp-admin/admin-ajax.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            // Mettre à jour l'état local
+            setSettings(prev => ({ ...prev, ...gridSettings }));
+          } else {
+            console.error('Erreur lors de la sauvegarde des paramètres de grille:', result.message);
+          }
+        } else {
+          console.error('Erreur HTTP lors de la sauvegarde des paramètres de grille');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la sauvegarde des paramètres de grille:', error);
+      }
     },
     saveGridSettings: async (newSettings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => {
       try {
