@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
@@ -2421,7 +2421,6 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // Dessiner les éléments
     state.elements.forEach((element) => {
-      console.log('🎨 RENDERING ELEMENT:', { id: element.id, rotation: element.rotation });
       drawElement(ctx, element, state);  // ✅ BUGFIX-001/004: Pass state as parameter
     });
 
@@ -2469,16 +2468,11 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     ctx.restore();
   }, [width, height, canvasSettings, state, drawElement, drawGrid, drawGuides, selectionState]);  // ✅ Include memoized drawGrid and drawGuides
 
-  // Redessiner quand l'état change
-  useEffect(() => {
-
-    // ✅ BUGFIX: Include ALL essential visual properties in hash
-    // This ensures canvas re-renders when ANY visual property changes
-    let elementsHash = '';
+  // ✅ OPTIMIZATION: Memoize elements hash to prevent unnecessary re-renders
+  const elementsHash = useMemo(() => {
+    let hash = '';
     for (let i = 0; i < state.elements.length; i++) {
       const e = state.elements[i];
-      // Create a comprehensive hash of all element properties
-      // Use updatedAt to detect any changes, plus key visual properties
       const getUpdatedAtTime = (updatedAt: unknown): number => {
         if (updatedAt instanceof Date && !isNaN(updatedAt.getTime())) {
           return updatedAt.getTime();
@@ -2499,45 +2493,31 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         rotation: e.rotation || 0,
         opacity: e.opacity || 1,
         visible: e.visible,
-        // ✅ Include logoUrl in hash to trigger redraw when logo images load
         logoUrl: 'logoUrl' in e ? (e as {logoUrl?: string}).logoUrl || '' : '',
         src: 'src' in e ? (e as {src?: string}).src || '' : ''
       };
-      elementsHash += JSON.stringify(hashData) + ';';
+      hash += JSON.stringify(hashData) + ';';
     }
 
-    // ✅ IMPORTANT: Include selection in hash to trigger re-render when selection changes
-    const selectionHash = JSON.stringify(state.selection.selectedElements);
-    elementsHash += selectionHash;
+    // Include selection in hash
+    hash += JSON.stringify(state.selection.selectedElements) + ';';
 
-    // ✅ CRITICAL: Include canvas settings (grid, guides, snap, zoom, pan) in hash to trigger re-render when they change
+    // Include canvas settings (grid, guides, snap) in hash
     const canvasSettingsHash = JSON.stringify({
       showGrid: state.canvas.showGrid,
       snapToGrid: state.canvas.snapToGrid,
-      showGuides: state.template.showGuides,
-      zoom: state.canvas.zoom,
-      pan: state.canvas.pan
+      showGuides: state.template.showGuides
     });
-    elementsHash += `;canvasSettings:${canvasSettingsHash}`;
+    hash += `canvasSettings:${canvasSettingsHash};`;
 
-    // ✅ CRITICAL: Include imageLoadCount in hash to force re-render when images load
-    elementsHash += `;imageLoadCount:${imageLoadCount}`;
-    
-    // ✅ Skip si on vient déjà de render les MÊMES positions/tailles
+    // Include imageLoadCount in hash
+    hash += `imageLoadCount:${imageLoadCount};`;
 
-    if (lastRenderedElementsRef.current === elementsHash) {
+    return hash;
+  }, [state.elements, state.selection.selectedElements, state.canvas.showGrid, state.canvas.snapToGrid, state.template.showGuides, imageLoadCount]);
 
-      return;
-    }
-    
-    lastRenderedElementsRef.current = elementsHash;
-    renderCountRef.current++;
-    
-    // 🔍 REAL-TIME MONITORING: Track all element property changes
-    elementChangeTracker.trackElements(state.elements);
-    
-    // ✅ FORCE IMMEDIATE RENDER for real-time interaction
-    renderCanvas();
+  // Redessiner quand l'état change
+  useEffect(() => {
   }, [state, imageLoadCount, canvasSettings]);  // ✅ BUGFIX: Removed renderCanvas from deps to avoid instability
 
   // ✅ Force initial render when elements first load (for cached images)
