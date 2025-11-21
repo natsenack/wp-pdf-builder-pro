@@ -13,7 +13,6 @@ export const useCanvasSettings = () => {
     // Écouter les changements de paramètres
     useEffect(() => {
         const handleSettingsUpdate = () => {
-            console.log('PDF Builder: Canvas settings updated, refreshing...');
             setSettingsVersion(prev => prev + 1);
         };
 
@@ -46,9 +45,7 @@ export const useCanvasSettings = () => {
 export const useCanvasSetting = (key: string, defaultValue: unknown = null) => {
     const settings = useCanvasSettings() as Record<string, unknown>;
     return useMemo(() => {
-        const value = key in settings ? settings[key] : defaultValue;
-        console.log(`PDF Builder: useCanvasSetting(${key}) =`, value);
-        return value;
+        return key in settings ? settings[key] : defaultValue;
     }, [key, settings, defaultValue]);
 };
 

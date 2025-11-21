@@ -878,6 +878,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Show success message
                     showSuccessMessage('Paramètres sauvegardés avec succès');
 
+                    // Update window.pdfBuilderCanvasSettings with new values
+                    if (data.data && data.data.saved) {
+                        console.log('PDF Builder: Updating window.pdfBuilderCanvasSettings with:', data.data.saved);
+                        // Merge the saved values into the existing settings
+                        window.pdfBuilderCanvasSettings = {
+                            ...window.pdfBuilderCanvasSettings,
+                            ...data.data.saved
+                        };
+                        console.log('PDF Builder: Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+                    }
+
                     // Notify React context to refresh settings
                     window.dispatchEvent(new Event('canvasSettingsUpdated'));
 
