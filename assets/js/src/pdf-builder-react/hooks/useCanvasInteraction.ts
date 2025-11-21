@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
+import { useCanvasSetting } from './useCanvasSettings';
 import { Element } from '../types/elements';
 
 // Déclaration des APIs globales du navigateur
@@ -23,6 +24,7 @@ interface UseCanvasInteractionProps {
 export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeight = 1123 }: UseCanvasInteractionProps) => {
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
+  const selectionMode = useCanvasSetting('canvas_selection_mode', 'click') as string;
 
   // États pour le drag et resize
   const isDraggingRef = useRef(false);
@@ -37,6 +39,12 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const selectedElementsRef = useRef<string[]>([]);  // ✅ Track locally instead of relying on stale state
   const resizeHandleRef = useRef<string | null>(null);
   const currentCursorRef = useRef<string>('default');
+
+  // États pour les modes de sélection avancés
+  const isSelectingRef = useRef(false);  // En cours de sélection lasso/rectangle
+  const selectionStartRef = useRef({ x: 0, y: 0 });  // Point de départ de la sélection
+  const selectionPointsRef = useRef<{ x: number; y: number }[]>([]);  // Points pour le lasso
+  const selectionRectRef = useRef({ x: 0, y: 0, width: 0, height: 0 });  // Rectangle de sélection
 
   // ✅ OPTIMISATION FLUIDITÉ: requestAnimationFrame pour synchroniser avec le refresh rate
   const rafIdRef = useRef<number | null>(null);
@@ -619,10 +627,24 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       }
     }
 
-    // ✅ Sinon on a cliqué sur le vide - désélectionner
-    if (state.selection.selectedElements.length > 0) {
-      dispatch({ type: 'CLEAR_SELECTION' });
-      selectedElementRef.current = null;
+    // ✅ Sinon on a cliqué sur le vide - gérer selon le mode de sélection
+    if (selectionMode === 'lasso' || selectionMode === 'rectangle') {
+      // Commencer une nouvelle sélection
+      isSelectingRef.current = true;
+      selectionStartRef.current = { x, y };
+      selectionPointsRef.current = [{ x, y }];
+      if (selectionMode === 'rectangle') {
+        selectionRectRef.current = { x, y, width: 0, height: 0 };
+      }
+      // Ne pas désélectionner immédiatement, attendre la fin de la sélection
+      event.preventDefault();
+      return;
+    } else {
+      // Mode clic simple - désélectionner
+      if (state.selection.selectedElements.length > 0) {
+        dispatch({ type: 'CLEAR_SELECTION' });
+        selectedElementRef.current = null;
+      }
     }
   }, [state, canvasRef, dispatch, getResizeHandleAtPosition]);
 
@@ -670,6 +692,35 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           }
         }
       });
+    }
+
+    // Finaliser la sélection lasso/rectangle si en cours
+    if (isSelectingRef.current) {
+      let selectedElementIds: string[] = [];
+
+      if (selectionMode === 'lasso' && selectionPointsRef.current.length > 2) {
+        // Sélection lasso : vérifier quels éléments sont à l'intérieur du polygone
+        selectedElementIds = state.elements
+          .filter(element => isElementInLasso(element, selectionPointsRef.current))
+          .map(element => element.id);
+      } else if (selectionMode === 'rectangle' && selectionRectRef.current.width > 0 && selectionRectRef.current.height > 0) {
+        // Sélection rectangle : vérifier quels éléments intersectent le rectangle
+        selectedElementIds = state.elements
+          .filter(element => isElementInRectangle(element, selectionRectRef.current))
+          .map(element => element.id);
+      }
+
+      // Appliquer la sélection
+      if (selectedElementIds.length > 0) {
+        dispatch({ type: 'SET_SELECTION', payload: selectedElementIds });
+      } else {
+        dispatch({ type: 'CLEAR_SELECTION' });
+      }
+
+      // Réinitialiser l'état de sélection
+      isSelectingRef.current = false;
+      selectionPointsRef.current = [];
+      selectionRectRef.current = { x: 0, y: 0, width: 0, height: 0 };
     }
 
     isDraggingRef.current = false;
@@ -877,6 +928,29 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     const cursor = getCursorAtPosition(x, y);
     updateCursor(cursor);
 
+    // Gérer la sélection lasso/rectangle en cours
+    if (isSelectingRef.current) {
+      if (selectionMode === 'lasso') {
+        // Ajouter le point actuel au lasso
+        selectionPointsRef.current.push({ x, y });
+      } else if (selectionMode === 'rectangle') {
+        // Mettre à jour le rectangle de sélection
+        const startX = Math.min(selectionStartRef.current.x, x);
+        const startY = Math.min(selectionStartRef.current.y, y);
+        const width = Math.abs(x - selectionStartRef.current.x);
+        const height = Math.abs(y - selectionStartRef.current.y);
+        selectionRectRef.current = { x: startX, y: startY, width, height };
+      }
+      // Forcer le re-rendu pour afficher la sélection
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          // TODO: Implement visual feedback for selection
+        }
+      }
+      return;
+    }
+
     if (isDraggingRef.current && selectedElementRef.current) {
       // ✅ OPTIMISATION FLUIDITÉ: Pour le drag multiple, passer directement les coordonnées actuelles de la souris
       // performDragUpdate calculera la nouvelle position pour chaque élément individuellement
@@ -960,6 +1034,42 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       onContextMenu(menuX, menuY);
     }
   }, [state, canvasRef]);
+
+  // Fonctions helper pour la sélection avancée
+  const isElementInRectangle = useCallback((element: Element, rect: { x: number; y: number; width: number; height: number }): boolean => {
+    // Vérifier si l'élément intersecte ou est contenu dans le rectangle
+    const elementRight = element.x + element.width;
+    const elementBottom = element.y + element.height;
+    const rectRight = rect.x + rect.width;
+    const rectBottom = rect.y + rect.height;
+
+    // Vérifier l'intersection
+    return !(element.x > rectRight || elementRight < rect.x || element.y > rectBottom || elementBottom < rect.y);
+  }, []);
+
+  const isElementInLasso = useCallback((element: Element, points: { x: number; y: number }[]): boolean => {
+    if (points.length < 3) return false;
+
+    // Utiliser l'algorithme du point dans le polygone (ray casting)
+    // Vérifier si le centre de l'élément est dans le lasso
+    const centerX = element.x + element.width / 2;
+    const centerY = element.y + element.height / 2;
+
+    return isPointInPolygon(centerX, centerY, points);
+  }, []);
+
+  const isPointInPolygon = (x: number, y: number, polygon: { x: number; y: number }[]): boolean => {
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      const xi = polygon[i].x, yi = polygon[i].y;
+      const xj = polygon[j].x, yj = polygon[j].y;
+
+      if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  };
 
   return {
     handleCanvasClick,

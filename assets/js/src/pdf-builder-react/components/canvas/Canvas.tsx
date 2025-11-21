@@ -3,6 +3,7 @@ import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
 import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
 import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts.ts';
 import { Element, ShapeElementProperties, TextElementProperties, LineElementProperties, ProductTableElementProperties, CustomerInfoElementProperties, CompanyInfoElementProperties, ImageElementProperties, OrderNumberElementProperties, MentionsElementProperties, DocumentTypeElementProperties, BuilderState } from '../../types/elements';
 import { wooCommerceManager } from '../../utils/WooCommerceElementsManager';
 import { elementChangeTracker } from '../../utils/ElementChangeTracker';
@@ -1232,6 +1233,9 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     canvasWidth: width,
     canvasHeight: height
   });
+
+  // Hook pour les raccourcis clavier
+  const keyboardShortcutInfo = useKeyboardShortcuts();
 
   // Fonctions de rendu WooCommerce avec données fictives ou réelles selon le mode
 
