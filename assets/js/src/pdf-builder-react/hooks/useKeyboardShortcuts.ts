@@ -9,6 +9,7 @@ import { useCanvasSetting } from './useCanvasSettings';
 export const useKeyboardShortcuts = () => {
   const { state, dispatch } = useBuilder();
   const keyboardShortcutsEnabled = useCanvasSetting('enable_keyboard_shortcuts', true) as boolean;
+  console.log('DEBUG: keyboardShortcutsEnabled =', keyboardShortcutsEnabled);
 
   // Références pour éviter les closures stale
   const stateRef = useRef(state);
@@ -32,8 +33,12 @@ export const useKeyboardShortcuts = () => {
       preventDefault: () => void;
       target: object;
     };
+    console.log('DEBUG: handleKeyDown called with key:', keyboardEvent.key);
     // Ne pas traiter si les raccourcis sont désactivés
-    if (!keyboardShortcutsEnabled) return;
+    if (!keyboardShortcutsEnabled) {
+      console.log('DEBUG: Keyboard shortcuts disabled, ignoring key event');
+      return;
+    }
 
     // Ne pas traiter si on est dans un champ de saisie
     const target = event.target as HTMLElement;
