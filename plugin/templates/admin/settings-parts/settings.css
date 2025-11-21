@@ -1179,17 +1179,18 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     padding: 0;
     max-width: 600px;
     width: 90%;
-    max-height: 90vh;
+    max-height: 85vh;
     overflow: hidden;
     box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     animation: slideIn 0.3s ease-out;
     border: 1px solid #e1e1e1;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Modal Interactions & Comportement - hauteur spécifique pour afficher le footer */
 #canvas-interactions-modal .canvas-modal-content {
-    max-height: none;
-    height: auto;
+    max-height: 90vh;
 }
 
 .canvas-modal-header {
@@ -1227,14 +1228,13 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
 .canvas-modal-body {
     padding: 24px;
-    max-height: calc(90vh - 140px);
     overflow-y: auto;
+    flex: 1 1 auto;
 }
 
 /* Modal Interactions & Comportement - ajustement du body pour le footer */
 #canvas-interactions-modal .canvas-modal-body {
     max-height: none;
-    height: auto;
 }
 
 .canvas-modal-footer {
@@ -1244,6 +1244,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     border-top: 1px solid #e1e1e1;
     padding: 20px 24px;
     background: #f6f7f7;
+    flex-shrink: 0;
 }
 
 .canvas-modal-save {
