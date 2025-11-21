@@ -82,25 +82,68 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById(modalId);
 
             if (modal) {
-                console.log('🔍 Modal found, creating SIMPLE test modal for category:', category);
+                console.log('🔍 Modal found, showing canvas modal for category:', category);
 
-                // DERNIÈRE TENTATIVE : Créer une modale de test ultra-simple
-                const testModal = document.createElement('div');
-                testModal.id = 'test-modal-' + Date.now();
-                testModal.innerHTML = `
-                    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; display: flex; align-items: center; justify-content: center;">
-                        <div style="background: white; padding: 20px; border-radius: 8px; max-width: 400px; text-align: center;">
-                            <h2 style="margin: 0 0 15px 0; color: #333;">🧪 Test Modal</h2>
-                            <p style="margin: 0 0 20px 0; color: #666;">Si vous voyez ceci, les modales fonctionnent !</p>
-                            <button onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = '';" style="background: #007cba; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Fermer</button>
-                        </div>
-                    </div>
-                `;
+                // SOLUTION : Utiliser la modale existante mais la simplifier
+                modal.style.display = 'block';
+                modal.style.visibility = 'visible';
+                modal.style.opacity = '1';
+                modal.style.zIndex = '999999';
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
 
-                document.body.appendChild(testModal);
+                // Simplifier le contenu de l'overlay et du content
+                const overlay = modal.querySelector('.canvas-modal-overlay');
+                const content = modal.querySelector('.canvas-modal-content');
+
+                if (overlay) {
+                    overlay.style.position = 'absolute';
+                    overlay.style.top = '0';
+                    overlay.style.left = '0';
+                    overlay.style.width = '100%';
+                    overlay.style.height = '100%';
+                    overlay.style.background = 'rgba(0,0,0,0.7)';
+                    overlay.style.display = 'flex';
+                    overlay.style.alignItems = 'center';
+                    overlay.style.justifyContent = 'center';
+                }
+
+                if (content) {
+                    content.style.background = 'white';
+                    content.style.borderRadius = '8px';
+                    content.style.padding = '20px';
+                    content.style.maxWidth = '600px';
+                    content.style.width = '90%';
+                    content.style.maxHeight = '85vh';
+                    content.style.overflow = 'auto';
+                    content.style.boxShadow = '0 10px 40px rgba(0,0,0,0.3)';
+                    content.style.position = 'relative';
+                    content.style.zIndex = '1000000';
+                }
+
+                // Ajouter les event listeners
+                const closeButtons = modal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
+                closeButtons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = '';
+                    });
+                });
+
+                if (overlay) {
+                    overlay.addEventListener('click', function(event) {
+                        if (event.target === overlay) {
+                            modal.style.display = 'none';
+                            document.body.style.overflow = '';
+                        }
+                    });
+                }
+
                 document.body.style.overflow = 'hidden';
-
-                console.log('🔍 Test modal created and appended to body');
+                console.log('🔍 Canvas modal should now be visible');
             } else {
                 console.error('Modal not found for category:', category, 'Expected ID:', modalId);
             }
