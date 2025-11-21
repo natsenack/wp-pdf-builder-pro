@@ -25,9 +25,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const canvasSettings = useCanvasSettings();
   const selectionMode = canvasSettings.canvasSelectionMode;
 
-  // Debug log
-  console.log('🔍 useCanvasInteraction - selectionMode:', selectionMode, 'canvasSettings:', canvasSettings);
-
   // États pour le drag et resize
   const isDraggingRef = useRef(false);
   const isResizingRef = useRef(false);
@@ -620,7 +617,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
     // ✅ Sinon on a cliqué sur le vide - gérer selon le mode de sélection
     if (selectionMode === 'lasso' || selectionMode === 'rectangle') {
-      console.log('🎯 Starting selection mode:', selectionMode);
       // Commencer une nouvelle sélection
       isSelectingRef.current = true;
       selectionStartRef.current = { x, y };
@@ -695,12 +691,10 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           .filter(element => isElementInLasso(element, selectionPointsRef.current))
           .map(element => element.id);
       } else if (selectionMode === 'rectangle' && selectionRectRef.current.width > 0 && selectionRectRef.current.height > 0) {
-        console.log('✅ Finalizing rectangle selection:', selectionRectRef.current);
         // Sélection rectangle : vérifier quels éléments intersectent le rectangle
         selectedElementIds = state.elements
           .filter(element => isElementInRectangle(element, selectionRectRef.current))
           .map(element => element.id);
-        console.log('🎯 Selected elements:', selectedElementIds);
       }
 
       // Appliquer la sélection
@@ -927,7 +921,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         // Ajouter le point actuel au lasso
         selectionPointsRef.current.push({ x, y });
       } else if (selectionMode === 'rectangle') {
-        console.log('📐 Updating rectangle selection:', { x, y, start: selectionStartRef.current });
         // Mettre à jour le rectangle de sélection
         const startX = Math.min(selectionStartRef.current.x, x);
         const startY = Math.min(selectionStartRef.current.y, y);
