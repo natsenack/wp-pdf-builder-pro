@@ -20,6 +20,6 @@ wp_enqueue_script(
 // Localiser le script pour AJAX
 wp_localize_script('pdf-builder-settings-js', 'pdf_builder_ajax', array(
     'ajax_url' => admin_url('admin-ajax.php'),
-    'nonce' => wp_create_nonce('pdf_builder_save_settings')
+    'nonce' => wp_create_nonce('pdf_builder_ajax')
 ));
 ?>
