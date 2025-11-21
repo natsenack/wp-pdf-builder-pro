@@ -8,13 +8,13 @@ import { useMemo, useState, useEffect } from 'react';
  * @returns {Object} Les paramètres du canvas
  */
 export const useCanvasSettings = () => {
-    const [settingsVersion, setSettingsVersion] = useState(0);
+    const [settings, setSettings] = useState(() => window.pdfBuilderCanvasSettings || getDefaultCanvasSettings());
 
     // Écouter les changements de paramètres
     useEffect(() => {
         const handleSettingsUpdate = () => {
-            console.log('REACT: handleSettingsUpdate called, updating settingsVersion');
-            setSettingsVersion(prev => prev + 1);
+            console.log('REACT: handleSettingsUpdate - updating settings from window');
+            setSettings(window.pdfBuilderCanvasSettings);
         };
 
         const handleStorageChange = async (event: StorageEvent) => {
@@ -41,9 +41,8 @@ export const useCanvasSettings = () => {
                             ...window.pdfBuilderCanvasSettings,
                             ...data.data
                         };
-                        console.log('REACT: window.pdfBuilderCanvasSettings updated, triggering handleSettingsUpdate');
-                        // Trigger settings update
-                        handleSettingsUpdate();
+                        console.log('REACT: window.pdfBuilderCanvasSettings updated, setting settings');
+                        setSettings(window.pdfBuilderCanvasSettings);
                     } else {
                         console.warn('REACT: Invalid AJAX response:', data);
                     }
@@ -63,15 +62,6 @@ export const useCanvasSettings = () => {
             window.removeEventListener('storage', handleStorageChange);
         };
     }, []);
-
-    const settings = useMemo(() => {
-        // Récupérer les paramètres depuis window.pdfBuilderCanvasSettings
-        // définis par Canvas_Manager::get_canvas_settings_script()
-        if (typeof window !== 'undefined' && window.pdfBuilderCanvasSettings) {
-            return window.pdfBuilderCanvasSettings;
-        }
-        return getDefaultCanvasSettings();
-    }, [settingsVersion]); // Dépend maintenant de settingsVersion
 
     return settings;
 };
