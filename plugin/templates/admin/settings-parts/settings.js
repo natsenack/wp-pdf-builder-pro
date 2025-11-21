@@ -50,11 +50,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // === GESTION DES CARTES CANVAS (ouverture des modales) ===
-    const canvasCards = document.querySelectorAll('.canvas-card');
+    const configureButtons = document.querySelectorAll('.canvas-configure-btn');
 
-    canvasCards.forEach(function(card) {
-        card.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
+    configureButtons.forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.stopPropagation(); // Empêcher la propagation du clic
+
+            // Trouver la carte parente pour obtenir la catégorie
+            const card = this.closest('.canvas-card');
+            const category = card.getAttribute('data-category');
             const modalId = 'canvas-' + category + '-modal';
             const modal = document.getElementById(modalId);
 
