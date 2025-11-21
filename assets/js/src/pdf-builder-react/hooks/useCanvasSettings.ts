@@ -1,12 +1,29 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 /**
  * Hook pour accéder aux paramètres du canvas
  * Retourne tous les paramètres canvas depuis les options WordPress
+ * Se met à jour automatiquement quand les paramètres changent
  *
  * @returns {Object} Les paramètres du canvas
  */
 export const useCanvasSettings = () => {
+    const [settingsVersion, setSettingsVersion] = useState(0);
+
+    // Écouter les changements de paramètres
+    useEffect(() => {
+        const handleSettingsUpdate = () => {
+            console.log('PDF Builder: Canvas settings updated, refreshing...');
+            setSettingsVersion(prev => prev + 1);
+        };
+
+        window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+
+        return () => {
+            window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+        };
+    }, []);
+
     const settings = useMemo(() => {
         // Récupérer les paramètres depuis window.pdfBuilderCanvasSettings
         // définis par Canvas_Manager::get_canvas_settings_script()
@@ -14,14 +31,14 @@ export const useCanvasSettings = () => {
             return window.pdfBuilderCanvasSettings;
         }
         return getDefaultCanvasSettings();
-    }, []);
+    }, [settingsVersion]); // Dépend maintenant de settingsVersion
 
     return settings;
 };
 
 /**
  * Hook pour accéder à un paramètre canvas spécifique
- * 
+ *
  * @param {string} key - Clé du paramètre
  * @param {unknown} defaultValue - Valeur par défaut
  * @returns {unknown} La valeur du paramètre
@@ -29,7 +46,9 @@ export const useCanvasSettings = () => {
 export const useCanvasSetting = (key: string, defaultValue: unknown = null) => {
     const settings = useCanvasSettings() as Record<string, unknown>;
     return useMemo(() => {
-        return key in settings ? settings[key] : defaultValue;
+        const value = key in settings ? settings[key] : defaultValue;
+        console.log(`PDF Builder: useCanvasSetting(${key}) =`, value);
+        return value;
     }, [key, settings, defaultValue]);
 };
 
