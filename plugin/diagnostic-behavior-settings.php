@@ -4,9 +4,12 @@
  * À placer dans le répertoire du plugin et accéder via l'URL WordPress
  */
 
-// Empêcher l'accès direct
-if (!defined('ABSPATH')) {
-    die('Accès direct non autorisé');
+// Inclure WordPress
+require_once('../../../wp-load.php');
+
+// Vérifier les permissions d'admin
+if (!current_user_can('manage_options')) {
+    wp_die('Accès non autorisé. Vous devez être administrateur pour accéder à cette page.');
 }
 
 echo "<h1>🔍 Diagnostic - Paramètres de comportement du canvas</h1>";
@@ -76,12 +79,13 @@ echo "</table>";
 
 echo "<h2>🔧 Actions de correction</h2>";
 echo "<form method='post'>";
+wp_nonce_field('reset_behavior_settings');
 echo "<input type='hidden' name='reset_behavior_settings' value='1'>";
 echo "<p><button type='submit' class='button button-primary'>Réinitialiser tous les paramètres de comportement aux valeurs par défaut</button></p>";
 echo "</form>";
 
 // Traiter la réinitialisation
-if (isset($_POST['reset_behavior_settings'])) {
+if (isset($_POST['reset_behavior_settings']) && wp_verify_nonce($_POST['_wpnonce'], 'reset_behavior_settings')) {
     foreach ($behavior_settings as $key => $config) {
         update_option($key, $config['default']);
     }
