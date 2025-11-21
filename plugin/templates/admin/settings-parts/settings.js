@@ -1982,45 +1982,63 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('🔍 DEBUG: Opening modal:', modalId);
                 console.log('🔍 DEBUG: Modal HTML structure:', modal.outerHTML.substring(0, 200) + '...');
 
-                modal.style.display = 'block';
-                modal.style.position = 'fixed';
-                modal.style.top = '0';
-                modal.style.left = '0';
-                modal.style.width = '100%';
-                modal.style.height = '100%';
-                modal.style.zIndex = '10001';
+                // Forcer l'affichage de la modale de manière agressive
+                modal.style.cssText = `
+                    display: block !important;
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                    z-index: 999999 !important;
+                    background: rgba(0,0,0,0.8) !important;
+                `;
                 document.body.style.overflow = 'hidden';
+
+                // Forcer l'affichage de l'overlay
+                const overlay = modal.querySelector('.canvas-modal-overlay');
+                if (overlay) {
+                    overlay.style.cssText = `
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        width: 100% !important;
+                        height: 100% !important;
+                        z-index: 1000000 !important;
+                    `;
+                }
+
+                // Forcer l'affichage du contenu
+                const content = modal.querySelector('.canvas-modal-content');
+                if (content) {
+                    content.style.cssText = `
+                        display: block !important;
+                        position: relative !important;
+                        z-index: 1000001 !important;
+                        background: white !important;
+                        border-radius: 8px !important;
+                        padding: 20px !important;
+                        max-width: 600px !important;
+                        width: 90% !important;
+                        margin: 0 auto !important;
+                    `;
+                }
+
+                console.log('🔍 DEBUG: Forced modal display with !important styles');
 
                 // Vérifier la visibilité après ouverture
                 setTimeout(() => {
-                    const computedStyle = window.getComputedStyle(modal);
-                    const content = modal.querySelector('.canvas-modal-content');
-                    const contentStyle = content ? window.getComputedStyle(content) : null;
-                    console.log('🔍 DEBUG: Modal visibility check:', {
-                        modal: {
-                            display: computedStyle.display,
-                            visibility: computedStyle.visibility,
-                            opacity: computedStyle.opacity,
-                            zIndex: computedStyle.zIndex,
-                            position: computedStyle.position,
-                            top: computedStyle.top,
-                            left: computedStyle.left,
-                            width: computedStyle.width,
-                            height: computedStyle.height
-                        },
-                        content: content ? {
-                            display: contentStyle.display,
-                            visibility: contentStyle.visibility,
-                            opacity: contentStyle.opacity,
-                            zIndex: contentStyle.zIndex,
-                            position: contentStyle.position
-                        } : 'NOT FOUND'
-                    });
+                    console.log('🔍 DEBUG: Modal display:', modal.style.display);
+                    console.log('🔍 DEBUG: Modal position:', modal.style.position);
+                    console.log('🔍 DEBUG: Modal z-index:', modal.style.zIndex);
+                    console.log('🔍 DEBUG: Body overflow:', document.body.style.overflow);
 
-                    // Forcer l'affichage si nécessaire
-                    if (content && contentStyle.display === 'none') {
-                        console.log('🔍 DEBUG: Forcing content display');
-                        content.style.display = 'flex';
+                    const content = modal.querySelector('.canvas-modal-content');
+                    if (content) {
+                        console.log('🔍 DEBUG: Content display:', content.style.display);
+                        console.log('🔍 DEBUG: Content z-index:', content.style.zIndex);
+                    } else {
+                        console.log('🔍 DEBUG: Content not found!');
                     }
                 }, 100);
 
