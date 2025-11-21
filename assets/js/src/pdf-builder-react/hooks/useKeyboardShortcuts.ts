@@ -9,7 +9,6 @@ import { useCanvasSetting } from './useCanvasSettings';
 export const useKeyboardShortcuts = () => {
   const { state, dispatch } = useBuilder();
   const keyboardShortcutsEnabled = useCanvasSetting('enable_keyboard_shortcuts', true) as boolean;
-  console.log('REACT: keyboardShortcutsEnabled =', keyboardShortcutsEnabled);
 
   // Références pour éviter les closures stale
   const stateRef = useRef(state);
@@ -33,12 +32,8 @@ export const useKeyboardShortcuts = () => {
       preventDefault: () => void;
       target: object;
     };
-    console.log('REACT: handleKeyDown called with key:', keyboardEvent.key);
     // Ne pas traiter si les raccourcis sont désactivés
-    if (!keyboardShortcutsEnabled) {
-      console.log('REACT: Keyboard shortcuts disabled, ignoring key event');
-      return;
-    }
+    if (!keyboardShortcutsEnabled) return;
 
     // Ne pas traiter si on est dans un champ de saisie
     const target = event.target as HTMLElement;

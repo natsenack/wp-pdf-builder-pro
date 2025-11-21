@@ -13,7 +13,6 @@ export const useCanvasSettings = () => {
     // Écouter les changements de paramètres
     useEffect(() => {
         const handleSettingsUpdate = () => {
-            console.log('REACT: canvasSettingsUpdated event received');
             setSettingsVersion(prev => prev + 1);
         };
 
@@ -46,11 +45,7 @@ export const useCanvasSettings = () => {
 export const useCanvasSetting = (key: string, defaultValue: unknown = null) => {
     const settings = useCanvasSettings() as Record<string, unknown>;
     return useMemo(() => {
-        const value = key in settings ? settings[key] : defaultValue;
-        if (key === 'enable_keyboard_shortcuts') {
-            console.log(`REACT: useCanvasSetting(${key}) =`, value, 'settings:', settings);
-        }
-        return value;
+        return key in settings ? settings[key] : defaultValue;
     }, [key, settings, defaultValue]);
 };
 
