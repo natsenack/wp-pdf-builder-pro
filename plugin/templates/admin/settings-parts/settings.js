@@ -862,6 +862,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Send AJAX request
             console.log('PDF Builder: Sending AJAX request for category:', category);
             console.log('PDF Builder: Form data:', Object.fromEntries(formData));
+            if (category === 'interactions') {
+                console.log('DEBUG: Interactions form data details:', Object.fromEntries(formData));
+            }
             fetch(pdf_builder_ajax.ajax_url, {
                 method: 'POST',
                 body: formData
