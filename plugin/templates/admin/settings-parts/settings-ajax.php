@@ -336,6 +336,7 @@ function pdf_builder_save_canvas_settings_handler() {
                         $value = $value === '1';
                     }
                     update_option($option_key, $value);
+                    error_log("SAVED: $option_key = " . (is_bool($value) ? ($value ? 'true' : 'false') : $value));
                 }
             }
 
