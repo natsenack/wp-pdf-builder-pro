@@ -143,7 +143,18 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
   try {
     const windowSettings = window.pdfBuilderCanvasSettings;
     
+    // Debug: Check if window settings exist - FORCE LOG
+    console.log('=== PDF BUILDER DEBUG ===');
+    console.log('window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
+    if (typeof window !== 'undefined' && window.pdfBuilderCanvasSettings) {
+      console.log('window.pdfBuilderCanvasSettings content:', window.pdfBuilderCanvasSettings);
+      console.log('canvas_selection_mode in window settings:', window.pdfBuilderCanvasSettings.canvas_selection_mode);
+    } else {
+      console.log('window.pdfBuilderCanvasSettings is undefined or null');
+    }
+    
     if (!windowSettings) {
+      console.log('🔍 No window settings found, using defaults');
       return {
         ...DEFAULT_SETTINGS,
         isLoading: false,
@@ -228,9 +239,11 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       refreshSettings: () => {}
     };
 
+    console.log('🔍 Mapped settings:', newSettings);
     return newSettings;
   } catch (_err) {
     const errorMsg = _err instanceof Error ? _err.message : 'Unknown error';
+    console.log('🔍 Error loading settings:', errorMsg);
     return {
       ...DEFAULT_SETTINGS,
       isLoading: false,
@@ -242,112 +255,30 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
 }
 
 export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps) {
-  const [settings, setSettings] = useState<CanvasSettingsContextType>(() => DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<CanvasSettingsContextType>(() => {
+    console.log('🔍 CanvasSettingsProvider initializing...');
+    // Try to load from window object first
+    const windowSettings = loadSettingsFromWindowObj();
+    console.log('🔍 Initial settings loaded:', windowSettings.canvasSelectionMode);
+    return windowSettings;
+  });
 
-  // Load settings from server on mount
+  // Load settings from server on mount - simplified
   useEffect(() => {
-    handleRefresh();
+    // For now, just use window settings - AJAX calls can be added later if needed
+    const windowSettings = loadSettingsFromWindowObj();
+    setSettings(windowSettings);
   }, []);
 
   // Listen for settings update events
   useEffect(() => {
     const handleSettingsUpdate = () => {
-      handleRefresh();
+      const windowSettings = loadSettingsFromWindowObj();
+      setSettings(windowSettings);
     };
     window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
     return () => window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
   }, []);
-
-  const handleRefresh = async () => {
-    try {
-      // Faire un appel AJAX pour récupérer les paramètres mis à jour
-      const response = await fetch(window.pdfBuilderAjax?.ajax_url || '/wp-admin/admin-ajax.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          action: 'pdf_builder_get_canvas_settings',
-          nonce: window.pdfBuilderAjax?.nonce || ''
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.data) {
-          // Mapper les données reçues vers le format du contexte
-          const newSettings: CanvasSettingsContextType = {
-            ...DEFAULT_SETTINGS,
-            // Dimensions
-            canvasWidth: data.data.canvas_width ?? DEFAULT_SETTINGS.canvasWidth,
-            canvasHeight: data.data.canvas_height ?? DEFAULT_SETTINGS.canvasHeight,
-            canvasUnit: data.data.canvas_unit ?? DEFAULT_SETTINGS.canvasUnit,
-            canvasOrientation: data.data.canvas_orientation ?? DEFAULT_SETTINGS.canvasOrientation,
-            
-            // Couleurs
-            canvasBackgroundColor: data.data.canvas_background_color ?? DEFAULT_SETTINGS.canvasBackgroundColor,
-            containerBackgroundColor: data.data.container_background_color ?? DEFAULT_SETTINGS.containerBackgroundColor,
-            borderColor: data.data.border_color ?? DEFAULT_SETTINGS.borderColor,
-            borderWidth: data.data.border_width ?? DEFAULT_SETTINGS.borderWidth,
-            shadowEnabled: data.data.shadow_enabled === true || data.data.shadow_enabled === '1',
-            
-            // Marges
-            marginTop: data.data.margin_top ?? DEFAULT_SETTINGS.marginTop,
-            marginRight: data.data.margin_right ?? DEFAULT_SETTINGS.marginRight,
-            marginBottom: data.data.margin_bottom ?? DEFAULT_SETTINGS.marginBottom,
-            marginLeft: data.data.margin_left ?? DEFAULT_SETTINGS.marginLeft,
-            showMargins: data.data.show_margins === true || data.data.show_margins === '1',
-            
-            // Grille
-            gridShow: data.data.show_grid === true || data.data.show_grid === '1',
-            gridSize: (data.data.show_grid === true || data.data.show_grid === '1')
-              ? (data.data.grid_size ?? DEFAULT_SETTINGS.gridSize)
-              : 0, // Désactiver gridSize si gridShow est false
-            gridColor: data.data.grid_color ?? DEFAULT_SETTINGS.gridColor,
-            gridSnapEnabled: (data.data.show_grid === true || data.data.show_grid === '1') && (data.data.snap_to_grid === true || data.data.snap_to_grid === '1'),
-            gridSnapTolerance: data.data.snap_tolerance ?? DEFAULT_SETTINGS.gridSnapTolerance,
-            guidesEnabled: data.data.show_guides === true || data.data.show_guides === '1',
-            
-            // 🔍 Zoom & Navigation
-            navigationEnabled: data.data.navigation_enabled === true || data.data.navigation_enabled === '1',
-            zoomDefault: (() => {
-              const minZoom = Math.max(1, (data.data.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin);
-              const maxZoom = Math.max(minZoom, (data.data.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax);
-              const defaultZoom = (data.data.default_zoom as number) ?? DEFAULT_SETTINGS.zoomDefault;
-              return Math.max(minZoom, Math.min(maxZoom, defaultZoom));
-            })(),
-            zoomMin: Math.max(1, (data.data.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin),
-            zoomMax: (() => {
-              const minZoom = Math.max(1, (data.data.min_zoom as number) ?? DEFAULT_SETTINGS.zoomMin);
-              const maxZoom = (data.data.max_zoom as number) ?? DEFAULT_SETTINGS.zoomMax;
-              return Math.max(minZoom, maxZoom);
-            })(),
-            zoomStep: Math.max(1, (data.data.zoom_step as number) ?? DEFAULT_SETTINGS.zoomStep),
-            
-            // Sélection
-            selectionDragEnabled: data.data.drag_enabled === true || data.data.drag_enabled === '1',
-            selectionMultiSelectEnabled: data.data.multi_select === true || data.data.multi_select === '1',
-            selectionRotationEnabled: data.data.enable_rotation === true || data.data.enable_rotation === '1',
-            selectionCopyPasteEnabled: data.data.copy_paste_enabled === true || data.data.copy_paste_enabled === '1',
-            selectionShowHandles: data.data.show_resize_handles === true || data.data.show_resize_handles === '1',
-            selectionHandleSize: (data.data.handle_size as number) ?? DEFAULT_SETTINGS.selectionHandleSize,
-            selectionHandleColor: (data.data.handle_color as string) ?? DEFAULT_SETTINGS.selectionHandleColor,
-            canvasSelectionMode: (data.data.canvas_selection_mode as 'click' | 'lasso' | 'rectangle') ?? DEFAULT_SETTINGS.canvasSelectionMode,
-            
-            // Autres paramètres...
-            isLoading: false,
-            isReady: true
-          };
-          
-          setSettings(newSettings);
-        }
-      }
-    } catch (error) {
-      console.warn('Erreur lors du rechargement des paramètres canvas:', error);
-      // Fallback: recharger depuis la variable globale
-      setSettings(loadSettingsFromWindowObj());
-    }
-  };
 
   // Écouter les événements custom pour les mises à jour
   useEffect(() => {

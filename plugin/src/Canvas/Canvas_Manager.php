@@ -608,12 +608,7 @@ JS;
             $mode = sanitize_text_field($settings['canvas_selection_mode']);
             if (in_array($mode, $allowed_modes)) {
                 $validated['canvas_selection_mode'] = $mode;
-                error_log("Canvas_Manager: canvas_selection_mode validated to: " . $mode);
-            } else {
-                error_log("Canvas_Manager: canvas_selection_mode invalid: " . $mode);
             }
-        } else {
-            error_log("Canvas_Manager: canvas_selection_mode not set in settings");
         }
 
         return $validated;

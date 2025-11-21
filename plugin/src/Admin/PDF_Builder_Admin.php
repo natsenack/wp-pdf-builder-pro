@@ -5849,6 +5849,7 @@ class PdfBuilderAdmin
             'auto_crop' => $canvas_settings_js['auto_crop'] ?? false,
             'embed_fonts' => $canvas_settings_js['embed_fonts'] ?? true,
             'optimize_for_web' => $canvas_settings_js['optimize_for_web'] ?? true,
+            'canvas_selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'click'),
         ]) . ";
         ";
         wp_add_inline_script('react-dom', $canvas_settings_script);
