@@ -464,10 +464,13 @@
                             <th scope="row"><label for="canvas_fps_target">Cible FPS</label></th>
                             <td>
                                 <select id="canvas_fps_target" name="canvas_fps_target">
-                                    <option value="30" <?php selected(get_option('pdf_builder_canvas_fps_target', '60'), '30'); ?>>30 FPS (Économie)</option>
-                                    <option value="60" <?php selected(get_option('pdf_builder_canvas_fps_target', '60'), '60'); ?>>60 FPS (Standard)</option>
-                                    <option value="120" <?php selected(get_option('pdf_builder_canvas_fps_target', '60'), '120'); ?>>120 FPS (Haute performance)</option>
+                                    <option value="30" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 30); ?>>30 FPS (Économie)</option>
+                                    <option value="60" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 60); ?>>60 FPS (Standard)</option>
+                                    <option value="120" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 120); ?>>120 FPS (Haute performance)</option>
                                 </select>
+                                <div id="fps_preview" style="margin-top: 5px; padding: 5px; background: #f8f9fa; border-radius: 3px; font-size: 12px; color: #666;">
+                                    FPS actuel : <span id="current_fps_value"><?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?></span>
+                                </div>
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
                             </td>
                         </tr>
@@ -651,8 +654,23 @@
             </div>
             <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="debug">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-save" data-category="performance">Sauvegarder</button>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Preview FPS en temps réel
+document.addEventListener('DOMContentLoaded', function() {
+    const fpsSelect = document.getElementById('canvas_fps_target');
+    const fpsValue = document.getElementById('current_fps_value');
+
+    if (fpsSelect && fpsValue) {
+        fpsSelect.addEventListener('change', function() {
+            fpsValue.textContent = this.value;
+            fpsValue.style.color = this.value >= 60 ? '#28a745' : this.value >= 30 ? '#ffc107' : '#dc3545';
+        });
+    }
+});
+</script>
