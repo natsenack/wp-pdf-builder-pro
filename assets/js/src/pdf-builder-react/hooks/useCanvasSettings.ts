@@ -16,10 +16,20 @@ export const useCanvasSettings = () => {
             setSettingsVersion(prev => prev + 1);
         };
 
+        const handleStorageChange = (event: StorageEvent) => {
+            if (event.key === 'pdfBuilderSettingsUpdated') {
+                // Settings were updated in another tab, reload the page to get fresh settings
+                console.log('Settings updated in another tab, reloading page...');
+                window.location.reload();
+            }
+        };
+
         window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+        window.addEventListener('storage', handleStorageChange);
 
         return () => {
             window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+            window.removeEventListener('storage', handleStorageChange);
         };
     }, []);
 

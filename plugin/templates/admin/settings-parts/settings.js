@@ -890,6 +890,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Notify React context to refresh settings
                     window.dispatchEvent(new Event('canvasSettingsUpdated'));
 
+                    // Notify other tabs/windows about settings change
+                    try {
+                        localStorage.setItem('pdfBuilderSettingsUpdated', Date.now().toString());
+                        // Also dispatch a storage event for same-tab listeners
+                        window.dispatchEvent(new StorageEvent('storage', {
+                            key: 'pdfBuilderSettingsUpdated',
+                            newValue: Date.now().toString(),
+                            storageArea: localStorage
+                        }));
+                    } catch (e) {
+                        // localStorage might not be available
+                    }
+
                     // Close modal after a short delay
                     setTimeout(() => {
                         const modal = document.querySelector('.canvas-modal[style*="display: flex"]');
