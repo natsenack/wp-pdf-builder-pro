@@ -385,6 +385,36 @@
 
                 <p style="margin-top: 15px;"><strong>Priorité :</strong> <span style="color: #ffc107; font-weight: bold;">MOYENNE</span> - Fonctionnalité non critique pour le moment</p>
             </div>
+
+            <div style="background: #e8f5e8; border: 1px solid #4caf50; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h4 style="color: #2e7d32; margin-top: 0;">📤 Carte "Export & Qualité" - EN ATTENTE</h4>
+                <p style="margin-bottom: 15px;"><strong>Statut :</strong> <span style="color: #ff9800; font-weight: bold;">EN ATTENTE - SYSTÈME D'APERÇU</span></p>
+
+                <div style="background: #f1f8e9; border-left: 4px solid #4caf50; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #2e7d32;">📋 Contexte :</h5>
+                    <p style="margin-bottom: 0;">Cette carte devra être créée dans les paramètres canvas une fois que le système d'aperçu PDF sera complètement implémenté et fonctionnel.</p>
+                </div>
+
+                <div style="background: #f8f9fa; border-left: 4px solid #2196f3; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #1976d2;">🎯 Fonctionnalités à implémenter :</h5>
+                    <ul style="margin-bottom: 0;">
+                        <li><strong>Formats d'export :</strong> PDF, PNG, JPG avec aperçu des formats disponibles</li>
+                        <li><strong>Contrôle qualité :</strong> Slider/barre de qualité d'image (1-100%)</li>
+                        <li><strong>Options de compression :</strong> Toggle pour compression intelligente</li>
+                        <li><strong>Métadonnées :</strong> Option pour inclure/exclure les métadonnées</li>
+                        <li><strong>Prévisualisation :</strong> Aperçu miniature du résultat d'export</li>
+                        <li><strong>Taille estimée :</strong> Calcul automatique de la taille du fichier</li>
+                    </ul>
+                </div>
+
+                <div style="background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #e65100;">⏳ Condition préalable :</h5>
+                    <p style="margin-bottom: 0;"><strong>Système d'aperçu PDF opérationnel requis avant de pouvoir créer cette carte.</strong> La carte aura besoin de pouvoir générer des aperçus des exports pour montrer à l'utilisateur le résultat avant l'export réel.</p>
+                </div>
+
+                <p style="margin-top: 15px;"><strong>Priorité :</strong> <span style="color: #ff9800; font-weight: bold;">ÉLEVÉE</span> - Fonctionnalité importante pour l'expérience utilisateur</p>
+                <p style="margin-top: 5px;"><strong>Dépend de :</strong> <span style="color: #2196f3; font-weight: bold;">Système d'aperçu PDF</span></p>
+            </div>
             </div>
 
             <div id="dev-console-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
