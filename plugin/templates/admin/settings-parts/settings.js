@@ -85,23 +85,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('🔍 Modal found, trying to show existing modal for category:', category);
 
                 // ESSAI : Au lieu de recréer, essayons de rendre visible la modale existante
-                modal.style.display = 'block !important';
-                modal.style.visibility = 'visible !important';
-                modal.style.opacity = '1 !important';
-                modal.style.zIndex = '999999 !important';
-                modal.style.position = 'fixed !important';
-                modal.style.top = '0 !important';
-                modal.style.left = '0 !important';
-                modal.style.width = '100% !important';
-                modal.style.height = '100% !important';
+                // Utiliser une classe CSS au lieu de styles inline pour éviter les conflits
+                modal.classList.add('canvas-modal-force-visible');
+                modal.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; z-index: 2147483647 !important; position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important;';
 
-                console.log('🔍 Existing modal styles applied');
+                console.log('🔍 Existing modal styles applied with force class');
+
+                // Vérifier les dimensions et position
+                console.log('🔍 Modal dimensions:', modal.offsetWidth, 'x', modal.offsetHeight);
+                console.log('🔍 Modal position:', modal.getBoundingClientRect());
 
                 // Vérifier les styles calculés de la modale existante
                 const computedStyle = window.getComputedStyle(modal);
                 console.log('🔍 Existing modal computed display:', computedStyle.display);
                 console.log('🔍 Existing modal computed visibility:', computedStyle.visibility);
                 console.log('🔍 Existing modal computed z-index:', computedStyle.zIndex);
+                console.log('🔍 Existing modal computed position:', computedStyle.position);
 
                 // Ajouter les event listeners à la modale existante
                 const closeButtons = modal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');

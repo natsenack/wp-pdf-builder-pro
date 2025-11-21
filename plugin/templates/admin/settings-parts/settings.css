@@ -1274,6 +1274,19 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     z-index: 10001; /* S'assurer que le contenu est au-dessus de l'overlay */
 }
 
+/* Classe de forçage pour rendre les modales visibles */
+.canvas-modal-force-visible {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 2147483647 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
 /* Modal Interactions & Comportement - hauteur spécifique pour afficher le footer */
 #canvas-interactions-modal .canvas-modal-content {
     max-height: 90vh;
