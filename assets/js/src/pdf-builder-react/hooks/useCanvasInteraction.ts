@@ -510,6 +510,10 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
     const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
 
+    // Borner les coordonnées aux limites du canvas pour éviter que la sélection dépasse
+    const boundedX = Math.max(0, Math.min(canvasWidth, x));
+    const boundedY = Math.max(0, Math.min(canvasHeight, y));
+
     // ✅ Chercher n'importe quel élément au clic (sélectionné ou pas)
     // Note: On cherche du dernier vers le premier pour sélectionner l'élément rendu au-dessus
     const clickedElement = [...state.elements].reverse().find(el => {
@@ -546,7 +550,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           isDraggingRef.current = true;
           // Stocker les positions de départ de tous les éléments sélectionnés
           dragStartRef.current = { [clickedElement.id]: { x: clickedElement.x, y: clickedElement.y } };
-          dragMouseStartRef.current = { x, y };  // Position souris
+          dragMouseStartRef.current = { x: boundedX, y: boundedY };  // Position souris
           selectedElementRef.current = clickedElement.id;
           event.preventDefault();
           return;
@@ -563,7 +567,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           }
         });
         dragStartRef.current = startPositions;
-        dragMouseStartRef.current = { x, y };  // Position souris
+        dragMouseStartRef.current = { x: boundedX, y: boundedY };  // Position souris
         selectedElementRef.current = clickedElement.id;
         event.preventDefault();
         return;
@@ -576,7 +580,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       isResizingRef.current = true;
       resizeHandleRef.current = resizeHandle.handle;
       selectedElementRef.current = resizeHandle.elementId;
-      resizeMouseStartRef.current = { x, y };  // Position souris au début du resize
+      resizeMouseStartRef.current = { x: boundedX, y: boundedY };  // Position souris au début du resize
       event.preventDefault();
       return;
     }
@@ -603,7 +607,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         const distance = Math.sqrt((x - centerX) ** 2 + (y - rotationHandleY) ** 2);
         if (distance <= rotationHandleSize / 2) {
           isRotatingRef.current = true;
-          rotationMouseStartRef.current = { x, y };
+          rotationMouseStartRef.current = { x: boundedX, y: boundedY };
           
           // Stocker les rotations initiales de tous les éléments sélectionnés
           const initialRotations: Record<string, number> = {};
@@ -625,10 +629,10 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     if (selectionMode === 'lasso' || selectionMode === 'rectangle') {
       // Commencer une nouvelle sélection
       isSelectingRef.current = true;
-      selectionStartRef.current = { x, y };
-      selectionPointsRef.current = [{ x, y }];
+      selectionStartRef.current = { x: boundedX, y: boundedY };
+      selectionPointsRef.current = [{ x: boundedX, y: boundedY }];
       if (selectionMode === 'rectangle') {
-        selectionRectRef.current = { x, y, width: 0, height: 0 };
+        selectionRectRef.current = { x: boundedX, y: boundedY, width: 0, height: 0 };
       }
       // Ne pas désélectionner immédiatement, attendre la fin de la sélection
       event.preventDefault();
@@ -916,8 +920,12 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // Calcul correct des coordonnées avec zoom et pan
     const canvasRelativeX = event.clientX - rect.left;
     const canvasRelativeY = event.clientY - rect.top;
-    const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
-    const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;    // Mettre à jour le curseur
+    let x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
+    let y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
+    
+    // Borner les coordonnées aux limites du canvas pour éviter que la sélection dépasse
+    x = Math.max(0, Math.min(canvasWidth, x));
+    y = Math.max(0, Math.min(canvasHeight, y));    // Mettre à jour le curseur
     const cursor = getCursorAtPosition(x, y);
     updateCursor(cursor);
 
