@@ -2471,7 +2471,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // Redessiner quand l'état change
   useEffect(() => {
     renderCanvas();
-  }, [renderCanvas, imageLoadCount]);
+  }, [renderCanvas, imageLoadCount, selectionState?.updateTrigger]);
 
   // Rendu initial
   useEffect(() => {

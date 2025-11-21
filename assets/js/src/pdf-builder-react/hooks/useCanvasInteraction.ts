@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect, useState } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { Element } from '../types/elements';
@@ -27,6 +27,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
   // Debug: Log selection mode
   console.log('🔍 useCanvasInteraction - selectionMode:', selectionMode);
+
+  // État pour déclencher le re-rendu du canvas pendant la sélection
+  const [selectionUpdateTrigger, setSelectionUpdateTrigger] = useState(0);
 
   // États pour le drag et resize
   const isDraggingRef = useRef(false);
@@ -923,6 +926,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       if (selectionMode === 'lasso') {
         // Ajouter le point actuel au lasso
         selectionPointsRef.current.push({ x, y });
+        // Forcer le re-rendu pour afficher le lasso en temps réel
+        setSelectionUpdateTrigger(prev => prev + 1);
       } else if (selectionMode === 'rectangle') {
         // Mettre à jour le rectangle de sélection
         const startX = Math.min(selectionStartRef.current.x, x);
@@ -930,13 +935,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         const width = Math.abs(x - selectionStartRef.current.x);
         const height = Math.abs(y - selectionStartRef.current.y);
         selectionRectRef.current = { x: startX, y: startY, width, height };
-      }
-      // Forcer le re-rendu pour afficher la sélection
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          // TODO: Implement visual feedback for selection
-        }
+        // Forcer le re-rendu pour afficher le rectangle en temps réel
+        setSelectionUpdateTrigger(prev => prev + 1);
       }
       return;
     }
@@ -1072,7 +1072,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       isSelecting: isSelectingRef.current,
       selectionMode,
       selectionRect: selectionRectRef.current,
-      selectionPoints: selectionPointsRef.current
+      selectionPoints: selectionPointsRef.current,
+      updateTrigger: selectionUpdateTrigger
     }
   };
 };
