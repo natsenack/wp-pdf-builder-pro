@@ -381,6 +381,16 @@
                                 <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Active les raccourcis clavier (Ctrl+Z, Ctrl+Y, etc.)</p>
                             </td>
                         </tr>
+                        <tr>
+                            <th scope="row"><label for="canvas_auto_save">Sauvegarde automatique</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="canvas_auto_save" name="canvas_auto_save" value="1" <?php checked(get_option('pdf_builder_canvas_auto_save', '1'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Sauvegarde automatiquement les modifications</p>
+                            </td>
+                        </tr>
                     </table>
                 </form>
             </div>
