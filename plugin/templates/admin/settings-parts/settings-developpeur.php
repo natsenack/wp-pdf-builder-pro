@@ -344,7 +344,15 @@
             </div>
 
             <div id="dev-todo-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
-            <h3 class="section-title">📋 À Faire - Développement</h3>
+            <!-- Accordéon pour la section À Faire - Développement -->
+            <div class="accordion-container" style="margin-bottom: 20px;">
+                <button type="button" class="accordion-toggle" id="dev-todo-toggle" style="width: 100%; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; text-align: left; cursor: pointer; font-size: 16px; font-weight: bold; color: #495057; transition: all 0.3s ease;">
+                    <span style="display: inline-flex; align-items: center; gap: 10px;">
+                        📋 À Faire - Développement
+                        <span class="accordion-icon" style="margin-left: auto; transition: transform 0.3s ease;">▶️</span>
+                    </span>
+                </button>
+                <div class="accordion-content" id="dev-todo-content" style="display: none; border: 1px solid #dee2e6; border-top: none; border-radius: 0 0 8px 8px; padding: 20px; background: white;">
 
             <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
                 <h4 style="color: #856404; margin-top: 0;">🚧 Système de Cache - RÉIMPLÉMENTATION REQUISE</h4>
@@ -415,6 +423,8 @@
                 <p style="margin-top: 15px;"><strong>Priorité :</strong> <span style="color: #ff9800; font-weight: bold;">ÉLEVÉE</span> - Fonctionnalité importante pour l'expérience utilisateur</p>
                 <p style="margin-top: 5px;"><strong>Dépend de :</strong> <span style="color: #2196f3; font-weight: bold;">Système d'aperçu PDF</span></p>
             </div>
+
+                </div>
             </div>
 
             <div id="dev-console-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
@@ -614,6 +624,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 systemInfoBtn.innerHTML = 'ℹ️ Infos Système';
                 systemInfoBtn.style.backgroundColor = '#28a745';
                 systemInfoBtn.style.borderColor = '#28a745';
+            }
+        });
+    }
+
+    // Accordéon pour la section À Faire - Développement
+    const devTodoToggle = document.getElementById('dev-todo-toggle');
+    const devTodoContent = document.getElementById('dev-todo-content');
+    const devTodoIcon = devTodoToggle ? devTodoToggle.querySelector('.accordion-icon') : null;
+
+    if (devTodoToggle && devTodoContent) {
+        devTodoToggle.addEventListener('click', function() {
+            if (devTodoContent.style.display === 'none' || devTodoContent.style.display === '') {
+                devTodoContent.style.display = 'block';
+                if (devTodoIcon) {
+                    devTodoIcon.style.transform = 'rotate(90deg)';
+                }
+                devTodoToggle.style.backgroundColor = '#e9ecef';
+            } else {
+                devTodoContent.style.display = 'none';
+                if (devTodoIcon) {
+                    devTodoIcon.style.transform = 'rotate(0deg)';
+                }
+                devTodoToggle.style.backgroundColor = '#f8f9fa';
             }
         });
     }
