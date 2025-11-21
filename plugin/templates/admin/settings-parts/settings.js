@@ -185,6 +185,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 newModal.style.display = 'block !important';
                 newModal.style.visibility = 'visible !important';
                 newModal.style.opacity = '1 !important';
+                newModal.style.zIndex = '999999 !important';
+                newModal.style.position = 'fixed !important';
+                newModal.style.top = '0 !important';
+                newModal.style.left = '0 !important';
+                newModal.style.width = '100% !important';
+                newModal.style.height = '100% !important';
 
                 // Vérifier les styles calculés
                 const computedStyle = window.getComputedStyle(newModal);
@@ -192,6 +198,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('🔍 Modal computed visibility:', computedStyle.visibility);
                 console.log('🔍 Modal computed opacity:', computedStyle.opacity);
                 console.log('🔍 Modal computed z-index:', computedStyle.zIndex);
+                console.log('🔍 Modal computed position:', computedStyle.position);
+
+                // Vérifier si la modale est visible avec un délai
+                setTimeout(function() {
+                    const stillVisible = newModal.offsetWidth > 0 && newModal.offsetHeight > 0;
+                    console.log('🔍 Modal dimensions after timeout:', newModal.offsetWidth, 'x', newModal.offsetHeight);
+                    console.log('🔍 Modal still in DOM:', document.body.contains(newModal));
+                    if (!stillVisible) {
+                        console.log('🔍 Modal is not visible, trying to force it again');
+                        newModal.style.display = 'block';
+                        newModal.style.zIndex = '999999';
+                    }
+                }, 100);
 
                 // Ajouter les event listeners
                 const closeButtons = newModal.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
