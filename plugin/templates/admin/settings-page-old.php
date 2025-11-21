@@ -26,7 +26,7 @@
     // Handle AJAX clear cache request BEFORE the early exit
     if ($is_ajax && isset($_POST['action']) && $_POST['action'] === 'pdf_builder_clear_cache') {
 
-        if (wp_verify_nonce($_POST['security'], 'pdf_builder_save_settings')) {
+        if (wp_verify_nonce($_POST['security'], 'pdf_builder_ajax')) {
             // Clear transients and cache
             delete_transient('pdf_builder_cache');
             delete_transient('pdf_builder_templates');
@@ -100,7 +100,7 @@
         // Optimize database
         elseif ($action === 'pdf_builder_optimize_db') {
 
-            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
                 global $wpdb;
                 $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder%'", ARRAY_N);
 
@@ -118,7 +118,7 @@
         // Repair templates
         elseif ($action === 'pdf_builder_repair_templates') {
 
-            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
                 // Réparer les templates : vérifier l'intégrité et corriger les erreurs basiques
                 global $wpdb;
                 
@@ -253,7 +253,7 @@
 
         // Save settings via floating button
         elseif ($action === 'pdf_builder_save_settings') {
-            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+            if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
                 $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
 
                 // Traiter directement selon l'onglet

@@ -21,7 +21,7 @@ function send_ajax_response($success, $message = '', $data = [])
 
 // AJAX Handlers
 function pdf_builder_clear_cache_handler() {
-    if (wp_verify_nonce($_POST['security'], 'pdf_builder_save_settings')) {
+    if (wp_verify_nonce($_POST['security'], 'pdf_builder_ajax')) {
         // Clear transients and cache
         delete_transient('pdf_builder_cache');
         delete_transient('pdf_builder_templates');
@@ -69,7 +69,7 @@ function pdf_builder_clear_cache_handler() {
 }
 
 function pdf_builder_save_settings_handler() {
-    if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_save_settings')) {
+    if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
 
     // Traiter directement selon l'onglet
