@@ -1014,9 +1014,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     // Show loading state
-                    const originalText = this.textContent;
-                    this.textContent = 'Sauvegarde...';
-                    this.disabled = true;
+                    // const originalText = this.textContent;
+                    // this.textContent = 'Sauvegarde...';
+                    // this.disabled = true;
 
                     // Send AJAX request with timeout
                     const controller = new AbortController();
@@ -1040,8 +1040,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (data.success) {
                             console.log('✅ Save successful for category:', category);
                             hideModal(modal);
-                            this.textContent = originalText;
-                            this.disabled = false;
+                            // this.textContent = originalText;
+                            // this.disabled = false;
 
                             // Update previews if function exists
                             if (typeof updateCanvasPreviews === 'function') {
@@ -1058,8 +1058,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     .catch(error => {
                         clearTimeout(timeoutId);
                         console.error('Save error:', error);
-                        this.textContent = originalText;
-                        this.disabled = false;
+                        // this.textContent = originalText;
+                        // this.disabled = false;
 
                         if (error.name === 'AbortError') {
                             alert('Erreur: Timeout de la requête (30 secondes)');
