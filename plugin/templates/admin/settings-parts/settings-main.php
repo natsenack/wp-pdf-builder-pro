@@ -419,25 +419,26 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
     <!-- Modals -->
     <?php require_once 'settings-modals.php'; ?>
 
-    <!-- Floating Save Button -->
-    <div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999 !important; background: rgba(255,255,255,0.9); border-radius: 10px; padding: 5px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-        <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
-            <span class="save-icon">💾</span>
-            <span class="save-text">Enregistrer</span>
-        </button>
-        <div class="floating-tooltip" style="position: absolute; bottom: 70px; right: 0; background: #333; color: white; padding: 8px 12px; border-radius: 6px; font-size: 14px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-            Cliquez pour sauvegarder tous les paramètres
-        </div>
-    </div>
-
-    <!-- Bouton de secours sans JavaScript -->
-    <noscript>
-        <div style="position: fixed; bottom: 80px; right: 20px; z-index: 999999; background: #fff; border: 2px solid #007cba; border-radius: 8px; padding: 10px;">
-            <strong>💾 Sauvegarde manuelle</strong><br>
-            <small>JavaScript désactivé - Utilisez les boutons de chaque onglet</small>
-        </div>
-    </noscript>
 </div>
+
+<!-- Floating Save Button - HORS du conteneur principal -->
+<div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999 !important; background: rgba(255,255,255,0.9); border-radius: 10px; padding: 5px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+    <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
+        <span class="save-icon">💾</span>
+        <span class="save-text">Enregistrer</span>
+    </button>
+    <div class="floating-tooltip" style="position: absolute; bottom: 70px; right: 0; background: #333; color: white; padding: 8px 12px; border-radius: 6px; font-size: 14px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+        Cliquez pour sauvegarder tous les paramètres
+    </div>
+</div>
+
+<!-- Bouton de secours sans JavaScript -->
+<noscript>
+    <div style="position: fixed; bottom: 80px; right: 20px; z-index: 999999; background: #fff; border: 2px solid #007cba; border-radius: 8px; padding: 10px;">
+        <strong>💾 Sauvegarde manuelle</strong><br>
+        <small>JavaScript désactivé - Utilisez les boutons de chaque onglet</small>
+    </div>
+</noscript>
 
 <style>
 /* Styles pour le bouton flottant */
