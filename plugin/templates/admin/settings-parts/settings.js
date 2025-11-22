@@ -31,14 +31,12 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Event listener pour le FPS
-    const fpsSelect = document.getElementById("canvas_fps_target");
-    if (fpsSelect) {
-        fpsSelect.addEventListener("change", function() {
-            const fpsValue = document.getElementById("current_fps_value");
-            if (fpsValue) {
-                fpsValue.textContent = this.value;
-            }
+    // Event listener pour la grille dans la modale (mise à jour en temps réel)
+    const gridEnabledCheckbox = document.getElementById("canvas_grid_enabled");
+    if (gridEnabledCheckbox) {
+        gridEnabledCheckbox.addEventListener("change", function() {
+            // Mettre à jour les contrôles de grille en temps réel
+            updateLegacyPreviews("grille");
         });
     }
 
