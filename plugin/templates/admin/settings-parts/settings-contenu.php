@@ -494,7 +494,14 @@ input:checked + .toggle-slider:before {
                     const overlay = modal.querySelector('.canvas-modal-overlay') || modal;
                     console.log('Using overlay/modal:', overlay === modal ? 'modal' : 'overlay');
                     console.log('Overlay/modal before show:', overlay.style.cssText);
-                    jQuery(overlay).css('display', 'flex');
+                    // Forcer l'affichage avec !important pour s'assurer que ça marche
+                    overlay.style.setProperty('display', 'flex', 'important');
+                    overlay.style.setProperty('width', '100%', 'important');
+                    overlay.style.setProperty('height', '100%', 'important');
+                    overlay.style.setProperty('position', 'fixed', 'important');
+                    overlay.style.setProperty('top', '0', 'important');
+                    overlay.style.setProperty('left', '0', 'important');
+                    overlay.style.setProperty('z-index', '999999', 'important');
                     // Afficher aussi la modale principale si elle est différente de l'overlay
                     if (overlay !== modal) {
                         jQuery(modal).css('display', 'flex');
