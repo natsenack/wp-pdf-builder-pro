@@ -928,8 +928,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     const success = showModal(modal);
 
                     if (success) {
-                        // Modal opened successfully - additional logic can be added here if needed
+                        // Modal opened successfully - update values from database
                         console.log('Modal opened successfully:', modalId);
+                        
+                        // Always refresh modal values from database when opening
+                        if (typeof updateCanvasPreviews === 'function') {
+                            console.log('Refreshing modal values for category:', category);
+                            updateCanvasPreviews(category);
+                        }
                     }
                 }
 
