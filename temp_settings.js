@@ -170,9 +170,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Afficher un message de succès
                 if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                     PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
-                } else {
-                    alert('Paramètres sauvegardés avec succès !');
                 }
+                // Alert supprimée selon les préférences utilisateur
             } else {
                 throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
             }
@@ -181,9 +180,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Erreur AJAX:', error);
             if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                 PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + error.message, 'error');
-            } else {
-                alert('Erreur lors de la sauvegarde: ' + error.message);
             }
+            // Alert supprimée selon les préférences utilisateur
         })
         .finally(() => {
             // Restaurer le bouton
