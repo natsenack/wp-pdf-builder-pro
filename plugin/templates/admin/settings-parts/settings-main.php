@@ -538,7 +538,8 @@ document.addEventListener('DOMContentLoaded', function() {
             forms.forEach(form => {
                 const formInputs = form.querySelectorAll('input, select, textarea');
                 formInputs.forEach(input => {
-                    if (input.name && input.type !== 'submit' && input.type !== 'button') {
+                    if (input.name && input.type !== 'submit' && input.type !== 'button' && 
+                        input.name !== 'action' && input.name !== 'nonce' && input.name !== 'current_tab') {
                         if (input.type === 'checkbox') {
                             formData.append(input.name, input.checked ? '1' : '0');
                         } else if (input.type === 'radio') {
