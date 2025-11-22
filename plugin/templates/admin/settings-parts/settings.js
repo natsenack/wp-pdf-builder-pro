@@ -568,7 +568,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Vérifier l'onglet actif au chargement
     updateFloatingButtonVisibility();
 
-}
 });
 
 // Fonction pour mettre à jour les previews des cartes après sauvegarde
