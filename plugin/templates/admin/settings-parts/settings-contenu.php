@@ -488,6 +488,7 @@ input:checked + .toggle-slider:before {
                 console.log('Configure button clicked for category:', category);
                 const modalId = 'canvas-' + category + '-modal';
                 const modal = document.getElementById(modalId);
+                console.log('Modal found:', modalId, modal ? 'YES' : 'NO');
                 if (modal) {
                     modal.style.display = 'block';
                 }
@@ -505,7 +506,9 @@ input:checked + .toggle-slider:before {
 
         // Handle modal save buttons
         const saveButtons = document.querySelectorAll('.canvas-modal-save');
-        saveButtons.forEach(function(button) {
+        console.log('Found save buttons:', saveButtons.length);
+        saveButtons.forEach(function(button, index) {
+            console.log('Attaching save handler to button', index, 'with category:', button.getAttribute('data-category'));
             button.addEventListener('click', function() {
                 const category = this.getAttribute('data-category');
                 const modal = this.closest('.canvas-modal');
