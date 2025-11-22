@@ -27,6 +27,31 @@
 
             <p style="margin-bottom: 20px;">Sélectionnez les rôles WordPress qui auront accès à PDF Builder Pro.</p>
 
+            <!-- Structure en colonnes -->
+            <div style="display: grid; grid-template-columns: 1fr 350px; gap: 30px; align-items: start;">
+
+                <!-- Colonne gauche : Gestion des rôles -->
+                <div>
+
+                    <!-- Boutons de contrôle rapide -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+                        <button type="button" id="select-all-roles" class="button button-secondary" style="margin-right: 5px;">
+                            Sélectionner Tout
+                        </button>
+                        <button type="button" id="select-common-roles" class="button button-secondary" style="margin-right: 5px;">
+                            Rôles Courants
+                        </button>
+                        <button type="button" id="select-none-roles" class="button button-secondary" style="margin-right: 5px;">
+                            Désélectionner Tout
+                        </button>
+                        <span class="description" style="margin-left: 10px;">
+                            Sélectionnés: <strong id="selected-count"><?php echo count($allowed_roles); ?></strong> rôle(s)
+                        </span>
+                    </div>
+
+                    <!-- Boutons toggle pour les rôles -->
+                    <div class="roles-toggle-list">
+
             <!-- Formulaire pour les paramètres d'accès (nécessaire pour la collecte AJAX) -->
             <form id="access-settings-form">
 
@@ -284,27 +309,73 @@
                     });
                 </script>
 
-            </form>
-
-                <!-- Permissions incluses -->
-                <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 4px; padding: 20px; margin-top: 30px;">
-                    <h4 style="margin-top: 0; color: #003d66;">🔐 Permissions Incluses</h4>
-                    <p style="margin: 10px 0; color: #003d66;">Les rôles sélectionnés auront accès à :</p>
-                    <ul style="margin: 0; padding-left: 20px; color: #003d66;">
-                        <li>✅ Création, édition et suppression de templates PDF</li>
-                        <li>✅ Génération et téléchargement de PDF</li>
-                        <li>✅ Accès aux paramètres et configuration</li>
-                        <li>✅ Prévisualisation avant génération</li>
-                        <li>✅ Gestion des commandes WooCommerce (si applicable)</li>
-                    </ul>
                 </div>
 
-                <!-- Avertissement important -->
-                <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; padding: 20px; margin-top: 20px;">
-                    <h4 style="margin-top: 0; color: #856404;">⚠️ Informations Importantes</h4>
-                    <ul style="margin: 0; padding-left: 20px; color: #856404;">
-                        <li>Les rôles non sélectionnés n'auront aucun accès à PDF Builder Pro</li>
-                        <li>Le rôle "Administrator" a toujours accès complet, indépendamment</li>
-                        <li>Minimum requis : au moins un rôle sélectionné</li>
-                    </ul>
+                <!-- Colonne droite : Informations et permissions -->
+                <div>
+
+                    <!-- Permissions Incluses -->
+                    <div class="permissions-info-card" style="margin-bottom: 20px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
+                            <span class="dashicons dashicons-shield" style="margin-right: 8px;"></span>
+                            Permissions Incluses
+                        </h3>
+                        <div class="permissions-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="permission-item" style="display: flex; align-items: center; padding: 8px 0;">
+                                <span class="dashicons dashicons-yes" style="color: #4ade80; margin-right: 8px;"></span>
+                                <span>Création de PDF</span>
+                            </div>
+                            <div class="permission-item" style="display: flex; align-items: center; padding: 8px 0;">
+                                <span class="dashicons dashicons-yes" style="color: #4ade80; margin-right: 8px;"></span>
+                                <span>Modification de templates</span>
+                            </div>
+                            <div class="permission-item" style="display: flex; align-items: center; padding: 8px 0;">
+                                <span class="dashicons dashicons-yes" style="color: #4ade80; margin-right: 8px;"></span>
+                                <span>Aperçu en temps réel</span>
+                            </div>
+                            <div class="permission-item" style="display: flex; align-items: center; padding: 8px 0;">
+                                <span class="dashicons dashicons-yes" style="color: #4ade80; margin-right: 8px;"></span>
+                                <span>Export PDF</span>
+                            </div>
+                            <div class="permission-item" style="display: flex; align-items: center; padding: 8px 0;">
+                                <span class="dashicons dashicons-yes" style="color: #4ade80; margin-right: 8px;"></span>
+                                <span>Gestion des éléments</span>
+                            </div>
+                            <div class="permission-item" style="display: flex; align-items: center; padding: 8px 0;">
+                                <span class="dashicons dashicons-yes" style="color: #4ade80; margin-right: 8px;"></span>
+                                <span>Paramètres de canvas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations Importantes -->
+                    <div class="important-info-card" style="padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
+                            <span class="dashicons dashicons-info" style="margin-right: 8px;"></span>
+                            Informations Importantes
+                        </h3>
+                        <div class="info-content">
+                            <div class="info-item" style="margin-bottom: 12px; display: flex; align-items: flex-start;">
+                                <span class="dashicons dashicons-warning" style="color: #fbbf24; margin-right: 8px; margin-top: 2px;"></span>
+                                <div>
+                                    <strong>Administrateur requis :</strong> L'administrateur a toujours accès à toutes les fonctionnalités, indépendamment des paramètres ci-dessous.
+                                </div>
+                            </div>
+                            <div class="info-item" style="margin-bottom: 12px; display: flex; align-items: flex-start;">
+                                <span class="dashicons dashicons-admin-users" style="color: #fbbf24; margin-right: 8px; margin-top: 2px;"></span>
+                                <div>
+                                    <strong>Rôles recommandés :</strong> Éditeur, Auteur et Contributeur sont les rôles les plus adaptés pour l'utilisation du générateur PDF.
+                                </div>
+                            </div>
+                            <div class="info-item" style="display: flex; align-items: flex-start;">
+                                <span class="dashicons dashicons-lock" style="color: #fbbf24; margin-right: 8px; margin-top: 2px;"></span>
+                                <div>
+                                    <strong>Sécurité :</strong> Les utilisateurs sans les permissions appropriées ne verront pas le menu du générateur PDF dans l'administration.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
+            </div>
