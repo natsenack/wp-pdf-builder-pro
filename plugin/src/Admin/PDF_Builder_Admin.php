@@ -5738,7 +5738,7 @@ class PdfBuilderAdmin
             'default_canvas_dpi' => $canvas_settings_js['default_canvas_dpi'] ?? 96,
             'canvas_width' => intval(get_option('pdf_builder_canvas_width', 794)),
             'canvas_height' => intval(get_option('pdf_builder_canvas_height', 1123)),
-            'canvas_orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
+            'canvas_orientation' => 'landscape', // FORCÉ TEMPORAIREMENT POUR TEST
             'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
             'default_orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
             'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',
