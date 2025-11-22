@@ -778,235 +778,288 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Canvas configuration modals functionality
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Canvas modals JS loaded and DOMContentLoaded fired');
+// Canvas configuration modals functionality - Version stable
+(function() {
+    'use strict';
 
-    // Hide all modals by default
-    const allModals = document.querySelectorAll('.canvas-modal');
-    allModals.forEach(function(modal) {
-        modal.style.display = 'none';
-    });
+    // Configuration
+    const MODAL_Z_INDEX = 2147483647; // Maximum z-index possible (signed 32-bit integer)
+    const MODAL_CONFIG = {
+        display: 'flex',
+        visibility: 'visible',
+        opacity: '1',
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        width: '100%',
+        height: '100%',
+        background: 'rgba(0,0,0,0.7)',
+        'z-index': MODAL_Z_INDEX.toString()
+    };
 
-    // Handle canvas configure buttons
-    const configureButtons = document.querySelectorAll('.canvas-configure-btn');
-    configureButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            const card = this.closest('.canvas-card');
-            const category = card.getAttribute('data-category');
-            const modalId = 'canvas-' + category + '-modal';
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                console.log('Opening modal:', modalId);
-                console.log('Modal before:', modal.style.display);
-                
-                // Force multiple CSS properties to ensure visibility
-                modal.style.setProperty('display', 'flex', 'important');
-                modal.style.setProperty('visibility', 'visible', 'important');
-                modal.style.setProperty('opacity', '1', 'important');
-                modal.style.setProperty('z-index', '1000000', 'important');
-                modal.style.setProperty('position', 'fixed', 'important');
-                modal.style.setProperty('top', '0', 'important');
-                modal.style.setProperty('left', '0', 'important');
-                modal.style.setProperty('width', '100%', 'important');
-                modal.style.setProperty('height', '100%', 'important');
-                
-                console.log('Modal after:', modal.style.display);
-                console.log('Modal computed style:', window.getComputedStyle(modal));
-                console.log('Modal rect:', modal.getBoundingClientRect());
-                
-                // Check if modal is actually visible
-                const rect = modal.getBoundingClientRect();
-                const isVisible = rect.width > 0 && rect.height > 0 && rect.top >= 0 && rect.left >= 0;
-                console.log('Modal visible?', isVisible, 'width:', rect.width, 'height:', rect.height, 'top:', rect.top, 'left:', rect.left);
-                
-                if (!isVisible) {
-                    console.error('Modal is not visible! Checking parent elements...');
-                    let parent = modal.parentElement;
-                    let depth = 0;
-                    while (parent && depth < 5) {
-                        const parentStyle = window.getComputedStyle(parent);
-                        console.log(`Parent ${depth} (${parent.tagName}.${parent.className}): display=${parentStyle.display}, visibility=${parentStyle.visibility}, overflow=${parentStyle.overflow}, position=${parentStyle.position}, z-index=${parentStyle.zIndex}`);
-                        parent = parent.parentElement;
-                        depth++;
+    let isInitialized = false;
+
+    // Utility functions
+    function safeQuerySelector(selector) {
+        try {
+            return document.querySelector(selector);
+        } catch (e) {
+            console.error('Invalid selector:', selector, e);
+            return null;
+        }
+    }
+
+    function safeQuerySelectorAll(selector) {
+        try {
+            return document.querySelectorAll(selector);
+        } catch (e) {
+            console.error('Invalid selector:', selector, e);
+            return [];
+        }
+    }
+
+    function applyModalStyles(modal) {
+        if (!modal) return false;
+
+        try {
+            // Reset all styles first
+            modal.style.cssText = '';
+
+            // Apply configuration with !important
+            Object.keys(MODAL_CONFIG).forEach(property => {
+                modal.style.setProperty(property, MODAL_CONFIG[property], 'important');
+            });
+
+            // Additional safety styles
+            modal.style.setProperty('pointer-events', 'auto', 'important');
+            modal.style.setProperty('align-items', 'center', 'important');
+            modal.style.setProperty('justify-content', 'center', 'important');
+
+            return true;
+        } catch (e) {
+            console.error('Error applying modal styles:', e);
+            return false;
+        }
+    }
+
+    function hideModal(modal) {
+        if (!modal) return;
+        try {
+            modal.style.setProperty('display', 'none', 'important');
+        } catch (e) {
+            console.error('Error hiding modal:', e);
+        }
+    }
+
+    function initializeModals() {
+        if (isInitialized) return;
+        console.log('Initializing canvas modals...');
+
+        try {
+            // Hide all modals by default
+            const allModals = safeQuerySelectorAll('.canvas-modal');
+            allModals.forEach(hideModal);
+
+            // Use event delegation for better stability
+            document.addEventListener('click', function(event) {
+                const target = event.target;
+
+                // Handle configure buttons
+                if (target.closest('.canvas-configure-btn')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const button = target.closest('.canvas-configure-btn');
+                    const card = button.closest('.canvas-card');
+
+                    if (!card) {
+                        console.error('Canvas card not found for configure button');
+                        return;
+                    }
+
+                    const category = card.getAttribute('data-category');
+                    if (!category) {
+                        console.error('Category not found in canvas card');
+                        return;
+                    }
+
+                    const modalId = 'canvas-' + category + '-modal';
+                    const modal = document.getElementById(modalId);
+
+                    if (!modal) {
+                        console.error('Modal not found:', modalId);
+                        return;
+                    }
+
+                    console.log('Opening modal:', modalId);
+                    const success = applyModalStyles(modal);
+
+                    if (success) {
+                        // Verify modal is visible
+                        setTimeout(() => {
+                            const rect = modal.getBoundingClientRect();
+                            const isVisible = rect.width > 0 && rect.height > 0;
+                            console.log('Modal visibility check:', {
+                                visible: isVisible,
+                                width: rect.width,
+                                height: rect.height,
+                                zIndex: window.getComputedStyle(modal).zIndex
+                            });
+
+                            if (!isVisible) {
+                                console.error('Modal failed to display properly');
+                            }
+                        }, 100);
                     }
                 }
-            } else {
-                console.error('Modal not found:', modalId);
-            }
-        });
-    });
 
-    // Handle modal close buttons
-    const closeButtons = document.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
-    closeButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            const modal = this.closest('.canvas-modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        });
-    });
-
-    // Handle modal save buttons
-    const saveButtons = document.querySelectorAll('.canvas-modal-save');
-    saveButtons.forEach(function(button) {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const category = this.getAttribute('data-category');
-            const modal = this.closest('.canvas-modal');
-            const form = modal.querySelector('form');
-
-            if (!form) {
-                alert('Erreur: Formulaire non trouvé');
-                return;
-            }
-
-            // Get AJAX config
-            let ajaxConfig = null;
-            if (typeof pdf_builder_ajax !== 'undefined') {
-                ajaxConfig = pdf_builder_ajax;
-            } else if (typeof pdfBuilderAjax !== 'undefined') {
-                ajaxConfig = pdfBuilderAjax;
-            }
-
-            if (!ajaxConfig) {
-                alert('Erreur de configuration AJAX');
-                return;
-            }
-
-            // Collect form data
-            const formData = new FormData(form);
-            formData.append('action', 'pdf_builder_save_canvas_settings');
-            formData.append('category', category);
-            formData.append('nonce', ajaxConfig.nonce || '');
-
-            // Show loading state
-            const originalText = this.textContent;
-            this.textContent = 'Sauvegarde...';
-            this.disabled = true;
-
-            // Send AJAX request
-            fetch(ajaxConfig.ajax_url, {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Success - close modal and update previews
-                    modal.style.display = 'none';
-                    this.textContent = originalText;
-                    this.disabled = false;
-
-                    // Update preview cards
-                    updateCanvasPreviews(category);
-
-                    // Dispatch event for other components
-                    window.dispatchEvent(new CustomEvent('canvasSettingsUpdated', {
-                        detail: { category: category, data: data.data }
-                    }));
-
-                    alert('Paramètres sauvegardés avec succès !');
-                } else {
-                    // Error
-                    this.textContent = originalText;
-                    this.disabled = false;
-                    alert('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'));
+                // Handle close buttons
+                if (target.closest('.canvas-modal-close, .canvas-modal-cancel')) {
+                    const modal = target.closest('.canvas-modal');
+                    if (modal) {
+                        hideModal(modal);
+                    }
                 }
-            })
-            .catch(error => {
-                this.textContent = originalText;
-                this.disabled = false;
-                alert('Erreur de connexion lors de la sauvegarde');
+
+                // Handle modal background click to close
+                if (target.classList.contains('canvas-modal')) {
+                    hideModal(target);
+                }
+            }, true); // Use capture phase for better event handling
+
+            // Handle escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    const visibleModals = safeQuerySelectorAll('.canvas-modal[style*="display: flex"]');
+                    visibleModals.forEach(hideModal);
+                }
             });
-        });
-    });
 
-    // Function to update canvas preview cards after save
-    function updateCanvasPreviews(category) {
-        switch(category) {
-            case 'dimensions':
-                // Update dimensions preview
-                const widthSpan = document.getElementById('card-canvas-width');
-                const heightSpan = document.getElementById('card-canvas-height');
-                if (widthSpan && heightSpan) {
-                    const format = document.getElementById('canvas_format')?.value || 'A4';
-                    const orientation = document.getElementById('canvas_orientation')?.value || 'portrait';
-                    const dpi = document.getElementById('canvas_dpi')?.value || 150;
+            // Handle save buttons with proper error handling
+            const saveButtons = safeQuerySelectorAll('.canvas-modal-save');
+            saveButtons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
 
-                    // Calculate dimensions based on format
-                    const formatDimensions = {
-                        'A4': orientation === 'landscape' ? {width: 1123, height: 794} : {width: 794, height: 1123},
-                        'A3': orientation === 'landscape' ? {width: 1587, height: 1123} : {width: 1123, height: 1587},
-                        'A5': orientation === 'landscape' ? {width: 559, height: 397} : {width: 397, height: 559}
-                    };
+                    const modal = this.closest('.canvas-modal');
+                    const category = this.getAttribute('data-category');
+                    const form = modal ? modal.querySelector('form') : null;
 
-                    const dims = formatDimensions[format] || formatDimensions['A4'];
-                    widthSpan.textContent = dims.width;
-                    heightSpan.textContent = dims.height;
-                }
-                break;
+                    if (!form) {
+                        alert('Erreur: Formulaire non trouvé');
+                        return;
+                    }
 
-            case 'zoom':
-                // Update zoom preview
-                updateZoomPreview();
-                break;
+                    // Get AJAX config with fallbacks
+                    let ajaxConfig = null;
+                    if (typeof pdf_builder_ajax !== 'undefined') {
+                        ajaxConfig = pdf_builder_ajax;
+                    } else if (typeof pdfBuilderAjax !== 'undefined') {
+                        ajaxConfig = pdfBuilderAjax;
+                    } else if (typeof ajaxurl !== 'undefined') {
+                        ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
+                    }
 
-            // Add other categories as needed
-            default:
-                console.log('Preview update not implemented for category:', category);
+                    if (!ajaxConfig || !ajaxConfig.ajax_url) {
+                        alert('Erreur de configuration AJAX');
+                        return;
+                    }
+
+                    // Collect form data safely
+                    let formData;
+                    try {
+                        formData = new FormData(form);
+                        formData.append('action', 'pdf_builder_save_canvas_settings');
+                        formData.append('category', category || '');
+                        formData.append('nonce', ajaxConfig.nonce || '');
+                    } catch (e) {
+                        console.error('Error creating form data:', e);
+                        alert('Erreur lors de la préparation des données');
+                        return;
+                    }
+
+                    // Show loading state
+                    const originalText = this.textContent;
+                    this.textContent = 'Sauvegarde...';
+                    this.disabled = true;
+
+                    // Send AJAX request with timeout
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+                    fetch(ajaxConfig.ajax_url, {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin',
+                        signal: controller.signal
+                    })
+                    .then(response => {
+                        clearTimeout(timeoutId);
+                        if (!response.ok) {
+                            throw new Error('HTTP ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            hideModal(modal);
+                            this.textContent = originalText;
+                            this.disabled = false;
+
+                            // Update previews if function exists
+                            if (typeof updateCanvasPreviews === 'function') {
+                                updateCanvasPreviews(category);
+                            }
+
+                            alert('Paramètres sauvegardés avec succès !');
+                        } else {
+                            throw new Error(data.data?.message || 'Erreur inconnue');
+                        }
+                    })
+                    .catch(error => {
+                        clearTimeout(timeoutId);
+                        console.error('Save error:', error);
+                        this.textContent = originalText;
+                        this.disabled = false;
+
+                        if (error.name === 'AbortError') {
+                            alert('Timeout: La requête a pris trop de temps');
+                        } else {
+                            alert('Erreur lors de la sauvegarde: ' + error.message);
+                        }
+                    });
+                });
+            });
+
+            // Initialize zoom preview if function exists
+            if (typeof updateZoomPreview === 'function') {
+                // Delay initialization to ensure DOM is ready
+                setTimeout(updateZoomPreview, 1000);
+            }
+
+            isInitialized = true;
+            console.log('Canvas modals initialized successfully');
+
+        } catch (e) {
+            console.error('Error initializing canvas modals:', e);
         }
     }
 
-    // Update zoom preview
-    function updateZoomPreview() {
-        const zoomPreview = document.getElementById('zoom-preview-value');
-        if (zoomPreview) {
-            // Get current values from options (this would need AJAX in real implementation)
-            // For now, we'll update it when settings are saved
-            // Get AJAX config for zoom preview
-            let ajaxConfig = null;
-            if (typeof pdf_builder_ajax !== 'undefined') {
-                ajaxConfig = pdf_builder_ajax;
-            } else if (typeof pdfBuilderAjax !== 'undefined') {
-                ajaxConfig = pdfBuilderAjax;
-            }
-
-            if (!ajaxConfig) {
-                console.error('AJAX config not found for zoom preview');
-                return;
-            }
-
-            fetch(ajaxConfig.ajax_url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    action: 'pdf_builder_get_canvas_settings',
-                    nonce: ajaxConfig.nonce || ''
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.data) {
-                    const minZoom = data.data.min_zoom || 10;
-                    const maxZoom = data.data.max_zoom || 500;
-                    zoomPreview.textContent = minZoom + '-' + maxZoom + '%';
-                }
-            })
-            .catch(error => {
-                console.error('Error updating zoom preview:', error);
-            });
-        }
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeModals);
+    } else {
+        // DOM already loaded
+        initializeModals();
     }
 
-    // Update zoom preview on settings update
-    window.addEventListener('canvasSettingsUpdated', updateZoomPreview);
+    // Also try to initialize after a short delay as backup
+    setTimeout(function() {
+        if (!isInitialized) {
+            console.log('Backup initialization attempt');
+            initializeModals();
+        }
+    }, 2000);
 
-    // Initial update
-    updateZoomPreview();
-});
-</script>
+})();
+})();</script>
