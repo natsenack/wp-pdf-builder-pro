@@ -533,25 +533,23 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('nonce', pdf_builder_ajax?.nonce || '');
             formData.append('current_tab', 'all'); // Sauvegarder tous les onglets
 
-            // Collecter les données de tous les formulaires visibles
+            // Collecter les données de TOUS les formulaires (pas seulement visibles)
             const forms = document.querySelectorAll('form');
             forms.forEach(form => {
-                if (form.offsetParent !== null) { // Formulaire visible
-                    const formInputs = form.querySelectorAll('input, select, textarea');
-                    formInputs.forEach(input => {
-                        if (input.name && input.type !== 'submit' && input.type !== 'button') {
-                            if (input.type === 'checkbox') {
-                                formData.append(input.name, input.checked ? '1' : '0');
-                            } else if (input.type === 'radio') {
-                                if (input.checked) {
-                                    formData.append(input.name, input.value);
-                                }
-                            } else {
+                const formInputs = form.querySelectorAll('input, select, textarea');
+                formInputs.forEach(input => {
+                    if (input.name && input.type !== 'submit' && input.type !== 'button') {
+                        if (input.type === 'checkbox') {
+                            formData.append(input.name, input.checked ? '1' : '0');
+                        } else if (input.type === 'radio') {
+                            if (input.checked) {
                                 formData.append(input.name, input.value);
                             }
+                        } else {
+                            formData.append(input.name, input.value);
                         }
-                    });
-                }
+                    }
+                });
             });
 
             // Envoyer la requête AJAX
