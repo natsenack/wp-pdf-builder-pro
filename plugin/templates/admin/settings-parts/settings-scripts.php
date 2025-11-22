@@ -14,7 +14,7 @@ wp_enqueue_script(
     PDF_BUILDER_PLUGIN_URL . 'templates/admin/settings-parts/settings.js',
     array('jquery'),
     PDF_BUILDER_VERSION,
-    true
+    false
 );
 
 // Localiser le script pour AJAX
