@@ -5732,6 +5732,9 @@ class PdfBuilderAdmin
         window.pdfBuilderCanvasSettings = " . wp_json_encode([
             'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
             'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
+            'default_canvas_dpi' => $canvas_settings_js['default_canvas_dpi'] ?? 96,
+            'canvas_width' => $canvas_settings_js['canvas_width'] ?? 794,
+            'canvas_height' => $canvas_settings_js['canvas_height'] ?? 1123,
             'default_canvas_unit' => $canvas_settings_js['default_canvas_unit'] ?? 'px',
             'default_orientation' => $canvas_settings_js['default_orientation'] ?? 'portrait',
             'canvas_background_color' => $canvas_settings_js['canvas_background_color'] ?? '#ffffff',

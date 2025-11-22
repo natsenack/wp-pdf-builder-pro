@@ -408,6 +408,48 @@ function pdf_builder_save_settings_handler() {
                     }
                 }
 
+                // Calculer et sauvegarder les dimensions du canvas en pixels
+                $format = get_option('pdf_builder_canvas_format', 'A4');
+                $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
+                $dpi = get_option('pdf_builder_canvas_dpi', 96);
+
+                // Dimensions standard en mm pour chaque format
+                $format_dimensions_mm = [
+                    'A4' => ['width' => 210, 'height' => 297],
+                    'A3' => ['width' => 297, 'height' => 420],
+                    'A5' => ['width' => 148, 'height' => 210],
+                    'Letter' => ['width' => 215.9, 'height' => 279.4],
+                    'Legal' => ['width' => 215.9, 'height' => 355.6],
+                    'Tabloid' => ['width' => 279.4, 'height' => 431.8]
+                ];
+
+                $dimensions = $format_dimensions_mm[$format] ?? $format_dimensions_mm['A4'];
+
+                // Appliquer l'orientation
+                if ($orientation === 'landscape') {
+                    $temp = $dimensions['width'];
+                    $dimensions['width'] = $dimensions['height'];
+                    $dimensions['height'] = $temp;
+                }
+
+                // Convertir mm en pixels (1mm = dpi/25.4 pixels)
+                $width_px = round(($dimensions['width'] / 25.4) * $dpi);
+                $height_px = round(($dimensions['height'] / 25.4) * $dpi);
+
+                // Sauvegarder les dimensions calculées
+                update_option('pdf_builder_canvas_width', $width_px);
+                update_option('pdf_builder_canvas_height', $height_px);
+
+                // Mettre à jour l'option globale des paramètres canvas pour l'éditeur React
+                $canvas_settings = [
+                    'default_canvas_format' => $format,
+                    'default_canvas_orientation' => $orientation,
+                    'default_canvas_dpi' => $dpi,
+                    'canvas_width' => $width_px,
+                    'canvas_height' => $height_px,
+                ];
+                update_option('pdf_builder_canvas_settings', $canvas_settings);
+
                 // Paramètres développeur
                 $value = $get_post_value('developer_enabled');
                 if ($value !== null) {
