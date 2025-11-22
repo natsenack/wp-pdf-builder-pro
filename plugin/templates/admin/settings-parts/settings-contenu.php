@@ -510,7 +510,7 @@ input:checked + .toggle-slider:before {
             if (event.target.closest('.canvas-modal')) {
                 console.log('Click detected in modal:', event.target.tagName, event.target.className, event.target.textContent);
             }
-        });
+        }, true);
 
         // Handle modal save buttons
         const saveButtons = document.querySelectorAll('.canvas-modal-save');
@@ -615,7 +615,7 @@ input:checked + .toggle-slider:before {
                     this.disabled = false;
                     alert('Erreur de connexion lors de la sauvegarde');
                 });
-            });
+            }, true);
         });
 
         // Function to update canvas preview cards after save
