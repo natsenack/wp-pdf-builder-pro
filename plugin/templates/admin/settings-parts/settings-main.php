@@ -981,7 +981,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     if (!ajaxConfig || !ajaxConfig.ajax_url) {
-                        alert('Erreur de configuration AJAX');
+                        alert('Erreur de configuration AJAX: variables AJAX non trouvées');
+                        console.error('Available globals:', { pdf_builder_ajax: typeof pdf_builder_ajax, pdfBuilderAjax: typeof pdfBuilderAjax, ajaxurl: typeof ajaxurl });
                         return;
                     }
 
@@ -1043,9 +1044,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.disabled = false;
 
                         if (error.name === 'AbortError') {
-                            // Alert timeout supprimée selon les préférences utilisateur
+                            alert('Erreur: Timeout de la requête (30 secondes)');
                         } else {
-                            // Alert erreur supprimée selon les préférences utilisateur
+                            alert('Erreur lors de la sauvegarde: ' + error.message);
                         }
                     });
                 });
