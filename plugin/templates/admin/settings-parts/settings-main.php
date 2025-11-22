@@ -541,9 +541,38 @@ document.addEventListener('DOMContentLoaded', function() {
             const forms = document.querySelectorAll('form');
             forms.forEach(form => {
                 const formInputs = form.querySelectorAll('input, select, textarea');
+
+                // Collecter d'abord les checkboxes multiples (arrays)
+                const checkboxArrays = {};
                 formInputs.forEach(input => {
-                    if (input.name && input.type !== 'submit' && input.type !== 'button' && 
-                        input.name !== 'action' && input.name !== 'nonce' && input.name !== 'current_tab') {
+                    if (input.type === 'checkbox' && input.name && input.name.endsWith('[]')) {
+                        const baseName = input.name.slice(0, -2); // Retirer []
+                        if (!checkboxArrays[baseName]) {
+                            checkboxArrays[baseName] = [];
+                        }
+                        if (input.checked) {
+                            checkboxArrays[baseName].push(input.value);
+                        }
+                    }
+                });
+
+                // Ajouter les arrays de checkboxes
+                Object.keys(checkboxArrays).forEach(name => {
+                    if (checkboxArrays[name].length > 0) {
+                        checkboxArrays[name].forEach(value => {
+                            formData.append(name + '[]', value);
+                        });
+                    } else {
+                        // Si aucun checkbox coché, envoyer un array vide
+                        formData.append(name + '[]', '');
+                    }
+                });
+
+                // Collecter les autres inputs
+                formInputs.forEach(input => {
+                    if (input.name && input.type !== 'submit' && input.type !== 'button' &&
+                        input.name !== 'action' && input.name !== 'nonce' && input.name !== 'current_tab' &&
+                        !input.name.endsWith('[]')) { // Ne pas traiter les arrays ici
                         if (input.type === 'checkbox') {
                             formData.append(input.name, input.checked ? '1' : '0');
                         } else if (input.type === 'radio') {
