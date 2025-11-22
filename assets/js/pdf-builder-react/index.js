@@ -9,7 +9,7 @@ import '../fallbacks/browser-compatibility.js';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder.tsx';
-import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas.ts';
+import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT, getCanvasDimensions } from './constants/canvas.ts';
 import { debugLog, debugError } from './utils/debug';
 import { 
   registerEditorInstance,
@@ -118,8 +118,15 @@ function initPDFBuilderReact() {
     const root = ReactDOM.createRoot(container);
     if (DEBUG_VERBOSE) debugLog('🎨 React root created, rendering component...');
 
-    root.render(React.createElement(ErrorBoundary, null, 
-      React.createElement(PDFBuilder, { width: DEFAULT_CANVAS_WIDTH, height: DEFAULT_CANVAS_HEIGHT })
+    // Récupérer les dimensions dynamiques depuis les paramètres
+    const canvasDimensions = getCanvasDimensions();
+    const canvasWidth = canvasDimensions.width;
+    const canvasHeight = canvasDimensions.height;
+
+    if (DEBUG_VERBOSE) debugLog('📐 Canvas dimensions:', { width: canvasWidth, height: canvasHeight });
+
+    root.render(React.createElement(ErrorBoundary, null,
+      React.createElement(PDFBuilder, { width: canvasWidth, height: canvasHeight })
     ));
     if (DEBUG_VERBOSE) debugLog('✅ React component rendered successfully');
 
