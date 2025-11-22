@@ -306,7 +306,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
       detail: { width: windowSettings.canvasWidth, height: windowSettings.canvasHeight }
     });
     console.log('🔍 Dispatching pdfBuilderUpdateCanvasDimensions event:', { width: windowSettings.canvasWidth, height: windowSettings.canvasHeight });
-    document.dispatchEvent(event);
+    setTimeout(() => document.dispatchEvent(event), 0);
   }, []);
 
   // Listen for settings update events
@@ -319,7 +319,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
       const event = new CustomEvent('pdfBuilderUpdateCanvasDimensions', {
         detail: { width: windowSettings.canvasWidth, height: windowSettings.canvasHeight }
       });
-      document.dispatchEvent(event);
+      setTimeout(() => document.dispatchEvent(event), 0);
     };
     window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
     return () => window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
