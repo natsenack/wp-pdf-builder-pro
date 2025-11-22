@@ -403,7 +403,7 @@ function pdf_builder_save_settings_handler() {
                 break;
 
             default:
-                send_ajax_response(false, 'Onglet non reconnu.');
+                send_ajax_response(false, 'Onglet non reconnu: ' . $current_tab);
                 break;
         }
     } else {
