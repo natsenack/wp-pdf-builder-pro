@@ -577,18 +577,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         floatingSaveBtn.classList.remove('saved');
                     }, 2000);
 
-                    // Afficher un message de succès si disponible
-                    if (data.data && data.data.message) {
-                        // Créer une notification temporaire
-                        const notification = document.createElement('div');
-                        notification.style.cssText = 'position: fixed; top: 50px; right: 20px; background: #28a745; color: white; padding: 15px; border-radius: 8px; z-index: 10000; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
-                        notification.textContent = data.data.message;
-                        document.body.appendChild(notification);
-
-                        setTimeout(() => {
-                            notification.remove();
-                        }, 3000);
-                    }
+                    // Notification de succès déjà gérée par le changement d'apparence du bouton
+                    // La notification popup a été supprimée pour éviter les doublons
                 } else {
                     // Erreur
                     console.error('Réponse complète en erreur:', data);
