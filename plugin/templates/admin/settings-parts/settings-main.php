@@ -578,12 +578,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     console.log('Sauvegarde réussie, traitement du succès...');
                     // Succès
+                    console.log('Changement du bouton en "Sauvegardé !"');
                     floatingSaveBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">Sauvegardé !</span>';
                     floatingSaveBtn.classList.remove('saving');
                     floatingSaveBtn.classList.add('saved');
 
                     // Remettre le texte original après 2 secondes
                     setTimeout(() => {
+                        console.log('Remise à zéro du bouton après succès');
                         floatingSaveBtn.innerHTML = originalText;
                         floatingSaveBtn.classList.remove('saved');
                     }, 2000);
