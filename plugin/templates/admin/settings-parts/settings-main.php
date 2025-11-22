@@ -777,4 +777,209 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Bouton flottant non trouvé');
     }
 });
+
+// Canvas configuration modals functionality
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Canvas modals JS loaded and DOMContentLoaded fired');
+
+    // Handle canvas configure buttons
+    const configureButtons = document.querySelectorAll('.canvas-configure-btn');
+    console.log('Found configure buttons:', configureButtons.length);
+    configureButtons.forEach(function(button, index) {
+        console.log('Attaching listener to button', index);
+        button.addEventListener('click', function() {
+            console.log('Configure button clicked!');
+            const card = this.closest('.canvas-card');
+            console.log('Card found:', card);
+            if (card) {
+                const category = card.getAttribute('data-category');
+                console.log('Category:', category);
+                const modalId = 'canvas-' + category + '-modal';
+                console.log('Looking for modal:', modalId);
+                const modal = document.getElementById(modalId);
+                console.log('Modal found:', modal);
+                if (modal) {
+                    modal.style.display = 'flex';
+                    console.log('Modal displayed');
+                } else {
+                    console.error('Modal not found:', modalId);
+                }
+            } else {
+                console.error('Card not found for button');
+            }
+        });
+    });
+
+    // Handle modal close buttons
+    const closeButtons = document.querySelectorAll('.canvas-modal-close, .canvas-modal-cancel');
+    closeButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.canvas-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+    // Handle modal save buttons
+    const saveButtons = document.querySelectorAll('.canvas-modal-save');
+    saveButtons.forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const category = this.getAttribute('data-category');
+            const modal = this.closest('.canvas-modal');
+            const form = modal.querySelector('form');
+
+            if (!form) {
+                alert('Erreur: Formulaire non trouvé');
+                return;
+            }
+
+            // Get AJAX config
+            let ajaxConfig = null;
+            if (typeof pdf_builder_ajax !== 'undefined') {
+                ajaxConfig = pdf_builder_ajax;
+            } else if (typeof pdfBuilderAjax !== 'undefined') {
+                ajaxConfig = pdfBuilderAjax;
+            }
+
+            if (!ajaxConfig) {
+                alert('Erreur de configuration AJAX');
+                return;
+            }
+
+            // Collect form data
+            const formData = new FormData(form);
+            formData.append('action', 'pdf_builder_save_canvas_settings');
+            formData.append('category', category);
+            formData.append('nonce', ajaxConfig.nonce || '');
+
+            // Show loading state
+            const originalText = this.textContent;
+            this.textContent = 'Sauvegarde...';
+            this.disabled = true;
+
+            // Send AJAX request
+            fetch(ajaxConfig.ajax_url, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Success - close modal and update previews
+                    modal.style.display = 'none';
+                    this.textContent = originalText;
+                    this.disabled = false;
+
+                    // Update preview cards
+                    updateCanvasPreviews(category);
+
+                    // Dispatch event for other components
+                    window.dispatchEvent(new CustomEvent('canvasSettingsUpdated', {
+                        detail: { category: category, data: data.data }
+                    }));
+
+                    alert('Paramètres sauvegardés avec succès !');
+                } else {
+                    // Error
+                    this.textContent = originalText;
+                    this.disabled = false;
+                    alert('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'));
+                }
+            })
+            .catch(error => {
+                this.textContent = originalText;
+                this.disabled = false;
+                alert('Erreur de connexion lors de la sauvegarde');
+            });
+        });
+    });
+
+    // Function to update canvas preview cards after save
+    function updateCanvasPreviews(category) {
+        switch(category) {
+            case 'dimensions':
+                // Update dimensions preview
+                const widthSpan = document.getElementById('card-canvas-width');
+                const heightSpan = document.getElementById('card-canvas-height');
+                if (widthSpan && heightSpan) {
+                    const format = document.getElementById('canvas_format')?.value || 'A4';
+                    const orientation = document.getElementById('canvas_orientation')?.value || 'portrait';
+                    const dpi = document.getElementById('canvas_dpi')?.value || 150;
+
+                    // Calculate dimensions based on format
+                    const formatDimensions = {
+                        'A4': orientation === 'landscape' ? {width: 1123, height: 794} : {width: 794, height: 1123},
+                        'A3': orientation === 'landscape' ? {width: 1587, height: 1123} : {width: 1123, height: 1587},
+                        'A5': orientation === 'landscape' ? {width: 559, height: 397} : {width: 397, height: 559}
+                    };
+
+                    const dims = formatDimensions[format] || formatDimensions['A4'];
+                    widthSpan.textContent = dims.width;
+                    heightSpan.textContent = dims.height;
+                }
+                break;
+
+            case 'zoom':
+                // Update zoom preview
+                updateZoomPreview();
+                break;
+
+            // Add other categories as needed
+            default:
+                console.log('Preview update not implemented for category:', category);
+        }
+    }
+
+    // Update zoom preview
+    function updateZoomPreview() {
+        const zoomPreview = document.getElementById('zoom-preview-value');
+        if (zoomPreview) {
+            // Get current values from options (this would need AJAX in real implementation)
+            // For now, we'll update it when settings are saved
+            // Get AJAX config for zoom preview
+            let ajaxConfig = null;
+            if (typeof pdf_builder_ajax !== 'undefined') {
+                ajaxConfig = pdf_builder_ajax;
+            } else if (typeof pdfBuilderAjax !== 'undefined') {
+                ajaxConfig = pdfBuilderAjax;
+            }
+
+            if (!ajaxConfig) {
+                console.error('AJAX config not found for zoom preview');
+                return;
+            }
+
+            fetch(ajaxConfig.ajax_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_get_canvas_settings',
+                    nonce: ajaxConfig.nonce || ''
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    const minZoom = data.data.min_zoom || 10;
+                    const maxZoom = data.data.max_zoom || 500;
+                    zoomPreview.textContent = minZoom + '-' + maxZoom + '%';
+                }
+            })
+            .catch(error => {
+                console.error('Error updating zoom preview:', error);
+            });
+        }
+    }
+
+    // Update zoom preview on settings update
+    window.addEventListener('canvasSettingsUpdated', updateZoomPreview);
+
+    // Initial update
+    updateZoomPreview();
+});
 </script>
