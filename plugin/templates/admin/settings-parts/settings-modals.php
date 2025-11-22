@@ -36,7 +36,7 @@
                             <td>
                                 <select id="canvas_orientation" name="canvas_orientation">
                                     <option value="portrait" <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
-                                    <option value="landscape" disabled <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'landscape'); ?>>Paysage - soon</option>
+                                    <option value="landscape" <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
                                 </select>
                                 <p class="canvas-modal-description">Orientation verticale du document</p>
                             </td>
