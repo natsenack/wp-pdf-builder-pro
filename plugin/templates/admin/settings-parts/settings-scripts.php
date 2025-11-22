@@ -11,7 +11,7 @@ require_once 'settings-canvas-params.php';
 // Enregistrer et charger le script JavaScript principal
 wp_enqueue_script(
     'pdf-builder-settings-js',
-    plugins_url('settings-parts/settings.js', dirname(__FILE__)),
+    plugins_url('settings.js', __DIR__),
     array('jquery'),
     PDF_BUILDER_VERSION,
     true
