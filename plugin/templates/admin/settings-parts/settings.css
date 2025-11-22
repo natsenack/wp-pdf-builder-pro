@@ -1468,48 +1468,46 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 }
 
 .canvas-modal-save {
-    background: rgba(255, 255, 255, 0.9);
-    color: #667eea;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: #ffffff;
+    color: #007cba;
+    border: 2px solid #ffffff;
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
     position: relative;
     z-index: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .canvas-modal-save:hover {
-    background: rgba(255, 255, 255, 1);
+    background: #f8f9fa;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    color: #5a67d8;
+    color: #005a87;
 }
 
 .canvas-modal-cancel {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
     position: relative;
     z-index: 1;
 }
 
 .canvas-modal-cancel:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.6);
     color: #ffffff;
+    transform: translateY(-1px);
 }
 
 /* Responsive pour les boutons modaux sur mobile */
