@@ -614,6 +614,7 @@ function pdf_builder_save_canvas_settings_handler() {
                 case 'grille':
                     // Sauvegarder les paramètres de grille
                     $grille_mappings = [
+                        'canvas_guides_enabled' => 'pdf_builder_canvas_guides_enabled',
                         'canvas_grid_enabled' => 'pdf_builder_canvas_grid_enabled',
                         'canvas_grid_size' => 'pdf_builder_canvas_grid_size',
                         'canvas_grid_color' => 'pdf_builder_canvas_grid_color',
@@ -629,7 +630,7 @@ function pdf_builder_save_canvas_settings_handler() {
                     foreach ($grille_mappings as $post_key => $option_key) {
                         if (isset($_POST[$post_key])) {
                             $value = $_POST[$post_key];
-                            if (in_array($post_key, ['canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_snap_to_elements', 'canvas_show_margins'])) {
+                            if (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_snap_to_elements', 'canvas_show_margins'])) {
                                 $value = $value === '1';
                             } elseif (strpos($post_key, 'margin_') !== false) {
                                 $value = intval($value);
