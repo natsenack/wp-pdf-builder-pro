@@ -508,6 +508,7 @@ input:checked + .toggle-slider:before {
         // Debug: Log all button clicks in modals
         document.addEventListener('click', function(event) {
             if (event.target.closest('.canvas-modal')) {
+                alert('Click in modal on: ' + event.target.tagName + ' ' + event.target.className);
                 console.log('Click detected in modal:', event.target.tagName, event.target.className, event.target.textContent);
             }
         }, true);
@@ -522,6 +523,7 @@ input:checked + .toggle-slider:before {
             console.log('Button style:', button.style);
 
             button.addEventListener('click', function(event) {
+                alert('Save button clicked for ' + this.getAttribute('data-category'));
                 console.log('Save button clicked - event fired for category:', this.getAttribute('data-category'));
                 event.preventDefault(); // Prevent any default behavior
                 event.stopPropagation(); // Stop event bubbling
