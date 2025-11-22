@@ -942,8 +942,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // Handle modal background click to close
-                if (target.classList.contains('canvas-modal')) {
-                    hideModal(target);
+                if (target.classList.contains('canvas-modal') || target.classList.contains('canvas-modal-overlay')) {
+                    hideModal(target.closest('.canvas-modal'));
                 }
             }, true); // Use capture phase for better event handling
 

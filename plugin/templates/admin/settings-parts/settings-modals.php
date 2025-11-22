@@ -1,7 +1,7 @@
 <?php // Modal components - Updated: 2025-11-18 20:20:00 ?>
 
 <!-- Canvas Configuration Modals Dimensions & Format -->
-<div id="canvas-dimensions-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
+<div id="canvas-dimensions-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
@@ -100,7 +100,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Zoom & Navigation -->
-<div id="canvas-zoom-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
+<div id="canvas-zoom-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
@@ -156,7 +156,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Apparence -->
-<div id="canvas-apparence-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
+<div id="canvas-apparence-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
@@ -235,7 +235,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Grille & Guides -->
-<div id="canvas-grille-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
+<div id="canvas-grille-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
@@ -299,7 +299,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Interactions & Comportement-->
-<div id="canvas-interactions-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
+<div id="canvas-interactions-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
@@ -392,7 +392,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Export & Qualité -->
-<div id="canvas-export-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
+<div id="canvas-export-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
@@ -438,7 +438,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Performance -->
-<div id="canvas-performance-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
+<div id="canvas-performance-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
@@ -561,7 +561,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Sauvegarde Auto -->
-<div id="canvas-autosave-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
+<div id="canvas-autosave-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
@@ -612,7 +612,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Debug -->
-<div id="canvas-debug-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
+<div id="canvas-debug-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
     <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
         <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
