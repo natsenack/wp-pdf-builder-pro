@@ -61,14 +61,14 @@
                                 <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
                             </td>
                         </tr>
-                        <tr>
-                            <th scope="row"><label for="performance_auto_optimization">Optimisation automatique des performances</label></th>
+                        <tr style="background-color: #fff3cd; border: 2px solid #ffeaa7; border-radius: 8px;">
+                            <th scope="row"><label for="performance_auto_optimization" style="color: #856404; font-weight: bold;">🚀 Optimisation automatique des performances</label></th>
                             <td>
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="performance_auto_optimization" name="performance_auto_optimization" value="1" <?php checked(get_option('pdf_builder_performance_auto_optimization', '0'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p class="description">Optimisation hebdomadaire automatique de la base de données et des ressources système</p>
+                                <p class="description" style="color: #856404; font-weight: bold;">✅ FONCTIONNEL - Optimisation hebdomadaire automatique de la base de données et des ressources système</p>
                             </td>
                         </tr>
                         <tr>
