@@ -492,6 +492,11 @@ input:checked + .toggle-slider:before {
                 if (modal) {
                     jQuery(modal).css('display', 'flex');
                     console.log('Modal shown for category:', category);
+                    console.log('Modal display:', modal.style.display);
+                    const saveButton = modal.querySelector('.canvas-modal-save');
+                    if (saveButton) {
+                        console.log('Save button rect after show:', saveButton.getBoundingClientRect());
+                    }
                 }
             });
         });
