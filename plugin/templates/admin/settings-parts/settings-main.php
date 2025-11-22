@@ -368,13 +368,23 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
     <?php require_once 'settings-modals.php'; ?>
 
     <!-- Floating Save Button -->
-    <div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-        <button type="button" class="floating-save-btn" id="floating-save-btn">
+    <div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999 !important; background: rgba(255,255,255,0.9); border-radius: 10px; padding: 5px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
             <span class="save-icon">💾</span>
             <span class="save-text">Enregistrer</span>
         </button>
-        <div class="floating-tooltip">Cliquez pour sauvegarder tous les paramètres</div>
+        <div class="floating-tooltip" style="position: absolute; bottom: 70px; right: 0; background: #333; color: white; padding: 8px 12px; border-radius: 6px; font-size: 14px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+            Cliquez pour sauvegarder tous les paramètres
+        </div>
     </div>
+
+    <!-- Bouton de secours sans JavaScript -->
+    <noscript>
+        <div style="position: fixed; bottom: 80px; right: 20px; z-index: 999999; background: #fff; border: 2px solid #007cba; border-radius: 8px; padding: 10px;">
+            <strong>💾 Sauvegarde manuelle</strong><br>
+            <small>JavaScript désactivé - Utilisez les boutons de chaque onglet</small>
+        </div>
+    </noscript>
 </div>
 
 <style>
@@ -507,22 +517,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const floatingSaveBtn = document.getElementById('floating-save-btn');
     if (floatingSaveBtn) {
         floatingSaveBtn.addEventListener('click', function() {
-            // Trouver le formulaire actif
-            const activeTab = document.querySelector('.tab-content.active');
-            if (activeTab) {
-                const form = activeTab.querySelector('form');
-                if (form) {
-                    // Simuler la soumission du formulaire
-                    const submitBtn = form.querySelector('input[type="submit"], button[type="submit"]');
-                    if (submitBtn) {
-                        submitBtn.click();
-                    } else {
-                        // Si pas de bouton submit, soumettre directement
-                        form.submit();
-                    }
+            console.log('Bouton flottant cliqué');
+
+            // Chercher tous les formulaires et trouver celui qui est visible
+            const forms = document.querySelectorAll('form');
+            for (const form of forms) {
+                // Vérifier si le formulaire est dans un onglet actif ou visible
+                if (form.offsetParent !== null) { // Le formulaire est visible
+                    console.log('Formulaire trouvé et visible:', form);
+                    form.submit();
+                    return;
                 }
             }
+
+            // Fallback: soumettre le premier formulaire trouvé
+            const firstForm = document.querySelector('form');
+            if (firstForm) {
+                console.log('Fallback: soumission du premier formulaire');
+                firstForm.submit();
+            } else {
+                console.error('Aucun formulaire trouvé');
+                alert('Erreur: Aucun formulaire trouvé à sauvegarder');
+            }
         });
+    } else {
+        console.error('Bouton flottant non trouvé');
     }
 });
 </script>
