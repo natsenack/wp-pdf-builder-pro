@@ -75,20 +75,6 @@
                             $test_mode_enabled = false;
                         }
                     }
-
-                    // Traitement des paramètres de notification
-                    if (isset($_POST['pdf_builder_save_notifications']) && isset($_POST['pdf_builder_license_nonce'])) {
-                        if (wp_verify_nonce($_POST['pdf_builder_license_nonce'], 'pdf_builder_license')) {
-                            $email = sanitize_email($_POST['notification_email'] ?? get_option('admin_email'));
-                            $enable_notifications = isset($_POST['enable_expiration_notifications']) ? 1 : 0;
-                            update_option('pdf_builder_license_notification_email', $email);
-                            update_option('pdf_builder_license_enable_notifications', $enable_notifications);
-                            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres de notification sauvegardés.</p></div>';
-                        // Recharger les valeurs
-                            $notification_email = $email;
-                            $enable_expiration_notifications = $enable_notifications;
-                        }
-                    }
                 ?>
 
                     <!-- Statut de la licence -->
@@ -752,7 +738,7 @@
                         </div>
                     </section>
 
-                    <!-- Section Notifications par Email -->
+                    <!-- Section Notifications par Email (intégrée au système unifié) -->
                     <section class="licence-section" style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: none; color: #343a40; box-shadow: 0 4px 12px rgba(0,102,204,0.15); margin-top: 30px;">
                         <h3 style="color: #003d7a; display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
                             📧 Notifications par Email
@@ -762,10 +748,7 @@
                             Recevez une notification par email quand votre licence expire bientôt. C'est une excellente façon de ne jamais oublier de renouveler votre licence.
                         </p>
 
-                        <form method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start;">
-                            <?php wp_nonce_field('pdf_builder_license', 'pdf_builder_license_nonce'); ?>
-                            <input type="hidden" name="pdf_builder_save_notifications" value="1">
-
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start;">
                             <!-- Toggle Notifications -->
                             <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
                                 <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: 600; color: #003d7a;">
@@ -794,7 +777,6 @@
                                     Défaut : adresse administrateur du site
                                 </p>
                             </div>
-
-                        </form>
+                        </div>
                     </section>
             </form>
