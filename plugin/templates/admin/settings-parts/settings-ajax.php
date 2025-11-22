@@ -606,6 +606,10 @@ function pdf_builder_save_canvas_settings_handler() {
                             }
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
+                        } elseif ($post_key === 'canvas_shadow_enabled') {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
                         }
                     }
                     break;
@@ -629,6 +633,10 @@ function pdf_builder_save_canvas_settings_handler() {
                             }
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
+                        } elseif (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid'])) {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
                         }
                     }
                     break;
@@ -652,6 +660,10 @@ function pdf_builder_save_canvas_settings_handler() {
                             }
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
+                        } elseif (in_array($post_key, ['canvas_multi_select', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_keyboard_shortcuts'])) {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
                         }
                     }
                     break;
@@ -674,6 +686,10 @@ function pdf_builder_save_canvas_settings_handler() {
                             }
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
+                        } elseif ($post_key === 'canvas_export_transparent') {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
                         }
                     }
                     break;
@@ -697,6 +713,10 @@ function pdf_builder_save_canvas_settings_handler() {
                             }
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
+                        } elseif (in_array($post_key, ['canvas_autosave_enabled', 'canvas_history_enabled'])) {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
                         }
                     }
                     break;
@@ -722,6 +742,10 @@ function pdf_builder_save_canvas_settings_handler() {
                             }
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
+                        } elseif (in_array($post_key, ['canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin'])) {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
                         }
                     }
                     break;
@@ -739,6 +763,10 @@ function pdf_builder_save_canvas_settings_handler() {
                             $value = $_POST[$post_key] === '1';
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
+                        } else {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
                         }
                     }
                     break;

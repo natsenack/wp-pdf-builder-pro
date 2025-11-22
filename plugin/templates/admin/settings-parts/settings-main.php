@@ -965,8 +965,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const saveButtons = safeQuerySelectorAll('.canvas-modal-save');
             saveButtons.forEach(function(button) {
                 button.addEventListener('click', function(event) {
-                    // event.preventDefault(); // Désactivé pour permettre l'actualisation automatique pendant les tests
-                    // TODO: Une fois les tests terminés, remettre event.preventDefault() pour revenir au comportement AJAX
+                    event.preventDefault();
 
                     console.log('💾 Save button clicked for category:', this.getAttribute('data-category'));
 
