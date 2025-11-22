@@ -1199,9 +1199,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const gridToggle = gridCheckbox?.closest('.toggle-switch');
         const snapToggle = snapCheckbox?.closest('.toggle-switch');
 
-        if (gridToggle) {
-            gridToggle.classList.toggle('disabled', !isGridEnabled);
-        }
+        // Note: gridToggle should NEVER be disabled - it's the main control
+        // Only dependent controls (snapToggle) should be disabled when grid is off
         if (snapToggle) {
             snapToggle.classList.toggle('disabled', !isGridEnabled);
         }
