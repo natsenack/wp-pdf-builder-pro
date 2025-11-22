@@ -93,6 +93,28 @@ function pdf_builder_save_settings_handler() {
                     update_option('pdf_builder_log_level', sanitize_text_field($value));
                 }
 
+                // Paramètres entreprise
+                $value = $get_post_value('company_phone_manual');
+                if ($value !== null) {
+                    update_option('pdf_builder_company_phone_manual', sanitize_text_field($value));
+                }
+                $value = $get_post_value('company_siret');
+                if ($value !== null) {
+                    update_option('pdf_builder_company_siret', sanitize_text_field($value));
+                }
+                $value = $get_post_value('company_vat');
+                if ($value !== null) {
+                    update_option('pdf_builder_company_vat', sanitize_text_field($value));
+                }
+                $value = $get_post_value('company_rcs');
+                if ($value !== null) {
+                    update_option('pdf_builder_company_rcs', sanitize_text_field($value));
+                }
+                $value = $get_post_value('company_capital');
+                if ($value !== null) {
+                    update_option('pdf_builder_company_capital', sanitize_text_field($value));
+                }
+
                 // Paramètres cache
                 $value = $get_post_value('cache_enabled');
                 if ($value !== null) {
