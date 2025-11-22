@@ -467,6 +467,31 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
         display: none; /* Masquer le tooltip sur mobile */
     }
 }
+
+/* Styles pour les contrôles RGPD désactivés */
+.gdpr-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.gdpr-disabled-section {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.gdpr-disabled-section * {
+    pointer-events: none !important;
+}
+
+.gdpr-disabled + span.toggle-slider {
+    background: #ccc !important;
+    cursor: not-allowed;
+}
+
+.gdpr-disabled + span.toggle-slider:before {
+    background: #999 !important;
+}
 </style>
 
 
@@ -535,8 +560,78 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Fonction pour gérer l'activation/désactivation des contrôles RGPD
+    function toggleRGPDControls() {
+        const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
+        const isEnabled = gdprEnabledCheckbox ? gdprEnabledCheckbox.checked : false;
+
+        // Liste des contrôles à désactiver/activer
+        const controlsToToggle = [
+            'gdpr_consent_required',
+            'gdpr_data_retention',
+            'gdpr_audit_enabled',
+            'gdpr_encryption_enabled',
+            'gdpr_consent_analytics',
+            'gdpr_consent_templates',
+            'gdpr_consent_marketing',
+            'export-format',
+            'export-my-data',
+            'delete-my-data',
+            'view-consent-status',
+            'refresh-audit-log',
+            'export-audit-log'
+        ];
+
+        // Désactiver/activer chaque contrôle
+        controlsToToggle.forEach(controlId => {
+            const control = document.getElementById(controlId);
+            if (control) {
+                control.disabled = !isEnabled;
+
+                // Ajouter/enlever une classe CSS pour le style visuel
+                if (isEnabled) {
+                    control.classList.remove('gdpr-disabled');
+                } else {
+                    control.classList.add('gdpr-disabled');
+                }
+
+                // Pour les labels de toggle, désactiver aussi le parent label
+                if (control.type === 'checkbox') {
+                    const label = control.closest('label');
+                    if (label) {
+                        if (isEnabled) {
+                            label.classList.remove('gdpr-disabled');
+                        } else {
+                            label.classList.add('gdpr-disabled');
+                        }
+                    }
+                }
+            }
+        });
+
+        // Désactiver/activer les sections entières (actions utilisateur et logs)
+        const gdprSections = document.querySelectorAll('.gdpr-section');
+        gdprSections.forEach(section => {
+            if (isEnabled) {
+                section.classList.remove('gdpr-disabled-section');
+            } else {
+                section.classList.add('gdpr-disabled-section');
+            }
+        });
+    }
+
     // Initialiser les indicateurs au chargement de la page
     updateSecurityStatusIndicators();
+    toggleRGPDControls();
+
+    // Ajouter un event listener pour le toggle RGPD principal
+    const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
+    if (gdprEnabledCheckbox) {
+        gdprEnabledCheckbox.addEventListener('change', function() {
+            toggleRGPDControls();
+            updateSecurityStatusIndicators(); // Mettre à jour l'indicateur aussi
+        });
+    }
 
     // Gestion du bouton flottant de sauvegarde
     const floatingSaveBtn = document.getElementById('floating-save-btn');
@@ -629,6 +724,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Sécurité & Conformité
                     updateSecurityStatusIndicators();
+
+                    // Mettre à jour l'état des contrôles RGPD
+                    toggleRGPDControls();
 
                     // Remettre le texte original après 2 secondes
                     setTimeout(() => {
