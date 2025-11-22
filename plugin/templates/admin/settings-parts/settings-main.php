@@ -782,6 +782,13 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Canvas modals JS loaded and DOMContentLoaded fired');
 
+    // Hide all modals by default
+    const allModals = document.querySelectorAll('.canvas-modal');
+    allModals.forEach(function(modal) {
+        modal.style.display = 'none';
+    });
+    console.log('All modals hidden by default');
+
     // Handle canvas configure buttons
     const configureButtons = document.querySelectorAll('.canvas-configure-btn');
     console.log('Found configure buttons:', configureButtons.length);
