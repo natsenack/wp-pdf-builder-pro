@@ -589,9 +589,7 @@ function pdf_builder_save_canvas_settings_handler() {
                     // Sauvegarder les paramètres d'apparence
                     $apparence_mappings = [
                         'canvas_bg_color' => 'pdf_builder_canvas_bg_color',
-                        'canvas_show_transparency' => 'pdf_builder_canvas_show_transparency',
                         'canvas_container_bg_color' => 'pdf_builder_canvas_container_bg_color',
-                        'canvas_container_show_transparency' => 'pdf_builder_canvas_container_show_transparency',
                         'canvas_border_color' => 'pdf_builder_canvas_border_color',
                         'canvas_border_width' => 'pdf_builder_canvas_border_width',
                         'canvas_shadow_enabled' => 'pdf_builder_canvas_shadow_enabled'
@@ -600,7 +598,7 @@ function pdf_builder_save_canvas_settings_handler() {
                     foreach ($apparence_mappings as $post_key => $option_key) {
                         if (isset($_POST[$post_key])) {
                             $value = $_POST[$post_key];
-                            if (in_array($post_key, ['canvas_show_transparency', 'canvas_container_show_transparency', 'canvas_shadow_enabled'])) {
+                            if ($post_key === 'canvas_shadow_enabled') {
                                 $value = $value === '1';
                             } elseif ($post_key === 'canvas_border_width') {
                                 $value = intval($value);
@@ -617,23 +615,14 @@ function pdf_builder_save_canvas_settings_handler() {
                         'canvas_guides_enabled' => 'pdf_builder_canvas_guides_enabled',
                         'canvas_grid_enabled' => 'pdf_builder_canvas_grid_enabled',
                         'canvas_grid_size' => 'pdf_builder_canvas_grid_size',
-                        'canvas_grid_color' => 'pdf_builder_canvas_grid_color',
-                        'canvas_snap_to_grid' => 'pdf_builder_canvas_snap_to_grid',
-                        'canvas_snap_to_elements' => 'pdf_builder_canvas_snap_to_elements',
-                        'canvas_show_margins' => 'pdf_builder_canvas_show_margins',
-                        'canvas_margin_top' => 'pdf_builder_canvas_margin_top',
-                        'canvas_margin_right' => 'pdf_builder_canvas_margin_right',
-                        'canvas_margin_bottom' => 'pdf_builder_canvas_margin_bottom',
-                        'canvas_margin_left' => 'pdf_builder_canvas_margin_left'
+                        'canvas_snap_to_grid' => 'pdf_builder_canvas_snap_to_grid'
                     ];
 
                     foreach ($grille_mappings as $post_key => $option_key) {
                         if (isset($_POST[$post_key])) {
                             $value = $_POST[$post_key];
-                            if (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_snap_to_elements', 'canvas_show_margins'])) {
+                            if (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid'])) {
                                 $value = $value === '1';
-                            } elseif (strpos($post_key, 'margin_') !== false) {
-                                $value = intval($value);
                             } elseif ($post_key === 'canvas_grid_size') {
                                 $value = intval($value);
                             }
@@ -671,19 +660,15 @@ function pdf_builder_save_canvas_settings_handler() {
                     $export_mappings = [
                         'canvas_export_format' => 'pdf_builder_canvas_export_format',
                         'canvas_export_quality' => 'pdf_builder_canvas_export_quality',
-                        'canvas_export_dpi' => 'pdf_builder_canvas_export_dpi',
-                        'canvas_export_transparency' => 'pdf_builder_canvas_export_transparency',
-                        'canvas_export_metadata' => 'pdf_builder_canvas_export_metadata'
+                        'canvas_export_transparent' => 'pdf_builder_canvas_export_transparent'
                     ];
 
                     foreach ($export_mappings as $post_key => $option_key) {
                         if (isset($_POST[$post_key])) {
                             $value = $_POST[$post_key];
-                            if (in_array($post_key, ['canvas_export_transparency', 'canvas_export_metadata'])) {
+                            if ($post_key === 'canvas_export_transparent') {
                                 $value = $value === '1';
                             } elseif ($post_key === 'canvas_export_quality') {
-                                $value = intval($value);
-                            } elseif ($post_key === 'canvas_export_dpi') {
                                 $value = intval($value);
                             }
                             update_option($option_key, $value);
