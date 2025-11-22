@@ -797,7 +797,31 @@ document.addEventListener('DOMContentLoaded', function() {
             const modalId = 'canvas-' + category + '-modal';
             const modal = document.getElementById(modalId);
             if (modal) {
+                console.log('Opening modal:', modalId);
+                console.log('Modal before:', modal.style.display);
                 modal.style.display = 'flex';
+                console.log('Modal after:', modal.style.display);
+                console.log('Modal computed style:', window.getComputedStyle(modal));
+                console.log('Modal rect:', modal.getBoundingClientRect());
+                
+                // Check if modal is actually visible
+                const rect = modal.getBoundingClientRect();
+                const isVisible = rect.width > 0 && rect.height > 0 && rect.top >= 0 && rect.left >= 0;
+                console.log('Modal visible?', isVisible, 'width:', rect.width, 'height:', rect.height, 'top:', rect.top, 'left:', rect.left);
+                
+                if (!isVisible) {
+                    console.error('Modal is not visible! Checking parent elements...');
+                    let parent = modal.parentElement;
+                    let depth = 0;
+                    while (parent && depth < 5) {
+                        const parentStyle = window.getComputedStyle(parent);
+                        console.log(`Parent ${depth} (${parent.tagName}.${parent.className}): display=${parentStyle.display}, visibility=${parentStyle.visibility}, overflow=${parentStyle.overflow}, position=${parentStyle.position}, z-index=${parentStyle.zIndex}`);
+                        parent = parent.parentElement;
+                        depth++;
+                    }
+                }
+            } else {
+                console.error('Modal not found:', modalId);
             }
         });
     });
