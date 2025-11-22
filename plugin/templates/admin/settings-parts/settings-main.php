@@ -588,7 +588,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 } else {
                     // Erreur
-                    console.error('Erreur de sauvegarde:', data);
+                    const errorMessage = data.data && data.data.message ? data.data.message : 'Erreur inconnue';
+                    console.error('Erreur de sauvegarde:', errorMessage);
+                    alert('Erreur de sauvegarde: ' + errorMessage);
                     floatingSaveBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
                     floatingSaveBtn.classList.remove('saving');
                     floatingSaveBtn.classList.add('error');
