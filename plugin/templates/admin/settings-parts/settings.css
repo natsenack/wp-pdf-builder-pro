@@ -1424,47 +1424,14 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 }
 
 .canvas-modal-display {
-    padding: 15px;
+    padding: 10px;
     background: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #e1e8ed;
-    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    border-radius: 4px;
+    font-family: monospace;
 }
 
-.canvas-dimensions-pixels {
-    font-size: 18px;
-    font-weight: 600;
-    color: #007cba;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-}
-
-.canvas-dimensions-pixels strong {
-    font-size: 24px;
-    color: #005a87;
-}
-
-.canvas-dimensions-unit {
-    font-size: 14px;
-    font-weight: 500;
+.canvas-modal-display small {
     color: #666;
-    margin-left: 2px;
-}
-
-.canvas-dimensions-mm {
-    padding: 8px 12px;
-    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-    border-radius: 6px;
-    display: inline-block;
-}
-
-.canvas-dimensions-mm span {
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .canvas-modal-save {

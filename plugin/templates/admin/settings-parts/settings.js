@@ -122,4 +122,66 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    // Fonction pour mettre à jour le preview de la carte Dimensions & Format
+    function updateCardPreview() {
+        const formatSelect = document.getElementById("canvas_format");
+        const orientationSelect = document.getElementById("canvas_orientation");
+        const dpiSelect = document.getElementById("canvas_dpi");
+
+        if (formatSelect && orientationSelect && dpiSelect) {
+            const format = formatSelect.value;
+            const orientation = orientationSelect.value;
+            const dpi = parseInt(dpiSelect.value);
+
+            // Dimensions standard en mm pour chaque format
+            const formatDimensionsMM = {
+                'A4': {width: 210, height: 297},
+                'A3': {width: 297, height: 420},
+                'A5': {width: 148, height: 210},
+                'Letter': {width: 215.9, height: 279.4},
+                'Legal': {width: 215.9, height: 355.6},
+                'Tabloid': {width: 279.4, height: 431.8}
+            };
+
+            let dimensions = formatDimensionsMM[format] || formatDimensionsMM['A4'];
+
+            // Appliquer l'orientation
+            if (orientation === 'landscape') {
+                const temp = dimensions.width;
+                dimensions.width = dimensions.height;
+                dimensions.height = temp;
+            }
+
+            // Convertir mm en pixels (1mm = dpi/25.4 pixels)
+            const widthPx = Math.round((dimensions.width / 25.4) * dpi);
+            const heightPx = Math.round((dimensions.height / 25.4) * dpi);
+
+            // Mettre à jour les éléments de la carte
+            const cardWidth = document.getElementById("card-canvas-width");
+            const cardHeight = document.getElementById("card-canvas-height");
+            const cardDpi = document.getElementById("card-canvas-dpi");
+
+            if (cardWidth) cardWidth.textContent = widthPx;
+            if (cardHeight) cardHeight.textContent = heightPx;
+            if (cardDpi) {
+                cardDpi.textContent = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
+            }
+        }
+    }
+
+    // Ajouter les event listeners pour mettre à jour le preview de la carte en temps réel
+    const cardFormatSelect = document.getElementById("canvas_format");
+    const cardOrientationSelect = document.getElementById("canvas_orientation");
+    const cardDpiSelect = document.getElementById("canvas_dpi");
+
+    if (cardFormatSelect) {
+        cardFormatSelect.addEventListener("change", updateCardPreview);
+    }
+    if (cardOrientationSelect) {
+        cardOrientationSelect.addEventListener("change", updateCardPreview);
+    }
+    if (cardDpiSelect) {
+        cardDpiSelect.addEventListener("change", updateCardPreview);
+    }
+
 });
