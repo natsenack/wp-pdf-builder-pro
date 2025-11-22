@@ -247,6 +247,70 @@ function pdf_builder_save_settings_handler() {
                     update_option('pdf_builder_template_library_enabled', $value === '1' ? 1 : 0);
                 }
 
+                // Paramètres développeur
+                $value = $get_post_value('developer_enabled');
+                if ($value !== null) {
+                    update_option('pdf_builder_developer_enabled', $value === '1' ? 1 : 0);
+                }
+                $value = $get_post_value('developer_password');
+                if ($value !== null) {
+                    update_option('pdf_builder_developer_password', sanitize_text_field($value));
+                }
+                $value = $get_post_value('license_test_mode');
+                if ($value !== null) {
+                    update_option('pdf_builder_license_test_mode', $value === '1' ? 1 : 0);
+                }
+                $value = $get_post_value('debug_php_errors');
+                if ($value !== null) {
+                    update_option('pdf_builder_debug_php_errors', $value === '1' ? 1 : 0);
+                }
+                $value = $get_post_value('debug_javascript');
+                if ($value !== null) {
+                    update_option('pdf_builder_debug_javascript', $value === '1' ? 1 : 0);
+                }
+                $value = $get_post_value('debug_javascript_verbose');
+                if ($value !== null) {
+                    update_option('pdf_builder_debug_javascript_verbose', $value === '1' ? 1 : 0);
+                }
+                $value = $get_post_value('debug_ajax');
+                if ($value !== null) {
+                    update_option('pdf_builder_debug_ajax', $value === '1' ? 1 : 0);
+                }
+                $value = $get_post_value('debug_performance');
+                if ($value !== null) {
+                    update_option('pdf_builder_debug_performance', $value === '1' ? 1 : 0);
+                }
+                $value = $get_post_value('debug_database');
+                if ($value !== null) {
+                    update_option('pdf_builder_debug_database', $value === '1' ? 1 : 0);
+                }
+                $value = $get_post_value('log_file_size');
+                if ($value !== null) {
+                    update_option('pdf_builder_log_file_size', intval($value));
+                }
+                $value = $get_post_value('log_retention');
+                if ($value !== null) {
+                    update_option('pdf_builder_log_retention', intval($value));
+                }
+                $value = $get_post_value('force_https');
+                if ($value !== null) {
+                    update_option('pdf_builder_force_https', $value === '1' ? 1 : 0);
+                }
+                $value = $get_post_value('performance_monitoring');
+                if ($value !== null) {
+                    update_option('pdf_builder_performance_monitoring', $value === '1' ? 1 : 0);
+                }
+
+                // Paramètres licence
+                $value = $get_post_value('enable_expiration_notifications');
+                if ($value !== null) {
+                    update_option('pdf_builder_enable_expiration_notifications', $value === '1' ? 1 : 0);
+                }
+                $value = $get_post_value('notification_email');
+                if ($value !== null) {
+                    update_option('pdf_builder_notification_email', sanitize_email($value));
+                }
+
                 // Paramètres canvas (toutes catégories)
                 $canvas_option_mappings = [
                     // Dimensions
