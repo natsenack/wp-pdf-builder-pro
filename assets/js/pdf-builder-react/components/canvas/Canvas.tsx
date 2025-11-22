@@ -2699,6 +2699,11 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     renderCanvas();
   }, [renderCanvas, imageLoadCount, selectionState?.updateTrigger]);
 
+  // Debug: Log when dimensions change
+  useEffect(() => {
+    console.log('🔍 Canvas dimensions changed:', { width, height });
+  }, [width, height]);
+
   // Rendu initial
   useEffect(() => {
     renderCanvas();
