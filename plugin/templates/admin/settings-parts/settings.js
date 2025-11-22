@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Créer une modale propre basée sur le contenu existant
                 const cleanModal = document.createElement('div');
                 cleanModal.id = modalId + '-clean';
+                cleanModal.className = 'canvas-modal'; // Ajouter la classe pour que closest() fonctionne
                 cleanModal.style.cssText = `
                     position: fixed;
                     top: 0;
