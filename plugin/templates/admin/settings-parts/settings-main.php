@@ -553,7 +553,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Envoyer la requête AJAX
-            fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+            console.log('Envoi requête AJAX vers:', pdf_builder_ajax.ajax_url);
+            console.log('Nonce utilisé:', pdf_builder_ajax.nonce);
+            fetch(pdf_builder_ajax.ajax_url, {
                 method: 'POST',
                 body: formData,
                 credentials: 'same-origin'
@@ -588,6 +590,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 } else {
                     // Erreur
+                    console.error('Réponse complète en erreur:', data);
                     const errorMessage = data.data && data.data.message ? data.data.message : 'Erreur inconnue';
                     console.error('Erreur de sauvegarde:', errorMessage);
                     alert('Erreur de sauvegarde: ' + errorMessage);
