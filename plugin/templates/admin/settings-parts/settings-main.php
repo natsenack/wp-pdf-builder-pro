@@ -518,28 +518,108 @@ document.addEventListener('DOMContentLoaded', function() {
     const floatingSaveBtn = document.getElementById('floating-save-btn');
     if (floatingSaveBtn) {
         floatingSaveBtn.addEventListener('click', function() {
-            console.log('Bouton flottant cliqué');
+            console.log('Bouton flottant cliqué - sauvegarde AJAX');
 
-            // Chercher tous les formulaires et trouver celui qui est visible
+            // Changer l'apparence du bouton pendant la sauvegarde
+            const originalText = floatingSaveBtn.innerHTML;
+            floatingSaveBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Sauvegarde...</span>';
+            floatingSaveBtn.classList.add('saving');
+
+            // Collecter les données de tous les formulaires
+            const formData = new FormData();
+
+            // Ajouter l'action AJAX
+            formData.append('action', 'pdf_builder_save_settings');
+            formData.append('nonce', pdf_builder_ajax?.nonce || '');
+            formData.append('current_tab', 'all'); // Sauvegarder tous les onglets
+
+            // Collecter les données de tous les formulaires visibles
             const forms = document.querySelectorAll('form');
-            for (const form of forms) {
-                // Vérifier si le formulaire est dans un onglet actif ou visible
-                if (form.offsetParent !== null) { // Le formulaire est visible
-                    console.log('Formulaire trouvé et visible:', form);
-                    form.submit();
-                    return;
+            forms.forEach(form => {
+                if (form.offsetParent !== null) { // Formulaire visible
+                    const formInputs = form.querySelectorAll('input, select, textarea');
+                    formInputs.forEach(input => {
+                        if (input.name && input.type !== 'submit' && input.type !== 'button') {
+                            if (input.type === 'checkbox') {
+                                formData.append(input.name, input.checked ? '1' : '0');
+                            } else if (input.type === 'radio') {
+                                if (input.checked) {
+                                    formData.append(input.name, input.value);
+                                }
+                            } else {
+                                formData.append(input.name, input.value);
+                            }
+                        }
+                    });
                 }
-            }
+            });
 
-            // Fallback: soumettre le premier formulaire trouvé
-            const firstForm = document.querySelector('form');
-            if (firstForm) {
-                console.log('Fallback: soumission du premier formulaire');
-                firstForm.submit();
-            } else {
-                console.error('Aucun formulaire trouvé');
-                alert('Erreur: Aucun formulaire trouvé à sauvegarder');
-            }
+            // Envoyer la requête AJAX
+            fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Réponse AJAX:', data);
+
+                if (data.success) {
+                    // Succès
+                    floatingSaveBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">Sauvegardé !</span>';
+                    floatingSaveBtn.classList.remove('saving');
+                    floatingSaveBtn.classList.add('saved');
+
+                    // Remettre le texte original après 2 secondes
+                    setTimeout(() => {
+                        floatingSaveBtn.innerHTML = originalText;
+                        floatingSaveBtn.classList.remove('saved');
+                    }, 2000);
+
+                    // Afficher un message de succès si disponible
+                    if (data.data && data.data.message) {
+                        // Créer une notification temporaire
+                        const notification = document.createElement('div');
+                        notification.style.cssText = 'position: fixed; top: 50px; right: 20px; background: #28a745; color: white; padding: 15px; border-radius: 8px; z-index: 10000; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
+                        notification.textContent = data.data.message;
+                        document.body.appendChild(notification);
+
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 3000);
+                    }
+                } else {
+                    // Erreur
+                    console.error('Erreur de sauvegarde:', data);
+                    floatingSaveBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
+                    floatingSaveBtn.classList.remove('saving');
+                    floatingSaveBtn.classList.add('error');
+
+                    // Remettre le texte original après 3 secondes
+                    setTimeout(() => {
+                        floatingSaveBtn.innerHTML = originalText;
+                        floatingSaveBtn.classList.remove('error');
+                    }, 3000);
+
+                    // Afficher l'erreur
+                    if (data.data && data.data.message) {
+                        alert('Erreur de sauvegarde: ' + data.data.message);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erreur AJAX:', error);
+                floatingSaveBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
+                floatingSaveBtn.classList.remove('saving');
+                floatingSaveBtn.classList.add('error');
+
+                setTimeout(() => {
+                    floatingSaveBtn.innerHTML = originalText;
+                    floatingSaveBtn.classList.remove('error');
+                }, 3000);
+
+                alert('Erreur de connexion lors de la sauvegarde');
+            });
         });
     } else {
         console.error('Bouton flottant non trouvé');
