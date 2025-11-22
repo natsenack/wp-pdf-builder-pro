@@ -2606,6 +2606,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       return;
     }
 
+    console.log('🔍 Rendering canvas with dimensions:', { width, height, displayWidth, displayHeight });
+
     // Clear canvas with background color from settings (matching PDF background)
     const canvasBgColor = normalizeColor(canvasSettings?.canvasBackgroundColor || '#ffffff');
     ctx.fillStyle = canvasBgColor;
