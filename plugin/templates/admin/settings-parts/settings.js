@@ -310,13 +310,14 @@ document.addEventListener("DOMContentLoaded", function() {
     };
     
     // Ajouter un event listener pour la grille dans la modale
-    const gridEnabledCheckbox = document.getElementById("canvas_grid_enabled");
-    if (gridEnabledCheckbox) {
-        gridEnabledCheckbox.addEventListener("change", function() {
-            // Mettre à jour les contrôles de grille en temps réel
-            window.updateCanvasPreviews("grille");
-        });
-    }
+    // Removed: causes infinite loop with updateGrilleModal
+    // const gridEnabledCheckbox = document.getElementById("canvas_grid_enabled");
+    // if (gridEnabledCheckbox) {
+    //     gridEnabledCheckbox.addEventListener("change", function() {
+    //         // Mettre à jour les contrôles de grille en temps réel
+    //         window.updateCanvasPreviews("grille");
+    //     });
+    // }
     
     // Ajouter des event listeners pour les dimensions en temps réel
     const formatSelect = document.getElementById("canvas_format");
