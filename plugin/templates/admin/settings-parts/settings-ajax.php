@@ -304,11 +304,11 @@ function pdf_builder_save_settings_handler() {
                 // Paramètres licence
                 $value = $get_post_value('enable_expiration_notifications');
                 if ($value !== null) {
-                    update_option('pdf_builder_enable_expiration_notifications', $value === '1' ? 1 : 0);
+                    update_option('pdf_builder_license_enable_notifications', $value === '1' ? 1 : 0);
                 }
                 $value = $get_post_value('notification_email');
                 if ($value !== null) {
-                    update_option('pdf_builder_notification_email', sanitize_email($value));
+                    update_option('pdf_builder_license_notification_email', sanitize_email($value));
                 }
 
                 // Paramètres canvas (toutes catégories)
