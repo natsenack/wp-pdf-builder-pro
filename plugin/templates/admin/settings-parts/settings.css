@@ -1285,15 +1285,14 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
-    border-bottom: 1px solid #e1e1e1;
-    padding: 24px;
-    background: #f6f7f7;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 15px;
 }
 
 .canvas-modal-header h3 {
     margin: 0;
-    color: #1d2327;
+    color: #495057;
     font-size: 18px;
     font-weight: 600;
 }
@@ -1303,10 +1302,7 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: #646970;
-    padding: 4px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    color: #6c757d;
 }
 
 .canvas-modal-close:hover {
@@ -1334,6 +1330,52 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     margin: 5px 0 0 0;
     font-size: 12px;
     color: #6c757d;
+}
+
+.canvas-modal-section-title {
+    margin-top: 0;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 8px;
+}
+
+.canvas-modal-section-title.spaced {
+    margin-top: 25px;
+}
+
+.canvas-modal-inline-flex {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.canvas-modal-sub-description {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+.canvas-modal-preview {
+    margin-top: 5px;
+    padding: 5px;
+    background: #f8f9fa;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #666;
+}
+
+.canvas-modal-section-title.margin-25 {
+    margin: 25px 0 15px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #dee2e6;
+    color: #495057;
+}
+
+.canvas-modal-section-title.margin-35 {
+    margin: 35px 0 15px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #dee2e6;
+    color: #495057;
 }
 
 .canvas-modal-display {

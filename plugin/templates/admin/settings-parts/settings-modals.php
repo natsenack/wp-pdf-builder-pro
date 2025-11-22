@@ -115,34 +115,34 @@
                     </p>
                 </div>
                 <form id="zoom-form">
-                    <h4 style="margin-top: 0; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">🔍 Zoom</h4>
+                    <h4 class="canvas-modal-section-title">🔍 Zoom</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="zoom_min">Zoom minimum (%)</label></th>
                             <td>
                                 <input type="number" id="zoom_min" name="canvas_zoom_min" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>" min="1" max="100" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Niveau de zoom minimum autorisé</p>
+                                <p class="canvas-modal-description">Niveau de zoom minimum autorisé</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="zoom_max">Zoom maximum (%)</label></th>
                             <td>
                                 <input type="number" id="zoom_max" name="canvas_zoom_max" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>" min="100" max="1000" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Niveau de zoom maximum autorisé</p>
+                                <p class="canvas-modal-description">Niveau de zoom maximum autorisé</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="zoom_default">Zoom par défaut (%)</label></th>
                             <td>
                                 <input type="number" id="zoom_default" name="canvas_zoom_default" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>" min="10" max="500" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Niveau de zoom au chargement du canvas</p>
+                                <p class="canvas-modal-description">Niveau de zoom au chargement du canvas</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="zoom_step">Pas de zoom (%)</label></th>
                             <td>
                                 <input type="number" id="zoom_step" name="canvas_zoom_step" value="<?php echo intval(get_option('pdf_builder_canvas_zoom_step', 25)); ?>" min="5" max="50" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Incrément de zoom par étape</p>
+                                <p class="canvas-modal-description">Incrément de zoom par étape</p>
                             </td>
                         </tr>
                     </table>
@@ -159,13 +159,13 @@
 <div id="canvas-apparence-modal" class="canvas-modal">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">🎨 Apparence</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <div class="canvas-modal-header">
+                <h3 >🎨 Apparence</h3>
+                <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
-                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                <div class="canvas-modal-info">
+                    <p >
                         <strong>💡 Comment ça marche :</strong> Ces paramètres contrôlent l'apparence visuelle du canvas de conception et de l'interface d'édition. 
                         Personnalisez les couleurs et les effets pour un meilleur confort de travail.
                     </p>
@@ -180,27 +180,27 @@
             ?>
 
                 <form id="canvas-apparence-form">
-                    <h4 style="margin-top: 0; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">🎨 Canvas</h4>
+                    <h4 class="canvas-modal-section-title">🎨 Canvas</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_bg_color">Couleur de fond du canvas</label></th>
                             <td>
                                 <input type="color" id="canvas_bg_color" name="canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Couleur d'arrière-plan de la zone de conception</p>
+                                <p class="canvas-modal-description">Couleur d'arrière-plan de la zone de conception</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_border_color">Couleur des bordures</label></th>
                             <td>
                                 <input type="color" id="canvas_border_color" name="canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_color', '#cccccc')); ?>" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Couleur des bordures autour du canvas</p>
+                                <p class="canvas-modal-description">Couleur des bordures autour du canvas</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_border_width">Épaisseur des bordures (px)</label></th>
                             <td>
                                 <input type="number" id="canvas_border_width" name="canvas_border_width" value="<?php echo intval(get_option('pdf_builder_canvas_border_width', 1)); ?>" min="0" max="10" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Épaisseur des bordures en pixels (0 = aucune)</p>
+                                <p class="canvas-modal-description">Épaisseur des bordures en pixels (0 = aucune)</p>
                             </td>
                         </tr>
                         <tr>
@@ -210,18 +210,18 @@
                                     <input type="checkbox" id="canvas_shadow_enabled" name="canvas_shadow_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_shadow_enabled', '0'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Ajoute une ombre portée au canvas</p>
+                                <p class="canvas-modal-description">Ajoute une ombre portée au canvas</p>
                             </td>
                         </tr>
                     </table>
                     
-                    <h4 style="margin-top: 25px; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">📦 Éditeur</h4>
+                    <h4 class="canvas-modal-section-title spaced">📦 Éditeur</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_container_bg_color">Arrière-plan de l'éditeur</label></th>
                             <td>
                                 <input type="color" id="canvas_container_bg_color" name="canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa')); ?>" />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Couleur de fond de l'interface d'édition</p>
+                                <p class="canvas-modal-description">Couleur de fond de l'interface d'édition</p>
                             </td>
                         </tr>
                     </table>
@@ -238,13 +238,13 @@
 <div id="canvas-grille-modal" class="canvas-modal">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">📏 Grille & Guides</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <div class="canvas-modal-header">
+                <h3 >📏 Grille & Guides</h3>
+                <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
-                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                <div class="canvas-modal-info">
+                    <p >
                         <strong>💡 Comment ça marche :</strong> Activez la grille pour afficher un quadrillage sur le canvas. 
                         Les éléments s'aligneront automatiquement sur les lignes de la grille si l'accrochage est activé.
                     </p>
@@ -258,7 +258,7 @@
                                     <input type="checkbox" id="canvas_guides_enabled" name="canvas_guides_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_guides_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Affiche des guides d'alignement temporaires</p>
+                                <p class="canvas-modal-description">Affiche des guides d'alignement temporaires</p>
                             </td>
                         </tr>
                         <tr>
@@ -268,14 +268,14 @@
                                     <input type="checkbox" id="canvas_grid_enabled" name="canvas_grid_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_grid_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Affiche/masque le quadrillage sur le canvas</p>
+                                <p class="canvas-modal-description">Affiche/masque le quadrillage sur le canvas</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="canvas_grid_size">Taille de la grille (px)</label></th>
                             <td>
                                 <input type="number" id="canvas_grid_size" name="canvas_grid_size" value="<?php echo intval(get_option('pdf_builder_canvas_grid_size', 20)); ?>" min="5" max="100" <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?> />
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Distance entre les lignes de la grille (5-100px)</p>
+                                <p class="canvas-modal-description">Distance entre les lignes de la grille (5-100px)</p>
                             </td>
                         </tr>
                         <tr>
@@ -285,7 +285,7 @@
                                     <input type="checkbox" id="canvas_snap_to_grid" name="canvas_snap_to_grid" value="1" <?php checked(get_option('pdf_builder_canvas_snap_to_grid', '1'), '1'); ?> <?php echo get_option('pdf_builder_canvas_grid_enabled', '1') !== '1' ? 'disabled' : ''; ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Les éléments s'alignent automatiquement sur la grille</p>
+                                <p class="canvas-modal-description">Les éléments s'alignent automatiquement sur la grille</p>
                             </td>
                         </tr>
                     </table>
@@ -302,19 +302,19 @@
 <div id="canvas-interactions-modal" class="canvas-modal">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">🎯 Interactions & Comportement</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <div class="canvas-modal-header">
+                <h3 >🎯 Interactions & Comportement</h3>
+                <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
-                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                <div class="canvas-modal-info">
+                    <p >
                         <strong>💡 Comment ça marche :</strong> Ces paramètres contrôlent les interactions disponibles sur le canvas pour manipuler les éléments,
                         ainsi que le comportement général de sélection et les raccourcis clavier.
                     </p>
                 </div>
                 <form id="canvas-interactions-form">
-                    <h4 style="margin-top: 0; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">🎯 Interactions</h4>
+                    <h4 class="canvas-modal-section-title">🎯 Interactions</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_drag_enabled">Glisser-déposer activé</label></th>
@@ -323,7 +323,7 @@
                                     <input type="checkbox" id="canvas_drag_enabled" name="canvas_drag_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_drag_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Permet de déplacer les éléments sur le canvas</p>
+                                <p class="canvas-modal-description">Permet de déplacer les éléments sur le canvas</p>
                             </td>
                         </tr>
                         <tr>
@@ -333,7 +333,7 @@
                                     <input type="checkbox" id="canvas_resize_enabled" name="canvas_resize_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_resize_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Affiche les poignées pour redimensionner les éléments</p>
+                                <p class="canvas-modal-description">Affiche les poignées pour redimensionner les éléments</p>
                             </td>
                         </tr>
                         <tr>
@@ -343,7 +343,7 @@
                                     <input type="checkbox" id="canvas_rotate_enabled" name="canvas_rotate_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_rotate_enabled', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Permet de faire pivoter les éléments avec la souris</p>
+                                <p class="canvas-modal-description">Permet de faire pivoter les éléments avec la souris</p>
                             </td>
                         </tr>
                         <tr>
@@ -353,12 +353,12 @@
                                     <input type="checkbox" id="canvas_multi_select" name="canvas_multi_select" value="1" <?php checked(get_option('pdf_builder_canvas_multi_select', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Ctrl+Clic pour sélectionner plusieurs éléments</p>
+                                <p class="canvas-modal-description">Ctrl+Clic pour sélectionner plusieurs éléments</p>
                             </td>
                         </tr>
                     </table>
 
-                    <h4 style="margin-top: 25px; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">⚙️ Comportement</h4>
+                    <h4 class="canvas-modal-section-title spaced">⚙️ Comportement</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_selection_mode">Mode de sélection</label></th>
@@ -368,7 +368,7 @@
                                     <option value="lasso" <?php selected(get_option('pdf_builder_canvas_selection_mode', 'click'), 'lasso'); ?>>Lasso</option>
                                     <option value="rectangle" <?php selected(get_option('pdf_builder_canvas_selection_mode', 'click'), 'rectangle'); ?>>Rectangle</option>
                                 </select>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Méthode de sélection des éléments sur le canvas</p>
+                                <p class="canvas-modal-description">Méthode de sélection des éléments sur le canvas</p>
                             </td>
                         </tr>
                         <tr>
@@ -378,7 +378,7 @@
                                     <input type="checkbox" id="canvas_keyboard_shortcuts" name="canvas_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_shortcuts', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Active les raccourcis clavier (Ctrl+Z, Ctrl+Y, etc.)</p>
+                                <p class="canvas-modal-description">Active les raccourcis clavier (Ctrl+Z, Ctrl+Y, etc.)</p>
                             </td>
                         </tr>
                     </table>
@@ -395,9 +395,9 @@
 <div id="canvas-export-modal" class="canvas-modal">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">📤 Export & Qualité</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <div class="canvas-modal-header">
+                <h3 >📤 Export & Qualité</h3>
+                <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
                 <form id="canvas-export-form">
@@ -441,24 +441,24 @@
 <div id="canvas-performance-modal" class="canvas-modal">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">⚡ Performance</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <div class="canvas-modal-header">
+                <h3 >⚡ Performance</h3>
+                <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
-                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                <div class="canvas-modal-info">
+                    <p >
                         <strong>💡 Optimisation :</strong> Ces paramètres améliorent les performances de l'éditeur et du plugin pour une expérience plus fluide.
                     </p>
                 </div>
                 <form id="canvas-performance-form">
                     <!-- Section Éditeur PDF -->
-                    <h4 style="margin: 25px 0 15px 0; padding-bottom: 8px; border-bottom: 1px solid #dee2e6; color: #495057;">
-                        <span style="display: inline-flex; align-items: center; gap: 8px;">
+                    <h4 class="canvas-modal-section-title margin-25">
+                        <span class="canvas-modal-inline-flex">
                             🎨 Éditeur PDF
                         </span>
                     </h4>
-                    <p style="color: #666; margin-bottom: 15px; font-size: 13px;">Paramètres de performance pour l'interface de conception</p>
+                    <p class="canvas-modal-sub-description">Paramètres de performance pour l'interface de conception</p>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_fps_target">Cible FPS</label></th>
@@ -468,10 +468,10 @@
                                     <option value="60" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 60); ?>>60 FPS (Standard)</option>
                                     <option value="120" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 120); ?>>120 FPS (Haute performance)</option>
                                 </select>
-                                <div id="fps_preview" style="margin-top: 5px; padding: 5px; background: #f8f9fa; border-radius: 3px; font-size: 12px; color: #666;">
+                                <div id="fps_preview" class="canvas-modal-preview">
                                     FPS actuel : <span id="current_fps_value"><?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?></span>
                                 </div>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
+                                <p class="canvas-modal-description">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
                             </td>
                         </tr>
                         <tr>
@@ -483,7 +483,7 @@
                                     <option value="512" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '512'); ?>>512 MB</option>
                                     <option value="1024" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '1024'); ?>>1 GB</option>
                                 </select>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Mémoire allouée au canvas et aux éléments</p>
+                                <p class="canvas-modal-description">Mémoire allouée au canvas et aux éléments</p>
                             </td>
                         </tr>
                         <tr>
@@ -493,7 +493,7 @@
                                     <input type="checkbox" id="canvas_lazy_loading_editor" name="canvas_lazy_loading_editor" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_editor', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Charge les éléments seulement quand visibles</p>
+                                <p class="canvas-modal-description">Charge les éléments seulement quand visibles</p>
                             </td>
                         </tr>
                         <tr>
@@ -503,18 +503,18 @@
                                     <input type="checkbox" id="canvas_preload_critical" name="canvas_preload_critical" value="1" <?php checked(get_option('pdf_builder_canvas_preload_critical', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Précharge les polices et outils essentiels</p>
+                                <p class="canvas-modal-description">Précharge les polices et outils essentiels</p>
                             </td>
                         </tr>
                     </table>
 
                     <!-- Section Plugin WordPress -->
-                    <h4 style="margin: 35px 0 15px 0; padding-bottom: 8px; border-bottom: 1px solid #dee2e6; color: #495057;">
-                        <span style="display: inline-flex; align-items: center; gap: 8px;">
+                    <h4 class="canvas-modal-section-title margin-35">
+                        <span class="canvas-modal-inline-flex">
                             🔧 Plugin WordPress
                         </span>
                     </h4>
-                    <p style="color: #666; margin-bottom: 15px; font-size: 13px;">Paramètres de performance pour le backend et génération PDF</p>
+                    <p class="canvas-modal-sub-description">Paramètres de performance pour le backend et génération PDF</p>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_memory_limit_php">Limite mémoire PHP</label></th>
@@ -525,7 +525,7 @@
                                     <option value="512" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '512'); ?>>512 MB</option>
                                     <option value="1024" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '1024'); ?>>1 GB</option>
                                 </select>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Mémoire pour génération PDF et traitement</p>
+                                <p class="canvas-modal-description">Mémoire pour génération PDF et traitement</p>
                             </td>
                         </tr>
                         <tr>
@@ -537,7 +537,7 @@
                                     <option value="60" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '60'); ?>>60 secondes</option>
                                     <option value="120" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '120'); ?>>120 secondes</option>
                                 </select>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Délai maximum pour les requêtes serveur</p>
+                                <p class="canvas-modal-description">Délai maximum pour les requêtes serveur</p>
                             </td>
                         </tr>
                         <tr>
@@ -547,7 +547,7 @@
                                     <input type="checkbox" id="canvas_lazy_loading_plugin" name="canvas_lazy_loading_plugin" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_plugin', '1'), '1'); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Charge les données seulement quand nécessaire</p>
+                                <p class="canvas-modal-description">Charge les données seulement quand nécessaire</p>
                             </td>
                         </tr>
                     </table>
@@ -564,9 +564,9 @@
 <div id="canvas-autosave-modal" class="canvas-modal">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">💾 Sauvegarde Auto</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <div class="canvas-modal-header">
+                <h3 >💾 Sauvegarde Auto</h3>
+                <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
                 <form id="canvas-autosave-form">
@@ -615,9 +615,9 @@
 <div id="canvas-debug-modal" class="canvas-modal">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">🐛 Debug</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <div class="canvas-modal-header">
+                <h3 >🐛 Debug</h3>
+                <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
                 <form id="canvas-debug-form">
