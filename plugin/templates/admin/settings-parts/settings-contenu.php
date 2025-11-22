@@ -490,7 +490,13 @@ input:checked + .toggle-slider:before {
                 const modal = document.getElementById(modalId);
                 console.log('Modal found:', modalId, modal ? 'YES' : 'NO');
                 if (modal) {
-                    jQuery(modal).css('display', 'flex');
+                    // Chercher l'overlay ou utiliser la modale principale
+                    const overlay = modal.querySelector('.canvas-modal-overlay') || modal;
+                    jQuery(overlay).css('display', 'flex');
+                    // Afficher aussi la modale principale si elle est différente de l'overlay
+                    if (overlay !== modal) {
+                        jQuery(modal).css('display', 'flex');
+                    }
                     console.log('Modal shown for category:', category);
                     console.log('Modal display:', modal.style.display);
                     const saveButton = modal.querySelector('.canvas-modal-save');
@@ -506,7 +512,15 @@ input:checked + .toggle-slider:before {
         closeButtons.forEach(function(button) {
             button.addEventListener('click', function() {
                 const modal = this.closest('.canvas-modal');
-                jQuery(modal).css('display', 'none');
+                if (modal) {
+                    // Masquer l'overlay ou la modale principale
+                    const overlay = modal.querySelector('.canvas-modal-overlay') || modal;
+                    jQuery(overlay).css('display', 'none');
+                    // Masquer aussi la modale principale si elle est différente de l'overlay
+                    if (overlay !== modal) {
+                        jQuery(modal).css('display', 'none');
+                    }
+                }
             });
         });
 
