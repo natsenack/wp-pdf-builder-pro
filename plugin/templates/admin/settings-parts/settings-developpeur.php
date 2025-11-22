@@ -424,6 +424,47 @@
                 <p style="margin-top: 5px;"><strong>Dépend de :</strong> <span style="color: #2196f3; font-weight: bold;">Système d'aperçu PDF</span></p>
             </div>
 
+            <div style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h4 style="color: #0d47a1; margin-top: 0;">🔧 Corrections Mineures v1.1.0</h4>
+                <p style="margin-bottom: 15px;"><strong>Statut :</strong> <span style="color: #ff9800; font-weight: bold;">EN ATTENTE - FINALISATION</span></p>
+
+                <div style="background: #f8f9fa; border-left: 4px solid #2196f3; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #0d47a1;">📋 Corrections identifiées :</h5>
+                    <ul style="margin-bottom: 0;">
+                        <li><strong>Système d'Aperçu PDF/PNG/JPG :</strong> Implémentation complète du système d'aperçu multi-format</li>
+                        <li><strong>Activation Onboarding Production :</strong> Vérifier que l'onboarding s'active en production (WP_DEBUG=false)</li>
+                        <li><strong>Nettoyage Styles Temporaires :</strong> Supprimer/déplacer les styles inline temporaires vers debug.css</li>
+                        <li><strong>Tests d'Intégration Complets :</strong> Validation Canvas/Metabox avec données réelles</li>
+                        <li><strong>Tests Performance & Charge :</strong> Validation < 2s génération, cache hit ratio > 80%</li>
+                        <li><strong>Tests Sécurité & Robustesse :</strong> Audit complet et gestion d'erreurs</li>
+                        <li><strong>Tests Utilisateur & UX :</strong> Validation expérience utilisateur finale</li>
+                        <li><strong>Tests Compatibilité Navigateurs :</strong> Chrome, Firefox, Safari, Edge</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f1f8e9; border-left: 4px solid #4caf50; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #2e7d32;">🎯 Actions requises :</h5>
+                    <ol style="margin-bottom: 0;">
+                        <li><strong>Implémenter système d'aperçu :</strong> PDF/PNG/JPG avec conversion côté serveur</li>
+                        <li><strong>Vérifier l'onboarding :</strong> Tester activation en mode production</li>
+                        <li><strong>Audit CSS :</strong> Identifier et nettoyer les styles temporaires</li>
+                        <li><strong>Tests d'intégration :</strong> Validation transitions Canvas ↔ Metabox</li>
+                        <li><strong>Tests performance :</strong> Mesure temps génération et cache efficiency</li>
+                        <li><strong>Tests sécurité :</strong> Audit permissions, sanitisation, rate limiting</li>
+                        <li><strong>Tests UX :</strong> Workflows intuitifs, gestion erreurs user-friendly</li>
+                        <li><strong>Tests compatibilité :</strong> Validation cross-browser et responsive</li>
+                    </ol>
+                </div>
+
+                <div style="background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #e65100;">⚠️ Impact sur la release :</h5>
+                    <p style="margin-bottom: 0;">Ces corrections sont critiques pour atteindre la version 1.1.0 stable. Le système d'aperçu PDF/PNG/JPG est essentiel pour l'expérience utilisateur, permettant aux clients de prévisualiser leurs documents avant génération finale.</p>
+                </div>
+
+                <p style="margin-top: 15px;"><strong>Priorité :</strong> <span style="color: #dc3545; font-weight: bold;">CRITIQUE</span> - Bloque la release v1.1.0</p>
+                <p style="margin-top: 5px;"><strong>Échéance :</strong> <span style="color: #dc3545; font-weight: bold;">Janvier 2026</span></p>
+            </div>
+
                 </div>
             </div>
 

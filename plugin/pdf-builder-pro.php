@@ -1131,25 +1131,35 @@ function pdf_builder_cleanup_old_backups() {
 function pdf_builder_execute_weekly_maintenance() {
     // Vérifier si la maintenance automatique est activée
     $auto_maintenance_enabled = get_option('pdf_builder_auto_maintenance', '0');
-    if ($auto_maintenance_enabled !== '1') {
-        return; // Maintenance automatique désactivée
+    $performance_optimization_enabled = get_option('pdf_builder_performance_auto_optimization', '0');
+
+    if ($auto_maintenance_enabled !== '1' && $performance_optimization_enabled !== '1') {
+        return; // Aucune maintenance automatique activée
     }
 
     try {
         // Log de début de maintenance
         error_log('[PDF Builder] Démarrage de la maintenance automatique hebdomadaire');
 
-        // 1. Optimiser la base de données
-        pdf_builder_auto_optimize_db();
+        // 1. Optimiser la base de données (si optimisation performance activée)
+        if ($performance_optimization_enabled === '1') {
+            pdf_builder_auto_optimize_db();
+        }
 
-        // 2. Réparer les templates
-        pdf_builder_auto_repair_templates();
+        // 2. Réparer les templates (si optimisation performance activée)
+        if ($performance_optimization_enabled === '1') {
+            pdf_builder_auto_repair_templates();
+        }
 
-        // 3. Supprimer les fichiers temporaires
-        pdf_builder_auto_remove_temp_files();
+        // 3. Supprimer les fichiers temporaires (maintenance générale)
+        if ($auto_maintenance_enabled === '1') {
+            pdf_builder_auto_remove_temp_files();
+        }
 
-        // 4. Nettoyer le cache
-        pdf_builder_auto_clear_cache();
+        // 4. Nettoyer le cache (maintenance générale)
+        if ($auto_maintenance_enabled === '1') {
+            pdf_builder_auto_clear_cache();
+        }
 
         // Log de fin de maintenance
         error_log('[PDF Builder] Maintenance automatique hebdomadaire terminée avec succès');

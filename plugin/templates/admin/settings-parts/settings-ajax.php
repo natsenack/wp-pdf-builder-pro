@@ -106,6 +106,9 @@ function pdf_builder_save_settings_handler() {
                 if (isset($_POST['systeme_auto_maintenance'])) {
                     update_option('pdf_builder_auto_maintenance', $_POST['systeme_auto_maintenance'] === '1' ? 1 : 0);
                 }
+                if (isset($_POST['performance_auto_optimization'])) {
+                    update_option('pdf_builder_performance_auto_optimization', $_POST['performance_auto_optimization'] === '1' ? 1 : 0);
+                }
                 if (isset($_POST['systeme_auto_backup'])) {
                     update_option('pdf_builder_auto_backup', $_POST['systeme_auto_backup'] === '1' ? 1 : 0);
                 }
