@@ -305,6 +305,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     const event = new CustomEvent('pdfBuilderUpdateCanvasDimensions', {
       detail: { width: windowSettings.canvasWidth, height: windowSettings.canvasHeight }
     });
+    console.log('🔍 Dispatching pdfBuilderUpdateCanvasDimensions event:', { width: windowSettings.canvasWidth, height: windowSettings.canvasHeight });
     document.dispatchEvent(event);
   }, []);
 

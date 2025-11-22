@@ -24,6 +24,7 @@ export function PDFBuilder({
   useEffect(() => {
     const handleUpdateDimensions = (event: CustomEvent) => {
       const { width, height } = event.detail;
+      console.log('🔍 PDFBuilder received pdfBuilderUpdateCanvasDimensions:', { width, height });
       setDimensions({ width, height });
     };
 
