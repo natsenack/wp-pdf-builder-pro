@@ -1,4 +1,4 @@
-/**
+﻿/**
  * JavaScript pour la page de paramètres PDF Builder Pro
  * Gestion des interactions utilisateur et AJAX
  */
@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    }
 
     // === GESTION DES CARTES CANVAS (ouverture des modales) ===
     const configureButtons = document.querySelectorAll('.canvas-configure-btn');
@@ -568,7 +569,4 @@ document.addEventListener('DOMContentLoaded', function() {
     // Vérifier l'onglet actif au chargement
     updateFloatingButtonVisibility();
 
-}
-}
-});
-
+    if (floatingSaveBtn) {
