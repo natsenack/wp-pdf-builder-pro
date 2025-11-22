@@ -528,15 +528,15 @@ input:checked + .toggle-slider:before {
             console.log('Button style:', button.style);
             console.log('Button rect:', button.getBoundingClientRect());
 
-            button.addEventListener('click', function(event) {
-                alert('Save handler called for ' + this.getAttribute('data-category'));
-                console.log('Save button clicked for ' + this.getAttribute('data-category'));
-                console.log('Save button clicked - event fired for category:', this.getAttribute('data-category'));
+            jQuery(button).on('click', function(event) {
+                alert('Save handler called for ' + jQuery(this).attr('data-category'));
+                console.log('Save button clicked for ' + jQuery(this).attr('data-category'));
+                console.log('Save button clicked - event fired for category:', jQuery(this).attr('data-category'));
                 event.preventDefault(); // Prevent any default behavior
                 event.stopPropagation(); // Stop event bubbling
-                const category = this.getAttribute('data-category');
-                const modal = this.closest('.canvas-modal');
-                const form = modal.querySelector('form');
+                const category = jQuery(this).attr('data-category');
+                const modal = jQuery(this).closest('.canvas-modal');
+                const form = modal.find('form');
 
                 console.log('Save button clicked for category:', category);
                 console.log('pdf_builder_ajax available:', typeof pdf_builder_ajax !== 'undefined');
