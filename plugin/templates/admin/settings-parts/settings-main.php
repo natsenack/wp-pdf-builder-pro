@@ -1031,7 +1031,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 updateCanvasPreviews(category);
                             }
 
-                            alert('Paramètres sauvegardés avec succès !');
+                            // Alert supprimée selon les préférences utilisateur
                         } else {
                             throw new Error(data.data?.message || 'Erreur inconnue');
                         }
@@ -1043,9 +1043,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.disabled = false;
 
                         if (error.name === 'AbortError') {
-                            alert('Timeout: La requête a pris trop de temps');
+                            // Alert timeout supprimée selon les préférences utilisateur
                         } else {
-                            alert('Erreur lors de la sauvegarde: ' + error.message);
+                            // Alert erreur supprimée selon les préférences utilisateur
                         }
                     });
                 });
