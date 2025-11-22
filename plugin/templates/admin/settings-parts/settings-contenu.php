@@ -499,15 +499,106 @@ input:checked + .toggle-slider:before {
             });
         });
 
-        // Handle modal overlay clicks
-        const modalOverlays = document.querySelectorAll('.canvas-modal-overlay');
-        modalOverlays.forEach(function(overlay) {
-            overlay.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.closest('.canvas-modal').style.display = 'none';
+        // Handle modal save buttons
+        const saveButtons = document.querySelectorAll('.canvas-modal-save');
+        saveButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+                const modal = this.closest('.canvas-modal');
+                const form = modal.querySelector('form');
+
+                if (!form) {
+                    console.error('Form not found in modal for category:', category);
+                    return;
                 }
+
+                // Collect form data
+                const formData = new FormData(form);
+                formData.append('action', 'pdf_builder_save_canvas_settings');
+                formData.append('category', category);
+                formData.append('nonce', pdf_builder_ajax?.nonce || '');
+
+                // Show loading state
+                const originalText = this.textContent;
+                this.textContent = 'Sauvegarde...';
+                this.disabled = true;
+
+                // Send AJAX request
+                fetch(pdf_builder_ajax.ajax_url, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Success - close modal and show success message
+                        modal.style.display = 'none';
+                        this.textContent = originalText;
+                        this.disabled = false;
+
+                        // Update preview cards if needed
+                        updateCanvasPreviews(category);
+
+                        // Dispatch event for other components to update
+                        window.dispatchEvent(new CustomEvent('canvasSettingsUpdated', {
+                            detail: { category: category, data: data.data }
+                        }));
+
+                        // Show success notification (you can enhance this)
+                        alert('Paramètres sauvegardés avec succès !');
+                    } else {
+                        // Error
+                        console.error('Save error:', data);
+                        this.textContent = originalText;
+                        this.disabled = false;
+                        alert('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'));
+                    }
+                })
+                .catch(error => {
+                    console.error('AJAX error:', error);
+                    this.textContent = originalText;
+                    this.disabled = false;
+                    alert('Erreur de connexion lors de la sauvegarde');
+                });
             });
         });
+
+        // Function to update canvas preview cards after save
+        function updateCanvasPreviews(category) {
+            switch(category) {
+                case 'dimensions':
+                    // Update dimensions preview
+                    const widthSpan = document.getElementById('card-canvas-width');
+                    const heightSpan = document.getElementById('card-canvas-height');
+                    if (widthSpan && heightSpan) {
+                        const format = document.getElementById('canvas_format')?.value || 'A4';
+                        const orientation = document.getElementById('canvas_orientation')?.value || 'portrait';
+                        const dpi = document.getElementById('canvas_dpi')?.value || 150;
+
+                        // Calculate dimensions based on format
+                        const formatDimensions = {
+                            'A4': orientation === 'landscape' ? {width: 1123, height: 794} : {width: 794, height: 1123},
+                            'A3': orientation === 'landscape' ? {width: 1587, height: 1123} : {width: 1123, height: 1587},
+                            'A5': orientation === 'landscape' ? {width: 559, height: 397} : {width: 397, height: 559}
+                        };
+
+                        const dims = formatDimensions[format] || formatDimensions['A4'];
+                        widthSpan.textContent = dims.width;
+                        heightSpan.textContent = dims.height;
+                    }
+                    break;
+
+                case 'zoom':
+                    // Update zoom preview
+                    updateZoomPreview();
+                    break;
+
+                // Add other categories as needed
+                default:
+                    console.log('Preview update not implemented for category:', category);
+            }
+        }
 
         // Update zoom preview
         function updateZoomPreview() {
