@@ -161,8 +161,14 @@ function pdf_builder_save_settings_handler() {
 
                 // Paramètres d'accès (rôles)
                 $value = $get_post_value('pdf_builder_allowed_roles');
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('[DEBUG] pdf_builder_allowed_roles received: ' . print_r($value, true));
+                }
                 if ($value !== null && is_array($value)) {
                     update_option('pdf_builder_allowed_roles', $value);
+                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                        error_log('[DEBUG] pdf_builder_allowed_roles saved: ' . print_r($value, true));
+                    }
                 }
 
                 // Paramètres de sécurité

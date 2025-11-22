@@ -556,6 +556,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
 
+                // Debug: Afficher les arrays collectés
+                console.log('Checkbox arrays collected:', checkboxArrays);
+
                 // Ajouter les arrays de checkboxes
                 Object.keys(checkboxArrays).forEach(name => {
                     if (checkboxArrays[name].length > 0) {
