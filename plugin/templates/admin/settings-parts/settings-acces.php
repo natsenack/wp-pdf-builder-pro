@@ -28,7 +28,7 @@
             <p style="margin-bottom: 20px;">Sélectionnez les rôles WordPress qui auront accès à PDF Builder Pro.</p>
 
             <!-- Formulaire pour les paramètres d'accès (nécessaire pour la collecte AJAX) -->
-            <form id="access-settings-form" style="display: contents;">
+            <form id="access-settings-form">
 
                 <!-- Boutons de contrôle rapide -->
                 <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">

@@ -539,6 +539,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Collecter les données de TOUS les formulaires (pas seulement visibles)
             const forms = document.querySelectorAll('form');
+            console.log('Forms found:', forms.length, forms);
             forms.forEach(form => {
                 const formInputs = form.querySelectorAll('input, select, textarea');
 
