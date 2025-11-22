@@ -530,6 +530,8 @@ input:checked + .toggle-slider:before {
                     return;
                 }
 
+                console.log('Form found, collecting data...');
+
                 // Collect form data
                 const formData = new FormData(form);
                 formData.append('action', 'pdf_builder_save_canvas_settings');
