@@ -2,7 +2,8 @@
 
 <!-- Canvas Configuration Modals Dimensions & Format -->
 <div id="canvas-dimensions-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
-    <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
+    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+        <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">🔍 Zoom</h3>
             <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -96,6 +97,7 @@
                 <button type="button" class="button button-primary canvas-modal-save" data-category="dimensions" style="pointer-events: auto; cursor: pointer; display: block !important;">Sauvegarder</button>
             </div>
         </div>
+    </div>
 </div>
 <!-- Canvas Configuration Modals Zoom & Navigation -->
 <div id="canvas-zoom-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; display: none;">
