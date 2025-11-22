@@ -509,7 +509,13 @@ input:checked + .toggle-slider:before {
         console.log('Found save buttons:', saveButtons.length);
         saveButtons.forEach(function(button, index) {
             console.log('Attaching save handler to button', index, 'with category:', button.getAttribute('data-category'));
-            button.addEventListener('click', function() {
+            console.log('Button element:', button);
+            console.log('Button disabled:', button.disabled);
+            console.log('Button style:', button.style);
+
+            button.addEventListener('click', function(event) {
+                console.log('Save button clicked - event fired for category:', this.getAttribute('data-category'));
+                event.preventDefault(); // Prevent any default behavior
                 const category = this.getAttribute('data-category');
                 const modal = this.closest('.canvas-modal');
                 const form = modal.querySelector('form');
