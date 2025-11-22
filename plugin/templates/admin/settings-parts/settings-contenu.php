@@ -513,10 +513,23 @@ input:checked + .toggle-slider:before {
                     console.log('Modal shown for category:', category);
                     console.log('Modal display:', modal.style.display);
                     console.log('Overlay/modal after show:', overlay.style.cssText);
-                    console.log('Modal computed style:', window.getComputedStyle(modal));
-                    console.log('Overlay computed style:', window.getComputedStyle(overlay));
+                    const modalComputed = window.getComputedStyle(modal);
+                    const overlayComputed = window.getComputedStyle(overlay);
+                    console.log('Modal computed - display:', modalComputed.display, 'visibility:', modalComputed.visibility, 'opacity:', modalComputed.opacity);
+                    console.log('Modal computed - width:', modalComputed.width, 'height:', modalComputed.height, 'position:', modalComputed.position);
+                    console.log('Overlay computed - display:', overlayComputed.display, 'visibility:', overlayComputed.visibility, 'opacity:', overlayComputed.opacity);
+                    console.log('Overlay computed - width:', overlayComputed.width, 'height:', overlayComputed.height, 'position:', overlayComputed.position);
                     console.log('Modal rect:', modal.getBoundingClientRect());
                     console.log('Overlay rect:', overlay.getBoundingClientRect());
+                    // Vérifier les parents
+                    let parent = modal.parentElement;
+                    let depth = 0;
+                    while (parent && depth < 5) {
+                        const parentComputed = window.getComputedStyle(parent);
+                        console.log(`Parent ${depth} (${parent.tagName}.${parent.className}): display=${parentComputed.display}, overflow=${parentComputed.overflow}, position=${parentComputed.position}`);
+                        parent = parent.parentElement;
+                        depth++;
+                    }
                     const saveButton = modal.querySelector('.canvas-modal-save');
                     if (saveButton) {
                         console.log('Save button found:', saveButton);
