@@ -522,15 +522,14 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Bouton flottant cliqué - sauvegarde AJAX');
 
             // Changer l'apparence du bouton pendant la sauvegarde
-            const originalText = floatingSaveBtn.innerHTML;
-            console.log('Texte original du bouton:', originalText);
+            const originalText = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>'; // Texte fixe original
             floatingSaveBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Sauvegarde...</span>';
             floatingSaveBtn.classList.add('saving');
 
             // Timeout de sécurité : remettre le bouton à l'état normal après 5 secondes maximum
             const safetyTimeout = setTimeout(() => {
                 console.warn('Timeout de sécurité activé - remise à zéro du bouton');
-                floatingSaveBtn.innerHTML = originalText;
+                floatingSaveBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
                 floatingSaveBtn.classList.remove('saving', 'saved', 'error');
             }, 5000);
 
@@ -586,7 +585,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Remettre le texte original après 2 secondes
                     setTimeout(() => {
                         console.log('Remise à zéro du bouton après succès');
-                        floatingSaveBtn.innerHTML = originalText;
+                        floatingSaveBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
                         floatingSaveBtn.classList.remove('saved');
                     }, 2000);
 
@@ -604,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Remettre le texte original après 3 secondes
                     setTimeout(() => {
-                        floatingSaveBtn.innerHTML = originalText;
+                        floatingSaveBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
                         floatingSaveBtn.classList.remove('error');
                     }, 3000);
 
@@ -622,7 +621,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 floatingSaveBtn.classList.add('error');
 
                 setTimeout(() => {
-                    floatingSaveBtn.innerHTML = originalText;
+                    floatingSaveBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
                     floatingSaveBtn.classList.remove('error');
                 }, 3000);
 
