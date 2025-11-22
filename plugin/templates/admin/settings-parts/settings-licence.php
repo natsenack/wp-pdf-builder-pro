@@ -562,7 +562,6 @@
                                     });
                                     showText.style.display = 'none';
                                     hideText.style.display = 'inline';
-                                    this.innerHTML = '<span class="hide-text">Voir moins</span>';
                                 } else {
                                     // Cacher les fonctionnalités
                                     hiddenFeatures.forEach(function(feature) {
@@ -570,7 +569,6 @@
                                     });
                                     showText.style.display = 'inline';
                                     hideText.style.display = 'none';
-                                    this.innerHTML = '<span class="show-text">Voir plus (10 restantes)</span>';
                                 }
                             });
                         }
@@ -619,13 +617,7 @@
 
                     <!-- Comparaison des fonctionnalités -->
                     <section class="licence-section" style="margin-top: 40px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h3 style="margin: 0;">Comparaison des Fonctionnalités</h3>
-                            <button type="button" id="toggle-features-btn" class="button button-secondary" style="font-size: 12px; padding: 4px 12px;">
-                                <span class="show-text">Voir plus (10 restantes)</span>
-                                <span class="hide-text" style="display: none;">Voir moins</span>
-                            </button>
-                        </div>
+                        <h3>Comparaison des Fonctionnalités</h3>
                         <table class="wp-list-table widefat fixed striped" style="margin-top: 15px; border-collapse: collapse; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                             <thead style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white;">
                                 <tr>
@@ -758,6 +750,14 @@
                                 </tr>
                             </tbody>
                         </table>
+
+                        <!-- Bouton toggle pour voir plus/moins de fonctionnalités -->
+                        <div style="margin-top: 15px; text-align: center;">
+                            <button type="button" id="toggle-features-btn" class="button button-primary" style="width: 100%; padding: 12px 20px; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s ease;">
+                                <span class="show-text">🔽 Voir plus de fonctionnalités (10 restantes)</span>
+                                <span class="hide-text" style="display: none;">🔼 Voir moins</span>
+                            </button>
+                        </div>
 
                         <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 8px; padding: 20px; margin-top: 20px;">
                             <h4 style="color: #8b4513; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px;">
