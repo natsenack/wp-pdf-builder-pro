@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveButton.disabled = false;
                 saveButton.textContent = 'Sauvegarder';
             }
-        })
+        });
     }
 
     // Fonction pour afficher les notifications admin
@@ -457,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Couleur initiale
             preview.style.backgroundColor = input.value;
-        }
+        });
     });
 
     // === GESTION DES REQUÊTES AJAX ===
@@ -532,7 +532,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const firstContent = firstAccordion.nextElementSibling;
         if (firstContent) {
             firstContent.style.display = 'block';
-        }
+        });
     }
 
     // Initialiser les onglets (premier actif par défaut)
@@ -543,7 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const firstTabContent = document.getElementById(firstTabId);
         if (firstTabContent) {
             firstTabContent.style.display = 'block';
-        }
+        });
     }
 
     // === BOUTON FLOTTANT DE SAUVEGARDE ===
@@ -555,7 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (floatingSaveContainer) {
             // Le bouton flottant est maintenant visible dans tous les onglets
             floatingSaveContainer.style.display = 'block';
-        }
+        });
     }
 
     // Mettre à jour la visibilité lors du changement d'onglet
@@ -659,7 +659,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (text !== btn) text.textContent = 'Sauvegarder';
                     else btn.textContent = '💾 Sauvegarder';
                 }, 3000);
-//             });
+            });
         });
-    });
 });
