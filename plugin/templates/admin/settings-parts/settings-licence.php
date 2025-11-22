@@ -759,17 +759,65 @@
                             </button>
                         </div>
 
-                        <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #f39c12; border-radius: 8px; padding: 20px; margin-top: 20px;">
-                            <h4 style="color: #8b4513; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px;">
-                                💡 <strong>Pourquoi passer en Premium ?</strong>
+                        <div style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border: 2px solid #ff9800; border-radius: 12px; padding: 20px; margin-top: 20px; position: relative; overflow: hidden; box-shadow: 0 6px 20px rgba(255,152,0,0.2);">
+                            <!-- Élément décoratif animé -->
+                            <div style="position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: linear-gradient(45deg, #ff9800, #ffb74d); border-radius: 50%; opacity: 0.8; animation: pulse 2s infinite;"></div>
+
+                            <h4 style="color: #e65100; margin: 0 0 18px 0; display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                                <span style="background: linear-gradient(45deg, #ff9800, #ffb74d); color: white; padding: 6px 10px; border-radius: 20px; font-size: 14px; box-shadow: 0 2px 4px rgba(255,152,0,0.3);">💎 PREMIUM</span>
+                                <strong>5 bonnes raisons de passer en Premium</strong>
                             </h4>
-                            <ul style="color: #8b4513; margin: 0; padding-left: 20px; line-height: 1.6;">
-                                <li><strong>Usage professionnel :</strong> Qualité 300 DPI sans filigrane pour vos documents clients</li>
-                                <li><strong>Productivité :</strong> Templates illimités et génération en masse pour gagner du temps</li>
-                                <li><strong>Évolutivité :</strong> API développeur pour intégrer dans vos workflows existants</li>
-                                <li><strong>Support dédié :</strong> Assistance prioritaire pour résoudre vos problèmes rapidement</li>
-                                <li><strong>Économique :</strong> 79€ à vie vs coûts récurrents d'autres solutions</li>
-                            </ul>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
+                                    <span style="color: #ff9800; font-size: 16px;">🏢</span>
+                                    <div style="flex: 1;">
+                                        <strong style="color: #e65100; font-size: 12px;">Usage professionnel</strong>
+                                        <div style="color: #5d4037; font-size: 11px; line-height: 1.3;">Qualité 300 DPI sans filigrane</div>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
+                                    <span style="color: #ff9800; font-size: 16px;">⚡</span>
+                                    <div style="flex: 1;">
+                                        <strong style="color: #e65100; font-size: 12px;">Productivité</strong>
+                                        <div style="color: #5d4037; font-size: 11px; line-height: 1.3;">Templates illimités et génération en masse</div>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
+                                    <span style="color: #ff9800; font-size: 16px;">🔧</span>
+                                    <div style="flex: 1;">
+                                        <strong style="color: #e65100; font-size: 12px;">Évolutivité</strong>
+                                        <div style="color: #5d4037; font-size: 11px; line-height: 1.3;">API développeur complète</div>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
+                                    <span style="color: #ff9800; font-size: 16px;">🎯</span>
+                                    <div style="flex: 1;">
+                                        <strong style="color: #e65100; font-size: 12px;">Support dédié</strong>
+                                        <div style="color: #5d4037; font-size: 11px; line-height: 1.3;">Réponse sous 24h garantie</div>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800; grid-column: span 2;">
+                                    <span style="color: #ff9800; font-size: 16px;">💰</span>
+                                    <div style="flex: 1;">
+                                        <strong style="color: #e65100; font-size: 12px;">Économique</strong>
+                                        <div style="color: #5d4037; font-size: 11px; line-height: 1.3;">79€ à vie vs coûts récurrents</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Animation CSS pour l'effet pulse -->
+                            <style>
+                                @keyframes pulse {
+                                    0% { transform: scale(1); opacity: 0.8; }
+                                    50% { transform: scale(1.1); opacity: 1; }
+                                    100% { transform: scale(1); opacity: 0.8; }
+                                }
+                            </style>
                         </div>
                     </section>
 
