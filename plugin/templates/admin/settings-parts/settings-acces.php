@@ -3,31 +3,10 @@
 
             <!-- Message de confirmation que l'onglet est chargé -->
             <div style="margin-bottom: 20px; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
-                ✅ Section Rôles chargée - Bouton de sauvegarde visible ci-dessous
+                ✅ Section Rôles chargée - Utilise le bouton "Enregistrer" flottant pour sauvegarder
             </div>
 
             <?php
-            // Traitement de la sauvegarde des rôles autorisés
-         if (isset($_POST['submit_roles']) && isset($_POST['pdf_builder_roles_nonce'])) {
-
-
-                if (wp_verify_nonce($_POST['pdf_builder_roles_nonce'], 'pdf_builder_roles')) {
-                    $allowed_roles = isset($_POST['pdf_builder_allowed_roles'])
-                        ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles'])
-                        : [];
-
-                    if (empty($allowed_roles)) {
-                        $allowed_roles = ['administrator'];
-                        // Au minimum l'admin
-                    }
-
-                    update_option('pdf_builder_allowed_roles', $allowed_roles);
-                    $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Rôles autorisés mis à jour avec succès.</p></div>';
-                } else {
-                    $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité (nonce invalide).</p></div>';
-                }
-            }
-
             global $wp_roles;
             $all_roles = $wp_roles->roles;
             $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
@@ -47,9 +26,6 @@
             ?>
 
             <p style="margin-bottom: 20px;">Sélectionnez les rôles WordPress qui auront accès à PDF Builder Pro.</p>
-
-            <form method="post">
-                <?php wp_nonce_field('pdf_builder_roles', 'pdf_builder_roles_nonce'); ?>
 
                 <!-- Boutons de contrôle rapide -->
                 <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
@@ -327,5 +303,3 @@
                         <li>Minimum requis : au moins un rôle sélectionné</li>
                     </ul>
                 </div>
-
-            </form>
