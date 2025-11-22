@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BuilderProvider } from './contexts/builder/BuilderContext.tsx';
 import { CanvasSettingsProvider } from './contexts/CanvasSettingsContext.tsx';
 import { PDFBuilderContent } from './components/PDFBuilderContent.tsx';
@@ -11,16 +11,35 @@ interface PDFBuilderProps {
 }
 
 export function PDFBuilder({
-  width = DEFAULT_CANVAS_WIDTH,
-  height = DEFAULT_CANVAS_HEIGHT,
+  width: initialWidth = DEFAULT_CANVAS_WIDTH,
+  height: initialHeight = DEFAULT_CANVAS_HEIGHT,
   className
 }: PDFBuilderProps) {
+  const [dimensions, setDimensions] = useState({
+    width: initialWidth,
+    height: initialHeight
+  });
+
+  // Écouter les changements de dimensions depuis l'API globale
+  useEffect(() => {
+    const handleUpdateDimensions = (event: CustomEvent) => {
+      const { width, height } = event.detail;
+      setDimensions({ width, height });
+    };
+
+    document.addEventListener('pdfBuilderUpdateCanvasDimensions', handleUpdateDimensions as EventListener);
+
+    return () => {
+      document.removeEventListener('pdfBuilderUpdateCanvasDimensions', handleUpdateDimensions as EventListener);
+    };
+  }, []);
+
   return (
     <CanvasSettingsProvider>
       <BuilderProvider>
         <PDFBuilderContent
-          width={width}
-          height={height}
+          width={dimensions.width}
+          height={dimensions.height}
           className={className}
         />
       </BuilderProvider>

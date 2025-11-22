@@ -118,6 +118,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 widthDisplay.textContent = widthPx;
                 heightDisplay.textContent = heightPx;
                 mmDisplay.textContent = dimensions.width.toFixed(1) + '×' + dimensions.height.toFixed(1) + 'mm';
+
+                // Mettre à jour les dimensions du canvas dans l'éditeur React
+                if (window.pdfBuilderReact && window.pdfBuilderReact.updateCanvasDimensions) {
+                    window.pdfBuilderReact.updateCanvasDimensions(widthPx, heightPx);
+                }
             }
         }
     }

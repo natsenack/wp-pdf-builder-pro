@@ -19,7 +19,8 @@ import {
   getCurrentTemplate,
   exportTemplate,
   saveTemplate,
-  resetAPI
+  resetAPI,
+  updateCanvasDimensions
 } from './api/global-api';
 
 // Composant ErrorBoundary pour capturer les erreurs de rendu
@@ -155,7 +156,8 @@ const exports = {
   exportTemplate,
   saveTemplate,
   registerEditorInstance,
-  resetAPI
+  resetAPI,
+  updateCanvasDimensions
 };
 
 if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
