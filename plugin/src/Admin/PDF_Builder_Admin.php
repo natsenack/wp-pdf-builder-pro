@@ -5729,6 +5729,8 @@ class PdfBuilderAdmin
         // Définir les paramètres canvas pour l'éditeur React
         $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
         error_log('PDF Builder - Canvas settings loaded: ' . print_r($canvas_settings_js, true));
+        $orientation_loaded = get_option('pdf_builder_canvas_orientation', 'portrait');
+        error_log('PDF Builder - Orientation chargée depuis DB: ' . $orientation_loaded);
         $canvas_settings_script = "
         window.pdfBuilderCanvasSettings = " . wp_json_encode([
             'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
