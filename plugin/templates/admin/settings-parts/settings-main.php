@@ -364,10 +364,10 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
         <?php require_once 'settings-developpeur.php'; ?>
     </div>
 
-    <!-- Modals -->
-    <?php require_once 'settings-modals.php'; ?>
-
 </div>
+
+<!-- Modals - COMPLETEMENT HORS du conteneur principal -->
+<?php require_once 'settings-modals.php'; ?>
 
 <!-- Floating Save Button - HORS du conteneur principal -->
 <div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999 !important; border-radius: 10px; padding: 5px;">
