@@ -111,7 +111,10 @@ try {
     # Les fichiers sources TypeScript ne doivent pas être en production, seulement les fichiers compilés
     $pluginModified = $allModified | Where-Object { 
         ($_ -like "plugin/*" -or $_ -like "build/*") -and
-        $_ -notlike "assets/js/src/*"
+        $_ -notlike "assets/js/src/*" -and
+        $_ -notlike "plugin/config/*" -and  # Exclure le dossier config qui n'existe pas dans plugin/
+        $_ -notlike "plugin/docs/*" -and    # Exclure le dossier docs qui n'existe pas dans plugin/
+        (Test-Path "$WorkingDir\$_")  # Vérifier que le fichier existe réellement
     }
     
     # Toujours inclure les fichiers dist s'ils ont été modifiés récemment (dans les dernières 5 minutes)
