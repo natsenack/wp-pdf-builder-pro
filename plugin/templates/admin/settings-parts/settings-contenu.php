@@ -509,8 +509,13 @@ input:checked + .toggle-slider:before {
 
                 console.log('Save button clicked for category:', category);
                 console.log('pdf_builder_ajax available:', typeof pdf_builder_ajax !== 'undefined');
+                console.log('pdfBuilderAjax available:', typeof pdfBuilderAjax !== 'undefined');
+
                 if (typeof pdf_builder_ajax !== 'undefined') {
                     console.log('pdf_builder_ajax:', pdf_builder_ajax);
+                }
+                if (typeof pdfBuilderAjax !== 'undefined') {
+                    console.log('pdfBuilderAjax:', pdfBuilderAjax);
                 }
 
                 if (!form) {
@@ -522,7 +527,22 @@ input:checked + .toggle-slider:before {
                 const formData = new FormData(form);
                 formData.append('action', 'pdf_builder_save_canvas_settings');
                 formData.append('category', category);
-                formData.append('nonce', pdf_builder_ajax?.nonce || '');
+
+                // Get AJAX config - try both possible variable names
+                let ajaxConfig = null;
+                if (typeof pdf_builder_ajax !== 'undefined') {
+                    ajaxConfig = pdf_builder_ajax;
+                } else if (typeof pdfBuilderAjax !== 'undefined') {
+                    ajaxConfig = pdfBuilderAjax;
+                }
+
+                if (!ajaxConfig) {
+                    console.error('AJAX config not found - neither pdf_builder_ajax nor pdfBuilderAjax is defined');
+                    alert('Erreur de configuration AJAX');
+                    return;
+                }
+
+                formData.append('nonce', ajaxConfig.nonce || '');
 
                 // Show loading state
                 const originalText = this.textContent;
@@ -530,7 +550,7 @@ input:checked + .toggle-slider:before {
                 this.disabled = true;
 
                 // Send AJAX request
-                fetch(pdf_builder_ajax.ajax_url, {
+                fetch(ajaxConfig.ajax_url, {
                     method: 'POST',
                     body: formData,
                     credentials: 'same-origin'
@@ -616,14 +636,27 @@ input:checked + .toggle-slider:before {
             if (zoomPreview) {
                 // Get current values from options (this would need AJAX in real implementation)
                 // For now, we'll update it when settings are saved
-                fetch(pdf_builder_ajax.ajax_url, {
+                // Get AJAX config for zoom preview
+                let ajaxConfig = null;
+                if (typeof pdf_builder_ajax !== 'undefined') {
+                    ajaxConfig = pdf_builder_ajax;
+                } else if (typeof pdfBuilderAjax !== 'undefined') {
+                    ajaxConfig = pdfBuilderAjax;
+                }
+
+                if (!ajaxConfig) {
+                    console.error('AJAX config not found for zoom preview');
+                    return;
+                }
+
+                fetch(ajaxConfig.ajax_url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: new URLSearchParams({
                         action: 'pdf_builder_get_canvas_settings',
-                        nonce: pdf_builder_ajax?.nonce || ''
+                        nonce: ajaxConfig.nonce || ''
                     })
                 })
                 .then(response => response.json())
