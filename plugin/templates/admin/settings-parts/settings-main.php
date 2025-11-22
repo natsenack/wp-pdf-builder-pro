@@ -1087,8 +1087,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update canvas previews after save
     window.updateCanvasPreviews = function(category) {
-        console.log('🔄 Updating canvas previews for category:', category);
-
         // Get AJAX config
         let ajaxConfig = null;
         if (typeof pdf_builder_ajax !== 'undefined') {
@@ -1100,11 +1098,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (!ajaxConfig || !ajaxConfig.ajax_url) {
-            console.error('❌ Cannot update previews: no AJAX config available');
             return;
         }
-
-        console.log('📡 Making AJAX request to get updated values for category:', category);
 
         // Make AJAX call to get updated values
         fetch(ajaxConfig.ajax_url, {
@@ -1118,44 +1113,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 'nonce': ajaxConfig.nonce || ''
             })
         })
-        .then(response => {
-            console.log('📨 AJAX response received:', response);
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            console.log('📊 AJAX data received:', data);
             if (data.success && data.data) {
-                console.log('✅ Updating modal values with:', data.data);
                 updateModalValues(category, data.data);
-            } else {
-                console.error('❌ Failed to get updated values:', data);
             }
         })
         .catch(error => {
-            console.error('❌ Error updating previews:', error);
+            console.error('Error updating previews:', error);
         });
     };
 
     // Function to update modal values in DOM
     function updateModalValues(category, values) {
-        console.log('🔄 Updating modal values for', category, 'with data:', values);
-
         const modalId = `canvas-${category}-modal`;
-        console.log('🎯 Looking for modal with ID:', modalId);
-
         const modal = document.getElementById(modalId);
         if (!modal) {
-            console.error('❌ Modal not found:', modalId);
-            console.log('📋 Available modals:', Array.from(document.querySelectorAll('[id*="canvas-"]')).map(el => el.id));
             return;
         }
-
-        console.log('✅ Modal found, updating values...');
 
         // Update values based on category
         switch (category) {
             case 'grille':
-                console.log('🎯 Calling updateGrilleModal');
                 updateGrilleModal(modal, values);
                 break;
             case 'dimensions':
@@ -1189,65 +1168,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update grille modal values
     function updateGrilleModal(modal, values) {
-        console.log('🎯 Updating grille modal with values:', values);
+        const isGridEnabled = values.grid_enabled === '1' || values.grid_enabled === true;
 
-        // Guides enabled
+        // Update checkboxes
         const guidesCheckbox = modal.querySelector('#canvas_guides_enabled');
         if (guidesCheckbox) {
-            const newValue = values.guides_enabled === '1' || values.guides_enabled === true;
-            console.log('📝 Setting guides_enabled:', guidesCheckbox.checked, '->', newValue);
-            guidesCheckbox.checked = newValue;
-        } else {
-            console.error('❌ guidesCheckbox not found');
+            guidesCheckbox.checked = values.guides_enabled === '1' || values.guides_enabled === true;
         }
 
-        // Grid enabled
         const gridCheckbox = modal.querySelector('#canvas_grid_enabled');
         if (gridCheckbox) {
-            const newValue = values.grid_enabled === '1' || values.grid_enabled === true;
-            console.log('📝 Setting grid_enabled:', gridCheckbox.checked, '->', newValue);
-            gridCheckbox.checked = newValue;
-        } else {
-            console.error('❌ gridCheckbox not found');
+            gridCheckbox.checked = isGridEnabled;
         }
 
-        // Grid size
+        // Update grid size input
         const gridSizeInput = modal.querySelector('#canvas_grid_size');
         if (gridSizeInput) {
-            const newValue = values.grid_size || 20;
-            console.log('📝 Setting grid_size:', gridSizeInput.value, '->', newValue);
-            gridSizeInput.value = newValue;
-            gridSizeInput.disabled = !(values.grid_enabled === '1' || values.grid_enabled === true);
-        } else {
-            console.error('❌ gridSizeInput not found');
+            gridSizeInput.value = values.grid_size || 20;
+            gridSizeInput.disabled = !isGridEnabled;
         }
 
-        // Snap to grid
+        // Update snap to grid checkbox
         const snapCheckbox = modal.querySelector('#canvas_snap_to_grid');
         if (snapCheckbox) {
-            const newValue = values.snap_to_grid === '1' || values.snap_to_grid === true;
-            console.log('📝 Setting snap_to_grid:', snapCheckbox.checked, '->', newValue);
-            snapCheckbox.checked = newValue;
-            snapCheckbox.disabled = !(values.grid_enabled === '1' || values.grid_enabled === true);
-        } else {
-            console.error('❌ snapCheckbox not found');
+            snapCheckbox.checked = values.snap_to_grid === '1' || values.snap_to_grid === true;
+            snapCheckbox.disabled = !isGridEnabled;
         }
 
-        // Update toggle switch classes
-        const gridToggle = modal.querySelector('#canvas_grid_enabled').closest('.toggle-switch');
-        const snapToggle = modal.querySelector('#canvas_snap_to_grid').closest('.toggle-switch');
+        // Update toggle switch visual states
+        const gridToggle = gridCheckbox?.closest('.toggle-switch');
+        const snapToggle = snapCheckbox?.closest('.toggle-switch');
+
         if (gridToggle) {
-            const isDisabled = !(values.grid_enabled === '1' || values.grid_enabled === true);
-            console.log('🎨 Setting grid toggle disabled:', gridToggle.classList.contains('disabled'), '->', isDisabled);
-            gridToggle.classList.toggle('disabled', isDisabled);
+            gridToggle.classList.toggle('disabled', !isGridEnabled);
         }
         if (snapToggle) {
-            const isDisabled = !(values.grid_enabled === '1' || values.grid_enabled === true);
-            console.log('🎨 Setting snap toggle disabled:', snapToggle.classList.contains('disabled'), '->', isDisabled);
-            snapToggle.classList.toggle('disabled', isDisabled);
+            snapToggle.classList.toggle('disabled', !isGridEnabled);
         }
-
-        console.log('✅ Grille modal update completed');
     }
 
     // Placeholder functions for other modals (to be implemented if needed)

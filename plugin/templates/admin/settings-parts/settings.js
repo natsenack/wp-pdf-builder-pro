@@ -242,69 +242,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Update grille modal values from AJAX
-    function updateGrilleModalFromAjax(modal, values) {
-        console.log('🎯 Updating grille modal with values:', values);
-
-        // Guides enabled
-        const guidesCheckbox = modal.querySelector('#canvas_guides_enabled');
-        if (guidesCheckbox) {
-            const newValue = values.guides_enabled === '1' || values.guides_enabled === true;
-            console.log('📝 Setting guides_enabled:', guidesCheckbox.checked, '->', newValue);
-            guidesCheckbox.checked = newValue;
-        } else {
-            console.error('❌ guidesCheckbox not found');
-        }
-
-        // Grid enabled
-        const gridCheckbox = modal.querySelector('#canvas_grid_enabled');
-        if (gridCheckbox) {
-            const newValue = values.grid_enabled === '1' || values.grid_enabled === true;
-            console.log('📝 Setting grid_enabled:', gridCheckbox.checked, '->', newValue);
-            gridCheckbox.checked = newValue;
-        } else {
-            console.error('❌ gridCheckbox not found');
-        }
-
-        // Grid size
-        const gridSizeInput = modal.querySelector('#canvas_grid_size');
-        if (gridSizeInput) {
-            const newValue = values.grid_size || 20;
-            console.log('📝 Setting grid_size:', gridSizeInput.value, '->', newValue);
-            gridSizeInput.value = newValue;
-            gridSizeInput.disabled = !(values.grid_enabled === '1' || values.grid_enabled === true);
-        } else {
-            console.error('❌ gridSizeInput not found');
-        }
-
-        // Snap to grid
-        const snapCheckbox = modal.querySelector('#canvas_snap_to_grid');
-        if (snapCheckbox) {
-            const newValue = values.snap_to_grid === '1' || values.snap_to_grid === true;
-            console.log('📝 Setting snap_to_grid:', snapCheckbox.checked, '->', newValue);
-            snapCheckbox.checked = newValue;
-            snapCheckbox.disabled = !(values.grid_enabled === '1' || values.grid_enabled === true);
-        } else {
-            console.error('❌ snapCheckbox not found');
-        }
-
-        // Update toggle switch classes
-        const gridToggle = modal.querySelector('#canvas_grid_enabled').closest('.toggle-switch');
-        const snapToggle = modal.querySelector('#canvas_snap_to_grid').closest('.toggle-switch');
-        if (gridToggle) {
-            const isDisabled = !(values.grid_enabled === '1' || values.grid_enabled === true);
-            console.log('🎨 Setting grid toggle disabled:', gridToggle.classList.contains('disabled'), '->', isDisabled);
-            gridToggle.classList.toggle('disabled', isDisabled);
-        }
-        if (snapToggle) {
-            const isDisabled = !(values.grid_enabled === '1' || values.grid_enabled === true);
-            console.log('🎨 Setting snap toggle disabled:', snapToggle.classList.contains('disabled'), '->', isDisabled);
-            snapToggle.classList.toggle('disabled', isDisabled);
-        }
-
-        console.log('✅ Grille modal update completed');
-    }
-
     window.updateZoomPreview = function() {
         window.updateCanvasPreviews("performance");
     };
