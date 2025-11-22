@@ -408,10 +408,6 @@ function pdf_builder_save_settings_handler() {
                     }
                 }
 
-                // Log orientation sauvegardée
-                $saved_orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
-                error_log('PDF Builder - Orientation sauvegardée: ' . $saved_orientation);
-
                 // Calculer et sauvegarder les dimensions du canvas en pixels
                 $format = get_option('pdf_builder_canvas_format', 'A4');
                 $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');

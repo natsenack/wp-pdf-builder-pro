@@ -300,6 +300,12 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     // For now, just use window settings - AJAX calls can be added later if needed
     const windowSettings = loadSettingsFromWindowObj();
     setSettings(windowSettings);
+    
+    // Déclencher l'événement pour mettre à jour les dimensions dans PDFBuilder
+    const event = new CustomEvent('pdfBuilderUpdateCanvasDimensions', {
+      detail: { width: windowSettings.canvasWidth, height: windowSettings.canvasHeight }
+    });
+    document.dispatchEvent(event);
   }, []);
 
   // Listen for settings update events
@@ -307,6 +313,12 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     const handleSettingsUpdate = () => {
       const windowSettings = loadSettingsFromWindowObj();
       setSettings(windowSettings);
+      
+      // Déclencher l'événement pour mettre à jour les dimensions dans PDFBuilder
+      const event = new CustomEvent('pdfBuilderUpdateCanvasDimensions', {
+        detail: { width: windowSettings.canvasWidth, height: windowSettings.canvasHeight }
+      });
+      document.dispatchEvent(event);
     };
     window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
     return () => window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
