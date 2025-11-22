@@ -568,30 +568,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Vérifier l'onglet actif au chargement
     updateFloatingButtonVisibility();
 
-});
+    // Fonction pour mettre à jour les previews des cartes après sauvegarde
+    function updateCanvasPreviews(category) {
+        console.log('Updating canvas previews for category:', category);
 
-// Fonction pour mettre à jour les previews des cartes après sauvegarde
-function updateCanvasPreviews(category) {
-    console.log('Updating canvas previews for category:', category);
+        // Mettre à jour le preview FPS si on est dans la catégorie performance
+        if (category === 'performance') {
+            const fpsSelect = document.getElementById('canvas_fps_target');
+            const fpsValue = document.getElementById('current_fps_value');
 
-    // Mettre à jour le preview FPS si on est dans la catégorie performance
-    if (category === 'performance') {
-        const fpsSelect = document.getElementById('canvas_fps_target');
-        const fpsValue = document.getElementById('current_fps_value');
-
-        if (fpsSelect && fpsValue) {
-            // Déclencher l'événement change pour mettre à jour le preview
-            const event = new Event('change');
-            fpsSelect.dispatchEvent(event);
+            if (fpsSelect && fpsValue) {
+                // Déclencher l'événement change pour mettre à jour le preview
+                const event = new Event('change');
+                fpsSelect.dispatchEvent(event);
+            }
         }
+
+        // Ici on peut ajouter d'autres previews selon les catégories
+        // Par exemple pour les couleurs, dimensions, etc.
     }
 
-    // Ici on peut ajouter d'autres previews selon les catégories
-    // Par exemple pour les couleurs, dimensions, etc.
-}
+    // Alias pour compatibilité
+    function updateZoomPreview() {
+        updateCanvasPreviews('performance');
+    }
 
-// Alias pour compatibilité
-function updateZoomPreview() {
-    updateCanvasPreviews('performance');
-}
+});
 
