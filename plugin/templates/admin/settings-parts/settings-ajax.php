@@ -578,7 +578,7 @@ function pdf_builder_save_canvas_settings_handler() {
                     // Calculer et sauvegarder les dimensions en pixels
                     $format = get_option('pdf_builder_canvas_format', 'A4');
                     $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
-                    $dpi = intval(get_option('pdf_builder_canvas_dpi', 150));
+                    $dpi = intval(get_option('pdf_builder_canvas_dpi', 96));
 
                     // Dimensions standard en mm pour chaque format
                     $formatDimensionsMM = [
@@ -937,7 +937,7 @@ function pdf_builder_get_canvas_settings_handler() {
                 $values = [
                     'format' => get_option('pdf_builder_canvas_format', 'A4'),
                     'orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
-                    'dpi' => get_option('pdf_builder_canvas_dpi', 150)
+                    'dpi' => get_option('pdf_builder_canvas_dpi', 96)
                 ];
                 break;
 

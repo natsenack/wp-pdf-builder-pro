@@ -85,7 +85,7 @@ input:checked + .toggle-slider:before {
                                     </div>
                                     <span class="preview-size" id="card-canvas-dpi">
                                         <?php
-                                        $dpi = get_option('pdf_builder_canvas_dpi', 150);
+                                        $dpi = get_option('pdf_builder_canvas_dpi', 96);
                                         $format = get_option('pdf_builder_canvas_format', 'A4');
                                         $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
 

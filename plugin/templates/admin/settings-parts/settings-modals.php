@@ -45,9 +45,10 @@
                             <th scope="row"><label for="canvas_dpi">Résolution DPI</label></th>
                             <td>
                                 <select id="canvas_dpi" name="canvas_dpi">
-                                    <option value="72" <?php selected(get_option('pdf_builder_canvas_dpi', 150), '72'); ?>>72 DPI (Web)</option>
-                                    <option value="150" <?php selected(get_option('pdf_builder_canvas_dpi', 150), '150'); ?>>150 DPI (Impression)</option>
-                                    <option value="300" <?php selected(get_option('pdf_builder_canvas_dpi', 150), '300'); ?>>300 DPI (Haute qualité)</option>
+                                    <option value="72" <?php selected(get_option('pdf_builder_canvas_dpi', 96), '72'); ?>>72 DPI (Web)</option>
+                                    <option value="96" <?php selected(get_option('pdf_builder_canvas_dpi', 96), '96'); ?>>96 DPI (Écran)</option>
+                                    <option value="150" <?php selected(get_option('pdf_builder_canvas_dpi', 96), '150'); ?>>150 DPI (Impression)</option>
+                                    <option value="300" <?php selected(get_option('pdf_builder_canvas_dpi', 96), '300'); ?>>300 DPI (Haute qualité)</option>
                                 </select>
                                 <p class="canvas-modal-description">Qualité d'impression (plus élevé = meilleure qualité)</p>
                             </td>
@@ -56,8 +57,8 @@
                             <th scope="row"><label>Dimensions calculées</label></th>
                             <td>
                                 <div id="canvas-dimensions-display" class="canvas-modal-display">
-                                    <span id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_width', 800)); ?></span> ×
-                                    <span id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_height', 600)); ?></span> px
+                                    <span id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_width', 794)); ?></span> ×
+                                    <span id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_height', 1123)); ?></span> px
                                     <br>
                                     <small id="canvas-mm-display">
                                         <?php
