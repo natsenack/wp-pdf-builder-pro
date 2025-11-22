@@ -492,6 +492,8 @@ input:checked + .toggle-slider:before {
                 if (modal) {
                     // Chercher l'overlay ou utiliser la modale principale
                     const overlay = modal.querySelector('.canvas-modal-overlay') || modal;
+                    console.log('Using overlay/modal:', overlay === modal ? 'modal' : 'overlay');
+                    console.log('Overlay/modal before show:', overlay.style.cssText);
                     jQuery(overlay).css('display', 'flex');
                     // Afficher aussi la modale principale si elle est différente de l'overlay
                     if (overlay !== modal) {
@@ -499,9 +501,15 @@ input:checked + .toggle-slider:before {
                     }
                     console.log('Modal shown for category:', category);
                     console.log('Modal display:', modal.style.display);
+                    console.log('Overlay/modal after show:', overlay.style.cssText);
+                    console.log('Modal rect:', modal.getBoundingClientRect());
                     const saveButton = modal.querySelector('.canvas-modal-save');
                     if (saveButton) {
+                        console.log('Save button found:', saveButton);
                         console.log('Save button rect after show:', saveButton.getBoundingClientRect());
+                        console.log('Save button computed style:', window.getComputedStyle(saveButton));
+                    } else {
+                        console.log('Save button NOT found in modal');
                     }
                 }
             });
