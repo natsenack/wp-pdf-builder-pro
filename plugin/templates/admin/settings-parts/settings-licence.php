@@ -752,8 +752,8 @@
                         </table>
 
                         <!-- Bouton toggle pour voir plus/moins de fonctionnalités -->
-                        <div style="margin-top: 15px; text-align: center;">
-                            <button type="button" id="toggle-features-btn" class="button button-primary" style="width: 100%; padding: 12px 20px; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s ease;">
+                        <div style="text-align: center;">
+                            <button type="button" id="toggle-features-btn" class="button button-primary" style="width: 100%; padding: 12px 20px; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 0 0 6px 6px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                                 <span class="show-text">🔽 Voir plus de fonctionnalités (10 restantes)</span>
                                 <span class="hide-text" style="display: none;">🔼 Voir moins</span>
                             </button>
