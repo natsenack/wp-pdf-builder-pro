@@ -93,7 +93,7 @@
             </div>
             <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="dimensions" style="pointer-events: auto; cursor: pointer;">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-save" data-category="dimensions" style="pointer-events: auto; cursor: pointer; display: block !important;">Sauvegarder</button>
             </div>
         </div>
 </div>
