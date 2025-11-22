@@ -127,6 +127,8 @@ export function resetAPI() {
  */
 export function updateCanvasDimensions(width: number, height: number) {
   try {
+    console.log('[Global API] updateCanvasDimensions called with:', width, 'x', height);
+
     // Mettre à jour l'objet window global
     if (!window.pdfBuilderCanvasSettings) {
       window.pdfBuilderCanvasSettings = {};
@@ -134,9 +136,13 @@ export function updateCanvasDimensions(width: number, height: number) {
     window.pdfBuilderCanvasSettings.canvas_width = width;
     window.pdfBuilderCanvasSettings.canvas_height = height;
 
+    console.log('[Global API] Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+
     // Dispatcher un événement pour notifier le contexte React
     const event = new CustomEvent('pdfBuilderCanvasSettingsUpdated');
     window.dispatchEvent(event);
+
+    console.log('[Global API] Dispatched pdfBuilderCanvasSettingsUpdated event');
 
     return true;
   } catch (error) {

@@ -120,8 +120,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 mmDisplay.textContent = dimensions.width.toFixed(1) + '×' + dimensions.height.toFixed(1) + 'mm';
 
                 // Mettre à jour les dimensions du canvas dans l'éditeur React
+                console.log('[Settings] Updating canvas dimensions:', widthPx, 'x', heightPx);
                 if (window.pdfBuilderReact && window.pdfBuilderReact.updateCanvasDimensions) {
-                    window.pdfBuilderReact.updateCanvasDimensions(widthPx, heightPx);
+                    console.log('[Settings] Calling updateCanvasDimensions...');
+                    const result = window.pdfBuilderReact.updateCanvasDimensions(widthPx, heightPx);
+                    console.log('[Settings] updateCanvasDimensions result:', result);
+                } else {
+                    console.error('[Settings] updateCanvasDimensions not available:', {
+                        windowPdfBuilderReact: !!window.pdfBuilderReact,
+                        updateCanvasDimensions: !!(window.pdfBuilderReact && window.pdfBuilderReact.updateCanvasDimensions)
+                    });
                 }
             }
         }

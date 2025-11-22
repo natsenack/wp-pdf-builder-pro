@@ -297,11 +297,13 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   // Listen for settings update events
   useEffect(() => {
     const handleSettingsUpdate = () => {
+      console.log('[CanvasSettings] Received pdfBuilderCanvasSettingsUpdated event');
       const windowSettings = loadSettingsFromWindowObj();
+      console.log('[CanvasSettings] New settings loaded:', windowSettings.canvasWidth, 'x', windowSettings.canvasHeight);
       setSettings(windowSettings);
     };
-    window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
-    return () => window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+    window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
+    return () => window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
   }, []);
 
   // Écouter les événements custom pour les mises à jour
