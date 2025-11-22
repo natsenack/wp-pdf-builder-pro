@@ -504,6 +504,13 @@ input:checked + .toggle-slider:before {
             });
         });
 
+        // Debug: Log all button clicks in modals
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('.canvas-modal')) {
+                console.log('Click detected in modal:', event.target.tagName, event.target.className, event.target.textContent);
+            }
+        });
+
         // Handle modal save buttons
         const saveButtons = document.querySelectorAll('.canvas-modal-save');
         console.log('Found save buttons:', saveButtons.length);
