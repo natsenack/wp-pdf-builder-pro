@@ -961,9 +961,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.addEventListener('click', function(event) {
                     event.preventDefault();
 
+                    console.log('💾 Save button clicked for category:', this.getAttribute('data-category'));
+
                     const modal = this.closest('.canvas-modal');
                     const category = this.getAttribute('data-category');
                     const form = modal ? modal.querySelector('form') : null;
+
+                    console.log('📋 Modal found:', !!modal, 'Form found:', !!form, 'Category:', category);
 
                     if (!form) {
                         alert('Erreur: Formulaire non trouvé');
@@ -993,8 +997,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         formData.append('action', 'pdf_builder_save_canvas_settings');
                         formData.append('category', category || '');
                         formData.append('nonce', ajaxConfig.nonce || '');
+
+                        console.log('📤 Sending AJAX save request for category:', category);
+                        console.log('📦 Form data keys:', Array.from(formData.keys()));
+
                     } catch (e) {
-                        console.error('Error creating form data:', e);
+                        console.error('❌ Error creating form data:', e);
                         alert('Erreur lors de la préparation des données');
                         return;
                     }
@@ -1022,18 +1030,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         return response.json();
                     })
                     .then(data => {
+                        console.log('💾 Save AJAX response received:', data);
                         if (data.success) {
+                            console.log('✅ Save successful for category:', category);
                             hideModal(modal);
                             this.textContent = originalText;
                             this.disabled = false;
 
                             // Update previews if function exists
                             if (typeof updateCanvasPreviews === 'function') {
+                                console.log('🔄 Calling updateCanvasPreviews after save');
                                 updateCanvasPreviews(category);
                             }
 
                             // Alert supprimée selon les préférences utilisateur
                         } else {
+                            console.error('❌ Save failed:', data.data?.message || 'Unknown error');
                             throw new Error(data.data?.message || 'Erreur inconnue');
                         }
                     })
