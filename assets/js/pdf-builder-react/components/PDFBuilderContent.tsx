@@ -60,11 +60,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     updateTemplateSettings
   } = useTemplate();
 
-  // Debug: Log canvas dimensions changes
-  React.useEffect(() => {
-    console.log('[PDFBuilderContent] Canvas dimensions:', canvasWidth, 'x', canvasHeight);
-  }, [canvasWidth, canvasHeight]);
-
   // Hook pour la sauvegarde automatique
   const {
     state: autoSaveState,

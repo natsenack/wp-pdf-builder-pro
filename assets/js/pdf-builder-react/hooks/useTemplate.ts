@@ -9,11 +9,6 @@ export function useTemplate() {
   const { state, dispatch } = useBuilder();
   const { canvasWidth, canvasHeight } = useCanvasSettings();
 
-  // Debug: Log canvas dimensions changes
-  useEffect(() => {
-    console.log('[useTemplate] Canvas dimensions changed:', canvasWidth, 'x', canvasHeight);
-  }, [canvasWidth, canvasHeight]);
-
   // Détecter si on est sur un template existant via l'URL ou les données localisées
   const getTemplateIdFromUrl = useCallback((): string | null => {
     // Priorité 1: Utiliser le templateId des données PHP localisées
