@@ -1143,6 +1143,9 @@ class PdfBuilderAdmin
             'nonce' => wp_create_nonce('pdf_builder_ajax')
         ));
 
+        // Charger l'API globale de l'éditeur React pour la communication avec les modals
+        $this->enqueueReactGlobalAPI();
+
         ?>
         <div class="wrap">
         <?php
@@ -1158,6 +1161,36 @@ class PdfBuilderAdmin
     public function settings_page()
     {
         return $this->settingsPage();
+    }
+
+    /**
+     * Charge seulement l'API globale de l'éditeur React (sans l'interface complète)
+     * Utile pour les pages qui ont besoin de communiquer avec l'éditeur
+     */
+    private function enqueueReactGlobalAPI()
+    {
+        // Charger React et ReactDOM en premier
+        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.0.0', true);
+        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
+
+        // Charger seulement l'API globale de PDF Builder React
+        $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
+        $cache_bust = time();
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
+        wp_enqueue_script('pdf-builder-react-api-only', $react_script_url, ['react', 'react-dom'], $version_param, true);
+
+        // Définir les paramètres canvas minimaux pour l'API
+        $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
+        $canvas_settings_script = "
+        window.pdfBuilderCanvasSettings = " . wp_json_encode([
+            'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
+            'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
+            'default_canvas_dpi' => $canvas_settings_js['default_canvas_dpi'] ?? 96,
+            'canvas_width' => $canvas_settings_js['canvas_width'] ?? 794,
+            'canvas_height' => $canvas_settings_js['canvas_height'] ?? 1123,
+        ]) . ";
+        ";
+        wp_add_inline_script('pdf-builder-react-api-only', $canvas_settings_script, 'before');
     }
 
     /**
