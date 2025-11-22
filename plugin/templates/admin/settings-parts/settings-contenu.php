@@ -502,14 +502,21 @@ input:checked + .toggle-slider:before {
                     overlay.style.setProperty('top', '0', 'important');
                     overlay.style.setProperty('left', '0', 'important');
                     overlay.style.setProperty('z-index', '999999', 'important');
+                    overlay.style.setProperty('visibility', 'visible', 'important');
+                    overlay.style.setProperty('opacity', '1', 'important');
                     // Afficher aussi la modale principale si elle est différente de l'overlay
                     if (overlay !== modal) {
-                        jQuery(modal).css('display', 'flex');
+                        modal.style.setProperty('display', 'flex', 'important');
+                        modal.style.setProperty('visibility', 'visible', 'important');
+                        modal.style.setProperty('opacity', '1', 'important');
                     }
                     console.log('Modal shown for category:', category);
                     console.log('Modal display:', modal.style.display);
                     console.log('Overlay/modal after show:', overlay.style.cssText);
+                    console.log('Modal computed style:', window.getComputedStyle(modal));
+                    console.log('Overlay computed style:', window.getComputedStyle(overlay));
                     console.log('Modal rect:', modal.getBoundingClientRect());
+                    console.log('Overlay rect:', overlay.getBoundingClientRect());
                     const saveButton = modal.querySelector('.canvas-modal-save');
                     if (saveButton) {
                         console.log('Save button found:', saveButton);
