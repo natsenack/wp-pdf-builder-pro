@@ -368,14 +368,95 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
     <?php require_once 'settings-modals.php'; ?>
 
     <!-- Floating Save Button -->
-    <div id="floating-save-button" style="display: none;">
+    <div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
         <button type="button" class="floating-save-btn" id="floating-save-btn">
             <span class="save-icon">💾</span>
-            <span class="save-text">Sauvegarder</span>
+            <span class="save-text">Enregistrer</span>
         </button>
         <div class="floating-tooltip">Cliquez pour sauvegarder tous les paramètres</div>
     </div>
 </div>
+
+<style>
+/* Styles pour le bouton flottant */
+.floating-save-btn {
+    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.floating-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+}
+
+.floating-save-btn.saving {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    animation: pulse 1.5s infinite;
+}
+
+.floating-save-btn.saved {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.floating-save-btn.error {
+    background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
+}
+
+.floating-tooltip {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.floating-save-btn:hover + .floating-tooltip,
+.floating-tooltip:hover {
+    opacity: 1;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive design pour mobile */
+@media (max-width: 768px) {
+    #floating-save-button {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .floating-save-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .floating-tooltip {
+        display: none; /* Masquer le tooltip sur mobile */
+    }
+}
+</style>
 
 
 <script>
@@ -420,6 +501,28 @@ document.addEventListener('DOMContentLoaded', function() {
         if (defaultTab) {
             defaultTab.click();
         }
+    }
+
+    // Gestion du bouton flottant de sauvegarde
+    const floatingSaveBtn = document.getElementById('floating-save-btn');
+    if (floatingSaveBtn) {
+        floatingSaveBtn.addEventListener('click', function() {
+            // Trouver le formulaire actif
+            const activeTab = document.querySelector('.tab-content.active');
+            if (activeTab) {
+                const form = activeTab.querySelector('form');
+                if (form) {
+                    // Simuler la soumission du formulaire
+                    const submitBtn = form.querySelector('input[type="submit"], button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.click();
+                    } else {
+                        // Si pas de bouton submit, soumettre directement
+                        form.submit();
+                    }
+                }
+            }
+        });
     }
 });
 </script>
