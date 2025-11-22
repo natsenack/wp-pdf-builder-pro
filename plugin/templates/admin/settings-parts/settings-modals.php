@@ -56,11 +56,12 @@
                             <th scope="row"><label>Dimensions calculées</label></th>
                             <td>
                                 <div id="canvas-dimensions-display" class="canvas-modal-display">
-                                    <div class="dimensions-primary">
-                                        <span id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_width', 800)); ?></span> ×
-                                        <span id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_height', 600)); ?></span> px
+                                    <div class="canvas-dimensions-pixels">
+                                        <strong id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_width', 800)); ?></strong> ×
+                                        <strong id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_height', 600)); ?></strong>
+                                        <span class="canvas-dimensions-unit">px</span>
                                     </div>
-                                    <div class="dimensions-secondary">
+                                    <div class="canvas-dimensions-mm">
                                         <span id="canvas-mm-display">
                                             <?php
                                             $format = get_option('pdf_builder_canvas_format', 'A4');
@@ -85,20 +86,7 @@
                                                 $dimensions['height'] = $temp;
                                             }
 
-                                            echo round($dimensions['width'], 1) . '×' . round($dimensions['height'], 1) . 'mm';
-                                            ?>
-                                        </span>
-                                        <span class="dimensions-format">
-                                            <?php
-                                            $format_labels = [
-                                                'A4' => 'A4 (Papier standard)',
-                                                'A3' => 'A3 (Papier grand format)',
-                                                'A5' => 'A5 (Papier demi-format)',
-                                                'Letter' => 'Letter (US Standard)',
-                                                'Legal' => 'Legal (US Legal)',
-                                                'Tabloid' => 'Tabloid (US Tabloid)'
-                                            ];
-                                            echo isset($format_labels[$format]) ? $format_labels[$format] : 'Format inconnu';
+                                            echo round($dimensions['width'], 1) . ' × ' . round($dimensions['height'], 1) . ' mm';
                                             ?>
                                         </span>
                                     </div>
