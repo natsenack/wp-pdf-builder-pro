@@ -319,60 +319,60 @@ function pdf_builder_save_settings_handler() {
                     update_option('pdf_builder_license_notification_email', sanitize_email($value));
                 }
 
-                // Paramètres canvas (toutes catégories)
+                // Paramètres canvas (toutes catégories) - seulement les champs qui existent dans les modals
                 $canvas_option_mappings = [
                     // Dimensions
                     'canvas_format' => 'pdf_builder_canvas_format',
                     'canvas_orientation' => 'pdf_builder_canvas_orientation',
                     'canvas_dpi' => 'pdf_builder_canvas_dpi',
-                    'canvas_width' => 'pdf_builder_canvas_width',
-                    'canvas_height' => 'pdf_builder_canvas_height',
-                    
+
                     // Apparence
                     'canvas_bg_color' => 'pdf_builder_canvas_bg_color',
+                    'canvas_container_bg_color' => 'pdf_builder_canvas_container_bg_color',
                     'canvas_border_color' => 'pdf_builder_canvas_border_color',
                     'canvas_border_width' => 'pdf_builder_canvas_border_width',
                     'canvas_shadow_enabled' => 'pdf_builder_canvas_shadow_enabled',
-                    
+
                     // Grille
+                    'canvas_guides_enabled' => 'pdf_builder_canvas_guides_enabled',
                     'canvas_grid_enabled' => 'pdf_builder_canvas_grid_enabled',
                     'canvas_grid_size' => 'pdf_builder_canvas_grid_size',
-                    'canvas_guides_enabled' => 'pdf_builder_canvas_guides_enabled',
                     'canvas_snap_to_grid' => 'pdf_builder_canvas_snap_to_grid',
-                    
+
                     // Zoom
                     'canvas_zoom_min' => 'pdf_builder_canvas_zoom_min',
                     'canvas_zoom_max' => 'pdf_builder_canvas_zoom_max',
                     'canvas_zoom_default' => 'pdf_builder_canvas_zoom_default',
-                    'canvas_pan_enabled' => 'pdf_builder_canvas_pan_enabled',
-                    
-                    // Interaction
+                    'canvas_zoom_step' => 'pdf_builder_canvas_zoom_step',
+
+                    // Interactions
+                    'canvas_selection_mode' => 'pdf_builder_canvas_selection_mode',
+                    'canvas_multi_select' => 'pdf_builder_canvas_multi_select',
                     'canvas_drag_enabled' => 'pdf_builder_canvas_drag_enabled',
                     'canvas_resize_enabled' => 'pdf_builder_canvas_resize_enabled',
                     'canvas_rotate_enabled' => 'pdf_builder_canvas_rotate_enabled',
-                    'canvas_multi_select' => 'pdf_builder_canvas_multi_select',
-                    
-                    // Comportement
-                    'canvas_selection_mode' => 'pdf_builder_canvas_selection_mode',
                     'canvas_keyboard_shortcuts' => 'pdf_builder_canvas_keyboard_shortcuts',
-                    'canvas_auto_save' => 'pdf_builder_canvas_auto_save',
-                    
+
                     // Export
                     'canvas_export_format' => 'pdf_builder_canvas_export_format',
                     'canvas_export_quality' => 'pdf_builder_canvas_export_quality',
                     'canvas_export_transparent' => 'pdf_builder_canvas_export_transparent',
-                    
+
                     // Performance
                     'canvas_fps_target' => 'pdf_builder_canvas_fps_target',
-                    'canvas_memory_limit' => 'pdf_builder_canvas_memory_limit',
-                    'canvas_lazy_loading' => 'pdf_builder_canvas_lazy_loading',
-                    
+                    'canvas_memory_limit_js' => 'pdf_builder_canvas_memory_limit_js',
+                    'canvas_memory_limit_php' => 'pdf_builder_canvas_memory_limit_php',
+                    'canvas_response_timeout' => 'pdf_builder_canvas_response_timeout',
+                    'canvas_lazy_loading_editor' => 'pdf_builder_canvas_lazy_loading_editor',
+                    'canvas_preload_critical' => 'pdf_builder_canvas_preload_critical',
+                    'canvas_lazy_loading_plugin' => 'pdf_builder_canvas_lazy_loading_plugin',
+
                     // Autosave
                     'canvas_autosave_enabled' => 'pdf_builder_canvas_autosave_enabled',
                     'canvas_autosave_interval' => 'pdf_builder_canvas_autosave_interval',
                     'canvas_history_enabled' => 'pdf_builder_canvas_history_enabled',
                     'canvas_history_max' => 'pdf_builder_canvas_history_max',
-                    
+
                     // Debug
                     'canvas_debug_enabled' => 'pdf_builder_canvas_debug_enabled',
                     'canvas_performance_monitoring' => 'pdf_builder_canvas_performance_monitoring',
@@ -386,19 +386,20 @@ function pdf_builder_save_settings_handler() {
                         // Convert checkbox values
                         $checkbox_fields = [
                             'canvas_shadow_enabled', 'canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid',
-                            'canvas_pan_enabled', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled',
-                            'canvas_multi_select', 'canvas_keyboard_shortcuts', 'canvas_auto_save', 'canvas_export_transparent',
-                            'canvas_lazy_loading', 'canvas_autosave_enabled', 'canvas_history_enabled', 'canvas_debug_enabled',
-                            'canvas_performance_monitoring', 'canvas_error_reporting'
+                            'canvas_multi_select', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled',
+                            'canvas_keyboard_shortcuts', 'canvas_export_transparent', 'canvas_lazy_loading_editor',
+                            'canvas_preload_critical', 'canvas_lazy_loading_plugin', 'canvas_autosave_enabled',
+                            'canvas_history_enabled', 'canvas_debug_enabled', 'canvas_performance_monitoring', 'canvas_error_reporting'
                         ];
                         if (in_array($field, $checkbox_fields)) {
                             $value = $value === '1' ? 1 : 0;
                         }
                         // Convert numeric values
                         $numeric_fields = [
-                            'canvas_width', 'canvas_height', 'canvas_border_width', 'canvas_grid_size', 'canvas_zoom_min',
-                            'canvas_zoom_max', 'canvas_zoom_default', 'canvas_export_quality', 'canvas_fps_target',
-                            'canvas_memory_limit', 'canvas_autosave_interval', 'canvas_history_max'
+                            'canvas_border_width', 'canvas_grid_size', 'canvas_zoom_min', 'canvas_zoom_max',
+                            'canvas_zoom_default', 'canvas_zoom_step', 'canvas_export_quality', 'canvas_fps_target',
+                            'canvas_memory_limit_js', 'canvas_memory_limit_php', 'canvas_response_timeout',
+                            'canvas_autosave_interval', 'canvas_history_max'
                         ];
                         if (in_array($field, $numeric_fields)) {
                             $value = intval($value);
