@@ -538,17 +538,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser les indicateurs au chargement de la page
     updateSecurityStatusIndicators();
 
-    // Ajouter des event listeners pour mettre à jour les indicateurs en temps réel
-    const enableLoggingCheckbox = document.getElementById('enable_logging');
-    const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
-
-    if (enableLoggingCheckbox) {
-        enableLoggingCheckbox.addEventListener('change', updateSecurityStatusIndicators);
-    }
-    if (gdprEnabledCheckbox) {
-        gdprEnabledCheckbox.addEventListener('change', updateSecurityStatusIndicators);
-    }
-
     // Gestion du bouton flottant de sauvegarde
     const floatingSaveBtn = document.getElementById('floating-save-btn');
     if (floatingSaveBtn) {
