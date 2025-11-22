@@ -177,14 +177,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // Afficher un message de succès
-                showAdminNotice('Paramètres sauvegardés avec succès !', 'success');
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
+                } else {
+                    alert('Paramètres sauvegardés avec succès !');
+                }
             } else {
                 throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
             }
         })
         .catch(error => {
             console.error('[DEBUG JS] Error:', error);
-            showAdminNotice('Erreur lors de la sauvegarde: ' + error.message, 'error');
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + error.message, 'error');
+            } else {
+                alert('Erreur lors de la sauvegarde: ' + error.message);
+            }
         })
         .finally(() => {
             // Restaurer le bouton
@@ -228,8 +236,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (dismissBtn) {
             dismissBtn.addEventListener('click', () => notice.remove());
         }
-    }
-
     // Gestionnaire pour les boutons de sauvegarde des modales
     document.addEventListener('click', function(event) {
         if (event.target.classList.contains('canvas-modal-save')) {
