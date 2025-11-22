@@ -1071,10 +1071,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Initialize zoom preview if function exists
-            if (typeof updateZoomPreview === 'function') {
-                // Delay initialization to ensure DOM is ready
-                setTimeout(updateZoomPreview, 1000);
-            }
+            // Removed automatic updateZoomPreview call to prevent conflicts with manual modal updates
+            // if (typeof updateZoomPreview === 'function') {
+            //     // Delay initialization to ensure DOM is ready
+            //     setTimeout(updateZoomPreview, 1000);
+            // }
 
             isInitialized = true;
             console.log('Canvas modals initialized successfully');
