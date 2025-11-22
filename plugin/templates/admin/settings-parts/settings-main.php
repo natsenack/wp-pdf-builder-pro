@@ -851,6 +851,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function showModal(modal) {
+        if (!modal) return false;
+
+        try {
+            console.log('Opening modal:', modal.id);
+            const success = applyModalStyles(modal);
+
+            if (success) {
+                // Verify modal is visible after a short delay
+                setTimeout(() => {
+                    const rect = modal.getBoundingClientRect();
+                    const isVisible = rect.width > 0 && rect.height > 0;
+                    console.log('Modal visibility check:', {
+                        modalId: modal.id,
+                        visible: isVisible,
+                        width: rect.width,
+                        height: rect.height,
+                        zIndex: window.getComputedStyle(modal).zIndex
+                    });
+
+                    if (!isVisible) {
+                        console.error('Modal failed to display properly:', modal.id);
+                    }
+                }, 100);
+            }
+
+            return success;
+        } catch (e) {
+            console.error('Error showing modal:', e);
+            return false;
+        }
+    }
+
     function initializeModals() {
         if (isInitialized) return;
         console.log('Initializing canvas modals...');
@@ -892,24 +925,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     console.log('Opening modal:', modalId);
-                    const success = applyModalStyles(modal);
+                    const success = showModal(modal);
 
                     if (success) {
-                        // Verify modal is visible
-                        setTimeout(() => {
-                            const rect = modal.getBoundingClientRect();
-                            const isVisible = rect.width > 0 && rect.height > 0;
-                            console.log('Modal visibility check:', {
-                                visible: isVisible,
-                                width: rect.width,
-                                height: rect.height,
-                                zIndex: window.getComputedStyle(modal).zIndex
-                            });
-
-                            if (!isVisible) {
-                                console.error('Modal failed to display properly');
-                            }
-                        }, 100);
+                        // Modal opened successfully - additional logic can be added here if needed
+                        console.log('Modal opened successfully:', modalId);
                     }
                 }
 
