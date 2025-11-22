@@ -476,12 +476,16 @@ input:checked + .toggle-slider:before {
 <script>
     // Canvas configuration modals functionality
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('Settings-contenu.js loaded and DOMContentLoaded fired');
+
         // Handle canvas configure buttons
         const configureButtons = document.querySelectorAll('.canvas-configure-btn');
+        console.log('Found configure buttons:', configureButtons.length);
         configureButtons.forEach(function(button) {
             button.addEventListener('click', function() {
                 const card = this.closest('.canvas-card');
                 const category = card.getAttribute('data-category');
+                console.log('Configure button clicked for category:', category);
                 const modalId = 'canvas-' + category + '-modal';
                 const modal = document.getElementById(modalId);
                 if (modal) {
