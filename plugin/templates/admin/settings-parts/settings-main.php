@@ -787,32 +787,17 @@ document.addEventListener('DOMContentLoaded', function() {
     allModals.forEach(function(modal) {
         modal.style.display = 'none';
     });
-    console.log('All modals hidden by default');
 
     // Handle canvas configure buttons
     const configureButtons = document.querySelectorAll('.canvas-configure-btn');
-    console.log('Found configure buttons:', configureButtons.length);
-    configureButtons.forEach(function(button, index) {
-        console.log('Attaching listener to button', index);
+    configureButtons.forEach(function(button) {
         button.addEventListener('click', function() {
-            console.log('Configure button clicked!');
             const card = this.closest('.canvas-card');
-            console.log('Card found:', card);
-            if (card) {
-                const category = card.getAttribute('data-category');
-                console.log('Category:', category);
-                const modalId = 'canvas-' + category + '-modal';
-                console.log('Looking for modal:', modalId);
-                const modal = document.getElementById(modalId);
-                console.log('Modal found:', modal);
-                if (modal) {
-                    modal.style.display = 'flex';
-                    console.log('Modal displayed');
-                } else {
-                    console.error('Modal not found:', modalId);
-                }
-            } else {
-                console.error('Card not found for button');
+            const category = card.getAttribute('data-category');
+            const modalId = 'canvas-' + category + '-modal';
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
             }
         });
     });
