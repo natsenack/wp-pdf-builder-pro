@@ -56,36 +56,52 @@
                             <th scope="row"><label>Dimensions calculées</label></th>
                             <td>
                                 <div id="canvas-dimensions-display" class="canvas-modal-display">
-                                    <span id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_width', 800)); ?></span> ×
-                                    <span id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_height', 600)); ?></span> px
-                                    <br>
-                                    <small id="canvas-mm-display">
-                                        <?php
-                                        $format = get_option('pdf_builder_canvas_format', 'A4');
-                                        $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
-                                        
-                                        // Dimensions standard en mm pour chaque format
-                                        $formatDimensionsMM = [
-                                            'A4' => ['width' => 210, 'height' => 297],
-                                            'A3' => ['width' => 297, 'height' => 420],
-                                            'A5' => ['width' => 148, 'height' => 210],
-                                            'Letter' => ['width' => 215.9, 'height' => 279.4],
-                                            'Legal' => ['width' => 215.9, 'height' => 355.6],
-                                            'Tabloid' => ['width' => 279.4, 'height' => 431.8]
-                                        ];
-                                        
-                                        $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
-                                        
-                                        // Appliquer l'orientation
-                                        if ($orientation === 'landscape') {
-                                            $temp = $dimensions['width'];
-                                            $dimensions['width'] = $dimensions['height'];
-                                            $dimensions['height'] = $temp;
-                                        }
-                                        
-                                        echo round($dimensions['width'], 1) . '×' . round($dimensions['height'], 1) . 'mm';
-                                        ?>
-                                    </small>
+                                    <div class="dimensions-primary">
+                                        <span id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_width', 800)); ?></span> ×
+                                        <span id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_height', 600)); ?></span> px
+                                    </div>
+                                    <div class="dimensions-secondary">
+                                        <span id="canvas-mm-display">
+                                            <?php
+                                            $format = get_option('pdf_builder_canvas_format', 'A4');
+                                            $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
+
+                                            // Dimensions standard en mm pour chaque format
+                                            $formatDimensionsMM = [
+                                                'A4' => ['width' => 210, 'height' => 297],
+                                                'A3' => ['width' => 297, 'height' => 420],
+                                                'A5' => ['width' => 148, 'height' => 210],
+                                                'Letter' => ['width' => 215.9, 'height' => 279.4],
+                                                'Legal' => ['width' => 215.9, 'height' => 355.6],
+                                                'Tabloid' => ['width' => 279.4, 'height' => 431.8]
+                                            ];
+
+                                            $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
+
+                                            // Appliquer l'orientation
+                                            if ($orientation === 'landscape') {
+                                                $temp = $dimensions['width'];
+                                                $dimensions['width'] = $dimensions['height'];
+                                                $dimensions['height'] = $temp;
+                                            }
+
+                                            echo round($dimensions['width'], 1) . '×' . round($dimensions['height'], 1) . 'mm';
+                                            ?>
+                                        </span>
+                                        <span class="dimensions-format">
+                                            <?php
+                                            $format_labels = [
+                                                'A4' => 'A4 (Papier standard)',
+                                                'A3' => 'A3 (Papier grand format)',
+                                                'A5' => 'A5 (Papier demi-format)',
+                                                'Letter' => 'Letter (US Standard)',
+                                                'Legal' => 'Legal (US Legal)',
+                                                'Tabloid' => 'Tabloid (US Tabloid)'
+                                            ];
+                                            echo isset($format_labels[$format]) ? $format_labels[$format] : 'Format inconnu';
+                                            ?>
+                                        </span>
+                                    </div>
                                 </div>
                             </td>
                         </tr>

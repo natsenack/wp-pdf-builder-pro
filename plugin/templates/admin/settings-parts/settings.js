@@ -118,6 +118,22 @@ document.addEventListener("DOMContentLoaded", function() {
                 widthDisplay.textContent = widthPx;
                 heightDisplay.textContent = heightPx;
                 mmDisplay.textContent = dimensions.width.toFixed(1) + '×' + dimensions.height.toFixed(1) + 'mm';
+
+                // Mettre à jour le label du format
+                const formatLabels = {
+                    'A4': 'A4 (Papier standard)',
+                    'A3': 'A3 (Papier grand format)',
+                    'A5': 'A5 (Papier demi-format)',
+                    'Letter': 'Letter (US Standard)',
+                    'Legal': 'Legal (US Legal)',
+                    'Tabloid': 'Tabloid (US Tabloid)'
+                };
+
+                const formatLabelElement = document.querySelector('.dimensions-format');
+                if (formatLabelElement) {
+                    const orientationText = orientation === 'landscape' ? ' (Paysage)' : ' (Portrait)';
+                    formatLabelElement.textContent = (formatLabels[format] || 'Format inconnu') + orientationText;
+                }
             }
         }
     }
