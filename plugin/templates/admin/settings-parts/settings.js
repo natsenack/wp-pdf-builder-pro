@@ -132,8 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction pour gérer la sauvegarde AJAX des paramètres canvas
     function saveCanvasSettings(category, formData) {
-        console.log('[DEBUG JS] saveCanvasSettings called with category:', category);
-
         // Afficher un indicateur de chargement
         const saveButton = document.querySelector('.canvas-modal-save');
         if (saveButton) {
@@ -145,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = new FormData();
         data.append('action', 'pdf_builder_save_canvas_settings');
         const nonce = window.pdf_builder_ajax?.nonce || '';
-        console.log('[DEBUG JS] Nonce available:', !!nonce);
         data.append('nonce', nonce);
         data.append('category', category);
 
@@ -154,20 +151,14 @@ document.addEventListener('DOMContentLoaded', function() {
             data.append(key, value);
         }
 
-        console.log('[DEBUG JS] Sending AJAX request...');
-
         // Envoyer la requête AJAX
         fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
             method: 'POST',
             body: data,
             credentials: 'same-origin'
         })
-        .then(response => {
-            console.log('[DEBUG JS] Response received:', response);
-            return response.json();
-        })
+        .then(response => response.json())
         .then(result => {
-            console.log('[DEBUG JS] Result:', result);
             if (result.success) {
                 // Fermer la modale
                 const modal = document.getElementById('canvas-' + category + '-modal-clean');
@@ -187,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
-            console.error('[DEBUG JS] Error:', error);
+            console.error('Erreur AJAX:', error);
             if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                 PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + error.message, 'error');
             } else {
@@ -239,32 +230,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gestionnaire pour les boutons de sauvegarde des modales
     document.addEventListener('click', function(event) {
         if (event.target.classList.contains('canvas-modal-save')) {
-            console.log('[DEBUG JS] Save button clicked');
             event.preventDefault();
 
             // Trouver la modale parente
             const modal = event.target.closest('.canvas-modal');
-            console.log('[DEBUG JS] Modal found:', modal);
             if (!modal) return;
 
             // Extraire la catégorie depuis l'ID de la modale
             const modalId = modal.id;
-            console.log('[DEBUG JS] Modal ID:', modalId);
             const categoryMatch = modalId.match(/^canvas-(.+)-modal(-clean)?$/);
             if (!categoryMatch) return;
 
             const category = categoryMatch[1];
-            console.log('[DEBUG JS] Category extracted:', category);
 
             // Trouver le formulaire dans la modale
             const form = modal.querySelector('form');
-            console.log('[DEBUG JS] Form found:', form);
             if (form) {
                 const formData = new FormData(form);
-                console.log('[DEBUG JS] Form data entries:');
-                for (let [key, value] of formData.entries()) {
-                    console.log(`  ${key}: ${value}`);
-                }
                 saveCanvasSettings(category, formData);
             } else {
                 // Si pas de formulaire, sauvegarder avec des données vides pour cette catégorie

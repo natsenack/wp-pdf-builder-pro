@@ -508,16 +508,9 @@ function pdf_builder_save_settings_handler() {
 // Canvas settings AJAX handler
 function pdf_builder_save_canvas_settings_handler() {
 
-    error_log('[DEBUG] pdf_builder_save_canvas_settings_handler called');
-
-    // Log all POST data for debugging
-    error_log('[DEBUG] POST data: ' . print_r($_POST, true));
-
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        error_log('[DEBUG] Nonce is valid');
 
         $category = sanitize_text_field($_POST['category'] ?? 'dimensions');
-        error_log('[DEBUG] Category: ' . $category);
 
         try {
             $saved_values = [];
@@ -774,7 +767,6 @@ function pdf_builder_save_canvas_settings_handler() {
             send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     } else {
-        error_log('[DEBUG] Nonce is INVALID');
         send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
     }
 }// Handler pour récupérer les paramètres canvas
