@@ -508,6 +508,8 @@ function pdf_builder_save_settings_handler() {
 // Canvas settings AJAX handler
 function pdf_builder_save_canvas_settings_handler() {
 
+    error_log('[DEBUG] pdf_builder_save_canvas_settings_handler called');
+
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
 
         $category = sanitize_text_field($_POST['category'] ?? 'dimensions');

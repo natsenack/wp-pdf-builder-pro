@@ -507,6 +507,12 @@ input:checked + .toggle-slider:before {
                 const modal = this.closest('.canvas-modal');
                 const form = modal.querySelector('form');
 
+                console.log('Save button clicked for category:', category);
+                console.log('pdf_builder_ajax available:', typeof pdf_builder_ajax !== 'undefined');
+                if (typeof pdf_builder_ajax !== 'undefined') {
+                    console.log('pdf_builder_ajax:', pdf_builder_ajax);
+                }
+
                 if (!form) {
                     console.error('Form not found in modal for category:', category);
                     return;
@@ -516,15 +522,7 @@ input:checked + .toggle-slider:before {
                 const formData = new FormData(form);
                 formData.append('action', 'pdf_builder_save_canvas_settings');
                 formData.append('category', category);
-
-                // Add nonce - use WordPress standard approach
-                const nonceInput = document.querySelector('input[name="_wpnonce"], input[name="pdf_builder_settings_nonce"]');
-                if (nonceInput) {
-                    formData.append('nonce', nonceInput.value);
-                } else {
-                    // Fallback: create a nonce using a standard WordPress nonce
-                    formData.append('nonce', '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>');
-                }
+                formData.append('nonce', pdf_builder_ajax?.nonce || '');
 
                 // Show loading state
                 const originalText = this.textContent;
@@ -532,14 +530,17 @@ input:checked + .toggle-slider:before {
                 this.disabled = true;
 
                 // Send AJAX request
-                const ajaxURL = typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php';
-                fetch(ajaxURL, {
+                fetch(pdf_builder_ajax.ajax_url, {
                     method: 'POST',
                     body: formData,
                     credentials: 'same-origin'
                 })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('AJAX response received:', response);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('AJAX data received:', data);
                     if (data.success) {
                         // Success - close modal and show success message
                         modal.style.display = 'none';
@@ -615,15 +616,14 @@ input:checked + .toggle-slider:before {
             if (zoomPreview) {
                 // Get current values from options (this would need AJAX in real implementation)
                 // For now, we'll update it when settings are saved
-                const ajaxURL = typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php';
-                fetch(ajaxURL, {
+                fetch(pdf_builder_ajax.ajax_url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: new URLSearchParams({
                         action: 'pdf_builder_get_canvas_settings',
-                        nonce: '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>'
+                        nonce: pdf_builder_ajax?.nonce || ''
                     })
                 })
                 .then(response => response.json())
