@@ -311,6 +311,23 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'templates/admin/settings-parts/settings-ajax.php';
     }
 
+    // Enregistrer les scripts pour la page de paramètres
+    add_action('admin_enqueue_scripts', function() {
+        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
+            wp_enqueue_script(
+                'pdf-builder-settings-js',
+                PDF_BUILDER_PLUGIN_URL . 'templates/admin/settings-parts/settings.js',
+                array('jquery'),
+                PDF_BUILDER_VERSION,
+                false
+            );
+            wp_localize_script('pdf-builder-settings-js', 'pdf_builder_ajax', array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_ajax')
+            ));
+        }
+    });
+
     // Charger le handler AJAX pour générer les styles des éléments
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php';

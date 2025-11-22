@@ -8,18 +8,5 @@
 // Inclure d'abord les paramètres canvas
 require_once 'settings-canvas-params.php';
 
-// Enregistrer et charger le script JavaScript principal
-wp_enqueue_script(
-    'pdf-builder-settings-js',
-    PDF_BUILDER_PLUGIN_URL . 'templates/admin/settings-parts/settings.js',
-    array('jquery'),
-    PDF_BUILDER_VERSION,
-    false
-);
-
-// Localiser le script pour AJAX
-wp_localize_script('pdf-builder-settings-js', 'pdf_builder_ajax', array(
-    'ajax_url' => admin_url('admin-ajax.php'),
-    'nonce' => wp_create_nonce('pdf_builder_ajax')
-));
+// Les scripts sont maintenant enregistrés dans bootstrap.php pour s'assurer qu'ils sont chargés avant wp_head
 ?>
