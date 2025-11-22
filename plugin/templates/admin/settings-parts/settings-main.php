@@ -799,7 +799,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (modal) {
                 console.log('Opening modal:', modalId);
                 console.log('Modal before:', modal.style.display);
-                modal.style.display = 'flex';
+                
+                // Force multiple CSS properties to ensure visibility
+                modal.style.setProperty('display', 'flex', 'important');
+                modal.style.setProperty('visibility', 'visible', 'important');
+                modal.style.setProperty('opacity', '1', 'important');
+                modal.style.setProperty('z-index', '1000000', 'important');
+                modal.style.setProperty('position', 'fixed', 'important');
+                modal.style.setProperty('top', '0', 'important');
+                modal.style.setProperty('left', '0', 'important');
+                modal.style.setProperty('width', '100%', 'important');
+                modal.style.setProperty('height', '100%', 'important');
+                
                 console.log('Modal after:', modal.style.display);
                 console.log('Modal computed style:', window.getComputedStyle(modal));
                 console.log('Modal rect:', modal.getBoundingClientRect());
