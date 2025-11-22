@@ -480,64 +480,14 @@ input:checked + .toggle-slider:before {
 
         // Handle canvas configure buttons
         const configureButtons = document.querySelectorAll('.canvas-configure-btn');
-        console.log('Found configure buttons:', configureButtons.length);
         configureButtons.forEach(function(button) {
             button.addEventListener('click', function() {
                 const card = this.closest('.canvas-card');
                 const category = card.getAttribute('data-category');
-                console.log('Configure button clicked for category:', category);
                 const modalId = 'canvas-' + category + '-modal';
                 const modal = document.getElementById(modalId);
-                console.log('Modal found:', modalId, modal ? 'YES' : 'NO');
                 if (modal) {
-                    // Chercher l'overlay ou utiliser la modale principale
-                    const overlay = modal.querySelector('.canvas-modal-overlay') || modal;
-                    console.log('Using overlay/modal:', overlay === modal ? 'modal' : 'overlay');
-                    console.log('Overlay/modal before show:', overlay.style.cssText);
-                    // Forcer l'affichage avec !important pour s'assurer que ça marche
-                    overlay.style.setProperty('display', 'flex', 'important');
-                    overlay.style.setProperty('width', '100%', 'important');
-                    overlay.style.setProperty('height', '100%', 'important');
-                    overlay.style.setProperty('position', 'fixed', 'important');
-                    overlay.style.setProperty('top', '0', 'important');
-                    overlay.style.setProperty('left', '0', 'important');
-                    overlay.style.setProperty('z-index', '999999', 'important');
-                    overlay.style.setProperty('visibility', 'visible', 'important');
-                    overlay.style.setProperty('opacity', '1', 'important');
-                    // Afficher aussi la modale principale si elle est différente de l'overlay
-                    if (overlay !== modal) {
-                        modal.style.setProperty('display', 'flex', 'important');
-                        modal.style.setProperty('visibility', 'visible', 'important');
-                        modal.style.setProperty('opacity', '1', 'important');
-                    }
-                    console.log('Modal shown for category:', category);
-                    console.log('Modal display:', modal.style.display);
-                    console.log('Overlay/modal after show:', overlay.style.cssText);
-                    const modalComputed = window.getComputedStyle(modal);
-                    const overlayComputed = window.getComputedStyle(overlay);
-                    console.log('Modal computed - display:', modalComputed.display, 'visibility:', modalComputed.visibility, 'opacity:', modalComputed.opacity);
-                    console.log('Modal computed - width:', modalComputed.width, 'height:', modalComputed.height, 'position:', modalComputed.position);
-                    console.log('Overlay computed - display:', overlayComputed.display, 'visibility:', overlayComputed.visibility, 'opacity:', overlayComputed.opacity);
-                    console.log('Overlay computed - width:', overlayComputed.width, 'height:', overlayComputed.height, 'position:', overlayComputed.position);
-                    console.log('Modal rect:', modal.getBoundingClientRect());
-                    console.log('Overlay rect:', overlay.getBoundingClientRect());
-                    // Vérifier les parents
-                    let parent = modal.parentElement;
-                    let depth = 0;
-                    while (parent && depth < 5) {
-                        const parentComputed = window.getComputedStyle(parent);
-                        console.log(`Parent ${depth} (${parent.tagName}.${parent.className}): display=${parentComputed.display}, overflow=${parentComputed.overflow}, position=${parentComputed.position}`);
-                        parent = parent.parentElement;
-                        depth++;
-                    }
-                    const saveButton = modal.querySelector('.canvas-modal-save');
-                    if (saveButton) {
-                        console.log('Save button found:', saveButton);
-                        console.log('Save button rect after show:', saveButton.getBoundingClientRect());
-                        console.log('Save button computed style:', window.getComputedStyle(saveButton));
-                    } else {
-                        console.log('Save button NOT found in modal');
-                    }
+                    modal.style.display = 'flex';
                 }
             });
         });
@@ -548,69 +498,26 @@ input:checked + .toggle-slider:before {
             button.addEventListener('click', function() {
                 const modal = this.closest('.canvas-modal');
                 if (modal) {
-                    // Masquer l'overlay ou la modale principale
-                    const overlay = modal.querySelector('.canvas-modal-overlay') || modal;
-                    jQuery(overlay).css('display', 'none');
-                    // Masquer aussi la modale principale si elle est différente de l'overlay
-                    if (overlay !== modal) {
-                        jQuery(modal).css('display', 'none');
-                    }
+                    modal.style.display = 'none';
                 }
             });
         });
 
-        // Debug: Log all button clicks in modals
-        document.addEventListener('click', function(event) {
-            if (event.target.closest('.canvas-modal')) {
-                console.log('Click in modal on: ' + event.target.tagName + ' ' + event.target.className);
-                console.log('Click detected in modal:', event.target.tagName, event.target.className, event.target.textContent);
-            }
-        }, true);
-
         // Handle modal save buttons
         const saveButtons = document.querySelectorAll('.canvas-modal-save');
-        console.log('Found save buttons:', saveButtons.length);
-        saveButtons.forEach(function(button, index) {
-            console.log('Attaching save handler to button', index, 'with category:', button.getAttribute('data-category'));
-            console.log('Button element:', button);
-            console.log('Button disabled:', button.disabled);
-            console.log('Button style:', button.style);
-            console.log('Button rect:', button.getBoundingClientRect());
-
-            jQuery(button).on('click', function(event) {
-                alert('Save handler called for ' + jQuery(this).attr('data-category'));
-                console.log('Save button clicked for ' + jQuery(this).attr('data-category'));
-                console.log('Save button clicked - event fired for category:', jQuery(this).attr('data-category'));
-                event.preventDefault(); // Prevent any default behavior
-                event.stopPropagation(); // Stop event bubbling
-                const category = jQuery(this).attr('data-category');
-                const modal = jQuery(this).closest('.canvas-modal');
-                const form = modal.find('form');
-
-                console.log('Save button clicked for category:', category);
-                console.log('pdf_builder_ajax available:', typeof pdf_builder_ajax !== 'undefined');
-                console.log('pdfBuilderAjax available:', typeof pdfBuilderAjax !== 'undefined');
-
-                if (typeof pdf_builder_ajax !== 'undefined') {
-                    console.log('pdf_builder_ajax:', pdf_builder_ajax);
-                }
-                if (typeof pdfBuilderAjax !== 'undefined') {
-                    console.log('pdfBuilderAjax:', pdfBuilderAjax);
-                }
+        saveButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const category = this.getAttribute('data-category');
+                const modal = this.closest('.canvas-modal');
+                const form = modal.querySelector('form');
 
                 if (!form) {
-                    console.error('Form not found in modal for category:', category);
+                    alert('Erreur: Formulaire non trouvé');
                     return;
                 }
 
-                console.log('Form found, collecting data...');
-
-                // Collect form data
-                const formData = new FormData(form);
-                formData.append('action', 'pdf_builder_save_canvas_settings');
-                formData.append('category', category);
-
-                // Get AJAX config - try both possible variable names
+                // Get AJAX config
                 let ajaxConfig = null;
                 if (typeof pdf_builder_ajax !== 'undefined') {
                     ajaxConfig = pdf_builder_ajax;
@@ -619,11 +526,14 @@ input:checked + .toggle-slider:before {
                 }
 
                 if (!ajaxConfig) {
-                    console.error('AJAX config not found - neither pdf_builder_ajax nor pdfBuilderAjax is defined');
                     alert('Erreur de configuration AJAX');
                     return;
                 }
 
+                // Collect form data
+                const formData = new FormData(form);
+                formData.append('action', 'pdf_builder_save_canvas_settings');
+                formData.append('category', category);
                 formData.append('nonce', ajaxConfig.nonce || '');
 
                 // Show loading state
@@ -637,44 +547,36 @@ input:checked + .toggle-slider:before {
                     body: formData,
                     credentials: 'same-origin'
                 })
-                .then(response => {
-                    console.log('AJAX response received:', response);
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    console.log('AJAX data received:', data);
                     if (data.success) {
-                        // Success - close modal and show success message
+                        // Success - close modal and update previews
                         modal.style.display = 'none';
                         this.textContent = originalText;
                         this.disabled = false;
 
-                        // Update preview cards if needed
+                        // Update preview cards
                         updateCanvasPreviews(category);
 
-                        // Dispatch event for other components to update
+                        // Dispatch event for other components
                         window.dispatchEvent(new CustomEvent('canvasSettingsUpdated', {
                             detail: { category: category, data: data.data }
                         }));
 
-                        // Show success notification (you can enhance this)
                         alert('Paramètres sauvegardés avec succès !');
                     } else {
                         // Error
-                        console.error('Save error:', data);
                         this.textContent = originalText;
                         this.disabled = false;
                         alert('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'));
                     }
                 })
                 .catch(error => {
-                    console.error('AJAX error:', error);
                     this.textContent = originalText;
                     this.disabled = false;
                     alert('Erreur de connexion lors de la sauvegarde');
                 });
             });
-            console.log('jQuery handler attached to button', index);
         });
 
         // Function to update canvas preview cards after save
