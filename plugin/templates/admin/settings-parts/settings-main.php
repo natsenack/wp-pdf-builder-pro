@@ -370,7 +370,7 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 </div>
 
 <!-- Floating Save Button - HORS du conteneur principal -->
-<div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999 !important; background: rgba(255,255,255,0.9); border-radius: 10px; padding: 5px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+<div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999 !important; border-radius: 10px; padding: 5px;">
     <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
         <span class="save-icon">💾</span>
         <span class="save-text">Enregistrer</span>
