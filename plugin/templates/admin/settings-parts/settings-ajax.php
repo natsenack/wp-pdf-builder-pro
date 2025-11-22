@@ -75,7 +75,8 @@ function pdf_builder_save_settings_handler() {
     // Traiter directement selon l'onglet
     switch ($current_tab) {
         case 'all':
-            // Traitement de tous les paramètres (bouton flottant de sauvegarde)
+            try {
+                // Traitement de tous les paramètres (bouton flottant de sauvegarde)
 
                 // Paramètres généraux
                 if (isset($_POST['debug_mode'])) {
@@ -333,6 +334,9 @@ function pdf_builder_save_settings_handler() {
                 ];
 
                 send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.', ['saved_options' => $saved]);
+            } catch (Exception $e) {
+                send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+            }
                 break;
 
             case 'contenu':
