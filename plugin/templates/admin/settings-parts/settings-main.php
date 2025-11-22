@@ -27,7 +27,43 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 echo '<div style="position: fixed; top: 50px; right: 20px; z-index: 1000000; background: red; color: white; padding: 20px; border-radius: 10px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
     <div>🔴 BOUTON TEST VISIBLE</div>
     <button onclick="alert(\'Bouton test cliqué - JavaScript fonctionne\')" style="margin-top: 10px; padding: 10px 20px; background: yellow; color: black; border: none; border-radius: 5px; cursor: pointer;">Test JS</button>
+    <br><br>
+    <button onclick="checkFloatingButton()" style="margin-top: 10px; padding: 10px 20px; background: blue; color: white; border: none; border-radius: 5px; cursor: pointer;">Vérifier bouton flottant</button>
 </div>';
+
+// Fonction de débogage pour le bouton flottant
+echo '<script>
+function checkFloatingButton() {
+    const floatingBtn = document.getElementById("floating-save-button");
+    const floatingBtnInner = document.getElementById("floating-save-btn");
+    
+    let message = "=== DIAGNOSTIC BOUTON FLOTTANT ===\\n\\n";
+    
+    if (floatingBtn) {
+        message += "✅ Conteneur trouvé\\n";
+        message += "Position: " + floatingBtn.style.position + "\\n";
+        message += "Display: " + floatingBtn.style.display + "\\n";
+        message += "Visibility: " + floatingBtn.style.visibility + "\\n";
+        message += "Z-index: " + floatingBtn.style.zIndex + "\\n";
+        message += "Offset: " + floatingBtn.offsetTop + "x" + floatingBtn.offsetLeft + "\\n";
+        message += "Visible: " + (floatingBtn.offsetParent !== null) + "\\n";
+    } else {
+        message += "❌ Conteneur NON trouvé\\n";
+    }
+    
+    if (floatingBtnInner) {
+        message += "✅ Bouton interne trouvé\\n";
+    } else {
+        message += "❌ Bouton interne NON trouvé\\n";
+    }
+    
+    // Vérifier les formulaires
+    const forms = document.querySelectorAll("form");
+    message += "\\nFormulaires trouvés: " + forms.length + "\\n";
+    
+    alert(message);
+}
+</script>';
 
 // Initialize
 $notices = [];
