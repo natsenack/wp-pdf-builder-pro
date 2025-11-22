@@ -5728,6 +5728,7 @@ class PdfBuilderAdmin
 
         // Définir les paramètres canvas pour l'éditeur React
         $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
+        error_log('PDF Builder - Canvas settings loaded: ' . print_r($canvas_settings_js, true));
         $canvas_settings_script = "
         window.pdfBuilderCanvasSettings = " . wp_json_encode([
             'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
@@ -5779,6 +5780,7 @@ class PdfBuilderAdmin
             'optimize_for_web' => $canvas_settings_js['optimize_for_web'] ?? true,
             'canvas_selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'click'),
         ]) . ";
+        console.log('PDF Builder - window.pdfBuilderCanvasSettings initialized:', window.pdfBuilderCanvasSettings);
         ";
         wp_add_inline_script('react-dom', $canvas_settings_script);
 

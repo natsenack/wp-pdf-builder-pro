@@ -189,6 +189,13 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       borderWidth: (windowSettings.border_width as number) ?? DEFAULT_SETTINGS.borderWidth,
       shadowEnabled: (windowSettings.shadow_enabled as boolean) === true || (windowSettings.shadow_enabled as string) === '1',
       
+      // Couleurs
+      canvasBackgroundColor: (windowSettings.canvas_background_color as string) ?? DEFAULT_SETTINGS.canvasBackgroundColor,
+      containerBackgroundColor: (windowSettings.container_background_color as string) ?? DEFAULT_SETTINGS.containerBackgroundColor,
+      borderColor: (windowSettings.border_color as string) ?? DEFAULT_SETTINGS.borderColor,
+      borderWidth: (windowSettings.border_width as number) ?? DEFAULT_SETTINGS.borderWidth,
+      shadowEnabled: (windowSettings.shadow_enabled as boolean) === true || (windowSettings.shadow_enabled as string) === '1',
+      
       // Marges
       marginTop: (windowSettings.margin_top as number) ?? DEFAULT_SETTINGS.marginTop,
       marginRight: (windowSettings.margin_right as number) ?? DEFAULT_SETTINGS.marginRight,
@@ -257,6 +264,7 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       refreshSettings: () => {}
     };
 
+    console.log('[CanvasSettings] Loaded dimensions:', newSettings.canvasWidth, 'x', newSettings.canvasHeight, 'orientation:', newSettings.canvasOrientation);
     console.log('🔍 Mapped settings:', newSettings);
     return newSettings;
   } catch (_err) {
