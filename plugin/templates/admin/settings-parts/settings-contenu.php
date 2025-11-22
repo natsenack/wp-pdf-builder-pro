@@ -625,6 +625,7 @@ input:checked + .toggle-slider:before {
                     alert('Erreur de connexion lors de la sauvegarde');
                 });
             });
+            console.log('jQuery handler attached to button', index);
         });
 
         // Function to update canvas preview cards after save
