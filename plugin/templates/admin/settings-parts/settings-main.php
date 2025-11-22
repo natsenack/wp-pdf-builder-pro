@@ -517,10 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gestion du bouton flottant de sauvegarde
     const floatingSaveBtn = document.getElementById('floating-save-btn');
     if (floatingSaveBtn) {
-        console.log('Bouton flottant trouvé et initialisé');
         floatingSaveBtn.addEventListener('click', function() {
-            console.log('Bouton flottant cliqué - sauvegarde AJAX');
-
             // Changer l'apparence du bouton pendant la sauvegarde
             const originalText = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>'; // Texte fixe original
             floatingSaveBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Sauvegarde...</span>';
@@ -528,7 +525,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Timeout de sécurité : remettre le bouton à l'état normal après 5 secondes maximum
             const safetyTimeout = setTimeout(() => {
-                console.warn('Timeout de sécurité activé - remise à zéro du bouton');
                 floatingSaveBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
                 floatingSaveBtn.classList.remove('saving', 'saved', 'error');
             }, 5000);
@@ -562,8 +558,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Envoyer la requête AJAX
-            console.log('Envoi requête AJAX vers:', pdf_builder_ajax.ajax_url);
-            console.log('Nonce utilisé:', pdf_builder_ajax.nonce);
             fetch(pdf_builder_ajax.ajax_url, {
                 method: 'POST',
                 body: formData,
@@ -571,20 +565,16 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Réponse AJAX reçue:', data);
                 clearTimeout(safetyTimeout); // Annuler le timeout de sécurité
 
                 if (data.success) {
-                    console.log('Sauvegarde réussie, traitement du succès...');
                     // Succès
-                    console.log('Changement du bouton en "Sauvegardé !"');
                     floatingSaveBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">Sauvegardé !</span>';
                     floatingSaveBtn.classList.remove('saving');
                     floatingSaveBtn.classList.add('saved');
 
                     // Remettre le texte original après 2 secondes
                     setTimeout(() => {
-                        console.log('Remise à zéro du bouton après succès');
                         floatingSaveBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
                         floatingSaveBtn.classList.remove('saved');
                     }, 2000);

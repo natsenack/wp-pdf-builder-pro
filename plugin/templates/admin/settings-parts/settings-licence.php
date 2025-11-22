@@ -545,6 +545,35 @@
                                 }, 1500);
                             });
                         }
+
+                        // ✅ Handler pour le bouton toggle des fonctionnalités
+                        var toggleFeaturesBtn = document.getElementById('toggle-features-btn');
+                        if (toggleFeaturesBtn) {
+                            toggleFeaturesBtn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                var hiddenFeatures = document.querySelectorAll('.feature-hidden');
+                                var showText = this.querySelector('.show-text');
+                                var hideText = this.querySelector('.hide-text');
+
+                                if (hiddenFeatures.length > 0 && hiddenFeatures[0].style.display === 'none') {
+                                    // Montrer les fonctionnalités cachées
+                                    hiddenFeatures.forEach(function(feature) {
+                                        feature.style.display = 'table-row';
+                                    });
+                                    showText.style.display = 'none';
+                                    hideText.style.display = 'inline';
+                                    this.innerHTML = '<span class="hide-text">Voir moins</span>';
+                                } else {
+                                    // Cacher les fonctionnalités
+                                    hiddenFeatures.forEach(function(feature) {
+                                        feature.style.display = 'none';
+                                    });
+                                    showText.style.display = 'inline';
+                                    hideText.style.display = 'none';
+                                    this.innerHTML = '<span class="show-text">Voir plus (10 restantes)</span>';
+                                }
+                            });
+                        }
                     });
                 </script>
 
@@ -590,7 +619,13 @@
 
                     <!-- Comparaison des fonctionnalités -->
                     <section class="licence-section" style="margin-top: 40px;">
-                        <h3>Comparaison des Fonctionnalités</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="margin: 0;">Comparaison des Fonctionnalités</h3>
+                            <button type="button" id="toggle-features-btn" class="button button-secondary" style="font-size: 12px; padding: 4px 12px;">
+                                <span class="show-text">Voir plus (10 restantes)</span>
+                                <span class="hide-text" style="display: none;">Voir moins</span>
+                            </button>
+                        </div>
                         <table class="wp-list-table widefat fixed striped" style="margin-top: 15px; border-collapse: collapse; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                             <thead style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white;">
                                 <tr>
@@ -631,91 +666,91 @@
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td>Codes-barres, QR codes, graphiques, tableaux dynamiques</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Variables WooCommerce</strong></td>
                                     <td style="text-align: center; color: #46b450;">✓ Basique</td>
                                     <td style="text-align: center; color: #46b450;">✓ Complet</td>
                                     <td>Commandes, clients, produits, métadonnées</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Génération PDF</strong></td>
                                     <td style="text-align: center; color: #ffb900;">50/mois</td>
                                     <td style="text-align: center; color: #46b450;">Illimitée</td>
                                     <td>Limite mensuelle de génération de documents</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Génération en masse</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td>Création automatique de multiples PDFs</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>API développeur</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td>Accès complet à l'API REST pour intégrations</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>White-label</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td>Rebranding complet, suppression des mentions</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Mises à jour automatiques</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td>Mises à jour transparentes et corrections de sécurité</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Formats d'export</strong></td>
                                     <td style="text-align: center; color: #ffb900;">PDF uniquement</td>
                                     <td style="text-align: center; color: #46b450;">PDF, PNG, JPG</td>
                                     <td>Export multi-formats pour différents usages</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Fiabilité de génération</strong></td>
                                     <td style="text-align: center; color: #ffb900;">Générateur unique</td>
                                     <td style="text-align: center; color: #46b450;">3 générateurs redondants</td>
                                     <td>Fallback automatique en cas d'erreur</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>API REST</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td>API complète pour intégrations et automatisations</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Templates prédéfinis</strong></td>
                                     <td style="text-align: center; color: #ffb900;">1 template de base</td>
                                     <td style="text-align: center; color: #46b450;">4 templates professionnels</td>
                                     <td>Factures, devis, bons de commande prêts à l'emploi</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>CSS personnalisé</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td>Injection de styles CSS avancés pour personnalisation complète</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Intégrations tierces</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td>Zapier, webhooks, API externes pour automatisation</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Historique des versions</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td>Suivi des modifications et possibilité de rollback</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Analytics & rapports</strong></td>
                                     <td style="text-align: center; color: #dc3232;">✗</td>
                                     <td style="text-align: center; color: #46b450;">✓</td>
                                     <td>Statistiques d'usage, performances et métriques détaillées</td>
                                 </tr>
-                                <tr>
+                                <tr class="feature-hidden" style="display: none;">
                                     <td><strong>Support technique</strong></td>
                                     <td style="text-align: center; color: #ffb900;">Communauté</td>
                                     <td style="text-align: center; color: #46b450;">Prioritaire</td>
