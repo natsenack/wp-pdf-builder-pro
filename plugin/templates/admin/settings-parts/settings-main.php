@@ -370,7 +370,8 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
     <!-- Floating Save Button -->
     <div id="floating-save-button" style="display: none;">
         <button type="button" class="floating-save-btn" id="floating-save-btn">
-            💾 Sauvegarder
+            <span class="save-icon">💾</span>
+            <span class="save-text">Sauvegarder</span>
         </button>
         <div class="floating-tooltip">Cliquez pour sauvegarder tous les paramètres</div>
     </div>

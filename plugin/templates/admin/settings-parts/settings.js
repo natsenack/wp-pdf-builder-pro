@@ -570,4 +570,121 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // === BOUTON FLOTTANT DE SAUVEGARDE ===
+    const floatingSaveBtn = document.getElementById('floating-save-btn');
+    const floatingSaveContainer = document.getElementById('floating-save-button');
+
+    // Fonction pour afficher/masquer le bouton flottant selon l'onglet actif
+    function updateFloatingButtonVisibility() {
+        if (floatingSaveContainer) {
+            // Le bouton flottant est maintenant visible dans tous les onglets
+            floatingSaveContainer.style.display = 'block';
+        }
+    }
+
+    // Mettre à jour la visibilité lors du changement d'onglet
+    const navTabs = document.querySelectorAll('.nav-tab');
+    navTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            setTimeout(updateFloatingButtonVisibility, 100);
+        });
+    });
+
+    // Vérifier l'onglet actif au chargement
+    updateFloatingButtonVisibility();
+
+    if (floatingSaveBtn) {
+        floatingSaveBtn.addEventListener('click', function() {
+            const btn = this;
+            const icon = btn.querySelector('.save-icon') || btn;
+            const text = btn.querySelector('.save-text') || btn;
+
+            // État de sauvegarde
+            btn.classList.remove('saved', 'error');
+            btn.classList.add('saving');
+            if (icon !== btn) icon.textContent = '⏳';
+            if (text !== btn) text.textContent = 'Sauvegarde...';
+            else btn.textContent = '⏳ Sauvegarde...';
+
+            // Collecter TOUS les champs de formulaire visibles sur la page
+            const formData = new FormData();
+
+            // Ajouter tous les inputs, selects, textareas visibles
+            document.querySelectorAll('input[name], select[name], textarea[name]').forEach(function(field) {
+                const fieldName = field.name;
+                const fieldValue = field.value;
+                const fieldType = field.type;
+
+                // Pour les checkboxes, envoyer '1' si coché, '0' si non coché
+                if (fieldType === 'checkbox') {
+                    formData.append(fieldName, field.checked ? '1' : '0');
+                }
+                // Pour les autres types, envoyer la valeur
+                else {
+                    formData.append(fieldName, fieldValue || '');
+                }
+            });
+
+            // Le bouton flottant sauvegarde TOUS les paramètres
+            formData.append('current_tab', 'all');
+            formData.append('action', 'pdf_builder_save_settings');
+            formData.append('nonce', pdf_builder_ajax.nonce);
+
+            // Envoyer via AJAX
+            fetch(pdf_builder_ajax.ajax_url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    btn.classList.remove('saving');
+                    btn.classList.add('saved');
+                    if (icon !== btn) icon.textContent = '✅';
+                    if (text !== btn) text.textContent = 'Enregistré !';
+                    else btn.textContent = '✅ Enregistré !';
+
+                    // Show toast notification
+                    if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                        PDF_Builder_Notification_Manager.show_toast('Paramètres enregistrés avec succès!', 'success');
+                    }
+
+                    setTimeout(() => {
+                        btn.classList.remove('saved');
+                        if (icon !== btn) icon.textContent = '💾';
+                        if (text !== btn) text.textContent = 'Sauvegarder';
+                        else btn.textContent = '💾 Sauvegarder';
+                    }, 3000);
+                } else {
+                    btn.classList.remove('saving');
+                    btn.classList.add('error');
+                    if (icon !== btn) icon.textContent = '❌';
+                    if (text !== btn) text.textContent = 'Erreur';
+                    else btn.textContent = '❌ Erreur';
+
+                    setTimeout(() => {
+                        btn.classList.remove('error');
+                        if (icon !== btn) icon.textContent = '💾';
+                        if (text !== btn) text.textContent = 'Sauvegarder';
+                        else btn.textContent = '💾 Sauvegarder';
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                btn.classList.remove('saving');
+                btn.classList.add('error');
+                if (icon !== btn) icon.textContent = '❌';
+                if (text !== btn) text.textContent = 'Erreur AJAX';
+                else btn.textContent = '❌ Erreur AJAX';
+
+                setTimeout(() => {
+                    btn.classList.remove('error');
+                    if (icon !== btn) icon.textContent = '💾';
+                    if (text !== btn) text.textContent = 'Sauvegarder';
+                    else btn.textContent = '💾 Sauvegarder';
+                }, 3000);
+            });
+        });
+    }
+
 });
