@@ -514,6 +514,41 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Fonction pour mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Sécurité
+    function updateSecurityStatusIndicators() {
+        // Mettre à jour l'indicateur de sécurité (enable_logging)
+        const enableLoggingCheckbox = document.getElementById('enable_logging');
+        const securityStatus = document.querySelector('.security-status');
+        if (enableLoggingCheckbox && securityStatus) {
+            const isActive = enableLoggingCheckbox.checked;
+            securityStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+            securityStatus.style.background = isActive ? '#28a745' : '#dc3545';
+        }
+
+        // Mettre à jour l'indicateur RGPD (gdpr_enabled)
+        const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
+        const rgpdStatus = document.querySelector('.rgpd-status');
+        if (gdprEnabledCheckbox && rgpdStatus) {
+            const isActive = gdprEnabledCheckbox.checked;
+            rgpdStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+            rgpdStatus.style.background = isActive ? '#28a745' : '#dc3545';
+        }
+    }
+
+    // Initialiser les indicateurs au chargement de la page
+    updateSecurityStatusIndicators();
+
+    // Ajouter des event listeners pour mettre à jour les indicateurs en temps réel
+    const enableLoggingCheckbox = document.getElementById('enable_logging');
+    const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
+
+    if (enableLoggingCheckbox) {
+        enableLoggingCheckbox.addEventListener('change', updateSecurityStatusIndicators);
+    }
+    if (gdprEnabledCheckbox) {
+        gdprEnabledCheckbox.addEventListener('change', updateSecurityStatusIndicators);
+    }
+
     // Gestion du bouton flottant de sauvegarde
     const floatingSaveBtn = document.getElementById('floating-save-btn');
     if (floatingSaveBtn) {
@@ -602,6 +637,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     floatingSaveBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">Sauvegardé !</span>';
                     floatingSaveBtn.classList.remove('saving');
                     floatingSaveBtn.classList.add('saved');
+
+                    // Mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Sécurité & Conformité
+                    updateSecurityStatusIndicators();
 
                     // Remettre le texte original après 2 secondes
                     setTimeout(() => {
