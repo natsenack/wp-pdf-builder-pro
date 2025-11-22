@@ -1,16 +1,16 @@
 <?php // Modal components - Updated: 2025-11-18 20:20:00 ?>
 
 <!-- Canvas Configuration Modals Dimensions & Format -->
-<div id="canvas-dimensions-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">📐 Dimensions & Format</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+<div id="canvas-dimensions-modal" class="canvas-modal">
+    <div class="canvas-modal-overlay">
+        <div class="canvas-modal-content">
+            <div class="canvas-modal-header">
+                <h3>📐 Dimensions & Format</h3>
+                <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
-                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                <div class="canvas-modal-info">
+                    <p>
                         <strong>💡 Comment ça marche :</strong> Ces paramètres définissent la taille, l'orientation et la qualité du document PDF généré. 
                         Le format A4 est actuellement supporté, d'autres formats arrivent bientôt.
                     </p>
@@ -28,7 +28,7 @@
                                     <option value="Legal" disabled <?php selected(get_option('pdf_builder_canvas_format', 'A4'), 'Legal'); ?>>Legal (8.5×14") - soon</option>
                                     <option value="Tabloid" disabled <?php selected(get_option('pdf_builder_canvas_format', 'A4'), 'Tabloid'); ?>>Tabloid (11×17") - soon</option>
                                 </select>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Taille standard du document PDF (A4 disponible)</p>
+                                <p class="canvas-modal-description">Taille standard du document PDF (A4 disponible)</p>
                             </td>
                         </tr>
                         <tr>
@@ -38,7 +38,7 @@
                                     <option value="portrait" <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
                                     <option value="landscape" disabled <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'landscape'); ?>>Paysage - soon</option>
                                 </select>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Orientation verticale du document</p>
+                                <p class="canvas-modal-description">Orientation verticale du document</p>
                             </td>
                         </tr>
                         <tr>
@@ -49,17 +49,17 @@
                                     <option value="150" <?php selected(get_option('pdf_builder_canvas_dpi', 150), '150'); ?>>150 DPI (Impression)</option>
                                     <option value="300" <?php selected(get_option('pdf_builder_canvas_dpi', 150), '300'); ?>>300 DPI (Haute qualité)</option>
                                 </select>
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Qualité d'impression (plus élevé = meilleure qualité)</p>
+                                <p class="canvas-modal-description">Qualité d'impression (plus élevé = meilleure qualité)</p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label>Dimensions calculées</label></th>
                             <td>
-                                <div id="canvas-dimensions-display" style="padding: 10px; background: #f8f9fa; border-radius: 4px; font-family: monospace;">
+                                <div id="canvas-dimensions-display" class="canvas-modal-display">
                                     <span id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_width', 800)); ?></span> ×
                                     <span id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_height', 600)); ?></span> px
                                     <br>
-                                    <small id="canvas-mm-display" style="color: #666;">
+                                    <small id="canvas-mm-display">
                                         <?php
                                         $format = get_option('pdf_builder_canvas_format', 'A4');
                                         $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
@@ -94,22 +94,22 @@
             </div>
             <div class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="dimensions" style="pointer-events: auto; cursor: pointer; display: block !important;">Sauvegarder</button>
+                <button type="button" class="button button-primary canvas-modal-save" data-category="dimensions">Sauvegarder</button>
             </div>
         </div>
     </div>
 </div>
 <!-- Canvas Configuration Modals Zoom & Navigation -->
-<div id="canvas-zoom-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
-            <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #495057;">🔍 Zoom</h3>
-                <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+<div id="canvas-zoom-modal" class="canvas-modal">
+    <div class="canvas-modal-overlay">
+        <div class="canvas-modal-content">
+            <div class="canvas-modal-header">
+                <h3>🔍 Zoom</h3>
+                <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007cba;">
-                    <p style="margin: 0; font-size: 14px; color: #495057; line-height: 1.5;">
+                <div class="canvas-modal-info">
+                    <p>
                         <strong>💡 Comment ça marche :</strong> Contrôlez les niveaux de zoom et les options de navigation du canvas.
                         Le zoom avec la molette de souris peut être activé/désactivé, et la navigation au clavier permet de se déplacer dans le canvas.
                     </p>
@@ -156,9 +156,9 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Apparence -->
-<div id="canvas-apparence-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
+<div id="canvas-apparence-modal" class="canvas-modal">
+    <div class="canvas-modal-overlay">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">🎨 Apparence</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -235,9 +235,9 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Grille & Guides -->
-<div id="canvas-grille-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
+<div id="canvas-grille-modal" class="canvas-modal">
+    <div class="canvas-modal-overlay">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">📏 Grille & Guides</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -299,9 +299,9 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Interactions & Comportement-->
-<div id="canvas-interactions-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
+<div id="canvas-interactions-modal" class="canvas-modal">
+    <div class="canvas-modal-overlay">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">🎯 Interactions & Comportement</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -392,9 +392,9 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Export & Qualité -->
-<div id="canvas-export-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
+<div id="canvas-export-modal" class="canvas-modal">
+    <div class="canvas-modal-overlay">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">📤 Export & Qualité</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -438,9 +438,9 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Performance -->
-<div id="canvas-performance-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
+<div id="canvas-performance-modal" class="canvas-modal">
+    <div class="canvas-modal-overlay">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">⚡ Performance</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -561,9 +561,9 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Sauvegarde Auto -->
-<div id="canvas-autosave-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
+<div id="canvas-autosave-modal" class="canvas-modal">
+    <div class="canvas-modal-overlay">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">💾 Sauvegarde Auto</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
@@ -612,9 +612,9 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Debug -->
-<div id="canvas-debug-modal" class="canvas-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; display: none;">
-    <div class="canvas-modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div class="canvas-modal-content" style="pointer-events: auto; background: white; border-radius: 8px; max-width: 600px; width: 90%; max-height: 90%; overflow-y: auto;">
+<div id="canvas-debug-modal" class="canvas-modal">
+    <div class="canvas-modal-overlay">
+        <div class="canvas-modal-content">
             <div class="canvas-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                 <h3 style="margin: 0; color: #495057;">🐛 Debug</h3>
                 <button type="button" class="canvas-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>

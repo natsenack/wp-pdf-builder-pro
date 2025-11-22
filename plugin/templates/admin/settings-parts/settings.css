@@ -1242,37 +1242,39 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 }
 
 /* === STYLES POUR LES MODALES CANVAS === */
+.canvas-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+
 .canvas-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.7);
     z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(2px);
-    animation: fadeIn 0.2s ease-out;
 }
 
 .canvas-modal-content {
-    background: #fff;
+    pointer-events: auto;
+    background: white;
     border-radius: 8px;
-    padding: 0;
     max-width: 600px;
     width: 90%;
-    max-height: 85vh;
-    overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    animation: slideIn 0.3s ease-out;
-    border: 1px solid #e1e1e1;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    z-index: 10001; /* S'assurer que le contenu est au-dessus de l'overlay */
-}
+    max-height: 90%;
+    overflow-y: auto;
 
 /* Modal Interactions & Comportement - hauteur spécifique pour afficher le footer */
 #canvas-interactions-modal .canvas-modal-content {
@@ -1310,6 +1312,45 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 .canvas-modal-close:hover {
     background: #e1e1e1;
     color: #1d2327;
+}
+
+/* === CLASSES UTILITAIRES POUR LE CONTENU DES MODALES === */
+.canvas-modal-info {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007cba;
+}
+
+.canvas-modal-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #495057;
+    line-height: 1.5;
+}
+
+.canvas-modal-description {
+    margin: 5px 0 0 0;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.canvas-modal-display {
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.canvas-modal-display small {
+    color: #666;
+}
+
+.canvas-modal-save {
+    pointer-events: auto;
+    cursor: pointer;
+    display: block !important;
 }
 
 .canvas-modal-body {
