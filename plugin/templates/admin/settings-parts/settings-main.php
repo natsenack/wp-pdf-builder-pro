@@ -23,58 +23,6 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
     error_log('[DEBUG] Settings page loaded');
 }
 
-// TEST TEMPORAIRE - Bouton visible en haut de page
-echo '<div style="position: fixed; top: 50px; right: 20px; z-index: 1000000; background: red; color: white; padding: 20px; border-radius: 10px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
-    <div>🔴 BOUTON TEST VISIBLE</div>
-    <button onclick="alert(\'Bouton test cliqué - JavaScript fonctionne\')" style="margin-top: 10px; padding: 10px 20px; background: yellow; color: black; border: none; border-radius: 5px; cursor: pointer;">Test JS</button>
-    <br><br>
-    <button onclick="checkFloatingButton()" style="margin-top: 10px; padding: 10px 20px; background: blue; color: white; border: none; border-radius: 5px; cursor: pointer;">Vérifier bouton flottant</button>
-</div>';
-
-// Fonction de débogage pour le bouton flottant
-echo '<script>
-function checkFloatingButton() {
-    console.log("=== DIAGNOSTIC BOUTON FLOTTANT ===");
-    
-    const floatingBtn = document.getElementById("floating-save-button");
-    const floatingBtnInner = document.getElementById("floating-save-btn");
-    
-    if (floatingBtn) {
-        console.log("✅ Conteneur trouvé");
-        console.log("Position:", floatingBtn.style.position);
-        console.log("Display:", floatingBtn.style.display);
-        console.log("Visibility:", floatingBtn.style.visibility);
-        console.log("Z-index:", floatingBtn.style.zIndex);
-        console.log("Offset:", floatingBtn.offsetTop + "x" + floatingBtn.offsetLeft);
-        console.log("Visible:", floatingBtn.offsetParent !== null);
-        console.log("Computed style display:", window.getComputedStyle(floatingBtn).display);
-        console.log("Computed style visibility:", window.getComputedStyle(floatingBtn).visibility);
-        console.log("Computed style z-index:", window.getComputedStyle(floatingBtn).zIndex);
-    } else {
-        console.log("❌ Conteneur NON trouvé");
-    }
-    
-    if (floatingBtnInner) {
-        console.log("✅ Bouton interne trouvé");
-        console.log("Bouton display:", window.getComputedStyle(floatingBtnInner).display);
-        console.log("Bouton visibility:", window.getComputedStyle(floatingBtnInner).visibility);
-    } else {
-        console.log("❌ Bouton interne NON trouvé");
-    }
-    
-    // Vérifier les formulaires
-    const forms = document.querySelectorAll("form");
-    console.log("Formulaires trouvés:", forms.length);
-    forms.forEach((form, index) => {
-        console.log("Formulaire " + index + ":", form);
-        console.log("  Visible:", form.offsetParent !== null);
-    });
-    
-    console.log("=== FIN DIAGNOSTIC ===");
-    alert("Diagnostic terminé - ouvrez la console (F12) pour voir les logs détaillés");
-}
-</script>';
-
 // Initialize
 $notices = [];
 $settings = get_option('pdf_builder_settings', []);
