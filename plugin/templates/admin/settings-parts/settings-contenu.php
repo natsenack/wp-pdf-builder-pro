@@ -529,6 +529,7 @@ input:checked + .toggle-slider:before {
             console.log('Button rect:', button.getBoundingClientRect());
 
             button.addEventListener('click', function(event) {
+                alert('Save handler called for ' + this.getAttribute('data-category'));
                 console.log('Save button clicked for ' + this.getAttribute('data-category'));
                 console.log('Save button clicked - event fired for category:', this.getAttribute('data-category'));
                 event.preventDefault(); // Prevent any default behavior
