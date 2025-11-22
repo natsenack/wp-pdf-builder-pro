@@ -525,6 +525,13 @@ document.addEventListener('DOMContentLoaded', function() {
             floatingSaveBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Sauvegarde...</span>';
             floatingSaveBtn.classList.add('saving');
 
+            // Timeout de sécurité : remettre le bouton à l'état normal après 10 secondes maximum
+            const safetyTimeout = setTimeout(() => {
+                console.warn('Timeout de sécurité activé - remise à zéro du bouton');
+                floatingSaveBtn.innerHTML = originalText;
+                floatingSaveBtn.classList.remove('saving', 'saved', 'error');
+            }, 10000);
+
             // Collecter les données de tous les formulaires
             const formData = new FormData();
 
@@ -564,6 +571,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 console.log('Réponse AJAX:', data);
+                clearTimeout(safetyTimeout); // Annuler le timeout de sécurité
 
                 if (data.success) {
                     // Succès
@@ -603,6 +611,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Erreur AJAX:', error);
+                clearTimeout(safetyTimeout); // Annuler le timeout de sécurité
                 floatingSaveBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
                 floatingSaveBtn.classList.remove('saving');
                 floatingSaveBtn.classList.add('error');
