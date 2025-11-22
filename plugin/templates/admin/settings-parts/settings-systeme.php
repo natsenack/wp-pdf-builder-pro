@@ -291,3 +291,231 @@
                     </p>
                 </div>
             </form>
+
+            <!-- Scripts JavaScript pour la section système -->
+            <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                // === GESTIONNAIRES POUR LES BOUTONS DE SAUVEGARDE ===
+
+                // Bouton "Créer une sauvegarde"
+                $('#create-backup-btn').on('click', function() {
+                    const $btn = $(this);
+                    const $results = $('#backup-results');
+
+                    $btn.prop('disabled', true).html('<span>⏳</span> Création...');
+                    $results.html('<span style="color: #007cba;">⏳ Création de la sauvegarde en cours...</span>');
+
+                    $.ajax({
+                        url: pdf_builder_ajax.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_create_backup',
+                            nonce: pdf_builder_ajax.nonce
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $results.html('<span style="color: #28a745;">✅ Sauvegarde créée avec succès</span>');
+                                // Ajouter une notification toast
+                                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                    PDF_Builder_Notification_Manager.show_toast('Sauvegarde créée avec succès !', 'success');
+                                }
+                            } else {
+                                $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                                $btn.prop('disabled', false).html('<span>📦</span> Créer une sauvegarde');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('[PDF Builder JS] Erreur AJAX création sauvegarde:', xhr, status, error);
+                            $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors de la création de la sauvegarde</span>');
+                        },
+                        complete: function() {
+                            $btn.prop('disabled', false).html('<span>📦</span> Créer une sauvegarde');
+                        }
+                    });
+                });
+
+                // Bouton "Lister les sauvegardes"
+                $('#list-backups-btn').on('click', function() {
+                    const $btn = $(this);
+                    const $results = $('#backup-results');
+
+                    $btn.prop('disabled', true).html('<span>⏳</span> Chargement...');
+                    $results.html('<span style="color: #007cba;">⏳ Chargement de la liste des sauvegardes...</span>');
+
+                    $.ajax({
+                        url: pdf_builder_ajax.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_list_backups',
+                            nonce: pdf_builder_ajax.nonce
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                let html = '<div style="margin-top: 15px;">';
+                                html += '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 10px; background: #e9ecef; border-radius: 6px;">';
+                                html += '<h4 style="margin: 0; color: #495057; display: flex; align-items: center; gap: 8px;">';
+                                html += '<span>📋</span> Sauvegardes disponibles (' + response.data.backups.length + ')';
+                                html += '</h4>';
+                                html += '<small style="color: #6c757d;">Triées par date (plus récent en premier)</small>';
+                                html += '</div>';
+
+                                if (response.data.backups.length > 0) {
+                                    response.data.backups.forEach(function(backup, index) {
+                                        const isAuto = backup.type === 'automatic';
+                                        const badgeColor = isAuto ? '#17a2b8' : '#28a745';
+                                        const badgeText = isAuto ? 'AUTO' : 'MANUEL';
+
+                                        html += '<div class="backup-item" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin: 8px 0; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; transition: all 0.2s ease;">';
+                                        html += '<div style="flex: 1; display: flex; align-items: center; gap: 15px;">';
+                                        html += '<div style="font-size: 24px;">' + (isAuto ? '🔄' : '📦') + '</div>';
+                                        html += '<div>';
+                                        html += '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">';
+                                        html += '<strong style="color: #495057; font-size: 14px;">' + backup.filename_raw + '</strong>';
+                                        html += '<span style="background: ' + badgeColor + '; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">' + badgeText + '</span>';
+                                        html += '</div>';
+                                        html += '<div style="color: #6c757d; font-size: 12px;">';
+                                        html += '<span>📏 ' + backup.size_human + '</span> • ';
+                                        html += '<span>📅 ' + backup.modified_human + '</span>';
+                                        html += '</div>';
+                                        html += '</div>';
+                                        html += '</div>';
+                                        html += '<div style="display: flex; gap: 8px;">';
+                                        html += '<button type="button" class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px;" title="Restaurer cette sauvegarde">';
+                                        html += '<span>🔄</span> Restaurer</button>';
+                                        html += '<a href="' + window.location.href.split('?')[0] + '?action=pdf_builder_download_backup&filename=' + encodeURIComponent(backup.filename) + '&nonce=' + pdf_builder_ajax.nonce + '" target="_blank" class="button button-small" style="background: #007cba; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; font-size: 12px;" title="Télécharger cette sauvegarde">';
+                                        html += '<span>📥</span> Télécharger</a>';
+                                        html += '<button type="button" class="button button-small delete-backup-btn" data-filename="' + backup.filename + '" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 12px;" title="Supprimer cette sauvegarde">';
+                                        html += '<span>🗑️</span> Supprimer</button>';
+                                        html += '</div>';
+                                        html += '</div>';
+                                    });
+                                } else {
+                                    html += '<div style="text-align: center; padding: 40px; color: #6c757d;">';
+                                    html += '<div style="font-size: 48px; margin-bottom: 15px;">📂</div>';
+                                    html += '<p>Aucune sauvegarde trouvée.</p>';
+                                    html += '<p style="font-size: 14px;">Créez votre première sauvegarde pour sécuriser vos paramètres.</p>';
+                                    html += '</div>';
+                                }
+                                html += '</div>';
+
+                                $results.html('<span style="color: #28a745;">✅ Liste chargée</span>' + html);
+
+                            } else {
+                                $results.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data || 'Erreur inconnue') + '</span>');
+                                $btn.prop('disabled', false).html('<span>📋</span> Lister les sauvegardes');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('[PDF Builder JS] Erreur AJAX listage sauvegardes:', xhr, status, error);
+                            $results.html('<span style="color: #dc3545;">❌ Erreur AJAX lors du chargement de la liste</span>');
+                        },
+                        complete: function() {
+                            $btn.prop('disabled', false).html('<span>📋</span> Lister les sauvegardes');
+                        }
+                    });
+                });
+
+                // Gestionnaire pour restaurer une sauvegarde
+                $(document).on('click', '.restore-backup-btn', function() {
+                    const filename = $(this).data('filename');
+                    const $btn = $(this);
+
+                    if (!confirm('⚠️ ATTENTION: Cette action va remplacer tous vos paramètres actuels par ceux de la sauvegarde.\n\nÊtes-vous sûr de vouloir continuer ?')) {
+                        return;
+                    }
+
+                    $btn.prop('disabled', true).html('<span>⏳</span> Restauration...');
+
+                    $.ajax({
+                        url: pdf_builder_ajax.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_restore_backup',
+                            filename: filename,
+                            nonce: pdf_builder_ajax.nonce
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                    PDF_Builder_Notification_Manager.show_toast('Sauvegarde restaurée avec succès ! Rechargez la page.', 'success');
+                                }
+                                setTimeout(function() {
+                                    window.location.reload();
+                                }, 2000);
+                            } else {
+                                alert('Erreur lors de la restauration: ' + (response.data || 'Erreur inconnue'));
+                                $btn.prop('disabled', false).html('<span>🔄</span> Restaurer');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('[PDF Builder JS] Erreur AJAX restauration sauvegarde:', xhr, status, error);
+                            alert('Erreur AJAX lors de la restauration');
+                            $btn.prop('disabled', false).html('<span>🔄</span> Restaurer');
+                        }
+                    });
+                });
+
+                // Gestionnaire pour supprimer une sauvegarde
+                $(document).on('click', '.delete-backup-btn', function() {
+                    const filename = $(this).data('filename');
+                    const $btn = $(this);
+
+                    if (!confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde ?\n\n' + filename)) {
+                        return;
+                    }
+
+                    $btn.prop('disabled', true).html('<span>⏳</span> Suppression...');
+
+                    $.ajax({
+                        url: pdf_builder_ajax.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'pdf_builder_delete_backup',
+                            filename: filename,
+                            nonce: pdf_builder_ajax.nonce
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                    PDF_Builder_Notification_Manager.show_toast('Sauvegarde supprimée avec succès !', 'success');
+                                }
+                                // Recharger la liste des sauvegardes
+                                $('#list-backups-btn').click();
+                            } else {
+                                alert('Erreur lors de la suppression: ' + (response.data || 'Erreur inconnue'));
+                                $btn.prop('disabled', false).html('<span>🗑️</span> Supprimer');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('[PDF Builder JS] Erreur AJAX suppression sauvegarde:', xhr, status, error);
+                            alert('Erreur AJAX lors de la suppression');
+                            $btn.prop('disabled', false).html('<span>🗑️</span> Supprimer');
+                        }
+                    });
+                });
+
+                // Gestionnaire pour la sauvegarde automatique - activer/désactiver la fréquence
+                $('#systeme_auto_backup').on('change', function() {
+                    const isChecked = $(this).is(':checked');
+                    const $frequencyRow = $('#auto_backup_frequency_row');
+                    const $frequencySelect = $('#systeme_auto_backup_frequency');
+
+                    if (isChecked) {
+                        $frequencyRow.show();
+                        $frequencySelect.prop('disabled', false);
+                    } else {
+                        $frequencyRow.hide();
+                        $frequencySelect.prop('disabled', true);
+                    }
+                });
+
+                // Gestionnaire pour la fréquence de sauvegarde automatique
+                $('#systeme_auto_backup_frequency').on('change', function() {
+                    const $hiddenInput = $('#systeme_auto_backup_frequency_hidden');
+                    $hiddenInput.val($(this).val());
+                });
+
+                // Initialiser l'état au chargement de la page
+                $('#systeme_auto_backup').trigger('change');
+            });
+            </script>
