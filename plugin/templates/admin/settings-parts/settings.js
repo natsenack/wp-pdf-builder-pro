@@ -48,7 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-    // === GESTION DES CARTES CANVAS (ouverture des modales) ===
+    // === GESTION DES CARTES CANVAS (ouverture des modales) - TEMPORAIREMENT DESACTIVE ===
+    /*
     const configureButtons = document.querySelectorAll('.canvas-configure-btn');
 
     configureButtons.forEach(function(button) {
@@ -128,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    */
 
     // Fonction pour gérer la sauvegarde AJAX des paramètres canvas
     function saveCanvasSettings(category, formData) {
