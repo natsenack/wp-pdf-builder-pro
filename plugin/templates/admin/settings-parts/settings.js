@@ -140,16 +140,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Préparer les données AJAX
         const data = new FormData();
-        data.append('action', 'pdf_builder_save_settings');
-        data.append('nonce', window.pdfBuilderSettings?.nonce || '');
+        data.append('action', 'pdf_builder_save_canvas_settings');
+        data.append('nonce', window.pdf_builder_ajax?.nonce || '');
+        data.append('category', category);
 
         // Ajouter les données du formulaire
         for (let [key, value] of formData.entries()) {
             data.append(key, value);
         }
-
-        // Ajouter le contexte canvas
-        data.append('context', 'canvas_' + category);
 
         // Envoyer la requête AJAX
         fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
@@ -161,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(result => {
             if (result.success) {
                 // Fermer la modale
-                const modal = document.getElementById('canvas-' + category + '-modal');
+                const modal = document.getElementById('canvas-' + category + '-modal-clean');
                 if (modal) {
                     modal.remove();
                     document.body.style.overflow = '';

@@ -572,9 +572,9 @@ function pdf_builder_save_canvas_settings_handler() {
                 case 'zoom':
                     // Sauvegarder les paramètres de zoom
                     $zoom_mappings = [
-                        'canvas_min_zoom' => 'pdf_builder_canvas_min_zoom',
-                        'canvas_max_zoom' => 'pdf_builder_canvas_max_zoom',
-                        'canvas_default_zoom' => 'pdf_builder_canvas_default_zoom',
+                        'canvas_zoom_min' => 'pdf_builder_canvas_zoom_min',
+                        'canvas_zoom_max' => 'pdf_builder_canvas_zoom_max',
+                        'canvas_zoom_default' => 'pdf_builder_canvas_zoom_default',
                         'canvas_zoom_step' => 'pdf_builder_canvas_zoom_step'
                     ];
 
@@ -735,6 +735,23 @@ function pdf_builder_save_canvas_settings_handler() {
                             if (in_array($post_key, ['canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin'])) {
                                 $value = $value === '1';
                             }
+                            update_option($option_key, $value);
+                            $saved_values[$post_key] = $value;
+                        }
+                    }
+                    break;
+
+                case 'debug':
+                    // Sauvegarder les paramètres de debug
+                    $debug_mappings = [
+                        'canvas_debug_enabled' => 'pdf_builder_canvas_debug_enabled',
+                        'canvas_performance_monitoring' => 'pdf_builder_canvas_performance_monitoring',
+                        'canvas_error_reporting' => 'pdf_builder_canvas_error_reporting'
+                    ];
+
+                    foreach ($debug_mappings as $post_key => $option_key) {
+                        if (isset($_POST[$post_key])) {
+                            $value = $_POST[$post_key] === '1';
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
                         }
