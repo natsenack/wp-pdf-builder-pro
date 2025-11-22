@@ -490,7 +490,8 @@ input:checked + .toggle-slider:before {
                 const modal = document.getElementById(modalId);
                 console.log('Modal found:', modalId, modal ? 'YES' : 'NO');
                 if (modal) {
-                    modal.style.display = 'block';
+                    $(modal).show();
+                    console.log('Modal shown for category:', category);
                 }
             });
         });
@@ -500,7 +501,7 @@ input:checked + .toggle-slider:before {
         closeButtons.forEach(function(button) {
             button.addEventListener('click', function() {
                 const modal = this.closest('.canvas-modal');
-                modal.style.display = 'none';
+                $(modal).hide();
             });
         });
 
@@ -523,6 +524,7 @@ input:checked + .toggle-slider:before {
             button.addEventListener('click', function(event) {
                 console.log('Save button clicked - event fired for category:', this.getAttribute('data-category'));
                 event.preventDefault(); // Prevent any default behavior
+                event.stopPropagation(); // Stop event bubbling
                 const category = this.getAttribute('data-category');
                 const modal = this.closest('.canvas-modal');
                 const form = modal.querySelector('form');
