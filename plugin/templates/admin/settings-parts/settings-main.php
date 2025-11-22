@@ -23,6 +23,12 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
     error_log('[DEBUG] Settings page loaded');
 }
 
+// TEST TEMPORAIRE - Bouton visible en haut de page
+echo '<div style="position: fixed; top: 50px; right: 20px; z-index: 1000000; background: red; color: white; padding: 20px; border-radius: 10px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+    <div>🔴 BOUTON TEST VISIBLE</div>
+    <button onclick="alert(\'Bouton test cliqué - JavaScript fonctionne\')" style="margin-top: 10px; padding: 10px 20px; background: yellow; color: black; border: none; border-radius: 5px; cursor: pointer;">Test JS</button>
+</div>';
+
 // Initialize
 $notices = [];
 $settings = get_option('pdf_builder_settings', []);
