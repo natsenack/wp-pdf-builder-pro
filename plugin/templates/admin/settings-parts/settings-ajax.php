@@ -78,7 +78,15 @@ function pdf_builder_save_settings_handler() {
             try {
                 // Helper function to get normalized value from POST
                 $get_post_value = function($key) {
-                    return isset($_POST[$key]) ? (is_array($_POST[$key]) ? end($_POST[$key]) : $_POST[$key]) : null;
+                    if (!isset($_POST[$key])) {
+                        return null;
+                    }
+                    // Pour les arrays (noms se terminant par []), retourner l'array complet
+                    if (is_array($_POST[$key])) {
+                        return $_POST[$key];
+                    }
+                    // Pour les valeurs simples, retourner la valeur
+                    return $_POST[$key];
                 };
 
                 // Traitement de tous les paramètres (bouton flottant de sauvegarde)
@@ -161,14 +169,8 @@ function pdf_builder_save_settings_handler() {
 
                 // Paramètres d'accès (rôles)
                 $value = $get_post_value('pdf_builder_allowed_roles');
-                if (defined('WP_DEBUG') && WP_DEBUG) {
-                    error_log('[DEBUG] pdf_builder_allowed_roles received: ' . print_r($value, true));
-                }
                 if ($value !== null && is_array($value)) {
                     update_option('pdf_builder_allowed_roles', $value);
-                    if (defined('WP_DEBUG') && WP_DEBUG) {
-                        error_log('[DEBUG] pdf_builder_allowed_roles saved: ' . print_r($value, true));
-                    }
                 }
 
                 // Paramètres de sécurité

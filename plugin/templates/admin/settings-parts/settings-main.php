@@ -539,7 +539,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Collecter les données de TOUS les formulaires (pas seulement visibles)
             const forms = document.querySelectorAll('form');
-            console.log('Forms found:', forms.length, forms);
             forms.forEach(form => {
                 const formInputs = form.querySelectorAll('input, select, textarea');
 
@@ -551,14 +550,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (!checkboxArrays[baseName]) {
                             checkboxArrays[baseName] = [];
                         }
+                        // Inclure même les checkboxes disabled si elles sont checked
                         if (input.checked) {
                             checkboxArrays[baseName].push(input.value);
                         }
                     }
                 });
-
-                // Debug: Afficher les arrays collectés
-                console.log('Checkbox arrays collected:', checkboxArrays);
 
                 // Ajouter les arrays de checkboxes
                 Object.keys(checkboxArrays).forEach(name => {
