@@ -1066,6 +1066,144 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to update canvas previews after save
+    window.updateCanvasPreviews = function(category) {
+        console.log('Updating canvas previews for category:', category);
+
+        // Get AJAX config
+        let ajaxConfig = null;
+        if (typeof pdf_builder_ajax !== 'undefined') {
+            ajaxConfig = pdf_builder_ajax;
+        } else if (typeof pdfBuilderAjax !== 'undefined') {
+            ajaxConfig = pdfBuilderAjax;
+        } else if (typeof ajaxurl !== 'undefined') {
+            ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
+        }
+
+        if (!ajaxConfig || !ajaxConfig.ajax_url) {
+            console.error('Cannot update previews: no AJAX config available');
+            return;
+        }
+
+        // Make AJAX call to get updated values
+        fetch(ajaxConfig.ajax_url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_get_canvas_settings',
+                'category': category,
+                'nonce': ajaxConfig.nonce || ''
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                updateModalValues(category, data.data);
+            } else {
+                console.error('Failed to get updated values:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating previews:', error);
+        });
+    };
+
+    // Function to update modal values in DOM
+    function updateModalValues(category, values) {
+        console.log('Updating modal values for', category, values);
+
+        const modalId = `canvas-${category}-modal`;
+        const modal = document.getElementById(modalId);
+        if (!modal) {
+            console.error('Modal not found:', modalId);
+            return;
+        }
+
+        // Update values based on category
+        switch (category) {
+            case 'grille':
+                updateGrilleModal(modal, values);
+                break;
+            case 'dimensions':
+                updateDimensionsModal(modal, values);
+                break;
+            case 'zoom':
+                updateZoomModal(modal, values);
+                break;
+            case 'apparence':
+                updateApparenceModal(modal, values);
+                break;
+            case 'interactions':
+                updateInteractionsModal(modal, values);
+                break;
+            case 'export':
+                updateExportModal(modal, values);
+                break;
+            case 'performance':
+                updatePerformanceModal(modal, values);
+                break;
+            case 'autosave':
+                updateAutosaveModal(modal, values);
+                break;
+            case 'debug':
+                updateDebugModal(modal, values);
+                break;
+            default:
+                console.warn('Unknown category:', category);
+        }
+    }
+
+    // Update grille modal values
+    function updateGrilleModal(modal, values) {
+        // Guides enabled
+        const guidesCheckbox = modal.querySelector('#canvas_guides_enabled');
+        if (guidesCheckbox) {
+            guidesCheckbox.checked = values.guides_enabled === '1' || values.guides_enabled === true;
+        }
+
+        // Grid enabled
+        const gridCheckbox = modal.querySelector('#canvas_grid_enabled');
+        if (gridCheckbox) {
+            gridCheckbox.checked = values.grid_enabled === '1' || values.grid_enabled === true;
+        }
+
+        // Grid size
+        const gridSizeInput = modal.querySelector('#canvas_grid_size');
+        if (gridSizeInput) {
+            gridSizeInput.value = values.grid_size || 20;
+            gridSizeInput.disabled = !(values.grid_enabled === '1' || values.grid_enabled === true);
+        }
+
+        // Snap to grid
+        const snapCheckbox = modal.querySelector('#canvas_snap_to_grid');
+        if (snapCheckbox) {
+            snapCheckbox.checked = values.snap_to_grid === '1' || values.snap_to_grid === true;
+            snapCheckbox.disabled = !(values.grid_enabled === '1' || values.grid_enabled === true);
+        }
+
+        // Update toggle switch classes
+        const gridToggle = modal.querySelector('#canvas_grid_enabled').closest('.toggle-switch');
+        const snapToggle = modal.querySelector('#canvas_snap_to_grid').closest('.toggle-switch');
+        if (gridToggle) {
+            gridToggle.classList.toggle('disabled', !(values.grid_enabled === '1' || values.grid_enabled === true));
+        }
+        if (snapToggle) {
+            snapToggle.classList.toggle('disabled', !(values.grid_enabled === '1' || values.grid_enabled === true));
+        }
+    }
+
+    // Placeholder functions for other modals (to be implemented if needed)
+    function updateDimensionsModal(modal, values) { /* TODO */ }
+    function updateZoomModal(modal, values) { /* TODO */ }
+    function updateApparenceModal(modal, values) { /* TODO */ }
+    function updateInteractionsModal(modal, values) { /* TODO */ }
+    function updateExportModal(modal, values) { /* TODO */ }
+    function updatePerformanceModal(modal, values) { /* TODO */ }
+    function updateAutosaveModal(modal, values) { /* TODO */ }
+    function updateDebugModal(modal, values) { /* TODO */ }
+
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeModals);
