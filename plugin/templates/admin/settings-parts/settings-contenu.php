@@ -490,7 +490,7 @@ input:checked + .toggle-slider:before {
                 const modal = document.getElementById(modalId);
                 console.log('Modal found:', modalId, modal ? 'YES' : 'NO');
                 if (modal) {
-                    $(modal).show();
+                    jQuery(modal).show();
                     console.log('Modal shown for category:', category);
                 }
             });
@@ -501,7 +501,7 @@ input:checked + .toggle-slider:before {
         closeButtons.forEach(function(button) {
             button.addEventListener('click', function() {
                 const modal = this.closest('.canvas-modal');
-                $(modal).hide();
+                jQuery(modal).hide();
             });
         });
 
