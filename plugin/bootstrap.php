@@ -658,6 +658,16 @@ function pdf_builder_register_essential_ajax_hooks()
         }
     });
 
+    // Action AJAX appelée par React pour charger un template
+    add_action('wp_ajax_pdf_builder_get_template', function() use ($template_manager) {
+        if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
+            $template_manager->ajaxLoadTemplate();
+        } else {
+            // Fallback handler
+            pdf_builder_fallback_ajax_load_template();
+        }
+    });
+
     add_action('wp_ajax_pdf_builder_auto_save_template', function() use ($template_manager) {
         if ($template_manager && method_exists($template_manager, 'ajax_auto_save_template')) {
             $template_manager->ajax_auto_save_template();
