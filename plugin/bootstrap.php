@@ -116,6 +116,13 @@ add_action('plugins_loaded', function() {
     update_option('pdf_builder_settings', $settings);
 }, 1);
 
+// Instancier PDF_Builder_Admin pour enregistrer les hooks AJAX
+add_action('plugins_loaded', function() {
+    if (class_exists('PDF_Builder_Admin')) {
+        new PDF_Builder_Admin();
+    }
+}, 5);
+
 // ============================================================================
 // HOOKS AJAX ESSENTIELS
 // ============================================================================
