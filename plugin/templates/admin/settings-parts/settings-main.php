@@ -1093,10 +1093,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
 
                             // Update window.pdfBuilderCanvasSettings for real-time canvas updates
-                            if (category === 'apparence') {
-                                
-                                updateWindowCanvasSettings();
-                            }
+                            // Note: Removed updateWindowCanvasSettings() call as it causes AJAX errors
+                            // if (category === 'apparence') {
+                            //     updateWindowCanvasSettings();
+                            // }
 
                             // Dispatch custom event for real-time canvas updates
                             if (category === 'apparence') {
@@ -1159,97 +1159,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (e) {
             
         }
-    }
-
-    // Function to update window.pdfBuilderCanvasSettings after save
-    function updateWindowCanvasSettings() {
-        // Get AJAX config
-        let ajaxConfig = null;
-        if (typeof pdf_builder_ajax !== 'undefined') {
-            ajaxConfig = pdf_builder_ajax;
-        } else if (typeof pdfBuilderAjax !== 'undefined') {
-            ajaxConfig = pdfBuilderAjax;
-        } else if (typeof ajaxurl !== 'undefined') {
-            ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
-        }
-
-        if (!ajaxConfig || !ajaxConfig.ajax_url) {
-            
-            return;
-        }
-
-        
-
-        // Make AJAX call to get all canvas settings
-        fetch(ajaxConfig.ajax_url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'action': 'pdf_builder_get_all_canvas_settings',
-                'nonce': ajaxConfig.nonce || ''
-            })
-        })
-        .then(response => {
-            
-            return response.json();
-        })
-        .then(data => {
-            
-            if (data.success && data.data) {
-                
-                // Update the global window object
-                window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
-                
-            } else {
-                
-            }
-        })
-        .catch(error => {
-            
-        });
-    }
-
-    // Function to update window.pdfBuilderCanvasSettings after save
-    function updateWindowCanvasSettings() {
-        // Get AJAX config
-        let ajaxConfig = null;
-        if (typeof pdf_builder_ajax !== 'undefined') {
-            ajaxConfig = pdf_builder_ajax;
-        } else if (typeof pdfBuilderAjax !== 'undefined') {
-            ajaxConfig = pdfBuilderAjax;
-        } else if (typeof ajaxurl !== 'undefined') {
-            ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
-        }
-
-        if (!ajaxConfig || !ajaxConfig.ajax_url) {
-            return;
-        }
-
-        // Make AJAX call to get all canvas settings
-        fetch(ajaxConfig.ajax_url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'action': 'pdf_builder_get_all_canvas_settings',
-                'nonce': ajaxConfig.nonce || ''
-            })
-        })
-        .then(response => {
-            return response.json();
-        })
-        .then(data => {
-            if (data.success && data.data) {
-                // Update the global window object
-                window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
-            } else {
-            }
-        })
-        .catch(error => {
-        });
     }
 
     // Function to update modal values in DOM
