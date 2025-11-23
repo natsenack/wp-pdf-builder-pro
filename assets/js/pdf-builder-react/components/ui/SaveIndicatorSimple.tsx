@@ -30,7 +30,7 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
   const colors: Record<string, { bg: string; text: string; border: string }> = {
     saving: { bg: '#2196F3', text: '#fff', border: '#1976D2' },
     saved: { bg: '#4CAF50', text: '#fff', border: '#388E3C' },
-    error: { bg: '#F44336', text: '#fff', border: '#D32F2F' }
+    error: { bg: '#FF9800', text: '#fff', border: '#F57C00' } // Orange au lieu de rouge
   };
 
   const color = colors[state];
@@ -43,7 +43,8 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
       case 'saved':
         return 'Sauvegardé ✓';
       case 'error':
-        return `Erreur: ${error || 'inconnue'}`;
+        // Message moins alarmant pour les erreurs d'auto-save
+        return 'Auto-save temporairement indisponible';
       default:
         return '';
     }
