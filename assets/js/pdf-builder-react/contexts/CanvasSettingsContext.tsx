@@ -299,8 +299,11 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   useEffect(() => {
     const handleSettingsUpdate = () => {
       console.log('🎨 Settings update event received, refreshing canvas settings...');
+      console.log('📊 Current window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
       const windowSettings = loadSettingsFromWindowObj();
+      console.log('🔄 New settings loaded:', windowSettings);
       setSettings(windowSettings);
+      console.log('✅ Canvas settings updated in context');
     };
     window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
     return () => window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);

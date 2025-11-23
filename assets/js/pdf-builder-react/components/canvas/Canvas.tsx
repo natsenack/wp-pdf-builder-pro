@@ -2762,6 +2762,14 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || '#cccccc'}` 
       : 'none';
 
+  console.log('🎨 Canvas rendering with settings:', {
+    canvasBackgroundColor: canvasSettings?.canvasBackgroundColor,
+    borderColor: canvasSettings?.borderColor,
+    borderWidth: canvasSettings?.borderWidth,
+    shadowEnabled: canvasSettings?.shadowEnabled,
+    borderStyle: borderStyle
+  });
+
   // Calculate canvas display size based on zoom
   const zoomScale = state.canvas.zoom / 100;
   const displayWidth = width * zoomScale;

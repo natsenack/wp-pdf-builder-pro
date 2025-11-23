@@ -1102,6 +1102,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update window.pdfBuilderCanvasSettings after save
     function updateWindowCanvasSettings() {
+        console.log('🔄 updateWindowCanvasSettings called');
         // Get AJAX config
         let ajaxConfig = null;
         if (typeof pdf_builder_ajax !== 'undefined') {
@@ -1117,6 +1118,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        console.log('📡 Making AJAX call to get all canvas settings');
+
         // Make AJAX call to get all canvas settings
         fetch(ajaxConfig.ajax_url, {
             method: 'POST',
@@ -1128,12 +1131,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 'nonce': ajaxConfig.nonce || ''
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('📥 AJAX response received:', response.status);
+            return response.json();
+        })
         .then(data => {
+            console.log('✅ Window settings data received:', data);
             if (data.success && data.data) {
                 console.log('✅ Window settings updated:', data.data);
                 // Update the global window object
                 window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
+                console.log('🎯 window.pdfBuilderCanvasSettings updated:', window.pdfBuilderCanvasSettings);
             } else {
                 console.error('❌ Failed to update window settings:', data);
             }
