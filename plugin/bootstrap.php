@@ -346,7 +346,7 @@ function pdf_builder_load_new_classes()
 
     // Charger les interfaces et classes de données
     $data_classes = [
-        'data/DataProviderInterface.php',
+        'src/Interfaces/DataProviderInterface.php',
         'data/SampleDataProvider.php',
         'data/WooCommerceDataProvider.php'
     ];
