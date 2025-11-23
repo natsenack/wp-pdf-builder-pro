@@ -214,27 +214,11 @@ input:checked + .toggle-slider:before {
                             </div>
                             <div class="canvas-card-preview">
                                 <div class="zoom-preview">
-                                    <div class="zoom-range">
-                                        <span class="zoom-label">Plage:</span>
-                                        <span class="zoom-value" id="zoom-preview-value">
-                                            <?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>-
-                                            <?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>%
-                                        </span>
-                                    </div>
-                                    <div class="zoom-details">
-                                        <div class="zoom-default">
-                                            <span class="zoom-label">Par défaut:</span>
-                                            <span class="zoom-value" id="zoom-default-value">
-                                                <?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>%
-                                            </span>
-                                        </div>
-                                        <div class="zoom-step">
-                                            <span class="zoom-label">Pas:</span>
-                                            <span class="zoom-value" id="zoom-step-value">
-                                                <?php echo intval(get_option('pdf_builder_canvas_zoom_step', 25)); ?>%
-                                            </span>
-                                        </div>
-                                    </div>
+                                    <span class="zoom-info">
+                                        Plage: <strong><?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>-<?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>%</strong> |
+                                        Défaut: <strong><?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>%</strong> |
+                                        Pas: <strong><?php echo intval(get_option('pdf_builder_canvas_zoom_step', 25)); ?>%</strong>
+                                    </span>
                                 </div>
                             </div>
                             <div class="canvas-card-actions">

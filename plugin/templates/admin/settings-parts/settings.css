@@ -1005,45 +1005,19 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
 .zoom-preview {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    align-items: center;
+    font-size: 12px;
+    color: #646970;
+}
+
+.zoom-info {
     font-size: 11px;
     color: #646970;
 }
 
-.zoom-range {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.zoom-details {
-    display: flex;
-    gap: 12px;
-}
-
-.zoom-default,
-.zoom-step {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.zoom-label {
-    font-size: 10px;
-    color: #8c8f94;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.zoom-value {
+.zoom-info strong {
+    color: #007cba;
     font-weight: 600;
-    color: #1d2327;
-    background: #f6f7f7;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 11px;
 }
 }
 
