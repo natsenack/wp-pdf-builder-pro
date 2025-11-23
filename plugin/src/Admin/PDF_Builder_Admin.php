@@ -5969,6 +5969,9 @@ class PdfBuilderAdmin
             // Charger le template
             file_put_contents($log_file, date('Y-m-d H:i:s') . ' - LOADING TEMPLATE: ' . $template_id . "\n", FILE_APPEND);
             $template_data = $this->template_manager->loadTemplateRobust($template_id);
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - TEMPLATE DATA TYPE: ' . gettype($template_data) . "\n", FILE_APPEND);
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - TEMPLATE DATA: ' . (is_array($template_data) ? 'ARRAY' : 'NOT_ARRAY') . "\n", FILE_APPEND);
+
             if (!$template_data) {
                 file_put_contents($log_file, date('Y-m-d H:i:s') . ' - ERROR: Template not found: ' . $template_id . "\n", FILE_APPEND);
                 wp_send_json_error('Template non trouvé avec ID: ' . $template_id);
@@ -5976,12 +5979,15 @@ class PdfBuilderAdmin
             }
 
             // S'assurer que les données sont dans le bon format
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - VALIDATING FORMAT' . "\n", FILE_APPEND);
             if (!is_array($template_data)) {
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' - ERROR: Invalid format, converting to error array' . "\n", FILE_APPEND);
                 $template_data = ['error' => 'Invalid template data format'];
             }
 
             // Extraire le nom du template
             $template_name = isset($template_data['name']) ? $template_data['name'] : 'Template ' . $template_id;
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - TEMPLATE NAME: ' . $template_name . "\n", FILE_APPEND);
 
             $response = [
                 'template' => $template_data,
@@ -5990,6 +5996,7 @@ class PdfBuilderAdmin
                 'message' => 'Template chargé avec succès'
             ];
 
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - SENDING SUCCESS RESPONSE' . "\n", FILE_APPEND);
             wp_send_json_success($response);
 
         } catch (Exception $e) {
