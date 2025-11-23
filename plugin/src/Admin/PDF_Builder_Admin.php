@@ -5996,6 +5996,7 @@ class PdfBuilderAdmin
                 'message' => 'Template chargé avec succès'
             ];
 
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - RESPONSE STRUCTURE: ' . json_encode($response) . "\n", FILE_APPEND);
             file_put_contents($log_file, date('Y-m-d H:i:s') . ' - SENDING SUCCESS RESPONSE' . "\n", FILE_APPEND);
             wp_send_json_success($response);
 
