@@ -649,6 +649,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const floatingSaveBtn = document.getElementById('floating-save-btn');
     if (floatingSaveBtn) {
         floatingSaveBtn.addEventListener('click', function() {
+            // Vérifier que pdf_builder_ajax est défini
+            if (typeof pdf_builder_ajax === 'undefined') {
+                alert('Erreur: Configuration AJAX manquante. Actualisez la page.');
+                return;
+            }
+
             // Changer l'apparence du bouton pendant la sauvegarde
             const originalText = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>'; // Texte fixe original
             floatingSaveBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Sauvegarde...</span>';

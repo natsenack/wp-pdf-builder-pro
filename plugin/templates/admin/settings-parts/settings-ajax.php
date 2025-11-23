@@ -72,6 +72,7 @@ function pdf_builder_save_settings_handler() {
     // Debug: Log that function is called
     if (defined('WP_DEBUG') && WP_DEBUG) {
         error_log('PDF Builder: pdf_builder_save_settings_handler called with current_tab: ' . ($_POST['current_tab'] ?? 'not set'));
+        error_log('PDF Builder: POST data: ' . print_r($_POST, true));
     }
 
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
@@ -517,6 +518,11 @@ function pdf_builder_save_settings_handler() {
 
                 send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.', ['saved_options' => $saved]);
             } catch (Exception $e) {
+                // Debug: Log the exception
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('PDF Builder: Exception in save_settings: ' . $e->getMessage());
+                    error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
+                }
                 send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
             }
                 break;
