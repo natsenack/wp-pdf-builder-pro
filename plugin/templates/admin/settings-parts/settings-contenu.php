@@ -80,36 +80,10 @@ input:checked + .toggle-slider:before {
                             <div class="canvas-card-preview">
                                 <div class="preview-format">
                                     <div >
-                                        <span id="card-canvas-width"><?php echo intval(get_option('pdf_builder_canvas_width', 794)); ?></span>×
-                                        <span id="card-canvas-height"><?php echo intval(get_option('pdf_builder_canvas_height', 1123)); ?></span>px
+                                        <span id="card-canvas-width"></span>×
+                                        <span id="card-canvas-height"></span>px
                                     </div>
                                     <span class="preview-size" id="card-canvas-dpi">
-                                        <?php
-                                        $dpi = get_option('pdf_builder_canvas_dpi', 96);
-                                        $format = get_option('pdf_builder_canvas_format', 'A4');
-                                        $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
-
-                                        // Dimensions standard en mm pour chaque format
-                                        $formatDimensionsMM = [
-                                            'A4' => ['width' => 210, 'height' => 297],
-                                            'A3' => ['width' => 297, 'height' => 420],
-                                            'A5' => ['width' => 148, 'height' => 210],
-                                            'Letter' => ['width' => 215.9, 'height' => 279.4],
-                                            'Legal' => ['width' => 215.9, 'height' => 355.6],
-                                            'Tabloid' => ['width' => 279.4, 'height' => 431.8]
-                                        ];
-
-                                        $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
-
-                                        // Appliquer l'orientation
-                                        if ($orientation === 'landscape') {
-                                            $temp = $dimensions['width'];
-                                            $dimensions['width'] = $dimensions['height'];
-                                            $dimensions['height'] = $temp;
-                                        }
-
-                                        echo "{$dpi} DPI - {$format} (" . round($dimensions['width'], 1) . '×' . round($dimensions['height'], 1) . 'mm)';
-                                        ?>
                                     </span>
                                 </div>
                             </div>
@@ -132,8 +106,8 @@ input:checked + .toggle-slider:before {
                                 <p>Personnalisez les couleurs, bordures et effets visuels du canvas.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="color-preview bg" style="background-color: <?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>;" title="Fond"></div>
-                                <div class="color-preview border" style="background-color: <?php echo esc_attr(get_option('pdf_builder_canvas_border_color', '#007cba')); ?>;" title="Bordure"></div>
+                                <div class="color-preview bg" title="Fond"></div>
+                                <div class="color-preview border" title="Bordure"></div>
                             </div>
                             <div class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
@@ -343,19 +317,19 @@ input:checked + .toggle-slider:before {
                                     <div class="performance-metrics">
                                         <div class="metric-item">
                                             <span class="metric-label">FPS</span>
-                                            <span class="metric-value"><?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?></span>
+                                            <span class="metric-value"></span>
                                         </div>
                                         <div class="metric-item">
                                             <span class="metric-label">RAM JS</span>
-                                            <span class="metric-value"><?php echo intval(get_option('pdf_builder_canvas_memory_limit_js', 256)); ?>MB</span>
+                                            <span class="metric-value"></span>
                                         </div>
                                         <div class="metric-item">
                                             <span class="metric-label">RAM PHP</span>
-                                            <span class="metric-value"><?php echo intval(get_option('pdf_builder_canvas_memory_limit_php', 256)); ?>MB</span>
+                                            <span class="metric-value"></span>
                                         </div>
                                     </div>
                                     <div class="performance-status">
-                                        <div class="status-indicator <?php echo (get_option('pdf_builder_canvas_lazy_loading_editor', '1') === '1' && get_option('pdf_builder_canvas_lazy_loading_plugin', '1') === '1') ? 'active' : 'inactive'; ?>">
+                                        <div class="status-indicator">
                                             <span class="status-dot"></span>
                                             <span class="status-text">Lazy Loading</span>
                                         </div>

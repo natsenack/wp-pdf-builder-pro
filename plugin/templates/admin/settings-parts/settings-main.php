@@ -859,6 +859,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize zoom card preview with real values
     updateZoomCardPreview();
+
+    // Initialize all canvas card previews with real values
+    if (window.updateCanvasPreviews) {
+        window.updateCanvasPreviews('all');
+    }
 });
 
 // Canvas configuration modals functionality - Version stable
