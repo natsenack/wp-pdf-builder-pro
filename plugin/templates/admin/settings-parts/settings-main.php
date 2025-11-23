@@ -678,7 +678,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (gdprEnabledCheckbox) {
         gdprEnabledCheckbox.addEventListener('change', function() {
             toggleRGPDControls();
-            updateSecurityStatusIndicators(); // Mettre à jour l'indicateur aussi
+            // Removed: updateSecurityStatusIndicators(); // Ne plus mettre à jour l'indicateur lors du toggle
         });
     }
 
