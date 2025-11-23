@@ -728,7 +728,10 @@ class PdfBuilderTemplateManager
         }
 
         file_put_contents($log_file, date('Y-m-d H:i:s') . " - SUCCESS: Template loaded successfully\n", FILE_APPEND);
-        return $template_data;
+        return [
+            'name' => $template['name'],
+            'data' => $template_data
+        ];
     }
 
     /**
