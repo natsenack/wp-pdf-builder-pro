@@ -464,11 +464,12 @@ if (
 <script>
 // Update zoom card preview
 function updateZoomCardPreview() {
-    // Test avec valeurs hardcodées d'abord
-    const minZoom = 10;
-    const maxZoom = 500;
-    const defaultZoom = 100;
-    const stepZoom = 25;
+    // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
+    const settings = window.pdfBuilderCanvasSettings || {};
+    const minZoom = settings.min_zoom || settings.default_zoom_min || 10;
+    const maxZoom = settings.max_zoom || settings.default_zoom_max || 500;
+    const defaultZoom = settings.default_zoom || 100;
+    const stepZoom = settings.zoom_step || 25;
 
     // Update zoom level display
     const zoomLevel = document.querySelector('.zoom-level');
@@ -1625,9 +1626,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     function updateDimensionsCardPreview() {
-        // Test avec valeurs hardcodées
-        const format = 'A4';
-        const dpi = 150;
+        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
+        const settings = window.pdfBuilderCanvasSettings || {};
+        const format = settings.default_canvas_format || 'A4';
+        const dpi = settings.default_canvas_dpi || 150;
 
         // Dimensions standard en mm pour chaque format
         const formatDimensionsMM = {
@@ -1664,9 +1666,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update apparence card preview
     function updateApparenceCardPreview() {
-        // Test avec valeurs hardcodées
-        const bgColor = '#ffffff';
-        const borderColor = '#666666';
+        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
+        const settings = window.pdfBuilderCanvasSettings || {};
+        const bgColor = settings.canvas_background_color || '#ffffff';
+        const borderColor = settings.border_color || '#cccccc';
 
         // Update color previews in the card
         const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
