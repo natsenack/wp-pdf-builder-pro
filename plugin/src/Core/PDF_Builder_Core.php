@@ -439,64 +439,42 @@ class PdfBuilderCore
      */
     public function settingsPage()
     {
-        // Vérifier les permissions - TEST: Permissions très permissives pour diagnostiquer
-        if (!is_user_logged_in()) {
-            wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
-        }
+        // TEST SIMPLE: Page de diagnostic basique
+        echo '<div class="wrap">';
+        echo '<h1>🔧 PDF Builder - Test d\'accès</h1>';
+        echo '<p>Cette page se charge correctement !</p>';
 
-        // Afficher les informations de debug pour diagnostiquer
         $current_user = wp_get_current_user();
-        echo '<div class="notice notice-info" style="margin: 20px; padding: 20px; background: #f0f8ff; border: 2px solid #007cba;">';
-        echo '<h3>🔍 DIAGNOSTIC DES PERMISSIONS</h3>';
-        echo '<p><strong>User ID:</strong> ' . $current_user->ID . '</p>';
-        echo '<p><strong>Username:</strong> ' . $current_user->user_login . '</p>';
-        echo '<p><strong>Email:</strong> ' . $current_user->user_email . '</p>';
-        echo '<p><strong>Roles:</strong> ' . implode(', ', $current_user->roles) . '</p>';
-        echo '<p><strong>manage_options:</strong> ' . (current_user_can('manage_options') ? '<span style="color: green;">✅ YES</span>' : '<span style="color: red;">❌ NO</span>') . '</p>';
-        echo '<p><strong>pdf_builder_access:</strong> ' . (current_user_can('pdf_builder_access') ? '<span style="color: green;">✅ YES</span>' : '<span style="color: red;">❌ NO</span>') . '</p>';
-        echo '<p><strong>administrator:</strong> ' . (in_array('administrator', $current_user->roles) ? '<span style="color: green;">✅ YES</span>' : '<span style="color: red;">❌ NO</span>') . '</p>';
-        echo '<hr>';
-        echo '<p><strong>Si vous voyez ce message, la page fonctionne !</strong></p>';
-        echo '<p>Les permissions sont maintenant très permissives pour le diagnostic.</p>';
-        echo '</div>';
+        echo '<h2>Informations utilisateur :</h2>';
+        echo '<ul>';
+        echo '<li><strong>ID:</strong> ' . $current_user->ID . '</li>';
+        echo '<li><strong>Login:</strong> ' . $current_user->user_login . '</li>';
+        echo '<li><strong>Email:</strong> ' . $current_user->user_email . '</li>';
+        echo '<li><strong>Rôles:</strong> ' . implode(', ', $current_user->roles) . '</li>';
+        echo '</ul>';
 
-        // DEPLOYMENT TEST: Forcer la détection de modification
-        // Enregistrer et charger le script pour la page des paramètres comme dans PDF_Builder_Admin
-        wp_register_script('pdf-builder-settings', plugins_url('templates/admin/js/pdf-builder-settings.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.0.0', true);
-        wp_enqueue_script('pdf-builder-settings');
+        echo '<h2>Permissions :</h2>';
+        echo '<ul>';
+        echo '<li><strong>is_user_logged_in():</strong> ' . (is_user_logged_in() ? '✅ OUI' : '❌ NON') . '</li>';
+        echo '<li><strong>current_user_can(\'read\'):</strong> ' . (current_user_can('read') ? '✅ OUI' : '❌ NON') . '</li>';
+        echo '<li><strong>current_user_can(\'manage_options\'):</strong> ' . (current_user_can('manage_options') ? '✅ OUI' : '❌ NON') . '</li>';
+        echo '<li><strong>current_user_can(\'pdf_builder_access\'):</strong> ' . (current_user_can('pdf_builder_access') ? '✅ OUI' : '❌ NON') . '</li>';
+        echo '</ul>';
 
-        // Localize AJAX for settings page
-        wp_localize_script('pdf-builder-settings', 'pdf_builder_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_ajax')
-        ));
-
-        // Charger l'API globale de l'éditeur React pour la communication avec les modals
-        $this->enqueueReactGlobalAPI();
-
-        ?>
-        <div class="wrap">
-        <?php
-        // Inclure la page settings comme dans PDF_Builder_Admin
-        $settings_page_path = plugin_dir_path(__FILE__) . '../templates/admin/settings-page.php';
-        if (file_exists($settings_page_path)) {
-            include $settings_page_path;
+        echo '<h2>Debug Role_Manager :</h2>';
+        if (class_exists('PDF_Builder\\Security\\Role_Manager')) {
+            $rm = \PDF_Builder\Security\Role_Manager::getInstance();
+            echo '<p>Role_Manager chargé: ✅</p>';
+            echo '<pre>' . print_r($rm->getDebugInfo(), true) . '</pre>';
         } else {
-            // Fallback au formulaire WordPress standard
-            ?>
-            <h1><?php _e('PDF Builder Settings', 'pdf-builder-pro'); ?></h1>
-            <form method="post" action="options.php">
-                <?php
-                \settings_fields('pdf_builder_options');
-                \do_settings_sections('pdf_builder_settings');
-                submit_button();
-                ?>
-            </form>
-            <?php
+            echo '<p>Role_Manager NON chargé: ❌</p>';
         }
-        ?>
-        </div>
-        <?php
+
+        echo '<h2>Actions disponibles :</h2>';
+        echo '<p><a href="' . admin_url('admin.php?page=pdf-builder-pro') . '" class="button button-primary">🏠 Aller à l\'accueil PDF Builder</a></p>';
+        echo '<p><a href="' . admin_url('admin.php?page=pdf-builder-templates') . '" class="button button-secondary">📋 Aller aux Templates</a></p>';
+
+        echo '</div>';
     }
 
     /**
