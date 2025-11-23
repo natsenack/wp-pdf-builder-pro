@@ -17,7 +17,6 @@ class PdfBuilderTemplatesAjax
     public function __construct()
     {
         // Actions pour les templates prédéfinis - géré dans predefined-templates-manager.php
-        // add_action('wp_ajax_pdf_builder_load_predefined_template', array($this, 'loadPredefinedTemplate'));
         add_action('wp_ajax_pdf_builder_create_from_predefined', array($this, 'createFromPredefined'));
         add_action('wp_ajax_pdf_builder_load_predefined_into_editor', array($this, 'loadPredefinedIntoEditor'));
         // Actions pour les templates personnalisés

@@ -121,7 +121,6 @@ class PdfBuilderCore
         add_action('init', [$this, 'initialize_directories']);
 
         // Initialiser le gestionnaire de notifications
-        // add_action('init', [$this, 'initialize_notification_manager']); // SUPPRIMÉ - méthode supprimée
     }
 
     /**

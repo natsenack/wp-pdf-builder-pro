@@ -37,12 +37,9 @@ class PdfBuilderTemplateManager
     private function initHooks()
     {
         // AJAX handlers pour les templates
-        // add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']); // Désactivé - conflit avec bootstrap.php
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']); // Alias pour compatibilité
         // NOTE: pdf_builder_load_template est enregistré dans PDF_Builder_Admin.php
-        // add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
         // NOTE: pdf_builder_flush_rest_cache est enregistré dans PDF_Builder_Admin.php
-        // add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
     }
 
     /**

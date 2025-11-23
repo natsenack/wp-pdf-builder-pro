@@ -237,11 +237,9 @@ class PdfBuilderAdmin
         // Enregistrer les hooks AJAX du Template_Manager avant même son instantiation
         // Cela garantit que les handlers AJAX seront disponibles immédiatement
         // ✅ Note: Seulement pdf_builder_save_template - React utilise celui-ci
-        // REMOVED: add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']); // Conflit avec bootstrap.php
 
 // REMOVED: Conflit avec bootstrap.php - le handler de bootstrap.php gère maintenant le chargement
 // Hook pdf_builder_get_template déjà enregistré plus haut
-// REMOVED: add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']); // REMOVED: migrated to AjaxHandler
 
         // Hooks WooCommerce - Délégation vers le manager
         if (class_exists('WooCommerce') && $this->woocommerce_integration !== null) {
@@ -251,32 +249,6 @@ class PdfBuilderAdmin
                 add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
             }
         }
-
-        // Hook AJAX pour sauvegarder les paramètres
-        // add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']); // Fonction inexistante
-        // add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']); // REMOVED: migrated to AjaxHandler
-        // add_action('wp_ajax_pdf_builder_save_general_settings', [$this, 'ajax_save_general_settings']); // Fonction inexistante
-        // add_action('wp_ajax_pdf_builder_save_performance_settings', [$this, 'ajax_save_performance_settings']); // Fonction inexistante
-        // Hook AJAX pour migrer les templates obsolètes
-        // add_action('wp_ajax_pdf_builder_migrate_templates', [$this, 'ajax_migrate_templates']); // REMOVED: migrated to AjaxHandler
-        // add_action('wp_ajax_pdf_builder_migrate_templates_to_posts', [$this, 'ajax_migrate_templates_to_posts']); // REMOVED: migrated to AjaxHandler
-        // Hook AJAX pour toggle debug mode
-        // add_action('wp_ajax_pdf_builder_toggle_debug', [$this, 'ajax_toggle_debug']); // REMOVED: migrated to AjaxHandler
-        // Hook AJAX pour toggle debug mode principal
-        // add_action('wp_ajax_pdf_builder_toggle_debug_mode', [$this, 'ajax_toggle_debug_mode']); // REMOVED: migrated to AjaxHandler
-
-        // Test notifications handler - REMOVED: handled in settings-page.php
-        // add_action('wp_ajax_pdf_builder_test_notifications', [$this, 'ajax_test_notifications']);
-        // Test SMTP connection handler - REMOVED: handled in settings-page.php
-        // add_action('wp_ajax_pdf_builder_test_smtp_connection', [$this, 'ajax_test_smtp_connection']);
-
-        // Maintenance actions AJAX - REMOVED: handled in settings-page.php
-        // add_action('wp_ajax_pdf_builder_remove_temp_files', [$this, 'ajax_remove_temp_files']);
-        // add_action('wp_ajax_pdf_builder_optimize_db', [$this, 'ajax_optimize_db']);
-        // add_action('wp_ajax_pdf_builder_repair_templates', [$this, 'ajax_repair_templates']);
-        // add_action('wp_ajax_pdf_builder_reset_settings', [$this, 'ajax_reset_settings']);
-        // add_action('wp_ajax_pdf_builder_check_integrity', [$this, 'ajax_check_integrity']);
-
 
         // Hook pour la compatibilité avec les anciens liens template_id
         add_action('admin_init', [$this, 'handle_legacy_template_links']);

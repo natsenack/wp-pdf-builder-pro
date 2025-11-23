@@ -203,11 +203,7 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
     // Settings handlers from settings-ajax.php - DISABLED: Conflit avec AjaxHandler.php
-    // add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
-    // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
     // REMOVED: pdf_builder_save_canvas_settings and pdf_builder_get_canvas_settings are now handled by PDF_Builder_Admin
-    // add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
-    // add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
 
     // Test AJAX handler
     add_action('wp_ajax_test_ajax', 'pdf_builder_test_ajax_handler');
@@ -220,10 +216,6 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_test_cache_integration_ajax');
     add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_clear_all_cache_ajax');
     add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_get_cache_metrics_ajax');
-    // add_action('wp_ajax_pdf_builder_create_backup', 'pdf_builder_create_backup_ajax'); // Désactivé - conflit avec le manager
-    // add_action('wp_ajax_pdf_builder_list_backups', 'pdf_builder_list_backups_ajax'); // Désactivé - conflit avec le manager
-    // add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_restore_backup_ajax'); // Désactivé - conflit avec le manager
-    // add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_delete_backup_ajax'); // Désactivé - conflit avec le manager
     add_action('pdf_builder_daily_backup', 'pdf_builder_execute_daily_backup');
     add_action('pdf_builder_cleanup_old_backups', 'pdf_builder_cleanup_old_backups');
     add_action('pdf_builder_weekly_maintenance', 'pdf_builder_execute_weekly_maintenance');
