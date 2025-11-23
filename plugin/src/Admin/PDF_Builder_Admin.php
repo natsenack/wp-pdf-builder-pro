@@ -3362,11 +3362,10 @@ class PdfBuilderAdmin
 
     /**
      * Récupère les utilitaires de données
+    /**
      */
     public function getDataUtils()
     {
         return $this->data_utils;
     }
-
-    /**
 }
