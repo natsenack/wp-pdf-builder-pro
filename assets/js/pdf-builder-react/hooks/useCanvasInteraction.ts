@@ -23,7 +23,9 @@ interface UseCanvasInteractionProps {
 export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeight = 1123 }: UseCanvasInteractionProps) => {
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
-  const selectionMode = canvasSettings.canvasSelectionMode;
+  
+  // Déterminer le mode de sélection effectif : si sélection multiple désactivée, forcer le mode 'click'
+  const selectionMode = canvasSettings.selectionMultiSelectEnabled ? canvasSettings.canvasSelectionMode : 'click';
 
   // État pour déclencher le re-rendu du canvas pendant la sélection
   const [selectionUpdateTrigger, setSelectionUpdateTrigger] = useState(0);
