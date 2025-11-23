@@ -8,7 +8,6 @@ import { useMemo, useState, useEffect } from 'react';
  * @returns {Object} Les paramètres du canvas
  */
 export const useCanvasSettings = () => {
-    console.log('[DEBUG] useCanvasSettings hook loaded - version 2025-11-23');
     const [settings, setSettings] = useState(() => window.pdfBuilderCanvasSettings || getDefaultCanvasSettings());
 
     // Écouter les changements de paramètres

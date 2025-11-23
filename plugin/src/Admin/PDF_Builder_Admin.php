@@ -6359,38 +6359,25 @@ class PdfBuilderAdmin
      */
     public function ajax_get_canvas_settings()
     {
-        error_log('PDF_BUILDER_DEBUG: ajax_get_canvas_settings called');
-        // Log pour débogage
-        $log_file = WP_CONTENT_DIR . '/debug_pdf_canvas.log';
-        $log_data = date('Y-m-d H:i:s') . ' - AJAX GET CANVAS SETTINGS START' . "\n";
-        $log_data .= 'REQUEST: ' . print_r($_REQUEST, true) . "\n";
-        $log_data .= 'POST: ' . print_r($_POST, true) . "\n";
-        $log_data .= 'USER: ' . (is_user_logged_in() ? 'LOGGED_IN' : 'NOT_LOGGED_IN') . "\n";
-        $log_data .= 'USER_ID: ' . get_current_user_id() . "\n";
-        file_put_contents($log_file, $log_data, FILE_APPEND);
-
         try {
             // Vérifier les permissions
             if (!is_user_logged_in()) {
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' - ERROR: User not logged in' . "\n", FILE_APPEND);
                 wp_send_json_error('Utilisateur non connecté');
                 return;
             }
 
             // Vérifier le nonce
             $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
-            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - NONCE CHECK: ' . $nonce . "\n", FILE_APPEND);
             if (!wp_verify_nonce($nonce, 'pdf_builder_nonce') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_templates')) {
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' - ERROR: Invalid nonce: ' . $nonce . "\n", FILE_APPEND);
                 wp_send_json_error('Nonce invalide');
                 return;
             }
 
             // Pour l'instant, retourner des paramètres par défaut
             // TODO: Implémenter la récupération réelle des paramètres canvas depuis la BD
-            $response_data = [
+            wp_send_json_success([
                 'canvas_settings' => [
                     'width' => 1123,
                     'height' => 794,
@@ -6398,12 +6385,9 @@ class PdfBuilderAdmin
                     'orientation' => 'landscape'
                 ],
                 'message' => 'Paramètres canvas récupérés (simulation)'
-            ];
-            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - SUCCESS: ' . print_r($response_data, true) . "\n", FILE_APPEND);
-            wp_send_json_success($response_data);
+            ]);
 
         } catch (Exception $e) {
-            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - EXCEPTION: ' . $e->getMessage() . "\n", FILE_APPEND);
             wp_send_json_error('Erreur lors de la récupération: ' . $e->getMessage());
         }
     }
