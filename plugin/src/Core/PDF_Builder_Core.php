@@ -212,13 +212,13 @@ class PdfBuilderCore
                 30
             );
 
-            // Pages admin - TEST: Utiliser une capacité WordPress de base
+            // Pages admin - TEST: Slug complètement différent
             add_submenu_page(
                 'pdf-builder-pro',
                 __('Templates', 'pdf-builder-pro'),
                 __('Templates', 'pdf-builder-pro'),
-                'read', // Capacité WordPress de base au lieu de pdf_builder_access
-                'pdf-builder-templates',
+                'read',
+                'test-pdf-templates', // Slug différent
                 array($this, 'templatesPage')
             );
 
@@ -226,8 +226,8 @@ class PdfBuilderCore
                 'pdf-builder-pro',
                 __('Settings', 'pdf-builder-pro'),
                 __('Settings', 'pdf-builder-pro'),
-                'read', // Capacité WordPress de base au lieu de pdf_builder_access
-                'pdf-builder-settings',
+                'read',
+                'test-pdf-settings', // Slug différent
                 array($this, 'settingsPage')
             );
         } catch (\Exception $e) {
