@@ -216,12 +216,12 @@ input:checked + .toggle-slider:before {
                                 <div class="zoom-preview-container">
                                     <div class="zoom-indicator">
                                         <button class="zoom-btn zoom-minus" disabled>−</button>
-                                        <span class="zoom-level"><?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>%</span>
+                                        <span class="zoom-level"></span>
                                         <button class="zoom-btn zoom-plus" disabled>+</button>
                                     </div>
                                     <div class="zoom-info">
-                                        <span><?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>% - <?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>%</span>
-                                        <span>Pas: <?php echo intval(get_option('pdf_builder_canvas_zoom_step', 25)); ?>%</span>
+                                        <span></span>
+                                        <span></span>
                                     </div>
                                 </div>
                             </div>
