@@ -1092,6 +1092,20 @@ document.addEventListener('DOMContentLoaded', function() {
                                 updateCanvasPreviews(category);
                             }
 
+                            // Update modal values with saved data
+                            if (typeof updateModalValues === 'function') {
+                                // Get the saved values from the response or use current form values
+                                const form = modal.querySelector('form');
+                                if (form) {
+                                    const formData = new FormData(form);
+                                    const values = {};
+                                    for (let [key, value] of formData.entries()) {
+                                        values[key] = value;
+                                    }
+                                    updateModalValues(category, values);
+                                }
+                            }
+
                             // Update window.pdfBuilderCanvasSettings for real-time canvas updates
                             // Note: Removed updateWindowCanvasSettings() call as it causes AJAX errors
                             // if (category === 'apparence') {
