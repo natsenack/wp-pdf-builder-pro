@@ -464,28 +464,16 @@ if (
 <script>
 // Update zoom card preview
 function updateZoomCardPreview() {
-    console.log('🔍 updateZoomCardPreview called');
-    console.log('window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
-
-    if (!window.pdfBuilderCanvasSettings) {
-        console.log('❌ window.pdfBuilderCanvasSettings is not defined');
-        return;
-    }
-
-    const minZoom = window.pdfBuilderCanvasSettings.min_zoom || 10;
-    const maxZoom = window.pdfBuilderCanvasSettings.max_zoom || 500;
-    const defaultZoom = window.pdfBuilderCanvasSettings.default_zoom || 100;
-    const stepZoom = window.pdfBuilderCanvasSettings.zoom_step || 25;
-
-    console.log('🔍 Zoom values - Min:', minZoom, 'Max:', maxZoom, 'Default:', defaultZoom, 'Step:', stepZoom);
+    // Test avec valeurs hardcodées d'abord
+    const minZoom = 10;
+    const maxZoom = 500;
+    const defaultZoom = 100;
+    const stepZoom = 25;
 
     // Update zoom level display
     const zoomLevel = document.querySelector('.zoom-level');
     if (zoomLevel) {
         zoomLevel.textContent = `${defaultZoom}%`;
-        console.log('✅ Set zoom level to:', `${defaultZoom}%`);
-    } else {
-        console.log('❌ Zoom level element not found');
     }
 
     // Update zoom info
@@ -495,9 +483,6 @@ function updateZoomCardPreview() {
             <span>${minZoom}% - ${maxZoom}%</span>
             <span>Pas: ${stepZoom}%</span>
         `;
-        console.log('✅ Set zoom info to:', `${minZoom}% - ${maxZoom}% | Pas: ${stepZoom}%`);
-    } else {
-        console.log('❌ Zoom info element not found');
     }
 }
 
@@ -1640,18 +1625,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     function updateDimensionsCardPreview() {
-        console.log('🔍 updateDimensionsCardPreview called');
-        console.log('window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
-
-        if (!window.pdfBuilderCanvasSettings) {
-            console.log('❌ window.pdfBuilderCanvasSettings is not defined');
-            return;
-        }
-
-        const format = window.pdfBuilderCanvasSettings.default_canvas_format || 'A4';
-        const dpi = window.pdfBuilderCanvasSettings.default_canvas_dpi || 96;
-
-        console.log('📐 Format:', format, 'DPI:', dpi);
+        // Test avec valeurs hardcodées
+        const format = 'A4';
+        const dpi = 150;
 
         // Dimensions standard en mm pour chaque format
         const formatDimensionsMM = {
@@ -1664,82 +1640,43 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         const dimensions = formatDimensionsMM[format] || formatDimensionsMM['A4'];
-        console.log('📏 Dimensions MM:', dimensions);
 
         // Calculer les dimensions en pixels
         const pixelsPerMM = dpi / 25.4;
         const widthPx = Math.round(dimensions.width * pixelsPerMM);
         const heightPx = Math.round(dimensions.height * pixelsPerMM);
 
-        console.log('📏 Dimensions PX:', widthPx, 'x', heightPx);
-
         // Update card preview elements
         const cardWidth = document.getElementById('card-canvas-width');
         const cardHeight = document.getElementById('card-canvas-height');
         const cardDpi = document.getElementById('card-canvas-dpi');
 
-        console.log('🎯 Elements found - Width:', !!cardWidth, 'Height:', !!cardHeight, 'DPI:', !!cardDpi);
-
         if (cardWidth) {
             cardWidth.textContent = widthPx;
-            console.log('✅ Set width to:', widthPx);
         }
         if (cardHeight) {
             cardHeight.textContent = heightPx;
-            console.log('✅ Set height to:', heightPx);
         }
         if (cardDpi) {
             cardDpi.textContent = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
-            console.log('✅ Set DPI info to:', cardDpi.textContent);
         }
     }
 
     // Update apparence card preview
     function updateApparenceCardPreview() {
-        console.log('🎨 updateApparenceCardPreview called');
-        console.log('window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
+        // Test avec valeurs hardcodées
+        const bgColor = '#ffffff';
+        const borderColor = '#666666';
 
-        if (!window.pdfBuilderCanvasSettings) {
-            console.log('❌ window.pdfBuilderCanvasSettings is not defined');
-            return;
-        }
-
-        console.log('🎨 Full window.pdfBuilderCanvasSettings object:', window.pdfBuilderCanvasSettings);
-
-        // Get values directly from WordPress options instead of modal inputs
-        // This ensures we use the saved values, not the current modal values
-
-        // Update color previews in the card using saved option values
+        // Update color previews in the card
         const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
         const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
 
-        console.log('🎯 Elements found - BG:', !!bgPreview, 'Border:', !!borderPreview);
-
-        // Use the global settings object that should be updated after save
-        if (window.pdfBuilderCanvasSettings) {
-            const bgColor = window.pdfBuilderCanvasSettings.canvas_background_color;
-            const borderColor = window.pdfBuilderCanvasSettings.border_color;
-
-            console.log('🎨 BG Color:', bgColor, 'Border Color:', borderColor);
-            console.log('🎨 Full canvas settings for colors:', {
-                canvas_background_color: window.pdfBuilderCanvasSettings.canvas_background_color,
-                border_color: window.pdfBuilderCanvasSettings.border_color,
-                bg_option: window.pdfBuilderCanvasSettings.canvas_background_color,
-                border_option: window.pdfBuilderCanvasSettings.border_color
-            });
-
-            if (bgPreview && bgColor) {
-                bgPreview.style.backgroundColor = bgColor;
-                console.log('✅ Set BG color to:', bgColor);
-            } else {
-                console.log('❌ BG preview not updated - bgColor:', bgColor, 'bgPreview:', !!bgPreview);
-            }
-            if (borderPreview && borderColor) {
-                borderPreview.style.backgroundColor = borderColor;
-                console.log('✅ Set border color to:', borderColor);
-            } else {
-                console.log('❌ Border preview not updated - borderColor:', borderColor, 'borderPreview:', !!borderPreview);
-            }
+        if (bgPreview && bgColor) {
+            bgPreview.style.backgroundColor = bgColor;
+        }
+        if (borderPreview && borderColor) {
+            borderPreview.style.backgroundColor = borderColor;
         }
     }
 

@@ -4,13 +4,6 @@
  * Définit les paramètres canvas globalement avant le chargement du JS
  */
 
-// DEBUG: Vérifier les options WordPress pour les couleurs
-$debug_bg_color = get_option('pdf_builder_canvas_bg_color', '#ffffff');
-$debug_border_color = get_option('pdf_builder_canvas_border_color', '#cccccc');
-error_log("DEBUG CANVAS COLORS - BG: " . $debug_bg_color . ", Border: " . $debug_border_color);
-error_log("DEBUG CANVAS COLORS - BG exists: " . (get_option('pdf_builder_canvas_bg_color') !== false ? 'YES' : 'NO'));
-error_log("DEBUG CANVAS COLORS - Border exists: " . (get_option('pdf_builder_canvas_border_color') !== false ? 'YES' : 'NO'));
-
 // Récupérer les paramètres canvas depuis les options séparées (synchronisées)
 $canvas_settings_js = [
     'default_canvas_format' => get_option('pdf_builder_canvas_format', 'A4'),
