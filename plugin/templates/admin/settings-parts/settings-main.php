@@ -464,17 +464,28 @@ if (
 <script>
 // Update zoom card preview
 function updateZoomCardPreview() {
-    if (!window.pdfBuilderCanvasSettings) return;
+    console.log('🔍 updateZoomCardPreview called');
+    console.log('window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
+
+    if (!window.pdfBuilderCanvasSettings) {
+        console.log('❌ window.pdfBuilderCanvasSettings is not defined');
+        return;
+    }
 
     const minZoom = window.pdfBuilderCanvasSettings.min_zoom || 10;
     const maxZoom = window.pdfBuilderCanvasSettings.max_zoom || 500;
     const defaultZoom = window.pdfBuilderCanvasSettings.default_zoom || 100;
     const stepZoom = window.pdfBuilderCanvasSettings.zoom_step || 25;
 
+    console.log('🔍 Zoom values - Min:', minZoom, 'Max:', maxZoom, 'Default:', defaultZoom, 'Step:', stepZoom);
+
     // Update zoom level display
     const zoomLevel = document.querySelector('.zoom-level');
     if (zoomLevel) {
         zoomLevel.textContent = `${defaultZoom}%`;
+        console.log('✅ Set zoom level to:', `${defaultZoom}%`);
+    } else {
+        console.log('❌ Zoom level element not found');
     }
 
     // Update zoom info
@@ -484,6 +495,9 @@ function updateZoomCardPreview() {
             <span>${minZoom}% - ${maxZoom}%</span>
             <span>Pas: ${stepZoom}%</span>
         `;
+        console.log('✅ Set zoom info to:', `${minZoom}% - ${maxZoom}% | Pas: ${stepZoom}%`);
+    } else {
+        console.log('❌ Zoom info element not found');
     }
 }
 
@@ -1682,6 +1696,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update apparence card preview
     function updateApparenceCardPreview() {
+        console.log('🎨 updateApparenceCardPreview called');
+        console.log('window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
+
+        if (!window.pdfBuilderCanvasSettings) {
+            console.log('❌ window.pdfBuilderCanvasSettings is not defined');
+            return;
+        }
+
         // Get values directly from WordPress options instead of modal inputs
         // This ensures we use the saved values, not the current modal values
 
@@ -1689,13 +1711,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
         const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
 
+        console.log('🎯 Elements found - BG:', !!bgPreview, 'Border:', !!borderPreview);
+
         // Use the global settings object that should be updated after save
         if (window.pdfBuilderCanvasSettings) {
-            if (bgPreview && window.pdfBuilderCanvasSettings.canvas_background_color) {
-                bgPreview.style.backgroundColor = window.pdfBuilderCanvasSettings.canvas_background_color;
+            const bgColor = window.pdfBuilderCanvasSettings.canvas_background_color;
+            const borderColor = window.pdfBuilderCanvasSettings.border_color;
+
+            console.log('🎨 BG Color:', bgColor, 'Border Color:', borderColor);
+
+            if (bgPreview && bgColor) {
+                bgPreview.style.backgroundColor = bgColor;
+                console.log('✅ Set BG color to:', bgColor);
             }
-            if (borderPreview && window.pdfBuilderCanvasSettings.border_color) {
-                borderPreview.style.backgroundColor = window.pdfBuilderCanvasSettings.border_color;
+            if (borderPreview && borderColor) {
+                borderPreview.style.backgroundColor = borderColor;
+                console.log('✅ Set border color to:', borderColor);
             }
         }
     }
