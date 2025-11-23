@@ -439,10 +439,13 @@ class PdfBuilderCore
      */
     public function settingsPage()
     {
+        // FORCE CACHE CLEAR: Vider les caches WordPress
+        wp_cache_flush();
+
         // TEST SIMPLE: Page de diagnostic basique
         echo '<div class="wrap">';
-        echo '<h1>🔧 PDF Builder - Test d\'accès</h1>';
-        echo '<p>Cette page se charge correctement !</p>';
+        echo '<h1>🔧 PDF Builder - Test d\'accès (CACHE CLEARED)</h1>';
+        echo '<p><strong>Cette page se charge correctement ! Cache vidé.</strong></p>';
 
         $current_user = wp_get_current_user();
         echo '<h2>Informations utilisateur :</h2>';
@@ -459,6 +462,14 @@ class PdfBuilderCore
         echo '<li><strong>current_user_can(\'read\'):</strong> ' . (current_user_can('read') ? '✅ OUI' : '❌ NON') . '</li>';
         echo '<li><strong>current_user_can(\'manage_options\'):</strong> ' . (current_user_can('manage_options') ? '✅ OUI' : '❌ NON') . '</li>';
         echo '<li><strong>current_user_can(\'pdf_builder_access\'):</strong> ' . (current_user_can('pdf_builder_access') ? '✅ OUI' : '❌ NON') . '</li>';
+        echo '</ul>';
+
+        echo '<h2>URLs à tester :</h2>';
+        echo '<ul>';
+        echo '<li><a href="' . admin_url('admin.php?page=test-pdf-settings') . '">📋 Test Settings (nouveau slug)</a></li>';
+        echo '<li><a href="' . admin_url('admin.php?page=test-pdf-templates') . '">📄 Test Templates (nouveau slug)</a></li>';
+        echo '<li><a href="' . admin_url('admin.php?page=pdf-builder-settings') . '">❌ Ancien Settings (devrait être 403)</a></li>';
+        echo '<li><a href="' . admin_url('admin.php?page=pdf-builder-templates') . '">❌ Ancien Templates (devrait être 403)</a></li>';
         echo '</ul>';
 
         echo '<h2>Debug Role_Manager :</h2>';
