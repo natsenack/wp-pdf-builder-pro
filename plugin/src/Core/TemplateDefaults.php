@@ -1,5 +1,7 @@
 <?php
 
+namespace PDF_Builder;
+
 /**
  * Gestionnaire des templates par défaut pour le système freemium
  * Fournit 3 templates gratuits de base (Modern, Classic, Corporate)
