@@ -695,7 +695,8 @@ class AjaxHandler
             $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
             if (!wp_verify_nonce($nonce, 'pdf_builder_nonce') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
-                !wp_verify_nonce($nonce, 'pdf_builder_templates')) {
+                !wp_verify_nonce($nonce, 'pdf_builder_templates') &&
+                !wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
                 wp_send_json_error('Nonce invalide');
                 return;
             }
@@ -797,8 +798,77 @@ class AjaxHandler
 
     private function saveDimensionsSettings()
     {
-        // TODO: Implémenter la sauvegarde des dimensions
-        return true;
+        $updated = 0;
+
+        // Format du document
+        if (isset($_POST['canvas_format'])) {
+            $format = sanitize_text_field($_POST['canvas_format']);
+            // Validation des formats supportés
+            $valid_formats = ['A4', 'A3', 'A5', 'Letter', 'Legal', 'Tabloid'];
+            if (in_array($format, $valid_formats)) {
+                update_option('pdf_builder_canvas_format', $format);
+                $updated++;
+            }
+        }
+
+        // Orientation (actuellement forcée en portrait)
+        // TODO: Implémenter l'orientation paysage dans v2.0
+        update_option('pdf_builder_canvas_orientation', 'portrait');
+        $updated++;
+
+        // Résolution DPI
+        if (isset($_POST['canvas_dpi'])) {
+            $dpi = intval($_POST['canvas_dpi']);
+            // Validation des DPI supportés
+            $valid_dpi = [72, 96, 150, 300];
+            if (in_array($dpi, $valid_dpi)) {
+                update_option('pdf_builder_canvas_dpi', $dpi);
+
+                // Recalculer les dimensions en pixels basées sur le nouveau DPI
+                $this->updateCanvasDimensionsFromFormat($dpi);
+
+                $updated++;
+            }
+        }
+
+        return $updated > 0;
+    }
+
+    /**
+     * Met à jour les dimensions du canvas en pixels basées sur le format et le DPI
+     */
+    private function updateCanvasDimensionsFromFormat($dpi)
+    {
+        $format = get_option('pdf_builder_canvas_format', 'A4');
+        $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
+
+        // Dimensions standard en mm pour chaque format
+        $formatDimensionsMM = [
+            'A4' => ['width' => 210, 'height' => 297],
+            'A3' => ['width' => 297, 'height' => 420],
+            'A5' => ['width' => 148, 'height' => 210],
+            'Letter' => ['width' => 215.9, 'height' => 279.4],
+            'Legal' => ['width' => 215.9, 'height' => 355.6],
+            'Tabloid' => ['width' => 279.4, 'height' => 431.8]
+        ];
+
+        $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
+
+        // Appliquer l'orientation (actuellement toujours portrait)
+        // TODO: Implémenter l'orientation paysage dans v2.0
+        // if ($orientation === 'landscape') {
+        //     $temp = $dimensions['width'];
+        //     $dimensions['width'] = $dimensions['height'];
+        //     $dimensions['height'] = $temp;
+        // }
+
+        // Convertir mm en pixels (1 pouce = 25.4 mm)
+        $widthPx = round(($dimensions['width'] / 25.4) * $dpi);
+        $heightPx = round(($dimensions['height'] / 25.4) * $dpi);
+
+        // Sauvegarder les dimensions en pixels
+        update_option('pdf_builder_canvas_width', $widthPx);
+        update_option('pdf_builder_canvas_height', $heightPx);
     }
 
     private function saveZoomSettings()
