@@ -1223,6 +1223,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
         
+    // Function to update window.pdfBuilderCanvasSettings after save
+    function updateWindowCanvasSettings() {
         // Get AJAX config
         let ajaxConfig = null;
         if (typeof pdf_builder_ajax !== 'undefined') {
