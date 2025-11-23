@@ -5909,6 +5909,24 @@ class PdfBuilderAdmin
         }
         </style>
         <?php
+
+        // Include modal components for canvas settings
+        $modals_file = plugin_dir_path(dirname(__FILE__, 2)) . 'templates/admin/settings-parts/settings-modals.php';
+        if (file_exists($modals_file)) {
+            include $modals_file;
+        }
+
+        // Include settings scripts for modal functionality
+        $scripts_file = plugin_dir_path(dirname(__FILE__, 2)) . 'templates/admin/settings-parts/settings-scripts.php';
+        if (file_exists($scripts_file)) {
+            include $scripts_file;
+        }
+
+        // Include main settings JavaScript for modal handling
+        $main_file = plugin_dir_path(dirname(__FILE__, 2)) . 'templates/admin/settings-parts/settings-main.php';
+        if (file_exists($main_file)) {
+            include $main_file;
+        }
     }
 
     /**
