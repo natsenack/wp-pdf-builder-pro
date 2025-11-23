@@ -312,8 +312,8 @@ class PdfBuilderCore
      */
     public function templatesPage()
     {
-        // Vérifier les permissions comme dans PDF_Builder_Admin
-        if (!current_user_can('pdf_builder_access') && !current_user_can('manage_options')) {
+        // Vérifier les permissions - utiliser manage_options comme capacité principale
+        if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
@@ -441,8 +441,8 @@ class PdfBuilderCore
      */
     public function settingsPage()
     {
-        // Vérifier les permissions comme dans PDF_Builder_Admin
-        if (!current_user_can('pdf_builder_access') && !current_user_can('manage_options')) {
+        // Vérifier les permissions - utiliser manage_options comme capacité principale
+        if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
