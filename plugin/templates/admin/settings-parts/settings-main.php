@@ -1086,12 +1086,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             this.textContent = originalText;
                             this.disabled = false;
 
-                            // Update previews if function exists
-                            if (typeof updateCanvasPreviews === 'function') {
-                                
-                                updateCanvasPreviews(category);
-                            }
-
                             // Update modal values with saved data
                             if (typeof updateModalValues === 'function') {
                                 // Get the saved values from the response or use current form values
@@ -1104,6 +1098,12 @@ document.addEventListener('DOMContentLoaded', function() {
                                     }
                                     updateModalValues(category, values);
                                 }
+                            }
+
+                            // Update previews if function exists
+                            if (typeof updateCanvasPreviews === 'function') {
+                                
+                                updateCanvasPreviews(category);
                             }
 
                             // Update window.pdfBuilderCanvasSettings for real-time canvas updates
