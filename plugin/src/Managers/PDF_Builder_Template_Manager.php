@@ -70,6 +70,7 @@ class PdfBuilderTemplateManager
     {
         try {
             // Log pour debug
+            error_log('PDF_BUILDER_DEBUG: ajaxSaveTemplateV3 started');
             
             // Write to uploads directory for guaranteed access
             $upload_dir = wp_upload_dir();
@@ -79,24 +80,29 @@ class PdfBuilderTemplateManager
 
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
-                
+                error_log('PDF_BUILDER_DEBUG: Permission check failed');
                 \wp_send_json_error('Permissions insuffisantes');
                 return;
             }
+            error_log('PDF_BUILDER_DEBUG: Permission check passed');
 
             // Vérification du nonce
             $nonce_valid = false;
             if (isset($_POST['nonce'])) {
+                error_log('PDF_BUILDER_DEBUG: Nonce received: ' . $_POST['nonce']);
                 $nonce_valid = \wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce') ||
                               \wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions') ||
                               \wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+            } else {
+                error_log('PDF_BUILDER_DEBUG: No nonce in POST data');
             }
 
             if (!$nonce_valid) {
-                
+                error_log('PDF_BUILDER_DEBUG: Nonce validation failed');
                 \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
+            error_log('PDF_BUILDER_DEBUG: Nonce validation passed');
 
             
 

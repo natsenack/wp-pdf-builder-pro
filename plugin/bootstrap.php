@@ -661,9 +661,11 @@ function pdf_builder_register_essential_ajax_hooks()
 
     // Enregistrer les hooks AJAX essentiels
     add_action('wp_ajax_pdf_builder_save_template', function() use ($template_manager) {
+        error_log('PDF_BUILDER_DEBUG: Bootstrap save handler called');
         if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
             $template_manager->ajaxSaveTemplateV3();
         } else {
+            error_log('PDF_BUILDER_DEBUG: Template manager not available');
             // Fallback handler
             pdf_builder_fallback_ajax_save_template();
         }
