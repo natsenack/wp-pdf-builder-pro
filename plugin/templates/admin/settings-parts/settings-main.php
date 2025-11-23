@@ -1215,10 +1215,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Placeholder functions for other modals (to be implemented if needed)
-    function updateDimensionsModal(modal, values) { /* TODO */ }
-    function updateZoomModal(modal, values) { /* TODO */ }
-    function updateApparenceModal(modal, values) { /* TODO */ }
+    // Update apparence modal values
+    function updateApparenceModal(modal, values) {
+        console.log('🎨 Updating apparence modal with values:', values);
+
+        // Update canvas background color
+        const canvasBgColorInput = modal.querySelector('#canvas_bg_color');
+        if (canvasBgColorInput && values.canvas_bg_color) {
+            canvasBgColorInput.value = values.canvas_bg_color;
+            console.log('✅ Updated canvas_bg_color:', values.canvas_bg_color);
+        }
+
+        // Update container background color
+        const containerBgColorInput = modal.querySelector('#canvas_container_bg_color');
+        if (containerBgColorInput && values.canvas_container_bg_color) {
+            containerBgColorInput.value = values.canvas_container_bg_color;
+            console.log('✅ Updated canvas_container_bg_color:', values.canvas_container_bg_color);
+        }
+
+        // Update border color
+        const borderColorInput = modal.querySelector('#canvas_border_color');
+        if (borderColorInput && values.canvas_border_color) {
+            borderColorInput.value = values.canvas_border_color;
+            console.log('✅ Updated canvas_border_color:', values.canvas_border_color);
+        }
+
+        // Update border width
+        const borderWidthInput = modal.querySelector('#canvas_border_width');
+        if (borderWidthInput && values.canvas_border_width !== undefined) {
+            borderWidthInput.value = values.canvas_border_width;
+            console.log('✅ Updated canvas_border_width:', values.canvas_border_width);
+        }
+
+        // Update shadow enabled checkbox
+        const shadowCheckbox = modal.querySelector('#canvas_shadow_enabled');
+        if (shadowCheckbox) {
+            const isEnabled = values.canvas_shadow_enabled === '1' || values.canvas_shadow_enabled === true;
+            shadowCheckbox.checked = isEnabled;
+            console.log('✅ Updated canvas_shadow_enabled:', isEnabled);
+        }
+    }
     function updateInteractionsModal(modal, values) { /* TODO */ }
     function updateExportModal(modal, values) { /* TODO */ }
     function updatePerformanceModal(modal, values) { /* TODO */ }

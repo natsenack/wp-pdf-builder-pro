@@ -953,7 +953,7 @@ function pdf_builder_get_canvas_settings_handler() {
                     'canvas_container_bg_color' => get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa'),
                     'canvas_border_color' => get_option('pdf_builder_canvas_border_color', '#cccccc'),
                     'canvas_border_width' => get_option('pdf_builder_canvas_border_width', 1),
-                    'canvas_shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', false)
+                    'canvas_shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', '0')
                 ];
                 break;
 
