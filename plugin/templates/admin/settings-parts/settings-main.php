@@ -1395,11 +1395,82 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         }
+
+        // Handle dimensions modal real-time updates
+        if (modal.id === 'canvas-dimensions-modal') {
+            const formatSelect = modal.querySelector('#canvas_format');
+            const dpiSelect = modal.querySelector('#canvas_dpi');
+
+            // Function to update dimensions when format or DPI changes
+            const updateDimensions = function() {
+                const format = formatSelect ? formatSelect.value : 'A4';
+                const dpi = dpiSelect ? parseInt(dpiSelect.value) : 96;
+                updateCalculatedDimensions(modal, format, dpi);
+            };
+
+            // Add event listeners for real-time updates
+            if (formatSelect) {
+                formatSelect.addEventListener('change', updateDimensions);
+            }
+            if (dpiSelect) {
+                dpiSelect.addEventListener('change', updateDimensions);
+            }
+        }
     }
     function updateExportModal(modal, values) { /* TODO */ }
     function updatePerformanceModal(modal, values) { /* TODO */ }
     function updateAutosaveModal(modal, values) { /* TODO */ }
     function updateDebugModal(modal, values) { /* TODO */ }
+
+    // Update dimensions modal values
+    function updateDimensionsModal(modal, values) {
+        // Update format select
+        const formatSelect = modal.querySelector('#canvas_format');
+        if (formatSelect && values.format) {
+            formatSelect.value = values.format;
+        }
+
+        // Update DPI select
+        const dpiSelect = modal.querySelector('#canvas_dpi');
+        if (dpiSelect && values.dpi) {
+            dpiSelect.value = values.dpi;
+        }
+
+        // Update calculated dimensions display
+        updateCalculatedDimensions(modal, values.format || 'A4', values.dpi || 96);
+    }
+
+    // Function to update calculated dimensions display
+    function updateCalculatedDimensions(modal, format, dpi) {
+        // Dimensions standard en mm pour chaque format
+        const formatDimensionsMM = {
+            'A4': { width: 210, height: 297 },
+            'A3': { width: 297, height: 420 },
+            'A5': { width: 148, height: 210 },
+            'Letter': { width: 215.9, height: 279.4 },
+            'Legal': { width: 215.9, height: 355.6 },
+            'Tabloid': { width: 279.4, height: 431.8 }
+        };
+
+        const dimensions = formatDimensionsMM[format] || formatDimensionsMM['A4'];
+
+        // Calculer les dimensions en pixels (1 inch = 25.4mm, 1 inch = dpi pixels)
+        const pixelsPerMM = dpi / 25.4;
+        const widthPx = Math.round(dimensions.width * pixelsPerMM);
+        const heightPx = Math.round(dimensions.height * pixelsPerMM);
+
+        // Update pixel dimensions display
+        const widthDisplay = modal.querySelector('#canvas-width-display');
+        const heightDisplay = modal.querySelector('#canvas-height-display');
+        if (widthDisplay) widthDisplay.textContent = widthPx;
+        if (heightDisplay) heightDisplay.textContent = heightPx;
+
+        // Update mm dimensions display
+        const mmDisplay = modal.querySelector('#canvas-mm-display');
+        if (mmDisplay) {
+            mmDisplay.textContent = dimensions.width + '×' + dimensions.height + 'mm';
+        }
+    }
 
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
