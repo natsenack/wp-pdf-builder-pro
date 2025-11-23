@@ -42,8 +42,8 @@ class PDF_Builder_Predefined_Templates_Manager
         if (!empty($settings['developer_enabled'])) {
             add_submenu_page(
                 'pdf-builder-pro',
-                __('Modèles Prédéfinis', 'pdf-builder-pro'),
-                __('Modèles Prédéfinis', 'pdf-builder-pro'),
+                __('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
+                __('🖼️ Galerie', 'pdf-builder-pro'),
                 'manage_options',
                 'pdf-builder-predefined-templates',
                 [$this, 'renderAdminPage']
