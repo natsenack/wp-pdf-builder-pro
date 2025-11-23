@@ -217,7 +217,7 @@ class PdfBuilderCore
                 'pdf-builder-pro',
                 __('Templates', 'pdf-builder-pro'),
                 __('Templates', 'pdf-builder-pro'),
-                'manage_options',
+                'pdf_builder_access', // Remettre la capacité originale
                 'pdf-builder-templates',
                 array($this, 'templatesPage')
             );
@@ -226,7 +226,7 @@ class PdfBuilderCore
                 'pdf-builder-pro',
                 __('Settings', 'pdf-builder-pro'),
                 __('Settings', 'pdf-builder-pro'),
-                'manage_options',
+                'pdf_builder_access', // Remettre la capacité originale
                 'pdf-builder-settings',
                 array($this, 'settingsPage')
             );
