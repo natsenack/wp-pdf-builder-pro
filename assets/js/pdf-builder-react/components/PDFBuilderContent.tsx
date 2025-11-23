@@ -129,15 +129,35 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
             top: '50px',
             right: '20px',
             padding: '14px 20px',
+            WebkitBorderRadius: '6px',
+            MozBorderRadius: '6px',
+            msBorderRadius: '6px',
+            OBorderRadius: '6px',
+            borderRadius: '6px',
             background: '#4CAF50',
             border: '2px solid #388E3C',
-            borderRadius: '6px',
+            WebkitBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+            MozBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+            msBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+            OBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
             fontSize: '14px',
             fontWeight: 'bold',
+            fontFamily: 'Arial, sans-serif',
             color: '#fff',
             zIndex: 999999,
+            display: '-webkit-box',
+            display: '-webkit-flex',
+            display: '-moz-box',
+            display: '-ms-flexbox',
             display: 'flex',
+            WebkitBoxAlign: 'center',
+            WebkitAlignItems: 'center',
+            MozBoxAlign: 'center',
+            msFlexAlign: 'center',
             alignItems: 'center',
+            WebkitGap: '12px',
+            MozGap: '12px',
             gap: '12px',
             minWidth: '200px',
             animation: 'slideIn 0.3s ease-out'
@@ -147,6 +167,28 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           <span>Template sauvegardé !</span>
         </div>
       )}
+
+      {/* Styles pour les animations des notifications */}
+      <style>{`
+        @keyframes slideIn {
+          from {
+            -webkit-transform: translateX(100px);
+            -moz-transform: translateX(100px);
+            -ms-transform: translateX(100px);
+            -o-transform: translateX(100px);
+            transform: translateX(100px);
+            opacity: 0;
+          }
+          to {
+            -webkit-transform: translateX(0);
+            -moz-transform: translateX(0);
+            -ms-transform: translateX(0);
+            -o-transform: translateX(0);
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
 
       <div
         className={`pdf-builder ${className || ''}`}
