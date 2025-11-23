@@ -439,29 +439,10 @@ class PdfBuilderCore
      */
     public function settingsPage()
     {
-        // DEBUG: Vérifier les permissions de l'utilisateur actuel
-        $current_user = wp_get_current_user();
-        $user_roles = $current_user->roles;
-        $user_caps = $current_user->allcaps;
-
-        // Log pour debug
-        error_log('PDF_BUILDER_DEBUG: User ID: ' . $current_user->ID);
-        error_log('PDF_BUILDER_DEBUG: User roles: ' . implode(', ', $user_roles));
-        error_log('PDF_BUILDER_DEBUG: Has manage_options: ' . (current_user_can('manage_options') ? 'YES' : 'NO'));
-        error_log('PDF_BUILDER_DEBUG: Has pdf_builder_access: ' . (current_user_can('pdf_builder_access') ? 'YES' : 'NO'));
-
-        // Vérifier les permissions - temporairement très permissif pour debug
-        if (!is_user_logged_in()) {
-            wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
+        // Vérifier les permissions - utiliser manage_options comme capacité principale
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
-
-        // Afficher les informations de debug
-        echo '<div class="notice notice-info"><p><strong>DEBUG INFO:</strong></p>';
-        echo '<p>User ID: ' . $current_user->ID . '</p>';
-        echo '<p>Roles: ' . implode(', ', $user_roles) . '</p>';
-        echo '<p>manage_options: ' . (current_user_can('manage_options') ? 'YES' : 'NO') . '</p>';
-        echo '<p>pdf_builder_access: ' . (current_user_can('pdf_builder_access') ? 'YES' : 'NO') . '</p>';
-        echo '</div>';
 
         // Enregistrer et charger le script pour la page des paramètres comme dans PDF_Builder_Admin
         wp_register_script('pdf-builder-settings', plugins_url('templates/admin/js/pdf-builder-settings.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.0.0', true);
