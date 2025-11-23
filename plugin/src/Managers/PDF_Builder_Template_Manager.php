@@ -104,20 +104,25 @@ class PdfBuilderTemplateManager
             }
             error_log('PDF_BUILDER_DEBUG: Nonce validation passed');
 
-            
-
             // Récupération et nettoyage des données
+            error_log('PDF_BUILDER_DEBUG: Starting data processing');
+            
             // Support pour les données JSON (nouvelle méthode) et FormData (ancienne)
             
             $json_data = null;
             if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+                error_log('PDF_BUILDER_DEBUG: Processing JSON data');
                 $json_input = file_get_contents('php://input');
                 
                 $json_data = json_decode($json_input, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('PDF_BUILDER_DEBUG: JSON decode error: ' . json_last_error_msg());
                     \wp_send_json_error('Données JSON invalides dans le corps de la requête: ' . json_last_error_msg());
                     return;
                 }
+                error_log('PDF_BUILDER_DEBUG: JSON data decoded successfully');
+            } else {
+                error_log('PDF_BUILDER_DEBUG: Processing FormData');
             }
 
             // Support pour les clés camelCase (frontend) et snake_case (ancien)
@@ -135,6 +140,7 @@ class PdfBuilderTemplateManager
                               (isset($json_data['template_id']) ? \intval($json_data['template_id']) : 0);
             } else {
                 // Données FormData
+                error_log('PDF_BUILDER_DEBUG: Processing FormData fields');
                 $template_data = isset($_POST['template_data']) ? \trim(\wp_unslash($_POST['template_data'])) : 
                                 (isset($_POST['templateData']) ? \trim(\wp_unslash($_POST['templateData'])) : '');
                 $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : 
@@ -142,6 +148,8 @@ class PdfBuilderTemplateManager
                 $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 
                               (isset($_POST['templateId']) ? \intval($_POST['templateId']) : 0);
             }
+
+            error_log('PDF_BUILDER_DEBUG: Template data extracted - Name: ' . $template_name . ', ID: ' . $template_id . ', Data length: ' . strlen($template_data));
 
             
 
@@ -263,11 +271,13 @@ class PdfBuilderTemplateManager
             }
 
             // Validation des données obligatoires
+            error_log('PDF_BUILDER_DEBUG: Validating required data - Template data empty: ' . (empty($template_data) ? 'YES' : 'NO') . ', Template name empty: ' . (empty($template_name) ? 'YES' : 'NO'));
             if (empty($template_data) || empty($template_name)) {
                 
                 \wp_send_json_error('Données template ou nom manquant');
                 return;
             }
+            error_log('PDF_BUILDER_DEBUG: Required data validation passed');
 
             // Sauvegarde en utilisant les posts WordPress ou la table personnalisée
             try {
