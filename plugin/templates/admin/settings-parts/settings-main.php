@@ -508,6 +508,31 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 
 
 <script>
+// Update zoom card preview
+function updateZoomCardPreview() {
+    if (!window.pdfBuilderCanvasSettings) return;
+
+    const minZoom = window.pdfBuilderCanvasSettings.min_zoom || 10;
+    const maxZoom = window.pdfBuilderCanvasSettings.max_zoom || 500;
+    const defaultZoom = window.pdfBuilderCanvasSettings.default_zoom || 100;
+    const stepZoom = window.pdfBuilderCanvasSettings.zoom_step || 25;
+
+    // Update zoom level display
+    const zoomLevel = document.querySelector('.zoom-level');
+    if (zoomLevel) {
+        zoomLevel.textContent = `${defaultZoom}%`;
+    }
+
+    // Update zoom info
+    const zoomInfo = document.querySelector('.zoom-info');
+    if (zoomInfo) {
+        zoomInfo.innerHTML = `
+            <span>${minZoom}% - ${maxZoom}%</span>
+            <span>Pas: ${stepZoom}%</span>
+        `;
+    }
+}
+
 // Tab switching functionality
 document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.nav-tab');
@@ -1708,31 +1733,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 gridContainer.classList.add('grid-inactive');
                 gridContainer.classList.remove('grid-active');
             }
-        }
-    }
-
-    // Update zoom card preview
-    function updateZoomCardPreview() {
-        if (!window.pdfBuilderCanvasSettings) return;
-
-        const minZoom = window.pdfBuilderCanvasSettings.min_zoom || 10;
-        const maxZoom = window.pdfBuilderCanvasSettings.max_zoom || 500;
-        const defaultZoom = window.pdfBuilderCanvasSettings.default_zoom || 100;
-        const stepZoom = window.pdfBuilderCanvasSettings.zoom_step || 25;
-
-        // Update zoom level display
-        const zoomLevel = document.querySelector('.zoom-level');
-        if (zoomLevel) {
-            zoomLevel.textContent = `${defaultZoom}%`;
-        }
-
-        // Update zoom info
-        const zoomInfo = document.querySelector('.zoom-info');
-        if (zoomInfo) {
-            zoomInfo.innerHTML = `
-                <span>${minZoom}% - ${maxZoom}%</span>
-                <span>Pas: ${stepZoom}%</span>
-            `;
         }
     }
 
