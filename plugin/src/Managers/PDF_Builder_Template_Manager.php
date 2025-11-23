@@ -73,6 +73,7 @@ class PdfBuilderTemplateManager
         
         try {
             // Log pour debug
+            error_log('PDF_BUILDER_DEBUG: Starting template save process');
             
             // Write to uploads directory for guaranteed access
             $upload_dir = wp_upload_dir();
@@ -83,7 +84,7 @@ class PdfBuilderTemplateManager
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
                 
-                \wp_send_json_error('Permissions insuffisantes');
+                \wp_send_json_error('Permissions insuffisantes [DEBUG: PDF_Builder_Template_Manager::ajaxSaveTemplateV3]');
                 return;
             }
 
@@ -97,7 +98,7 @@ class PdfBuilderTemplateManager
 
             if (!$nonce_valid) {
                 
-                \wp_send_json_error('Sécurité: Nonce invalide');
+                \wp_send_json_error('Sécurité: Nonce invalide [DEBUG: PDF_Builder_Template_Manager::ajaxSaveTemplateV3]');
                 return;
             }
 
@@ -262,7 +263,7 @@ class PdfBuilderTemplateManager
             // Validation des données obligatoires
             if (empty($template_data) || empty($template_name)) {
                 
-                \wp_send_json_error('Données template ou nom manquant');
+                \wp_send_json_error('Données template ou nom manquant [DEBUG: PDF_Builder_Template_Manager::ajaxSaveTemplateV3]');
                 return;
             }
 
@@ -424,13 +425,14 @@ class PdfBuilderTemplateManager
                 'template_id' => $template_id,
                 'template_name' => $template_name,
                 'name' => $template_name,
-                'element_count' => $element_count
+                'element_count' => $element_count,
+                'debug' => 'PDF_BUILDER_DEBUG: Template saved successfully by PDF_Builder_Template_Manager::ajaxSaveTemplateV3'
                 )
             );
         } catch (\Throwable $e) {
             
             
-            \wp_send_json_error('Erreur critique lors de la sauvegarde: ' . $e->getMessage());
+            \wp_send_json_error('Erreur critique lors de la sauvegarde: ' . $e->getMessage() . ' [DEBUG: PDF_Builder_Template_Manager::ajaxSaveTemplateV3]');
         }
     }
 
