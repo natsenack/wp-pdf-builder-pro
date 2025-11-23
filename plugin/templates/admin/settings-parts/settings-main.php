@@ -1103,7 +1103,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Update previews if function exists
                             if (typeof updateCanvasPreviews === 'function') {
                                 
-                                updateCanvasPreviews(category);
+                                // Add small delay to ensure DOM updates are complete
+                                setTimeout(() => {
+                                    updateCanvasPreviews(category);
+                                }, 50);
                             }
 
                             // Update window.pdfBuilderCanvasSettings for real-time canvas updates
