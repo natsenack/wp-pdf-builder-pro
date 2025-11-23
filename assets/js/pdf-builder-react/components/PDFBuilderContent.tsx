@@ -132,6 +132,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           isNewTemplate={isNewTemplate}
           isModified={isModified}
           isSaving={isSaving}
+          isLoading={isLoading}
           isEditingExistingTemplate={isEditingExistingTemplate}
           onSave={saveTemplateWithAutoSave}
           onPreview={previewTemplate}

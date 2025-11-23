@@ -329,6 +329,14 @@ export function useTemplate() {
         throw new Error('Aucun template chargé pour la sauvegarde');
       }
 
+      // Vérifier que le template est complètement chargé
+      if (!state.template.name || state.template.name.trim() === '') {
+        console.log('[PDF_BUILDER_FRONTEND] Template name not loaded yet, skipping save');
+        return; // Ne pas lancer d'erreur, juste ignorer
+      }
+
+      console.log('[PDF_BUILDER_FRONTEND] Template name:', state.template.name);
+
       if (!window.pdfBuilderData?.ajaxUrl) {
         throw new Error('URL AJAX non disponible');
       }

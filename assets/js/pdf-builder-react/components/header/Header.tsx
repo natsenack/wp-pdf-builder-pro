@@ -27,6 +27,7 @@ interface HeaderProps {
   isNewTemplate: boolean;
   isModified: boolean;
   isSaving: boolean;
+  isLoading: boolean;
   isEditingExistingTemplate: boolean;
   onSave: () => void;
   onPreview: () => void;
@@ -47,6 +48,7 @@ export const Header = memo(function Header({
   isNewTemplate,
   isModified,
   isSaving,
+  isLoading,
   isEditingExistingTemplate,
   onSave,
   onPreview: _onPreview,
@@ -56,6 +58,7 @@ export const Header = memo(function Header({
   // Use deferred values for frequently changing props to prevent cascading re-renders
   const deferredIsModified = useDeferredValue(isModified);
   const deferredIsSaving = useDeferredValue(isSaving);
+  const deferredIsLoading = useDeferredValue(isLoading);
   const deferredIsEditingExistingTemplate = useDeferredValue(isEditingExistingTemplate);
     // Debug logging
   useEffect(() => {
@@ -546,15 +549,19 @@ export const Header = memo(function Header({
               alert('Erreur lors de la sauvegarde: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
             }
           }}
-          disabled={deferredIsSaving || !deferredIsModified}
+          disabled={deferredIsSaving || !deferredIsModified || deferredIsLoading}
           onMouseEnter={() => setHoveredButton('save')}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...primaryButtonStyles,
-            opacity: (deferredIsSaving || !deferredIsModified) ? 0.6 : 1,
-            pointerEvents: (deferredIsSaving || !deferredIsModified) ? 'none' : 'auto'
+            opacity: (deferredIsSaving || !deferredIsModified || deferredIsLoading) ? 0.6 : 1,
+            pointerEvents: (deferredIsSaving || !deferredIsModified || deferredIsLoading) ? 'none' : 'auto'
           }}
-          title={deferredIsModified ? (deferredIsEditingExistingTemplate ? 'Modifier le template' : 'Enregistrer les modifications') : 'Aucune modification'}
+          title={
+            deferredIsLoading ? 'Chargement du template...' :
+            deferredIsModified ? (deferredIsEditingExistingTemplate ? 'Modifier le template' : 'Enregistrer les modifications') :
+            'Aucune modification'
+          }
         >
           <span>{deferredIsSaving ? '⟳' : '💾'}</span>
           <span>{deferredIsSaving ? 'Enregistrement...' : (deferredIsEditingExistingTemplate ? 'Modifier' : 'Enregistrer')}</span>
