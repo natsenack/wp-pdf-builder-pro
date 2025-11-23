@@ -360,10 +360,6 @@
                                 <p class="canvas-modal-description">Ctrl+Clic pour sélectionner plusieurs éléments</p>
                             </td>
                         </tr>
-                    </table>
-
-                    <h4 class="canvas-modal-section-title spaced">⚙️ Comportement</h4>
-                    <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_selection_mode">Mode de sélection</label></th>
                             <td>
@@ -375,6 +371,10 @@
                                 <p class="canvas-modal-description">Méthode de sélection des éléments sur le canvas</p>
                             </td>
                         </tr>
+                    </table>
+
+                    <h4 class="canvas-modal-section-title spaced">⚙️ Comportement</h4>
+                    <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_keyboard_shortcuts">Raccourcis clavier</label></th>
                             <td>
