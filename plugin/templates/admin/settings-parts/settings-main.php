@@ -369,9 +369,9 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 
 <!-- Floating Save Button - HORS du conteneur principal -->
 <div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999 !important; border-radius: 10px; padding: 5px; display: block !important; visibility: visible !important; opacity: 1 !important;">
-    <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); color: white; border: 3px solid yellow !important; border-radius: 50px; padding: 20px 30px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 8px 20px rgba(255,0,0,0.8) !important; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; visibility: visible !important; opacity: 1 !important; z-index: 1000000 !important;">
+    <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; visibility: visible !important; opacity: 1 !important;">
         <span class="save-icon">💾</span>
-        <span class="save-text">ENREGISTRER</span>
+        <span class="save-text">Enregistrer</span>
     </button>
     <div class="floating-tooltip" style="position: absolute; bottom: 70px; right: 0; background: #333; color: white; padding: 8px 12px; border-radius: 6px; font-size: 14px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
         Cliquez pour sauvegarder tous les paramètres
@@ -510,49 +510,6 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 <script>
 // Tab switching functionality
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔍 DEBUG: DOMContentLoaded fired');
-    console.log('🔍 DEBUG: Checking floating save button...');
-
-    const floatingBtn = document.getElementById('floating-save-btn');
-    const floatingContainer = document.getElementById('floating-save-button');
-
-    console.log('🔍 DEBUG: floating-save-btn element:', floatingBtn);
-    console.log('🔍 DEBUG: floating-save-button container:', floatingContainer);
-
-    if (floatingBtn) {
-        const computedStyle = window.getComputedStyle(floatingBtn);
-        console.log('🔍 DEBUG: Button found! Key styles:');
-        console.log('  - display:', computedStyle.display);
-        console.log('  - visibility:', computedStyle.visibility);
-        console.log('  - opacity:', computedStyle.opacity);
-        console.log('  - position:', computedStyle.position);
-        console.log('  - top:', computedStyle.top);
-        console.log('  - left:', computedStyle.left);
-        console.log('  - bottom:', computedStyle.bottom);
-        console.log('  - right:', computedStyle.right);
-        console.log('  - z-index:', computedStyle.zIndex);
-        console.log('  - width:', computedStyle.width);
-        console.log('  - height:', computedStyle.height);
-
-        // Vérifier le conteneur aussi
-        if (floatingContainer) {
-            const containerStyle = window.getComputedStyle(floatingContainer);
-            console.log('🔍 DEBUG: Container styles:');
-            console.log('  - display:', containerStyle.display);
-            console.log('  - position:', containerStyle.position);
-            console.log('  - z-index:', containerStyle.zIndex);
-        }
-
-        // Vérifier si le bouton est dans le viewport
-        const rect = floatingBtn.getBoundingClientRect();
-        console.log('🔍 DEBUG: Button position in viewport:');
-        console.log('  - top:', rect.top, 'left:', rect.left, 'bottom:', rect.bottom, 'right:', rect.right);
-        console.log('  - width:', rect.width, 'height:', rect.height);
-        console.log('  - visible in viewport:', rect.top >= 0 && rect.left >= 0 && rect.bottom <= window.innerHeight && rect.right <= window.innerWidth);
-    } else {
-        console.error('🔍 DEBUG: Floating save button NOT found!');
-    }
-
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
 
@@ -829,10 +786,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     } else {
-        console.error('❌ Bouton flottant non trouvé dans le DOM!');
-        console.log('Elements avec classe floating-save-btn:', document.querySelectorAll('.floating-save-btn'));
-        console.log('Element avec id floating-save-btn:', document.getElementById('floating-save-btn'));
-        console.log('Element avec id floating-save-button:', document.getElementById('floating-save-button'));
+        
     }
 });
 
