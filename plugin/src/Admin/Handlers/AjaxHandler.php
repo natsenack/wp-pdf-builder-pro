@@ -879,8 +879,45 @@ class AjaxHandler
 
     private function saveApparenceSettings()
     {
-        // TODO: Implémenter la sauvegarde de l'apparence
-        return true;
+        $updated = 0;
+
+        // Couleur de fond du canvas
+        if (isset($_POST['canvas_bg_color'])) {
+            update_option('pdf_builder_canvas_bg_color', sanitize_hex_color($_POST['canvas_bg_color']));
+            $updated++;
+        }
+
+        // Couleur des bordures
+        if (isset($_POST['canvas_border_color'])) {
+            update_option('pdf_builder_canvas_border_color', sanitize_hex_color($_POST['canvas_border_color']));
+            $updated++;
+        }
+
+        // Épaisseur des bordures
+        if (isset($_POST['canvas_border_width'])) {
+            $width = intval($_POST['canvas_border_width']);
+            if ($width >= 0 && $width <= 10) {
+                update_option('pdf_builder_canvas_border_width', $width);
+                $updated++;
+            }
+        }
+
+        // Ombre activée
+        if (isset($_POST['canvas_shadow_enabled'])) {
+            update_option('pdf_builder_canvas_shadow_enabled', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_shadow_enabled', '0');
+            $updated++;
+        }
+
+        // Arrière-plan de l'éditeur
+        if (isset($_POST['canvas_container_bg_color'])) {
+            update_option('pdf_builder_canvas_container_bg_color', sanitize_hex_color($_POST['canvas_container_bg_color']));
+            $updated++;
+        }
+
+        return $updated > 0;
     }
 
     private function saveGrilleSettings()
