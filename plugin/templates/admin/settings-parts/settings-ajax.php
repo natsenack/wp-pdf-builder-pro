@@ -410,7 +410,7 @@ function pdf_builder_save_settings_handler() {
 
                 // Calculer et sauvegarder les dimensions du canvas en pixels
                 $format = get_option('pdf_builder_canvas_format', 'A4');
-                $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
+                $orientation = 'portrait'; // FORCÉ EN PORTRAIT - v2.0
                 $dpi = get_option('pdf_builder_canvas_dpi', 96);
 
                 // Dimensions standard en mm pour chaque format
@@ -425,12 +425,12 @@ function pdf_builder_save_settings_handler() {
 
                 $dimensions = $format_dimensions_mm[$format] ?? $format_dimensions_mm['A4'];
 
-                // Appliquer l'orientation
-                if ($orientation === 'landscape') {
-                    $temp = $dimensions['width'];
-                    $dimensions['width'] = $dimensions['height'];
-                    $dimensions['height'] = $temp;
-                }
+                // Orientation temporairement désactivée - toujours portrait
+                // if ($orientation === 'landscape') {
+                //     $temp = $dimensions['width'];
+                //     $dimensions['width'] = $dimensions['height'];
+                //     $dimensions['height'] = $temp;
+                // }
 
                 // Convertir mm en pixels (1mm = dpi/25.4 pixels)
                 $width_px = round(($dimensions['width'] / 25.4) * $dpi);
@@ -443,7 +443,7 @@ function pdf_builder_save_settings_handler() {
                 // Mettre à jour l'option globale des paramètres canvas pour l'éditeur React
                 $canvas_settings = [
                     'default_canvas_format' => $format,
-                    'default_canvas_orientation' => $orientation,
+                    'default_canvas_orientation' => 'portrait', // FORCÉ EN PORTRAIT - v2.0
                     'default_canvas_dpi' => $dpi,
                     'canvas_width' => $width_px,
                     'canvas_height' => $height_px,

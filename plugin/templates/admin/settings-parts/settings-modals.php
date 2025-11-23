@@ -31,6 +31,8 @@
                                 <p class="canvas-modal-description">Taille standard du document PDF (A4 disponible)</p>
                             </td>
                         </tr>
+                        <!-- ORIENTATION TEMPORAIREMENT DÉSACTIVÉE - v2.0 -->
+                        <!--
                         <tr>
                             <th scope="row"><label for="canvas_orientation">Orientation</label></th>
                             <td>
@@ -41,6 +43,7 @@
                                 <p class="canvas-modal-description">Orientation verticale du document</p>
                             </td>
                         </tr>
+                        -->
                         <tr>
                             <th scope="row"><label for="canvas_dpi">Résolution DPI</label></th>
                             <td>
@@ -63,7 +66,7 @@
                                     <small id="canvas-mm-display">
                                         <?php
                                         $format = get_option('pdf_builder_canvas_format', 'A4');
-                                        $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
+                                        $orientation = 'portrait'; // FORCÉ EN PORTRAIT - v2.0
                                         
                                         // Dimensions standard en mm pour chaque format
                                         $formatDimensionsMM = [
@@ -77,12 +80,12 @@
                                         
                                         $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
                                         
-                                        // Appliquer l'orientation
-                                        if ($orientation === 'landscape') {
-                                            $temp = $dimensions['width'];
-                                            $dimensions['width'] = $dimensions['height'];
-                                            $dimensions['height'] = $temp;
-                                        }
+                                        // Orientation temporairement désactivée - toujours portrait
+                                        // if ($orientation === 'landscape') {
+                                        //     $temp = $dimensions['width'];
+                                        //     $dimensions['width'] = $dimensions['height'];
+                                        //     $dimensions['height'] = $temp;
+                                        // }
                                         
                                         echo round($dimensions['width'], 1) . '×' . round($dimensions['height'], 1) . 'mm';
                                         ?>

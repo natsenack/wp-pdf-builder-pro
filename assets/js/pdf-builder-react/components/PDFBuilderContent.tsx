@@ -155,16 +155,15 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               style={{
                 flex: 1,
                 display: 'flex',
-                justifyContent: 'flex-start',
-                alignItems: 'flex-start',
+                justifyContent: 'center',
+                alignItems: 'center',
                 backgroundColor: canvasSettings.containerBackgroundColor || '#f8f8f8',
                 border: '1px solid #e0e0e0',
                 borderRadius: '4px',
-                overflow: 'auto',
+                overflow: 'visible',
                 position: 'relative',
-                padding: '20px',
-                maxWidth: '100%',
-                maxHeight: '100%'
+                paddingTop: '20px',
+                paddingBottom: '20px'
               }}
             >
               {/* Indicateur de dimensions A4 */}

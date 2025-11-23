@@ -2606,11 +2606,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       return;
     }
 
-    console.log('🔍 Rendering canvas with dimensions:', { width, height, displayWidth, displayHeight });
-
     // Clear canvas with background color from settings (matching PDF background)
     const canvasBgColor = normalizeColor(canvasSettings?.canvasBackgroundColor || '#ffffff');
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Ensure complete clear
     ctx.fillStyle = canvasBgColor;
     ctx.fillRect(0, 0, width, height);
 
@@ -2701,11 +2698,6 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   useEffect(() => {
     renderCanvas();
   }, [renderCanvas, imageLoadCount, selectionState?.updateTrigger]);
-
-  // Debug: Log when dimensions change
-  useEffect(() => {
-    console.log('🔍 Canvas dimensions changed:', { width, height });
-  }, [width, height]);
 
   // Rendu initial
   useEffect(() => {

@@ -22,10 +22,8 @@ export function PDFBuilder({
 
   // Écouter les changements de dimensions depuis l'API globale
   useEffect(() => {
-    console.log('🔍 PDFBuilder adding event listener for pdfBuilderUpdateCanvasDimensions');
     const handleUpdateDimensions = (event: CustomEvent) => {
       const { width, height } = event.detail;
-      console.log('🔍 PDFBuilder received pdfBuilderUpdateCanvasDimensions:', { width, height });
       setDimensions({ width, height });
     };
 
