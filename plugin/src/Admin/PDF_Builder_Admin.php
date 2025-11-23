@@ -5679,6 +5679,14 @@ class PdfBuilderAdmin
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
 
+        // Charger les scripts des modals de paramètres pour l'éditeur
+        wp_enqueue_script('pdf-builder-settings-main', plugins_url('templates/admin/settings-parts/settings-main.php', dirname(__FILE__, 2)), ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+        wp_enqueue_script('pdf-builder-settings-modals', plugins_url('templates/admin/settings-parts/settings-modals.php', dirname(__FILE__, 2)), ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+        
+        // Charger les styles CSS des modals
+        wp_enqueue_style('pdf-builder-settings-styles', plugins_url('templates/admin/settings-parts/settings-styles.php', dirname(__FILE__, 2)), [], PDF_BUILDER_PRO_VERSION);
+        wp_enqueue_style('pdf-builder-settings-css', plugins_url('templates/admin/settings-parts/settings.css', dirname(__FILE__, 2)), [], PDF_BUILDER_PRO_VERSION);
+
         // Charger les scripts de l'API Preview pour l'éditeur React
         // ✅ Use file modification time for stable cache busting
         $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.js';
@@ -5806,6 +5814,12 @@ class PdfBuilderAdmin
             <div id="pdf-builder-react-editor" class="pdf-builder-react-editor" style="display: none;">
                 <div id="pdf-builder-react-root"></div>
             </div>
+
+            <?php
+            // Inclure les modals de paramètres
+            include_once plugin_dir_path(__FILE__) . '../../templates/admin/settings-parts/settings-modals.php';
+            ?>
+
         </div>
 
         <script>
@@ -5909,24 +5923,6 @@ class PdfBuilderAdmin
         }
         </style>
         <?php
-
-        // Include modal components for canvas settings
-        $modals_file = plugin_dir_path(dirname(__FILE__, 2)) . 'templates/admin/settings-parts/settings-modals.php';
-        if (file_exists($modals_file)) {
-            include $modals_file;
-        }
-
-        // Include settings scripts for modal functionality
-        $scripts_file = plugin_dir_path(dirname(__FILE__, 2)) . 'templates/admin/settings-parts/settings-scripts.php';
-        if (file_exists($scripts_file)) {
-            include $scripts_file;
-        }
-
-        // Include main settings JavaScript for modal handling
-        $main_file = plugin_dir_path(dirname(__FILE__, 2)) . 'templates/admin/settings-parts/settings-main.php';
-        if (file_exists($main_file)) {
-            include $main_file;
-        }
     }
 
     /**
