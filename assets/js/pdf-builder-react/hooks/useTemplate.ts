@@ -318,10 +318,12 @@ export function useTemplate() {
 
   // Sauvegarder un template manuellement
   const saveTemplate = useCallback(async () => {
+    console.log('[PDF_BUILDER_FRONTEND] Starting template save...');
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
       const templateId = getTemplateIdFromUrl();
+      console.log('[PDF_BUILDER_FRONTEND] Template ID:', templateId);
 
       if (!templateId) {
         throw new Error('Aucun template chargé pour la sauvegarde');
@@ -334,6 +336,9 @@ export function useTemplate() {
       if (!window.pdfBuilderData?.nonce) {
         throw new Error('Nonce non disponible');
       }
+
+      console.log('[PDF_BUILDER_FRONTEND] AJAX URL available:', !!window.pdfBuilderData?.ajaxUrl);
+      console.log('[PDF_BUILDER_FRONTEND] Nonce available:', !!window.pdfBuilderData?.nonce);
 
       // ✅ NORMALISER LES ÉLÉMENTS AVANT SAUVEGARDE
       // Cela garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
@@ -355,20 +360,34 @@ export function useTemplate() {
       formData.append('template_data', JSON.stringify(templateData));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
+      console.log('[PDF_BUILDER_FRONTEND] Data to send:');
+      console.log('- Template ID:', templateId);
+      console.log('- Template Name:', state.template.name || 'Nouveau template');
+      console.log('- Elements count:', normalizedElements.length);
+      console.log('- Canvas size:', canvasWidth, 'x', canvasHeight);
+      console.log('- Template data size:', JSON.stringify(templateData).length, 'characters');
+      console.log('- Nonce:', window.pdfBuilderData?.nonce ? 'Present' : 'Missing');
+
       const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
         method: 'POST',
         body: formData
       });
+
+      console.log('[PDF_BUILDER_FRONTEND] HTTP Response status:', response.status);
 
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
+      console.log('[PDF_BUILDER_FRONTEND] Server response:', result);
 
       if (!result.success) {
+        console.error('[PDF_BUILDER_FRONTEND] Server returned error:', result.data);
         throw new Error(result.data || 'Erreur lors de la sauvegarde');
       }
+
+      console.log('[PDF_BUILDER_FRONTEND] Save successful! Template ID:', result.data?.template_id);
 
       dispatch({
         type: 'SAVE_TEMPLATE',
@@ -379,6 +398,7 @@ export function useTemplate() {
       });
 
     } catch (error) {
+      console.error('[PDF_BUILDER_FRONTEND] Save failed:', error);
       console.error('[useTemplate] SAVE - Error:', error);
       throw error;
     } finally {
