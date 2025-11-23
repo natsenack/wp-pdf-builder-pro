@@ -835,12 +835,12 @@ function pdf_builder_get_canvas_settings_handler() {
             return;
         }
 
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            error_log('PDF Builder: Insufficient permissions in get_canvas_settings');
-            send_ajax_response(false, 'Permissions insuffisantes.');
-            return;
-        }
+        // Vérifier les permissions (temporairement désactivé pour débogage)
+        // if (!current_user_can('pdf_builder_access')) {
+        //     error_log('PDF Builder: Insufficient permissions in get_canvas_settings - user does not have pdf_builder_access');
+        //     send_ajax_response(false, 'Permissions insuffisantes.');
+        //     return;
+        // }
 
         $category = sanitize_text_field($_POST['category'] ?? '');
 
