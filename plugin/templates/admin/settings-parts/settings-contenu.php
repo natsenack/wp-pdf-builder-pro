@@ -213,12 +213,16 @@ input:checked + .toggle-slider:before {
                                 <p>Contrôlez les niveaux de zoom et les options de navigation.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="zoom-preview">
-                                    <span class="zoom-info">
-                                        Plage: <strong><?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>-<?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>%</strong> |
-                                        Défaut: <strong><?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>%</strong> |
-                                        Pas: <strong><?php echo intval(get_option('pdf_builder_canvas_zoom_step', 25)); ?>%</strong>
-                                    </span>
+                                <div class="zoom-preview-container">
+                                    <div class="zoom-indicator">
+                                        <button class="zoom-btn zoom-minus" disabled>−</button>
+                                        <span class="zoom-level"><?php echo intval(get_option('pdf_builder_canvas_zoom_default', 100)); ?>%</span>
+                                        <button class="zoom-btn zoom-plus" disabled>+</button>
+                                    </div>
+                                    <div class="zoom-info">
+                                        <span><?php echo intval(get_option('pdf_builder_canvas_zoom_min', 10)); ?>% - <?php echo intval(get_option('pdf_builder_canvas_zoom_max', 500)); ?>%</span>
+                                        <span>Pas: <?php echo intval(get_option('pdf_builder_canvas_zoom_step', 25)); ?>%</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="canvas-card-actions">

@@ -1717,10 +1717,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const defaultZoom = window.pdfBuilderCanvasSettings.default_zoom || 100;
         const stepZoom = window.pdfBuilderCanvasSettings.zoom_step || 25;
 
-        // Update zoom info display
+        // Update zoom level display
+        const zoomLevel = document.querySelector('.zoom-level');
+        if (zoomLevel) {
+            zoomLevel.textContent = `${defaultZoom}%`;
+        }
+
+        // Update zoom info
         const zoomInfo = document.querySelector('.zoom-info');
         if (zoomInfo) {
-            zoomInfo.innerHTML = `Plage: <strong>${minZoom}-${maxZoom}%</strong> | Défaut: <strong>${defaultZoom}%</strong> | Pas: <strong>${stepZoom}%</strong>`;
+            zoomInfo.innerHTML = `
+                <span>${minZoom}% - ${maxZoom}%</span>
+                <span>Pas: ${stepZoom}%</span>
+            `;
         }
     }
 
