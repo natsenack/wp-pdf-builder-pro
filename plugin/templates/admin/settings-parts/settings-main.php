@@ -858,6 +858,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const success = applyModalStyles(modal);
 
             if (success) {
+                // Initialize event listeners for this modal
+                initializeModalEventListeners(modal);
+
                 // Verify modal is visible after a short delay
                 setTimeout(() => {
                     const rect = modal.getBoundingClientRect();
@@ -1258,7 +1261,86 @@ document.addEventListener('DOMContentLoaded', function() {
             
         }
     }
-    function updateInteractionsModal(modal, values) { /* TODO */ }
+    function updateInteractionsModal(modal, values) {
+        // Update drag enabled
+        const dragCheckbox = modal.querySelector('#canvas_drag_enabled');
+        if (dragCheckbox) {
+            dragCheckbox.checked = values.drag_enabled === '1' || values.drag_enabled === true;
+        }
+
+        // Update resize enabled
+        const resizeCheckbox = modal.querySelector('#canvas_resize_enabled');
+        if (resizeCheckbox) {
+            resizeCheckbox.checked = values.resize_enabled === '1' || values.resize_enabled === true;
+        }
+
+        // Update rotate enabled
+        const rotateCheckbox = modal.querySelector('#canvas_rotate_enabled');
+        if (rotateCheckbox) {
+            rotateCheckbox.checked = values.rotate_enabled === '1' || values.rotate_enabled === true;
+        }
+
+        // Update multi select
+        const multiSelectCheckbox = modal.querySelector('#canvas_multi_select');
+        if (multiSelectCheckbox) {
+            multiSelectCheckbox.checked = values.multi_select === '1' || values.multi_select === true;
+        }
+
+        // Update selection mode
+        const selectionModeSelect = modal.querySelector('#canvas_selection_mode');
+        if (selectionModeSelect) {
+            selectionModeSelect.value = values.selection_mode || 'click';
+        }
+
+        // Update keyboard shortcuts
+        const keyboardCheckbox = modal.querySelector('#canvas_keyboard_shortcuts');
+        if (keyboardCheckbox) {
+            keyboardCheckbox.checked = values.keyboard_shortcuts === '1' || values.keyboard_shortcuts === true;
+        }
+
+        // Apply dependency logic: disable selection mode when multi-select is disabled
+        updateSelectionModeDependency(modal);
+    }
+
+    // Function to handle dependency between multi-select and selection mode
+    function updateSelectionModeDependency(modal) {
+        const multiSelectCheckbox = modal.querySelector('#canvas_multi_select');
+        const selectionModeSelect = modal.querySelector('#canvas_selection_mode');
+        const selectionModeLabel = modal.querySelector('label[for="canvas_selection_mode"]');
+
+        if (!multiSelectCheckbox || !selectionModeSelect) return;
+
+        const isMultiSelectEnabled = multiSelectCheckbox.checked;
+
+        // Enable/disable selection mode based on multi-select
+        selectionModeSelect.disabled = !isMultiSelectEnabled;
+
+        // Update visual appearance
+        if (isMultiSelectEnabled) {
+            selectionModeSelect.style.opacity = '1';
+            if (selectionModeLabel) {
+                selectionModeLabel.style.opacity = '1';
+            }
+        } else {
+            selectionModeSelect.style.opacity = '0.5';
+            if (selectionModeLabel) {
+                selectionModeLabel.style.opacity = '0.5';
+            }
+        }
+    }
+
+    // Function to initialize modal event listeners
+    function initializeModalEventListeners(modal) {
+        // Handle interactions modal dependencies
+        if (modal.id === 'canvas-interactions-modal') {
+            const multiSelectCheckbox = modal.querySelector('#canvas_multi_select');
+            if (multiSelectCheckbox) {
+                multiSelectCheckbox.addEventListener('change', function() {
+                    updateSelectionModeDependency(modal);
+                });
+            }
+        }
+    }
     function updateExportModal(modal, values) { /* TODO */ }
     function updatePerformanceModal(modal, values) { /* TODO */ }
     function updateAutosaveModal(modal, values) { /* TODO */ }
