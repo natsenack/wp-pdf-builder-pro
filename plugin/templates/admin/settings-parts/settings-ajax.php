@@ -1027,7 +1027,7 @@ function pdf_builder_get_canvas_settings_handler() {
 // AJAX Handler for getting template data
 function pdf_builder_get_template_handler() {
     try {
-        error_log('PDF Builder: get_template_handler called with POST: ' . print_r($_GET, true));
+        error_log('PDF Builder: get_template_handler called with GET: ' . print_r($_GET, true));
 
         // Vérifier le nonce
         $nonce = $_GET['nonce'] ?? '';
@@ -1050,26 +1050,31 @@ function pdf_builder_get_template_handler() {
             return;
         }
 
-        // Load template using the admin class method
-        if (!class_exists('PDF_Builder_Admin')) {
-            send_ajax_response(false, 'Classe PDF_Builder_Admin non trouvée.');
-            return;
-        }
+        // Load template directly from database
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+        $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
 
-        $admin = new PDF_Builder_Admin();
-        $template_data = $admin->loadTemplateRobust($template_id);
-
-        if (!$template_data) {
+        if (!$template) {
+            error_log('PDF Builder: Template not found: ' . $template_id);
             send_ajax_response(false, 'Template non trouvé.');
             return;
         }
 
-        // Transform elements for React if they exist
-        if (isset($template_data['elements']) && is_array($template_data['elements'])) {
-            $template_data['elements'] = $admin->transformElementsForReact($template_data['elements']);
+        // Try to decode JSON
+        $template_data = json_decode($template['template_data'], true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('PDF Builder: JSON decode error: ' . json_last_error_msg());
+            send_ajax_response(false, 'Erreur de décodage JSON du template.');
+            return;
         }
 
-        error_log('PDF Builder: Template loaded successfully: ' . print_r($template_data, true));
+        // Add template name if not present
+        if (isset($template['name']) && !isset($template_data['name'])) {
+            $template_data['name'] = $template['name'];
+        }
+
+        error_log('PDF Builder: Template loaded successfully: ' . $template['name']);
         send_ajax_response(true, 'Template chargé avec succès.', $template_data);
 
     } catch (Exception $e) {
