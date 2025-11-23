@@ -63,8 +63,8 @@ function pdf_builder_is_pro_license_active() {
     $license_active = get_option('pdf_builder_pro_license_active', false);
 
     // Also check for license manager if it exists
-    if (class_exists('PDF_Builder_License_Manager')) {
-        $license_manager = PDF_Builder_License_Manager::get_instance();
+    if (class_exists('PDF_Builder\\Managers\\PDF_Builder_License_Manager')) {
+        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::get_instance();
         if (method_exists($license_manager, 'is_license_active')) {
             return $license_manager->is_license_active();
         }
@@ -97,10 +97,6 @@ if (!defined('PDF_BUILDER_SRC_DIR')) {
 
 if (!defined('PDF_BUILDER_ASSETS_DIR')) {
     define('PDF_BUILDER_ASSETS_DIR', PDF_BUILDER_PLUGIN_DIR . 'assets/');
-}
-
-if (!defined('PDF_BUILDER_ASSETS_URL')) {
-    define('PDF_BUILDER_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
 }
 
 if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {

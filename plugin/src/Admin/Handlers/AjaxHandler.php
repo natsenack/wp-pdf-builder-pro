@@ -100,7 +100,7 @@ class AjaxHandler
             }
 
             // Générer le PDF avec TCPDF ou autre
-            $pdf_generator = new PDF_Builder_Pro_Generator();
+            $pdf_generator = new \PDF_Builder\Controllers\PdfBuilderProGenerator();
             $pdf_file = $pdf_generator->generateFromHtml($pdf_content, 'canvas_template_' . time() . '.pdf');
 
             if (!$pdf_file) {

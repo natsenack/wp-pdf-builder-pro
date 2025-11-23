@@ -519,18 +519,18 @@ function pdf_builder_load_bootstrap()
     }
 
     // INITIALISER LE GESTIONNAIRE DE NOTIFICATIONS
-    if (class_exists('PDF_Builder_Notification_Manager')) {
-        PDF_Builder_Notification_Manager::get_instance();
+    if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
+        \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance();
     }
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
-    if (class_exists('PDF_Builder_Onboarding_Manager')) {
-        PDF_Builder_Onboarding_Manager::get_instance();
+    if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+        \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
     }
 
     // INITIALISER LE GESTIONNAIRE RGPD
-    if (class_exists('PDF_Builder_Pro\PDF_Builder_GDPR_Manager')) {
-        \PDF_Builder_Pro\PDF_Builder_GDPR_Manager::get_instance();
+    if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
+        \PDF_Builder\Utilities\PDF_Builder_GDPR_Manager::get_instance();
     }
 
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1) - seulement si WooCommerce est actif
@@ -634,8 +634,8 @@ function pdf_builder_register_essential_ajax_hooks()
 
     // Créer une instance du template manager pour les handlers AJAX
     $template_manager = null;
-    if (class_exists('PDF_Builder_Pro\\Managers\\PdfBuilderTemplateManager')) {
-        $template_manager = new PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
+    if (class_exists('PDF_Builder\\Managers\\PdfBuilderTemplateManager')) {
+        $template_manager = new \PDF_Builder\Managers\PdfBuilderTemplateManager();
     }
 
     // Enregistrer les hooks AJAX essentiels - DISABLED: Conflit avec AjaxHandler.php
