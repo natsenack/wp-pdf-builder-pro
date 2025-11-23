@@ -873,8 +873,45 @@ class AjaxHandler
 
     private function saveZoomSettings()
     {
-        // TODO: Implémenter la sauvegarde du zoom
-        return true;
+        $updated = 0;
+
+        // Zoom minimum
+        if (isset($_POST['canvas_zoom_min'])) {
+            $min = intval($_POST['canvas_zoom_min']);
+            if ($min >= 1 && $min <= 100) {
+                update_option('pdf_builder_canvas_zoom_min', $min);
+                $updated++;
+            }
+        }
+
+        // Zoom maximum
+        if (isset($_POST['canvas_zoom_max'])) {
+            $max = intval($_POST['canvas_zoom_max']);
+            if ($max >= 100 && $max <= 1000) {
+                update_option('pdf_builder_canvas_zoom_max', $max);
+                $updated++;
+            }
+        }
+
+        // Zoom par défaut
+        if (isset($_POST['canvas_zoom_default'])) {
+            $default = intval($_POST['canvas_zoom_default']);
+            if ($default >= 10 && $default <= 500) {
+                update_option('pdf_builder_canvas_zoom_default', $default);
+                $updated++;
+            }
+        }
+
+        // Pas de zoom
+        if (isset($_POST['canvas_zoom_step'])) {
+            $step = intval($_POST['canvas_zoom_step']);
+            if ($step >= 5 && $step <= 50) {
+                update_option('pdf_builder_canvas_zoom_step', $step);
+                $updated++;
+            }
+        }
+
+        return $updated > 0;
     }
 
     private function saveApparenceSettings()
@@ -922,8 +959,45 @@ class AjaxHandler
 
     private function saveGrilleSettings()
     {
-        // TODO: Implémenter la sauvegarde de la grille
-        return true;
+        $updated = 0;
+
+        // Guides activés
+        if (isset($_POST['canvas_guides_enabled'])) {
+            update_option('pdf_builder_canvas_guides_enabled', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_guides_enabled', '0');
+            $updated++;
+        }
+
+        // Grille activée
+        if (isset($_POST['canvas_grid_enabled'])) {
+            update_option('pdf_builder_canvas_grid_enabled', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_grid_enabled', '0');
+            $updated++;
+        }
+
+        // Taille de la grille
+        if (isset($_POST['canvas_grid_size'])) {
+            $size = intval($_POST['canvas_grid_size']);
+            if ($size >= 5 && $size <= 100) {
+                update_option('pdf_builder_canvas_grid_size', $size);
+                $updated++;
+            }
+        }
+
+        // Accrochage à la grille
+        if (isset($_POST['canvas_snap_to_grid'])) {
+            update_option('pdf_builder_canvas_snap_to_grid', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_snap_to_grid', '0');
+            $updated++;
+        }
+
+        return $updated > 0;
     }
 
     private function saveInteractionsSettings()
@@ -971,26 +1045,174 @@ class AjaxHandler
 
     private function saveExportSettings()
     {
-        // TODO: Implémenter la sauvegarde de l'export
-        return true;
+        $updated = 0;
+
+        // Format d'export
+        if (isset($_POST['canvas_export_format'])) {
+            $format = sanitize_text_field($_POST['canvas_export_format']);
+            if (in_array($format, ['png', 'jpg', 'svg'])) {
+                update_option('pdf_builder_canvas_export_format', $format);
+                $updated++;
+            }
+        }
+
+        // Qualité d'export
+        if (isset($_POST['canvas_export_quality'])) {
+            $quality = intval($_POST['canvas_export_quality']);
+            if ($quality >= 1 && $quality <= 100) {
+                update_option('pdf_builder_canvas_export_quality', $quality);
+                $updated++;
+            }
+        }
+
+        // Fond transparent
+        if (isset($_POST['canvas_export_transparent'])) {
+            update_option('pdf_builder_canvas_export_transparent', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_export_transparent', '0');
+            $updated++;
+        }
+
+        return $updated > 0;
     }
 
     private function savePerformanceSettings()
     {
-        // TODO: Implémenter la sauvegarde de la performance
-        return true;
+        $updated = 0;
+
+        // Cible FPS
+        if (isset($_POST['canvas_fps_target'])) {
+            $fps = intval($_POST['canvas_fps_target']);
+            if (in_array($fps, [30, 60, 120])) {
+                update_option('pdf_builder_canvas_fps_target', $fps);
+                $updated++;
+            }
+        }
+
+        // Limite mémoire JavaScript
+        if (isset($_POST['canvas_memory_limit_js'])) {
+            $memory_js = sanitize_text_field($_POST['canvas_memory_limit_js']);
+            if (in_array($memory_js, ['128', '256', '512', '1024'])) {
+                update_option('pdf_builder_canvas_memory_limit_js', $memory_js);
+                $updated++;
+            }
+        }
+
+        // Chargement paresseux éditeur
+        if (isset($_POST['canvas_lazy_loading_editor'])) {
+            update_option('pdf_builder_canvas_lazy_loading_editor', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_lazy_loading_editor', '0');
+            $updated++;
+        }
+
+        // Préchargement ressources critiques
+        if (isset($_POST['canvas_preload_critical'])) {
+            update_option('pdf_builder_canvas_preload_critical', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_preload_critical', '0');
+            $updated++;
+        }
+
+        // Limite mémoire PHP
+        if (isset($_POST['canvas_memory_limit_php'])) {
+            $memory_php = sanitize_text_field($_POST['canvas_memory_limit_php']);
+            if (in_array($memory_php, ['128', '256', '512', '1024'])) {
+                update_option('pdf_builder_canvas_memory_limit_php', $memory_php);
+                $updated++;
+            }
+        }
+
+        // Timeout réponses AJAX
+        if (isset($_POST['canvas_response_timeout'])) {
+            $timeout = intval($_POST['canvas_response_timeout']);
+            if (in_array($timeout, [10, 30, 60, 120])) {
+                update_option('pdf_builder_canvas_response_timeout', $timeout);
+                $updated++;
+            }
+        }
+
+        // Chargement paresseux plugin
+        if (isset($_POST['canvas_lazy_loading_plugin'])) {
+            update_option('pdf_builder_canvas_lazy_loading_plugin', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_lazy_loading_plugin', '0');
+            $updated++;
+        }
+
+        return $updated > 0;
     }
 
     private function saveAutosaveSettings()
     {
-        // TODO: Implémenter la sauvegarde de l'autosave
-        return true;
+        $updated = 0;
+
+        // Sauvegarde automatique activée
+        if (isset($_POST['canvas_autosave_enabled'])) {
+            update_option('pdf_builder_canvas_autosave_enabled', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_autosave_enabled', '0');
+            $updated++;
+        }
+
+        // Intervalle de sauvegarde
+        if (isset($_POST['canvas_autosave_interval'])) {
+            $interval = intval($_POST['canvas_autosave_interval']);
+            if ($interval >= 1 && $interval <= 60) {
+                update_option('pdf_builder_canvas_autosave_interval', $interval);
+                $updated++;
+            }
+        }
+
+        // Historique activé
+        if (isset($_POST['canvas_history_enabled'])) {
+            update_option('pdf_builder_canvas_history_enabled', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_history_enabled', '0');
+            $updated++;
+        }
+
+        return $updated > 0;
     }
 
     private function saveDebugSettings()
     {
-        // TODO: Implémenter la sauvegarde du debug
-        return true;
+        $updated = 0;
+
+        // Debug activé
+        if (isset($_POST['canvas_debug_enabled'])) {
+            update_option('pdf_builder_canvas_debug_enabled', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_debug_enabled', '0');
+            $updated++;
+        }
+
+        // Monitoring performance
+        if (isset($_POST['canvas_performance_monitoring'])) {
+            update_option('pdf_builder_canvas_performance_monitoring', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_performance_monitoring', '0');
+            $updated++;
+        }
+
+        // Rapport d'erreurs
+        if (isset($_POST['canvas_error_reporting'])) {
+            update_option('pdf_builder_canvas_error_reporting', '1');
+            $updated++;
+        } else {
+            update_option('pdf_builder_canvas_error_reporting', '0');
+            $updated++;
+        }
+
+        return $updated > 0;
     }
 
     /**
