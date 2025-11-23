@@ -212,12 +212,12 @@ class PdfBuilderCore
                 30
             );
 
-            // Pages admin - RÉACTIVÉ: Intégrer avec PDF_Builder_Admin.php
+            // Pages admin - TEST: Utiliser une capacité WordPress de base
             add_submenu_page(
                 'pdf-builder-pro',
                 __('Templates', 'pdf-builder-pro'),
                 __('Templates', 'pdf-builder-pro'),
-                'pdf_builder_access', // Remettre la capacité originale
+                'read', // Capacité WordPress de base au lieu de pdf_builder_access
                 'pdf-builder-templates',
                 array($this, 'templatesPage')
             );
@@ -226,7 +226,7 @@ class PdfBuilderCore
                 'pdf-builder-pro',
                 __('Settings', 'pdf-builder-pro'),
                 __('Settings', 'pdf-builder-pro'),
-                'pdf_builder_access', // Remettre la capacité originale
+                'read', // Capacité WordPress de base au lieu de pdf_builder_access
                 'pdf-builder-settings',
                 array($this, 'settingsPage')
             );
