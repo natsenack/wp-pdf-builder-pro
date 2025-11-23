@@ -1406,6 +1406,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const format = formatSelect ? formatSelect.value : 'A4';
                 const dpi = dpiSelect ? parseInt(dpiSelect.value) : 96;
                 updateCalculatedDimensions(modal, format, dpi);
+                // Also update card preview
+                updateDimensionsCardPreview();
             };
 
             // Add event listeners for real-time updates
@@ -1415,6 +1417,119 @@ document.addEventListener('DOMContentLoaded', function() {
             if (dpiSelect) {
                 dpiSelect.addEventListener('change', updateDimensions);
             }
+        }
+
+        // Handle apparence modal real-time updates
+        if (modal.id === 'canvas-apparence-modal') {
+            const bgColorInput = modal.querySelector('#canvas_bg_color');
+            const borderColorInput = modal.querySelector('#canvas_border_color');
+            const shadowEnabled = modal.querySelector('#canvas_shadow_enabled');
+
+            const updateApparence = function() {
+                updateApparenceCardPreview();
+            };
+
+            if (bgColorInput) bgColorInput.addEventListener('input', updateApparence);
+            if (borderColorInput) borderColorInput.addEventListener('input', updateApparence);
+            if (shadowEnabled) shadowEnabled.addEventListener('change', updateApparence);
+        }
+
+        // Handle grille modal real-time updates
+        if (modal.id === 'canvas-grille-modal') {
+            const gridEnabled = modal.querySelector('#canvas_grid_enabled');
+            const gridSize = modal.querySelector('#canvas_grid_size');
+            const snapToGrid = modal.querySelector('#canvas_snap_to_grid');
+            const guidesEnabled = modal.querySelector('#canvas_guides_enabled');
+
+            const updateGrille = function() {
+                updateGrilleCardPreview();
+            };
+
+            if (gridEnabled) gridEnabled.addEventListener('change', updateGrille);
+            if (gridSize) gridSize.addEventListener('input', updateGrille);
+            if (snapToGrid) snapToGrid.addEventListener('change', updateGrille);
+            if (guidesEnabled) guidesEnabled.addEventListener('change', updateGrille);
+        }
+
+        // Handle zoom modal real-time updates
+        if (modal.id === 'canvas-zoom-modal') {
+            const zoomMin = modal.querySelector('#canvas_zoom_min');
+            const zoomMax = modal.querySelector('#canvas_zoom_max');
+
+            const updateZoom = function() {
+                updateZoomCardPreview();
+            };
+
+            if (zoomMin) zoomMin.addEventListener('input', updateZoom);
+            if (zoomMax) zoomMax.addEventListener('input', updateZoom);
+        }
+
+        // Handle interactions modal real-time updates
+        if (modal.id === 'canvas-interactions-modal') {
+            const dragEnabled = modal.querySelector('#canvas_drag_enabled');
+            const resizeEnabled = modal.querySelector('#canvas_resize_enabled');
+            const rotateEnabled = modal.querySelector('#canvas_rotate_enabled');
+            const multiSelect = modal.querySelector('#canvas_multi_select');
+            const selectionMode = modal.querySelector('#canvas_selection_mode');
+            const keyboardShortcuts = modal.querySelector('#canvas_keyboard_shortcuts');
+
+            const updateInteractions = function() {
+                updateInteractionsCardPreview();
+            };
+
+            if (dragEnabled) dragEnabled.addEventListener('change', updateInteractions);
+            if (resizeEnabled) resizeEnabled.addEventListener('change', updateInteractions);
+            if (rotateEnabled) rotateEnabled.addEventListener('change', updateInteractions);
+            if (multiSelect) multiSelect.addEventListener('change', updateInteractions);
+            if (selectionMode) selectionMode.addEventListener('change', updateInteractions);
+            if (keyboardShortcuts) keyboardShortcuts.addEventListener('change', updateInteractions);
+        }
+
+        // Handle export modal real-time updates
+        if (modal.id === 'canvas-export-modal') {
+            const exportFormat = modal.querySelector('#canvas_export_format');
+            const exportQuality = modal.querySelector('#canvas_export_quality');
+
+            const updateExport = function() {
+                updateExportCardPreview();
+            };
+
+            if (exportFormat) exportFormat.addEventListener('change', updateExport);
+            if (exportQuality) exportQuality.addEventListener('input', updateExport);
+        }
+
+        // Handle performance modal real-time updates
+        if (modal.id === 'canvas-performance-modal') {
+            const fpsTarget = modal.querySelector('#canvas_fps_target');
+            const memoryJs = modal.querySelector('#canvas_memory_limit_js');
+            const memoryPhp = modal.querySelector('#canvas_memory_limit_php');
+            const lazyLoadingEditor = modal.querySelector('#canvas_lazy_loading_editor');
+            const lazyLoadingPlugin = modal.querySelector('#canvas_lazy_loading_plugin');
+
+            const updatePerformance = function() {
+                updatePerformanceCardPreview();
+            };
+
+            if (fpsTarget) fpsTarget.addEventListener('input', updatePerformance);
+            if (memoryJs) memoryJs.addEventListener('input', updatePerformance);
+            if (memoryPhp) memoryPhp.addEventListener('input', updatePerformance);
+            if (lazyLoadingEditor) lazyLoadingEditor.addEventListener('change', updatePerformance);
+            if (lazyLoadingPlugin) lazyLoadingPlugin.addEventListener('change', updatePerformance);
+        }
+
+        // Handle autosave modal real-time updates
+        if (modal.id === 'canvas-autosave-modal') {
+            const autosaveEnabled = modal.querySelector('#canvas_autosave_enabled');
+            const autosaveInterval = modal.querySelector('#canvas_autosave_interval');
+            const versionsLimit = modal.querySelector('#canvas_versions_limit');
+
+            const updateAutosave = function() {
+                updateAutosaveCardPreview();
+            };
+
+            if (autosaveEnabled) autosaveEnabled.addEventListener('change', updateAutosave);
+            if (autosaveInterval) autosaveInterval.addEventListener('input', updateAutosave);
+            if (versionsLimit) versionsLimit.addEventListener('input', updateAutosave);
         }
     }
     function updateExportModal(modal, values) { /* TODO */ }
@@ -1472,12 +1587,312 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to update canvas card previews in real-time
+    window.updateCanvasPreviews = function(category) {
+        console.log('Updating canvas previews for category:', category);
+
+        // Update dimensions card preview
+        if (category === 'dimensions' || category === 'all') {
+            updateDimensionsCardPreview();
+        }
+
+        // Update apparence card preview
+        if (category === 'apparence' || category === 'all') {
+            updateApparenceCardPreview();
+        }
+
+        // Update grille card preview
+        if (category === 'grille' || category === 'all') {
+            updateGrilleCardPreview();
+        }
+
+        // Update zoom card preview
+        if (category === 'zoom' || category === 'all') {
+            updateZoomCardPreview();
+        }
+
+        // Update interactions card preview
+        if (category === 'interactions' || category === 'all') {
+            updateInteractionsCardPreview();
+        }
+
+        // Update export card preview
+        if (category === 'export' || category === 'all') {
+            updateExportCardPreview();
+        }
+
+        // Update performance card preview
+        if (category === 'performance' || category === 'all') {
+            updatePerformanceCardPreview();
+        }
+
+        // Update autosave card preview
+        if (category === 'autosave' || category === 'all') {
+            updateAutosaveCardPreview();
+        }
+    };
+
+    // Update dimensions card preview
+    function updateDimensionsCardPreview() {
+        const formatSelect = document.getElementById('canvas_format');
+        const dpiSelect = document.getElementById('canvas_dpi');
+
+        if (!formatSelect || !dpiSelect) return;
+
+        const format = formatSelect.value;
+        const dpi = parseInt(dpiSelect.value);
+
+        // Dimensions standard en mm pour chaque format
+        const formatDimensionsMM = {
+            'A4': { width: 210, height: 297 },
+            'A3': { width: 297, height: 420 },
+            'A5': { width: 148, height: 210 },
+            'Letter': { width: 215.9, height: 279.4 },
+            'Legal': { width: 215.9, height: 355.6 },
+            'Tabloid': { width: 279.4, height: 431.8 }
+        };
+
+        const dimensions = formatDimensionsMM[format] || formatDimensionsMM['A4'];
+
+        // Calculer les dimensions en pixels
+        const pixelsPerMM = dpi / 25.4;
+        const widthPx = Math.round(dimensions.width * pixelsPerMM);
+        const heightPx = Math.round(dimensions.height * pixelsPerMM);
+
+        // Update card preview elements
+        const cardWidth = document.getElementById('card-canvas-width');
+        const cardHeight = document.getElementById('card-canvas-height');
+        const cardDpi = document.getElementById('card-canvas-dpi');
+
+        if (cardWidth) cardWidth.textContent = widthPx;
+        if (cardHeight) cardHeight.textContent = heightPx;
+        if (cardDpi) {
+            cardDpi.textContent = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
+        }
+    }
+
+    // Update apparence card preview
+    function updateApparenceCardPreview() {
+        const bgColorInput = document.getElementById('canvas_bg_color');
+        const borderColorInput = document.getElementById('canvas_border_color');
+
+        // Update color previews in the card
+        const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
+        const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
+
+        if (bgColorInput && bgPreview) {
+            bgPreview.style.backgroundColor = bgColorInput.value;
+        }
+        if (borderColorInput && borderPreview) {
+            borderPreview.style.backgroundColor = borderColorInput.value;
+        }
+    }
+
+    // Update grille card preview
+    function updateGrilleCardPreview() {
+        const gridEnabled = document.getElementById('canvas_grid_enabled');
+        const gridSize = document.getElementById('canvas_grid_size');
+        const snapToGrid = document.getElementById('canvas_snap_to_grid');
+        const guidesEnabled = document.getElementById('canvas_guides_enabled');
+
+        const gridCard = document.querySelector('.canvas-card[data-category="grille"]');
+        if (!gridCard) return;
+
+        const gridContainer = gridCard.querySelector('.grid-preview-container');
+        if (gridContainer) {
+            if (gridEnabled && gridEnabled.checked) {
+                gridContainer.classList.add('grid-active');
+                gridContainer.classList.remove('grid-inactive');
+            } else {
+                gridContainer.classList.add('grid-inactive');
+                gridContainer.classList.remove('grid-active');
+            }
+        }
+    }
+
+    // Update zoom card preview
+    function updateZoomCardPreview() {
+        const zoomMin = document.getElementById('canvas_zoom_min');
+        const zoomMax = document.getElementById('canvas_zoom_max');
+
+        const zoomValue = document.getElementById('zoom-preview-value');
+        if (zoomValue && zoomMin && zoomMax) {
+            zoomValue.textContent = `${zoomMin.value}-${zoomMax.value}%`;
+        }
+    }
+
+    // Update interactions card preview
+    function updateInteractionsCardPreview() {
+        const dragEnabled = document.getElementById('canvas_drag_enabled');
+        const resizeEnabled = document.getElementById('canvas_resize_enabled');
+        const multiSelect = document.getElementById('canvas_multi_select');
+        const selectionMode = document.getElementById('canvas_selection_mode');
+
+        const interactionsCard = document.querySelector('.canvas-card[data-category="interactions"]');
+        if (!interactionsCard) return;
+
+        const miniCanvas = interactionsCard.querySelector('.mini-canvas');
+        if (miniCanvas) {
+            // Update drag state
+            if (dragEnabled && dragEnabled.checked) {
+                miniCanvas.classList.add('drag-enabled');
+            } else {
+                miniCanvas.classList.remove('drag-enabled');
+            }
+
+            // Update resize state
+            if (resizeEnabled && resizeEnabled.checked) {
+                miniCanvas.classList.add('resize-enabled');
+            } else {
+                miniCanvas.classList.remove('resize-enabled');
+            }
+
+            // Update multi-select state
+            if (multiSelect && multiSelect.checked) {
+                miniCanvas.classList.add('multi-select-enabled');
+            } else {
+                miniCanvas.classList.remove('multi-select-enabled');
+            }
+        }
+
+        // Update selection mode indicator
+        const modeIcons = interactionsCard.querySelectorAll('.mode-icon');
+        modeIcons.forEach(icon => icon.classList.remove('active'));
+
+        if (selectionMode && modeIcons.length > 0) {
+            const modeValue = selectionMode.value;
+            if (modeValue === 'rectangle' && modeIcons[0]) {
+                modeIcons[0].classList.add('active');
+            } else if (modeValue === 'lasso' && modeIcons[1]) {
+                modeIcons[1].classList.add('active');
+            } else if (modeValue === 'click' && modeIcons[2]) {
+                modeIcons[2].classList.add('active');
+            }
+        }
+    }
+
+    // Update export card preview
+    function updateExportCardPreview() {
+        const exportFormat = document.getElementById('canvas_export_format');
+        const exportQuality = document.getElementById('canvas_export_quality');
+
+        const exportCard = document.querySelector('.canvas-card[data-category="export"]');
+        if (!exportCard) return;
+
+        // Update format badges
+        const formatBadges = exportCard.querySelectorAll('.format-badge');
+        formatBadges.forEach(badge => badge.classList.remove('active'));
+
+        if (exportFormat) {
+            const activeBadge = exportCard.querySelector(`.format-badge.${exportFormat.value.toLowerCase()}`);
+            if (activeBadge) {
+                activeBadge.classList.add('active');
+            }
+        }
+
+        // Update quality bar
+        const qualityFill = exportCard.querySelector('.quality-fill');
+        const qualityText = exportCard.querySelector('.quality-text');
+
+        if (exportQuality && qualityFill && qualityText) {
+            const quality = parseInt(exportQuality.value);
+            qualityFill.style.width = quality + '%';
+            qualityText.textContent = quality + '%';
+        }
+    }
+
+    // Update performance card preview
+    function updatePerformanceCardPreview() {
+        const fpsTarget = document.getElementById('canvas_fps_target');
+        const memoryJs = document.getElementById('canvas_memory_limit_js');
+        const memoryPhp = document.getElementById('canvas_memory_limit_php');
+        const lazyLoadingEditor = document.getElementById('canvas_lazy_loading_editor');
+        const lazyLoadingPlugin = document.getElementById('canvas_lazy_loading_plugin');
+
+        // Update FPS metric
+        const fpsValue = document.querySelector('.canvas-card[data-category="performance"] .metric-value:first-child');
+        if (fpsTarget && fpsValue) {
+            fpsValue.textContent = fpsTarget.value;
+        }
+
+        // Update memory metrics
+        const memoryValues = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-value');
+        if (memoryJs && memoryValues[1]) {
+            memoryValues[1].textContent = memoryJs.value + 'MB';
+        }
+        if (memoryPhp && memoryValues[2]) {
+            memoryValues[2].textContent = memoryPhp.value + 'MB';
+        }
+
+        // Update lazy loading status
+        const statusIndicator = document.querySelector('.canvas-card[data-category="performance"] .status-indicator');
+        if (statusIndicator && lazyLoadingEditor && lazyLoadingPlugin) {
+            const isActive = lazyLoadingEditor.checked && lazyLoadingPlugin.checked;
+            statusIndicator.classList.toggle('active', isActive);
+            statusIndicator.classList.toggle('inactive', !isActive);
+        }
+    }
+
+    // Update autosave card preview
+    function updateAutosaveCardPreview() {
+        const autosaveInterval = document.getElementById('canvas_autosave_interval');
+        const autosaveEnabled = document.getElementById('canvas_autosave_enabled');
+        const versionsLimit = document.getElementById('canvas_versions_limit');
+
+        const autosaveCard = document.querySelector('.canvas-card[data-category="autosave"]');
+        if (!autosaveCard) return;
+
+        // Update timer display
+        const timerDisplay = autosaveCard.querySelector('.autosave-timer');
+        if (autosaveInterval && timerDisplay) {
+            const minutes = Math.floor(parseInt(autosaveInterval.value) / 60);
+            timerDisplay.textContent = minutes + 'min';
+        }
+
+        // Update status
+        const statusIndicator = autosaveCard.querySelector('.autosave-status');
+        if (autosaveEnabled && statusIndicator) {
+            if (autosaveEnabled.checked) {
+                statusIndicator.classList.add('active');
+            } else {
+                statusIndicator.classList.remove('active');
+            }
+        }
+
+        // Update versions dots
+        const versionDots = autosaveCard.querySelectorAll('.version-dot');
+        if (versionsLimit && versionDots.length > 0) {
+            const limit = parseInt(versionsLimit.value);
+            versionDots.forEach((dot, index) => {
+                if (index < limit) {
+                    dot.style.display = 'block';
+                } else {
+                    dot.style.display = 'none';
+                }
+            });
+        }
+    }
+
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeModals);
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeModals();
+            // Initialize all canvas previews on page load
+            setTimeout(function() {
+                if (typeof updateCanvasPreviews === 'function') {
+                    updateCanvasPreviews('all');
+                }
+            }, 100);
+        });
     } else {
         // DOM already loaded
         initializeModals();
+        // Initialize all canvas previews on page load
+        setTimeout(function() {
+            if (typeof updateCanvasPreviews === 'function') {
+                updateCanvasPreviews('all');
+            }
+        }, 100);
     }
 
     // Also try to initialize after a short delay as backup
