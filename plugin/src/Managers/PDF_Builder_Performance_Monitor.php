@@ -1,6 +1,6 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Managers;
+namespace PDF_Builder\Managers;
 
 /**
  * Moniteur de Performance - PDF Builder Pro

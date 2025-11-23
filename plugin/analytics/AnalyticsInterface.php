@@ -4,7 +4,7 @@
  * Interface file - declares symbols only
  */
 
-namespace WP_PDF_Builder_Pro\Analytics;
+namespace PDF_Builder\Analytics;
 
 /**
  * Interface AnalyticsInterface

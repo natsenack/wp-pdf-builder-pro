@@ -6,7 +6,7 @@
  * pour éviter les interférences avec le fonctionnement du plugin
  */
 
-namespace PDF_Builder_Pro\Core;
+namespace PDF_Builder\Core;
 
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');

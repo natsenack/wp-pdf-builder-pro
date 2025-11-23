@@ -1,8 +1,8 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Generators;
+namespace PDF_Builder\Generators;
 
-use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
+use PDF_Builder\Interfaces\DataProviderInterface;
 
 /**
  * Classe CanvasGenerator

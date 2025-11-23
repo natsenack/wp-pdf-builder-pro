@@ -13,7 +13,7 @@ try {
         echo 'Classe PdfBuilderAdmin NON disponible\n';
     }
 
-    if (class_exists('PDF_Builder_Pro\Managers\PdfBuilderTemplateManager')) {
+    if (class_exists('PDF_Builder\\Managers\\PdfBuilderTemplateManager')) {
         echo 'Classe PdfBuilderTemplateManager disponible\n';
     } else {
         echo 'Classe PdfBuilderTemplateManager NON disponible\n';

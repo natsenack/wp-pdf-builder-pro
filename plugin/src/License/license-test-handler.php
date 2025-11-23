@@ -7,7 +7,7 @@
  * @version 1.0.0
  */
 
-namespace PDF_Builder_Pro\License;
+namespace PDF_Builder\License;
 
 if (!defined('ABSPATH')) {
     exit;

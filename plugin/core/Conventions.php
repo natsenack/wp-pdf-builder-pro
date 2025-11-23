@@ -6,7 +6,7 @@
  * Ce fichier définit les standards utilisés dans tout le projet
  */
 
-namespace WP_PDF_Builder_Pro;
+namespace PDF_Builder;
 
 // =============================================================================
 // NAMESPACES PRINCIPAUX
@@ -15,7 +15,7 @@ namespace WP_PDF_Builder_Pro;
 /**
  * Namespace racine du plugin
  */
-const ROOT_NAMESPACE = 'WP_PDF_Builder_Pro';
+const ROOT_NAMESPACE = 'PDF_Builder';
 /**
  * Sous-namespaces principaux
  */

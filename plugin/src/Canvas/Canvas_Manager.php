@@ -1,12 +1,12 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Canvas;
+namespace PDF_Builder\Canvas;
 
 /**
  * Canvas Manager
  * Gère les paramètres du canvas et les applique aux générations PDF/Image
  *
- * @package WP_PDF_Builder_Pro
+ * @package PDF_Builder
  * @since 1.1.0
  */
 class Canvas_Manager

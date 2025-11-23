@@ -6,7 +6,7 @@
  * PSR-4 compliant autoloader for the PDF Builder Pro plugin
  */
 
-namespace WP_PDF_Builder_Pro\Core;
+namespace PDF_Builder\Core;
 
 if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit;
@@ -23,7 +23,6 @@ class PdfBuilderAutoloader
      */
     private static $prefixes = [
         'PDF_Builder\\' => 'src/',
-        'WP_PDF_Builder_Pro\\' => '',
     ];
 
     /**
@@ -50,20 +49,9 @@ class PdfBuilderAutoloader
 
             // Get the relative class name
             $relative_class = substr($class, $len);
-// Special handling for WP_PDF_Builder_Pro namespace
-            if ($prefix === 'WP_PDF_Builder_Pro\\') {
-// Convert namespace parts to lowercase directories but keep class names as-is
-                $parts = explode('\\', $relative_class);
-                $lastPart = array_pop($parts);
-// Extract the class name
-                $dirs = array_map('lcfirst', $parts);
-// Convert directory names to lowercase
-                $relative_class = implode('/', $dirs) . '/' . $lastPart;
-// Rebuild path
-            } else {
+
             // Replace namespace separators with directory separators
-                $relative_class = str_replace('\\', '/', $relative_class);
-            }
+            $relative_class = str_replace('\\', '/', $relative_class);
 
             $file = self::$base_path . $base_dir . $relative_class . '.php';
 // Debug: uncomment for troubleshooting

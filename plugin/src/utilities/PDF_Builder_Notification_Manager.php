@@ -2,7 +2,7 @@
 /**
  * Gestionnaire unifié des notifications pour PDF Builder Pro
  *
- * @package PDF_Builder_Pro
+ * @package PDF_Builder
  * @since 1.0.0
  */
 

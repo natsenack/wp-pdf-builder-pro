@@ -1,6 +1,6 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Managers;
+namespace PDF_Builder\Managers;
 
 /**
  * Gestionnaire de Commandes Sécurisées - PDF Builder Pro

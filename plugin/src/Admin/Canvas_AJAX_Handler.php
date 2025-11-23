@@ -1,14 +1,14 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Admin;
+namespace PDF_Builder\Admin;
 
-use WP_PDF_Builder_Pro\Canvas\Canvas_Manager;
+use PDF_Builder\Canvas\Canvas_Manager;
 
 /**
  * Canvas AJAX Handlers
  * Gère les requêtes AJAX pour les paramètres du canvas
  *
- * @package WP_PDF_Builder_Pro
+ * @package PDF_Builder
  * @since 1.1.0
  */
 class CanvasAjaxHandler

@@ -5,7 +5,7 @@
  * Limite à 100 requêtes par minute par IP
  */
 
-namespace WP_PDF_Builder_Pro\Security;
+namespace PDF_Builder\Security;
 
 class Rate_Limiter
 {

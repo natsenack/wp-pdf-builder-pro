@@ -5,7 +5,7 @@
  * Phase 1: Système d'aperçu côté serveur inspiré de WooCommerce PDF Invoice Builder
  */
 
-namespace WP_PDF_Builder_Pro\AJAX;
+namespace PDF_Builder\AJAX;
 
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {

@@ -5,11 +5,11 @@
  *
  * Gère l'envoi des notifications par email pour les événements PDF Builder
  *
- * @package PDF_Builder_Pro
+ * @package PDF_Builder
  * @version 1.0.0
  */
 
-namespace WP_PDF_Builder_Pro\Managers;
+namespace PDF_Builder\Managers;
 
 if (!defined('ABSPATH')) {
     exit;

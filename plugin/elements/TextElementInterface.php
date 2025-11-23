@@ -1,6 +1,6 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Elements;
+namespace PDF_Builder\Elements;
 
 /**
  * Interface TextElementInterface

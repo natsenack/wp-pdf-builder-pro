@@ -3,7 +3,7 @@
 /**
  * Mode Switcher - Gestionnaire de basculement entre modes Canvas/Metabox
  *
- * @package PDF_Builder_Pro
+ * @package PDF_Builder
  * @subpackage Managers
  */
 

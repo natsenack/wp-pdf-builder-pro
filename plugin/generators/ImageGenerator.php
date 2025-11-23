@@ -1,8 +1,8 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Generators;
+namespace PDF_Builder\Generators;
 
-use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
+use PDF_Builder\Interfaces\DataProviderInterface;
 
 /**
  * Générateur d'images simple utilisant GD
@@ -66,8 +66,8 @@ class ImageGenerator extends BaseGenerator
             }
 
             // Si output_file est spécifié, sauvegarder dans le fichier
-            if (isset($this->options['output_file'])) {
-                $output_path = $this->options['output_file'];
+            if (isset($this->config['output_file'])) {
+                $output_path = $this->config['output_file'];
 // Créer le répertoire si nécessaire
                 $dir = dirname($output_path);
                 if (!is_dir($dir)) {

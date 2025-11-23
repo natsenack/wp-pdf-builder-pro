@@ -336,7 +336,7 @@ function pdf_builder_load_core()
     $loaded = true;
 }
 
-// Fonction pour charger les nouvelles classes WP_PDF_Builder_Pro
+// Fonction pour charger les nouvelles classes PDF_Builder
 function pdf_builder_load_new_classes()
 {
     static $new_classes_loaded = false;
@@ -440,7 +440,7 @@ function pdf_builder_load_bootstrap()
     }
     $bootstrap_loaded = true;
 
-    // CHARGER L'AUTOLOADER POUR LES NOUVELLES CLASSES (WP_PDF_Builder_Pro)
+    // CHARGER L'AUTOLOADER POUR LES NOUVELLES CLASSES (PDF_Builder)
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
     }
@@ -465,8 +465,8 @@ function pdf_builder_load_bootstrap()
     if ($test_mode_enabled && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php';
         // Initialiser le handler seulement si le mode test de licence est activé
-        if (class_exists('PDF_Builder_Pro\\License\\LicenseTestHandler')) {
-            $license_test_handler = \PDF_Builder_Pro\License\LicenseTestHandler::getInstance();
+        if (class_exists('PDF_Builder\\License\\LicenseTestHandler')) {
+            $license_test_handler = \PDF_Builder\License\LicenseTestHandler::getInstance();
             $license_test_handler->init();
         }
     }
@@ -495,7 +495,7 @@ function pdf_builder_load_bootstrap()
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/PDF_Builder_Advanced_Localization.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/PDF_Builder_Advanced_Localization.php';
         // Initialiser l'instance
-        \WP_PDF_Builder_Pro\Src\PdfBuilderAdvancedLocalization::getInstance();
+        \PDF_Builder\Src\PdfBuilderAdvancedLocalization::getInstance();
     }
 
     // CHARGER ET INITIALISER LE GESTIONNAIRE DE CANVAS
@@ -508,14 +508,14 @@ function pdf_builder_load_bootstrap()
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php';
         // Initialiser l'instance
-        \WP_PDF_Builder_Pro\Managers\PdfBuilderBackupRestoreManager::getInstance();
+        \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
     }
 
     // INITIALISER LE GESTIONNAIRE DE TUTORIELS - SUPPRIMÉ
 
     // ENREGISTRER LES HANDLERS AJAX POUR LE CANVAS
-    if (class_exists('WP_PDF_Builder_Pro\\Admin\\Canvas_AJAX_Handler')) {
-        \WP_PDF_Builder_Pro\Admin\Canvas_AJAX_Handler::register_hooks();
+    if (class_exists('PDF_Builder\\Admin\\Canvas_AJAX_Handler')) {
+        \PDF_Builder\Admin\Canvas_AJAX_Handler::register_hooks();
     }
 
     // INITIALISER LE GESTIONNAIRE DE NOTIFICATIONS
@@ -545,8 +545,8 @@ function pdf_builder_load_bootstrap()
 
     // INSTANCIER L'API PREVIEW POUR LES ROUTES REST (Étape 1.4)
     add_action('init', function() {
-        if (class_exists('WP_PDF_Builder_Pro\Api\PreviewImageAPI')) {
-            new \WP_PDF_Builder_Pro\Api\PreviewImageAPI();
+        if (class_exists('PDF_Builder\\Api\\PreviewImageAPI')) {
+            new \PDF_Builder\Api\PreviewImageAPI();
         }
     });
 

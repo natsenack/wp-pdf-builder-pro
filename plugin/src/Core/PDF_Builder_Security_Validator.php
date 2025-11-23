@@ -11,7 +11,7 @@
  * @since   Phase 5.8 - Corrections Sécurité
  */
 
-namespace WP_PDF_Builder_Pro\Core;
+namespace PDF_Builder\Core;
 
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {

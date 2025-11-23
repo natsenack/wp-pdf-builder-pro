@@ -5,7 +5,7 @@
  *
  * Maps dynamic variables to WooCommerce order data
  *
- * @package PDF_Builder_Pro
+ * @package PDF_Builder
  * @version 1.0
  * @since   5.4
  */

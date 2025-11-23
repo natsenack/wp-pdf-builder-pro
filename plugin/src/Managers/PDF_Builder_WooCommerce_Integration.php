@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Gestion de l'intégration WooCommerce
  */
 
-use PDF_Builder\Controllers\PDF_Builder_Pro_Generator;
+use PDF_Builder\Controllers\PdfBuilderProGenerator;
 
 class PDF_Builder_WooCommerce_Integration
 {
@@ -464,7 +464,7 @@ class PDF_Builder_WooCommerce_Integration
             // Générer le PDF SANS TCPDF - utiliser la nouvelle approche HTML
 
             // Générer le HTML depuis les éléments du template
-            $generator = new PDF_Builder_Pro_Generator();
+            $generator = new PdfBuilderProGenerator();
 
             $html_content = $generator->generate($elements, ['order' => $order]);
 

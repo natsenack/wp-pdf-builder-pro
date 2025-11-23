@@ -1,10 +1,10 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Generators;
+namespace PDF_Builder\Generators;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
+use PDF_Builder\Interfaces\DataProviderInterface;
 
 /**
  * Classe PDFGenerator
@@ -634,6 +634,8 @@ class PDFGenerator extends BaseGenerator
         }
         $image_data = ob_get_clean();
         imagedestroy($image);
+        
+        return $image_data;
     }
 
     /**

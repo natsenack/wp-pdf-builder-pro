@@ -1,6 +1,6 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\States;
+namespace PDF_Builder\States;
 
 /**
  * Interface PreviewStateInterface

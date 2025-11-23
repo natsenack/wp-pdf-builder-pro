@@ -5,7 +5,7 @@
  * Applique les rôles autorisés configurés dans l'onglet Rôles
  */
 
-namespace WP_PDF_Builder_Pro\Security;
+namespace PDF_Builder\Security;
 
 class Role_Manager
 {

@@ -5,7 +5,7 @@
  * Gestion des actions AJAX pour les templates prédéfinis
  */
 
-namespace WP_PDF_Builder_Pro\AJAX;
+namespace PDF_Builder\AJAX;
 
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {

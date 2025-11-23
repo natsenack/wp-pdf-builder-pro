@@ -1,8 +1,8 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Generators;
+namespace PDF_Builder\Generators;
 
-use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
+use PDF_Builder\Interfaces\DataProviderInterface;
 
 /**
  * Classe GeneratorManager
@@ -39,7 +39,7 @@ private function initializeGeneratorsConfig(): void
 {
     $this->generators_config = [
         'dompdf' => [
-            'class' => 'WP_PDF_Builder_Pro\\Generators\\PDFGenerator',
+            'class' => 'PDF_Builder\\Generators\\PDFGenerator',
             'priority' => 1,
             'enabled' => true,
             'max_attempts' => 2,
@@ -48,7 +48,7 @@ private function initializeGeneratorsConfig(): void
             'capabilities' => ['high_quality', 'vector_graphics', 'fonts']
         ],
         'canvas' => [
-            'class' => 'WP_PDF_Builder_Pro\\Generators\\CanvasGenerator',
+            'class' => 'PDF_Builder\\Generators\\CanvasGenerator',
             'priority' => 2,
             'enabled' => true,
             'max_attempts' => 3,
@@ -57,7 +57,7 @@ private function initializeGeneratorsConfig(): void
             'capabilities' => ['fast', 'client_side', 'fallback']
         ],
         'image' => [
-            'class' => 'WP_PDF_Builder_Pro\\Generators\\ImageGenerator',
+            'class' => 'PDF_Builder\\Generators\\ImageGenerator',
             'priority' => 3,
             'enabled' => true,
             'max_attempts' => 1,

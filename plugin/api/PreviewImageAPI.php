@@ -1,10 +1,10 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Api;
+namespace PDF_Builder\Api;
 
-use WP_PDF_Builder_Pro\Generators\GeneratorManager;
-use WP_PDF_Builder_Pro\Data\SampleDataProvider;
-use WP_PDF_Builder_Pro\Data\WooCommerceDataProvider;
+use PDF_Builder\Generators\GeneratorManager;
+use PDF_Builder\Data\SampleDataProvider;
+use PDF_Builder\Data\WooCommerceDataProvider;
 
 // Declare WooCommerce functions for linter
 if (!function_exists('wc_get_order')) {

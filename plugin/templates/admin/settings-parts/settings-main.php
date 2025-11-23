@@ -14,8 +14,8 @@ if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) {
 }
 
 // Vérifier l'accès via Role_Manager si disponible
-if (class_exists('WP_PDF_Builder_Pro\Security\Role_Manager')) {
-    \WP_PDF_Builder_Pro\Security\Role_Manager::check_and_block_access();
+if (class_exists('PDF_Builder\\Security\\Role_Manager')) {
+    \PDF_Builder\Security\Role_Manager::check_and_block_access();
 }
 
 // Charger les styles CSS

@@ -1,6 +1,6 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Api;
+namespace PDF_Builder\Api;
 
 /**
  * Exception personnalisée pour l'API PreviewImageAPI

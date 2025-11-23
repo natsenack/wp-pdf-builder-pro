@@ -11,7 +11,7 @@
  * @version 1.0.0
  */
 
-namespace WP_PDF_Builder_Pro\Src\Utilities;
+namespace PDF_Builder\Src\Utilities;
 
 if (!defined('ABSPATH')) {
     exit;

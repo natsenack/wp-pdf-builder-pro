@@ -1,8 +1,8 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Data;
+namespace PDF_Builder\Data;
 
-use WP_PDF_Builder_Pro\Interfaces\DataProviderInterface;
+use PDF_Builder\Interfaces\DataProviderInterface;
 
 /**
  * Classe WooCommerceDataProvider

@@ -1,6 +1,6 @@
 <?php
 
-namespace WP_PDF_Builder_Pro\Interfaces;
+namespace PDF_Builder\Interfaces;
 
 /**
  * Interface DataProviderInterface

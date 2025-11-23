@@ -3,7 +3,7 @@
  * PDF Builder Pro - Onboarding Manager
  * Gestionnaire d'onboarding et tutoriels
  *
- * @package PDF_Builder_Pro
+ * @package PDF_Builder
  * @since 1.0.0
  */
 

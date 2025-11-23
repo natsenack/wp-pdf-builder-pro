@@ -1,6 +1,6 @@
 <?php
 
-namespace PDF_Builder_Pro\Managers;
+namespace PDF_Builder\Managers;
 
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {

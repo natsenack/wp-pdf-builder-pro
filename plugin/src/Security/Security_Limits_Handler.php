@@ -5,7 +5,7 @@
  * Applique les paramètres max_execution_time, memory_limit et max_template_size
  */
 
-namespace WP_PDF_Builder_Pro\Security;
+namespace PDF_Builder\Security;
 
 class Security_Limits_Handler
 {

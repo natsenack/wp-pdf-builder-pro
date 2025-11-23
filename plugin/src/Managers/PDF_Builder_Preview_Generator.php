@@ -5,7 +5,7 @@
  * Phase 1: Génération d'aperçu côté serveur avec Dompdf
  */
 
-namespace WP_PDF_Builder_Pro\Managers;
+namespace PDF_Builder\Managers;
 
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
