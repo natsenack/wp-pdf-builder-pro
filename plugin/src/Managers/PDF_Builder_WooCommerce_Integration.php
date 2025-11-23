@@ -11,6 +11,8 @@ if (!defined('ABSPATH')) {
  * Gestion de l'intégration WooCommerce
  */
 
+namespace PDF_Builder\Managers;
+
 use PDF_Builder\Controllers\PdfBuilderProGenerator;
 
 class PDF_Builder_WooCommerce_Integration

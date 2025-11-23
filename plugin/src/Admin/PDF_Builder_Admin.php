@@ -85,12 +85,12 @@ class PdfBuilderAdmin
         $this->utils = new Utils($this);
 
         // Initialiser l'intégration WooCommerce si disponible
-        if (class_exists('PDF_Builder\\Managers\\PDF_Builder_WooCommerce_Integration')) {
+        if (class_exists('PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration')) {
             $this->woocommerce_integration = new \PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration($this->core);
         }
 
         // Initialiser le manager de templates prédéfinis
-        if (class_exists('PDF_Builder\\Admin\\PDF_Builder_Predefined_Templates_Manager')) {
+        if (class_exists('PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager')) {
             $this->predefined_templates_manager = new \PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager();
         }
 
@@ -1223,7 +1223,7 @@ class PdfBuilderAdmin
         // Paramètres du canvas pour le JavaScript
         // Récupérer les paramètres canvas depuis le Canvas Manager
         $canvas_settings_js = [];
-        if (class_exists('PDF_Builder\\Managers\\PDF_Builder_Canvas_Manager')) {
+        if (class_exists('PDF_Builder\Managers\PDF_Builder_Canvas_Manager')) {
             $canvas_manager = \PDF_Builder\Managers\PDF_Builder_Canvas_Manager::get_instance();
             $canvas_settings_js = $canvas_manager->get_canvas_settings();
         } else {
@@ -1235,9 +1235,9 @@ class PdfBuilderAdmin
 
         // ✅ Initialiser le système de notification unifié
         
-        if (class_exists('PDF_Builder\\Managers\\PDF_Builder_Notification_Manager')) {
+        if (class_exists('PDF_Builder\Utilities\PDF_Builder_Notification_Manager')) {
             
-            \PDF_Builder\Managers\PDF_Builder_Notification_Manager::get_instance()->enqueue_scripts();
+            \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance()->enqueue_scripts();
             
         } else {
             
@@ -2037,7 +2037,7 @@ class PdfBuilderAdmin
     private function filterCanvasParameters($post_data)
     {
         // Utiliser la méthode du Canvas Manager pour la cohérence
-        if (class_exists('PDF_Builder\\Managers\\PDF_Builder_Canvas_Manager')) {
+        if (class_exists('PDF_Builder\Managers\PDF_Builder_Canvas_Manager')) {
             $canvas_manager = \PDF_Builder\Managers\PDF_Builder_Canvas_Manager::get_instance();
             return $canvas_manager->filter_canvas_parameters($post_data);
         }

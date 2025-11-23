@@ -1,4 +1,7 @@
 <?php
+
+namespace PDF_Builder\Utilities;
+
 /**
  * Gestionnaire unifié des notifications pour PDF Builder Pro
  *
