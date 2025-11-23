@@ -1520,8 +1520,6 @@ class PdfBuilderAdmin
      */
     public function ajaxSaveTemplateV3()
     {
-        error_log('PDF_BUILDER_DEBUG: PDF_Builder_Admin ajaxSaveTemplateV3 called');
-        
         try {
             $manager = $this->getTemplateManager();
             if ($manager) {

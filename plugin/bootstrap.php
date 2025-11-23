@@ -129,34 +129,11 @@ add_action('plugins_loaded', function() {
 
 // Intercepter les requêtes AJAX pour les templates
 add_action('wp_ajax_pdf_builder_save_template', function() {
-    error_log('PDF_BUILDER_DEBUG: Bootstrap handler called');
-    
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
-
-    // Charger les classes nécessaires
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
-    }
-
-    // Créer une instance du template manager
-    $template_manager = null;
-    if (class_exists('PDF_Builder_Pro\\Managers\\PdfBuilderTemplateManager')) {
-        $template_manager = new PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
-    }
-
-    // Exécuter directement la sauvegarde
-    if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
-        $template_manager->ajaxSaveTemplateV3();
-    } else {
-        // Fallback handler
-        pdf_builder_fallback_ajax_save_template();
-    }
-
-    // Terminer la requête pour éviter les conflits avec d'autres handlers
-    exit;
+    pdf_builder_register_essential_ajax_hooks();
 }, 1);
 
 add_action('wp_ajax_pdf_builder_load_template', function() {
@@ -164,28 +141,7 @@ add_action('wp_ajax_pdf_builder_load_template', function() {
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
-
-    // Charger les classes nécessaires
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
-    }
-
-    // Créer une instance du template manager
-    $template_manager = null;
-    if (class_exists('PDF_Builder_Pro\\Managers\\PdfBuilderTemplateManager')) {
-        $template_manager = new PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
-    }
-
-    // Exécuter directement le chargement
-    if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
-        $template_manager->ajaxLoadTemplate();
-    } else {
-        // Fallback handler
-        pdf_builder_fallback_ajax_load_template();
-    }
-
-    // Terminer la requête pour éviter les conflits avec d'autres handlers
-    exit;
+    pdf_builder_register_essential_ajax_hooks();
 }, 1);
 
 add_action('wp_ajax_pdf_builder_auto_save_template', function() {
@@ -687,7 +643,7 @@ function pdf_builder_templates_page_simple()
     echo '<div class="wrap"><h1>Templates</h1><p>Page templates en cours de développement.</p></div>';
 }
 
-// Fonction OBSOLETE - Plus utilisée car les handlers sont maintenant inline pour éviter les conflits
+// Fonction pour enregistrer les hooks AJAX essentiels
 function pdf_builder_register_essential_ajax_hooks()
 {
     // Charger les classes nécessaires pour les handlers AJAX
