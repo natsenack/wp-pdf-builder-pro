@@ -439,12 +439,28 @@ class PdfBuilderCore
      */
     public function settingsPage()
     {
-        // Vérifier les permissions - utiliser manage_options comme capacité principale
-        // DEPLOYMENT TEST: Forcer la détection de modification
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        // Vérifier les permissions - TEST: Permissions très permissives pour diagnostiquer
+        if (!is_user_logged_in()) {
+            wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
+        // Afficher les informations de debug pour diagnostiquer
+        $current_user = wp_get_current_user();
+        echo '<div class="notice notice-info" style="margin: 20px; padding: 20px; background: #f0f8ff; border: 2px solid #007cba;">';
+        echo '<h3>🔍 DIAGNOSTIC DES PERMISSIONS</h3>';
+        echo '<p><strong>User ID:</strong> ' . $current_user->ID . '</p>';
+        echo '<p><strong>Username:</strong> ' . $current_user->user_login . '</p>';
+        echo '<p><strong>Email:</strong> ' . $current_user->user_email . '</p>';
+        echo '<p><strong>Roles:</strong> ' . implode(', ', $current_user->roles) . '</p>';
+        echo '<p><strong>manage_options:</strong> ' . (current_user_can('manage_options') ? '<span style="color: green;">✅ YES</span>' : '<span style="color: red;">❌ NO</span>') . '</p>';
+        echo '<p><strong>pdf_builder_access:</strong> ' . (current_user_can('pdf_builder_access') ? '<span style="color: green;">✅ YES</span>' : '<span style="color: red;">❌ NO</span>') . '</p>';
+        echo '<p><strong>administrator:</strong> ' . (in_array('administrator', $current_user->roles) ? '<span style="color: green;">✅ YES</span>' : '<span style="color: red;">❌ NO</span>') . '</p>';
+        echo '<hr>';
+        echo '<p><strong>Si vous voyez ce message, la page fonctionne !</strong></p>';
+        echo '<p>Les permissions sont maintenant très permissives pour le diagnostic.</p>';
+        echo '</div>';
+
+        // DEPLOYMENT TEST: Forcer la détection de modification
         // Enregistrer et charger le script pour la page des paramètres comme dans PDF_Builder_Admin
         wp_register_script('pdf-builder-settings', plugins_url('templates/admin/js/pdf-builder-settings.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.0.0', true);
         wp_enqueue_script('pdf-builder-settings');
