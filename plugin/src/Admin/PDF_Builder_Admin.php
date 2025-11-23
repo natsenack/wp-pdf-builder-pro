@@ -5707,7 +5707,7 @@ class PdfBuilderAdmin
 
         // Localize script with data
         $localize_data = [
-            'nonce' => wp_create_nonce('pdf_builder_nonce'),
+            'nonce' => wp_create_nonce('pdf_builder_ajax'),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'templateId' => $template_id,
             'strings' => [
@@ -5731,6 +5731,12 @@ class PdfBuilderAdmin
 
         // Définir le nonce AJAX pour les modals de paramètres
         wp_localize_script('pdf-builder-react', 'pdf_builder_ajax', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_ajax')
+        ]);
+
+        // Localize AJAX for modals script as well
+        wp_localize_script('pdf-builder-modals', 'pdf_builder_ajax', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_ajax')
         ]);
