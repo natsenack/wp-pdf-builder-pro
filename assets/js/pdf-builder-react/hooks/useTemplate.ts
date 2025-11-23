@@ -319,6 +319,8 @@ export function useTemplate() {
   // Sauvegarder un template manuellement
   const saveTemplate = useCallback(async () => {
     console.log('[useTemplate] SAVE - Starting save process');
+    console.log('[useTemplate] SAVE - window.pdfBuilderData:', window.pdfBuilderData);
+    console.log('[useTemplate] SAVE - Current state:', { elements: state.elements.length, template: state.template });
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
@@ -326,7 +328,18 @@ export function useTemplate() {
       console.log('[useTemplate] SAVE - Template ID from URL:', templateId);
 
       if (!templateId) {
+        console.error('[useTemplate] SAVE - No template ID found');
         throw new Error('Aucun template chargé pour la sauvegarde');
+      }
+
+      if (!window.pdfBuilderData?.ajaxUrl) {
+        console.error('[useTemplate] SAVE - No AJAX URL available');
+        throw new Error('URL AJAX non disponible');
+      }
+
+      if (!window.pdfBuilderData?.nonce) {
+        console.error('[useTemplate] SAVE - No nonce available');
+        throw new Error('Nonce non disponible');
       }
 
       // ✅ NORMALISER LES ÉLÉMENTS AVANT SAUVEGARDE
