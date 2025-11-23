@@ -1440,6 +1440,33 @@ document.addEventListener('DOMContentLoaded', function() {
             lazyPluginCheckbox.checked = values.canvas_lazy_loading_plugin === '1' || values.canvas_lazy_loading_plugin === true;
         }
     }
+
+    function updateZoomModal(modal, values) {
+        // Update zoom minimum
+        const zoomMinInput = modal.querySelector('#zoom_min');
+        if (zoomMinInput && values.canvas_zoom_min !== undefined) {
+            zoomMinInput.value = values.canvas_zoom_min;
+        }
+
+        // Update zoom maximum
+        const zoomMaxInput = modal.querySelector('#zoom_max');
+        if (zoomMaxInput && values.canvas_zoom_max !== undefined) {
+            zoomMaxInput.value = values.canvas_zoom_max;
+        }
+
+        // Update zoom default
+        const zoomDefaultInput = modal.querySelector('#zoom_default');
+        if (zoomDefaultInput && values.canvas_zoom_default !== undefined) {
+            zoomDefaultInput.value = values.canvas_zoom_default;
+        }
+
+        // Update zoom step
+        const zoomStepInput = modal.querySelector('#zoom_step');
+        if (zoomStepInput && values.canvas_zoom_step !== undefined) {
+            zoomStepInput.value = values.canvas_zoom_step;
+        }
+    }
+
     function updateAutosaveModal(modal, values) {
         // Update autosave enabled
         const autosaveCheckbox = modal.querySelector('#canvas_autosave_enabled');
