@@ -129,6 +129,8 @@ add_action('plugins_loaded', function() {
 
 // Intercepter les requêtes AJAX pour les templates
 add_action('wp_ajax_pdf_builder_save_template', function() {
+    error_log('PDF_BUILDER_DEBUG: Bootstrap handler called');
+    
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
         return;

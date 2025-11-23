@@ -68,6 +68,9 @@ class PdfBuilderTemplateManager
      */
     public function ajaxSaveTemplateV3()
     {
+        // Log de débogage pour vérifier que la méthode est appelée
+        error_log('PDF_BUILDER_DEBUG: ajaxSaveTemplateV3 called');
+        
         try {
             // Log pour debug
             
