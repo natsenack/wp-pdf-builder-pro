@@ -73,7 +73,7 @@ class PdfBuilderTemplateManager
         
         try {
             // Log pour debug
-            error_log('PDF_BUILDER_DEBUG: Starting template save process');
+            error_log('PDF_BUILDER_DEBUG: Starting template save process - v2');
             
             // Write to uploads directory for guaranteed access
             $upload_dir = wp_upload_dir();
