@@ -318,10 +318,12 @@ export function useTemplate() {
 
   // Sauvegarder un template manuellement
   const saveTemplate = useCallback(async () => {
+    console.log('[useTemplate] SAVE - Starting save process');
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
       const templateId = getTemplateIdFromUrl();
+      console.log('[useTemplate] SAVE - Template ID from URL:', templateId);
 
       if (!templateId) {
         throw new Error('Aucun template chargé pour la sauvegarde');
@@ -339,6 +341,8 @@ export function useTemplate() {
         canvasHeight: canvasHeight,
         version: '1.0'
       };
+      console.log('[useTemplate] SAVE - Template data to send:', templateData);
+      
       // Log détaillé des éléments order_number
       const orderNumberElements = templateData.elements.filter((el: Record<string, unknown>) => el.type === 'order_number');
 
@@ -349,21 +353,25 @@ export function useTemplate() {
       formData.append('template_data', JSON.stringify(templateData));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
+      console.log('[useTemplate] SAVE - Sending request to:', window.pdfBuilderData?.ajaxUrl);
       const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
         method: 'POST',
         body: formData
       });
 
+      console.log('[useTemplate] SAVE - Response status:', response.status);
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
+      console.log('[useTemplate] SAVE - Server response:', result);
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors de la sauvegarde');
       }
 
+      console.log('[useTemplate] SAVE - Dispatching SAVE_TEMPLATE action');
       dispatch({
         type: 'SAVE_TEMPLATE',
         payload: {
@@ -372,6 +380,7 @@ export function useTemplate() {
         }
       });
 
+      console.log('[useTemplate] SAVE - Save completed successfully');
     } catch (error) {
       console.error('[useTemplate] SAVE - Error:', error);
       throw error;
