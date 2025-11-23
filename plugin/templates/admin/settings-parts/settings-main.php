@@ -18,9 +18,12 @@ if (class_exists('WP_PDF_Builder_Pro\Security\Role_Manager')) {
     \WP_PDF_Builder_Pro\Security\Role_Manager::check_and_block_access();
 }
 
+// Charger les styles CSS
+require_once dirname(__FILE__) . '/settings-styles.php';
+
 // Debug: Page loaded
 if (defined('WP_DEBUG') && WP_DEBUG) {
-    
+
 }
 
 // Initialize
