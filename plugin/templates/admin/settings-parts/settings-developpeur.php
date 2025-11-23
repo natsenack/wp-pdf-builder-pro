@@ -789,7 +789,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (testSuccessBtn) {
         testSuccessBtn.addEventListener('click', function() {
             if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                PDF_Builder_Notification_Manager.show_toast('✅ Test de notification de succès réussi !', 'success');
+                PDF_Builder_Notification_Manager.show_toast(' Test de notification de succès réussi !', 'success');
             } else {
                 alert('Le système de notifications n\'est pas chargé.');
             }
@@ -799,7 +799,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (testErrorBtn) {
         testErrorBtn.addEventListener('click', function() {
             if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                PDF_Builder_Notification_Manager.show_toast('❌ Test de notification d\'erreur réussi !', 'error');
+                PDF_Builder_Notification_Manager.show_toast(' Test de notification d\'erreur réussi !', 'error');
             } else {
                 alert('Le système de notifications n\'est pas chargé.');
             }
@@ -809,7 +809,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (testWarningBtn) {
         testWarningBtn.addEventListener('click', function() {
             if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                PDF_Builder_Notification_Manager.show_toast('⚠️ Test de notification d\'avertissement réussi !', 'warning');
+                PDF_Builder_Notification_Manager.show_toast(' Test de notification d\'avertissement réussi !', 'warning');
             } else {
                 alert('Le système de notifications n\'est pas chargé.');
             }
@@ -819,7 +819,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (testInfoBtn) {
         testInfoBtn.addEventListener('click', function() {
             if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                PDF_Builder_Notification_Manager.show_toast('ℹ️ Test de notification d\'information réussi !', 'info');
+                PDF_Builder_Notification_Manager.show_toast(' Test de notification d\'information réussi !', 'info');
             } else {
                 alert('Le système de notifications n\'est pas chargé.');
             }
