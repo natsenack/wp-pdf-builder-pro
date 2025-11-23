@@ -1704,6 +1704,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        console.log('🎨 Full window.pdfBuilderCanvasSettings object:', window.pdfBuilderCanvasSettings);
+
         // Get values directly from WordPress options instead of modal inputs
         // This ensures we use the saved values, not the current modal values
 
@@ -1719,14 +1721,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const borderColor = window.pdfBuilderCanvasSettings.border_color;
 
             console.log('🎨 BG Color:', bgColor, 'Border Color:', borderColor);
+            console.log('🎨 Full canvas settings for colors:', {
+                canvas_background_color: window.pdfBuilderCanvasSettings.canvas_background_color,
+                border_color: window.pdfBuilderCanvasSettings.border_color,
+                bg_option: window.pdfBuilderCanvasSettings.canvas_background_color,
+                border_option: window.pdfBuilderCanvasSettings.border_color
+            });
 
             if (bgPreview && bgColor) {
                 bgPreview.style.backgroundColor = bgColor;
                 console.log('✅ Set BG color to:', bgColor);
+            } else {
+                console.log('❌ BG preview not updated - bgColor:', bgColor, 'bgPreview:', !!bgPreview);
             }
             if (borderPreview && borderColor) {
                 borderPreview.style.backgroundColor = borderColor;
                 console.log('✅ Set border color to:', borderColor);
+            } else {
+                console.log('❌ Border preview not updated - borderColor:', borderColor, 'borderPreview:', !!borderPreview);
             }
         }
     }
