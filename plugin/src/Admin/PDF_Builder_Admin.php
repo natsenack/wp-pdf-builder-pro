@@ -302,6 +302,8 @@ class PdfBuilderAdmin
         // ✅ Note: Seulement pdf_builder_save_template - React utilise celui-ci
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajax_get_template']);
+        add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'ajax_save_canvas_settings']);
+        add_action('wp_ajax_pdf_builder_preview_image', [$this, 'ajax_preview_image']);
 
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
 // Hook pdf_builder_get_template déjà enregistré plus haut
@@ -6312,5 +6314,72 @@ class PdfBuilderAdmin
             'current_count' => self::count_user_templates(get_current_user_id()),
             'limit' => 1
         ]);
+    }
+
+    /**
+     * AJAX - Sauvegarder les paramètres canvas
+     */
+    public function ajax_save_canvas_settings()
+    {
+        try {
+            // Vérifier les permissions
+            if (!is_user_logged_in()) {
+                wp_send_json_error('Utilisateur non connecté');
+                return;
+            }
+
+            // Vérifier le nonce
+            $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+            if (!wp_verify_nonce($nonce, 'pdf_builder_nonce') &&
+                !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
+                !wp_verify_nonce($nonce, 'pdf_builder_templates')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            // Pour l'instant, on accepte juste la requête sans rien sauvegarder
+            // TODO: Implémenter la sauvegarde réelle des paramètres canvas
+            wp_send_json_success([
+                'message' => 'Paramètres canvas sauvegardés (simulation)'
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX - Générer une image de prévisualisation
+     */
+    public function ajax_preview_image()
+    {
+        try {
+            // Vérifier les permissions
+            if (!is_user_logged_in()) {
+                wp_send_json_error('Utilisateur non connecté');
+                return;
+            }
+
+            // Vérifier le nonce
+            $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+            if (!wp_verify_nonce($nonce, 'pdf_builder_nonce') &&
+                !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
+                !wp_verify_nonce($nonce, 'pdf_builder_templates')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            // Pour l'instant, retourner une réponse de succès sans générer d'image
+            // TODO: Implémenter la génération réelle d'images de prévisualisation
+            wp_send_json_success([
+                'image' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+                'format' => 'png',
+                'type' => 'preview',
+                'message' => 'Prévisualisation générée (simulation)'
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la génération: ' . $e->getMessage());
+        }
     }
 }
