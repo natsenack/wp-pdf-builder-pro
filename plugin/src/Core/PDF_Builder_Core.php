@@ -212,25 +212,24 @@ class PdfBuilderCore
                 30
             );
 
-            // DISABLED: Conflit avec PDF_Builder_Admin.php - garder seulement le système principal
-            // add_submenu_page(
-            //     'pdf-builder-pro',
-            //     __('Templates', 'pdf-builder-pro'),
-            //     __('Templates', 'pdf-builder-pro'),
-            //     'manage_options',
-            //     'pdf-builder-templates',
-            //     array($this, 'templates_page')
-            // );
+            // Pages admin - RÉACTIVÉ: Intégrer avec PDF_Builder_Admin.php
+            add_submenu_page(
+                'pdf-builder-pro',
+                __('Templates', 'pdf-builder-pro'),
+                __('Templates', 'pdf-builder-pro'),
+                'manage_options',
+                'pdf-builder-templates',
+                array($this, 'templatesPage')
+            );
 
-            // DISABLED: Conflit avec PDF_Builder_Admin.php - garder seulement le système principal
-            // add_submenu_page(
-            //     'pdf-builder-pro',
-            //     __('Settings', 'pdf-builder-pro'),
-            //     __('Settings', 'pdf-builder-pro'),
-            //     'manage_options',
-            //     'pdf-builder-settings',
-            //     array($this, 'settings_page')
-            // );
+            add_submenu_page(
+                'pdf-builder-pro',
+                __('Settings', 'pdf-builder-pro'),
+                __('Settings', 'pdf-builder-pro'),
+                'manage_options',
+                'pdf-builder-settings',
+                array($this, 'settingsPage')
+            );
         } catch (\Exception $e) {
             
         }
@@ -313,17 +312,29 @@ class PdfBuilderCore
      */
     public function templatesPage()
     {
-        ?>
-        <div class="wrap">
-            <h1><?php _e('PDF Templates', 'pdf-builder-pro'); ?></h1>
-            <p><?php _e('Manage your PDF templates.', 'pdf-builder-pro'); ?></p>
+        // Vérifier les permissions comme dans PDF_Builder_Admin
+        if (!current_user_can('pdf_builder_access') && !current_user_can('manage_options')) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
 
-            <div id="pdf-builder-templates-container">
-                <!-- Le contenu React sera chargé ici -->
-                <p><?php _e('Loading PDF Builder...', 'pdf-builder-pro'); ?></p>
+        // Inclure la page templates comme dans PDF_Builder_Admin
+        $templates_page_path = plugin_dir_path(__FILE__) . '../templates/admin/templates-page.php';
+        if (file_exists($templates_page_path)) {
+            include $templates_page_path;
+        } else {
+            // Fallback basique si le fichier n'existe pas
+            ?>
+            <div class="wrap">
+                <h1><?php _e('PDF Templates', 'pdf-builder-pro'); ?></h1>
+                <p><?php _e('Manage your PDF templates.', 'pdf-builder-pro'); ?></p>
+
+                <div id="pdf-builder-templates-container">
+                    <!-- Le contenu React sera chargé ici -->
+                    <p><?php _e('Loading PDF Builder...', 'pdf-builder-pro'); ?></p>
+                </div>
             </div>
-        </div>
-        <?php
+            <?php
+        }
     }
 
     /**
@@ -430,8 +441,34 @@ class PdfBuilderCore
      */
     public function settingsPage()
     {
+        // Vérifier les permissions comme dans PDF_Builder_Admin
+        if (!current_user_can('pdf_builder_access') && !current_user_can('manage_options')) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
+
+        // Enregistrer et charger le script pour la page des paramètres comme dans PDF_Builder_Admin
+        wp_register_script('pdf-builder-settings', plugins_url('templates/admin/js/pdf-builder-settings.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.0.0', true);
+        wp_enqueue_script('pdf-builder-settings');
+
+        // Localize AJAX for settings page
+        wp_localize_script('pdf-builder-settings', 'pdf_builder_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_ajax')
+        ));
+
+        // Charger l'API globale de l'éditeur React pour la communication avec les modals
+        $this->enqueueReactGlobalAPI();
+
         ?>
         <div class="wrap">
+        <?php
+        // Inclure la page settings comme dans PDF_Builder_Admin
+        $settings_page_path = plugin_dir_path(__FILE__) . '../templates/admin/settings-page.php';
+        if (file_exists($settings_page_path)) {
+            include $settings_page_path;
+        } else {
+            // Fallback au formulaire WordPress standard
+            ?>
             <h1><?php _e('PDF Builder Settings', 'pdf-builder-pro'); ?></h1>
             <form method="post" action="options.php">
                 <?php
@@ -440,16 +477,41 @@ class PdfBuilderCore
                 submit_button();
                 ?>
             </form>
+            <?php
+        }
+        ?>
         </div>
         <?php
     }
 
     /**
-     * Callback de la section des paramètres
+     * Charge seulement l'API globale de l'éditeur React (sans l'interface complète)
+     * Utile pour les pages qui ont besoin de communiquer avec l'éditeur
      */
-    public function settingsSectionCallback()
+    private function enqueueReactGlobalAPI()
     {
-        echo '<p>' . __('Configure PDF Builder Pro settings.', 'pdf-builder-pro') . '</p>';
+        // Charger React et ReactDOM en premier
+        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.0.0', true);
+        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
+
+        // Charger seulement l'API globale de PDF Builder React
+        $react_script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/dist/pdf-builder-react.js';
+        $cache_bust = time();
+        $version_param = $this->version . '-' . $cache_bust;
+        wp_enqueue_script('pdf-builder-react-api-only', $react_script_url, ['react', 'react-dom'], $version_param, true);
+
+        // Définir les paramètres canvas minimaux pour l'API
+        $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
+        $canvas_settings_script = "
+        window.pdfBuilderCanvasSettings = " . wp_json_encode([
+            'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
+            'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
+            'default_canvas_dpi' => $canvas_settings_js['default_canvas_dpi'] ?? 96,
+            'canvas_width' => $canvas_settings_js['canvas_width'] ?? 794,
+            'canvas_height' => $canvas_settings_js['canvas_height'] ?? 1123,
+        ]) . ";
+        ";
+        wp_add_inline_script('pdf-builder-react-api-only', $canvas_settings_script, 'before');
     }
 
     /**
