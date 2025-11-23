@@ -82,8 +82,8 @@ class PdfBuilderCore
         }
 
         // Charger la classe d'administration
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PdfBuilderAdmin.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PdfBuilderAdmin.php';
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         }
 
         // Charger le contrôleur PDF
@@ -586,7 +586,7 @@ class PdfBuilderCore
 
         // Inclure et instancier la classe d'administration
         if (!class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
-            include_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PdfBuilderAdmin.php';
+            include_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         }
 
         if (class_exists('PDF_Builder\Admin\PdfBuilderAdmin')) {
