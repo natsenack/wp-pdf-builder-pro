@@ -1111,7 +1111,7 @@ function pdf_builder_get_all_canvas_settings_handler() {
 // Hook AJAX actions - MOVED to pdf-builder-pro.php for global registration
 // add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
 // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
-// REMOVED: pdf_builder_get_canvas_settings is now handled by PDF_Builder_Admin
-add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
-add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
-add_action('wp_ajax_pdf_builder_get_all_canvas_settings', 'pdf_builder_get_all_canvas_settings_handler');
+// REMOVED: Canvas settings actions moved to PDF_Builder_Admin to avoid duplication
+// add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
+// add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
+// add_action('wp_ajax_pdf_builder_get_all_canvas_settings', 'pdf_builder_get_all_canvas_settings_handler');

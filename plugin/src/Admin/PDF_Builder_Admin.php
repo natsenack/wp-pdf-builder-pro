@@ -1062,14 +1062,15 @@ class PdfBuilderAdmin
         }
 
         // Enregistrer et charger le script pour la page des paramètres
-        wp_register_script('pdf-builder-settings', plugins_url('templates/admin/js/pdf-builder-settings.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.0.0', true);
-        wp_enqueue_script('pdf-builder-settings');
+        // REMOVED: pdf-builder-settings script was empty and unnecessary
+        // wp_register_script('pdf-builder-settings', plugins_url('templates/admin/js/pdf-builder-settings.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.0.0', true);
+        // wp_enqueue_script('pdf-builder-settings');
 
-        // Localize AJAX for settings page
-        wp_localize_script('pdf-builder-settings', 'pdf_builder_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_ajax')
-        ));
+        // Localize AJAX for settings page - REMOVED: not needed since script was removed
+        // wp_localize_script('pdf-builder-settings', 'pdf_builder_ajax', array(
+        //     'ajax_url' => admin_url('admin-ajax.php'),
+        //     'nonce' => wp_create_nonce('pdf_builder_ajax')
+        // ));
 
         // Charger l'API globale de l'éditeur React pour la communication avec les modals
         $this->enqueueReactGlobalAPI();
