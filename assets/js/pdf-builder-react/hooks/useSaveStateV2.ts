@@ -41,7 +41,7 @@ export function useSaveStateV2({
   templateId,
   elements,
   nonce,
-  autoSaveInterval = 5000,
+  autoSaveInterval = 999999999, // Désactivé temporairement pour éviter les erreurs AJAX
   onSaveStart,
   onSaveSuccess,
   onSaveError
