@@ -47,6 +47,11 @@ class PdfBuilderAdmin
     private $woocommerce_integration = null;
 
     /**
+     * Flag pour éviter l'ajout multiple du menu
+     */
+    private static $menu_added = false;
+
+    /**
      * Manager de templates prédéfinis
      */
     private $predefined_templates_manager = null;
@@ -333,6 +338,12 @@ class PdfBuilderAdmin
      */
     public function addAdminMenu()
     {
+        // Éviter l'ajout multiple du menu
+        if (self::$menu_added) {
+            return;
+        }
+        self::$menu_added = true;
+
         // Menu principal avec icône distinctive - position remontée
         add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 25);
 
