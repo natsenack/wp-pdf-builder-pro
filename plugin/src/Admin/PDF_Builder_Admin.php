@@ -9,7 +9,6 @@
 namespace PDF_Builder\Admin;
 
 // Importer les classes spécialisées
-// use PDF_Builder\Admin\Managers\TemplateManager; // REMOVED: Conflit avec PdfBuilderTemplateManager
 use PDF_Builder\Admin\Managers\SettingsManager;
 use PDF_Builder\Admin\Handlers\AjaxHandler;
 use PDF_Builder\Admin\Utils\Permissions;
@@ -75,7 +74,6 @@ class PdfBuilderAdmin
         $this->core = $core;
 
         // Initialiser les managers spécialisés
-        // $this->template_manager = new TemplateManager($this); // REMOVED: Conflit avec PdfBuilderTemplateManager
         $this->settings_manager = new SettingsManager($this);
         $this->ajax_handler = new AjaxHandler($this);
 
@@ -1045,15 +1043,6 @@ class PdfBuilderAdmin
         }
 
         // Enregistrer et charger le script pour la page des paramètres
-        // REMOVED: pdf-builder-settings script was empty and unnecessary
-        // wp_register_script('pdf-builder-settings', plugins_url('templates/admin/js/pdf-builder-settings.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.1.0', true);
-        // wp_enqueue_script('pdf-builder-settings');
-
-        // Localize AJAX for settings page - REMOVED: not needed since script was removed
-        // wp_localize_script('pdf-builder-settings', 'pdf_builder_ajax', array(
-        //     'ajax_url' => admin_url('admin-ajax.php'),
-        //     'nonce' => wp_create_nonce('pdf_builder_ajax')
-        // ));
 
         // Charger l'API globale de l'éditeur React pour la communication avec les modals
         $this->enqueueReactGlobalAPI();
