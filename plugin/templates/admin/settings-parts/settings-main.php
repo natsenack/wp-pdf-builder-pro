@@ -225,11 +225,6 @@ if (
 <div class="wrap">
     <div class="pdf-builder-header">
         <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
-        <div class="pdf-builder-actions">
-            <a href="<?php echo esc_url(home_url('/')); ?>" target="_blank" class="button button-secondary">
-                👁️ <?php _e('Visiter le site', 'pdf-builder-pro'); ?>
-            </a>
-        </div>
     </div>
 
     <?php foreach ($notices as $notice) {
