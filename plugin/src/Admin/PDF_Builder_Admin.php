@@ -5680,7 +5680,7 @@ class PdfBuilderAdmin
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
 
         // Charger le script JavaScript des modals pour l'éditeur
-        wp_enqueue_script('pdf-builder-modals', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-modals.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
+        wp_enqueue_script('pdf-builder-modals', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-modals.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
 
         // Charger les scripts de l'API Preview pour l'éditeur React
         // ✅ Use file modification time for stable cache busting
