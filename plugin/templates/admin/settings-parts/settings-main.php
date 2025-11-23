@@ -570,6 +570,39 @@ document.addEventListener('DOMContentLoaded', function() {
             rgpdStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
             rgpdStatus.style.background = isActive ? '#28a745' : '#dc3545';
         }
+
+        // Mettre à jour les indicateurs système
+        updateSystemStatusIndicators();
+    }
+
+    // Fonction pour mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Système
+    function updateSystemStatusIndicators() {
+        // Indicateur Cache & Performance
+        const cacheEnabledCheckbox = document.getElementById('general_cache_enabled');
+        const cacheStatus = document.querySelector('.cache-performance-status');
+        if (cacheEnabledCheckbox && cacheStatus) {
+            const isActive = cacheEnabledCheckbox.checked;
+            cacheStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+            cacheStatus.style.background = isActive ? '#28a745' : '#dc3545';
+        }
+
+        // Indicateur Maintenance automatique
+        const maintenanceCheckbox = document.getElementById('systeme_auto_maintenance');
+        const maintenanceStatus = document.querySelector('.maintenance-status');
+        if (maintenanceCheckbox && maintenanceStatus) {
+            const isActive = maintenanceCheckbox.checked;
+            maintenanceStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+            maintenanceStatus.style.background = isActive ? '#28a745' : '#dc3545';
+        }
+
+        // Indicateur Sauvegarde automatique
+        const backupCheckbox = document.getElementById('systeme_auto_backup');
+        const backupStatus = document.querySelector('.backup-status');
+        if (backupCheckbox && backupStatus) {
+            const isActive = backupCheckbox.checked;
+            backupStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+            backupStatus.style.background = isActive ? '#28a745' : '#dc3545';
+        }
     }
 
     // Fonction pour gérer l'activation/désactivation des contrôles RGPD
