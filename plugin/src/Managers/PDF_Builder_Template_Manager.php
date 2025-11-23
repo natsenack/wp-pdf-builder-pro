@@ -683,27 +683,51 @@ class PdfBuilderTemplateManager
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
+        // Log pour débogage
+        $log_file = WP_CONTENT_DIR . '/debug_pdf_template.log';
+        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Loading template ID: $template_id\n", FILE_APPEND);
+        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table: $table_templates\n", FILE_APPEND);
+
+        // Vérifier si la table existe
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_templates'") === $table_templates;
+        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table exists: " . ($table_exists ? 'YES' : 'NO') . "\n", FILE_APPEND);
+
+        if (!$table_exists) {
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Table does not exist\n", FILE_APPEND);
+            return false;
+        }
+
         $template = $wpdb->get_row(
             $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
             ARRAY_A
         );
 
+        file_put_contents($log_file, date('Y-m-d H:i:s') . " - SQL Result: " . ($template ? 'FOUND' : 'NOT FOUND') . "\n", FILE_APPEND);
+
         if (!$template) {
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Template not found in database\n", FILE_APPEND);
             return false;
         }
 
         $template_data_raw = $template['template_data'];
+        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Raw template data length: " . strlen($template_data_raw) . "\n", FILE_APPEND);
 
         // Vérifier si les données contiennent des backslashes (échappement PHP)
         if (strpos($template_data_raw, '\\') !== false) {
             $template_data_raw = stripslashes($template_data_raw);
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Applied stripslashes\n", FILE_APPEND);
         }
 
         $template_data = json_decode($template_data_raw, true);
-        if ($template_data === null && json_last_error() !== JSON_ERROR_NONE) {
+        $json_error = json_last_error();
+        file_put_contents($log_file, date('Y-m-d H:i:s') . " - JSON decode result: " . ($template_data === null ? 'NULL' : 'VALID') . ", Error: " . $json_error . "\n", FILE_APPEND);
+
+        if ($template_data === null && $json_error !== JSON_ERROR_NONE) {
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Invalid JSON data\n", FILE_APPEND);
             return false;
         }
 
+        file_put_contents($log_file, date('Y-m-d H:i:s') . " - SUCCESS: Template loaded successfully\n", FILE_APPEND);
         return $template_data;
     }
 
