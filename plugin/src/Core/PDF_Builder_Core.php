@@ -440,6 +440,7 @@ class PdfBuilderCore
     public function settingsPage()
     {
         // Vérifier les permissions - utiliser manage_options comme capacité principale
+        // DEPLOYMENT TEST: Forcer la détection de modification
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
