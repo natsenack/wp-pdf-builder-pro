@@ -1022,4 +1022,4 @@ function pdf_builder_get_canvas_settings_handler() {
 // add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
 // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
 add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
-add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
+// add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');

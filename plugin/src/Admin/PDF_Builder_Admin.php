@@ -5726,6 +5726,12 @@ class PdfBuilderAdmin
 
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
+        // Définir le nonce AJAX pour les modals de paramètres
+        wp_localize_script('pdf-builder-react', 'pdf_builder_ajax', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_ajax')
+        ]);
+
         // Définir les paramètres canvas pour l'éditeur React
         $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
         error_log('PDF Builder - Canvas settings loaded: ' . print_r($canvas_settings_js, true));
