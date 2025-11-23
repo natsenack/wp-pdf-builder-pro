@@ -20,7 +20,8 @@ export const useCanvasSettings = () => {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: new URLSearchParams({
-                        action: 'pdf_builder_get_canvas_settings'
+                        action: 'pdf_builder_get_canvas_settings',
+                        nonce: window.pdfBuilderData?.nonce || ''
                     })
                 });
 
