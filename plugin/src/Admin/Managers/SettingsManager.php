@@ -135,17 +135,19 @@ class SettingsManager
 
     /**
      * Ajouter la page de paramètres
+     * DISABLED: Conflit avec la page principale d'onglets
      */
     public function addSettingsPage()
     {
-        add_submenu_page(
-            'pdf-builder-admin',
-            __('Paramètres', 'pdf-builder-pro'),
-            __('Paramètres', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-settings',
-            [$this, 'renderSettingsPage']
-        );
+        // Page désactivée pour éviter le conflit avec le système d'onglets
+        // add_submenu_page(
+        //     'pdf-builder-admin',
+        //     __('Paramètres', 'pdf-builder-pro'),
+        //     __('Paramètres', 'pdf-builder-pro'),
+        //     'manage_options',
+        //     'pdf-builder-settings',
+        //     [$this, 'renderSettingsPage']
+        // );
     }
 
     /**
