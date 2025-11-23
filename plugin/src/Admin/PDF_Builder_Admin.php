@@ -6359,6 +6359,7 @@ class PdfBuilderAdmin
      */
     public function ajax_get_canvas_settings()
     {
+        error_log('PDF_BUILDER_DEBUG: ajax_get_canvas_settings called');
         // Log pour débogage
         $log_file = WP_CONTENT_DIR . '/debug_pdf_canvas.log';
         $log_data = date('Y-m-d H:i:s') . ' - AJAX GET CANVAS SETTINGS START' . "\n";

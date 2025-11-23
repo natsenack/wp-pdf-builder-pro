@@ -826,9 +826,11 @@ function pdf_builder_save_canvas_settings_handler() {
 }// Handler pour récupérer les paramètres canvas
 function pdf_builder_get_canvas_settings_handler() {
     try {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
-            send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
+        // Vérifier le nonce - utiliser le même que PDF_Builder_Admin
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce') &&
+            !wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions') &&
+            !wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+            send_ajax_response(false, 'Nonce invalide');
             return;
         }
 
@@ -1108,6 +1110,6 @@ function pdf_builder_get_all_canvas_settings_handler() {
 // add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
 // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
 // REMOVED: pdf_builder_get_canvas_settings is now handled by PDF_Builder_Admin
-// add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
-// add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
+add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
+add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
 add_action('wp_ajax_pdf_builder_get_all_canvas_settings', 'pdf_builder_get_all_canvas_settings_handler');
