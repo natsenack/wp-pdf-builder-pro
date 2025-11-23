@@ -2446,7 +2446,7 @@ class PdfBuilderAdmin
         try {
 // Charger le template de manière robuste
             if ($template_id > 0) {
-                $template_data = $this->loadTemplateRobust($template_id);
+                $template_data = $this->template_processor->loadTemplateRobust($template_id);
             } else {
             // Vérifier s'il y a un template spécifique pour le statut de la commande
                 $order_status = $order->get_status();
@@ -2454,7 +2454,7 @@ class PdfBuilderAdmin
                 $status_key = 'wc-' . $order_status;
                 if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
                     $mapped_template_id = $status_templates[$status_key];
-                    $template_data = $this->loadTemplateRobust($mapped_template_id);
+                    $template_data = $this->template_processor->loadTemplateRobust($mapped_template_id);
                 } else {
                     $template_data = $this->template_processor->getDefaultInvoiceTemplate();
                 }
@@ -3006,7 +3006,7 @@ class PdfBuilderAdmin
 
         // Load existing template data if template_id is provided
         if ($template_id > 0) {
-            $existing_template_data = $this->loadTemplateRobust($template_id);
+            $existing_template_data = $this->template_processor->loadTemplateRobust($template_id);
             if ($existing_template_data && isset($existing_template_data['elements'])) {
                 // Transformer les éléments dans le format React
                 $existing_template_data['elements'] = $this->transformElementsForReact($existing_template_data['elements']);
