@@ -75,7 +75,10 @@ $canvas_settings_js = [
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 ?>
 <script>
+// Debug: Canvas settings script loaded
+console.log('🎨 settings-canvas-params.php script loaded');
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings_js); ?>;
+console.log('✅ window.pdfBuilderCanvasSettings defined:', window.pdfBuilderCanvasSettings);
 
 // Fonction pour convertir le format et l'orientation en dimensions pixels
 window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {

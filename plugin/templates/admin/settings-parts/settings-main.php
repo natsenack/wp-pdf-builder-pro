@@ -462,6 +462,13 @@ if (
 
 
 <script>
+// Debug: Check if window.pdfBuilderCanvasSettings is available
+console.log('🔍 window.pdfBuilderCanvasSettings at script start:', window.pdfBuilderCanvasSettings);
+if (window.pdfBuilderCanvasSettings) {
+    console.log('✅ window.pdfBuilderCanvasSettings content:', window.pdfBuilderCanvasSettings);
+} else {
+    console.log('❌ window.pdfBuilderCanvasSettings is not defined');
+}
 // Update zoom card preview
 function updateZoomCardPreview() {
     // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
