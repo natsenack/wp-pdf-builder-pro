@@ -779,5 +779,51 @@ document.addEventListener('DOMContentLoaded', function() {
         // Écouter les changements
         developerEnabledToggle.addEventListener('change', toggleDeveloperSections);
     }
+
+    // Tests de Notifications
+    const testSuccessBtn = document.getElementById('test-notifications-success');
+    const testErrorBtn = document.getElementById('test-notifications-error');
+    const testWarningBtn = document.getElementById('test-notifications-warning');
+    const testInfoBtn = document.getElementById('test-notifications-info');
+
+    if (testSuccessBtn) {
+        testSuccessBtn.addEventListener('click', function() {
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('✅ Test de notification de succès réussi !', 'success');
+            } else {
+                alert('Le système de notifications n\'est pas chargé.');
+            }
+        });
+    }
+
+    if (testErrorBtn) {
+        testErrorBtn.addEventListener('click', function() {
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('❌ Test de notification d\'erreur réussi !', 'error');
+            } else {
+                alert('Le système de notifications n\'est pas chargé.');
+            }
+        });
+    }
+
+    if (testWarningBtn) {
+        testWarningBtn.addEventListener('click', function() {
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('⚠️ Test de notification d\'avertissement réussi !', 'warning');
+            } else {
+                alert('Le système de notifications n\'est pas chargé.');
+            }
+        });
+    }
+
+    if (testInfoBtn) {
+        testInfoBtn.addEventListener('click', function() {
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('ℹ️ Test de notification d\'information réussi !', 'info');
+            } else {
+                alert('Le système de notifications n\'est pas chargé.');
+            }
+        });
+    }
 });
 </script>
