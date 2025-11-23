@@ -560,6 +560,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const isActive = enableLoggingCheckbox.checked;
             securityStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
             securityStatus.style.background = isActive ? '#28a745' : '#dc3545';
+        } else {
+            console.log('Security status update: checkbox found:', !!enableLoggingCheckbox, 'status element found:', !!securityStatus);
         }
 
         // Mettre à jour l'indicateur RGPD (gdpr_enabled)
@@ -569,6 +571,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const isActive = gdprEnabledCheckbox.checked;
             rgpdStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
             rgpdStatus.style.background = isActive ? '#28a745' : '#dc3545';
+        } else {
+            console.log('RGPD status update: checkbox found:', !!gdprEnabledCheckbox, 'status element found:', !!rgpdStatus);
         }
 
         // Mettre à jour les indicateurs système
