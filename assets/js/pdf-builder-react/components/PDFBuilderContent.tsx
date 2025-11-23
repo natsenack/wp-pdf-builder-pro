@@ -38,6 +38,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
 }: PDFBuilderContentProps) {
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [isPropertiesPanelOpen, setIsPropertiesPanelOpen] = useState(false);
+  const [manualSaveSuccess, setManualSaveSuccess] = useState(false);
 
   const {
     templateName,
@@ -97,6 +98,11 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
       // Effectuer la sauvegarde manuelle
       await saveTemplate();
       console.log('[PDF_BUILDER] Manual save successful');
+      
+      // Afficher l'indicateur de succès temporaire
+      setManualSaveSuccess(true);
+      setTimeout(() => setManualSaveSuccess(false), 3000); // Disparaît après 3 secondes
+      
     } catch (manualSaveError) {
       console.error('[PDF_BUILDER] Manual save failed:', manualSaveError);
       throw manualSaveError; // Re-throw pour que l'UI montre l'erreur
@@ -114,6 +120,33 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
         progress={progress}
         showProgressBar={autoSaveState === 'saving'}
       />
+
+      {/* Indicateur de succès manuel temporaire */}
+      {manualSaveSuccess && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '50px',
+            right: '20px',
+            padding: '14px 20px',
+            background: '#4CAF50',
+            border: '2px solid #388E3C',
+            borderRadius: '6px',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#fff',
+            zIndex: 999999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            minWidth: '200px',
+            animation: 'slideIn 0.3s ease-out'
+          }}
+        >
+          <span style={{ fontSize: '16px' }}>✓</span>
+          <span>Template sauvegardé !</span>
+        </div>
+      )}
 
       <div
         className={`pdf-builder ${className || ''}`}
