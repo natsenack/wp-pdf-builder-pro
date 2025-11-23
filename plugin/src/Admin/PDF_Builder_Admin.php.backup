@@ -6350,6 +6350,39 @@ class PdfBuilderAdmin
     }
 
     /**
+     * AJAX - Récupérer les paramètres canvas
+     */
+    public function ajax_get_canvas_settings()
+    {
+        try {
+            // Vérifier les permissions
+            if (!is_user_logged_in()) {
+                wp_send_json_error('Utilisateur non connecté');
+                return;
+            }
+
+            // Vérifier le nonce
+            $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+            if (!wp_verify_nonce($nonce, 'pdf_builder_nonce') &&
+                !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
+                !wp_verify_nonce($nonce, 'pdf_builder_templates')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            // Pour l'instant, retourner des paramètres par défaut
+            // TODO: Implémenter la récupération réelle des paramètres canvas depuis la BD
+            wp_send_json_success([
+                'canvas_settings' => [
+                    'width' => 1123,
+                    'height' => 794,
+                    'unit' => 'mm',
+                    'orientation' => 'landscape'
+                ],
+                'message' => 'Paramètres canvas récupérés (simulation)'
+            ]);
+
+        } catch (Exception $e) {
             wp_send_json_error('Erreur lors de la récupération: ' . $e->getMessage());
         }
     }
