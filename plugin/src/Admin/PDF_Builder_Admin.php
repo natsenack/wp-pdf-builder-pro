@@ -5679,9 +5679,6 @@ class PdfBuilderAdmin
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
 
-        // Charger le script JavaScript des modals pour l'éditeur
-        wp_enqueue_script('pdf-builder-modals', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-modals.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
-
         // Charger les scripts de l'API Preview pour l'éditeur React
         // ✅ Use file modification time for stable cache busting
         $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.js';
@@ -5707,7 +5704,7 @@ class PdfBuilderAdmin
 
         // Localize script with data
         $localize_data = [
-            'nonce' => wp_create_nonce('pdf_builder_ajax'),
+            'nonce' => wp_create_nonce('pdf_builder_nonce'),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'templateId' => $template_id,
             'strings' => [
@@ -5728,18 +5725,6 @@ class PdfBuilderAdmin
         }
 
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
-
-        // Définir le nonce AJAX pour les modals de paramètres
-        wp_localize_script('pdf-builder-react', 'pdf_builder_ajax', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_ajax')
-        ]);
-
-        // Localize AJAX for modals script as well
-        wp_localize_script('pdf-builder-modals', 'pdf_builder_ajax', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_ajax')
-        ]);
 
         // Définir les paramètres canvas pour l'éditeur React
         $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
@@ -5815,12 +5800,6 @@ class PdfBuilderAdmin
             <div id="pdf-builder-react-editor" class="pdf-builder-react-editor" style="display: none;">
                 <div id="pdf-builder-react-root"></div>
             </div>
-
-            <?php
-            // Inclure les modals de paramètres
-            include_once plugin_dir_path(__FILE__) . '../../templates/admin/settings-parts/settings-modals.php';
-            ?>
-
         </div>
 
         <script>

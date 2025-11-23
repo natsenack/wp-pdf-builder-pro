@@ -982,16 +982,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Get AJAX config with fallbacks
                     let ajaxConfig = null;
-                    console.log('Available globals:', { pdf_builder_ajax: typeof pdf_builder_ajax, pdfBuilderAjax: typeof pdfBuilderAjax, ajaxurl: typeof ajaxurl });
                     if (typeof pdf_builder_ajax !== 'undefined') {
                         ajaxConfig = pdf_builder_ajax;
-                        console.log('Using pdf_builder_ajax:', ajaxConfig);
                     } else if (typeof pdfBuilderAjax !== 'undefined') {
                         ajaxConfig = pdfBuilderAjax;
-                        console.log('Using pdfBuilderAjax:', ajaxConfig);
                     } else if (typeof ajaxurl !== 'undefined') {
                         ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
-                        console.log('Using fallback ajaxurl:', ajaxConfig);
                     }
 
                     if (!ajaxConfig || !ajaxConfig.ajax_url) {
@@ -1056,32 +1052,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Dispatch custom event for real-time canvas updates
                             if (category === 'apparence') {
                                 console.log('🎨 Dispatching appearance settings update event');
-                                
-                                // Update window.pdfBuilderCanvasSettings with new values
-                                if (typeof window.pdfBuilderCanvasSettings !== 'undefined') {
-                                    // Get the updated values from the form
-                                    const formData = new FormData(form);
-                                    const newSettings = {};
-                                    
-                                    for (let [key, value] of formData.entries()) {
-                                        if (key === 'canvas_shadow_enabled') {
-                                            newSettings.shadow_enabled = value === '1';
-                                        } else if (key === 'canvas_border_width') {
-                                            newSettings.border_width = parseInt(value) || 1;
-                                        } else if (key === 'canvas_bg_color') {
-                                            newSettings.canvas_background_color = value;
-                                        } else if (key === 'canvas_container_bg_color') {
-                                            newSettings.container_background_color = value;
-                                        } else if (key === 'canvas_border_color') {
-                                            newSettings.border_color = value;
-                                        }
-                                    }
-                                    
-                                    // Update window object
-                                    Object.assign(window.pdfBuilderCanvasSettings, newSettings);
-                                    console.log('🔄 Updated window.pdfBuilderCanvasSettings:', newSettings);
-                                }
-                                
                                 const updateEvent = new CustomEvent('pdfBuilderCanvasSettingsUpdated', {
                                     detail: { category: 'apparence' }
                                 });
@@ -1126,20 +1096,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update canvas previews after save
     window.updateCanvasPreviews = function(category) {
-        console.log('🔄 updateCanvasPreviews called with category:', category);
-
         // Get AJAX config
         let ajaxConfig = null;
-        console.log('Available globals in updateCanvasPreviews:', { pdf_builder_ajax: typeof pdf_builder_ajax, pdfBuilderAjax: typeof pdfBuilderAjax, ajaxurl: typeof ajaxurl });
         if (typeof pdf_builder_ajax !== 'undefined') {
             ajaxConfig = pdf_builder_ajax;
-            console.log('Using pdf_builder_ajax in updateCanvasPreviews:', ajaxConfig);
         } else if (typeof pdfBuilderAjax !== 'undefined') {
             ajaxConfig = pdfBuilderAjax;
-            console.log('Using pdfBuilderAjax in updateCanvasPreviews:', ajaxConfig);
         } else if (typeof ajaxurl !== 'undefined') {
             ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
-            console.log('Using fallback ajaxurl in updateCanvasPreviews:', ajaxConfig);
         }
 
         if (!ajaxConfig || !ajaxConfig.ajax_url) {

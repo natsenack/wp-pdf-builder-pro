@@ -826,18 +826,14 @@ function pdf_builder_save_canvas_settings_handler() {
 }// Handler pour récupérer les paramètres canvas
 function pdf_builder_get_canvas_settings_handler() {
     try {
-        error_log('PDF Builder: get_canvas_settings_handler called with POST: ' . print_r($_POST, true));
-
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
-            error_log('PDF Builder: Invalid nonce in get_canvas_settings');
             send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
             return;
         }
 
         // Vérifier les permissions
-        if (!current_user_can('edit_posts')) {
-            error_log('PDF Builder: Insufficient permissions in get_canvas_settings - user does not have edit_posts');
+        if (!current_user_can('manage_options')) {
             send_ajax_response(false, 'Permissions insuffisantes.');
             return;
         }
@@ -1015,70 +1011,9 @@ function pdf_builder_get_canvas_settings_handler() {
                 return;
         }
 
-        error_log('PDF Builder: Sending response for category ' . $category . ': ' . print_r($values, true));
         send_ajax_response(true, 'Paramètres récupérés avec succès.', $values);
 
     } catch (Exception $e) {
-        error_log('PDF Builder: Exception in get_canvas_settings: ' . $e->getMessage());
-        send_ajax_response(false, 'Erreur: ' . $e->getMessage());
-    }
-}
-
-// AJAX Handler for getting template data
-function pdf_builder_get_template_handler() {
-    try {
-        error_log('PDF Builder: get_template_handler called with GET: ' . print_r($_GET, true));
-
-        // Vérifier le nonce
-        $nonce = $_GET['nonce'] ?? '';
-        if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
-            error_log('PDF Builder: Invalid nonce in get_template: ' . $nonce);
-            send_ajax_response(false, 'Nonce invalide.');
-            return;
-        }
-
-        // Vérifier les permissions
-        if (!current_user_can('edit_posts')) {
-            error_log('PDF Builder: Insufficient permissions in get_template - user does not have edit_posts');
-            send_ajax_response(false, 'Permissions insuffisantes.');
-            return;
-        }
-
-        $template_id = intval($_GET['template_id'] ?? 0);
-        if (!$template_id) {
-            send_ajax_response(false, 'ID du template requis.');
-            return;
-        }
-
-        // Load template directly from database
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
-
-        if (!$template) {
-            error_log('PDF Builder: Template not found: ' . $template_id);
-            send_ajax_response(false, 'Template non trouvé.');
-            return;
-        }
-
-        // Try to decode JSON
-        $template_data = json_decode($template['template_data'], true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('PDF Builder: JSON decode error: ' . json_last_error_msg());
-            send_ajax_response(false, 'Erreur de décodage JSON du template.');
-            return;
-        }
-
-        // Add template name if not present
-        if (isset($template['name']) && !isset($template_data['name'])) {
-            $template_data['name'] = $template['name'];
-        }
-
-        error_log('PDF Builder: Template loaded successfully: ' . $template['name']);
-        send_ajax_response(true, 'Template chargé avec succès.', $template_data);
-
-    } catch (Exception $e) {
-        error_log('PDF Builder: Exception in get_template: ' . $e->getMessage());
         send_ajax_response(false, 'Erreur: ' . $e->getMessage());
     }
 }
@@ -1087,5 +1022,4 @@ function pdf_builder_get_template_handler() {
 // add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
 // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
 add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
-// add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
-add_action('wp_ajax_pdf_builder_get_template', 'pdf_builder_get_template_handler');
+add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
