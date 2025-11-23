@@ -127,30 +127,8 @@ add_action('plugins_loaded', function() {
 // HOOKS AJAX ESSENTIELS
 // ============================================================================
 
-// Intercepter les requêtes AJAX pour les templates
-add_action('wp_ajax_pdf_builder_save_template', function() {
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-    pdf_builder_register_essential_ajax_hooks();
-}, 1);
-
-add_action('wp_ajax_pdf_builder_load_template', function() {
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-    pdf_builder_register_essential_ajax_hooks();
-}, 1);
-
-add_action('wp_ajax_pdf_builder_auto_save_template', function() {
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-    pdf_builder_register_essential_ajax_hooks();
-}, 1);
+// REMOVED: Ces hooks causaient des erreurs fatales car pdf_builder_register_essential_ajax_hooks() n'existe pas
+// Les vrais handlers sont enregistrés plus loin dans ce fichier avec le template manager
 
 // Test AJAX simple pour l'intégration du cache
 add_action('wp_ajax_pdf_builder_simple_test', function() {
