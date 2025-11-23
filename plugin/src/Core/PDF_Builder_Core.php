@@ -439,49 +439,17 @@ class PdfBuilderCore
      */
     public function settingsPage()
     {
-        // TEST SIMPLE: Page de diagnostic basique
-        echo '<div class="wrap">';
-        echo '<h1>✅ PDF Builder - Problème RÉSOLU !</h1>';
-        echo '<p><strong>Les menus sont maintenant correctement enregistrés et accessibles.</strong></p>';
-
-        $current_user = wp_get_current_user();
-        echo '<h2>Informations utilisateur :</h2>';
-        echo '<ul>';
-        echo '<li><strong>ID:</strong> ' . $current_user->ID . '</li>';
-        echo '<li><strong>Login:</strong> ' . $current_user->user_login . '</li>';
-        echo '<li><strong>Email:</strong> ' . $current_user->user_email . '</li>';
-        echo '<li><strong>Rôles:</strong> ' . implode(', ', $current_user->roles) . '</li>';
-        echo '</ul>';
-
-        echo '<h2>Permissions :</h2>';
-        echo '<ul>';
-        echo '<li><strong>is_user_logged_in():</strong> ' . (is_user_logged_in() ? '✅ OUI' : '❌ NON') . '</li>';
-        echo '<li><strong>current_user_can(\'read\'):</strong> ' . (current_user_can('read') ? '✅ OUI' : '❌ NON') . '</li>';
-        echo '<li><strong>current_user_can(\'manage_options\'):</strong> ' . (current_user_can('manage_options') ? '✅ OUI' : '❌ NON') . '</li>';
-        echo '<li><strong>current_user_can(\'pdf_builder_access\'):</strong> ' . (current_user_can('pdf_builder_access') ? '✅ OUI' : '❌ NON') . '</li>';
-        echo '</ul>';
-
-        echo '<h2>URLs maintenant disponibles :</h2>';
-        echo '<ul>';
-        echo '<li><a href="' . admin_url('admin.php?page=pdf-builder-settings') . '">📋 Settings (fonctionnel)</a></li>';
-        echo '<li><a href="' . admin_url('admin.php?page=pdf-builder-templates') . '">📄 Templates (fonctionnel)</a></li>';
-        echo '<li><a href="' . admin_url('admin.php?page=pdf-builder-pro') . '">🏠 Accueil PDF Builder</a></li>';
-        echo '</ul>';
-
-        echo '<h2>Debug Role_Manager :</h2>';
-        if (class_exists('PDF_Builder\\Security\\Role_Manager')) {
-            $rm = \PDF_Builder\Security\Role_Manager::getInstance();
-            echo '<p>Role_Manager chargé: ✅</p>';
-            echo '<pre>' . print_r($rm->getDebugInfo(), true) . '</pre>';
+        // Inclure le template principal des paramètres avec onglets
+        $template_path = PDF_BUILDER_PLUGIN_DIR . 'templates/admin/settings-parts/settings-main.php';
+        if (file_exists($template_path)) {
+            include $template_path;
         } else {
-            echo '<p>Role_Manager NON chargé: ❌</p>';
+            // Fallback si le template n'existe pas
+            echo '<div class="wrap">';
+            echo '<h1>' . __('Paramètres PDF Builder Pro', 'pdf-builder-pro') . '</h1>';
+            echo '<p>' . __('Template de paramètres introuvable.', 'pdf-builder-pro') . '</p>';
+            echo '</div>';
         }
-
-        echo '<h2>Actions disponibles :</h2>';
-        echo '<p><a href="' . admin_url('admin.php?page=pdf-builder-pro') . '" class="button button-primary">🏠 Aller à l\'accueil PDF Builder</a></p>';
-        echo '<p><a href="' . admin_url('admin.php?page=pdf-builder-templates') . '" class="button button-secondary">📋 Aller aux Templates</a></p>';
-
-        echo '</div>';
     }
 
     /**
