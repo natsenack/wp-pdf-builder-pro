@@ -1074,7 +1074,7 @@ class PdfBuilderAdmin
 
         // Enregistrer et charger le script pour la page des paramètres
         // REMOVED: pdf-builder-settings script was empty and unnecessary
-        // wp_register_script('pdf-builder-settings', plugins_url('templates/admin/js/pdf-builder-settings.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.0.0', true);
+        // wp_register_script('pdf-builder-settings', plugins_url('templates/admin/js/pdf-builder-settings.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.1.0', true);
         // wp_enqueue_script('pdf-builder-settings');
 
         // Localize AJAX for settings page - REMOVED: not needed since script was removed
