@@ -1381,10 +1381,103 @@ document.addEventListener('DOMContentLoaded', function() {
         // Note: Real-time preview updates have been removed.
         // Previews now only update after successful save operations.
     }
-    function updateExportModal(modal, values) { /* TODO */ }
-    function updatePerformanceModal(modal, values) { /* TODO */ }
-    function updateAutosaveModal(modal, values) { /* TODO */ }
-    function updateDebugModal(modal, values) { /* TODO */ }
+    function updateExportModal(modal, values) {
+        // Update export format
+        const formatSelect = modal.querySelector('#canvas_export_format');
+        if (formatSelect && values.canvas_export_format) {
+            formatSelect.value = values.canvas_export_format;
+        }
+
+        // Update export quality
+        const qualityInput = modal.querySelector('#canvas_export_quality');
+        if (qualityInput && values.canvas_export_quality !== undefined) {
+            qualityInput.value = values.canvas_export_quality;
+        }
+
+        // Update transparent background checkbox
+        const transparentCheckbox = modal.querySelector('#canvas_export_transparent');
+        if (transparentCheckbox) {
+            transparentCheckbox.checked = values.canvas_export_transparent === '1' || values.canvas_export_transparent === true;
+        }
+    }
+    function updatePerformanceModal(modal, values) {
+        // Update FPS target
+        const fpsSelect = modal.querySelector('#canvas_fps_target');
+        if (fpsSelect && values.canvas_fps_target) {
+            fpsSelect.value = values.canvas_fps_target;
+        }
+
+        // Update memory limits
+        const memoryJsSelect = modal.querySelector('#canvas_memory_limit_js');
+        if (memoryJsSelect && values.canvas_memory_limit_js) {
+            memoryJsSelect.value = values.canvas_memory_limit_js;
+        }
+
+        const memoryPhpSelect = modal.querySelector('#canvas_memory_limit_php');
+        if (memoryPhpSelect && values.canvas_memory_limit_php) {
+            memoryPhpSelect.value = values.canvas_memory_limit_php;
+        }
+
+        // Update timeout
+        const timeoutSelect = modal.querySelector('#canvas_response_timeout');
+        if (timeoutSelect && values.canvas_response_timeout) {
+            timeoutSelect.value = values.canvas_response_timeout;
+        }
+
+        // Update checkboxes
+        const lazyEditorCheckbox = modal.querySelector('#canvas_lazy_loading_editor');
+        if (lazyEditorCheckbox) {
+            lazyEditorCheckbox.checked = values.canvas_lazy_loading_editor === '1' || values.canvas_lazy_loading_editor === true;
+        }
+
+        const preloadCheckbox = modal.querySelector('#canvas_preload_critical');
+        if (preloadCheckbox) {
+            preloadCheckbox.checked = values.canvas_preload_critical === '1' || values.canvas_preload_critical === true;
+        }
+
+        const lazyPluginCheckbox = modal.querySelector('#canvas_lazy_loading_plugin');
+        if (lazyPluginCheckbox) {
+            lazyPluginCheckbox.checked = values.canvas_lazy_loading_plugin === '1' || values.canvas_lazy_loading_plugin === true;
+        }
+    }
+    function updateAutosaveModal(modal, values) {
+        // Update autosave enabled
+        const autosaveCheckbox = modal.querySelector('#canvas_autosave_enabled');
+        if (autosaveCheckbox) {
+            autosaveCheckbox.checked = values.canvas_autosave_enabled === '1' || values.canvas_autosave_enabled === true;
+        }
+
+        // Update autosave interval
+        const intervalInput = modal.querySelector('#canvas_autosave_interval');
+        if (intervalInput && values.canvas_autosave_interval !== undefined) {
+            intervalInput.value = values.canvas_autosave_interval;
+        }
+
+        // Update history enabled
+        const historyCheckbox = modal.querySelector('#canvas_history_enabled');
+        if (historyCheckbox) {
+            historyCheckbox.checked = values.canvas_history_enabled === '1' || values.canvas_history_enabled === true;
+        }
+    }
+    function updateDebugModal(modal, values) {
+        // Update debug enabled
+        const debugCheckbox = modal.querySelector('#canvas_debug_enabled');
+        if (debugCheckbox) {
+            debugCheckbox.checked = values.canvas_debug_enabled === '1' || values.canvas_debug_enabled === true;
+        }
+
+        // Update performance monitoring
+        const perfCheckbox = modal.querySelector('#canvas_performance_monitoring');
+        if (perfCheckbox) {
+            perfCheckbox.checked = values.canvas_performance_monitoring === '1' || values.canvas_performance_monitoring === true;
+        }
+
+        // Update error reporting
+        const errorCheckbox = modal.querySelector('#canvas_error_reporting');
+        if (errorCheckbox) {
+            errorCheckbox.checked = values.canvas_error_reporting === '1' || values.canvas_error_reporting === true;
+        }
+    }
 
     // Update dimensions modal values
     function updateDimensionsModal(modal, values) {
