@@ -5679,13 +5679,8 @@ class PdfBuilderAdmin
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
 
-        // Charger les scripts des modals de paramètres pour l'éditeur
-        wp_enqueue_script('pdf-builder-settings-main', plugins_url('templates/admin/settings-parts/settings-main.php', dirname(__FILE__, 2)), ['jquery'], PDF_BUILDER_PRO_VERSION, true);
-        wp_enqueue_script('pdf-builder-settings-modals', plugins_url('templates/admin/settings-parts/settings-modals.php', dirname(__FILE__, 2)), ['jquery'], PDF_BUILDER_PRO_VERSION, true);
-        
-        // Charger les styles CSS des modals
-        wp_enqueue_style('pdf-builder-settings-styles', plugins_url('templates/admin/settings-parts/settings-styles.php', dirname(__FILE__, 2)), [], PDF_BUILDER_PRO_VERSION);
-        wp_enqueue_style('pdf-builder-settings-css', plugins_url('templates/admin/settings-parts/settings.css', dirname(__FILE__, 2)), [], PDF_BUILDER_PRO_VERSION);
+        // Charger le script JavaScript des modals pour l'éditeur
+        wp_enqueue_script('pdf-builder-modals', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-modals.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
 
         // Charger les scripts de l'API Preview pour l'éditeur React
         // ✅ Use file modification time for stable cache busting
