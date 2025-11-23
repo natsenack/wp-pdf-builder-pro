@@ -205,8 +205,9 @@ function pdf_builder_register_ajax_handlers() {
     // Settings handlers from settings-ajax.php
     add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
     add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
-    add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
-    add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
+    // REMOVED: pdf_builder_save_canvas_settings and pdf_builder_get_canvas_settings are now handled by PDF_Builder_Admin
+    // add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
+    // add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
 
     // Test AJAX handler
     add_action('wp_ajax_test_ajax', 'pdf_builder_test_ajax_handler');
