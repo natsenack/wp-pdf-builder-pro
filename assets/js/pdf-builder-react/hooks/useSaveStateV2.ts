@@ -163,7 +163,7 @@ export function useSaveStateV2({
           'X-Requested-With': 'XMLHttpRequest'
         },
         body: new URLSearchParams({
-          'action': 'pdf_builder_auto_save_template',
+          'action': 'pdf_builder_save_template',
           'nonce': nonce,
           'template_id': templateId.toString(),
           'elements': JSON.stringify(cleanElements)
