@@ -1247,10 +1247,19 @@ class PdfBuilderAdmin
 
         // Charger le script JavaScript pour la page de paramètres
         if ($hook === 'pdf-builder_page_pdf-builder-settings') {
+            // Charger le système de notifications unifié
+            wp_enqueue_script(
+                'pdf-builder-notifications',
+                PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js',
+                ['jquery'],
+                PDF_BUILDER_PRO_VERSION . '-' . time(),
+                true
+            );
+
             wp_enqueue_script(
                 'pdf-builder-settings-page',
                 plugins_url('templates/admin/js/settings-page.js', PDF_BUILDER_PLUGIN_FILE),
-                ['jquery'],
+                ['jquery', 'pdf-builder-notifications'],
                 PDF_BUILDER_PRO_VERSION . '-' . time(),
                 true
             );

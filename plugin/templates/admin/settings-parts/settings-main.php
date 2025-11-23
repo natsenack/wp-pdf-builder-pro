@@ -1108,11 +1108,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
 
                             // Afficher notification de succès
-                            showNotification('Paramètres sauvegardés avec succès !', 'success');
-                        } else {
+                            if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
+                                window.pdfBuilderNotifications.showToast('Paramètres sauvegardés avec succès !', 'success', 4000);
+                            } else if (window.PDF_Builder_Notification_Manager) {
+                                window.PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success', 4000);
+                            }
                             // Erreur de sauvegarde - afficher notification d'erreur
                             const errorMessage = data.data?.message || 'Erreur inconnue lors de la sauvegarde';
-                            showNotification('Erreur de sauvegarde: ' + errorMessage, 'error');
+                            if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
+                                window.pdfBuilderNotifications.showToast('Erreur de sauvegarde: ' + errorMessage, 'error', 6000);
+                            } else if (window.PDF_Builder_Notification_Manager) {
+                                window.PDF_Builder_Notification_Manager.show_toast('Erreur de sauvegarde: ' + errorMessage, 'error', 6000);
+                            }
                             throw new Error(errorMessage);
                         }
                     })
@@ -1123,9 +1130,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.disabled = false;
 
                         if (error.name === 'AbortError') {
-                            showNotification('Erreur: Timeout de la requête (30 secondes)', 'error');
+                            if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
+                                window.pdfBuilderNotifications.showToast('Erreur: Timeout de la requête (30 secondes)', 'error', 6000);
+                            } else if (window.PDF_Builder_Notification_Manager) {
+                                window.PDF_Builder_Notification_Manager.show_toast('Erreur: Timeout de la requête (30 secondes)', 'error', 6000);
+                            }
                         } else {
-                            showNotification('Erreur lors de la sauvegarde: ' + error.message, 'error');
+                            if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
+                                window.pdfBuilderNotifications.showToast('Erreur lors de la sauvegarde: ' + error.message, 'error', 6000);
+                            } else if (window.PDF_Builder_Notification_Manager) {
+                                window.PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + error.message, 'error', 6000);
+                            }
                         }
                     });
                 });
@@ -1146,83 +1161,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to show notifications
-    function showNotification(message, type = 'success') {
-        // Remove any existing notifications
-        const existingNotifications = document.querySelectorAll('.pdf-builder-notification');
-        existingNotifications.forEach(notification => notification.remove());
-
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = `pdf-builder-notification ${type}`;
-        notification.innerHTML = `
-            <div class="notification-content">
-                <span class="notification-icon">${type === 'success' ? '✅' : '❌'}</span>
-                <span class="notification-message">${message}</span>
-                <button class="notification-close">&times;</button>
-            </div>
-        `;
-
-        // Add styles
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            min-width: 300px;
-            max-width: 500px;
-            padding: 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 14px;
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: all 0.3s ease;
-        `;
-
-        // Set colors based on type
-        if (type === 'success') {
-            notification.style.backgroundColor = '#d4edda';
-            notification.style.border = '1px solid #c3e6cb';
-            notification.style.color = '#155724';
-        } else {
-            notification.style.backgroundColor = '#f8d7da';
-            notification.style.border = '1px solid #f5c6cb';
-            notification.style.color = '#721c24';
-        }
-
-        // Add to page
-        document.body.appendChild(notification);
-
-        // Add close button functionality
-        const closeButton = notification.querySelector('.notification-close');
-        closeButton.addEventListener('click', function() {
-            hideNotification(notification);
-        });
-
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            hideNotification(notification);
-        }, 5000);
-
-        // Show notification with animation
-        setTimeout(() => {
-            notification.style.opacity = '1';
-            notification.style.transform = 'translateY(0)';
-        }, 10);
-
-        function hideNotification(notification) {
-            notification.style.opacity = '0';
-            notification.style.transform = 'translateY(-20px)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }
-    }
-        
     // Function to update window.pdfBuilderCanvasSettings after save
     function updateWindowCanvasSettings() {
         // Get AJAX config
