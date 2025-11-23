@@ -1705,6 +1705,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update apparence card preview
     function updateApparenceCardPreview() {
+        console.log('updateApparenceCardPreview called');
+        console.log('window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+
         // Get values directly from WordPress options instead of modal inputs
         // This ensures we use the saved values, not the current modal values
 
@@ -1712,14 +1715,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
         const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
 
+        console.log('bgPreview element:', bgPreview);
+        console.log('borderPreview element:', borderPreview);
+
         // Use the global settings object that should be updated after save
         if (window.pdfBuilderCanvasSettings) {
+            console.log('canvas_background_color:', window.pdfBuilderCanvasSettings.canvas_background_color);
+            console.log('border_color:', window.pdfBuilderCanvasSettings.border_color);
+
             if (bgPreview && window.pdfBuilderCanvasSettings.canvas_background_color) {
                 bgPreview.style.backgroundColor = window.pdfBuilderCanvasSettings.canvas_background_color;
+                console.log('Set bg color to:', window.pdfBuilderCanvasSettings.canvas_background_color);
             }
             if (borderPreview && window.pdfBuilderCanvasSettings.border_color) {
                 borderPreview.style.backgroundColor = window.pdfBuilderCanvasSettings.border_color;
+                console.log('Set border color to:', window.pdfBuilderCanvasSettings.border_color);
             }
+        } else {
+            console.log('window.pdfBuilderCanvasSettings is not defined');
         }
     }
 
