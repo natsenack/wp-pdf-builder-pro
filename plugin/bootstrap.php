@@ -582,26 +582,27 @@ function pdf_builder_load_bootstrap()
     define('PDF_BUILDER_BOOTSTRAP_LOADED', true);
 }
 
-// Fonction simple pour enregistrer le menu admin
+// Fonction simple pour enregistrer le menu admin - DISABLED: Conflit avec PDF_Builder_Admin.php
 function pdf_builder_register_admin_menu_simple()
 {
-    add_menu_page(
-        'PDF Builder Pro',
-        'PDF Builder',
-        'read',
-        'pdf-builder-pro',
-        'pdf_builder_admin_page_simple',
-        'dashicons-pdf',
-        30
-    );
-    add_submenu_page(
-        'pdf-builder-pro',
-        __('Templates', 'pdf-builder-pro'),
-        __('Templates', 'pdf-builder-pro'),
-        'read',
-        'pdf-builder-templates',
-        'pdf_builder_templates_page_simple'
-    );
+    // DISABLED: Garder seulement le système principal PDF_Builder_Admin.php
+    // add_menu_page(
+    //     'PDF Builder Pro',
+    //     'PDF Builder',
+    //     'read',
+    //     'pdf-builder-pro',
+    //     'pdf_builder_admin_page_simple',
+    //     'dashicons-pdf',
+    //     30
+    // );
+    // add_submenu_page(
+    //     'pdf-builder-pro',
+    //     __('Templates', 'pdf-builder-pro'),
+    //     __('Templates', 'pdf-builder-pro'),
+    //     'read',
+    //     'pdf-builder-templates',
+    //     'pdf_builder_templates_page_simple'
+    // );
 }
 
 // Callbacks simples
@@ -637,7 +638,9 @@ function pdf_builder_register_essential_ajax_hooks()
         $template_manager = new PDF_Builder_Pro\Managers\PdfBuilderTemplateManager();
     }
 
-    // Enregistrer les hooks AJAX essentiels
+    // Enregistrer les hooks AJAX essentiels - DISABLED: Conflit avec AjaxHandler.php
+    // Garder seulement le système principal AjaxHandler.php
+    /*
     add_action('wp_ajax_pdf_builder_save_template', function() use ($template_manager) {
         error_log('PDF_BUILDER_DEBUG: Bootstrap save handler called');
         if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
@@ -676,6 +679,7 @@ function pdf_builder_register_essential_ajax_hooks()
             pdf_builder_fallback_ajax_auto_save_template();
         }
     });
+    */
 }
 
 // Fonction de chargement différé (maintenant vide car les hooks sont enregistrés au bootstrap)
@@ -684,7 +688,8 @@ function pdf_builder_load_core_when_needed()
     // Les hooks essentiels sont déjà enregistrés dans pdf_builder_load_bootstrap()
 }
 
-// Handlers AJAX de fallback
+// Handlers AJAX de fallback - DISABLED: Plus utilisés après désactivation des actions AJAX
+/*
 function pdf_builder_fallback_ajax_save_template()
 {
     // Vérifications de base
@@ -774,6 +779,7 @@ function pdf_builder_fallback_ajax_auto_save_template()
     // Même logique que save_template mais pour l'auto-save
     pdf_builder_fallback_ajax_save_template();
 }
+*/
 
 // Chargement différé du core
 function pdf_builder_load_core_on_demand()

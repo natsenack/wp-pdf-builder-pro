@@ -9,7 +9,7 @@
 namespace PDF_Builder\Admin;
 
 // Importer les classes spécialisées
-use PDF_Builder\Admin\Managers\TemplateManager;
+// use PDF_Builder\Admin\Managers\TemplateManager; // REMOVED: Conflit avec PdfBuilderTemplateManager
 use PDF_Builder\Admin\Managers\SettingsManager;
 use PDF_Builder\Admin\Handlers\AjaxHandler;
 use PDF_Builder\Admin\Utils\Permissions;
@@ -70,7 +70,7 @@ class PdfBuilderAdmin
         $this->core = $core;
 
         // Initialiser les managers spécialisés
-        $this->template_manager = new TemplateManager($this);
+        // $this->template_manager = new TemplateManager($this); // REMOVED: Conflit avec PdfBuilderTemplateManager
         $this->settings_manager = new SettingsManager($this);
         $this->ajax_handler = new AjaxHandler($this);
 

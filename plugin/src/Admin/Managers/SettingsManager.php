@@ -33,9 +33,8 @@ class SettingsManager
      */
     private function registerHooks()
     {
-        // Hooks pour les paramètres
+        // Hooks pour les paramètres - seulement l'enregistrement, pas la page
         add_action('admin_init', [$this, 'registerSettings']);
-        add_action('admin_menu', [$this, 'addSettingsPage']);
     }
 
     /**
@@ -133,43 +132,7 @@ class SettingsManager
         }
     }
 
-    /**
-     * Ajouter la page de paramètres
-     * DISABLED: Conflit avec la page principale d'onglets
-     */
-    public function addSettingsPage()
-    {
-        // Page désactivée pour éviter le conflit avec le système d'onglets
-        // add_submenu_page(
-        //     'pdf-builder-admin',
-        //     __('Paramètres', 'pdf-builder-pro'),
-        //     __('Paramètres', 'pdf-builder-pro'),
-        //     'manage_options',
-        //     'pdf-builder-settings',
-        //     [$this, 'renderSettingsPage']
-        // );
-    }
 
-    /**
-     * Rendre la page de paramètres
-     */
-    public function renderSettingsPage()
-    {
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.'));
-        }
-
-        echo '<div class="wrap">';
-        echo '<h1>' . __('Paramètres PDF Builder Pro', 'pdf-builder-pro') . '</h1>';
-
-        echo '<form method="post" action="options.php">';
-        settings_fields('pdf_builder_settings');
-        do_settings_sections('pdf_builder_settings');
-        submit_button();
-        echo '</form>';
-
-        echo '</div>';
-    }
 
     /**
      * Section générale

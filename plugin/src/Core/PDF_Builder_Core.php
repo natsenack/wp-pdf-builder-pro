@@ -212,23 +212,25 @@ class PdfBuilderCore
                 30
             );
 
-            add_submenu_page(
-                'pdf-builder-pro',
-                __('Templates', 'pdf-builder-pro'),
-                __('Templates', 'pdf-builder-pro'),
-                'manage_options',
-                'pdf-builder-templates',
-                array($this, 'templates_page')
-            );
+            // DISABLED: Conflit avec PDF_Builder_Admin.php - garder seulement le système principal
+            // add_submenu_page(
+            //     'pdf-builder-pro',
+            //     __('Templates', 'pdf-builder-pro'),
+            //     __('Templates', 'pdf-builder-pro'),
+            //     'manage_options',
+            //     'pdf-builder-templates',
+            //     array($this, 'templates_page')
+            // );
 
-            add_submenu_page(
-                'pdf-builder-pro',
-                __('Settings', 'pdf-builder-pro'),
-                __('Settings', 'pdf-builder-pro'),
-                'manage_options',
-                'pdf-builder-settings',
-                array($this, 'settings_page')
-            );
+            // DISABLED: Conflit avec PDF_Builder_Admin.php - garder seulement le système principal
+            // add_submenu_page(
+            //     'pdf-builder-pro',
+            //     __('Settings', 'pdf-builder-pro'),
+            //     __('Settings', 'pdf-builder-pro'),
+            //     'manage_options',
+            //     'pdf-builder-settings',
+            //     array($this, 'settings_page')
+            // );
         } catch (\Exception $e) {
             
         }

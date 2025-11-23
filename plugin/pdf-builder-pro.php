@@ -202,9 +202,9 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
-    // Settings handlers from settings-ajax.php
-    add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
-    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
+    // Settings handlers from settings-ajax.php - DISABLED: Conflit avec AjaxHandler.php
+    // add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
+    // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
     // REMOVED: pdf_builder_save_canvas_settings and pdf_builder_get_canvas_settings are now handled by PDF_Builder_Admin
     // add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
     // add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
