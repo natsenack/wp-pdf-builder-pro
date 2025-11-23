@@ -373,12 +373,10 @@ class PdfBuilderCore
         // Récupérer les logs récents depuis la base de données
         $table_name = $wpdb->prefix . 'pdf_builder_logs';
         $recent_logs = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT * FROM {$table_name}
-                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-                 ORDER BY created_at DESC
-                 LIMIT 50"
-            )
+            "SELECT * FROM {$table_name}
+             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+             ORDER BY created_at DESC
+             LIMIT 50"
         );
 
         ?>

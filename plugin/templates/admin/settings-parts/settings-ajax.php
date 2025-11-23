@@ -823,7 +823,9 @@ function pdf_builder_save_canvas_settings_handler() {
     } else {
         send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
     }
-}// Handler pour récupérer les paramètres canvas
+}
+
+// Handler pour récupérer les paramètres canvas
 function pdf_builder_get_canvas_settings_handler() {
     try {
         // Vérifier le nonce - utiliser le même que PDF_Builder_Admin
