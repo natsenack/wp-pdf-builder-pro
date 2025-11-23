@@ -465,6 +465,38 @@
                 <p style="margin-top: 5px;"><strong>Échéance :</strong> <span style="color: #dc3545; font-weight: bold;">Janvier 2026</span></p>
             </div>
 
+            <div style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <h4 style="color: #0d47a1; margin-top: 0;">🖼️ Menu "Galerie" - À CACHER EN PRODUCTION</h4>
+                <p style="margin-bottom: 15px;"><strong>Statut :</strong> <span style="color: #2196f3; font-weight: bold;">NOTE POUR RELEASE FINALE</span></p>
+
+                <div style="background: #f8f9fa; border-left: 4px solid #2196f3; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #0d47a1;">📍 Localisation :</h5>
+                    <ul style="margin-bottom: 0;">
+                        <li><strong>Fichier :</strong> <code>templates/admin/predefined-templates-manager.php</code></li>
+                        <li><strong>Ligne :</strong> 46 - Fonction <code>add_submenu_page()</code></li>
+                        <li><strong>Slug :</strong> <code>pdf-builder-predefined-templates</code></li>
+                        <li><strong>Label :</strong> <code>🖼️ Galerie</code></li>
+                    </ul>
+                </div>
+
+                <div style="background: #f8f9fa; border-left: 4px solid #4caf50; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #2e7d32;">🎯 Action requise :</h5>
+                    <p style="margin-bottom: 0;"><strong>Cacher le menu "Galerie" du menu admin WordPress</strong> car il est exclusivement destiné au développeur pour gérer les modèles prédéfinis du système.</p>
+                </div>
+
+                <div style="background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin: 15px 0;">
+                    <h5 style="margin-top: 0; color: #e65100;">💡 Solution proposée :</h5>
+                    <ul style="margin-bottom: 0;">
+                        <li>Ajouter une condition <code>if (WP_DEBUG)</code> autour de l'appel <code>add_submenu_page()</code></li>
+                        <li>Ou utiliser un filtre/capability personnalisé pour les développeurs uniquement</li>
+                        <li>Ou commenter/supprimer complètement la ligne</li>
+                    </ul>
+                </div>
+
+                <p style="margin-top: 15px;"><strong>Priorité :</strong> <span style="color: #ff9800; font-weight: bold;">FAIBLE</span> - Amélioration UX pour utilisateurs finaux</p>
+                <p style="margin-top: 5px;"><strong>Action :</strong> <span style="color: #2196f3; font-weight: bold;">À FAIRE AVANT RELEASE FINALE</span></p>
+            </div>
+
                 </div>
             </div>
 
