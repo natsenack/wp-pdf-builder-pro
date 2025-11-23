@@ -14,7 +14,10 @@ export const useCanvasSettings = () => {
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
+                const ajaxUrl = window.pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+                console.log('[useCanvasSettings] Fetching settings from:', ajaxUrl);
+
+                const response = await fetch(ajaxUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -26,6 +29,8 @@ export const useCanvasSettings = () => {
                 });
 
                 const data = await response.json();
+                console.log('[useCanvasSettings] Raw AJAX response:', data);
+
                 if (data.success && data.data) {
                     window.pdfBuilderCanvasSettings = {
                         ...window.pdfBuilderCanvasSettings,
