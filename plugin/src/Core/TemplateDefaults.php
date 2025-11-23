@@ -111,9 +111,9 @@ class TemplateDefaults {
                     update_post_meta($post_id, '_pdf_template_category', $template_data['category']);
 
                     // Log de création
-                    error_log("PDF Builder: Template par défaut '$key' créé pour utilisateur $user_id (post_id: $post_id)");
+                    
                 } else {
-                    error_log("PDF Builder: Erreur création template '$key' pour utilisateur $user_id: " . print_r($post_id, true));
+                    
                 }
             }
         }

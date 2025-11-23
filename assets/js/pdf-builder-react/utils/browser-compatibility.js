@@ -74,7 +74,7 @@ try {
 // Test de fetch API
 if (typeof fetch !== 'undefined') {
   fetch(window.location.href, { method: 'HEAD' })
-    .then(() => console.log('✅ Fetch API fonctionne'))
+    .then(() => {})
     .catch(e => console.error('❌ Fetch API ne fonctionne pas:', e));
 }
 

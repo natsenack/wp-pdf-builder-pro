@@ -156,17 +156,17 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
     const windowSettings = window.pdfBuilderCanvasSettings;
     
     // Debug: Check if window settings exist - FORCE LOG
-    console.log('=== PDF BUILDER DEBUG ===');
-    console.log('window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
+    
+    
     if (typeof window !== 'undefined' && window.pdfBuilderCanvasSettings) {
-      console.log('window.pdfBuilderCanvasSettings content:', window.pdfBuilderCanvasSettings);
-      console.log('canvas_selection_mode in window settings:', window.pdfBuilderCanvasSettings.canvas_selection_mode);
+      
+      
     } else {
-      console.log('window.pdfBuilderCanvasSettings is undefined or null');
+      
     }
     
     if (!windowSettings) {
-      console.log('🔍 No window settings found, using defaults');
+      
       return {
         ...DEFAULT_SETTINGS,
         isLoading: false,
@@ -257,12 +257,12 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       refreshSettings: () => {}
     };
 
-    console.log('[CanvasSettings] Loaded dimensions:', newSettings.canvasWidth, 'x', newSettings.canvasHeight, 'orientation:', newSettings.canvasOrientation);
-    console.log('🔍 Mapped settings:', newSettings);
+    
+    
     return newSettings;
   } catch (_err) {
     const errorMsg = _err instanceof Error ? _err.message : 'Unknown error';
-    console.log('🔍 Error loading settings:', errorMsg);
+    
     return {
       ...DEFAULT_SETTINGS,
       isLoading: false,
@@ -275,10 +275,10 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
 
 export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps) {
   const [settings, setSettings] = useState<CanvasSettingsContextType>(() => {
-    console.log('🔍 CanvasSettingsProvider initializing...');
+    
     // Try to load from window object first
     const windowSettings = loadSettingsFromWindowObj();
-    console.log('🔍 Initial settings loaded:', windowSettings.canvasSelectionMode);
+    
     return windowSettings;
   });
 
@@ -298,19 +298,12 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   // Listen for settings update events
   useEffect(() => {
     const handleSettingsUpdate = () => {
-      console.log('🎨 Settings update event received, refreshing canvas settings...');
-      console.log('📊 Current window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+      
+      
       const windowSettings = loadSettingsFromWindowObj();
-      console.log('🔄 New settings loaded:', windowSettings);
-      console.log('🎨 Appearance values:', {
-        canvasBackgroundColor: windowSettings.canvasBackgroundColor,
-        containerBackgroundColor: windowSettings.containerBackgroundColor,
-        borderColor: windowSettings.borderColor,
-        borderWidth: windowSettings.borderWidth,
-        shadowEnabled: windowSettings.shadowEnabled
-      });
+      
       setSettings(windowSettings);
-      console.log('✅ Canvas settings updated in context');
+      
     };
     window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
     return () => window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);

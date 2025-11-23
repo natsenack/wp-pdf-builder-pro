@@ -764,12 +764,12 @@ class PreviewImageAPI
 
             // Log pour debug
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log("PreviewImageAPI: Cleaned up $deleted_count expired cache files");
+                
             }
 
         } catch (\Exception $e) {
             // Log l'erreur mais ne pas interrompre l'exécution
-            error_log("PreviewImageAPI cleanup_cache error: " . $e->getMessage());
+            
         }
     }
 }

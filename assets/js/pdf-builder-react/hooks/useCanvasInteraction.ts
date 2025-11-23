@@ -25,9 +25,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   const canvasSettings = useCanvasSettings();
   const selectionMode = canvasSettings.canvasSelectionMode;
 
-  // Debug: Log selection mode
-  console.log('🔍 useCanvasInteraction - selectionMode:', selectionMode);
-
   // État pour déclencher le re-rendu du canvas pendant la sélection
   const [selectionUpdateTrigger, setSelectionUpdateTrigger] = useState(0);
 

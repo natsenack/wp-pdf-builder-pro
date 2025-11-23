@@ -95,7 +95,7 @@ class Role_Manager
         }
 
         update_option('pdf_builder_allowed_roles', $roles);
-        error_log('[PDF Builder] Role Manager: Allowed roles updated to: ' . implode(', ', $roles));
+        
     }
 
     /**

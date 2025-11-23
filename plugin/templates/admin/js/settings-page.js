@@ -211,7 +211,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
-                console.log('Erreur lors de la mise à jour des métriques:', error);
+                
             }
         });
     }

@@ -133,13 +133,13 @@ class PdfBuilderCore
             // Obtenir le répertoire d'upload WordPress
             $upload_dir = wp_upload_dir();
             if (isset($upload_dir['error']) && $upload_dir['error']) {
-                error_log('PDF Builder: Upload directory error: ' . $upload_dir['error']);
+                
                 return;
             }
 
             $base_dir = $upload_dir['basedir'];
             if (empty($base_dir) || !is_writable($base_dir)) {
-                error_log('PDF Builder: Upload directory not writable: ' . $base_dir);
+                
                 return;
             }
 
@@ -174,7 +174,7 @@ class PdfBuilderCore
                 }
             }
         } catch (\Exception $e) {
-            error_log('PDF Builder: Error in initialize_directories: ' . $e->getMessage());
+            
         }
     }
 
@@ -230,7 +230,7 @@ class PdfBuilderCore
                 array($this, 'settings_page')
             );
         } catch (\Exception $e) {
-            error_log('PDF Builder Core: Error in register_admin_menu: ' . $e->getMessage());
+            
         }
     }
 

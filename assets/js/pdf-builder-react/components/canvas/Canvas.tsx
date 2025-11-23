@@ -1195,13 +1195,6 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // Force re-render when canvas settings change
   const [, forceUpdate] = useState({});
   useEffect(() => {
-    console.log('🔄 Canvas settings changed, forcing re-render:', {
-      canvasBackgroundColor: canvasSettings.canvasBackgroundColor,
-      containerBackgroundColor: canvasSettings.containerBackgroundColor,
-      borderColor: canvasSettings.borderColor,
-      borderWidth: canvasSettings.borderWidth,
-      shadowEnabled: canvasSettings.shadowEnabled
-    });
     forceUpdate({});
   }, [canvasSettings.canvasBackgroundColor, canvasSettings.borderColor, canvasSettings.borderWidth, canvasSettings.shadowEnabled, canvasSettings.containerBackgroundColor]);
 
@@ -1342,7 +1335,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     const currentMemoryUsage = calculateCacheMemoryUsage();
     const memoryLimit = memoryLimitJs;
 
-    console.log(`[Canvas Memory] Cache size: ${cache.size} items, Memory usage: ${currentMemoryUsage.toFixed(1)}MB / ${memoryLimit}MB`);
+    
 
     // Nettoyer si limite dépassée ou trop d'éléments
     if (isMemoryLimitExceeded() || cache.size > MAX_CACHE_ITEMS) {
@@ -1364,16 +1357,16 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         memoryFreed += data.size / (1024 * 1024); // MB
         removed++;
 
-        console.log(`[Canvas Memory] Removed cached image: ${url.split('/').pop()} (${(data.size / (1024 * 1024)).toFixed(2)}MB)`);
+        
       }
 
-      console.log(`[Canvas Memory] Cleanup complete: removed ${removed} items, freed ${(memoryFreed).toFixed(1)}MB`);
+      
     }
   }, [calculateCacheMemoryUsage, memoryLimitJs, isMemoryLimitExceeded]);
 
   // Fonction pour forcer un nettoyage manuel (utile pour le débogage)
   const forceCacheCleanup = useCallback(() => {
-    console.log('[Canvas Memory] Manual cache cleanup requested');
+    
     cleanupImageCache();
   }, [cleanupImageCache]);
 
@@ -1418,8 +1411,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
         // Log détaillé de la mémoire si activé
         if (canvasSettings.debugMode) {
-          console.log(`[Canvas Memory] Browser: ${browserMemoryUsage.toFixed(1)}MB / ${browserLimit.toFixed(1)}MB (${(browserMemoryUsage/browserLimit*100).toFixed(1)}%)`);
-          console.log(`[Canvas Memory] Cache: ${cacheMemoryUsage.toFixed(1)}MB / ${memoryLimitJs}MB (${(cacheMemoryUsage/memoryLimitJs*100).toFixed(1)}%)`);
+          
+          
         }
 
         // Nettoyage d'urgence si mémoire critique
@@ -2774,14 +2767,6 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     : (canvasSettings?.borderWidth && canvasSettings.borderWidth > 0) 
       ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || '#cccccc'}` 
       : 'none';
-
-  console.log('🎨 Canvas rendering with settings:', {
-    canvasBackgroundColor: canvasSettings?.canvasBackgroundColor,
-    borderColor: canvasSettings?.borderColor,
-    borderWidth: canvasSettings?.borderWidth,
-    shadowEnabled: canvasSettings?.shadowEnabled,
-    borderStyle: borderStyle
-  });
 
   // Calculate canvas display size based on zoom
   const zoomScale = state.canvas.zoom / 100;

@@ -242,7 +242,7 @@ class PdfBuilderAdmin
         $test_key = get_option('pdf_builder_license_test_key', '');
 
         // Déboguer pour voir les valeurs
-        // error_log('DEBUG is_premium: status=' . $license_status . ' has_key=' . (!empty($license_key) ? 'yes' : 'no') . ' has_test_key=' . (!empty($test_key) ? 'yes' : 'no'));
+        // 
 
         // is_premium si vraie licence OU si clé de test existe
         $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
@@ -1218,7 +1218,7 @@ class PdfBuilderAdmin
     public function enqueueAdminScripts($hook)
     {
         // DEBUG: Log le hook reçu
-        error_log('PDF_Builder_Admin::enqueueAdminScripts called with hook: ' . $hook);
+        
         
         // Charger seulement sur nos pages admin (diagnostic/test retirés)
         // Note: WordPress remplace les tirets par des underscores dans les hooks
@@ -1235,7 +1235,7 @@ class PdfBuilderAdmin
 
         // Vérification des hooks
         if (!in_array($hook, $allowed_hooks)) {
-            error_log('PDF_Builder_Admin::enqueueAdminScripts: Hook ' . $hook . ' not in allowed hooks');
+            
             return;
         }
 
@@ -1333,13 +1333,13 @@ class PdfBuilderAdmin
         // Note: pdfBuilderCanvasSettings est maintenant défini directement dans le template
 
         // ✅ Initialiser le système de notification unifié
-        error_log('PDF_Builder_Admin::enqueueAdminScripts: About to initialize notification manager');
+        
         if (class_exists('PDF_Builder_Notification_Manager')) {
-            error_log('PDF_Builder_Admin::enqueueAdminScripts: PDF_Builder_Notification_Manager class exists, calling enqueue_scripts');
+            
             \PDF_Builder_Notification_Manager::get_instance()->enqueue_scripts();
-            error_log('PDF_Builder_Admin::enqueueAdminScripts: Notification manager enqueue_scripts called');
+            
         } else {
-            error_log('PDF_Builder_Admin::enqueueAdminScripts: PDF_Builder_Notification_Manager class does not exist');
+            
         }
 
         // Charger le script JavaScript pour la page de paramètres
@@ -1523,11 +1523,11 @@ class PdfBuilderAdmin
             if ($manager) {
                 $manager->ajaxSaveTemplateV3();
             } else {
-                error_log('PDF Builder Admin: Template manager not available');
+                
                 wp_send_json_error('Erreur: Gestionnaire de templates non disponible');
             }
         } catch (\Throwable $e) {
-            error_log('PDF Builder Admin: Critical error in ajaxSaveTemplateV3 wrapper: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            
             wp_send_json_error('Erreur critique dans le gestionnaire d\'administration: ' . $e->getMessage());
         }
     }
@@ -5794,7 +5794,6 @@ class PdfBuilderAdmin
             'debug_mode' => get_option('pdf_builder_canvas_debug_mode', '0') == '1',
             'show_fps' => get_option('pdf_builder_canvas_show_fps', '0') == '1'
         ]) . ";
-        console.log('PDF Builder - window.pdfBuilderCanvasSettings initialized:', window.pdfBuilderCanvasSettings);
         ";
         wp_add_inline_script('react-dom', $canvas_settings_script);
 
@@ -5921,7 +5920,7 @@ class PdfBuilderAdmin
     public function ajax_get_template()
     {
         try {
-            error_log('PDF Builder: ajax_get_template called - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+            
             // Vérifier les permissions - permettre aux utilisateurs connectés de charger les templates
             // Au lieu de manage_options qui est trop restrictif, on utilise read pour les utilisateurs connectés
             if (!is_user_logged_in()) {
@@ -6083,7 +6082,7 @@ class PdfBuilderAdmin
             }
         } catch (Exception $e) {
             // Si la sauvegarde échoue, retourner quand même le template par défaut
-            error_log('Erreur lors de la création du template par défaut: ' . $e->getMessage());
+            
         }
 
         return $default_template;

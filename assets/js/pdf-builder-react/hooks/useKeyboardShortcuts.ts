@@ -101,7 +101,6 @@ export const useKeyboardShortcuts = () => {
           // Ctrl+C pour copier (si des éléments sont sélectionnés)
           if (stateRef.current.selection.selectedElements.length > 0) {
             // TODO: Implémenter la logique de copie
-            console.log('Copy not yet implemented');
           }
         }
         break;
@@ -111,7 +110,6 @@ export const useKeyboardShortcuts = () => {
           event.preventDefault();
           // Ctrl+V pour coller
           // TODO: Implémenter la logique de collage
-          console.log('Paste not yet implemented');
         }
         break;
 
@@ -121,7 +119,6 @@ export const useKeyboardShortcuts = () => {
           // Ctrl+D pour dupliquer (optionnel)
           if (stateRef.current.selection.selectedElements.length > 0) {
             // TODO: Implémenter la logique de duplication
-            console.log('Duplicate not yet implemented');
           }
         }
         break;

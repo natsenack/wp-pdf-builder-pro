@@ -47,7 +47,7 @@ class License_Expiration_Handler
 // Clear the key
 
                 // Log the expiration
-                error_log('PDF Builder Pro: License expired on ' . $license_expires);
+                
             } else {
         // Check if we should send a notification (30 days or 7 days before expiration)
                 $diff_days = $expires_date->diff($now)->days;
@@ -71,7 +71,7 @@ class License_Expiration_Handler
                 delete_option('pdf_builder_license_test_mode_enabled');
                 update_option('pdf_builder_license_status', 'free');
 // Log the expiration
-                error_log('PDF Builder Pro: Test key expired on ' . $test_key_expires);
+                
             }
         }
     }
@@ -132,9 +132,9 @@ class License_Expiration_Handler
         if ($sent) {
         // Mark that we sent the notification today
             update_option('pdf_builder_license_last_notification_' . date('Y-m-d'), time());
-            error_log('PDF Builder Pro: Expiration notification sent to ' . $notification_email);
+            
         } else {
-            error_log('PDF Builder Pro: Failed to send expiration notification to ' . $notification_email);
+            
         }
     }
 

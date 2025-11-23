@@ -800,7 +800,7 @@ class PDF_Builder_Onboarding_Manager {
      * Rendre le wizard d'onboarding
      */
     public function render_onboarding_wizard() {
-        error_log('PDF_Builder_Onboarding_Manager::render_onboarding_wizard: Starting render');
+        
         $steps = $this->get_onboarding_steps();
 
         // Vérifier si une étape spécifique est demandée via URL
@@ -924,11 +924,11 @@ class PDF_Builder_Onboarding_Manager {
         $action = sanitize_text_field($_POST['step_action'] ?? '');
         $selected_template = sanitize_text_field($_POST['selected_template'] ?? '');
 
-        error_log('PDF_Builder_Onboarding: ajax_complete_onboarding_step called');
-        error_log('PDF_Builder_Onboarding: Step received: ' . $step);
-        error_log('PDF_Builder_Onboarding: Action received: ' . $action);
-        error_log('PDF_Builder_Onboarding: Selected template: ' . $selected_template);
-        error_log('PDF_Builder_Onboarding: Current step in options: ' . $this->onboarding_options['current_step']);
+        
+        
+        
+        
+        
 
         // Validation des étapes avant de passer à la suivante
         $validation_error = $this->validate_step_completion($step, $action);
@@ -960,27 +960,27 @@ class PDF_Builder_Onboarding_Manager {
         if ($current_step_data) {
             switch ($current_step_data['id']) {
                 case 'freemium_mode':
-                    error_log('PDF_Builder_Onboarding: Processing freemium mode step');
+                    
                     if (!empty($_POST['selected_mode'])) {
                         $this->onboarding_options['selected_mode'] = sanitize_text_field($_POST['selected_mode']);
-                        error_log('PDF_Builder_Onboarding: Freemium mode saved: ' . $this->onboarding_options['selected_mode']);
+                        
                     } else {
-                        error_log('PDF_Builder_Onboarding: No freemium mode selected');
+                        
                     }
                     break;
 
                 case 'first_template':
-                    error_log('PDF_Builder_Onboarding: Processing first template step');
+                    
                     if (!empty($_POST['selected_template'])) {
-                        error_log('PDF_Builder_Onboarding: Template selected');
+                        
                         $this->onboarding_options['selected_template'] = sanitize_text_field($_POST['selected_template']);
                     } else {
-                        error_log('PDF_Builder_Onboarding: No template selected');
+                        
                     }
                     break;
 
                 case 'assign_template':
-                    error_log('PDF_Builder_Onboarding: Processing template assignment step');
+                    
                     // Sauvegarder les préférences d'assignation si fournies
                     if (isset($_POST['template_usage'])) {
                         $this->onboarding_options['template_usage'] = sanitize_text_field($_POST['template_usage']);
@@ -988,7 +988,7 @@ class PDF_Builder_Onboarding_Manager {
                     break;
 
                 case 'woocommerce_setup':
-                    error_log('PDF_Builder_Onboarding: Processing WooCommerce setup step');
+                    
                     // Sauvegarder les préférences WooCommerce
                     if (isset($_POST['woocommerce_options'])) {
                         update_option('pdf_builder_woocommerce_integration', $_POST['woocommerce_options']);
@@ -996,7 +996,7 @@ class PDF_Builder_Onboarding_Manager {
                     break;
 
                 case 'completed':
-                    error_log('PDF_Builder_Onboarding: Processing completion step');
+                    
                     $this->onboarding_options['completed'] = true;
                     $this->onboarding_options['completed_at'] = current_time('timestamp');
                     // Rediriger vers l'éditeur après completion de l'onboarding
@@ -1004,7 +1004,7 @@ class PDF_Builder_Onboarding_Manager {
                     break;
 
                 default:
-                    error_log('PDF_Builder_Onboarding: Processing step ' . $step . ' (' . $current_step_data['id'] . ') - no special logic');
+                    
                     break;
             }
         }
@@ -1017,7 +1017,7 @@ class PDF_Builder_Onboarding_Manager {
             'redirect_to' => $this->onboarding_options['redirect_to'] ?? null
         ];
 
-        error_log('PDF_Builder_Onboarding: Response: ' . json_encode($response));
+        
 
         wp_send_json_success($response);
     }

@@ -13,15 +13,6 @@
     isMobile: typeof navigator !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
   };
 
-  console.log('🌐 Navigateur détecté:', {
-    Chrome: browserInfo.isChrome,
-    Firefox: browserInfo.isFirefox,
-    Safari: browserInfo.isSafari,
-    Edge: browserInfo.isEdge,
-    Mobile: browserInfo.isMobile,
-    UserAgent: navigator.userAgent
-  });
-
   // Test des polyfills
   const tests = [
     {

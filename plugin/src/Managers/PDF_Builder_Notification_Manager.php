@@ -114,9 +114,9 @@ class PdfBuilderNotificationManager
         $to = $this->getAdminEmail();
 // Vérifier si SMTP est activé
         $smtp_enabled = get_option('pdf_builder_smtp_enabled', false);
-        error_log("PDF Builder: SMTP enabled check - smtp_enabled = " . ($smtp_enabled ? 'true' : 'false'));
+        
         if ($smtp_enabled) {
-            error_log("PDF Builder: Using SMTP for notification - $subject");
+            
             $smtp_result = $this->sendSmtpEmail($to, $subject, $message);
         // Si send_smtp_email retourne un array, c'est le nouveau format
             if (is_array($smtp_result)) {
@@ -126,7 +126,7 @@ class PdfBuilderNotificationManager
         }
 
         // Utiliser wp_mail() par défaut
-        error_log("PDF Builder: Using wp_mail() for notification - $subject");
+        
         $headers = array(
             'Content-Type: text/html; charset=UTF-8',
             'From: ' . get_bloginfo('name') . ' <' . get_option('admin_email') . '>'
@@ -142,9 +142,9 @@ class PdfBuilderNotificationManager
         $result = wp_mail($to, $subject, nl2br($message), $headers);
 // Logger l'envoi
         if ($result) {
-            error_log("PDF Builder: Notification sent via wp_mail() - $subject");
+            
         } else {
-            error_log("PDF Builder: Failed to send notification via wp_mail() - $subject");
+            
         }
 
         return $result;
@@ -233,7 +233,7 @@ class PdfBuilderNotificationManager
      */
     private function sendSmtpEmail($to, $subject, $message)
     {
-        error_log("PDF Builder: send_smtp_email called with to=$to, subject=$subject");
+        
 // Récupérer les paramètres SMTP
         $smtp_host = get_option('pdf_builder_smtp_host', '');
         $smtp_port = get_option('pdf_builder_smtp_port', 587);
@@ -242,10 +242,10 @@ class PdfBuilderNotificationManager
         $smtp_password = get_option('pdf_builder_smtp_password', '');
         $smtp_from_email = get_option('pdf_builder_smtp_from_email', get_option('admin_email'));
         $smtp_from_name = get_option('pdf_builder_smtp_from_name', get_bloginfo('name'));
-        error_log("PDF Builder SMTP Config: Host=$smtp_host, Port=$smtp_port, Encryption=$smtp_encryption, From=$smtp_from_email");
+        
 // Vérifier que les paramètres requis sont présents
         if (empty($smtp_host) || empty($smtp_username) || empty($smtp_password)) {
-            error_log("PDF Builder: SMTP configuration incomplete - missing required parameters");
+            
             return ['success' => false, 'error' => 'Configuration SMTP incomplète'];
         }
 
@@ -271,7 +271,7 @@ class PdfBuilderNotificationManager
             $phpmailer->SMTPDebug = 2;
             $phpmailer->Debugoutput = function ($str, $level) use (&$debug_output) {
 
-                error_log("PHPMailer Debug [$level]: $str");
+                
                 $debug_output .= "[" . $level . "] " . $str . "\n";
             };
 // Configuration du chiffrement
@@ -292,22 +292,22 @@ class PdfBuilderNotificationManager
             $phpmailer->Body = nl2br($message);
             $phpmailer->AltBody = strip_tags($message);
 // Log de configuration
-            error_log("PDF Builder SMTP Config: Host=$smtp_host, Port=$smtp_port, Encryption=$smtp_encryption, From=$smtp_from_email");
+            
 // Log avant envoi
-            error_log("PDF Builder: About to send email via PHPMailer to $to with subject: $subject");
+            
 // Envoyer l'email
             $result = $phpmailer->send();
 // Logger l'envoi
             if ($result) {
-                error_log("PDF Builder: Notification sent via SMTP - $subject");
+                
                 return ['success' => true, 'error' => null];
             } else {
-                error_log("PDF Builder: Failed to send notification via SMTP - " . $phpmailer->ErrorInfo);
+                
                 return ['success' => false, 'error' => $phpmailer->ErrorInfo];
             }
         } catch (Exception $e) {
-            error_log("PDF Builder: SMTP Exception caught - " . $e->getMessage());
-            error_log("PDF Builder: SMTP Exception trace - " . $e->getTraceAsString());
+            
+            
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

@@ -47,12 +47,12 @@ function pdf_builder_media_diagnostic_ajax() {
     }
     
     // Log everything
-    error_log('GD Library: ' . ($diagnostic['gd_library'] ? 'YES' : 'NO'));
-    error_log('ImageMagick: ' . ($diagnostic['imagick'] ? 'YES' : 'NO'));
-    error_log('Upload dir writable: ' . ($diagnostic['uploads_writable'] ? 'YES' : 'NO'));
-    error_log('Attachments count: ' . count($diagnostic['attachments']));
+    
+    
+    
+    
     foreach ($diagnostic['attachments'] as $att) {
-        error_log('  - ' . $att['title'] . ' (' . $att['filename'] . ')');
+        
     }
     wp_send_json_success($diagnostic);
 }

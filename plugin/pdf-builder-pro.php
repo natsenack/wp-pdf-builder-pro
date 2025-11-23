@@ -1139,7 +1139,7 @@ function pdf_builder_execute_weekly_maintenance() {
 
     try {
         // Log de début de maintenance
-        error_log('[PDF Builder] Démarrage de la maintenance automatique hebdomadaire');
+        
 
         // 1. Optimiser la base de données (si optimisation performance activée)
         if ($performance_optimization_enabled === '1') {
@@ -1162,10 +1162,10 @@ function pdf_builder_execute_weekly_maintenance() {
         }
 
         // Log de fin de maintenance
-        error_log('[PDF Builder] Maintenance automatique hebdomadaire terminée avec succès');
+        
 
     } catch (Exception $e) {
-        error_log('[PDF Builder] Erreur lors de la maintenance automatique: ' . $e->getMessage());
+        
     }
 }
 
@@ -1187,9 +1187,9 @@ function pdf_builder_auto_optimize_db() {
             $wpdb->query("REPAIR TABLE {$table}");
         }
 
-        error_log('[PDF Builder] Base de données optimisée automatiquement');
+        
     } catch (Exception $e) {
-        error_log('[PDF Builder] Erreur lors de l\'optimisation automatique de la DB: ' . $e->getMessage());
+        
     }
 }
 
@@ -1215,9 +1215,9 @@ function pdf_builder_auto_repair_templates() {
             update_option('pdf_builder_settings', []);
         }
 
-        error_log('[PDF Builder] Templates réparés automatiquement');
+        
     } catch (Exception $e) {
-        error_log('[PDF Builder] Erreur lors de la réparation automatique des templates: ' . $e->getMessage());
+        
     }
 }
 
@@ -1246,10 +1246,10 @@ function pdf_builder_auto_remove_temp_files() {
                 }
             }
 
-            error_log('[PDF Builder] ' . $deleted_count . ' fichiers temporaires supprimés automatiquement');
+            
         }
     } catch (Exception $e) {
-        error_log('[PDF Builder] Erreur lors de la suppression automatique des fichiers temp: ' . $e->getMessage());
+        
     }
 }
 
@@ -1285,13 +1285,13 @@ function pdf_builder_auto_clear_cache() {
                     }
                 }
 
-                error_log('[PDF Builder] ' . $deleted_count . ' fichiers cache supprimés automatiquement');
+                
             }
         }
 
-        error_log('[PDF Builder] Cache nettoyé automatiquement');
+        
     } catch (Exception $e) {
-        error_log('[PDF Builder] Erreur lors du nettoyage automatique du cache: ' . $e->getMessage());
+        
     }
 }
 

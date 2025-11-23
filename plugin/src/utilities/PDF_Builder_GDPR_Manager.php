@@ -177,7 +177,7 @@ class PDF_Builder_GDPR_Manager {
         $export_result = $this->create_user_data_export($user_data, $user_id, $format);
 
         if (is_wp_error($export_result)) {
-            error_log('PDF Builder GDPR: Export error for format ' . $format . ': ' . $export_result->get_error_message());
+            
             wp_send_json_error(['message' => $export_result->get_error_message()]);
             return;
         }
@@ -185,7 +185,7 @@ class PDF_Builder_GDPR_Manager {
         // Logger l'action avec plus de détails
         $this->log_audit_action($user_id, 'data_exported', 'user_data', $format . ' (' . $export_result['mime_type'] . ')');
 
-        error_log('PDF Builder GDPR: Export successful - Format: ' . $format . ', MIME: ' . $export_result['mime_type'] . ', File: ' . $export_result['filename']);
+        
 
         wp_send_json_success([
             'message' => sprintf(__('Données exportées avec succès au format %s.', 'pdf-builder-pro'), strtoupper($format)),

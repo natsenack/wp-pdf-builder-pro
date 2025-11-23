@@ -4,7 +4,7 @@
  */
 
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("Settings loaded");
+    
 
     window.updateZoomPreview = function() {
         window.updateCanvasPreviews("performance");

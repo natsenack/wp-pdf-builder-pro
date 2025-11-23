@@ -35,7 +35,7 @@ class Security_Limits_Handler
 
         if ($max_execution_time > 0 && $max_execution_time <= 3600) {
             set_time_limit($max_execution_time);
-            error_log("[PDF Builder] Security: set_time_limit({$max_execution_time})");
+            
         }
 
         // Appliquer la limite mémoire depuis les paramètres canvas
@@ -44,7 +44,7 @@ class Security_Limits_Handler
 
         if (!empty($memory_limit)) {
             ini_set('memory_limit', $memory_limit);
-            error_log("[PDF Builder] Security: memory_limit set to {$memory_limit} from canvas settings");
+            
         }
     }
 
@@ -84,9 +84,6 @@ class Security_Limits_Handler
         if ($size > $max_template_size) {
             $size_mb = round($size / 1048576, 2);
             $max_mb = round($max_template_size / 1048576, 2);
-            error_log(
-                "[PDF Builder] Security: Template size exceeds limit ({$size_mb}MB > {$max_mb}MB)"
-            );
             throw new \Exception(
                 sprintf(
                     'La taille du template (%s MB) dépasse la limite configurée (%s MB)',

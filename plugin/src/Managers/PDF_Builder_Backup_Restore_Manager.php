@@ -277,7 +277,7 @@ class PdfBuilderBackupRestoreManager
             $settings[$key] = $value;
             // DEBUG: Log pour vérifier l'export
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log("[PDF Builder] Export setting: $key = " . (is_array($value) ? json_encode($value) : $value));
+                
             }
         }
 
@@ -401,7 +401,7 @@ class PdfBuilderBackupRestoreManager
             update_option($key, $value);
             // DEBUG: Log pour vérifier l'import
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log("[PDF Builder] Import setting: $key = " . (is_array($value) ? json_encode($value) : $value));
+                
             }
         }
         return true;
@@ -496,31 +496,31 @@ class PdfBuilderBackupRestoreManager
             if (!file_exists($this->backup_dir)) {
                 // Créer le répertoire s'il n'existe pas
                 if (!wp_mkdir_p($this->backup_dir)) {
-                    error_log('PDF Builder: Impossible de créer le répertoire de sauvegarde: ' . $this->backup_dir);
+                    
                     return $backups;
                 }
             }
 
             if (!is_readable($this->backup_dir)) {
-                error_log('PDF Builder: Répertoire de sauvegarde non lisible: ' . $this->backup_dir);
+                
                 return $backups;
             }
 
             $files = glob($this->backup_dir . '*.{json,zip}', GLOB_BRACE);
 
             if ($files === false) {
-                error_log('PDF Builder: Erreur lors de la lecture du répertoire de sauvegarde: ' . $this->backup_dir);
+                
                 return $backups;
             }
 
             foreach ($files as $file) {
                 if (!file_exists($file)) {
-                    error_log('PDF Builder: Fichier de sauvegarde inexistant: ' . $file);
+                    
                     continue;
                 }
 
                 if (!is_readable($file)) {
-                    error_log('PDF Builder: Fichier de sauvegarde non lisible: ' . $file);
+                    
                     continue;
                 }
 
@@ -529,7 +529,7 @@ class PdfBuilderBackupRestoreManager
                 $modified = @filemtime($file);
 
                 if ($size === false || $modified === false) {
-                    error_log('PDF Builder: Impossible de lire les informations du fichier: ' . $file);
+                    
                     continue;
                 }
 
@@ -551,7 +551,7 @@ class PdfBuilderBackupRestoreManager
             });
 
         } catch (\Exception $e) {
-            error_log('PDF Builder: Exception dans listBackups(): ' . $e->getMessage());
+            
             return $backups;
         }
 
@@ -786,7 +786,7 @@ class PdfBuilderBackupRestoreManager
             wp_send_json_success(['backups' => $backups]);
 
         } catch (\Exception $e) {
-            error_log('PDF Builder: Exception in ajaxListBackups: ' . $e->getMessage());
+            
             wp_send_json_error(['message' => __('Erreur lors du chargement des sauvegardes.', 'pdf-builder-pro')]);
         }
     }
@@ -796,7 +796,7 @@ class PdfBuilderBackupRestoreManager
      */
     public function ajaxDeleteBackup()
     {
-        error_log('PDF Builder: ajaxDeleteBackup called');
+        
 
         check_ajax_referer('pdf_builder_save_settings', 'nonce');
 

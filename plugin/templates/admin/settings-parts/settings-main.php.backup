@@ -738,9 +738,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // La notification popup a été supprimée pour éviter les doublons
                 } else {
                     // Erreur
-                    
+                    console.error('Réponse complète en erreur:', data);
                     const errorMessage = data.data && data.data.message ? data.data.message : 'Erreur inconnue';
-                    
+                    console.error('Erreur de sauvegarde:', errorMessage);
                     alert('Erreur de sauvegarde: ' + errorMessage);
                     floatingSaveBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
                     floatingSaveBtn.classList.remove('saving');
@@ -759,7 +759,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                
+                console.error('Erreur AJAX catchée:', error);
                 clearTimeout(safetyTimeout); // Annuler le timeout de sécurité
                 floatingSaveBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
                 floatingSaveBtn.classList.remove('saving');
@@ -774,7 +774,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     } else {
-        
+        console.error('Bouton flottant non trouvé');
     }
 });
 
@@ -804,7 +804,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             return document.querySelector(selector);
         } catch (e) {
-            
+            console.error('Invalid selector:', selector, e);
             return null;
         }
     }
@@ -813,7 +813,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             return document.querySelectorAll(selector);
         } catch (e) {
-            
+            console.error('Invalid selector:', selector, e);
             return [];
         }
     }
@@ -837,7 +837,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             return true;
         } catch (e) {
-            
+            console.error('Error applying modal styles:', e);
             return false;
         }
     }
@@ -847,7 +847,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             modal.style.setProperty('display', 'none', 'important');
         } catch (e) {
-            
+            console.error('Error hiding modal:', e);
         }
     }
 
@@ -864,14 +864,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     const isVisible = rect.width > 0 && rect.height > 0;
 
                     if (!isVisible) {
-                        
+                        console.error('Modal failed to display properly:', modal.id);
                     }
                 }, 100);
             }
 
             return success;
         } catch (e) {
-            
+            console.error('Error showing modal:', e);
             return false;
         }
     }
@@ -897,13 +897,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     const card = button.closest('.canvas-card');
 
                     if (!card) {
-                        
+                        console.error('Canvas card not found for configure button');
                         return;
                     }
 
                     const category = card.getAttribute('data-category');
                     if (!category) {
-                        
+                        console.error('Category not found in canvas card');
                         return;
                     }
 
@@ -911,7 +911,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const modal = document.getElementById(modalId);
 
                     if (!modal) {
-                        
+                        console.error('Modal not found:', modalId);
                         return;
                     }
 
@@ -977,7 +977,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (!ajaxConfig || !ajaxConfig.ajax_url) {
                         alert('Erreur de configuration AJAX: variables AJAX non trouvées');
-                        
+                        console.error('Available globals:', { pdf_builder_ajax: typeof pdf_builder_ajax, pdfBuilderAjax: typeof pdfBuilderAjax, ajaxurl: typeof ajaxurl });
                         return;
                     }
 
@@ -993,7 +993,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
 
                     } catch (e) {
-                        
+                        console.error('❌ Error creating form data:', e);
                         alert('Erreur lors de la préparation des données');
                         return;
                     }
@@ -1051,13 +1051,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             // Alert supprimée selon les préférences utilisateur
                         } else {
-                            
+                            console.error('❌ Save failed:', data.data?.message || 'Unknown error');
                             throw new Error(data.data?.message || 'Erreur inconnue');
                         }
                     })
                     .catch(error => {
                         clearTimeout(timeoutId);
-                        
+                        console.error('Save error:', error);
                         this.textContent = originalText;
                         this.disabled = false;
 
@@ -1081,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
 
         } catch (e) {
-            
+            console.error('Error initializing canvas modals:', e);
         }
     }
 
@@ -1099,7 +1099,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (!ajaxConfig || !ajaxConfig.ajax_url) {
-            
+            console.error('❌ Cannot update window settings: no AJAX config');
             return;
         }
 
@@ -1128,11 +1128,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
                 
             } else {
-                
+                console.error('❌ Failed to update window settings:', data);
             }
         })
         .catch(error => {
-            
+            console.error('❌ Error updating window settings:', error);
         });
     }
 

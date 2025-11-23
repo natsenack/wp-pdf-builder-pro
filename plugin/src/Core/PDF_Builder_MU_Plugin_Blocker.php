@@ -54,7 +54,7 @@ class PDFBuilderMuPluginBlocker {
                 @unlink($file_path);
                 
                 // Log l'action
-                error_log('[PDF Builder Pro] Suppression de MU-plugin non autorisé: ' . $file_path);
+                
             }
         }
     }

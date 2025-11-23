@@ -140,9 +140,7 @@ elementChangeTracker.onChange(change => {
 // Listen only to color changes
 elementChangeTracker.onChange(change => {
   if (change.property === "fillColor") {
-    console.log(
-      `🎨 ${change.elementId} color: ${change.oldValue} → ${change.newValue}`
-    );
+    // Log color changes for monitoring
   }
 });
 
