@@ -2787,7 +2787,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
           height: `${displayHeight}px`,
           border: borderStyle,
           cursor: 'crosshair',
-          backgroundColor: '#ffffff',
+          backgroundColor: canvasSettings?.canvasBackgroundColor || '#ffffff',
           boxShadow: canvasSettings?.shadowEnabled ? '2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)' : 'none',
           transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
         }}
