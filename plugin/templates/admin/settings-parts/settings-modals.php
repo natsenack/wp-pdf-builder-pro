@@ -676,5 +676,41 @@ document.addEventListener('DOMContentLoaded', function() {
             fpsValue.style.color = this.value >= 60 ? '#28a745' : this.value >= 30 ? '#ffc107' : '#dc3545';
         });
     }
+
+    // Gestion de la dépendance Sélection multiple -> Mode de sélection
+    const multiSelectCheckbox = document.getElementById('canvas_multi_select');
+    const selectionModeSelect = document.getElementById('canvas_selection_mode');
+
+    if (multiSelectCheckbox && selectionModeSelect) {
+        // Fonction pour gérer l'état du mode de sélection
+        function updateSelectionModeState() {
+            if (!multiSelectCheckbox.checked) {
+                // Désactiver le mode de sélection si sélection multiple est désactivée
+                selectionModeSelect.disabled = true;
+                selectionModeSelect.style.opacity = '0.5';
+                selectionModeSelect.style.cursor = 'not-allowed';
+                // Sauvegarder la valeur actuelle pour la restaurer si réactivé
+                selectionModeSelect.setAttribute('data-previous-value', selectionModeSelect.value);
+                selectionModeSelect.value = 'click'; // Forcer en mode clic simple
+            } else {
+                // Réactiver le mode de sélection si sélection multiple est activée
+                selectionModeSelect.disabled = false;
+                selectionModeSelect.style.opacity = '1';
+                selectionModeSelect.style.cursor = 'default';
+                // Restaurer la valeur précédente si elle existe
+                const previousValue = selectionModeSelect.getAttribute('data-previous-value');
+                if (previousValue) {
+                    selectionModeSelect.value = previousValue;
+                    selectionModeSelect.removeAttribute('data-previous-value');
+                }
+            }
+        }
+
+        // Appliquer l'état initial
+        updateSelectionModeState();
+
+        // Écouter les changements sur la case à cocher
+        multiSelectCheckbox.addEventListener('change', updateSelectionModeState);
+    }
 });
 </script>
