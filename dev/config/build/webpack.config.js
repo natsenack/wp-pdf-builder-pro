@@ -16,8 +16,9 @@ module.exports = {
     globalObject: 'this'
   },
   externals: {
-    // 'react': 'React',  // Commenté pour bundler React
-    // 'react-dom': 'ReactDOM'  // Commenté pour bundler ReactDOM
+    'react': 'React',
+    'react-dom': 'ReactDOM',
+    'react-dom/client': 'ReactDOM'
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
@@ -58,9 +59,9 @@ module.exports = {
       new TerserPlugin({
         terserOptions: {
           compress: {
-            drop_console: false,  // ✅ GARDÉ POUR DEBUGGING
+            drop_console: true,  // ✅ ACTIVÉ pour production
             drop_debugger: true,
-            pure_funcs: [] // ✅ VIDE POUR NE PAS SUPPRIMER console.log
+            pure_funcs: ['console.log', 'console.info', 'console.debug'] // Supprimer les logs de debug
           },
           mangle: {
             safari10: true
@@ -68,16 +69,72 @@ module.exports = {
         }
       })
     ],
-    // Désactiver la séparation des chunks pour forcer un seul bundle
-    runtimeChunk: false,
-    splitChunks: false,
-    usedExports: true, // Améliorer l'arbre des dépendances
-    sideEffects: true   // Respecter les sideEffects du package.json
+    // Activer le code splitting intelligent avec chunks dynamiques
+    runtimeChunk: 'single',
+    splitChunks: {
+      chunks: 'all',
+      maxSize: 150000, // 150KB max par chunk
+      minSize: 10000,  // 10KB min par chunk
+      cacheGroups: {
+        // Chunk pour React et ses dépendances (si pas externe)
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/,
+          name: 'react-vendor',
+          chunks: 'all',
+          priority: 20,
+          enforce: true
+        },
+        // Chunk pour les utilitaires lourds
+        heavy: {
+          test: /[\\/]node_modules[\\/](jsbarcode|qrcode|@fortawesome)[\\/]/,
+          name: 'heavy-utils',
+          chunks: 'all',
+          priority: 25,
+          enforce: true
+        },
+        // Chunk pour les composants de l'application
+        components: {
+          test: /[\\/]assets[\\/]js[\\/]pdf-builder-react[\\/]components[\\/]/,
+          name: 'components',
+          chunks: 'async', // Uniquement les imports dynamiques
+          priority: 15,
+          maxSize: 100000, // 100KB max pour les composants
+          minSize: 20000   // 20KB min
+        },
+        // Chunk pour les hooks et contextes
+        hooks: {
+          test: /[\\/]assets[\\/]js[\\/]pdf-builder-react[\\/](hooks|contexts)[\\/]/,
+          name: 'hooks-contexts',
+          chunks: 'all',
+          priority: 12,
+          maxSize: 80000, // 80KB max
+          minSize: 15000  // 15KB min
+        },
+        // Chunk pour les utilitaires
+        utils: {
+          test: /[\\/]assets[\\/]js[\\/]pdf-builder-react[\\/]utils[\\/]/,
+          name: 'utils',
+          chunks: 'all',
+          priority: 10,
+          maxSize: 50000, // 50KB max
+          minSize: 10000  // 10KB min
+        },
+        // Vendor par défaut
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          chunks: 'all',
+          priority: 5
+        }
+      }
+    },
+    usedExports: true,
+    sideEffects: true
   },
   performance: {
-    hints: 'warning',
-    maxEntrypointSize: 204800, // 200 KiB limit
-    maxAssetSize: 204800,     // 200 KiB limit
+    hints: 'error', // Plus strict que 'warning'
+    maxEntrypointSize: 150 * 1024, // 150 KiB (réduit de 200)
+    maxAssetSize: 150 * 1024,     // 150 KiB (réduit de 200)
     assetFilter: function(assetFilename) {
       return !assetFilename.endsWith('.map');
     }

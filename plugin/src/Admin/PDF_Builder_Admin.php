@@ -347,6 +347,13 @@ class PdfBuilderAdmin
 
         // Paramètres et configuration
         add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-settings', [$this, 'settings_page']);
+
+        // Analytics et métriques
+        add_submenu_page('pdf-builder-pro', __('Analytics - PDF Builder Pro', 'pdf-builder-pro'), __('📊 Analytics', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-analytics', [$this, 'analytics_page']);
+
+        // Gestionnaire AJAX pour les actions analytics
+        add_action('wp_ajax_pdf_builder_cleanup', [$this, 'ajax_cleanup_analytics']);
+        add_action('wp_ajax_pdf_builder_reset', [$this, 'ajax_reset_analytics']);
     }
 
 
@@ -1129,6 +1136,7 @@ class PdfBuilderAdmin
             'pdf-builder_page_pdf-builder-templates',
             'pdf-builder_page_pdf-builder-react-editor', // Éditeur React
             'pdf-builder_page_pdf-builder-settings',      // ✅ FIXÉ: un underscore après pdf-builder, pas pdf-builder-pro
+            'pdf-builder_page_pdf-builder-analytics',     // Page Analytics
             'pdf-builder_page_pdf-builder-developer',
             'pdf-builder_page_pdf-builder-predefined-templates', // Gestion des modèles prédéfinis
             'woocommerce_page_wc-orders' // Pour les commandes WooCommerce
@@ -3364,6 +3372,431 @@ class PdfBuilderAdmin
     public function getDataUtils()
     {
         return $this->data_utils;
+    }
+
+    /**
+     * Page Analytics et métriques
+     */
+    public function analytics_page()
+    {
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
+
+        // Traiter la sauvegarde des paramètres
+        if (isset($_POST['save_analytics_settings']) && wp_verify_nonce($_POST['_wpnonce'] ?? '', 'pdf_builder_analytics_settings')) {
+            $analytics_enabled = isset($_POST['pdf_builder_analytics_enabled']) ? true : false;
+            update_option('pdf_builder_analytics_enabled', $analytics_enabled);
+
+            echo '<div class="notice notice-success is-dismissible"><p>Paramètres analytics sauvegardés avec succès.</p></div>';
+        }
+
+        // Charger l'AnalyticsTracker
+        if (!class_exists('PDF_Builder\\Analytics\\AnalyticsTracker')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'analytics/AnalyticsTracker.php';
+        }
+
+        $analytics = new \PDF_Builder\Analytics\AnalyticsTracker();
+
+        // Récupérer les métriques
+        $events = $analytics->getMetrics('events');
+        $performance = $analytics->getMetrics('performance');
+        $errors = $analytics->getMetrics('errors');
+        $popular_templates = $analytics->getPopularTemplates(10);
+
+        // Statistiques générales
+        $total_events = count($events);
+        $total_performance = count($performance);
+        $total_errors = count($errors);
+
+        // Événements récents (derniers 7 jours)
+        $recent_events = array_filter($events, function($event) {
+            return $event['timestamp'] > (time() - (7 * 24 * 60 * 60));
+        });
+        $recent_count = count($recent_events);
+
+        // Performance moyenne
+        $avg_duration = 0;
+        if ($total_performance > 0) {
+            $total_duration = array_sum(array_column($performance, 'duration'));
+            $avg_duration = round($total_duration / $total_performance, 2);
+        }
+
+        ?>
+        <div class="wrap">
+            <div class="pdf-builder-analytics">
+                <div class="analytics-header">
+                    <h1>📊 Analytics - PDF Builder Pro</h1>
+                    <p class="analytics-subtitle">Suivez l'utilisation et les performances de votre générateur PDF</p>
+
+                    <div class="analytics-controls">
+                        <form method="post" action="">
+                            <?php wp_nonce_field('pdf_builder_analytics_settings'); ?>
+                            <label>
+                                <input type="checkbox"
+                                       name="pdf_builder_analytics_enabled"
+                                       value="1"
+                                       <?php checked(get_option('pdf_builder_analytics_enabled', false), true); ?>>
+                                Activer l'analytics (respecte la confidentialité)
+                            </label>
+                            <button type="submit" name="save_analytics_settings" class="button button-primary">
+                                💾 Sauvegarder
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Statistiques principales -->
+                <div class="analytics-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-number"><?php echo number_format($total_events); ?></div>
+                            <div class="stat-label">Événements trackés</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-content">
+                            <div class="stat-number"><?php echo $avg_duration; ?>s</div>
+                            <div class="stat-label">Temps moyen génération</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🚨</div>
+                        <div class="stat-content">
+                            <div class="stat-number"><?php echo number_format($total_errors); ?></div>
+                            <div class="stat-label">Erreurs détectées</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <div class="stat-number"><?php echo number_format($recent_count); ?></div>
+                            <div class="stat-label">Événements (7 derniers jours)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-content">
+                    <!-- Templates populaires -->
+                    <div class="analytics-section">
+                        <h3>📋 Templates les plus utilisés</h3>
+                        <?php if (!empty($popular_templates)): ?>
+                            <div class="popular-templates">
+                                <?php foreach ($popular_templates as $template): ?>
+                                    <div class="template-item">
+                                        <div class="template-name">
+                                            <?php echo esc_html($template['name'] ?? 'Template #' . ($template['template_id'] ?? 'N/A')); ?>
+                                        </div>
+                                        <div class="template-stats">
+                                            <span class="usage-count"><?php echo number_format($template['usage_count'] ?? 0); ?> utilisations</span>
+                                            <?php if (isset($template['last_used'])): ?>
+                                                <span class="last-used">Dernière utilisation: <?php echo date('d/m/Y H:i', $template['last_used']); ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else: ?>
+                            <p class="no-data">Aucune donnée de template disponible. Activez l'analytics pour commencer à collecter des statistiques.</p>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Métriques de performance récentes -->
+                    <div class="analytics-section">
+                        <h3>⚡ Performances récentes</h3>
+                        <?php if (!empty($performance)): ?>
+                            <div class="performance-metrics">
+                                <table class="wp-list-table widefat fixed striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Opération</th>
+                                            <th>Durée</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        // Trier par date décroissante et limiter à 10
+                                        usort($performance, function($a, $b) {
+                                            return $b['timestamp'] <=> $a['timestamp'];
+                                        });
+                                        $recent_performance = array_slice($performance, 0, 10);
+
+                                        foreach ($recent_performance as $metric): ?>
+                                            <tr>
+                                                <td><?php echo esc_html($metric['operation'] ?? 'N/A'); ?></td>
+                                                <td><?php echo number_format($metric['duration'] ?? 0, 2); ?>s</td>
+                                                <td><?php echo date('d/m/Y H:i:s', $metric['timestamp'] ?? time()); ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php else: ?>
+                            <p class="no-data">Aucune métrique de performance disponible.</p>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Actions de maintenance -->
+                    <div class="analytics-section">
+                        <h3>🛠️ Maintenance</h3>
+                        <div class="maintenance-actions">
+                            <form method="post" action="" style="display: inline;">
+                                <?php wp_nonce_field('pdf_builder_cleanup_analytics'); ?>
+                                <button type="submit" name="cleanup_analytics" class="button button-secondary"
+                                        onclick="return confirm('Êtes-vous sûr de vouloir nettoyer les anciennes données ? Cette action est irréversible.')">
+                                    🧹 Nettoyer les données (>90 jours)
+                                </button>
+                            </form>
+
+                            <form method="post" action="" style="display: inline; margin-left: 10px;">
+                                <?php wp_nonce_field('pdf_builder_reset_analytics'); ?>
+                                <button type="submit" name="reset_analytics" class="button button-secondary"
+                                        onclick="return confirm('Êtes-vous sûr de vouloir réinitialiser toutes les données d\'analytics ? Cette action est irréversible.')">
+                                    🔄 Réinitialiser tout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .pdf-builder-analytics {
+                    width: 100%;
+                    padding: 0 20px;
+                    box-sizing: border-box;
+                }
+
+                .analytics-header {
+                    margin-bottom: 30px;
+                }
+
+                .analytics-subtitle {
+                    color: #666;
+                    font-size: 16px;
+                    margin: 10px 0 20px 0;
+                }
+
+                .analytics-controls {
+                    background: #fff;
+                    border: 1px solid #e1e1e1;
+                    border-radius: 8px;
+                    padding: 20px;
+                    margin-top: 20px;
+                }
+
+                .analytics-controls label {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-weight: 500;
+                }
+
+                .analytics-stats {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: 20px;
+                    margin-bottom: 30px;
+                }
+
+                .stat-card {
+                    background: #fff;
+                    border: 1px solid #e1e1e1;
+                    border-radius: 8px;
+                    padding: 20px;
+                    display: flex;
+                    align-items: center;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+
+                .stat-icon {
+                    font-size: 32px;
+                    margin-right: 15px;
+                }
+
+                .stat-number {
+                    font-size: 28px;
+                    font-weight: bold;
+                    color: #2271b1;
+                }
+
+                .stat-label {
+                    color: #666;
+                    font-size: 14px;
+                }
+
+                .analytics-content {
+                    display: grid;
+                    gap: 30px;
+                }
+
+                .analytics-section {
+                    background: #fff;
+                    border: 1px solid #e1e1e1;
+                    border-radius: 8px;
+                    padding: 25px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+
+                .analytics-section h3 {
+                    margin-top: 0;
+                    color: #1d2327;
+                    border-bottom: 1px solid #e1e1e1;
+                    padding-bottom: 10px;
+                }
+
+                .popular-templates {
+                    display: grid;
+                    gap: 15px;
+                }
+
+                .template-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 15px;
+                    background: #f8f9fa;
+                    border-radius: 6px;
+                    border: 1px solid #e9ecef;
+                }
+
+                .template-name {
+                    font-weight: 500;
+                    color: #1d2327;
+                }
+
+                .template-stats {
+                    text-align: right;
+                    font-size: 14px;
+                    color: #666;
+                }
+
+                .usage-count {
+                    display: block;
+                    font-weight: bold;
+                    color: #2271b1;
+                }
+
+                .last-used {
+                    display: block;
+                    font-size: 12px;
+                    margin-top: 2px;
+                }
+
+                .performance-metrics table {
+                    margin-top: 15px;
+                }
+
+                .no-data {
+                    color: #666;
+                    font-style: italic;
+                    text-align: center;
+                    padding: 20px;
+                }
+
+                .maintenance-actions {
+                    margin-top: 15px;
+                }
+
+                .maintenance-actions .button {
+                    margin-right: 10px;
+                }
+            </style>
+
+            <script>
+                // Gestion des actions de maintenance
+                jQuery(document).ready(function($) {
+                    $('form').on('submit', function(e) {
+                        var $form = $(this);
+                        var action = $form.find('input[name], button[name]').attr('name');
+
+                        if (action === 'cleanup_analytics' || action === 'reset_analytics') {
+                            e.preventDefault();
+
+                            $.ajax({
+                                url: ajaxurl,
+                                type: 'POST',
+                                data: {
+                                    action: 'pdf_builder_' + action.replace('_analytics', ''),
+                                    nonce: '<?php echo wp_create_nonce("pdf_builder_analytics"); ?>'
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        location.reload();
+                                    } else {
+                                        alert('Erreur: ' + (response.data || 'Action échouée'));
+                                    }
+                                },
+                                error: function() {
+                                    alert('Erreur lors de la requête AJAX');
+                                }
+                            });
+                        }
+                    });
+                });
+            </script>
+        </div>
+        <?php
+    }
+
+    /**
+     * AJAX handler pour nettoyer les anciennes données analytics
+     */
+    public function ajax_cleanup_analytics()
+    {
+        // Vérifier les permissions et le nonce
+        if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_analytics')) {
+            wp_send_json_error('Permissions insuffisantes ou nonce invalide');
+            return;
+        }
+
+        try {
+            // Charger l'AnalyticsTracker
+            if (!class_exists('PDF_Builder\\Analytics\\AnalyticsTracker')) {
+                require_once PDF_BUILDER_PLUGIN_DIR . 'analytics/AnalyticsTracker.php';
+            }
+
+            $analytics = new \PDF_Builder\Analytics\AnalyticsTracker();
+            $analytics->cleanupOldData(90); // Nettoyer les données de plus de 90 jours
+
+            wp_send_json_success('Données anciennes nettoyées avec succès');
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors du nettoyage: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX handler pour réinitialiser toutes les données analytics
+     */
+    public function ajax_reset_analytics()
+    {
+        // Vérifier les permissions et le nonce
+        if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_analytics')) {
+            wp_send_json_error('Permissions insuffisantes ou nonce invalide');
+            return;
+        }
+
+        try {
+            // Supprimer toutes les options analytics
+            $analytics_options = [
+                'pdf_builder_analytics_events',
+                'pdf_builder_analytics_performance',
+                'pdf_builder_analytics_errors'
+            ];
+
+            foreach ($analytics_options as $option) {
+                delete_option($option);
+            }
+
+            wp_send_json_success('Toutes les données analytics ont été réinitialisées');
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors de la réinitialisation: ' . $e->getMessage());
+        }
     }
 }
 

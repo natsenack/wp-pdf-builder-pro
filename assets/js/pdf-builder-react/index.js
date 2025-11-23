@@ -1,27 +1,33 @@
 // ============================================================================
-// PDF Builder React Bundle - Entry Point
+// PDF Builder React Bundle - Entry Point OPTIMISÉ avec Code Splitting
 // ============================================================================
 
 // Import du diagnostic de compatibilité
 import '../fallbacks/browser-compatibility.js';
 
-// Import des composants React
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { PDFBuilder } from './PDFBuilder.tsx';
+// Imports synchrones légers
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT, getCanvasDimensions } from './constants/canvas.ts';
 import { debugLog, debugError } from './utils/debug';
-import { 
-  registerEditorInstance,
-  loadTemplate,
-  getEditorState,
-  setEditorState,
-  getCurrentTemplate,
-  exportTemplate,
-  saveTemplate,
-  resetAPI,
-  updateCanvasDimensions
-} from './api/global-api';
+
+// Import React pour les composants
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+
+// Imports lourds en lazy loading
+const loadHeavyComponents = async () => {
+  const [
+    { PDFBuilder },
+    globalApi
+  ] = await Promise.all([
+    import('./PDFBuilder.tsx'),
+    import('./api/global-api')
+  ]);
+
+  return {
+    PDFBuilder: PDFBuilder.PDFBuilder,
+    globalApi
+  };
+};
 
 // Composant ErrorBoundary pour capturer les erreurs de rendu
 class ErrorBoundary extends React.Component {
@@ -79,7 +85,7 @@ const DEBUG_VERBOSE = false;
 
 if (DEBUG_VERBOSE) debugLog('🚀 PDF Builder React bundle starting execution...');
 
-function initPDFBuilderReact() {
+async function initPDFBuilderReact() {
   if (DEBUG_VERBOSE) debugLog('✅ initPDFBuilderReact function called');
 
   try {
@@ -98,13 +104,17 @@ function initPDFBuilderReact() {
       debugError('❌ React is not available');
       return false;
     }
-    if (typeof ReactDOM === 'undefined') {
-      debugError('❌ ReactDOM is not available');
-      return false;
-    }
     if (DEBUG_VERBOSE) debugLog('✅ React dependencies available');
 
-    if (DEBUG_VERBOSE) debugLog('🎯 All dependencies loaded, initializing React...');
+    if (DEBUG_VERBOSE) debugLog('📦 Loading heavy components asynchronously...');
+
+    // Charger les composants lourds de manière asynchrone
+    const { PDFBuilder, globalApi } = await loadHeavyComponents();
+
+    // Exposer l'API globale
+    Object.assign(window, globalApi);
+
+    if (DEBUG_VERBOSE) debugLog('✅ Heavy components loaded, initializing React...');
 
     // Masquer le loading et afficher l'éditeur
     const loadingEl = document.getElementById('pdf-builder-react-loading');
@@ -116,7 +126,7 @@ function initPDFBuilderReact() {
     if (DEBUG_VERBOSE) debugLog('🎨 Creating React root...');
 
     // Créer et rendre l'application React
-    const root = ReactDOM.createRoot(container);
+    const root = createRoot(container);
     if (DEBUG_VERBOSE) debugLog('🎨 React root created, rendering component...');
 
     // Récupérer les dimensions dynamiques depuis les paramètres
