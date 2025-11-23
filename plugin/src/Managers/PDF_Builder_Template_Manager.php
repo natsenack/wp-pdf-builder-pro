@@ -658,8 +658,10 @@ class PdfBuilderTemplateManager
                 $element_types[$type] = ($element_types[$type] ?? 0) + 1;
             }
 
-            // Réponse de succès - Retourner directement template_data pour compatibilité React
-            \wp_send_json_success($template_data);
+            // Réponse de succès - Retourner directement template_data en JSON pur pour compatibilité React
+            header('Content-Type: application/json');
+            echo \wp_json_encode($template_data);
+            exit;
 
         } catch (\Throwable $e) {
             
