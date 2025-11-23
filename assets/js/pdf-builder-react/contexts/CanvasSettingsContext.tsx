@@ -189,13 +189,6 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       borderWidth: (windowSettings.border_width as number) ?? DEFAULT_SETTINGS.borderWidth,
       shadowEnabled: (windowSettings.shadow_enabled as boolean) === true || (windowSettings.shadow_enabled as string) === '1',
       
-      // Couleurs
-      canvasBackgroundColor: (windowSettings.canvas_background_color as string) ?? DEFAULT_SETTINGS.canvasBackgroundColor,
-      containerBackgroundColor: (windowSettings.container_background_color as string) ?? DEFAULT_SETTINGS.containerBackgroundColor,
-      borderColor: (windowSettings.border_color as string) ?? DEFAULT_SETTINGS.borderColor,
-      borderWidth: (windowSettings.border_width as number) ?? DEFAULT_SETTINGS.borderWidth,
-      shadowEnabled: (windowSettings.shadow_enabled as boolean) === true || (windowSettings.shadow_enabled as string) === '1',
-      
       // Marges
       marginTop: (windowSettings.margin_top as number) ?? DEFAULT_SETTINGS.marginTop,
       marginRight: (windowSettings.margin_right as number) ?? DEFAULT_SETTINGS.marginRight,
@@ -305,24 +298,12 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   // Listen for settings update events
   useEffect(() => {
     const handleSettingsUpdate = () => {
+      console.log('🎨 Settings update event received, refreshing canvas settings...');
       const windowSettings = loadSettingsFromWindowObj();
       setSettings(windowSettings);
     };
     window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
     return () => window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
-  }, []);
-
-  // Écouter les événements custom pour les mises à jour
-  useEffect(() => {
-    const handleCustomUpdate = () => {
-      handleRefresh();
-    };
-    
-    window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleCustomUpdate);
-
-    return () => {
-      window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleCustomUpdate);
-    };
   }, []);
 
   // Synchronisation automatique : si gridShow est désactivé, désactiver gridSnapEnabled et gridSize

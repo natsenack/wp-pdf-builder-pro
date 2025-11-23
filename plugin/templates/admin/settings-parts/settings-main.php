@@ -1049,6 +1049,12 @@ document.addEventListener('DOMContentLoaded', function() {
                                 updateCanvasPreviews(category);
                             }
 
+                            // Update window.pdfBuilderCanvasSettings for real-time canvas updates
+                            if (category === 'apparence') {
+                                console.log('🎨 Updating window.pdfBuilderCanvasSettings for apparence...');
+                                updateWindowCanvasSettings();
+                            }
+
                             // Dispatch custom event for real-time canvas updates
                             if (category === 'apparence') {
                                 console.log('🎨 Dispatching appearance settings update event');
@@ -1094,8 +1100,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to update canvas previews after save
-    window.updateCanvasPreviews = function(category) {
+    // Function to update window.pdfBuilderCanvasSettings after save
+    function updateWindowCanvasSettings() {
+        // Get AJAX config
+        let ajaxConfig = null;
+        if (typeof pdf_builder_ajax !== 'undefined') {
+            ajaxConfig = pdf_builder_ajax;
+        } else if (typeof pdfBuilderAjax !== 'undefined') {
+            ajaxConfig = pdfBuilderAjax;
+        } else if (typeof ajaxurl !== 'undefined') {
+            ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
+        }
+
+        if (!ajaxConfig || !ajaxConfig.ajax_url) {
+            console.error('❌ Cannot update window settings: no AJAX config');
+            return;
+        }
+
+        // Make AJAX call to get all canvas settings
+        fetch(ajaxConfig.ajax_url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_get_all_canvas_settings',
+                'nonce': ajaxConfig.nonce || ''
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                console.log('✅ Window settings updated:', data.data);
+                // Update the global window object
+                window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
+            } else {
+                console.error('❌ Failed to update window settings:', data);
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error updating window settings:', error);
+        });
+    }
         // Get AJAX config
         let ajaxConfig = null;
         if (typeof pdf_builder_ajax !== 'undefined') {
