@@ -368,8 +368,8 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 <?php require_once 'settings-modals.php'; ?>
 
 <!-- Floating Save Button - HORS du conteneur principal -->
-<div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999 !important; border-radius: 10px; padding: 5px;">
-    <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
+<div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999 !important; border-radius: 10px; padding: 5px; display: block !important; visibility: visible !important; opacity: 1 !important;">
+    <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; visibility: visible !important; opacity: 1 !important;">
         <span class="save-icon">💾</span>
         <span class="save-text">Enregistrer</span>
     </button>
@@ -388,9 +388,21 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 
 <style>
 /* Styles pour le bouton flottant */
+#floating-save-button {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 999999 !important;
+    border-radius: 10px;
+    padding: 5px;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
 .floating-save-btn {
     background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-    color: white;
+    color: white !important;
     border: none;
     border-radius: 50px;
     padding: 15px 25px;
@@ -399,9 +411,11 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     transition: all 0.3s ease;
-    display: flex;
+    display: flex !important;
     align-items: center;
     gap: 8px;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .floating-save-btn:hover {
