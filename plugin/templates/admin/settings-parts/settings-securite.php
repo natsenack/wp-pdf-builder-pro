@@ -6,7 +6,7 @@
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                     <span style="display: inline-flex; align-items: center; gap: 10px;">
                         🛡️ Sécurité
-                        <span class="security-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_enable_logging', true) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_enable_logging', true) ? 'ACTIF' : 'INACTIF'; ?></span>
+                        <span id="security-status-indicator" class="security-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_enable_logging', true) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_enable_logging', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                     </span>
                 </h3>
 
@@ -41,7 +41,7 @@
                 <h3 style="color: #155724; margin-top: 0; border-bottom: 2px solid #28a745; padding-bottom: 10px;">
                     <span style="display: inline-flex; align-items: center; gap: 10px;">
                         📋 Gestion RGPD & Conformité
-                        <span class="rgpd-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_gdpr_enabled', true) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_gdpr_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
+                        <span id="rgpd-status-indicator" class="rgpd-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_gdpr_enabled', true) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_gdpr_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                     </span>
                 </h3>
 

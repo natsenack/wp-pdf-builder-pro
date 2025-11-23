@@ -555,30 +555,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateSecurityStatusIndicators() {
         // Mettre à jour l'indicateur de sécurité (enable_logging)
         const enableLoggingCheckbox = document.getElementById('enable_logging');
-        const securityStatuses = document.querySelectorAll('.security-status');
-        console.log('Security status elements found:', securityStatuses.length);
-        if (enableLoggingCheckbox && securityStatuses.length > 0) {
+        const securityStatus = document.getElementById('security-status-indicator');
+        console.log('Security status element found:', !!securityStatus, 'checkbox checked:', enableLoggingCheckbox ? enableLoggingCheckbox.checked : 'N/A');
+        if (enableLoggingCheckbox && securityStatus) {
             const isActive = enableLoggingCheckbox.checked;
-            securityStatuses.forEach(status => {
-                status.textContent = isActive ? 'ACTIF' : 'INACTIF';
-                status.style.background = isActive ? '#28a745' : '#dc3545';
-            });
-        } else {
-            console.log('Security status update: checkbox found:', !!enableLoggingCheckbox, 'status elements found:', securityStatuses.length);
+            securityStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+            securityStatus.style.background = isActive ? '#28a745' : '#dc3545';
+            console.log('Updated security status to:', securityStatus.textContent);
         }
 
         // Mettre à jour l'indicateur RGPD (gdpr_enabled)
         const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
-        const rgpdStatuses = document.querySelectorAll('.rgpd-status');
-        console.log('RGPD status elements found:', rgpdStatuses.length);
-        if (gdprEnabledCheckbox && rgpdStatuses.length > 0) {
+        const rgpdStatus = document.getElementById('rgpd-status-indicator');
+        console.log('RGPD status element found:', !!rgpdStatus, 'checkbox checked:', gdprEnabledCheckbox ? gdprEnabledCheckbox.checked : 'N/A');
+        if (gdprEnabledCheckbox && rgpdStatus) {
             const isActive = gdprEnabledCheckbox.checked;
-            rgpdStatuses.forEach(status => {
-                status.textContent = isActive ? 'ACTIF' : 'INACTIF';
-                status.style.background = isActive ? '#28a745' : '#dc3545';
-            });
-        } else {
-            console.log('RGPD status update: checkbox found:', !!gdprEnabledCheckbox, 'status elements found:', rgpdStatuses.length);
+            rgpdStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+            rgpdStatus.style.background = isActive ? '#28a745' : '#dc3545';
+            console.log('Updated RGPD status to:', rgpdStatus.textContent);
         }
 
         // Mettre à jour les indicateurs système
