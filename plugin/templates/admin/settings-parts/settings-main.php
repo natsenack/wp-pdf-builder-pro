@@ -1097,6 +1097,36 @@ document.addEventListener('DOMContentLoaded', function() {
                                         values[key] = value;
                                     }
                                     updateModalValues(category, values);
+
+                                    // Update global canvas settings with new values
+                                    if (window.pdfBuilderCanvasSettings) {
+                                        // Map form values to global settings
+                                        if (values.canvas_bg_color) window.pdfBuilderCanvasSettings.canvas_background_color = values.canvas_bg_color;
+                                        if (values.canvas_border_color) window.pdfBuilderCanvasSettings.border_color = values.canvas_border_color;
+                                        if (values.canvas_border_width !== undefined) window.pdfBuilderCanvasSettings.border_width = values.canvas_border_width;
+                                        if (values.canvas_shadow_enabled !== undefined) window.pdfBuilderCanvasSettings.shadow_enabled = values.canvas_shadow_enabled === '1' || values.canvas_shadow_enabled === true;
+                                        if (values.canvas_container_bg_color) window.pdfBuilderCanvasSettings.container_background_color = values.canvas_container_bg_color;
+
+                                        // Add more mappings as needed for other categories
+                                        if (category === 'zoom') {
+                                            if (values.canvas_zoom_min !== undefined) window.pdfBuilderCanvasSettings.min_zoom = parseInt(values.canvas_zoom_min);
+                                            if (values.canvas_zoom_max !== undefined) window.pdfBuilderCanvasSettings.max_zoom = parseInt(values.canvas_zoom_max);
+                                            if (values.canvas_zoom_default !== undefined) window.pdfBuilderCanvasSettings.default_zoom = parseInt(values.canvas_zoom_default);
+                                            if (values.canvas_zoom_step !== undefined) window.pdfBuilderCanvasSettings.zoom_step = parseInt(values.canvas_zoom_step);
+                                        }
+
+                                        if (category === 'grille') {
+                                            if (values.canvas_grid_enabled !== undefined) window.pdfBuilderCanvasSettings.show_grid = values.canvas_grid_enabled === '1' || values.canvas_grid_enabled === true;
+                                            if (values.canvas_grid_size !== undefined) window.pdfBuilderCanvasSettings.grid_size = parseInt(values.canvas_grid_size);
+                                            if (values.canvas_guides_enabled !== undefined) window.pdfBuilderCanvasSettings.show_guides = values.canvas_guides_enabled === '1' || values.canvas_guides_enabled === true;
+                                            if (values.canvas_snap_to_grid !== undefined) window.pdfBuilderCanvasSettings.snap_to_grid = values.canvas_snap_to_grid === '1' || values.canvas_snap_to_grid === true;
+                                        }
+
+                                        if (category === 'dimensions') {
+                                            if (values.canvas_format) window.pdfBuilderCanvasSettings.default_canvas_format = values.canvas_format;
+                                            if (values.canvas_dpi) window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(values.canvas_dpi);
+                                        }
+                                    }
                                 }
                             }
 
@@ -1606,13 +1636,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     function updateDimensionsCardPreview() {
-        const formatSelect = document.getElementById('canvas_format');
-        const dpiSelect = document.getElementById('canvas_dpi');
+        if (!window.pdfBuilderCanvasSettings) return;
 
-        if (!formatSelect || !dpiSelect) return;
-
-        const format = formatSelect.value;
-        const dpi = parseInt(dpiSelect.value);
+        const format = window.pdfBuilderCanvasSettings.default_canvas_format || 'A4';
+        const dpi = window.pdfBuilderCanvasSettings.default_canvas_dpi || 96;
 
         // Dimensions standard en mm pour chaque format
         const formatDimensionsMM = {
@@ -1645,34 +1672,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update apparence card preview
     function updateApparenceCardPreview() {
-        const bgColorInput = document.getElementById('canvas_bg_color');
-        const borderColorInput = document.getElementById('canvas_border_color');
+        // Get values directly from WordPress options instead of modal inputs
+        // This ensures we use the saved values, not the current modal values
 
-        // Update color previews in the card
+        // Update color previews in the card using saved option values
         const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
         const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
 
-        if (bgColorInput && bgPreview) {
-            bgPreview.style.backgroundColor = bgColorInput.value;
-        }
-        if (borderColorInput && borderPreview) {
-            borderPreview.style.backgroundColor = borderColorInput.value;
+        // Use the global settings object that should be updated after save
+        if (window.pdfBuilderCanvasSettings) {
+            if (bgPreview && window.pdfBuilderCanvasSettings.canvas_background_color) {
+                bgPreview.style.backgroundColor = window.pdfBuilderCanvasSettings.canvas_background_color;
+            }
+            if (borderPreview && window.pdfBuilderCanvasSettings.border_color) {
+                borderPreview.style.backgroundColor = window.pdfBuilderCanvasSettings.border_color;
+            }
         }
     }
 
     // Update grille card preview
     function updateGrilleCardPreview() {
-        const gridEnabled = document.getElementById('canvas_grid_enabled');
-        const gridSize = document.getElementById('canvas_grid_size');
-        const snapToGrid = document.getElementById('canvas_snap_to_grid');
-        const guidesEnabled = document.getElementById('canvas_guides_enabled');
-
         const gridCard = document.querySelector('.canvas-card[data-category="grille"]');
-        if (!gridCard) return;
+        if (!gridCard || !window.pdfBuilderCanvasSettings) return;
 
         const gridContainer = gridCard.querySelector('.grid-preview-container');
         if (gridContainer) {
-            if (gridEnabled && gridEnabled.checked) {
+            const isGridEnabled = window.pdfBuilderCanvasSettings.show_grid === true || window.pdfBuilderCanvasSettings.show_grid === '1';
+            if (isGridEnabled) {
                 gridContainer.classList.add('grid-active');
                 gridContainer.classList.remove('grid-inactive');
             } else {
@@ -1684,12 +1710,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update zoom card preview
     function updateZoomCardPreview() {
-        const zoomMin = document.getElementById('canvas_zoom_min');
-        const zoomMax = document.getElementById('canvas_zoom_max');
-
         const zoomValue = document.getElementById('zoom-preview-value');
-        if (zoomValue && zoomMin && zoomMax) {
-            zoomValue.textContent = `${zoomMin.value}-${zoomMax.value}%`;
+        if (zoomValue && window.pdfBuilderCanvasSettings) {
+            const minZoom = window.pdfBuilderCanvasSettings.min_zoom || 10;
+            const maxZoom = window.pdfBuilderCanvasSettings.max_zoom || 500;
+            zoomValue.textContent = `${minZoom}-${maxZoom}%`;
         }
     }
 
