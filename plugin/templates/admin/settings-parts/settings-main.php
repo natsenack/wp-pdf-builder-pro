@@ -282,41 +282,6 @@ if (
 
 // Canvas settings are now loaded in settings-canvas-params.php
 ?>
-    window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {
-        const formatDimensions = {
-            'A6': { width: 349, height: 496 },
-            'A5': { width: 496, height: 701 },
-            'A4': { width: 794, height: 1123 },
-            'A3': { width: 1123, height: 1587 },
-            'A2': { width: 1587, height: 2245 },
-            'A1': { width: 2245, height: 3175 },
-            'A0': { width: 3175, height: 4494 },
-            'Letter': { width: 816, height: 1056 },
-            'Legal': { width: 816, height: 1344 },
-            'Tabloid': { width: 1056, height: 1632 }
-        };
-
-        const dims = formatDimensions[format] || formatDimensions['A4'];
-
-        // Inverser les dimensions si orientation paysage
-        if (orientation === 'landscape') {
-            return { width: dims.height, height: dims.width };
-        }
-
-        return dims;
-    };
-
-    // Ajouter les dimensions calculées aux paramètres
-    window.pdfBuilderCanvasSettings.default_canvas_width = window.pdfBuilderCanvasSettings.getDimensionsFromFormat(
-        window.pdfBuilderCanvasSettings.default_canvas_format,
-        window.pdfBuilderCanvasSettings.default_canvas_orientation
-    ).width;
-
-    window.pdfBuilderCanvasSettings.default_canvas_height = window.pdfBuilderCanvasSettings.getDimensionsFromFormat(
-        window.pdfBuilderCanvasSettings.default_canvas_format,
-        window.pdfBuilderCanvasSettings.default_canvas_orientation
-    ).height;
-</script>
 
     <!-- Tab Content Containers -->
     <div id="general" class="tab-content active">
