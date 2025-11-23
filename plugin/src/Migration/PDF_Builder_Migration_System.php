@@ -278,5 +278,5 @@ class PDF_Builder_Migration_System
     }
 }
 
-// Initialize the migration system
-PDF_Builder_Migration_System::getInstance();
+// Initialization will be done in bootstrap.php after constants are loaded
+// PDF_Builder_Migration_System::getInstance();

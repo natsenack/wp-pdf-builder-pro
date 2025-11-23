@@ -187,6 +187,13 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'core/constants.php';
     }
 
+    // Initialiser le système de migration après le chargement des constantes
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php';
+        // Initialiser le système de migration maintenant que les constantes sont chargées
+        PDF_Builder_Migration_System::getInstance();
+    }
+
     // Charger le logger en premier (nécessaire pour PDF_Builder_Core)
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Logger.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Logger.php';
@@ -1134,8 +1141,6 @@ function pdf_builder_ajax_get_template()
 }
 
 // ============================================================================
-// INITIALISER LE SYSTÈME DE MIGRATION
+// INITIALISER LE SYSTÈME DE MIGRATION (DÉPLACÉ PLUS HAUT)
 // ============================================================================
-if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Migration/PDF_Builder_Migration_System.php';
-}
+// Le système de migration est maintenant initialisé juste après constants.php
