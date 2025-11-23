@@ -1113,6 +1113,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             } else if (window.PDF_Builder_Notification_Manager) {
                                 window.PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success', 4000);
                             }
+                        } else {
                             // Erreur de sauvegarde - afficher notification d'erreur
                             const errorMessage = data.data?.message || 'Erreur inconnue lors de la sauvegarde';
                             if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
