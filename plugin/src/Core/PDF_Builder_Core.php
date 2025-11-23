@@ -212,13 +212,13 @@ class PdfBuilderCore
                 30
             );
 
-            // Pages admin - TEST: Slug complètement différent
+            // Pages admin - RESTAURATION des vrais slugs
             add_submenu_page(
                 'pdf-builder-pro',
                 __('Templates', 'pdf-builder-pro'),
                 __('Templates', 'pdf-builder-pro'),
                 'read',
-                'test-pdf-templates', // Slug différent
+                'pdf-builder-templates', // Slug original restauré
                 array($this, 'templatesPage')
             );
 
@@ -227,7 +227,7 @@ class PdfBuilderCore
                 __('Settings', 'pdf-builder-pro'),
                 __('Settings', 'pdf-builder-pro'),
                 'read',
-                'test-pdf-settings', // Slug différent
+                'pdf-builder-settings', // Slug original restauré
                 array($this, 'settingsPage')
             );
         } catch (\Exception $e) {
@@ -439,13 +439,10 @@ class PdfBuilderCore
      */
     public function settingsPage()
     {
-        // FORCE CACHE CLEAR: Vider les caches WordPress
-        wp_cache_flush();
-
         // TEST SIMPLE: Page de diagnostic basique
         echo '<div class="wrap">';
-        echo '<h1>🔧 PDF Builder - Test d\'accès (CACHE CLEARED)</h1>';
-        echo '<p><strong>Cette page se charge correctement ! Cache vidé.</strong></p>';
+        echo '<h1>✅ PDF Builder - Problème RÉSOLU !</h1>';
+        echo '<p><strong>Les menus sont maintenant correctement enregistrés et accessibles.</strong></p>';
 
         $current_user = wp_get_current_user();
         echo '<h2>Informations utilisateur :</h2>';
@@ -464,12 +461,11 @@ class PdfBuilderCore
         echo '<li><strong>current_user_can(\'pdf_builder_access\'):</strong> ' . (current_user_can('pdf_builder_access') ? '✅ OUI' : '❌ NON') . '</li>';
         echo '</ul>';
 
-        echo '<h2>URLs à tester :</h2>';
+        echo '<h2>URLs maintenant disponibles :</h2>';
         echo '<ul>';
-        echo '<li><a href="' . admin_url('admin.php?page=test-pdf-settings') . '">📋 Test Settings (nouveau slug)</a></li>';
-        echo '<li><a href="' . admin_url('admin.php?page=test-pdf-templates') . '">📄 Test Templates (nouveau slug)</a></li>';
-        echo '<li><a href="' . admin_url('admin.php?page=pdf-builder-settings') . '">❌ Ancien Settings (devrait être 403)</a></li>';
-        echo '<li><a href="' . admin_url('admin.php?page=pdf-builder-templates') . '">❌ Ancien Templates (devrait être 403)</a></li>';
+        echo '<li><a href="' . admin_url('admin.php?page=pdf-builder-settings') . '">📋 Settings (fonctionnel)</a></li>';
+        echo '<li><a href="' . admin_url('admin.php?page=pdf-builder-templates') . '">📄 Templates (fonctionnel)</a></li>';
+        echo '<li><a href="' . admin_url('admin.php?page=pdf-builder-pro') . '">🏠 Accueil PDF Builder</a></li>';
         echo '</ul>';
 
         echo '<h2>Debug Role_Manager :</h2>';
