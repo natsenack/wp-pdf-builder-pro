@@ -624,6 +624,7 @@ function pdf_builder_save_canvas_settings_handler() {
 
                 case 'apparence':
                     // Sauvegarder les paramètres d'apparence
+                    error_log('PDF Builder: Saving apparence settings - POST data: ' . print_r($_POST, true));
                     $apparence_mappings = [
                         'canvas_bg_color' => 'pdf_builder_canvas_bg_color',
                         'canvas_container_bg_color' => 'pdf_builder_canvas_container_bg_color',
@@ -642,10 +643,12 @@ function pdf_builder_save_canvas_settings_handler() {
                             }
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
+                            error_log("PDF Builder: Saved $option_key = " . print_r($value, true));
                         } elseif ($post_key === 'canvas_shadow_enabled') {
                             // Checkbox non cochée
                             update_option($option_key, false);
                             $saved_values[$post_key] = false;
+                            error_log("PDF Builder: Saved $option_key = false (checkbox unchecked)");
                         }
                     }
                     break;
