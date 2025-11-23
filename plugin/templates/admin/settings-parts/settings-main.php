@@ -861,9 +861,12 @@ document.addEventListener('DOMContentLoaded', function() {
     updateZoomCardPreview();
 
     // Initialize all canvas card previews with real values
-    if (window.updateCanvasPreviews) {
-        window.updateCanvasPreviews('all');
-    }
+    // Use setTimeout to ensure window.pdfBuilderCanvasSettings is loaded
+    setTimeout(function() {
+        if (window.updateCanvasPreviews) {
+            window.updateCanvasPreviews('all');
+        }
+    }, 100);
 });
 
 // Canvas configuration modals functionality - Version stable
