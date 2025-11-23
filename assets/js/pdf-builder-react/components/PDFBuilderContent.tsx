@@ -68,7 +68,8 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     error: autoSaveError,
     saveNow: retryAutoSave,
     triggerSave,
-    progress
+    progress,
+    isEnabled: autoSaveEnabled
   } = useAutoSave();
 
   // Hook pour les paramètres du canvas
@@ -111,15 +112,17 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
 
   return (
     <>
-      {/* SaveIndicator - affiché dans le coin supérieur droit */}
-      <SaveIndicator
-        state={autoSaveState}
-        lastSavedAt={lastSavedAt}
-        error={autoSaveError}
-        onRetry={retryAutoSave}
-        progress={progress}
-        showProgressBar={autoSaveState === 'saving'}
-      />
+      {/* SaveIndicator - affiché seulement si auto-save activé */}
+      {autoSaveEnabled && (
+        <SaveIndicator
+          state={autoSaveState}
+          lastSavedAt={lastSavedAt}
+          error={autoSaveError}
+          onRetry={retryAutoSave}
+          progress={progress}
+          showProgressBar={autoSaveState === 'saving'}
+        />
+      )}
 
       {/* Indicateur de succès manuel temporaire */}
       {manualSaveSuccess && (

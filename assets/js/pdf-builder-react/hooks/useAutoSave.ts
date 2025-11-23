@@ -17,6 +17,7 @@ export interface UseAutoSaveReturn {
   triggerSave: () => void;
   clearError: () => void;
   progress: number;
+  isEnabled: boolean;
 }
 
 export function useAutoSave(): UseAutoSaveReturn {
@@ -79,6 +80,7 @@ export function useAutoSave(): UseAutoSaveReturn {
     saveNow,
     triggerSave,
     clearError,
-    progress
+    progress,
+    isEnabled: autoSaveEnabled
   };
 }
