@@ -1049,6 +1049,15 @@ document.addEventListener('DOMContentLoaded', function() {
                                 updateCanvasPreviews(category);
                             }
 
+                            // Dispatch custom event for real-time canvas updates
+                            if (category === 'apparence') {
+                                console.log('🎨 Dispatching appearance settings update event');
+                                const updateEvent = new CustomEvent('pdfBuilderCanvasSettingsUpdated', {
+                                    detail: { category: 'apparence' }
+                                });
+                                window.dispatchEvent(updateEvent);
+                            }
+
                             // Alert supprimée selon les préférences utilisateur
                         } else {
                             console.error('❌ Save failed:', data.data?.message || 'Unknown error');

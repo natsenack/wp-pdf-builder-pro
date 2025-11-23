@@ -172,6 +172,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
                 }
                 // Alert supprimée selon les préférences utilisateur
+
+                // Déclencher l'événement de mise à jour des paramètres pour l'éditeur
+                window.dispatchEvent(new CustomEvent('pdfBuilderCanvasSettingsUpdated'));
+                console.log('📡 Event pdfBuilderCanvasSettingsUpdated dispatched for category:', category);
             } else {
                 throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
             }
