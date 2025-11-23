@@ -31,19 +31,19 @@
                                 <p class="canvas-modal-description">Taille standard du document PDF (A4 disponible)</p>
                             </td>
                         </tr>
-                        <!-- ORIENTATION TEMPORAIREMENT DÉSACTIVÉE - v2.0 -->
-                        <!--
                         <tr>
-                            <th scope="row"><label for="canvas_orientation">Orientation</label></th>
+                            <th scope="row"><label>Orientation</label></th>
                             <td>
-                                <select id="canvas_orientation" name="canvas_orientation">
-                                    <option value="portrait" <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
-                                    <option value="landscape" <?php selected(get_option('pdf_builder_canvas_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
-                                </select>
-                                <p class="canvas-modal-description">Orientation verticale du document</p>
+                                <div style="background: #f0f8ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 10px; margin: 5px 0;">
+                                    <strong>📄 Portrait uniquement (v1.0)</strong><br>
+                                    <small style="color: #666;">
+                                        L'orientation paysage sera disponible dans la version 2.0 avec recalcul automatique des dimensions.
+                                        Actuellement, tous les documents sont générés en format portrait pour garantir la stabilité.
+                                    </small>
+                                </div>
+                                <p class="canvas-modal-description">Orientation fixée en portrait pour la v1.0</p>
                             </td>
                         </tr>
-                        -->
                         <tr>
                             <th scope="row"><label for="canvas_dpi">Résolution DPI</label></th>
                             <td>
