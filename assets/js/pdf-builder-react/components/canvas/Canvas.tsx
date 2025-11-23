@@ -1192,6 +1192,19 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
+  // Force re-render when canvas settings change
+  const [, forceUpdate] = useState({});
+  useEffect(() => {
+    console.log('🔄 Canvas settings changed, forcing re-render:', {
+      canvasBackgroundColor: canvasSettings.canvasBackgroundColor,
+      containerBackgroundColor: canvasSettings.containerBackgroundColor,
+      borderColor: canvasSettings.borderColor,
+      borderWidth: canvasSettings.borderWidth,
+      shadowEnabled: canvasSettings.shadowEnabled
+    });
+    forceUpdate({});
+  }, [canvasSettings.canvasBackgroundColor, canvasSettings.borderColor, canvasSettings.borderWidth, canvasSettings.shadowEnabled, canvasSettings.containerBackgroundColor]);
+
   // État pour le menu contextuel
   const [contextMenu, setContextMenu] = React.useState<{
     isVisible: boolean;

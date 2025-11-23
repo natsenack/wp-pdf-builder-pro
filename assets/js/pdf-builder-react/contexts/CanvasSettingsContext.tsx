@@ -302,6 +302,13 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
       console.log('📊 Current window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
       const windowSettings = loadSettingsFromWindowObj();
       console.log('🔄 New settings loaded:', windowSettings);
+      console.log('🎨 Appearance values:', {
+        canvasBackgroundColor: windowSettings.canvasBackgroundColor,
+        containerBackgroundColor: windowSettings.containerBackgroundColor,
+        borderColor: windowSettings.borderColor,
+        borderWidth: windowSettings.borderWidth,
+        shadowEnabled: windowSettings.shadowEnabled
+      });
       setSettings(windowSettings);
       console.log('✅ Canvas settings updated in context');
     };
