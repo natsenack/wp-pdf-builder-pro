@@ -1626,10 +1626,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     function updateDimensionsCardPreview() {
-        if (!window.pdfBuilderCanvasSettings) return;
+        console.log('🔍 updateDimensionsCardPreview called');
+        console.log('window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
+
+        if (!window.pdfBuilderCanvasSettings) {
+            console.log('❌ window.pdfBuilderCanvasSettings is not defined');
+            return;
+        }
 
         const format = window.pdfBuilderCanvasSettings.default_canvas_format || 'A4';
         const dpi = window.pdfBuilderCanvasSettings.default_canvas_dpi || 96;
+
+        console.log('📐 Format:', format, 'DPI:', dpi);
 
         // Dimensions standard en mm pour chaque format
         const formatDimensionsMM = {
@@ -1642,21 +1650,33 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         const dimensions = formatDimensionsMM[format] || formatDimensionsMM['A4'];
+        console.log('📏 Dimensions MM:', dimensions);
 
         // Calculer les dimensions en pixels
         const pixelsPerMM = dpi / 25.4;
         const widthPx = Math.round(dimensions.width * pixelsPerMM);
         const heightPx = Math.round(dimensions.height * pixelsPerMM);
 
+        console.log('📏 Dimensions PX:', widthPx, 'x', heightPx);
+
         // Update card preview elements
         const cardWidth = document.getElementById('card-canvas-width');
         const cardHeight = document.getElementById('card-canvas-height');
         const cardDpi = document.getElementById('card-canvas-dpi');
 
-        if (cardWidth) cardWidth.textContent = widthPx;
-        if (cardHeight) cardHeight.textContent = heightPx;
+        console.log('🎯 Elements found - Width:', !!cardWidth, 'Height:', !!cardHeight, 'DPI:', !!cardDpi);
+
+        if (cardWidth) {
+            cardWidth.textContent = widthPx;
+            console.log('✅ Set width to:', widthPx);
+        }
+        if (cardHeight) {
+            cardHeight.textContent = heightPx;
+            console.log('✅ Set height to:', heightPx);
+        }
         if (cardDpi) {
             cardDpi.textContent = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
+            console.log('✅ Set DPI info to:', cardDpi.textContent);
         }
     }
 
