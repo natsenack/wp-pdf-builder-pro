@@ -9,13 +9,18 @@ import { useMemo, useState, useEffect } from 'react';
  */
 export const useCanvasSettings = () => {
     const [settings, setSettings] = useState(() => window.pdfBuilderCanvasSettings || getDefaultCanvasSettings());
+    const [isLoading, setIsLoading] = useState(false);
 
     // Écouter les changements de paramètres
     useEffect(() => {
+        let isMounted = true;
+
         const fetchSettings = async () => {
+            if (isLoading) return; // Éviter les appels multiples
+
             try {
+                setIsLoading(true);
                 const ajaxUrl = window.pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
-                console.log('[useCanvasSettings] Fetching settings from:', ajaxUrl);
 
                 const response = await fetch(ajaxUrl, {
                     method: 'POST',
@@ -28,8 +33,9 @@ export const useCanvasSettings = () => {
                     })
                 });
 
+                if (!isMounted) return;
+
                 const data = await response.json();
-                console.log('[useCanvasSettings] Raw AJAX response:', data);
 
                 if (data.success && data.data) {
                     window.pdfBuilderCanvasSettings = {
@@ -41,33 +47,47 @@ export const useCanvasSettings = () => {
                     console.warn('REACT: Invalid AJAX response:', data);
                 }
             } catch (error) {
-                console.warn('REACT: Failed to fetch updated settings:', error);
+                if (isMounted) {
+                    console.warn('REACT: Failed to fetch updated settings:', error);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
             }
         };
 
         const handleSettingsUpdate = () => {
-            setSettings(window.pdfBuilderCanvasSettings);
+            if (isMounted) {
+                setSettings(window.pdfBuilderCanvasSettings);
+            }
         };
 
         const handleStorageChange = async (event: StorageEvent) => {
-            if (event.key === 'pdfBuilderSettingsUpdated') {
+            if (event.key === 'pdfBuilderSettingsUpdated' && isMounted) {
                 await fetchSettings();
             }
         };
 
-        window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
-        window.addEventListener('storage', handleStorageChange);
+        // Ne fetch que si les settings ne sont pas déjà chargés
+        if (!window.pdfBuilderCanvasSettings) {
+            fetchSettings();
+        }
 
         // Check if settings were updated while this tab was closed
         if (localStorage.getItem('pdfBuilderSettingsUpdated')) {
             fetchSettings();
         }
 
+        window.addEventListener('canvasSettingsUpdated', handleSettingsUpdate);
+        window.addEventListener('storage', handleStorageChange);
+
         return () => {
+            isMounted = false;
             window.removeEventListener('canvasSettingsUpdated', handleSettingsUpdate);
             window.removeEventListener('storage', handleStorageChange);
         };
-    }, []);
+    }, []); // Dépendances vides pour un seul appel au montage
 
     return settings;
 };

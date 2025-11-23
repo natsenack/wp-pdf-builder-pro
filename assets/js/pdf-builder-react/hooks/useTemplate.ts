@@ -94,11 +94,6 @@ export function useTemplate() {
       }
 
       const result = await response.json();
-      
-      // 🔍 DEBUG: Log exact response received
-      console.log('[useTemplate] Raw AJAX response:', result);
-      console.log('[useTemplate] Response success:', result.success);
-      console.log('[useTemplate] Response data:', result.data);
 
       if (!result.success) {
         throw new Error(result.data || 'Erreur lors du chargement du template');
