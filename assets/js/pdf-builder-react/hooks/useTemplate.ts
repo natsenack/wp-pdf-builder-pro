@@ -345,7 +345,7 @@ export function useTemplate() {
       const formData = new FormData();
       formData.append('action', 'pdf_builder_save_template');
       formData.append('template_id', templateId);
-      formData.append('template_name', state.template.name || 'Template sans nom');
+      formData.append('template_name', state.template.name || 'Nouveau template');
       formData.append('template_data', JSON.stringify(templateData));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
@@ -367,7 +367,7 @@ export function useTemplate() {
       dispatch({
         type: 'SAVE_TEMPLATE',
         payload: {
-          id: result.data.id,
+          id: result.data.template_id || result.data.id,
           name: result.data.name
         }
       });

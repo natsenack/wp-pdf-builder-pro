@@ -199,6 +199,7 @@ const initialState: BuilderState = {
     isModified: false,
     isSaving: false,
     isLoading: true, // ✅ Start as loading until template is fetched
+    name: 'Nouveau template',
     description: '',
     tags: [],
     canvasWidth: 794,  // A4 width in PX (plus large)
