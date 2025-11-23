@@ -510,6 +510,24 @@ $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
 <script>
 // Tab switching functionality
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 DEBUG: DOMContentLoaded fired');
+    console.log('🔍 DEBUG: Checking floating save button...');
+
+    const floatingBtn = document.getElementById('floating-save-btn');
+    const floatingContainer = document.getElementById('floating-save-button');
+
+    console.log('🔍 DEBUG: floating-save-btn element:', floatingBtn);
+    console.log('🔍 DEBUG: floating-save-button container:', floatingContainer);
+
+    if (floatingBtn) {
+        console.log('🔍 DEBUG: Button found! Style computed:', window.getComputedStyle(floatingBtn));
+        console.log('🔍 DEBUG: Button display:', floatingBtn.style.display);
+        console.log('🔍 DEBUG: Button visibility:', floatingBtn.style.visibility);
+        console.log('🔍 DEBUG: Button opacity:', floatingBtn.style.opacity);
+    } else {
+        console.error('🔍 DEBUG: Floating save button NOT found!');
+    }
+
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
 
@@ -786,7 +804,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     } else {
-        
+        console.error('❌ Bouton flottant non trouvé dans le DOM!');
+        console.log('Elements avec classe floating-save-btn:', document.querySelectorAll('.floating-save-btn'));
+        console.log('Element avec id floating-save-btn:', document.getElementById('floating-save-btn'));
+        console.log('Element avec id floating-save-button:', document.getElementById('floating-save-button'));
     }
 });
 
