@@ -1710,11 +1710,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update zoom card preview
     function updateZoomCardPreview() {
+        if (!window.pdfBuilderCanvasSettings) return;
+
+        const minZoom = window.pdfBuilderCanvasSettings.min_zoom || 10;
+        const maxZoom = window.pdfBuilderCanvasSettings.max_zoom || 500;
+        const defaultZoom = window.pdfBuilderCanvasSettings.default_zoom || 100;
+        const stepZoom = window.pdfBuilderCanvasSettings.zoom_step || 25;
+
+        // Update range display
         const zoomValue = document.getElementById('zoom-preview-value');
-        if (zoomValue && window.pdfBuilderCanvasSettings) {
-            const minZoom = window.pdfBuilderCanvasSettings.min_zoom || 10;
-            const maxZoom = window.pdfBuilderCanvasSettings.max_zoom || 500;
+        if (zoomValue) {
             zoomValue.textContent = `${minZoom}-${maxZoom}%`;
+        }
+
+        // Update default zoom display
+        const defaultValue = document.getElementById('zoom-default-value');
+        if (defaultValue) {
+            defaultValue.textContent = `${defaultZoom}%`;
+        }
+
+        // Update step zoom display
+        const stepValue = document.getElementById('zoom-step-value');
+        if (stepValue) {
+            stepValue.textContent = `${stepZoom}%`;
         }
     }
 

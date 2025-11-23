@@ -1005,29 +1005,46 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
 
 .zoom-preview {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11px;
     color: #646970;
 }
 
-.zoom-minus, .zoom-plus {
-    background: #007cba;
-    color: white;
-    border: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 3px;
+.zoom-range {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: bold;
+    gap: 4px;
+}
+
+.zoom-details {
+    display: flex;
+    gap: 12px;
+}
+
+.zoom-default,
+.zoom-step {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.zoom-label {
+    font-size: 10px;
+    color: #8c8f94;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .zoom-value {
     font-weight: 600;
     color: #1d2327;
+    background: #f6f7f7;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+}
 }
 
 .interaction-preview {
