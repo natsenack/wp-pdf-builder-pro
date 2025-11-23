@@ -1107,10 +1107,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                 window.dispatchEvent(updateEvent);
                             }
 
-                            // Alert supprimée selon les préférences utilisateur
+                            // Afficher notification de succès
+                            showNotification('Paramètres sauvegardés avec succès !', 'success');
                         } else {
-                            
-                            throw new Error(data.data?.message || 'Erreur inconnue');
+                            // Erreur de sauvegarde - afficher notification d'erreur
+                            const errorMessage = data.data?.message || 'Erreur inconnue lors de la sauvegarde';
+                            showNotification('Erreur de sauvegarde: ' + errorMessage, 'error');
+                            throw new Error(errorMessage);
                         }
                     })
                     .catch(error => {
@@ -1120,9 +1123,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.disabled = false;
 
                         if (error.name === 'AbortError') {
-                            alert('Erreur: Timeout de la requête (30 secondes)');
+                            showNotification('Erreur: Timeout de la requête (30 secondes)', 'error');
                         } else {
-                            alert('Erreur lors de la sauvegarde: ' + error.message);
+                            showNotification('Erreur lors de la sauvegarde: ' + error.message, 'error');
                         }
                     });
                 });
@@ -1143,8 +1146,82 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to update window.pdfBuilderCanvasSettings after save
-    function updateWindowCanvasSettings() {
+    // Function to show notifications
+    function showNotification(message, type = 'success') {
+        // Remove any existing notifications
+        const existingNotifications = document.querySelectorAll('.pdf-builder-notification');
+        existingNotifications.forEach(notification => notification.remove());
+
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `pdf-builder-notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <span class="notification-icon">${type === 'success' ? '✅' : '❌'}</span>
+                <span class="notification-message">${message}</span>
+                <button class="notification-close">&times;</button>
+            </div>
+        `;
+
+        // Add styles
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            max-width: 500px;
+            padding: 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        `;
+
+        // Set colors based on type
+        if (type === 'success') {
+            notification.style.backgroundColor = '#d4edda';
+            notification.style.border = '1px solid #c3e6cb';
+            notification.style.color = '#155724';
+        } else {
+            notification.style.backgroundColor = '#f8d7da';
+            notification.style.border = '1px solid #f5c6cb';
+            notification.style.color = '#721c24';
+        }
+
+        // Add to page
+        document.body.appendChild(notification);
+
+        // Add close button functionality
+        const closeButton = notification.querySelector('.notification-close');
+        closeButton.addEventListener('click', function() {
+            hideNotification(notification);
+        });
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            hideNotification(notification);
+        }, 5000);
+
+        // Show notification with animation
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateY(0)';
+        }, 10);
+
+        function hideNotification(notification) {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(-20px)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }
+    }
         
         // Get AJAX config
         let ajaxConfig = null;
@@ -1191,6 +1268,47 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             
+        });
+    }
+
+    // Function to update window.pdfBuilderCanvasSettings after save
+    function updateWindowCanvasSettings() {
+        // Get AJAX config
+        let ajaxConfig = null;
+        if (typeof pdf_builder_ajax !== 'undefined') {
+            ajaxConfig = pdf_builder_ajax;
+        } else if (typeof pdfBuilderAjax !== 'undefined') {
+            ajaxConfig = pdfBuilderAjax;
+        } else if (typeof ajaxurl !== 'undefined') {
+            ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
+        }
+
+        if (!ajaxConfig || !ajaxConfig.ajax_url) {
+            return;
+        }
+
+        // Make AJAX call to get all canvas settings
+        fetch(ajaxConfig.ajax_url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'action': 'pdf_builder_get_all_canvas_settings',
+                'nonce': ajaxConfig.nonce || ''
+            })
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.data) {
+                // Update the global window object
+                window.pdfBuilderCanvasSettings = { ...window.pdfBuilderCanvasSettings, ...data.data };
+            } else {
+            }
+        })
+        .catch(error => {
         });
     }
 
@@ -1396,141 +1514,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Handle dimensions modal real-time updates
-        if (modal.id === 'canvas-dimensions-modal') {
-            const formatSelect = modal.querySelector('#canvas_format');
-            const dpiSelect = modal.querySelector('#canvas_dpi');
-
-            // Function to update dimensions when format or DPI changes
-            const updateDimensions = function() {
-                const format = formatSelect ? formatSelect.value : 'A4';
-                const dpi = dpiSelect ? parseInt(dpiSelect.value) : 96;
-                updateCalculatedDimensions(modal, format, dpi);
-                // Also update card preview
-                updateDimensionsCardPreview();
-            };
-
-            // Add event listeners for real-time updates
-            if (formatSelect) {
-                formatSelect.addEventListener('change', updateDimensions);
-            }
-            if (dpiSelect) {
-                dpiSelect.addEventListener('change', updateDimensions);
-            }
-        }
-
-        // Handle apparence modal real-time updates
-        if (modal.id === 'canvas-apparence-modal') {
-            const bgColorInput = modal.querySelector('#canvas_bg_color');
-            const borderColorInput = modal.querySelector('#canvas_border_color');
-            const shadowEnabled = modal.querySelector('#canvas_shadow_enabled');
-
-            const updateApparence = function() {
-                updateApparenceCardPreview();
-            };
-
-            if (bgColorInput) bgColorInput.addEventListener('input', updateApparence);
-            if (borderColorInput) borderColorInput.addEventListener('input', updateApparence);
-            if (shadowEnabled) shadowEnabled.addEventListener('change', updateApparence);
-        }
-
-        // Handle grille modal real-time updates
-        if (modal.id === 'canvas-grille-modal') {
-            const gridEnabled = modal.querySelector('#canvas_grid_enabled');
-            const gridSize = modal.querySelector('#canvas_grid_size');
-            const snapToGrid = modal.querySelector('#canvas_snap_to_grid');
-            const guidesEnabled = modal.querySelector('#canvas_guides_enabled');
-
-            const updateGrille = function() {
-                updateGrilleCardPreview();
-            };
-
-            if (gridEnabled) gridEnabled.addEventListener('change', updateGrille);
-            if (gridSize) gridSize.addEventListener('input', updateGrille);
-            if (snapToGrid) snapToGrid.addEventListener('change', updateGrille);
-            if (guidesEnabled) guidesEnabled.addEventListener('change', updateGrille);
-        }
-
-        // Handle zoom modal real-time updates
-        if (modal.id === 'canvas-zoom-modal') {
-            const zoomMin = modal.querySelector('#canvas_zoom_min');
-            const zoomMax = modal.querySelector('#canvas_zoom_max');
-
-            const updateZoom = function() {
-                updateZoomCardPreview();
-            };
-
-            if (zoomMin) zoomMin.addEventListener('input', updateZoom);
-            if (zoomMax) zoomMax.addEventListener('input', updateZoom);
-        }
-
-        // Handle interactions modal real-time updates
-        if (modal.id === 'canvas-interactions-modal') {
-            const dragEnabled = modal.querySelector('#canvas_drag_enabled');
-            const resizeEnabled = modal.querySelector('#canvas_resize_enabled');
-            const rotateEnabled = modal.querySelector('#canvas_rotate_enabled');
-            const multiSelect = modal.querySelector('#canvas_multi_select');
-            const selectionMode = modal.querySelector('#canvas_selection_mode');
-            const keyboardShortcuts = modal.querySelector('#canvas_keyboard_shortcuts');
-
-            const updateInteractions = function() {
-                updateInteractionsCardPreview();
-            };
-
-            if (dragEnabled) dragEnabled.addEventListener('change', updateInteractions);
-            if (resizeEnabled) resizeEnabled.addEventListener('change', updateInteractions);
-            if (rotateEnabled) rotateEnabled.addEventListener('change', updateInteractions);
-            if (multiSelect) multiSelect.addEventListener('change', updateInteractions);
-            if (selectionMode) selectionMode.addEventListener('change', updateInteractions);
-            if (keyboardShortcuts) keyboardShortcuts.addEventListener('change', updateInteractions);
-        }
-
-        // Handle export modal real-time updates
-        if (modal.id === 'canvas-export-modal') {
-            const exportFormat = modal.querySelector('#canvas_export_format');
-            const exportQuality = modal.querySelector('#canvas_export_quality');
-
-            const updateExport = function() {
-                updateExportCardPreview();
-            };
-
-            if (exportFormat) exportFormat.addEventListener('change', updateExport);
-            if (exportQuality) exportQuality.addEventListener('input', updateExport);
-        }
-
-        // Handle performance modal real-time updates
-        if (modal.id === 'canvas-performance-modal') {
-            const fpsTarget = modal.querySelector('#canvas_fps_target');
-            const memoryJs = modal.querySelector('#canvas_memory_limit_js');
-            const memoryPhp = modal.querySelector('#canvas_memory_limit_php');
-            const lazyLoadingEditor = modal.querySelector('#canvas_lazy_loading_editor');
-            const lazyLoadingPlugin = modal.querySelector('#canvas_lazy_loading_plugin');
-
-            const updatePerformance = function() {
-                updatePerformanceCardPreview();
-            };
-
-            if (fpsTarget) fpsTarget.addEventListener('input', updatePerformance);
-            if (memoryJs) memoryJs.addEventListener('input', updatePerformance);
-            if (memoryPhp) memoryPhp.addEventListener('input', updatePerformance);
-            if (lazyLoadingEditor) lazyLoadingEditor.addEventListener('change', updatePerformance);
-            if (lazyLoadingPlugin) lazyLoadingPlugin.addEventListener('change', updatePerformance);
-        }
-
-        // Handle autosave modal real-time updates
-        if (modal.id === 'canvas-autosave-modal') {
-            const autosaveEnabled = modal.querySelector('#canvas_autosave_enabled');
-            const autosaveInterval = modal.querySelector('#canvas_autosave_interval');
-            const versionsLimit = modal.querySelector('#canvas_versions_limit');
-
-            const updateAutosave = function() {
-                updateAutosaveCardPreview();
-            };
-
-            if (autosaveEnabled) autosaveEnabled.addEventListener('change', updateAutosave);
-            if (autosaveInterval) autosaveInterval.addEventListener('input', updateAutosave);
-            if (versionsLimit) versionsLimit.addEventListener('input', updateAutosave);
-        }
+        // Note: Real-time preview updates have been removed.
+        // Previews now only update after successful save operations.
     }
     function updateExportModal(modal, values) { /* TODO */ }
     function updatePerformanceModal(modal, values) { /* TODO */ }
