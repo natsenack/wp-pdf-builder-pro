@@ -69,6 +69,11 @@ function pdf_builder_clear_cache_handler() {
 }
 
 function pdf_builder_save_settings_handler() {
+    // Debug: Log that function is called
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('PDF Builder: pdf_builder_save_settings_handler called with current_tab: ' . ($_POST['current_tab'] ?? 'not set'));
+    }
+
     if (wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
 
