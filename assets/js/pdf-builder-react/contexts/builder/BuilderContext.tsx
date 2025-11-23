@@ -386,8 +386,7 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
     }
 
     case 'SAVE_TEMPLATE': {
-      console.log('[BuilderContext] SAVE_TEMPLATE action received:', action.payload);
-      const newState = {
+      return {
         ...state,
         template: {
           ...state.template,
@@ -399,8 +398,6 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           name: action.payload?.name || state.template.name
         }
       };
-      console.log('[BuilderContext] New template state after SAVE_TEMPLATE:', newState.template);
-      return newState;
     }
 
     case 'SET_TEMPLATE_MODIFIED': {
