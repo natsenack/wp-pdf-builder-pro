@@ -748,5 +748,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Gestion du toggle Mode Développeur
+    const developerEnabledToggle = document.getElementById('developer_enabled');
+    const devLicenseSection = document.getElementById('dev-license-section');
+    const devDebugSection = document.getElementById('dev-debug-section');
+
+    if (developerEnabledToggle && devLicenseSection && devDebugSection) {
+        function toggleDeveloperSections() {
+            const isEnabled = developerEnabledToggle.checked;
+            if (isEnabled) {
+                devLicenseSection.style.display = 'block';
+                devDebugSection.style.display = 'block';
+            } else {
+                devLicenseSection.style.display = 'none';
+                devDebugSection.style.display = 'none';
+            }
+        }
+
+        // Appliquer l'état initial
+        toggleDeveloperSections();
+
+        // Écouter les changements
+        developerEnabledToggle.addEventListener('change', toggleDeveloperSections);
+    }
 });
 </script>
