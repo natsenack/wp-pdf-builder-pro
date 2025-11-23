@@ -300,13 +300,14 @@ class PdfBuilderAdmin
         // Enregistrer les hooks AJAX du Template_Manager avant même son instantiation
         // Cela garantit que les handlers AJAX seront disponibles immédiatement
         // ✅ Note: Seulement pdf_builder_save_template - React utilise celui-ci
-        add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
+        // REMOVED: add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']); // Conflit avec bootstrap.php
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajax_get_template']);
         add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'ajax_save_canvas_settings']);
         add_action('wp_ajax_pdf_builder_get_canvas_settings', [$this, 'ajax_get_canvas_settings']);
         add_action('wp_ajax_pdf_builder_preview_image', [$this, 'ajax_preview_image']);
 
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
+// REMOVED: Conflit avec bootstrap.php - le handler de bootstrap.php gère maintenant le chargement
 // Hook pdf_builder_get_template déjà enregistré plus haut
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
 
