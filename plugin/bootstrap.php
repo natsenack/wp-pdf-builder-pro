@@ -447,17 +447,6 @@ function pdf_builder_load_new_classes()
         }
     }
 
-    // Charger les analytics
-    $analytics_classes = [
-        'analytics/AnalyticsInterface.php'
-    ];
-    foreach ($analytics_classes as $class_file) {
-        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
-        if (file_exists($file_path)) {
-            require_once $file_path;
-        }
-    }
-
     // Charger les états
     $state_classes = [
         'states/PreviewStateManager.php'

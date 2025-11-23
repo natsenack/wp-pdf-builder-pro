@@ -348,12 +348,6 @@ class PdfBuilderAdmin
         // Paramètres et configuration
         add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-settings', [$this, 'settings_page']);
 
-        // Analytics et métriques
-        add_submenu_page('pdf-builder-pro', __('Analytics - PDF Builder Pro', 'pdf-builder-pro'), __('📊 Analytics', 'pdf-builder-pro'), 'pdf_builder_access', 'pdf-builder-analytics', [$this, 'analytics_page']);
-
-        // Gestionnaire AJAX pour les actions analytics
-        add_action('wp_ajax_pdf_builder_cleanup', [$this, 'ajax_cleanup_analytics']);
-        add_action('wp_ajax_pdf_builder_reset', [$this, 'ajax_reset_analytics']);
     }
 
 
@@ -3375,9 +3369,7 @@ class PdfBuilderAdmin
     }
 
     /**
-     * Page Analytics et métriques
      */
-    public function analytics_page()
     {
         if (!$this->checkAdminPermissions()) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
@@ -3745,7 +3737,6 @@ class PdfBuilderAdmin
     /**
      * AJAX handler pour nettoyer les anciennes données analytics
      */
-    public function ajax_cleanup_analytics()
     {
         // Vérifier les permissions et le nonce
         if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_analytics')) {
@@ -3772,7 +3763,6 @@ class PdfBuilderAdmin
     /**
      * AJAX handler pour réinitialiser toutes les données analytics
      */
-    public function ajax_reset_analytics()
     {
         // Vérifier les permissions et le nonce
         if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_analytics')) {
