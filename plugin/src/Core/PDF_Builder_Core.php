@@ -193,8 +193,8 @@ class PdfBuilderCore
      */
     public function registerAdminMenu()
     {
-        // RÉACTIVÉ TEMPORAIREMENT pour les tests de diagnostic
-        // Tous les menus sont gérés par PdfBuilderAdmin - mais on les réactive pour debug
+        // DÉSACTIVÉ - Tous les menus sont gérés par PdfBuilderAdmin
+        return;
 
         if (self::$menu_added) {
             return;
