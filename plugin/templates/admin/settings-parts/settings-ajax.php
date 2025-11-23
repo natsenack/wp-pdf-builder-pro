@@ -1024,8 +1024,63 @@ function pdf_builder_get_canvas_settings_handler() {
     }
 }
 
+// AJAX Handler for getting template data
+function pdf_builder_get_template_handler() {
+    try {
+        error_log('PDF Builder: get_template_handler called with POST: ' . print_r($_GET, true));
+
+        // Vérifier le nonce
+        $nonce = $_GET['nonce'] ?? '';
+        if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
+            error_log('PDF Builder: Invalid nonce in get_template: ' . $nonce);
+            send_ajax_response(false, 'Nonce invalide.');
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('edit_posts')) {
+            error_log('PDF Builder: Insufficient permissions in get_template - user does not have edit_posts');
+            send_ajax_response(false, 'Permissions insuffisantes.');
+            return;
+        }
+
+        $template_id = intval($_GET['template_id'] ?? 0);
+        if (!$template_id) {
+            send_ajax_response(false, 'ID du template requis.');
+            return;
+        }
+
+        // Load template using the admin class method
+        if (!class_exists('PDF_Builder_Admin')) {
+            send_ajax_response(false, 'Classe PDF_Builder_Admin non trouvée.');
+            return;
+        }
+
+        $admin = new PDF_Builder_Admin();
+        $template_data = $admin->loadTemplateRobust($template_id);
+
+        if (!$template_data) {
+            send_ajax_response(false, 'Template non trouvé.');
+            return;
+        }
+
+        // Transform elements for React if they exist
+        if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+            $template_data['elements'] = $admin->transformElementsForReact($template_data['elements']);
+        }
+
+        error_log('PDF Builder: Template loaded successfully: ' . print_r($template_data, true));
+        send_ajax_response(true, 'Template chargé avec succès.', $template_data);
+
+    } catch (Exception $e) {
+        error_log('PDF Builder: Exception in get_template: ' . $e->getMessage());
+        send_ajax_response(false, 'Erreur: ' . $e->getMessage());
+    }
+}
+
 // Hook AJAX actions - MOVED to pdf-builder-pro.php for global registration
 // add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
 // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler');
 add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
 // add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
+add_action('wp_ajax_pdf_builder_get_template', 'pdf_builder_get_template_handler');
