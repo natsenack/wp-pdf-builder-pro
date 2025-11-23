@@ -2610,6 +2610,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // Clear canvas with background color from settings (matching PDF background)
     const canvasBgColor = normalizeColor(canvasSettings?.canvasBackgroundColor || '#ffffff');
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Ensure complete clear
     ctx.fillStyle = canvasBgColor;
     ctx.fillRect(0, 0, width, height);
 
