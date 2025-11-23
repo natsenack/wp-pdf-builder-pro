@@ -280,19 +280,8 @@ if (
     </div>
 <?php
 
-// Include canvas settings JavaScript (global)
-$canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
+// Canvas settings are now loaded in settings-canvas-params.php
 ?>
-<script>
-    // Script de définition des paramètres canvas - exécuté très tôt
-    window.pdfBuilderCanvasSettings = {
-        'default_canvas_format': 'A4',
-        'default_canvas_orientation': 'portrait',
-        'default_canvas_unit': 'px',
-        'default_orientation': 'portrait'
-    };
-
-    // Fonction pour convertir le format et l'orientation en dimensions pixels
     window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {
         const formatDimensions = {
             'A6': { width: 349, height: 496 },
@@ -1672,18 +1661,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     function updateDimensionsCardPreview() {
-        console.log('updateDimensionsCardPreview called');
-        console.log('window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
-
-        if (!window.pdfBuilderCanvasSettings) {
-            console.log('window.pdfBuilderCanvasSettings is not defined');
-            return;
-        }
+        if (!window.pdfBuilderCanvasSettings) return;
 
         const format = window.pdfBuilderCanvasSettings.default_canvas_format || 'A4';
         const dpi = window.pdfBuilderCanvasSettings.default_canvas_dpi || 96;
-
-        console.log('format:', format, 'dpi:', dpi);
 
         // Dimensions standard en mm pour chaque format
         const formatDimensionsMM = {
@@ -1696,43 +1677,26 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         const dimensions = formatDimensionsMM[format] || formatDimensionsMM['A4'];
-        console.log('dimensions:', dimensions);
 
         // Calculer les dimensions en pixels
         const pixelsPerMM = dpi / 25.4;
         const widthPx = Math.round(dimensions.width * pixelsPerMM);
         const heightPx = Math.round(dimensions.height * pixelsPerMM);
 
-        console.log('widthPx:', widthPx, 'heightPx:', heightPx);
-
         // Update card preview elements
         const cardWidth = document.getElementById('card-canvas-width');
         const cardHeight = document.getElementById('card-canvas-height');
         const cardDpi = document.getElementById('card-canvas-dpi');
 
-        console.log('cardWidth element:', cardWidth);
-        console.log('cardHeight element:', cardHeight);
-        console.log('cardDpi element:', cardDpi);
-
-        if (cardWidth) {
-            cardWidth.textContent = widthPx;
-            console.log('Set width to:', widthPx);
-        }
-        if (cardHeight) {
-            cardHeight.textContent = heightPx;
-            console.log('Set height to:', heightPx);
-        }
+        if (cardWidth) cardWidth.textContent = widthPx;
+        if (cardHeight) cardHeight.textContent = heightPx;
         if (cardDpi) {
             cardDpi.textContent = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
-            console.log('Set DPI info to:', cardDpi.textContent);
         }
     }
 
     // Update apparence card preview
     function updateApparenceCardPreview() {
-        console.log('updateApparenceCardPreview called');
-        console.log('window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
-
         // Get values directly from WordPress options instead of modal inputs
         // This ensures we use the saved values, not the current modal values
 
@@ -1740,24 +1704,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
         const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
 
-        console.log('bgPreview element:', bgPreview);
-        console.log('borderPreview element:', borderPreview);
-
         // Use the global settings object that should be updated after save
         if (window.pdfBuilderCanvasSettings) {
-            console.log('canvas_background_color:', window.pdfBuilderCanvasSettings.canvas_background_color);
-            console.log('border_color:', window.pdfBuilderCanvasSettings.border_color);
-
             if (bgPreview && window.pdfBuilderCanvasSettings.canvas_background_color) {
                 bgPreview.style.backgroundColor = window.pdfBuilderCanvasSettings.canvas_background_color;
-                console.log('Set bg color to:', window.pdfBuilderCanvasSettings.canvas_background_color);
             }
             if (borderPreview && window.pdfBuilderCanvasSettings.border_color) {
                 borderPreview.style.backgroundColor = window.pdfBuilderCanvasSettings.border_color;
-                console.log('Set border color to:', window.pdfBuilderCanvasSettings.border_color);
             }
-        } else {
-            console.log('window.pdfBuilderCanvasSettings is not defined');
         }
     }
 
