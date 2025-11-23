@@ -1056,6 +1056,32 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Dispatch custom event for real-time canvas updates
                             if (category === 'apparence') {
                                 console.log('🎨 Dispatching appearance settings update event');
+                                
+                                // Update window.pdfBuilderCanvasSettings with new values
+                                if (typeof window.pdfBuilderCanvasSettings !== 'undefined') {
+                                    // Get the updated values from the form
+                                    const formData = new FormData(form);
+                                    const newSettings = {};
+                                    
+                                    for (let [key, value] of formData.entries()) {
+                                        if (key === 'canvas_shadow_enabled') {
+                                            newSettings.shadow_enabled = value === '1';
+                                        } else if (key === 'canvas_border_width') {
+                                            newSettings.border_width = parseInt(value) || 1;
+                                        } else if (key === 'canvas_bg_color') {
+                                            newSettings.canvas_background_color = value;
+                                        } else if (key === 'canvas_container_bg_color') {
+                                            newSettings.container_background_color = value;
+                                        } else if (key === 'canvas_border_color') {
+                                            newSettings.border_color = value;
+                                        }
+                                    }
+                                    
+                                    // Update window object
+                                    Object.assign(window.pdfBuilderCanvasSettings, newSettings);
+                                    console.log('🔄 Updated window.pdfBuilderCanvasSettings:', newSettings);
+                                }
+                                
                                 const updateEvent = new CustomEvent('pdfBuilderCanvasSettingsUpdated', {
                                     detail: { category: 'apparence' }
                                 });
