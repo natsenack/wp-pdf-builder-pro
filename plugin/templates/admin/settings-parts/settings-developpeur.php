@@ -751,19 +751,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gestion du toggle Mode Développeur
     const developerEnabledToggle = document.getElementById('developer_enabled');
-    const devLicenseSection = document.getElementById('dev-license-section');
-    const devDebugSection = document.getElementById('dev-debug-section');
+    const devSections = [
+        'dev-license-section',
+        'dev-debug-section',
+        'dev-logs-section',
+        'dev-optimizations-section',
+        'dev-logs-viewer-section',
+        'dev-tools-section',
+        'dev-shortcuts-section',
+        'dev-todo-section'
+    ];
 
-    if (developerEnabledToggle && devLicenseSection && devDebugSection) {
+    if (developerEnabledToggle) {
         function toggleDeveloperSections() {
             const isEnabled = developerEnabledToggle.checked;
-            if (isEnabled) {
-                devLicenseSection.style.display = 'block';
-                devDebugSection.style.display = 'block';
-            } else {
-                devLicenseSection.style.display = 'none';
-                devDebugSection.style.display = 'none';
-            }
+            devSections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.style.display = isEnabled ? 'block' : 'none';
+                }
+            });
         }
 
         // Appliquer l'état initial
