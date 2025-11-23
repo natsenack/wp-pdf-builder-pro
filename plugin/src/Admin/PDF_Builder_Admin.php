@@ -5920,7 +5920,7 @@ class PdfBuilderAdmin
     public function ajax_get_template()
     {
         try {
-            
+
             // Vérifier les permissions - permettre aux utilisateurs connectés de charger les templates
             // Au lieu de manage_options qui est trop restrictif, on utilise read pour les utilisateurs connectés
             if (!is_user_logged_in()) {
@@ -5941,32 +5941,27 @@ class PdfBuilderAdmin
                           wp_verify_nonce($nonce, 'pdf_builder_templates');
 
             if (!$nonce_valid) {
-                wp_send_json_error('Nonce invalide');
+                wp_send_json_error('Nonce invalide: ' . $nonce);
                 return;
             }
 
             // Récupérer l'ID du template - accepter GET ou POST
             $template_id = isset($_REQUEST['template_id']) ? intval($_REQUEST['template_id']) : 0;
             if (!$template_id || $template_id <= 0) {
-                wp_send_json_error('ID template manquant ou invalide');
+                wp_send_json_error('ID template manquant ou invalide: ' . $template_id);
                 return;
             }
 
             // Charger le template
-            $template_data = $this->loadTemplateRobust($template_id);
+            $template_data = $this->template_manager->loadTemplateRobust($template_id);
             if (!$template_data) {
-                // Si le template n'existe pas, créer un template par défaut
-                $template_data = $this->createDefaultTemplate($template_id);
+                wp_send_json_error('Template non trouvé avec ID: ' . $template_id);
+                return;
             }
 
             // S'assurer que les données sont dans le bon format
             if (!is_array($template_data)) {
                 $template_data = ['error' => 'Invalid template data format'];
-            }
-
-            // Transformer les éléments pour React si nécessaire
-            if (isset($template_data['elements']) && is_array($template_data['elements'])) {
-                $template_data['elements'] = $this->transformElementsForReact($template_data['elements']);
             }
 
             // Extraire le nom du template
