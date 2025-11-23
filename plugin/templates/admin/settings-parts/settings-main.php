@@ -982,12 +982,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Get AJAX config with fallbacks
                     let ajaxConfig = null;
+                    console.log('Available globals:', { pdf_builder_ajax: typeof pdf_builder_ajax, pdfBuilderAjax: typeof pdfBuilderAjax, ajaxurl: typeof ajaxurl });
                     if (typeof pdf_builder_ajax !== 'undefined') {
                         ajaxConfig = pdf_builder_ajax;
+                        console.log('Using pdf_builder_ajax:', ajaxConfig);
                     } else if (typeof pdfBuilderAjax !== 'undefined') {
                         ajaxConfig = pdfBuilderAjax;
+                        console.log('Using pdfBuilderAjax:', ajaxConfig);
                     } else if (typeof ajaxurl !== 'undefined') {
                         ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
+                        console.log('Using fallback ajaxurl:', ajaxConfig);
                     }
 
                     if (!ajaxConfig || !ajaxConfig.ajax_url) {
@@ -1096,14 +1100,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update canvas previews after save
     window.updateCanvasPreviews = function(category) {
+        console.log('🔄 updateCanvasPreviews called with category:', category);
+
         // Get AJAX config
         let ajaxConfig = null;
+        console.log('Available globals in updateCanvasPreviews:', { pdf_builder_ajax: typeof pdf_builder_ajax, pdfBuilderAjax: typeof pdfBuilderAjax, ajaxurl: typeof ajaxurl });
         if (typeof pdf_builder_ajax !== 'undefined') {
             ajaxConfig = pdf_builder_ajax;
+            console.log('Using pdf_builder_ajax in updateCanvasPreviews:', ajaxConfig);
         } else if (typeof pdfBuilderAjax !== 'undefined') {
             ajaxConfig = pdfBuilderAjax;
+            console.log('Using pdfBuilderAjax in updateCanvasPreviews:', ajaxConfig);
         } else if (typeof ajaxurl !== 'undefined') {
             ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
+            console.log('Using fallback ajaxurl in updateCanvasPreviews:', ajaxConfig);
         }
 
         if (!ajaxConfig || !ajaxConfig.ajax_url) {

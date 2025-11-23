@@ -826,14 +826,18 @@ function pdf_builder_save_canvas_settings_handler() {
 }// Handler pour récupérer les paramètres canvas
 function pdf_builder_get_canvas_settings_handler() {
     try {
+        error_log('PDF Builder: get_canvas_settings_handler called with POST: ' . print_r($_POST, true));
+
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            error_log('PDF Builder: Invalid nonce in get_canvas_settings');
             send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
             return;
         }
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
+            error_log('PDF Builder: Insufficient permissions in get_canvas_settings');
             send_ajax_response(false, 'Permissions insuffisantes.');
             return;
         }
@@ -1011,9 +1015,11 @@ function pdf_builder_get_canvas_settings_handler() {
                 return;
         }
 
+        error_log('PDF Builder: Sending response for category ' . $category . ': ' . print_r($values, true));
         send_ajax_response(true, 'Paramètres récupérés avec succès.', $values);
 
     } catch (Exception $e) {
+        error_log('PDF Builder: Exception in get_canvas_settings: ' . $e->getMessage());
         send_ajax_response(false, 'Erreur: ' . $e->getMessage());
     }
 }
