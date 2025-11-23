@@ -5919,42 +5919,58 @@ class PdfBuilderAdmin
      */
     public function ajax_get_template()
     {
+        // Log pour débogage
+        $log_file = WP_CONTENT_DIR . '/debug_pdf_ajax.log';
+        $log_data = date('Y-m-d H:i:s') . ' - AJAX GET TEMPLATE START' . "\n";
+        $log_data .= 'REQUEST: ' . print_r($_REQUEST, true) . "\n";
+        $log_data .= 'USER: ' . (is_user_logged_in() ? 'LOGGED_IN' : 'NOT_LOGGED_IN') . "\n";
+        $log_data .= 'USER_ID: ' . get_current_user_id() . "\n";
+        file_put_contents($log_file, $log_data, FILE_APPEND);
+
         try {
 
             // Vérifier les permissions - permettre aux utilisateurs connectés de charger les templates
             // Au lieu de manage_options qui est trop restrictif, on utilise read pour les utilisateurs connectés
             if (!is_user_logged_in()) {
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' - ERROR: User not logged in' . "\n", FILE_APPEND);
                 wp_send_json_error('Utilisateur non connecté');
                 return;
             }
 
             // Vérifier que l'utilisateur a au moins les droits de lecture
             if (!current_user_can('read')) {
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' - ERROR: User cannot read' . "\n", FILE_APPEND);
                 wp_send_json_error('Permissions insuffisantes - droits de lecture requis');
                 return;
             }
 
             // Vérifier le nonce - accepter plusieurs formats
             $nonce = isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : '';
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - NONCE CHECK: ' . $nonce . "\n", FILE_APPEND);
             $nonce_valid = wp_verify_nonce($nonce, 'pdf_builder_nonce') ||
                           wp_verify_nonce($nonce, 'pdf_builder_order_actions') ||
                           wp_verify_nonce($nonce, 'pdf_builder_templates');
 
             if (!$nonce_valid) {
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' - ERROR: Invalid nonce: ' . $nonce . "\n", FILE_APPEND);
                 wp_send_json_error('Nonce invalide: ' . $nonce);
                 return;
             }
 
             // Récupérer l'ID du template - accepter GET ou POST
             $template_id = isset($_REQUEST['template_id']) ? intval($_REQUEST['template_id']) : 0;
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - TEMPLATE_ID: ' . $template_id . "\n", FILE_APPEND);
             if (!$template_id || $template_id <= 0) {
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' - ERROR: Invalid template ID: ' . $template_id . "\n", FILE_APPEND);
                 wp_send_json_error('ID template manquant ou invalide: ' . $template_id);
                 return;
             }
 
             // Charger le template
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - LOADING TEMPLATE: ' . $template_id . "\n", FILE_APPEND);
             $template_data = $this->template_manager->loadTemplateRobust($template_id);
             if (!$template_data) {
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' - ERROR: Template not found: ' . $template_id . "\n", FILE_APPEND);
                 wp_send_json_error('Template non trouvé avec ID: ' . $template_id);
                 return;
             }
@@ -5977,8 +5993,10 @@ class PdfBuilderAdmin
             wp_send_json_success($response);
 
         } catch (Exception $e) {
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - EXCEPTION: ' . $e->getMessage() . "\n", FILE_APPEND);
             wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
         } catch (Error $e) {
+            file_put_contents($log_file, date('Y-m-d H:i:s') . ' - FATAL ERROR: ' . $e->getMessage() . "\n", FILE_APPEND);
             wp_send_json_error('Erreur fatale lors du chargement du template: ' . $e->getMessage());
         }
     }
