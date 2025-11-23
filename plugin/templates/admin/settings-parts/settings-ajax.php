@@ -426,15 +426,9 @@ function pdf_builder_save_settings_handler() {
                 $dimensions = $format_dimensions_mm[$format] ?? $format_dimensions_mm['A4'];
 
                 // Orientation temporairement désactivée - toujours portrait
-                // if ($orientation === 'landscape') {
-                //     $temp = $dimensions['width'];
-                //     $dimensions['width'] = $dimensions['height'];
-                //     $dimensions['height'] = $temp;
-                // }
-
-                // Convertir mm en pixels (1mm = dpi/25.4 pixels)
-                $width_px = round(($dimensions['width'] / 25.4) * $dpi);
-                $height_px = round(($dimensions['height'] / 25.4) * $dpi);
+                // Forcer les dimensions portrait (pas d'inversion)
+                $width_px = round(($dimensions['width'] / 25.4) * $dpi);   // 794px pour A4
+                $height_px = round(($dimensions['height'] / 25.4) * $dpi); // 1123px pour A4
 
                 // Sauvegarder les dimensions calculées
                 update_option('pdf_builder_canvas_width', $width_px);
