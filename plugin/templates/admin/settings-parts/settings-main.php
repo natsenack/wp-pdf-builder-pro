@@ -886,6 +886,20 @@ document.addEventListener('DOMContentLoaded', function() {
     function hideModal(modal) {
         if (!modal) return;
         try {
+            // Restore original settings if dimensions modal was cancelled
+            if (modal.getAttribute('data-category') === 'dimensions' && modal._originalDimensionsSettings) {
+                if (window.pdfBuilderCanvasSettings) {
+                    window.pdfBuilderCanvasSettings.default_canvas_format = modal._originalDimensionsSettings.format;
+                    window.pdfBuilderCanvasSettings.default_canvas_dpi = modal._originalDimensionsSettings.dpi;
+                    
+                    // Update preview with restored values
+                    if (typeof updateDimensionsCardPreview === 'function') {
+                        updateDimensionsCardPreview();
+                    }
+                }
+                delete modal._originalDimensionsSettings;
+            }
+
             modal.style.setProperty('display', 'none', 'important');
         } catch (e) {
             
@@ -901,6 +915,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (success) {
                 // Initialize event listeners for this modal
                 initializeModalEventListeners(modal);
+
+                // Synchronize modal values with current settings for dimensions modal
+                if (modal.getAttribute('data-category') === 'dimensions') {
+                    synchronizeDimensionsModalValues(modal);
+                }
 
                 // Verify modal is visible after a short delay
                 setTimeout(() => {
@@ -1070,6 +1089,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             hideModal(modal);
                             this.textContent = originalText;
                             this.disabled = false;
+
+                            // Clear original settings since save was successful
+                            delete modal._originalDimensionsSettings;
 
                             // Update window.pdfBuilderCanvasSettings with saved values for dimensions
                             if (category === 'dimensions' && data.data && data.data.saved) {
@@ -1868,5 +1890,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize real-time preview for dimensions
     initializeDimensionsRealTimePreview();
+
+    // Synchronize dimensions modal values with current settings
+    function synchronizeDimensionsModalValues(modal) {
+        if (!modal || !window.pdfBuilderCanvasSettings) return;
+
+        // Store original values for restoration if modal is cancelled
+        modal._originalDimensionsSettings = {
+            format: window.pdfBuilderCanvasSettings.default_canvas_format,
+            dpi: window.pdfBuilderCanvasSettings.default_canvas_dpi
+        };
+
+        const formatSelect = modal.querySelector('#canvas_format');
+        const dpiSelect = modal.querySelector('#canvas_dpi');
+
+        if (formatSelect) {
+            formatSelect.value = window.pdfBuilderCanvasSettings.default_canvas_format || 'A4';
+        }
+
+        if (dpiSelect) {
+            dpiSelect.value = window.pdfBuilderCanvasSettings.default_canvas_dpi || 96;
+        }
+    }
 
 })();</script>
