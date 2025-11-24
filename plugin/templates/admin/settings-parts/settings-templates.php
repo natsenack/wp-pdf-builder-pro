@@ -415,7 +415,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                             $detected_plugin = isset($status_plugins[$status_key]) ? $status_plugins[$status_key] : 'Plugin inconnu';
                             $tooltip_text = "Slug personnalisé détecté - ajouté par: {$detected_plugin}";
                             ?>
-                            <span class="custom-status-indicator" title="<?php echo esc_attr($tooltip_text); ?>" data-tooltip-debug="<?php echo esc_attr($tooltip_text); ?>">🔍</span>
+                            <span class="custom-status-indicator" data-tooltip="<?php echo esc_attr($tooltip_text); ?>" style="font-family: Arial, sans-serif;">🔍</span>
                             <?php endif; ?>
                         </h4>
                         <div class="template-selector">
@@ -589,7 +589,42 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                 }
 
                 .custom-status-indicator:hover {
-                    transform: scale(1.1);
+                    transform: scale(1.05);
+                }
+
+                /* Tooltip personnalisé */
+                .custom-status-indicator {
+                    position: relative;
+                }
+
+                .custom-status-indicator:hover::after {
+                    content: attr(data-tooltip);
+                    position: absolute;
+                    bottom: 125%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: #333;
+                    color: white;
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    white-space: nowrap;
+                    z-index: 1000;
+                    opacity: 1;
+                    visibility: visible;
+                    pointer-events: none;
+                }
+
+                .custom-status-indicator:hover::before {
+                    content: '';
+                    position: absolute;
+                    bottom: 110%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    border: 5px solid transparent;
+                    border-top-color: #333;
+                    z-index: 1000;
+                    pointer-events: none;
                 }
             </style>
 
