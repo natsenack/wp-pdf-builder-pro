@@ -40,6 +40,7 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_save_template_v3', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_auto_save_template', [$this, 'ajaxAutoSaveTemplateWrapper']);
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
+        add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajaxFlushRestCache']);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
 
@@ -283,6 +284,49 @@ class AjaxHandler
             if ($template) {
                 wp_send_json_success([
                     'template' => $template,
+                    'message' => 'Template chargé avec succès'
+                ]);
+            } else {
+                wp_send_json_error('Template introuvable');
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Charger un template (version GET pour l'éditeur React)
+     */
+    public function ajaxGetTemplate()
+    {
+        try {
+            // Vérifier les permissions
+            if (!is_user_logged_in() || !current_user_can('manage_options')) {
+                wp_send_json_error('Permissions insuffisantes');
+                return;
+            }
+
+            // Vérifier le nonce depuis les paramètres GET
+            if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_nonce')) {
+                wp_send_json_error('Nonce invalide');
+                return;
+            }
+
+            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : null;
+
+            if (!$template_id) {
+                wp_send_json_error('ID de template manquant');
+                return;
+            }
+
+            // Charger le template
+            $template = $this->admin->loadTemplate($template_id);
+
+            if ($template) {
+                wp_send_json_success([
+                    'template' => $template,
+                    'template_name' => $template['name'] ?? 'Template ' . $template_id,
                     'message' => 'Template chargé avec succès'
                 ]);
             } else {
