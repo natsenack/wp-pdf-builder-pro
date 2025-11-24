@@ -395,15 +395,21 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
 
             <form method="post" action="" id="templates-status-form">
                 <div class="templates-status-grid">
+                    <?php
+                    // Définir les statuts WooCommerce par défaut
+                    $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
+                    ?>
                     <?php foreach ($order_statuses as $status_key => $status_label): ?>
-                    <div class="template-status-card">
+                    <?php
+                    // Vérifier si c'est un statut personnalisé
+                    $clean_status_key = str_replace('wc-', '', $status_key);
+                    $is_custom_status = !in_array($clean_status_key, $default_statuses);
+                    ?>
+                    <div class="template-status-card <?php echo $is_custom_status ? 'custom-status-card' : ''; ?>">
                         <h4>
                             <?php echo esc_html($status_label); ?>
-                            <?php
-                            $clean_status_key = str_replace('wc-', '', $status_key);
-                            $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
-                            if (!in_array($clean_status_key, $default_statuses)): ?>
-                                <small style="color: #666; font-weight: normal;">(<?php echo esc_html($clean_status_key); ?>)</small>
+                            <?php if ($is_custom_status): ?>
+                            <span class="custom-status-indicator" title="Statut personnalisé">🆕</span>
                             <?php endif; ?>
                         </h4>
                         <div class="template-selector">
@@ -545,6 +551,39 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
 
                 .templates-status-notice {
                     margin-bottom: 20px;
+                }
+
+                /* Styles pour les statuts personnalisés */
+                .custom-status-card {
+                    border-color: #ff6b35;
+                    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+                }
+
+                .custom-status-card h4 {
+                    border-bottom-color: #ff6b35;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+
+                .custom-status-indicator {
+                    font-size: 14px;
+                    background: #ff6b35;
+                    color: white;
+                    padding: 2px 6px;
+                    border-radius: 10px;
+                    font-weight: bold;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-width: 20px;
+                    height: 20px;
+                    cursor: help;
+                    transition: transform 0.2s ease;
+                }
+
+                .custom-status-indicator:hover {
+                    transform: scale(1.1);
                 }
             </style>
 
