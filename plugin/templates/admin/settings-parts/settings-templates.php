@@ -52,32 +52,6 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
             <div class="notice notice-warning">
                 <p><strong>⚠️ WooCommerce n'est pas actif</strong></p>
                 <p>Cette fonctionnalité nécessite WooCommerce pour fonctionner. Veuillez installer et activer WooCommerce.</p>
-                <details style="margin-top: 10px;">
-                    <summary style="cursor: pointer; font-weight: bold;">Informations de diagnostic</summary>
-                    <div style="margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 4px;">
-                        <p><strong>Classe WooCommerce :</strong> <?php echo class_exists('WooCommerce') ? 'Disponible' : 'Non disponible'; ?></p>
-                        <p><strong>Fonction wc_get_order_statuses :</strong> <?php echo function_exists('wc_get_order_statuses') ? 'Disponible' : 'Non disponible'; ?></p>
-                        <p><strong>Plugins actifs :</strong> <?php
-                        if (function_exists('get_option')) {
-                            $active_plugins = get_option('active_plugins', []);
-                            $woocommerce_plugins = array_filter($active_plugins, function($plugin) {
-                                return strpos($plugin, 'woocommerce') !== false;
-                            });
-                            echo empty($woocommerce_plugins) ? 'Aucun plugin WooCommerce détecté' : implode(', ', $woocommerce_plugins);
-                        } else {
-                            echo 'Impossible de récupérer la liste des plugins';
-                        }
-                        ?></p>
-                    </div>
-                </details>
-            </div>
-            <?php else: ?>
-
-            <?php if (empty($templates)): ?>
-            <div class="notice notice-warning">
-                <p><strong>⚠️ Aucun template PDF disponible</strong></p>
-                <p>Vous devez créer au moins un template PDF avant de pouvoir configurer les assignations par statut.</p>
-                <p><a href="<?php echo admin_url('edit.php?post_type=pdf_template'); ?>" class="button button-primary">Créer un template PDF</a></p>
             </div>
             <?php else: ?>
 
@@ -85,8 +59,6 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                 <div class="notice notice-info">
                     <p><strong>ℹ️ Configuration des templates par statut</strong></p>
                     <p>Assignez un template PDF par défaut pour chaque statut de commande WooCommerce. Lorsque le statut d'une commande change, le template correspondant sera automatiquement utilisé pour générer le PDF.</p>
-                    <p><strong><?php echo count($order_statuses); ?> statuts détectés :</strong> <?php echo implode(', ', array_values($order_statuses)); ?></p>
-                    <p><strong><?php echo count($templates); ?> templates disponibles :</strong> <?php echo implode(', ', array_values($templates)); ?></p>
                 </div>
             </div>
 
@@ -248,5 +220,3 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                 });
             });
             </script>
-            <?php endif; ?>
-            <?php endif; ?>

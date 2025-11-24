@@ -414,15 +414,6 @@ if (
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* Styles pour les onglets */
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
 .floating-save-btn:hover + .floating-tooltip,
 .floating-tooltip:hover {
     opacity: 1;
@@ -456,6 +447,15 @@ if (
     opacity: 0.5;
     pointer-events: none;
     cursor: not-allowed;
+}
+
+/* Styles pour les onglets */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
 }
 
 .gdpr-disabled-section {
