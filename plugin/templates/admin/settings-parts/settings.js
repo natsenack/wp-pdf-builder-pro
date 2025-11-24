@@ -213,27 +213,37 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (fpsTargetSelect) {
         fpsTargetSelect.addEventListener("change", function() {
-            updatePerformanceCardPreview();
+            if (typeof updatePerformanceCardPreview === 'function') {
+                updatePerformanceCardPreview();
+            }
         });
     }
     if (memoryJsSelect) {
         memoryJsSelect.addEventListener("change", function() {
-            updatePerformanceCardPreview();
+            if (typeof updatePerformanceCardPreview === 'function') {
+                updatePerformanceCardPreview();
+            }
         });
     }
     if (memoryPhpSelect) {
         memoryPhpSelect.addEventListener("change", function() {
-            updatePerformanceCardPreview();
+            if (typeof updatePerformanceCardPreview === 'function') {
+                updatePerformanceCardPreview();
+            }
         });
     }
     if (lazyLoadingEditorCheckbox) {
         lazyLoadingEditorCheckbox.addEventListener("change", function() {
-            updatePerformanceCardPreview();
+            if (typeof updatePerformanceCardPreview === 'function') {
+                updatePerformanceCardPreview();
+            }
         });
     }
     if (lazyLoadingPluginCheckbox) {
         lazyLoadingPluginCheckbox.addEventListener("change", function() {
-            updatePerformanceCardPreview();
+            if (typeof updatePerformanceCardPreview === 'function') {
+                updatePerformanceCardPreview();
+            }
         });
     }
 
@@ -244,17 +254,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (autosaveEnabledCheckbox) {
         autosaveEnabledCheckbox.addEventListener("change", function() {
-            updateAutosaveCardPreview();
+            if (typeof window.updateAutosaveCardPreview === 'function') {
+                window.updateAutosaveCardPreview();
+            }
         });
     }
     if (autosaveIntervalInput) {
         autosaveIntervalInput.addEventListener("input", function() {
-            updateAutosaveCardPreview();
+            if (typeof window.updateAutosaveCardPreview === 'function') {
+                window.updateAutosaveCardPreview();
+            }
         });
     }
     if (versionsLimitInput) {
         versionsLimitInput.addEventListener("input", function() {
-            updateAutosaveCardPreview();
+            if (typeof window.updateAutosaveCardPreview === 'function') {
+                window.updateAutosaveCardPreview();
+            }
         });
     }
 
@@ -267,27 +283,37 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (bgColorInput) {
         bgColorInput.addEventListener("input", function() {
-            updateApparenceCardPreview();
+            if (typeof updateApparenceCardPreview === 'function') {
+                updateApparenceCardPreview();
+            }
         });
     }
     if (borderColorInput) {
         borderColorInput.addEventListener("input", function() {
-            updateApparenceCardPreview();
+            if (typeof updateApparenceCardPreview === 'function') {
+                updateApparenceCardPreview();
+            }
         });
     }
     if (borderWidthInput) {
         borderWidthInput.addEventListener("input", function() {
-            updateApparenceCardPreview();
+            if (typeof updateApparenceCardPreview === 'function') {
+                updateApparenceCardPreview();
+            }
         });
     }
     if (shadowEnabledCheckbox) {
         shadowEnabledCheckbox.addEventListener("change", function() {
-            updateApparenceCardPreview();
+            if (typeof updateApparenceCardPreview === 'function') {
+                updateApparenceCardPreview();
+            }
         });
     }
     if (containerBgColorInput) {
         containerBgColorInput.addEventListener("input", function() {
-            updateApparenceCardPreview();
+            if (typeof updateApparenceCardPreview === 'function') {
+                updateApparenceCardPreview();
+            }
         });
     }
 
@@ -299,22 +325,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (zoomMinInput) {
         zoomMinInput.addEventListener("input", function() {
-            updateZoomCardPreview();
+            if (typeof updateZoomCardPreview === 'function') {
+                updateZoomCardPreview();
+            }
         });
     }
     if (zoomMaxInput) {
         zoomMaxInput.addEventListener("input", function() {
-            updateZoomCardPreview();
+            if (typeof updateZoomCardPreview === 'function') {
+                updateZoomCardPreview();
+            }
         });
     }
     if (zoomDefaultInput) {
         zoomDefaultInput.addEventListener("input", function() {
-            updateZoomCardPreview();
+            if (typeof updateZoomCardPreview === 'function') {
+                updateZoomCardPreview();
+            }
         });
     }
     if (zoomStepInput) {
         zoomStepInput.addEventListener("input", function() {
-            updateZoomCardPreview();
+            if (typeof updateZoomCardPreview === 'function') {
+                updateZoomCardPreview();
+            }
         });
     }
 
@@ -324,12 +358,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (exportFormatSelect) {
         exportFormatSelect.addEventListener("change", function() {
-            updateExportCardPreview();
+            if (typeof updateExportCardPreview === 'function') {
+                updateExportCardPreview();
+            }
         });
     }
     if (exportQualityInput) {
         exportQualityInput.addEventListener("input", function() {
-            updateExportCardPreview();
+            if (typeof updateExportCardPreview === 'function') {
+                updateExportCardPreview();
+            }
         });
     }
 
@@ -339,7 +377,9 @@ document.addEventListener("DOMContentLoaded", function() {
     if (gridEnabledCheckbox) {
         // Add additional listener for the new preview update
         gridEnabledCheckbox.addEventListener("change", function() {
-            updateGrilleCardPreview();
+            if (typeof updateGrilleCardPreview === 'function') {
+                updateGrilleCardPreview();
+            }
         });
     }
 
@@ -351,22 +391,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (dragEnabledCheckbox) {
         dragEnabledCheckbox.addEventListener("change", function() {
-            updateInteractionsCardPreview();
+            if (typeof updateInteractionsCardPreview === 'function') {
+                updateInteractionsCardPreview();
+            }
         });
     }
     if (resizeEnabledCheckbox) {
         resizeEnabledCheckbox.addEventListener("change", function() {
-            updateInteractionsCardPreview();
+            if (typeof updateInteractionsCardPreview === 'function') {
+                updateInteractionsCardPreview();
+            }
         });
     }
     if (multiSelectCheckbox) {
         multiSelectCheckbox.addEventListener("change", function() {
-            updateInteractionsCardPreview();
+            if (typeof updateInteractionsCardPreview === 'function') {
+                updateInteractionsCardPreview();
+            }
         });
     }
     if (selectionModeSelect) {
         selectionModeSelect.addEventListener("change", function() {
-            updateInteractionsCardPreview();
+            if (typeof updateInteractionsCardPreview === 'function') {
+                updateInteractionsCardPreview();
+            }
         });
     }
 

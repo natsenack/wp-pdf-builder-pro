@@ -1128,7 +1128,7 @@ function pdf_builder_get_canvas_settings_handler() {
             case 'autosave':
                 $values = [
                     'autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', true),
-                    'autosave_interval' => get_option('pdf_builder_canvas_autosave_interval', 30),
+                    'autosave_interval' => get_option('pdf_builder_canvas_autosave_interval', 5),
                     'history_enabled' => get_option('pdf_builder_canvas_history_enabled', true),
                     'history_max' => get_option('pdf_builder_canvas_history_max', 50)
                 ];

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Settings</title>
+</head>
+<body>
+    <h1>Test PDF Builder Settings</h1>
+
+    <!-- Mock elements for testing -->
+    <input type="checkbox" id="canvas_autosave_enabled">
+    <input type="number" id="canvas_autosave_interval" value="5">
+    <input type="number" id="canvas_versions_limit" value="10">
+
+    <div class="canvas-card" data-category="autosave">
+        <div class="autosave-timer"></div>
+        <div class="autosave-status"></div>
+        <div class="version-dot"></div>
+        <div class="version-dot"></div>
+        <div class="version-dot"></div>
+    </div>
+
+    <script>
+        // Mock window.pdfBuilderCanvasSettings
+        window.pdfBuilderCanvasSettings = {
+            autosave_enabled: true,
+            autosave_interval: 5,
+            versions_limit: 10
+        };
+
+        // Mock function to test
+        window.updateAutosaveCardPreview = function() {
+            console.log('updateAutosaveCardPreview called');
+            const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
+            const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : 5;
+
+            const timerDisplay = document.querySelector('.autosave-timer');
+            if (timerDisplay) {
+                const minutes = autosaveInterval;
+                timerDisplay.textContent = minutes + 'min';
+            }
+        };
+
+        // Test the function
+        console.log('Testing updateAutosaveCardPreview...');
+        if (typeof window.updateAutosaveCardPreview === 'function') {
+            window.updateAutosaveCardPreview();
+            console.log('✅ Function exists and executed');
+        } else {
+            console.log('❌ Function does not exist');
+        }
+    </script>
+</body>
+</html>
