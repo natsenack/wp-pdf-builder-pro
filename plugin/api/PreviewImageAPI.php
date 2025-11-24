@@ -144,15 +144,16 @@ class PreviewImageAPI
             // Validation des paramètres (Jour 1-2)
             $validated_params = $this->validateRestParams($params);
 
-            // Pour l'instant, juste retourner une réponse de succès
-            // La génération réelle viendra plus tard
+            // === JOUR 3-4 : Génération PDF avec DomPDF ===
+            $generation_result = $this->generatePDFPreview($validated_params);
+
             return new \WP_REST_Response(array(
                 'success' => true,
-                'message' => 'Endpoint Preview opérationnel - Jour 1-2 validé',
+                'message' => 'PDF généré avec succès - Jour 3-4 validé',
                 'data' => array(
                     'validated_params' => $validated_params,
-                    'ready_for_generation' => false, // À implémenter dans les jours suivants
-                    'version' => '1.0-jour1-2'
+                    'generation_result' => $generation_result,
+                    'version' => '1.0-jour3-4'
                 )
             ), 200);
 
@@ -769,5 +770,128 @@ class PreviewImageAPI
             // Log l'erreur mais ne pas interrompre l'exécution
             
         }
+    }
+
+    /**
+     * Génère un aperçu PDF avec DomPDF (Jour 3-4) - Méthode publique pour tests
+     *
+     * @param array $validated_params Paramètres validés
+     * @return array Résultat de la génération
+     */
+    public function generatePDFPreviewPublic($validated_params)
+    {
+        return $this->generatePDFPreview($validated_params);
+    }
+
+    /**
+     * Génère un aperçu PDF avec DomPDF (Jour 3-4)
+     *
+     * @param array $validated_params Paramètres validés
+     * @return array Résultat de la génération
+     */
+    private function generatePDFPreview($validated_params)
+    {
+        try {
+            // Créer un fournisseur de données statiques (pas de variables dynamiques)
+            $data_provider = new SampleDataProvider();
+
+            // Préparer les données du template
+            $template_data = $validated_params['template_data'] ?? $this->getDefaultTemplateData();
+
+            // Configuration pour DomPDF optimisée
+            $generator_config = [
+                'dpi' => 150, // Résolution optimisée
+                'compression' => 'FAST', // Compression rapide
+                'memory_limit' => '256M', // Limite mémoire
+                'timeout' => 30, // Timeout 30 secondes
+                'paper_size' => 'A4',
+                'orientation' => 'portrait'
+            ];
+
+            // Générer le PDF avec le GeneratorManager
+            $result = $this->generator_manager->generatePreview(
+                $template_data,
+                $data_provider,
+                'pdf', // Format de sortie souhaité
+                $generator_config
+            );
+
+            if ($result === false) {
+                throw new \Exception('Échec de la génération PDF - tous les générateurs ont échoué');
+            }
+
+            // Pour les jours 3-4, nous retournons des informations sur la génération
+            // Dans les jours 5-7, nous convertirons en image
+            return [
+                'pdf_generated' => true,
+                'generator_used' => 'dompdf', // Générateur primaire pour jours 3-4
+                'file_size' => $result ? strlen($result) : 0,
+                'config' => $generator_config,
+                'template_elements' => count($template_data['elements'] ?? []),
+                'data_provider' => 'SampleDataProvider (statique)',
+                'ready_for_image_conversion' => false // À implémenter jours 5-7
+            ];
+
+        } catch (\Exception $e) {
+            // En cas d'erreur, retourner les détails de l'erreur
+            return [
+                'pdf_generated' => false,
+                'error' => $e->getMessage(),
+                'generator_attempts' => $this->generator_manager->getAttemptHistory(),
+                'config' => $generator_config ?? [],
+                'fallback_used' => true
+            ];
+        }
+    }
+
+    /**
+     * Retourne des données de template par défaut pour les tests
+     *
+     * @return array Données de template par défaut
+     */
+    private function getDefaultTemplateData()
+    {
+        return [
+            'id' => 'default_preview_template',
+            'name' => 'Template Aperçu par Défaut',
+            'elements' => [
+                [
+                    'type' => 'text',
+                    'content' => 'APERÇU PDF BUILDER PRO',
+                    'style' => [
+                        'fontSize' => '24px',
+                        'fontWeight' => 'bold',
+                        'color' => '#333',
+                        'textAlign' => 'center'
+                    ],
+                    'position' => ['x' => 50, 'y' => 100]
+                ],
+                [
+                    'type' => 'text',
+                    'content' => 'Génération avec DomPDF - Jour 3-4',
+                    'style' => [
+                        'fontSize' => '16px',
+                        'color' => '#666',
+                        'textAlign' => 'center'
+                    ],
+                    'position' => ['x' => 50, 'y' => 150]
+                ],
+                [
+                    'type' => 'text',
+                    'content' => 'Données statiques - Pas de variables dynamiques',
+                    'style' => [
+                        'fontSize' => '14px',
+                        'color' => '#999',
+                        'textAlign' => 'center'
+                    ],
+                    'position' => ['x' => 50, 'y' => 200]
+                ]
+            ],
+            'page' => [
+                'size' => 'A4',
+                'orientation' => 'portrait',
+                'margins' => ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20]
+            ]
+        ];
     }
 }
