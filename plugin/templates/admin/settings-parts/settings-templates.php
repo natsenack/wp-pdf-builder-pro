@@ -225,6 +225,16 @@ if ($woocommerce_active) {
         if (!in_array($clean_status_key, $default_statuses)) {
             // C'est un statut personnalisé, essayer de détecter le plugin responsable
             $plugin_name = detect_custom_status_plugin($clean_status_key);
+
+            // Debug: Afficher les informations de détection
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log("PDF Builder Debug - Statut personnalisé détecté:");
+                error_log("  Clé originale: " . $status_key);
+                error_log("  Clé nettoyée: " . $clean_status_key);
+                error_log("  Nom du statut: " . $status_name);
+                error_log("  Plugin détecté: " . ($plugin_name ?: 'AUCUN'));
+            }
+
             if ($plugin_name) {
                 $custom_status_plugins[] = $plugin_name;
             }
@@ -288,6 +298,21 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                 <?php if (!empty($custom_status_plugins)): ?>
                 <span style="font-size: 14px; font-weight: normal; color: #666;">
                     🔌 Plugins détectés: <?php echo esc_html(implode(', ', $custom_status_plugins)); ?>
+                    <?php if (defined('WP_DEBUG') && WP_DEBUG && !empty($order_statuses)): ?>
+                    <br><small style="color: #999;">
+                        Debug: <?php
+                        $debug_info = [];
+                        foreach ($order_statuses as $status_key => $status_name) {
+                            $clean_status_key = str_replace('wc-', '', $status_key);
+                            if (!in_array($clean_status_key, ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'])) {
+                                $plugin_name = detect_custom_status_plugin($clean_status_key);
+                                $debug_info[] = $clean_status_key . ' → ' . ($plugin_name ?: 'NON IDENTIFIÉ');
+                            }
+                        }
+                        echo implode(' | ', $debug_info);
+                        ?>
+                    </small>
+                    <?php endif; ?>
                 </span>
                 <?php elseif ($woocommerce_active && !empty($order_statuses)): ?>
                 <span style="font-size: 14px; font-weight: normal; color: #28a745;">
