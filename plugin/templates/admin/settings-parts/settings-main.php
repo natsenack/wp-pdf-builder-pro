@@ -1070,6 +1070,32 @@ document.addEventListener('DOMContentLoaded', function() {
                             hideModal(modal);
                             this.textContent = originalText;
                             this.disabled = false;
+
+                            // Update window.pdfBuilderCanvasSettings with saved values for dimensions
+                            if (category === 'dimensions' && data.data && data.data.saved) {
+                                if (data.data.saved.canvas_width) {
+                                    window.pdfBuilderCanvasSettings.canvas_width = parseInt(data.data.saved.canvas_width);
+                                }
+                                if (data.data.saved.canvas_height) {
+                                    window.pdfBuilderCanvasSettings.canvas_height = parseInt(data.data.saved.canvas_height);
+                                }
+                                if (data.data.saved.canvas_format) {
+                                    window.pdfBuilderCanvasSettings.default_canvas_format = data.data.saved.canvas_format;
+                                }
+                                if (data.data.saved.canvas_dpi) {
+                                    window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(data.data.saved.canvas_dpi);
+                                }
+                                if (data.data.saved.canvas_orientation) {
+                                    window.pdfBuilderCanvasSettings.default_canvas_orientation = data.data.saved.canvas_orientation;
+                                }
+                            }
+
+                            // Update canvas previews after successful save
+                            if (category === 'dimensions' && typeof updateDimensionsCardPreview === 'function') {
+                                setTimeout(function() {
+                                    updateDimensionsCardPreview();
+                                }, 100);
+                            }
                         } else {
                             const errorMessage = (data.data && data.data.message) || 'Unknown error during save';
                             if (window.pdfBuilderNotifications) {
