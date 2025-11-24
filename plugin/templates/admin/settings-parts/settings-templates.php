@@ -139,37 +139,7 @@ function detect_plugin_from_active_plugins($status_key) {
         }
     }
 
-    // 3. Liste de plugins connus qui modifient les statuts (fallback)
-    $known_status_plugins = [
-        'woocommerce-order-status-manager' => 'WooCommerce Order Status Manager',
-        'wc-order-status-manager' => 'WooCommerce Order Status Manager',
-        'yith-woocommerce-custom-order-status' => 'YITH WooCommerce Custom Order Status',
-        'custom-order-status-for-woocommerce' => 'Custom Order Status for WooCommerce',
-        'woocommerce-order-status-actions-manager' => 'WooCommerce Order Status & Actions Manager',
-        'woo-order-status' => 'WooBeWoo Order Status',
-        'woocommerce-shipment-tracking' => 'WooCommerce Shipment Tracking',
-        'dokan' => 'Dokan (Marketplace)',
-        'dokan-lite' => 'Dokan Lite (Marketplace)',
-        'wc-vendors' => 'WC Vendors (Marketplace)',
-        'woocommerce-product-vendors' => 'WooCommerce Product Vendors',
-    ];
-
-    // Vérifier si ces plugins connus sont actifs
-    foreach ($active_plugins as $plugin_file) {
-        $plugin_slug = dirname($plugin_file);
-
-        if (isset($known_status_plugins[$plugin_slug])) {
-            return $known_status_plugins[$plugin_slug];
-        }
-
-        // Vérifier aussi le nom du fichier principal
-        $plugin_main_file = basename($plugin_file, '.php');
-        if (isset($known_status_plugins[$plugin_main_file])) {
-            return $known_status_plugins[$plugin_main_file];
-        }
-    }
-
-    // 4. Analyse des headers des plugins pour détecter les fonctionnalités
+    // 3. Analyse des headers des plugins pour détecter les fonctionnalités
     foreach ($active_plugins as $plugin_file) {
         $plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_file);
 
