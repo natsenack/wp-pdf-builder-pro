@@ -36,9 +36,20 @@ $is_premium = \PDF_Builder\Admin\PdfBuilderAdmin::is_premium_user();
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
-    // Recharger la page pour afficher les templates
-    wp_redirect(admin_url('admin.php?page=pdf-builder-templates'));
-    exit;
+    // IMPORTANT: Recalculer le nombre de templates après création
+    $templates_count = \PDF_Builder\Admin\PdfBuilderAdmin::count_user_templates(get_current_user_id());
+
+    // Si toujours aucun template après création, éviter la boucle infinie
+    if ($templates_count === 0) {
+        // Ne pas rediriger, afficher un message d'erreur à la place
+        add_action('admin_notices', function() {
+            echo '<div class="notice notice-error"><p>Erreur: Impossible de créer les templates par défaut. Veuillez contacter le support.</p></div>';
+        });
+    } else {
+        // Redirection seulement si les templates ont été créés avec succès
+        wp_redirect(admin_url('admin.php?page=pdf-builder-templates'));
+        exit;
+    }
 }
 ?>
 

@@ -113,89 +113,89 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
             <?php endif; ?>
 
             <style>
-            .templates-status-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 20px;
-                margin: 20px 0;
-            }
+                .templates-status-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 20px;
+                    margin: 20px 0;
+                }
 
-            .template-status-card {
-                background: white;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                padding: 20px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                transition: box-shadow 0.3s ease;
-            }
+                .template-status-card {
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    padding: 20px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    transition: box-shadow 0.3s ease;
+                }
 
-            .template-status-card:hover {
-                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            }
+                .template-status-card:hover {
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                }
 
-            .template-status-card h4 {
-                margin: 0 0 15px 0;
-                color: #23282d;
-                font-size: 16px;
-                font-weight: 600;
-                border-bottom: 2px solid #007cba;
-                padding-bottom: 8px;
-            }
+                .template-status-card h4 {
+                    margin: 0 0 15px 0;
+                    color: #23282d;
+                    font-size: 16px;
+                    font-weight: 600;
+                    border-bottom: 2px solid #007cba;
+                    padding-bottom: 8px;
+                }
 
-            .template-selector {
-                margin-bottom: 15px;
-            }
+                .template-selector {
+                    margin-bottom: 15px;
+                }
 
-            .template-selector label {
-                display: block;
-                font-weight: 600;
-                margin-bottom: 5px;
-                color: #23282d;
-            }
+                .template-selector label {
+                    display: block;
+                    font-weight: 600;
+                    margin-bottom: 5px;
+                    color: #23282d;
+                }
 
-            .template-select {
-                width: 100%;
-                max-width: 100%;
-                padding: 8px 12px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                font-size: 14px;
-                background: white;
-            }
+                .template-select {
+                    width: 100%;
+                    max-width: 100%;
+                    padding: 8px 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    background: white;
+                }
 
-            .template-preview {
-                padding: 10px;
-                background: #f8f9fa;
-                border-radius: 4px;
-                min-height: 40px;
-            }
+                .template-preview {
+                    padding: 10px;
+                    background: #f8f9fa;
+                    border-radius: 4px;
+                    min-height: 40px;
+                }
 
-            .current-template {
-                color: #155724;
-                font-size: 13px;
-                margin: 0;
-            }
+                .current-template {
+                    color: #155724;
+                    font-size: 13px;
+                    margin: 0;
+                }
 
-            .no-template {
-                color: #6c757d;
-                font-style: italic;
-                font-size: 13px;
-                margin: 0;
-            }
+                .no-template {
+                    color: #6c757d;
+                    font-style: italic;
+                    font-size: 13px;
+                    margin: 0;
+                }
 
-            .templates-status-actions {
-                margin-top: 30px;
-                padding: 20px;
-                background: #f8f9fa;
-                border-radius: 8px;
-                display: flex;
-                gap: 10px;
-                justify-content: center;
-            }
+                .templates-status-actions {
+                    margin-top: 30px;
+                    padding: 20px;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    display: flex;
+                    gap: 10px;
+                    justify-content: center;
+                }
 
-            .templates-status-notice {
-                margin-bottom: 20px;
-            }
+                .templates-status-notice {
+                    margin-bottom: 20px;
+                }
             </style>
 
 </div>
