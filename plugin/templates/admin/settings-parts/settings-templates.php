@@ -397,10 +397,16 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                 <div class="templates-status-grid">
                     <?php foreach ($order_statuses as $status_key => $status_label): ?>
                     <div class="template-status-card">
-                        <h4><?php echo esc_html($status_label); ?></h4>
-                        <small style="color: #666; font-weight: normal; display: block; margin-bottom: 10px;">
-                            Slug: <?php echo esc_html(str_replace('wc-', '', $status_key)); ?>
-                        </small>
+                        <h4>
+                            <?php echo esc_html($status_label); ?>
+                            <?php
+                            // Afficher le slug seulement pour les statuts personnalisés
+                            $clean_status_key = str_replace('wc-', '', $status_key);
+                            $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
+                            if (!in_array($clean_status_key, $default_statuses)): ?>
+                                <small style="color: #666; font-weight: normal;">(<?php echo esc_html($clean_status_key); ?>)</small>
+                            <?php endif; ?>
+                        </h4>
                         <div class="template-selector">
                             <label for="template_<?php echo esc_attr($status_key); ?>">
                                 Template par défaut :
