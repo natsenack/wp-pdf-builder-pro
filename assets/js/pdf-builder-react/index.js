@@ -13,21 +13,9 @@ import { debugLog, debugError } from './utils/debug';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-// Imports lourds en lazy loading
-const loadHeavyComponents = async () => {
-  const [
-    { PDFBuilder },
-    globalApi
-  ] = await Promise.all([
-    import('./PDFBuilder.tsx'),
-    import('./api/global-api')
-  ]);
-
-  return {
-    PDFBuilder: PDFBuilder.PDFBuilder,
-    globalApi
-  };
-};
+// Imports synchrones des composants lourds (plus de lazy loading pour éviter les chunks webpack)
+import { PDFBuilder } from './PDFBuilder.tsx';
+import * as globalApi from './api/global-api';
 
 // Composant ErrorBoundary pour capturer les erreurs de rendu
 class ErrorBoundary extends React.Component {
@@ -106,15 +94,13 @@ async function initPDFBuilderReact() {
     }
     if (DEBUG_VERBOSE) debugLog('✅ React dependencies available');
 
-    if (DEBUG_VERBOSE) debugLog('📦 Loading heavy components asynchronously...');
-
-    // Charger les composants lourds de manière asynchrone
-    const { PDFBuilder, globalApi } = await loadHeavyComponents();
+    // Composants déjà chargés de manière synchrone
+    if (DEBUG_VERBOSE) debugLog('✅ Components loaded synchronously, initializing React...');
 
     // Exposer l'API globale
     Object.assign(window, globalApi);
 
-    if (DEBUG_VERBOSE) debugLog('✅ Heavy components loaded, initializing React...');
+    if (DEBUG_VERBOSE) debugLog('✅ Global API exposed, initializing React...');
 
     // Masquer le loading et afficher l'éditeur
     const loadingEl = document.getElementById('pdf-builder-react-loading');
