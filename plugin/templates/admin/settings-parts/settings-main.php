@@ -1130,12 +1130,28 @@ document.addEventListener('DOMContentLoaded', function() {
                                         }
 
                                         if (category === 'dimensions') {
-                                            // Update window.pdfBuilderCanvasSettings with new values (removed - causes preview to show form defaults instead of saved values)
-                                            // if (values.canvas_format) window.pdfBuilderCanvasSettings.default_canvas_format = values.canvas_format;
-                                            // if (values.canvas_dpi) window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(values.canvas_dpi);
+                                            // Update window.pdfBuilderCanvasSettings with new values
+                                            if (values.canvas_format) window.pdfBuilderCanvasSettings.default_canvas_format = values.canvas_format;
+                                            if (values.canvas_dpi) window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(values.canvas_dpi);
+                                            if (values.canvas_orientation) window.pdfBuilderCanvasSettings.default_canvas_orientation = values.canvas_orientation;
+                                            // canvas_width and canvas_height are calculated, but we can update them too
+                                            // But since they are calculated in the AJAX handler, we need to get them from the response
                                         }
                                     }
                                 }
+                            }
+
+                            // Update window.pdfBuilderCanvasSettings with saved values from response
+                            if (data.data && data.data.saved) {
+                                const saved = data.data.saved;
+                                if (category === 'dimensions') {
+                                    if (saved.canvas_format) window.pdfBuilderCanvasSettings.default_canvas_format = saved.canvas_format;
+                                    if (saved.canvas_orientation) window.pdfBuilderCanvasSettings.default_canvas_orientation = saved.canvas_orientation;
+                                    if (saved.canvas_dpi) window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(saved.canvas_dpi);
+                                    if (saved.canvas_width) window.pdfBuilderCanvasSettings.canvas_width = parseInt(saved.canvas_width);
+                                    if (saved.canvas_height) window.pdfBuilderCanvasSettings.canvas_height = parseInt(saved.canvas_height);
+                                }
+                                // Add mappings for other categories as needed
                             }
 
                             // Update previews if function exists
