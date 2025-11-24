@@ -515,6 +515,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const target = this.getAttribute('href').substring(1);
             document.getElementById(target).classList.add('active');
 
+            // Update canvas previews when switching to contenu tab
+            if (target === 'contenu' && typeof updateCanvasPreviews === 'function') {
+                setTimeout(function() {
+                    updateCanvasPreviews('all');
+                }, 50);
+            }
+
             // Update URL hash without scrolling
             history.replaceState(null, null, '#' + target);
         });
