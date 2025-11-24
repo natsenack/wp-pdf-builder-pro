@@ -2437,8 +2437,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         
                         console.log('DEBUG: Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+                        console.log('DEBUG: About to call updateAutosaveCardPreview, function exists:', typeof updateAutosaveCardPreview);
                         // Update preview immediately
                         if (typeof updateAutosaveCardPreview === 'function') {
+                            console.log('DEBUG: Calling updateAutosaveCardPreview now');
                             updateAutosaveCardPreview();
                         } else {
                             console.warn('updateAutosaveCardPreview function not found');
