@@ -2102,6 +2102,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update autosave card preview
     window.updateAutosaveCardPreview = function() {
+        console.log('DEBUG: updateAutosaveCardPreview START - function called successfully');
         console.log('DEBUG: updateAutosaveCardPreview called');
         // Try to get values from modal inputs first (real-time), then from settings
         const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
