@@ -1281,6 +1281,243 @@ class PdfBuilderAdmin
             ]);
         }
 
+        // Charger les scripts pour l'éditeur React
+        if ($hook === 'pdf-builder_page_pdf-builder-react-editor') {
+            // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
+            wp_enqueue_script('react', 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js', [], '18.2.0', true);
+            wp_enqueue_script('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
+
+            // Enqueue PDF Builder React scripts from local build
+            $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
+            // ✅ Force cache bust by using current timestamp (changes every second)
+            $cache_bust = time(); // Unix timestamp - changes every second
+            $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
+
+            wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
+
+            // Charger les scripts de l'API Preview pour l'éditeur React
+            // ✅ Use file modification time for stable cache busting
+            $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.js';
+            $preview_client_mtime = file_exists($preview_client_path) ? filemtime($preview_client_path) : time();
+            $version_param_api = PDF_BUILDER_PRO_VERSION . '-' . $preview_client_mtime;
+            wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param_api, true);
+            wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param_api, true);
+
+            // Localize pdfBuilderAjax for API Preview scripts
+            wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_order_actions'),
+                'version' => PDF_BUILDER_PRO_VERSION,
+                'timestamp' => time(),
+                'strings' => [
+                    'loading' => __('Chargement...', 'pdf-builder-pro'),
+                    'error' => __('Erreur', 'pdf-builder-pro'),
+                    'success' => __('Succès', 'pdf-builder-pro'),
+                    'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+                    'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
+                ]
+            ]);
+
+            // Localize script with data
+            $localize_data = [
+                'nonce' => wp_create_nonce('pdf_builder_nonce'),
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 1,
+                'strings' => [
+                    'loading' => __('Chargement de l\'éditeur React...', 'pdf-builder-pro'),
+                    'error' => __('Erreur lors du chargement', 'pdf-builder-pro'),
+                ]
+            ];
+
+            // Load existing template data if template_id is provided
+            if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
+                $template_id = intval($_GET['template_id']);
+                $existing_template_data = $this->template_processor->loadTemplateRobust($template_id);
+                if ($existing_template_data && isset($existing_template_data['elements'])) {
+                    // Transformer les éléments dans le format React
+                    $existing_template_data['elements'] = $this->transformElementsForReact($existing_template_data['elements']);
+                    $localize_data['existingTemplate'] = $existing_template_data;
+                    $localize_data['hasExistingData'] = true;
+                }
+            }
+
+            wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
+
+            // Définir les paramètres canvas pour l'éditeur React
+            $canvas_settings_script = "
+            window.pdfBuilderCanvasSettings = " . wp_json_encode([
+                'default_canvas_format' => get_option('pdf_builder_canvas_format', 'A4'),
+                'default_canvas_orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
+                'default_canvas_unit' => get_option('pdf_builder_canvas_unit', 'px'),
+                'default_canvas_dpi' => intval(get_option('pdf_builder_canvas_dpi', 96)),
+                'default_orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
+                'canvas_background_color' => get_option('pdf_builder_canvas_bg_color', '#ffffff'),
+                'canvas_show_transparency' => get_option('pdf_builder_canvas_show_transparency', false),
+                'container_background_color' => get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa'),
+                'container_show_transparency' => get_option('pdf_builder_canvas_container_show_transparency', false),
+                'border_color' => get_option('pdf_builder_canvas_border_color', '#cccccc'),
+                'border_width' => intval(get_option('pdf_builder_canvas_border_width', 1)),
+                'shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', '0') == '1',
+                'margin_top' => intval(get_option('pdf_builder_canvas_margin_top', 28)),
+                'margin_right' => intval(get_option('pdf_builder_canvas_margin_right', 28)),
+                'margin_bottom' => intval(get_option('pdf_builder_canvas_margin_bottom', 10)),
+                'margin_left' => intval(get_option('pdf_builder_canvas_margin_left', 10)),
+                'show_margins' => get_option('pdf_builder_canvas_show_margins', '0') == '1',
+                'show_grid' => get_option('pdf_builder_canvas_grid_enabled', '1') == '1',
+                'grid_size' => intval(get_option('pdf_builder_canvas_grid_size', 20)),
+                'grid_color' => get_option('pdf_builder_canvas_grid_color', '#e0e0e0'),
+                'snap_to_grid' => get_option('pdf_builder_canvas_snap_to_grid', '1') == '1',
+                'snap_to_elements' => get_option('pdf_builder_canvas_snap_to_elements', '0') == '1',
+                'snap_tolerance' => intval(get_option('pdf_builder_canvas_snap_tolerance', 5)),
+                'show_guides' => get_option('pdf_builder_canvas_guides_enabled', '1') == '1',
+                'navigation_enabled' => get_option('pdf_builder_canvas_navigation_enabled', '1') == '1',
+                'default_zoom' => intval(get_option('pdf_builder_canvas_zoom_default', 100)),
+                'min_zoom' => intval(get_option('pdf_builder_canvas_zoom_min', 10)),
+                'max_zoom' => intval(get_option('pdf_builder_canvas_zoom_max', 500)),
+                'zoom_step' => intval(get_option('pdf_builder_canvas_zoom_step', 25)),
+                'zoom_with_wheel' => get_option('pdf_builder_canvas_zoom_with_wheel', '1') == '1',
+                'pan_with_mouse' => get_option('pdf_builder_canvas_pan_enabled', '1') == '1',
+                'show_resize_handles' => get_option('pdf_builder_canvas_show_resize_handles', '1') == '1',
+                'handle_size' => intval(get_option('pdf_builder_canvas_handle_size', 8)),
+                'handle_color' => get_option('pdf_builder_canvas_handle_color', '#007cba'),
+                'enable_rotation' => get_option('pdf_builder_canvas_rotate_enabled', '1') == '1',
+                'rotation_step' => intval(get_option('pdf_builder_canvas_rotation_step', 15)),
+                'multi_select' => get_option('pdf_builder_canvas_multi_select', '1') == '1',
+                'copy_paste_enabled' => get_option('pdf_builder_canvas_copy_paste_enabled', '1') == '1',
+                'export_quality' => get_option('pdf_builder_canvas_export_quality', 90),
+                'export_format' => get_option('pdf_builder_canvas_export_format', 'png'),
+                'compress_images' => get_option('pdf_builder_canvas_compress_images', '1') == '1',
+                'image_quality' => intval(get_option('pdf_builder_canvas_image_quality', 85)),
+                'max_image_size' => intval(get_option('pdf_builder_canvas_max_image_size', 2048)),
+                'include_metadata' => get_option('pdf_builder_canvas_include_metadata', '1') == '1',
+                'pdf_author' => get_option('pdf_builder_canvas_pdf_author', 'PDF Builder Pro'),
+                'pdf_subject' => get_option('pdf_builder_canvas_pdf_subject', ''),
+                'auto_crop' => get_option('pdf_builder_canvas_auto_crop', '0') == '1',
+                'embed_fonts' => get_option('pdf_builder_canvas_embed_fonts', '1') == '1',
+                'optimize_for_web' => get_option('pdf_builder_canvas_optimize_for_web', '1') == '1',
+                'enable_hardware_acceleration' => get_option('pdf_builder_canvas_enable_hardware_acceleration', '1') == '1',
+                'limit_fps' => get_option('pdf_builder_canvas_limit_fps', '1') == '1',
+                'max_fps' => intval(get_option('pdf_builder_canvas_fps_target', 60)),
+                'auto_save_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') == '1',
+                'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 30)),
+                'auto_save_versions' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
+                'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
+                'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
+                'enable_keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1') == '1',
+                'canvas_selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'click'),
+                'debug_mode' => get_option('pdf_builder_canvas_debug_mode', '0') == '1',
+                'show_fps' => get_option('pdf_builder_canvas_show_fps', '0') == '1'
+            ]) . ";
+            ";
+            wp_add_inline_script('react-dom', $canvas_settings_script);
+
+            // Add initialization script
+            $init_script = "
+        // Initialize React editor when DOM is ready
+        function initReactEditor() {
+            console.log('🔍 DEBUG: initReactEditor called - checking React availability');
+
+            // First check if React dependencies are loaded
+            if (typeof window.React === 'undefined' || typeof window.ReactDOM === 'undefined') {
+                console.log('⏳ DEBUG: React or ReactDOM not yet loaded, waiting...');
+                return false;
+            }
+
+            console.log('✅ DEBUG: React and ReactDOM are available');
+
+            if (typeof window.pdfBuilderReact === 'undefined') {
+                console.log('❌ DEBUG: window.pdfBuilderReact is undefined - script may not have loaded yet');
+                console.log('❌ DEBUG: Available window properties:', Object.keys(window).filter(key => key.includes('pdfBuilder') || key.includes('react')));
+                return false;
+            }
+
+            console.log('✅ DEBUG: window.pdfBuilderReact exists:', window.pdfBuilderReact);
+
+            if (typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function') {
+                console.log('❌ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is not a function');
+                console.log('❌ DEBUG: Available methods:', Object.keys(window.pdfBuilderReact));
+                return false;
+            }
+
+            console.log('✅ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is a function');
+
+            try {
+                var result = window.pdfBuilderReact.initPDFBuilderReact();
+                console.log('✅ DEBUG: initPDFBuilderReact returned:', result);
+                return result;
+            } catch (error) {
+                console.log('❌ DEBUG: Error calling initPDFBuilderReact:', error);
+                return false;
+            }
+        }
+
+        function loadExistingTemplateData() {
+            // ✅ DISABLED: Template loading is now handled by React useTemplate hook
+            // which reads template_id from URL params and calls AJAX GET
+            // This prevents duplicate/race condition loads
+            // 
+            // Previously: PHP inline code loaded existingTemplate → dispatch event → React loads
+            // Now: React useEffect reads URL → calls AJAX GET → updates state
+            // This ensures single, consistent source of truth (AJAX response)
+            
+            return false;
+        }
+
+        // Initialize React editor immediately
+        if (!initReactEditor()) {
+            var initAttempts = 0;
+            var maxInitAttempts = 50; // 25 seconds max (increased from 30)
+            var initInterval = setInterval(function() {
+                initAttempts++;
+                console.log('🔄 DEBUG: Attempt', initAttempts, 'to initialize React editor');
+
+                if (initReactEditor()) {
+                    clearInterval(initInterval);
+                    console.log('✅ DEBUG: React editor initialized successfully on attempt', initAttempts);
+
+                    // Now try to load existing data once
+                    setTimeout(function() {
+                        loadExistingTemplateData();
+                    }, 1000);
+
+                } else if (initAttempts >= maxInitAttempts) {
+                    // Failed to initialize React editor after max attempts
+                    clearInterval(initInterval);
+
+                    // ✅ CORRECTION: Masquer le loader même en cas d'échec pour éviter de masquer l'éditeur
+                    var loadingEl = document.getElementById('pdf-builder-react-loading');
+                    var editorEl = document.getElementById('pdf-builder-react-editor');
+                    if (loadingEl) {
+                        loadingEl.style.display = 'none';
+                    }
+                    if (editorEl) {
+                        editorEl.style.display = 'block';
+                        editorEl.innerHTML = '<div style=\"padding: 40px; text-align: center; color: #dc3232;\"><h3>Erreur d\\'initialisation</h3><p>L\\'éditeur React n\\'a pas pu être chargé. Vérifiez la console pour plus de détails.</p><button onclick=\"location.reload()\" class=\"button\">Recharger la page</button></div>';
+                    }
+                }
+            }, 500);
+        } else {
+            // Try to load existing data once
+            setTimeout(function() {
+                loadExistingTemplateData();
+            }, 1000);
+        }
+
+        // ✅ CORRECTION: Fallback - masquer automatiquement le loader après 10 secondes maximum
+        setTimeout(function() {
+            var loadingEl = document.getElementById('pdf-builder-react-loading');
+            var editorEl = document.getElementById('pdf-builder-react-editor');
+            if (loadingEl && loadingEl.style.display !== 'none') {
+                loadingEl.style.display = 'none';
+                if (editorEl) {
+                    editorEl.style.display = 'block';
+                }
+            }
+        }, 10000);
+        ";
+            wp_add_inline_script('pdf-builder-react', $init_script);
+        }
+
 // Styles pour l'éditeur canvas - Plus nécessaire car nous utilisons seulement l'éditeur React
     }
 
@@ -2936,161 +3173,7 @@ class PdfBuilderAdmin
             $template_type = 'custom';
         }
 
-        // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
-
-        // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
-        wp_enqueue_script('react', 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js', [], '18.2.0', true);
-        wp_enqueue_script('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
-
-        // Declare global variables BEFORE loading bundle - Initialize verbose logging flag
-        $developer_settings = get_option('pdf_builder_settings', []);
-        $verbose_enabled = isset($developer_settings['debug_javascript_verbose']) && $developer_settings['debug_javascript_verbose'];
-        // ✅ Default is FALSE - logs only shown when explicitly enabled
-        // ✅ Never set pdfBuilderDebug=true as it interferes with conditional logging
-        // Force deployment: 2025-11-24
-        $inline_script = "window.PDF_BUILDER_VERBOSE = " . ($verbose_enabled ? 'true' : 'false') . ";";
-        wp_add_inline_script('react-dom', $inline_script);
-
-        // Enqueue PDF Builder React scripts from local build
-        $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
-        // ✅ Force cache bust by using current timestamp (changes every second)
-        $cache_bust = time(); // Unix timestamp - changes every second
-        $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
-
-        // DEBUG: Log the script URL and check if file exists
-        $script_file_path = PDF_BUILDER_ASSETS_DIR . 'js/dist/pdf-builder-react.js';
-        error_log('PDF Builder React Script URL: ' . $react_script_url);
-        error_log('PDF Builder React Script File Path: ' . $script_file_path);
-        error_log('PDF Builder React Script File Exists: ' . (file_exists($script_file_path) ? 'YES' : 'NO'));
-
-        // Test if URL is accessible
-        $url_headers = @get_headers($react_script_url);
-        if ($url_headers) {
-            $status_code = substr($url_headers[0], 9, 3);
-            error_log('PDF Builder React Script URL Status: ' . $status_code);
-        } else {
-            error_log('PDF Builder React Script URL Status: UNABLE TO CHECK');
-        }
-
-        wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
-
-        // Charger les scripts de l'API Preview pour l'éditeur React
-        // ✅ Use file modification time for stable cache busting
-        $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.js';
-        $preview_client_mtime = file_exists($preview_client_path) ? filemtime($preview_client_path) : time();
-        $version_param_api = PDF_BUILDER_PRO_VERSION . '-' . $preview_client_mtime;
-        wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param_api, true);
-        wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param_api, true);
-
-        // Localize pdfBuilderAjax for API Preview scripts
-        wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_order_actions'),
-            'version' => PDF_BUILDER_PRO_VERSION,
-            'timestamp' => time(),
-            'strings' => [
-                'loading' => __('Chargement...', 'pdf-builder-pro'),
-                'error' => __('Erreur', 'pdf-builder-pro'),
-                'success' => __('Succès', 'pdf-builder-pro'),
-                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-                'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
-            ]
-        ]);
-
-        // Localize script with data
-        $localize_data = [
-            'nonce' => wp_create_nonce('pdf_builder_nonce'),
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'templateId' => $template_id,
-            'strings' => [
-                'loading' => __('Chargement de l\'éditeur React...', 'pdf-builder-pro'),
-                'error' => __('Erreur lors du chargement', 'pdf-builder-pro'),
-            ]
-        ];
-
-        // Load existing template data if template_id is provided
-        if ($template_id > 0) {
-            $existing_template_data = $this->template_processor->loadTemplateRobust($template_id);
-            if ($existing_template_data && isset($existing_template_data['elements'])) {
-                // Transformer les éléments dans le format React
-                $existing_template_data['elements'] = $this->transformElementsForReact($existing_template_data['elements']);
-                $localize_data['existingTemplate'] = $existing_template_data;
-                $localize_data['hasExistingData'] = true;
-            }
-        }
-
-        wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
-
-        // Définir les paramètres canvas pour l'éditeur React
-        $canvas_settings_script = "
-        window.pdfBuilderCanvasSettings = " . wp_json_encode([
-            'default_canvas_format' => get_option('pdf_builder_canvas_format', 'A4'),
-            'default_canvas_orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
-            'default_canvas_unit' => get_option('pdf_builder_canvas_unit', 'px'),
-            'default_canvas_dpi' => intval(get_option('pdf_builder_canvas_dpi', 96)),
-            'default_orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
-            'canvas_background_color' => get_option('pdf_builder_canvas_bg_color', '#ffffff'),
-            'canvas_show_transparency' => get_option('pdf_builder_canvas_show_transparency', false),
-            'container_background_color' => get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa'),
-            'container_show_transparency' => get_option('pdf_builder_canvas_container_show_transparency', false),
-            'border_color' => get_option('pdf_builder_canvas_border_color', '#cccccc'),
-            'border_width' => intval(get_option('pdf_builder_canvas_border_width', 1)),
-            'shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', '0') == '1',
-            'margin_top' => intval(get_option('pdf_builder_canvas_margin_top', 28)),
-            'margin_right' => intval(get_option('pdf_builder_canvas_margin_right', 28)),
-            'margin_bottom' => intval(get_option('pdf_builder_canvas_margin_bottom', 10)),
-            'margin_left' => intval(get_option('pdf_builder_canvas_margin_left', 10)),
-            'show_margins' => get_option('pdf_builder_canvas_show_margins', '0') == '1',
-            'show_grid' => get_option('pdf_builder_canvas_grid_enabled', '1') == '1',
-            'grid_size' => intval(get_option('pdf_builder_canvas_grid_size', 20)),
-            'grid_color' => get_option('pdf_builder_canvas_grid_color', '#e0e0e0'),
-            'snap_to_grid' => get_option('pdf_builder_canvas_snap_to_grid', '1') == '1',
-            'snap_to_elements' => get_option('pdf_builder_canvas_snap_to_elements', '0') == '1',
-            'snap_tolerance' => intval(get_option('pdf_builder_canvas_snap_tolerance', 5)),
-            'show_guides' => get_option('pdf_builder_canvas_guides_enabled', '1') == '1',
-
-            // 🔍 Zoom & Navigation
-            'navigation_enabled' => get_option('pdf_builder_canvas_navigation_enabled', '1') == '1',
-            'default_zoom' => intval(get_option('pdf_builder_canvas_zoom_default', 100)),
-            'min_zoom' => intval(get_option('pdf_builder_canvas_zoom_min', 10)),
-            'max_zoom' => intval(get_option('pdf_builder_canvas_zoom_max', 500)),
-            'zoom_step' => intval(get_option('pdf_builder_canvas_zoom_step', 25)),
-            'zoom_with_wheel' => get_option('pdf_builder_canvas_zoom_with_wheel', '1') == '1',
-            'pan_with_mouse' => get_option('pdf_builder_canvas_pan_enabled', '1') == '1',
-
-            'show_resize_handles' => get_option('pdf_builder_canvas_show_resize_handles', '1') == '1',
-            'handle_size' => intval(get_option('pdf_builder_canvas_handle_size', 8)),
-            'handle_color' => get_option('pdf_builder_canvas_handle_color', '#007cba'),
-            'enable_rotation' => get_option('pdf_builder_canvas_rotate_enabled', '1') == '1',
-            'rotation_step' => intval(get_option('pdf_builder_canvas_rotation_step', 15)),
-            'multi_select' => get_option('pdf_builder_canvas_multi_select', '1') == '1',
-            'copy_paste_enabled' => get_option('pdf_builder_canvas_copy_paste_enabled', '1') == '1',
-            'export_quality' => get_option('pdf_builder_canvas_export_quality', 90),
-            'export_format' => get_option('pdf_builder_canvas_export_format', 'png'),
-            'compress_images' => get_option('pdf_builder_canvas_compress_images', '1') == '1',
-            'image_quality' => intval(get_option('pdf_builder_canvas_image_quality', 85)),
-            'max_image_size' => intval(get_option('pdf_builder_canvas_max_image_size', 2048)),
-            'include_metadata' => get_option('pdf_builder_canvas_include_metadata', '1') == '1',
-            'pdf_author' => get_option('pdf_builder_canvas_pdf_author', 'PDF Builder Pro'),
-            'pdf_subject' => get_option('pdf_builder_canvas_pdf_subject', ''),
-            'auto_crop' => get_option('pdf_builder_canvas_auto_crop', '0') == '1',
-            'embed_fonts' => get_option('pdf_builder_canvas_embed_fonts', '1') == '1',
-            'optimize_for_web' => get_option('pdf_builder_canvas_optimize_for_web', '1') == '1',
-            'enable_hardware_acceleration' => get_option('pdf_builder_canvas_enable_hardware_acceleration', '1') == '1',
-            'limit_fps' => get_option('pdf_builder_canvas_limit_fps', '1') == '1',
-            'max_fps' => intval(get_option('pdf_builder_canvas_fps_target', 60)),
-            'auto_save_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') == '1',
-            'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 30)),
-            'auto_save_versions' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
-            'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
-            'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
-            'enable_keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1') == '1',
-            'canvas_selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'click'),
-            'debug_mode' => get_option('pdf_builder_canvas_debug_mode', '0') == '1',
-            'show_fps' => get_option('pdf_builder_canvas_show_fps', '0') == '1'
-        ]) . ";
-        ";
-        wp_add_inline_script('react-dom', $canvas_settings_script);
+        // Enqueue React scripts are now handled in enqueueAdminScripts()
 
         ?>
         <div class="wrap">
@@ -3105,115 +3188,6 @@ class PdfBuilderAdmin
                 <div id="pdf-builder-react-root"></div>
             </div>
         </div>
-
-        <script>
-        // ============================================================================
-        // PDF Builder React Editor Initialization
-        // ============================================================================
-
-        // Initialize React editor when DOM is ready
-        function initReactEditor() {
-            console.log('🔍 DEBUG: initReactEditor called - checking React availability');
-
-            // First check if React dependencies are loaded
-            if (typeof window.React === 'undefined' || typeof window.ReactDOM === 'undefined') {
-                console.log('⏳ DEBUG: React or ReactDOM not yet loaded, waiting...');
-                return false;
-            }
-
-            console.log('✅ DEBUG: React and ReactDOM are available');
-
-            if (typeof window.pdfBuilderReact === 'undefined') {
-                console.log('❌ DEBUG: window.pdfBuilderReact is undefined - script may not have loaded yet');
-                console.log('❌ DEBUG: Available window properties:', Object.keys(window).filter(key => key.includes('pdfBuilder') || key.includes('react')));
-                return false;
-            }
-
-            console.log('✅ DEBUG: window.pdfBuilderReact exists:', window.pdfBuilderReact);
-
-            if (typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function') {
-                console.log('❌ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is not a function');
-                console.log('❌ DEBUG: Available methods:', Object.keys(window.pdfBuilderReact));
-                return false;
-            }
-
-            console.log('✅ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is a function');
-
-            try {
-                var result = window.pdfBuilderReact.initPDFBuilderReact();
-                console.log('✅ DEBUG: initPDFBuilderReact returned:', result);
-                return result;
-            } catch (error) {
-                console.log('❌ DEBUG: Error calling initPDFBuilderReact:', error);
-                return false;
-            }
-        }
-
-        function loadExistingTemplateData() {
-            // ✅ DISABLED: Template loading is now handled by React useTemplate hook
-            // which reads template_id from URL params and calls AJAX GET
-            // This prevents duplicate/race condition loads
-            // 
-            // Previously: PHP inline code loaded existingTemplate → dispatch event → React loads
-            // Now: React useEffect reads URL → calls AJAX GET → updates state
-            // This ensures single, consistent source of truth (AJAX response)
-            
-            return false;
-        }
-
-        // Initialize React editor immediately
-        if (!initReactEditor()) {
-            var initAttempts = 0;
-            var maxInitAttempts = 50; // 25 seconds max (increased from 30)
-            var initInterval = setInterval(function() {
-                initAttempts++;
-                console.log('🔄 DEBUG: Attempt', initAttempts, 'to initialize React editor');
-
-                if (initReactEditor()) {
-                    clearInterval(initInterval);
-                    console.log('✅ DEBUG: React editor initialized successfully on attempt', initAttempts);
-
-                    // Now try to load existing data once
-                    setTimeout(function() {
-                        loadExistingTemplateData();
-                    }, 1000);
-
-                } else if (initAttempts >= maxInitAttempts) {
-                    // Failed to initialize React editor after max attempts
-                    clearInterval(initInterval);
-
-                    // ✅ CORRECTION: Masquer le loader même en cas d'échec pour éviter de masquer l'éditeur
-                    var loadingEl = document.getElementById('pdf-builder-react-loading');
-                    var editorEl = document.getElementById('pdf-builder-react-editor');
-                    if (loadingEl) {
-                        loadingEl.style.display = 'none';
-                    }
-                    if (editorEl) {
-                        editorEl.style.display = 'block';
-                        editorEl.innerHTML = '<div style="padding: 40px; text-align: center; color: #dc3232;"><h3>Erreur d\'initialisation</h3><p>L\'éditeur React n\'a pas pu être chargé. Vérifiez la console pour plus de détails.</p><button onclick="location.reload()" class="button">Recharger la page</button></div>';
-                    }
-                }
-            }, 500);
-        } else {
-            // Try to load existing data once
-            setTimeout(function() {
-                loadExistingTemplateData();
-            }, 1000);
-        }
-
-        // ✅ CORRECTION: Fallback - masquer automatiquement le loader après 10 secondes maximum
-        setTimeout(function() {
-            var loadingEl = document.getElementById('pdf-builder-react-loading');
-            var editorEl = document.getElementById('pdf-builder-react-editor');
-            if (loadingEl && loadingEl.style.display !== 'none') {
-                loadingEl.style.display = 'none';
-                if (editorEl) {
-                    editorEl.style.display = 'block';
-                }
-            }
-        }, 10000);
-
-        </script>
 
         <style>
         .pdf-builder-react-editor {
