@@ -1144,32 +1144,28 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             }
 
-                            // Update window.pdfBuilderCanvasSettings with saved values from response
-                            if (data.data && data.data.saved) {
-                                console.log('💾 Updating settings with saved data:', data.data.saved, 'for category:', category);
-                                const saved = data.data.saved;
-                                if (category === 'dimensions') {
-                                    if (values.canvas_format) window.pdfBuilderCanvasSettings.default_canvas_format = values.canvas_format;
-                                    if (values.canvas_orientation) window.pdfBuilderCanvasSettings.default_canvas_orientation = values.canvas_orientation;
-                                    if (values.canvas_dpi) window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(values.canvas_dpi);
-                                    if (data.data.saved && data.data.saved.canvas_width) window.pdfBuilderCanvasSettings.canvas_width = parseInt(data.data.saved.canvas_width);
-                                    if (data.data.saved && data.data.saved.canvas_height) window.pdfBuilderCanvasSettings.canvas_height = parseInt(data.data.saved.canvas_height);
+                            // Update window.pdfBuilderCanvasSettings with form values
+                            console.log('💾 Updating settings with form values for category:', category);
+                            if (category === 'dimensions') {
+                                if (values.canvas_format) window.pdfBuilderCanvasSettings.default_canvas_format = values.canvas_format;
+                                if (values.canvas_orientation) window.pdfBuilderCanvasSettings.default_canvas_orientation = values.canvas_orientation;
+                                if (values.canvas_dpi) window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(values.canvas_dpi);
+                                if (data.data.saved && data.data.saved.canvas_width) window.pdfBuilderCanvasSettings.canvas_width = parseInt(data.data.saved.canvas_width);
+                                if (data.data.saved && data.data.saved.canvas_height) window.pdfBuilderCanvasSettings.canvas_height = parseInt(data.data.saved.canvas_height);
+                            }
+                            if (category === 'apparence') {
+                                console.log('🎨 Updating apparence in window.pdfBuilderCanvasSettings');
+                                if (values.canvas_bg_color) {
+                                    window.pdfBuilderCanvasSettings.canvas_background_color = values.canvas_bg_color;
+                                    console.log('BG color updated to:', values.canvas_bg_color);
                                 }
-                                if (category === 'apparence') {
-                                    console.log('🎨 Updating apparence in window.pdfBuilderCanvasSettings');
-                                    if (values.canvas_bg_color) {
-                                        window.pdfBuilderCanvasSettings.canvas_background_color = values.canvas_bg_color;
-                                        console.log('BG color updated to:', values.canvas_bg_color);
-                                    }
-                                    if (values.canvas_border_color) {
-                                        window.pdfBuilderCanvasSettings.border_color = values.canvas_border_color;
-                                        console.log('Border color updated to:', values.canvas_border_color);
-                                    }
-                                    if (values.canvas_container_bg_color) window.pdfBuilderCanvasSettings.container_background_color = values.canvas_container_bg_color;
-                                    if (values.canvas_border_width) window.pdfBuilderCanvasSettings.border_width = parseInt(values.canvas_border_width);
-                                    if (values.canvas_shadow_enabled !== undefined) window.pdfBuilderCanvasSettings.shadow_enabled = values.canvas_shadow_enabled === '1' || values.canvas_shadow_enabled === true;
+                                if (values.canvas_border_color) {
+                                    window.pdfBuilderCanvasSettings.border_color = values.canvas_border_color;
+                                    console.log('Border color updated to:', values.canvas_border_color);
                                 }
-                                // Add mappings for other categories as needed
+                                if (values.canvas_container_bg_color) window.pdfBuilderCanvasSettings.container_background_color = values.canvas_container_bg_color;
+                                if (values.canvas_border_width) window.pdfBuilderCanvasSettings.border_width = parseInt(values.canvas_border_width);
+                                if (values.canvas_shadow_enabled !== undefined) window.pdfBuilderCanvasSettings.shadow_enabled = values.canvas_shadow_enabled === '1' || values.canvas_shadow_enabled === true;
                             }
 
                             // Update previews if function exists
