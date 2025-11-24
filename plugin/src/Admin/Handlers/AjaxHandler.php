@@ -807,21 +807,9 @@ class AjaxHandler
             }
 
             if ($saved) {
-                // Si c'est une sauvegarde de dimensions, déclencher l'événement JavaScript
-                $extra_data = [];
-                if ($category === 'dimensions') {
-                    $extra_data = [
-                        'js_event' => 'pdfBuilderUpdateCanvasDimensions',
-                        'js_data' => [
-                            'width' => intval(get_option('pdf_builder_canvas_width', 794)),
-                            'height' => intval(get_option('pdf_builder_canvas_height', 1123))
-                        ]
-                    ];
-                }
-
-                wp_send_json_success(array_merge([
+                wp_send_json_success([
                     'message' => 'Paramètres ' . $category . ' sauvegardés avec succès'
-                ], $extra_data));
+                ]);
             } else {
                 wp_send_json_error('Erreur lors de la sauvegarde des paramètres ' . $category);
             }
