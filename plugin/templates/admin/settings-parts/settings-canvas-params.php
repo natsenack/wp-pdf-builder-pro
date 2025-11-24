@@ -100,20 +100,25 @@ window.pdfBuilderPaperFormats = <?php echo wp_json_encode(\PDF_Builder\PAPER_FOR
 
 // Fonction pour convertir le format et l'orientation en dimensions pixels
 window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {
-    const formatDimensions = {
-        'A6': { width: 349, height: 496 },
-        'A5': { width: 496, height: 701 },
-        'A4': { width: 794, height: 1123 },
-        'A3': { width: 1123, height: 1587 },
-        'A2': { width: 1587, height: 2245 },
-        'A1': { width: 2245, height: 3175 },
-        'A0': { width: 3175, height: 4494 },
-        'Letter': { width: 816, height: 1056 },
-        'Legal': { width: 816, height: 1344 },
-        'Tabloid': { width: 1056, height: 1632 }
+    // Utiliser les dimensions standard centralisées en mm
+    const formatDimensionsMM = window.pdfBuilderPaperFormats || {
+        'A4': { width: 210, height: 297 },
+        'A3': { width: 297, height: 420 },
+        'A5': { width: 148, height: 210 },
+        'Letter': { width: 215.9, height: 279.4 },
+        'Legal': { width: 215.9, height: 355.6 },
+        'Tabloid': { width: 279.4, height: 431.8 }
     };
 
-    const dims = formatDimensions[format] || formatDimensions['A4'];
+    const dimsMM = formatDimensionsMM[format] || formatDimensionsMM['A4'];
+
+    // Calculer les dimensions en pixels (1 inch = 25.4mm)
+    const dpi = window.pdfBuilderCanvasSettings?.default_canvas_dpi || 96;
+    const pixelsPerMM = dpi / 25.4;
+    const dims = {
+        width: Math.round(dimsMM.width * pixelsPerMM),
+        height: Math.round(dimsMM.height * pixelsPerMM)
+    };
 
     // Inverser les dimensions si orientation paysage
     if (orientation === 'landscape') {
