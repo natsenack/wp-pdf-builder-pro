@@ -37,14 +37,8 @@ register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
 require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
 require_once PDF_BUILDER_PLUGIN_DIR . 'api/PreviewImageAPI.php';
 
-// Initialiser l'autoloader et l'API Preview après que WordPress soit chargé
+// Initialiser l'API Preview après que WordPress soit chargé
 add_action('init', function() {
-    // Initialiser l'autoloader
-    if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
-        \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
-    }
-
-    // Initialiser l'API Preview
     new \PDF_Builder\Api\PreviewImageAPI();
 });
 
@@ -301,6 +295,12 @@ function pdf_builder_init()
     $autoload_path = plugin_dir_path(__FILE__) . 'vendor/autoload.php';
     if (file_exists($autoload_path)) {
         require_once $autoload_path;
+    }
+
+    // Initialiser notre autoloader personnalisé
+    require_once plugin_dir_path(__FILE__) . 'core/autoloader.php';
+    if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
+        \PDF_Builder\Core\PdfBuilderAutoloader::init(plugin_dir_path(__FILE__));
     }
 
     // Vérifier et créer les tables manquantes
