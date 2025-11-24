@@ -1653,7 +1653,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings
         const settings = window.pdfBuilderCanvasSettings;
         const format = settings.default_canvas_format || 'A4';
-        const dpi = settings.default_canvas_dpi || 96;
+        const dpi = parseInt(settings.default_canvas_dpi) || 96;
 
         // Debug logs removed - issue fixed
 
@@ -1673,8 +1673,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const pixelsPerMM = dpi / 25.4;
         const widthPx = Math.round(dimensions.width * pixelsPerMM);
         const heightPx = Math.round(dimensions.height * pixelsPerMM);
-
-        console.log('DEBUG: dpi =', dpi, 'type:', typeof dpi, 'pixelsPerMM =', pixelsPerMM, 'widthPx =', widthPx, 'heightPx =', heightPx);
 
         // Update card preview elements
         const cardWidth = document.getElementById('card-canvas-width');
