@@ -409,7 +409,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                         <h4>
                             <?php echo esc_html($status_label); ?>
                             <?php if ($is_custom_status): ?>
-                            <span class="custom-status-indicator" title="Statut personnalisé">🆕</span>
+                            <span class="custom-status-indicator" title="Statut personnalisé ajouté par plugin">🔧</span>
                             <?php endif; ?>
                         </h4>
                         <div class="template-selector">
