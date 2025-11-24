@@ -254,7 +254,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 paddingBottom: '20px'
               }}
             >
-              {/* Indicateur de dimensions A4 */}
+              {/* Indicateur de dimensions avec format et DPI */}
               <div
                 style={{
                   position: 'absolute',
@@ -269,7 +269,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                   zIndex: 10
                 }}
               >
-                A4: {width}×{height}px
+                {(window as any).pdfBuilderCanvasSettings?.default_canvas_format || 'A4'}: {width}×{height}px ({(window as any).pdfBuilderCanvasSettings?.default_canvas_dpi || 96} DPI)
               </div>
               
               {/* ✅ Loading spinner overlay */}
