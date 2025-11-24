@@ -1622,11 +1622,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update canvas card previews in real-time
     window.updateCanvasPreviews = function(category) {
-        console.log('Updating canvas previews for category:', category);
-
-        console.log('About to call updateDimensionsCardPreview');
-            updateDimensionsCardPreview();
-            console.log('updateDimensionsCardPreview called successfully');
+        updateDimensionsCardPreview();
 
         // Update apparence card preview
         if (category === 'apparence' || category === 'all') {
@@ -1666,22 +1662,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     function updateDimensionsCardPreview() {
-        console.log('🔄 updateDimensionsCardPreview called');
-
         // Vérifier que les settings sont chargés
         if (!window.pdfBuilderCanvasSettings) {
-            console.log('⏳ Settings not loaded, retrying...');
             setTimeout(updateDimensionsCardPreview, 200);
             return;
         }
 
-        console.log('✅ Settings loaded:', window.pdfBuilderCanvasSettings);
-
         // Récupérer les valeurs avec des valeurs par défaut sûres
         const format = window.pdfBuilderCanvasSettings.default_canvas_format || 'A4';
         const dpi = parseInt(window.pdfBuilderCanvasSettings.default_canvas_dpi) || 96;
-
-        console.log('📋 Values:', { format, dpi });
 
         // Dimensions standard en mm
         const formatDimensions = {
@@ -1700,36 +1689,23 @@ document.addEventListener('DOMContentLoaded', function() {
         const widthPx = Math.round(dimensions.width * pixelsPerMM);
         const heightPx = Math.round(dimensions.height * pixelsPerMM);
 
-        console.log('📐 Calculated:', { widthPx, heightPx, pixelsPerMM });
-
         // Mettre à jour les éléments HTML
         const widthEl = document.getElementById('card-canvas-width');
         const heightEl = document.getElementById('card-canvas-height');
         const dpiEl = document.getElementById('card-canvas-dpi');
 
-        console.log('🎯 Elements found:', {
-            widthEl: !!widthEl,
-            heightEl: !!heightEl,
-            dpiEl: !!dpiEl
-        });
-
         if (widthEl) {
             widthEl.textContent = widthPx;
-            console.log('✅ Width updated to:', widthPx);
         }
 
         if (heightEl) {
             heightEl.textContent = heightPx;
-            console.log('✅ Height updated to:', heightPx);
         }
 
         if (dpiEl) {
             const dpiText = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
             dpiEl.textContent = dpiText;
-            console.log('✅ DPI updated to:', dpiText);
         }
-
-        console.log('🎉 updateDimensionsCardPreview completed');
     }
 
     // Update apparence card preview
