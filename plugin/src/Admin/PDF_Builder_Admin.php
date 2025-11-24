@@ -1445,7 +1445,25 @@ class PdfBuilderAdmin
             if (scriptElement) {
                 console.log('📄 DEBUG: pdf-builder-react script element found:', scriptElement.src);
                 if (!scriptElement.onload && !scriptElement.onerror) {
-                    console.log('⚠️ DEBUG: Script element exists but no load/error handlers set');
+                    console.log('⚠️ DEBUG: Script element exists but no load/error handlers set - adding them now');
+
+                    // Add load and error handlers to monitor script loading
+                    scriptElement.onload = function() {
+                        console.log('✅ DEBUG: pdf-builder-react script loaded successfully');
+                        // Try to initialize again after script loads
+                        setTimeout(function() {
+                            if (typeof window.pdfBuilderReact !== 'undefined') {
+                                console.log('✅ DEBUG: window.pdfBuilderReact now available after script load');
+                                initReactEditor();
+                            } else {
+                                console.log('❌ DEBUG: window.pdfBuilderReact still undefined after script load');
+                            }
+                        }, 100);
+                    };
+
+                    scriptElement.onerror = function() {
+                        console.log('❌ DEBUG: Failed to load pdf-builder-react script');
+                    };
                 }
             } else {
                 console.log('❌ DEBUG: pdf-builder-react script element NOT found in DOM');
@@ -1454,6 +1472,13 @@ class PdfBuilderAdmin
             if (typeof window.pdfBuilderReact === 'undefined') {
                 console.log('❌ DEBUG: window.pdfBuilderReact is undefined - script may not have loaded yet');
                 console.log('❌ DEBUG: Available window properties:', Object.keys(window).filter(key => key.includes('pdfBuilder') || key.includes('react')));
+
+                // If script element exists but pdfBuilderReact is not available, the script might still be loading
+                if (scriptElement && !scriptElement.onload) {
+                    console.log('⏳ DEBUG: Script element exists but no handlers - script might still be loading, will retry initialization');
+                    return false;
+                }
+
                 return false;
             }
 
