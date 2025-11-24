@@ -80,10 +80,11 @@ input:checked + .toggle-slider:before {
                             <div class="canvas-card-preview">
                                 <div class="preview-format">
                                     <div >
-                                        <span id="card-canvas-width"></span>×
-                                        <span id="card-canvas-height"></span>px
+                                        <span id="card-canvas-width">794</span>×
+                                        <span id="card-canvas-height">1123</span>px
                                     </div>
                                     <span class="preview-size" id="card-canvas-dpi">
+                                        96 DPI - A4 (210.0×297.0mm)
                                     </span>
                                 </div>
                             </div>

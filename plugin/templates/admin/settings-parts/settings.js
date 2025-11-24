@@ -180,13 +180,28 @@ document.addEventListener("DOMContentLoaded", function() {
     const cardDpiSelect = document.getElementById("canvas_dpi");
 
     if (cardFormatSelect) {
-        cardFormatSelect.addEventListener("change", updateCardPreview);
+        cardFormatSelect.addEventListener("change", function() {
+            updateCardPreview();
+            if (typeof updateDimensionsCardPreview === 'function') {
+                updateDimensionsCardPreview();
+            }
+        });
     }
     if (cardOrientationSelect) {
-        cardOrientationSelect.addEventListener("change", updateCardPreview);
+        cardOrientationSelect.addEventListener("change", function() {
+            updateCardPreview();
+            if (typeof updateDimensionsCardPreview === 'function') {
+                updateDimensionsCardPreview();
+            }
+        });
     }
     if (cardDpiSelect) {
-        cardDpiSelect.addEventListener("change", updateCardPreview);
+        cardDpiSelect.addEventListener("change", function() {
+            updateCardPreview();
+            if (typeof updateDimensionsCardPreview === 'function') {
+                updateDimensionsCardPreview();
+            }
+        });
     }
 
     // Add real-time updates for performance card

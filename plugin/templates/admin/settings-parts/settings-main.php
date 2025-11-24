@@ -1762,15 +1762,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     function updateDimensionsCardPreview() {
-        // Vérifier que les settings sont chargés
-        if (!window.pdfBuilderCanvasSettings) {
-            setTimeout(updateDimensionsCardPreview, 200);
-            return;
-        }
+        console.log('updateDimensionsCardPreview called');
+        // Try to get values from modal inputs first (real-time), then from settings
+        const formatInput = document.getElementById("canvas_format");
+        const dpiInput = document.getElementById("canvas_dpi");
 
-        // Récupérer les valeurs avec des valeurs par défaut sûres
-        const format = window.pdfBuilderCanvasSettings.default_canvas_format || 'A4';
-        const dpi = parseInt(window.pdfBuilderCanvasSettings.default_canvas_dpi) || 96;
+        const format = formatInput ? formatInput.value : (window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4');
+        const dpi = dpiInput ? parseInt(dpiInput.value) : (parseInt(window.pdfBuilderCanvasSettings?.default_canvas_dpi) || 96);
+
+        // Orientation is always portrait for now
+        const orientation = 'portrait';
 
         // Dimensions standard en mm
         const formatDimensions = {
