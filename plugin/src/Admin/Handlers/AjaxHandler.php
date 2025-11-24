@@ -320,8 +320,8 @@ class AjaxHandler
                 return;
             }
 
-            // Charger le template
-            $template = $this->admin->loadTemplate($template_id);
+            // Charger le template en utilisant le template processor
+            $template = $this->admin->template_processor->loadTemplateRobust($template_id);
 
             if ($template) {
                 wp_send_json_success([
