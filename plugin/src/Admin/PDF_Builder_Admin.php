@@ -1308,7 +1308,7 @@ class PdfBuilderAdmin
                 error_log('PDF Builder React Script URL Status: UNABLE TO CHECK');
             }
 
-            wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
+            wp_enqueue_script('pdf-builder-react', $react_script_url, [], $version_param, true);
 
             // Charger les scripts de l'API Preview pour l'éditeur React
             // ✅ Use file modification time for stable cache busting
