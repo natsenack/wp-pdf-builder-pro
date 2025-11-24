@@ -449,11 +449,38 @@ jQuery(document).ready(function($) {
             },
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
-                if (response.success) {
-                    showMaintenanceNotification('success', 'Sauvegardes listées', 'Liste des sauvegardes récupérée avec succès.');
-                    $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Sauvegardes listées<br><pre style="background: #f8f9fa; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 12px;">' + JSON.stringify(response.data, null, 2) + '</pre></div>');
+                if (response.success && response.data.backups && response.data.backups.length > 0) {
+                    showMaintenanceNotification('success', 'Sauvegardes listées', response.data.backups.length + ' sauvegarde(s) trouvée(s).');
+
+                    // Créer la liste des sauvegardes
+                    let html = '<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">';
+                    html += '<h4 style="margin: 0 0 15px 0; color: #155724;">📋 Sauvegardes disponibles (' + response.data.backups.length + ')</h4>';
+                    html += '<div style="max-height: 400px; overflow-y: auto;">';
+
+                    response.data.backups.forEach(function(backup) {
+                        html += '<div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; margin-bottom: 8px; background: white; border: 1px solid #dee2e6; border-radius: 4px;">';
+                        html += '<div style="flex: 1;">';
+                        html += '<strong>' + backup.filename + '</strong><br>';
+                        html += '<small style="color: #6c757d;">' + backup.modified_human + ' • ' + backup.size_human + ' • ' + backup.type.toUpperCase() + '</small>';
+                        html += '</div>';
+                        html += '<div style="display: flex; gap: 5px;">';
+                        html += '<button class="button button-secondary download-backup-btn" data-filename="' + backup.filename + '" title="Télécharger"><span>📥</span></button>';
+                        html += '<button class="button button-primary restore-backup-btn" data-filename="' + backup.filename + '" title="Restaurer"><span>🔄</span></button>';
+                        html += '<button class="button button-danger delete-backup-btn" data-filename="' + backup.filename + '" title="Supprimer"><span>🗑️</span></button>';
+                        html += '</div>';
+                        html += '</div>';
+                    });
+
+                    html += '</div>';
+                    html += '</div>';
+
+                    $results.html(html);
+
+                    // Attacher les événements aux boutons
+                    attachBackupButtonEvents();
+
                 } else {
-                    showMaintenanceNotification('warning', 'Aucune sauvegarde', response.data || 'Aucune sauvegarde trouvée.');
+                    showMaintenanceNotification('warning', 'Aucune sauvegarde', 'Aucune sauvegarde trouvée.');
                     $results.html('<div style="color: #856404; padding: 10px; background: #fff3cd; border-radius: 4px; margin-top: 10px;">⚠️ Aucune sauvegarde trouvée</div>');
                 }
             },
@@ -467,5 +494,118 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+    // Fonction pour attacher les événements aux boutons de sauvegarde
+    function attachBackupButtonEvents() {
+        // Bouton Télécharger
+        $('.download-backup-btn').on('click', function(e) {
+            e.preventDefault();
+            const filename = $(this).data('filename');
+            const $button = $(this);
+
+            if (confirm('Télécharger la sauvegarde "' + filename + '" ?')) {
+                $button.prop('disabled', true).html('<span>⏳</span>');
+
+                // Créer un formulaire temporaire pour le téléchargement
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = pdfBuilderAjax.ajaxurl;
+
+                const fields = {
+                    action: 'pdf_builder_download_backup',
+                    nonce: pdfBuilderAjax.nonce,
+                    filename: filename
+                };
+
+                for (const key in fields) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = fields[key];
+                    form.appendChild(input);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+
+                $button.prop('disabled', false).html('<span>📥</span>');
+            }
+        });
+
+        // Bouton Restaurer
+        $('.restore-backup-btn').on('click', function(e) {
+            e.preventDefault();
+            const filename = $(this).data('filename');
+            const $button = $(this);
+
+            if (confirm('⚠️ ATTENTION: Restaurer la sauvegarde "' + filename + '" ?\n\nCela écrasera toutes les données actuelles. Êtes-vous sûr ?')) {
+                $button.prop('disabled', true).html('<span>⏳</span>');
+
+                $.ajax({
+                    url: pdfBuilderAjax.ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_restore_backup',
+                        nonce: pdfBuilderAjax.nonce,
+                        filename: filename
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showMaintenanceNotification('success', 'Sauvegarde restaurée', 'La sauvegarde a été restaurée avec succès.');
+                            // Recharger la page après 2 secondes
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            showMaintenanceNotification('error', 'Erreur de restauration', response.data.message || 'Erreur lors de la restauration.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de restaurer la sauvegarde.');
+                    },
+                    complete: function() {
+                        $button.prop('disabled', false).html('<span>🔄</span>');
+                    }
+                });
+            }
+        });
+
+        // Bouton Supprimer
+        $('.delete-backup-btn').on('click', function(e) {
+            e.preventDefault();
+            const filename = $(this).data('filename');
+            const $button = $(this);
+
+            if (confirm('Supprimer définitivement la sauvegarde "' + filename + '" ?')) {
+                $button.prop('disabled', true).html('<span>⏳</span>');
+
+                $.ajax({
+                    url: pdfBuilderAjax.ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_delete_backup',
+                        nonce: pdfBuilderAjax.nonce,
+                        filename: filename
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showMaintenanceNotification('success', 'Sauvegarde supprimée', 'La sauvegarde a été supprimée avec succès.');
+                            // Recharger la liste des sauvegardes
+                            $('#list-backups-btn').trigger('click');
+                        } else {
+                            showMaintenanceNotification('error', 'Erreur de suppression', response.data.message || 'Erreur lors de la suppression.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de supprimer la sauvegarde.');
+                    },
+                    complete: function() {
+                        $button.prop('disabled', false).html('<span>🗑️</span>');
+                    }
+                });
+            }
+        });
+    }
 
 });
