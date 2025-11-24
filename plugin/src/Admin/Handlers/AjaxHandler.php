@@ -807,6 +807,13 @@ class AjaxHandler
                     break;
                 case 'autosave':
                     $saved = $this->saveAutosaveSettings();
+                    if ($saved) {
+                        $savedData = [
+                            'canvas_autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1'),
+                            'canvas_autosave_interval' => get_option('pdf_builder_canvas_autosave_interval', '5'),
+                            'canvas_versions_limit' => get_option('pdf_builder_canvas_versions_limit', '10')
+                        ];
+                    }
                     break;
                 case 'debug':
                     $saved = $this->saveDebugSettings();

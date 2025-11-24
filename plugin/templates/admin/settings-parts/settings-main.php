@@ -990,6 +990,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 delete modal._originalInteractionsSettings;
             }
+            if (modal.getAttribute('data-category') === 'autosave' && modal._originalAutosaveSettings) {
+                if (window.pdfBuilderCanvasSettings) {
+                    window.pdfBuilderCanvasSettings.autosave_enabled = modal._originalAutosaveSettings.autosaveEnabled;
+                    window.pdfBuilderCanvasSettings.autosave_interval = modal._originalAutosaveSettings.autosaveInterval;
+                    window.pdfBuilderCanvasSettings.versions_limit = modal._originalAutosaveSettings.versionsLimit;
+                    
+                    // Update preview with restored values
+                    if (typeof updateAutosaveCardPreview === 'function') {
+                        updateAutosaveCardPreview();
+                    }
+                }
+                delete modal._originalAutosaveSettings;
+            }
 
             modal.style.setProperty('display', 'none', 'important');
         } catch (e) {
@@ -1015,6 +1028,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Synchronize modal values with current settings for interactions modal
                 if (modal.getAttribute('data-category') === 'interactions') {
                     synchronizeInteractionsModalValues(modal);
+                }
+
+                // Synchronize modal values with current settings for autosave modal
+                if (modal.getAttribute('data-category') === 'autosave') {
+                    synchronizeAutosaveModalValues(modal);
                 }
 
                 // Verify modal is visible after a short delay
@@ -1197,6 +1215,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             delete modal._originalDimensionsSettings;
                             delete modal._originalApparenceSettings;
                             delete modal._originalInteractionsSettings;
+                            delete modal._originalAutosaveSettings;
 
                             // Update window.pdfBuilderCanvasSettings with saved values for dimensions
                             if (category === 'dimensions' && data.data && data.data.saved) {
@@ -2220,6 +2239,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize real-time preview for interactions
     initializeInteractionsRealTimePreview();
 
+    // Initialize real-time preview for autosave
+    initializeAutosaveRealTimePreview();
+
     // Synchronize dimensions modal values with current settings
     function synchronizeDimensionsModalValues(modal) {
         if (!modal || !window.pdfBuilderCanvasSettings) return;
@@ -2322,6 +2344,32 @@ document.addEventListener('DOMContentLoaded', function() {
         updateSelectionModeDependency(modal);
     }
 
+    // Synchronize autosave modal values with current settings
+    function synchronizeAutosaveModalValues(modal) {
+        if (!modal || !window.pdfBuilderCanvasSettings) return;
+
+        // Store original values for restoration if modal is cancelled
+        modal._originalAutosaveSettings = {
+            autosaveEnabled: window.pdfBuilderCanvasSettings.autosave_enabled,
+            autosaveInterval: window.pdfBuilderCanvasSettings.autosave_interval,
+            versionsLimit: window.pdfBuilderCanvasSettings.versions_limit
+        };
+
+        const autosaveEnabledCheckbox = modal.querySelector('#canvas_autosave_enabled');
+        const autosaveIntervalInput = modal.querySelector('#canvas_autosave_interval');
+        const versionsLimitInput = modal.querySelector('#canvas_versions_limit');
+
+        if (autosaveEnabledCheckbox) {
+            autosaveEnabledCheckbox.checked = window.pdfBuilderCanvasSettings.autosave_enabled ?? true;
+        }
+        if (autosaveIntervalInput) {
+            autosaveIntervalInput.value = window.pdfBuilderCanvasSettings.autosave_interval ?? 5;
+        }
+        if (versionsLimitInput) {
+            versionsLimitInput.value = window.pdfBuilderCanvasSettings.versions_limit ?? 10;
+        }
+    }
+
     // Real-time preview updates for interactions modal
     function initializeInteractionsRealTimePreview() {
         // Listen for changes in interactions modal fields
@@ -2351,6 +2399,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Update preview immediately
                     if (typeof updateInteractionsCardPreview === 'function') {
                         updateInteractionsCardPreview();
+                    }
+                }
+            }
+        });
+    }
+
+    // Real-time preview updates for autosave modal
+    function initializeAutosaveRealTimePreview() {
+        // Listen for changes in autosave modal fields
+        document.addEventListener('change', function(event) {
+            const target = event.target;
+            const modal = target.closest('.canvas-modal[data-category="autosave"]');
+            
+            if (modal && (target.id === 'canvas_autosave_enabled' || target.id === 'canvas_autosave_interval' || target.id === 'canvas_versions_limit')) {
+                // Update window.pdfBuilderCanvasSettings temporarily for preview
+                if (window.pdfBuilderCanvasSettings) {
+                    if (target.id === 'canvas_autosave_enabled') {
+                        window.pdfBuilderCanvasSettings.autosave_enabled = target.checked;
+                    } else if (target.id === 'canvas_autosave_interval') {
+                        window.pdfBuilderCanvasSettings.autosave_interval = parseInt(target.value);
+                    } else if (target.id === 'canvas_versions_limit') {
+                        window.pdfBuilderCanvasSettings.versions_limit = parseInt(target.value);
+                    }
+                    
+                    // Update preview immediately
+                    if (typeof updateAutosaveCardPreview === 'function') {
+                        updateAutosaveCardPreview();
                     }
                 }
             }
