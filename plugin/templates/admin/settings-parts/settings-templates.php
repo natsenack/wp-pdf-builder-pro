@@ -415,7 +415,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                             $detected_plugin = isset($status_plugins[$status_key]) ? $status_plugins[$status_key] : 'Plugin inconnu';
                             $tooltip_text = "Slug personnalisé détecté - ajouté par: {$detected_plugin}";
                             ?>
-                            <span class="custom-status-indicator" title="<?php echo esc_attr($tooltip_text); ?>">🔍</span>
+                            <span class="custom-status-indicator" title="<?php echo esc_attr($tooltip_text); ?>" data-tooltip-debug="<?php echo esc_attr($tooltip_text); ?>">🔍</span>
                             <?php endif; ?>
                         </h4>
                         <div class="template-selector">
