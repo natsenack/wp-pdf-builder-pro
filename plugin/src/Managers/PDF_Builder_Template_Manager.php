@@ -68,7 +68,7 @@ class PdfBuilderTemplateManager
         // Fonction utilitaire pour les logs conditionnels
         $debugLog = function($message) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                $debugLog(' . $message);
+                error_log('PDF_BUILDER_DEBUG: ' . $message);
             }
         };
 
@@ -145,7 +145,7 @@ class PdfBuilderTemplateManager
                               (isset($json_data['template_id']) ? \intval($json_data['template_id']) : 0);
             } else {
                 // Données FormData
-                $debugLog(Processing FormData fields');
+                $debugLog('Processing FormData fields');
                 $template_data = isset($_POST['template_data']) ? \trim(\wp_unslash($_POST['template_data'])) : 
                                 (isset($_POST['templateData']) ? \trim(\wp_unslash($_POST['templateData'])) : '');
                 $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : 
@@ -154,7 +154,7 @@ class PdfBuilderTemplateManager
                               (isset($_POST['templateId']) ? \intval($_POST['templateId']) : 0);
             }
 
-            $debugLog(Template data extracted - Name: ' . $template_name . ', ID: ' . $template_id . ', Data length: ' . strlen($template_data));
+            $debugLog('Template data extracted - Name: ' . $template_name . ', ID: ' . $template_id . ', Data length: ' . strlen($template_data));
 
             
 
@@ -276,13 +276,13 @@ class PdfBuilderTemplateManager
             }
 
             // Validation des données obligatoires
-            $debugLog(Validating required data - Template data empty: ' . (empty($template_data) ? 'YES' : 'NO') . ', Template name empty: ' . (empty($template_name) ? 'YES' : 'NO'));
+            $debugLog('Validating required data - Template data empty: ' . (empty($template_data) ? 'YES' : 'NO') . ', Template name empty: ' . (empty($template_name) ? 'YES' : 'NO'));
             if (empty($template_data) || empty($template_name)) {
                 
                 \wp_send_json_error('Données template ou nom manquant');
                 return;
             }
-            $debugLog(Required data validation passed');
+            $debugLog('Required data validation passed');
 
             // Sauvegarde en utilisant les posts WordPress ou la table personnalisée
             try {
