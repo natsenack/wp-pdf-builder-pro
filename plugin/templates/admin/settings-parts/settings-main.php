@@ -1831,8 +1831,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Orientation is always portrait for now
         const orientation = 'portrait';
 
-        // Dimensions standard en mm
-        const formatDimensions = {
+        // Utiliser les dimensions standard centralisées
+        const formatDimensions = window.pdfBuilderPaperFormats || {
             'A4': { width: 210, height: 297 },
             'A3': { width: 297, height: 420 },
             'A5': { width: 148, height: 210 },
