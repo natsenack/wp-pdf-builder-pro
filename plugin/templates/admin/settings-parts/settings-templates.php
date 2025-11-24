@@ -84,8 +84,8 @@ function detect_plugin_from_status_data($status_data, $status_key) {
     }
 
     // Si on trouve des données de statut mais pas de plugin spécifique,
-    // c'est probablement ajouté via code personnalisé ou interface WooCommerce
-    return 'Statut personnalisé WooCommerce';
+    // continuer avec l'analyse des plugins actifs
+    return null;
 }
 
 /**
@@ -96,6 +96,14 @@ function detect_plugin_from_active_plugins($status_key) {
 
     // Obtenir tous les plugins actifs
     $active_plugins = get_option('active_plugins', []);
+
+    // Plugins à exclure de la détection (plugins de base qui ne comptent pas comme "modificateurs de statuts")
+    $excluded_plugins = [
+        'woocommerce/woocommerce.php', // WooCommerce lui-même
+    ];
+
+    // Filtrer les plugins exclus
+    $active_plugins = array_diff($active_plugins, $excluded_plugins);
 
     // 1. D'abord, analyser les options de la base de données pour les plugins actifs
     foreach ($active_plugins as $plugin_file) {
