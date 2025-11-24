@@ -884,12 +884,16 @@ function pdf_builder_save_canvas_settings_handler() {
                     'canvas_snap_tolerance' => 'snap_tolerance',
                 ],
                 'interactions' => [
+                    'canvas_drag_enabled' => 'drag_enabled',
+                    'canvas_resize_enabled' => 'resize_enabled',
+                    'canvas_rotate_enabled' => 'rotate_enabled',
                     'canvas_multi_select' => 'multi_select',
+                    'canvas_selection_mode' => 'selection_mode',
+                    'canvas_keyboard_shortcuts' => 'keyboard_shortcuts',
                     'canvas_copy_paste_enabled' => 'copy_paste_enabled',
                     'canvas_show_resize_handles' => 'show_resize_handles',
                     'canvas_handle_size' => 'handle_size',
                     'canvas_handle_color' => 'handle_color',
-                    'canvas_rotate_enabled' => 'enable_rotation',
                     'canvas_rotation_step' => 'rotation_step',
                 ],
                 'export' => [

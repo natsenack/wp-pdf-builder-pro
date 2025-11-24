@@ -51,6 +51,8 @@ $canvas_settings_js = [
     // Interactions - paramètres manquants
     'drag_enabled' => get_option('pdf_builder_canvas_drag_enabled', '1') == '1',
     'resize_enabled' => get_option('pdf_builder_canvas_resize_enabled', '1') == '1',
+    'rotate_enabled' => get_option('pdf_builder_canvas_rotate_enabled', '1') == '1',
+    'keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1') == '1',
     'selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'rectangle'),
     'export_quality' => get_option('pdf_builder_canvas_export_quality', 90),
     'export_format' => get_option('pdf_builder_canvas_export_format', 'png'),

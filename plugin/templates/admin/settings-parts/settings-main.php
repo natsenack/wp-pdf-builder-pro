@@ -1295,11 +1295,17 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_resize_enabled !== undefined) {
                                     window.pdfBuilderCanvasSettings.resize_enabled = data.data.saved.canvas_resize_enabled === '1' || data.data.saved.canvas_resize_enabled === true;
                                 }
+                                if (data.data.saved.canvas_rotate_enabled !== undefined) {
+                                    window.pdfBuilderCanvasSettings.rotate_enabled = data.data.saved.canvas_rotate_enabled === '1' || data.data.saved.canvas_rotate_enabled === true;
+                                }
                                 if (data.data.saved.canvas_multi_select !== undefined) {
                                     window.pdfBuilderCanvasSettings.multi_select = data.data.saved.canvas_multi_select === '1' || data.data.saved.canvas_multi_select === true;
                                 }
                                 if (data.data.saved.canvas_selection_mode !== undefined) {
                                     window.pdfBuilderCanvasSettings.selection_mode = data.data.saved.canvas_selection_mode;
+                                }
+                                if (data.data.saved.canvas_keyboard_shortcuts !== undefined) {
+                                    window.pdfBuilderCanvasSettings.keyboard_shortcuts = data.data.saved.canvas_keyboard_shortcuts === '1' || data.data.saved.canvas_keyboard_shortcuts === true;
                                 }
                             }
 
