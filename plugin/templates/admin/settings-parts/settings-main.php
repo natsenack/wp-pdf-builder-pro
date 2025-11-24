@@ -2102,6 +2102,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update autosave card preview
     window.updateAutosaveCardPreview = function() {
+        console.log('DEBUG: updateAutosaveCardPreview called');
         // Try to get values from modal inputs first (real-time), then from settings
         const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
         const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
@@ -2110,6 +2111,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : (window.pdfBuilderCanvasSettings?.autosave_interval || 5);
         const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.autosave_enabled === true || window.pdfBuilderCanvasSettings?.autosave_enabled === '1');
         const versionsLimit = versionsLimitInput ? parseInt(versionsLimitInput.value) : (window.pdfBuilderCanvasSettings?.versions_limit || 10);
+
+        console.log('DEBUG: autosaveIntervalInput:', autosaveIntervalInput, 'value:', autosaveIntervalInput?.value);
+        console.log('DEBUG: window.pdfBuilderCanvasSettings.autosave_interval:', window.pdfBuilderCanvasSettings?.autosave_interval);
+        console.log('DEBUG: Final autosaveInterval:', autosaveInterval);
 
         const autosaveCard = document.querySelector('.canvas-card[data-category="autosave"]');
         if (!autosaveCard) return;
@@ -2417,8 +2422,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener(eventType, function(event) {
                 const target = event.target;
                 const modal = target.closest('.canvas-modal[data-category="autosave"]');
+                console.log('DEBUG: Event fired:', eventType, 'on', event.target.id, 'modal found:', !!modal);
                 
                 if (modal && (target.id === 'canvas_autosave_enabled' || target.id === 'canvas_autosave_interval' || target.id === 'canvas_history_max')) {
+                    console.log('DEBUG: Processing autosave input change:', target.id, '=', target.type === 'checkbox' ? target.checked : target.value);
                     // Update window.pdfBuilderCanvasSettings temporarily for preview
                     if (window.pdfBuilderCanvasSettings) {
                         if (target.id === 'canvas_autosave_enabled') {
@@ -2429,6 +2436,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             window.pdfBuilderCanvasSettings.versions_limit = parseInt(target.value);
                         }
                         
+                        console.log('DEBUG: Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
                         // Update preview immediately
                         if (typeof updateAutosaveCardPreview === 'function') {
                             updateAutosaveCardPreview();
