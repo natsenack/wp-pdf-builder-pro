@@ -1643,21 +1643,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     function updateDimensionsCardPreview() {
-        // Attendre que window.pdfBuilderCanvasSettings soit chargé
+        console.log('🔄 updateDimensionsCardPreview called');
+
+        // Vérifier que les settings sont chargés
         if (!window.pdfBuilderCanvasSettings) {
-            setTimeout(updateDimensionsCardPreview, 100);
+            console.log('⏳ Settings not loaded, retrying...');
+            setTimeout(updateDimensionsCardPreview, 200);
             return;
         }
 
-        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings
-        const settings = window.pdfBuilderCanvasSettings;
-        const format = settings.default_canvas_format || 'A4';
-        const dpi = parseInt(settings.default_canvas_dpi) || 96;
+        console.log('✅ Settings loaded:', window.pdfBuilderCanvasSettings);
 
-        // Debug logs removed - issue fixed
+        // Récupérer les valeurs avec des valeurs par défaut sûres
+        const format = window.pdfBuilderCanvasSettings.default_canvas_format || 'A4';
+        const dpi = parseInt(window.pdfBuilderCanvasSettings.default_canvas_dpi) || 96;
 
-        // Dimensions standard en mm pour chaque format
-        const formatDimensionsMM = {
+        console.log('📋 Values:', { format, dpi });
+
+        // Dimensions standard en mm
+        const formatDimensions = {
             'A4': { width: 210, height: 297 },
             'A3': { width: 297, height: 420 },
             'A5': { width: 148, height: 210 },
@@ -1666,19 +1670,43 @@ document.addEventListener('DOMContentLoaded', function() {
             'Tabloid': { width: 279.4, height: 431.8 }
         };
 
-        const dimensions = formatDimensionsMM[format] || formatDimensionsMM['A4'];
+        const dimensions = formatDimensions[format] || formatDimensions['A4'];
 
         // Calculer les dimensions en pixels
         const pixelsPerMM = dpi / 25.4;
         const widthPx = Math.round(dimensions.width * pixelsPerMM);
         const heightPx = Math.round(dimensions.height * pixelsPerMM);
 
-        // Update card preview elements
-        const cardWidth = document.getElementById('card-canvas-width');
-        const cardHeight = document.getElementById('card-canvas-height');
-        const cardDpi = document.getElementById('card-canvas-dpi');
+        console.log('📐 Calculated:', { widthPx, heightPx, pixelsPerMM });
 
-        // Update card preview elements
+        // Mettre à jour les éléments HTML
+        const widthEl = document.getElementById('card-canvas-width');
+        const heightEl = document.getElementById('card-canvas-height');
+        const dpiEl = document.getElementById('card-canvas-dpi');
+
+        console.log('🎯 Elements found:', {
+            widthEl: !!widthEl,
+            heightEl: !!heightEl,
+            dpiEl: !!dpiEl
+        });
+
+        if (widthEl) {
+            widthEl.textContent = widthPx;
+            console.log('✅ Width updated to:', widthPx);
+        }
+
+        if (heightEl) {
+            heightEl.textContent = heightPx;
+            console.log('✅ Height updated to:', heightPx);
+        }
+
+        if (dpiEl) {
+            const dpiText = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
+            dpiEl.textContent = dpiText;
+            console.log('✅ DPI updated to:', dpiText);
+        }
+
+        console.log('🎉 updateDimensionsCardPreview completed');
     }
 
     // Update apparence card preview
