@@ -400,7 +400,6 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                         <h4>
                             <?php echo esc_html($status_label); ?>
                             <?php
-                            // Afficher le slug seulement pour les statuts personnalisés
                             $clean_status_key = str_replace('wc-', '', $status_key);
                             $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
                             if (!in_array($clean_status_key, $default_statuses)): ?>
