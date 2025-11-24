@@ -904,15 +904,8 @@ class AjaxHandler
         $format = get_option('pdf_builder_canvas_format', 'A4');
         $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
 
-        // Dimensions standard en mm pour chaque format
-        $formatDimensionsMM = [
-            'A4' => ['width' => 210, 'height' => 297],
-            'A3' => ['width' => 297, 'height' => 420],
-            'A5' => ['width' => 148, 'height' => 210],
-            'Letter' => ['width' => 215.9, 'height' => 279.4],
-            'Legal' => ['width' => 215.9, 'height' => 355.6],
-            'Tabloid' => ['width' => 279.4, 'height' => 431.8]
-        ];
+        // Utiliser les dimensions standard centralisées
+        $formatDimensionsMM = \PDF_Builder\PAPER_FORMATS;
 
         $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
 

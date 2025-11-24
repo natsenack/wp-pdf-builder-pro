@@ -419,15 +419,8 @@ function pdf_builder_save_settings_handler() {
                 $orientation = 'portrait'; // FORCÉ EN PORTRAIT - v2.0
                 $dpi = get_option('pdf_builder_canvas_dpi', 96);
 
-                // Dimensions standard en mm pour chaque format
-                $format_dimensions_mm = [
-                    'A4' => ['width' => 210, 'height' => 297],
-                    'A3' => ['width' => 297, 'height' => 420],
-                    'A5' => ['width' => 148, 'height' => 210],
-                    'Letter' => ['width' => 215.9, 'height' => 279.4],
-                    'Legal' => ['width' => 215.9, 'height' => 355.6],
-                    'Tabloid' => ['width' => 279.4, 'height' => 431.8]
-                ];
+                // Utiliser les dimensions standard centralisées
+                $format_dimensions_mm = \PDF_Builder\PAPER_FORMATS;
 
                 $dimensions = $format_dimensions_mm[$format] ?? $format_dimensions_mm['A4'];
 
@@ -613,15 +606,8 @@ function pdf_builder_save_canvas_settings_handler() {
                     $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
                     $dpi = intval(get_option('pdf_builder_canvas_dpi', 96));
 
-                    // Dimensions standard en mm pour chaque format
-                    $formatDimensionsMM = [
-                        'A4' => ['width' => 210, 'height' => 297],
-                        'A3' => ['width' => 297, 'height' => 420],
-                        'A5' => ['width' => 148, 'height' => 210],
-                        'Letter' => ['width' => 215.9, 'height' => 279.4],
-                        'Legal' => ['width' => 215.9, 'height' => 355.6],
-                        'Tabloid' => ['width' => 279.4, 'height' => 431.8]
-                    ];
+                    // Utiliser les dimensions standard centralisées
+                    $formatDimensionsMM = \PDF_Builder\PAPER_FORMATS;
 
                     $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
 

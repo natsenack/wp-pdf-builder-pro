@@ -76,9 +76,11 @@ const METHOD_CONVENTIONS = [
  */
 const PAPER_FORMATS = [
     'A4' => ['width' => 210, 'height' => 297],
+    'A3' => ['width' => 297, 'height' => 420],
     'A5' => ['width' => 148, 'height' => 210],
-    'Letter' => ['width' => 216, 'height' => 279],
-    'Legal' => ['width' => 216, 'height' => 356],
+    'Letter' => ['width' => 215.9, 'height' => 279.4],
+    'Legal' => ['width' => 215.9, 'height' => 355.6],
+    'Tabloid' => ['width' => 279.4, 'height' => 431.8]
 ];
 /**
  * Orientations supportées

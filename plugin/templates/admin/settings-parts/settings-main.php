@@ -1747,8 +1747,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update calculated dimensions display
     function updateCalculatedDimensions(modal, format, dpi) {
-        // Dimensions standard en mm pour chaque format
-        const formatDimensionsMM = {
+        // Utiliser les dimensions standard centralisées
+        const formatDimensionsMM = window.pdfBuilderPaperFormats || {
             'A4': { width: 210, height: 297 },
             'A3': { width: 297, height: 420 },
             'A5': { width: 148, height: 210 },

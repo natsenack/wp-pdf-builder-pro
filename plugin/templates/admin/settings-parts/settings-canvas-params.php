@@ -95,6 +95,9 @@ $canvas_settings_js = [
 <script>
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings_js); ?>;
 
+// Dimensions standard des formats de papier en mm (centralisées)
+window.pdfBuilderPaperFormats = <?php echo wp_json_encode(\PDF_Builder\PAPER_FORMATS); ?>;
+
 // Fonction pour convertir le format et l'orientation en dimensions pixels
 window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {
     const formatDimensions = {
