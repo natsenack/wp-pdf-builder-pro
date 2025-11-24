@@ -116,11 +116,25 @@ export function useSaveStateV2({
    * Effectue l'auto-save
    */
   const performSave = useCallback(async () => {
-    if (!templateId || inProgressRef.current) return;
-    
+    console.log('[PDF Builder] useSaveStateV2 - performSave() appelée !');
+
+    if (!templateId || inProgressRef.current) {
+      console.log('[PDF Builder] useSaveStateV2 - performSave annulée:', {
+        templateId: !!templateId,
+        inProgress: inProgressRef.current
+      });
+      return;
+    }
+
     inProgressRef.current = true;
     const now = Date.now();
     lastSaveTimeRef.current = now;
+
+    console.log('[PDF Builder] useSaveStateV2 - Début sauvegarde:', {
+      templateId,
+      elementsCount: elements.length,
+      timestamp: now
+    });
 
     debugSave('[SAVE V2] Début de la sauvegarde manuelle', { templateId, elementsCount: elements.length });
 
@@ -293,11 +307,24 @@ export function useSaveStateV2({
    */
   useEffect(() => {
     const currentHash = getElementsHash(elements);
+    console.log('[PDF Builder] useSaveStateV2 - Détection changements:', {
+      currentHash: currentHash.substring(0, 20) + '...',
+      previousHash: elementsHashRef.current ? elementsHashRef.current.substring(0, 20) + '...' : 'null',
+      hashChanged: currentHash !== elementsHashRef.current,
+      elementsCount: elements.length,
+      state
+    });
 
     // Si les éléments n'ont pas changé, ne rien faire
     if (currentHash === elementsHashRef.current) {
+      console.log('[PDF Builder] useSaveStateV2 - Pas de changement détecté, pas d\'auto-save');
       return;
     }
+
+    console.log('[PDF Builder] useSaveStateV2 - Changement détecté, préparation auto-save');
+
+    // Mettre à jour le hash
+    elementsHashRef.current = currentHash;
 
 
 
@@ -313,13 +340,26 @@ export function useSaveStateV2({
 
     // Attendre 3 secondes d'inactivité avant de sauvegarder
     autoSaveTimeoutRef.current = setTimeout(() => {
+      console.log('[PDF Builder] useSaveStateV2 - 3 secondes écoulées, vérification auto-save');
+
       // Ne rien faire si l'auto-save est désactivé (autoSaveInterval === 0)
       if (autoSaveInterval === 0) {
+        console.log('[PDF Builder] useSaveStateV2 - Auto-save désactivé (interval = 0)');
         return;
       }
+
       const timeSinceLastSave = Date.now() - lastSaveTimeRef.current;
+      console.log('[PDF Builder] useSaveStateV2 - Vérification timing:', {
+        timeSinceLastSave,
+        autoSaveInterval,
+        shouldSave: timeSinceLastSave >= autoSaveInterval
+      });
+
       if (timeSinceLastSave >= autoSaveInterval) {
+        console.log('[PDF Builder] useSaveStateV2 - Déclenchement auto-save !');
         performSave();
+      } else {
+        console.log('[PDF Builder] useSaveStateV2 - Pas encore temps de sauvegarder');
       }
     }, 3000);
 
