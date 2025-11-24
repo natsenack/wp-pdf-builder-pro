@@ -1100,9 +1100,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (form) {
                                     const formData = new FormData(form);
                                     const values = {};
-                                    for (let [key, value] of formData.entries()) {
+                                    formData.forEach(function(value, key) {
                                         values[key] = value;
-                                    }
+                                    });
                                     updateModalValues(category, values);
 
                                     // Update window.pdfBuilderCanvasSettings with form values
@@ -1184,10 +1184,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         } else {
                             // Erreur de sauvegarde - afficher notification d'erreur
                             const errorMessage = (data.data && data.data.message) || 'Erreur inconnue lors de la sauvegarde';
-                            if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
-                                window.pdfBuilderNotifications.showToast('Erreur de sauvegarde: ' + errorMessage, 'error', 6000);
-                            } else if (window.PDF_Builder_Notification_Manager) {
-                                window.PDF_Builder_Notification_Manager.show_toast('Erreur de sauvegarde: ' + errorMessage, 'error', 6000);
+                            if (window.pdfBuilderNotifications) {
+                                if (window.pdfBuilderNotifications.showToast) {
+                                    window.pdfBuilderNotifications.showToast('Erreur de sauvegarde: ' + errorMessage, 'error', 6000);
+                                }
+                            }
+                            if (window.PDF_Builder_Notification_Manager) {
+                                if (window.PDF_Builder_Notification_Manager.show_toast) {
+                                    window.PDF_Builder_Notification_Manager.show_toast('Erreur de sauvegarde: ' + errorMessage, 'error', 6000);
+                                }
                             }
                             throw new Error(errorMessage);
                         }
