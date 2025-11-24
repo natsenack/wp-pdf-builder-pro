@@ -1681,9 +1681,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const cardHeight = document.getElementById('card-canvas-height');
         const cardDpi = document.getElementById('card-canvas-dpi');
 
-        // Debug logs removed - issue fixed
+        console.log('DOM elements check:', {
+            cardWidth: !!cardWidth,
+            cardHeight: !!cardHeight,
+            cardDpi: !!cardDpi,
+            widthPx: widthPx,
+            heightPx: heightPx,
+            dpi: dpi
+        });
 
-        // Debug logs removed - issue fixed
+        if (cardWidth) {
+            cardWidth.textContent = widthPx;
+            console.log('Set width to:', widthPx);
+        }
+        if (cardHeight) {
+            cardHeight.textContent = heightPx;
+            console.log('Set height to:', heightPx);
+        }
+        if (cardDpi) {
+            cardDpi.textContent = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
+            console.log('Set DPI text to:', `${dpi} DPI - ${format}`);
+        }
     }
 
     // Update apparence card preview
