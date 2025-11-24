@@ -621,7 +621,7 @@ class PdfBuilderBackupRestoreManager
      */
     public function exportTemplates()
     {
-        check_ajax_referer('pdf_builder_save_settings', 'nonce');
+        check_ajax_referer('pdf_builder_cache_actions', 'nonce');
 
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
@@ -648,7 +648,7 @@ class PdfBuilderBackupRestoreManager
      */
     public function importTemplates()
     {
-        check_ajax_referer('pdf_builder_save_settings', 'nonce');
+        check_ajax_referer('pdf_builder_cache_actions', 'nonce');
 
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
@@ -705,7 +705,7 @@ class PdfBuilderBackupRestoreManager
      */
     public function ajaxCreateBackup()
     {
-        check_ajax_referer('pdf_builder_save_settings', 'nonce');
+        check_ajax_referer('pdf_builder_cache_actions', 'nonce');
 
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
@@ -736,7 +736,7 @@ class PdfBuilderBackupRestoreManager
      */
     public function ajaxRestoreBackup()
     {
-        check_ajax_referer('pdf_builder_save_settings', 'nonce');
+        check_ajax_referer('pdf_builder_cache_actions', 'nonce');
 
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
@@ -774,7 +774,7 @@ class PdfBuilderBackupRestoreManager
     public function ajaxListBackups()
     {
         try {
-            check_ajax_referer('pdf_builder_save_settings', 'nonce');
+            check_ajax_referer('pdf_builder_cache_actions', 'nonce');
 
             if (!current_user_can('manage_options')) {
                 wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
@@ -798,7 +798,7 @@ class PdfBuilderBackupRestoreManager
     {
         
 
-        check_ajax_referer('pdf_builder_save_settings', 'nonce');
+        check_ajax_referer('pdf_builder_cache_actions', 'nonce');
 
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
@@ -825,7 +825,7 @@ class PdfBuilderBackupRestoreManager
      */
     public function ajaxDownloadBackup()
     {
-        check_ajax_referer('pdf_builder_save_settings', 'nonce');
+        check_ajax_referer('pdf_builder_cache_actions', 'nonce');
 
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
