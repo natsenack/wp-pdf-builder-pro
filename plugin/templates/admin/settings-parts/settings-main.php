@@ -2300,22 +2300,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const keyboardCheckbox = modal.querySelector('#canvas_keyboard_shortcuts');
 
         if (dragCheckbox) {
-            dragCheckbox.checked = window.pdfBuilderCanvasSettings.drag_enabled !== undefined ? window.pdfBuilderCanvasSettings.drag_enabled : true;
+            dragCheckbox.checked = window.pdfBuilderCanvasSettings.drag_enabled ?? true;
         }
         if (resizeCheckbox) {
-            resizeCheckbox.checked = window.pdfBuilderCanvasSettings.resize_enabled !== undefined ? window.pdfBuilderCanvasSettings.resize_enabled : true;
+            resizeCheckbox.checked = window.pdfBuilderCanvasSettings.resize_enabled ?? true;
         }
         if (rotateCheckbox) {
-            rotateCheckbox.checked = window.pdfBuilderCanvasSettings.rotate_enabled !== undefined ? window.pdfBuilderCanvasSettings.rotate_enabled : true;
+            rotateCheckbox.checked = window.pdfBuilderCanvasSettings.rotate_enabled ?? true;
         }
         if (multiSelectCheckbox) {
-            multiSelectCheckbox.checked = window.pdfBuilderCanvasSettings.multi_select !== undefined ? window.pdfBuilderCanvasSettings.multi_select : true;
+            multiSelectCheckbox.checked = window.pdfBuilderCanvasSettings.multi_select ?? true;
         }
         if (selectionModeSelect) {
             selectionModeSelect.value = window.pdfBuilderCanvasSettings.selection_mode || 'bounding_box';
         }
         if (keyboardCheckbox) {
-            keyboardCheckbox.checked = window.pdfBuilderCanvasSettings.keyboard_shortcuts !== undefined ? window.pdfBuilderCanvasSettings.keyboard_shortcuts : true;
+            keyboardCheckbox.checked = window.pdfBuilderCanvasSettings.keyboard_shortcuts ?? true;
         }
 
         // Apply dependency logic after synchronization

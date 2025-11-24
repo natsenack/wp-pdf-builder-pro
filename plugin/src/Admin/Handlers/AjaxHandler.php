@@ -1079,30 +1079,46 @@ class AjaxHandler
 
         // Glisser-déposer activé
         if (isset($_POST['canvas_drag_enabled'])) {
-            update_option('pdf_builder_canvas_drag_enabled', sanitize_text_field($_POST['canvas_drag_enabled']));
+            update_option('pdf_builder_canvas_drag_enabled', '1');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_drag_enabled to: ' . $_POST['canvas_drag_enabled']);
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_drag_enabled to: 1');
+        } else {
+            update_option('pdf_builder_canvas_drag_enabled', '0');
+            $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_drag_enabled to: 0');
         }
 
         // Redimensionnement activé
         if (isset($_POST['canvas_resize_enabled'])) {
-            update_option('pdf_builder_canvas_resize_enabled', sanitize_text_field($_POST['canvas_resize_enabled']));
+            update_option('pdf_builder_canvas_resize_enabled', '1');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_resize_enabled to: ' . $_POST['canvas_resize_enabled']);
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_resize_enabled to: 1');
+        } else {
+            update_option('pdf_builder_canvas_resize_enabled', '0');
+            $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_resize_enabled to: 0');
         }
 
         // Rotation activée
         if (isset($_POST['canvas_rotate_enabled'])) {
-            update_option('pdf_builder_canvas_rotate_enabled', sanitize_text_field($_POST['canvas_rotate_enabled']));
+            update_option('pdf_builder_canvas_rotate_enabled', '1');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_rotate_enabled to: ' . $_POST['canvas_rotate_enabled']);
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_rotate_enabled to: 1');
+        } else {
+            update_option('pdf_builder_canvas_rotate_enabled', '0');
+            $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_rotate_enabled to: 0');
         }
 
         // Sélection multiple
         if (isset($_POST['canvas_multi_select'])) {
-            update_option('pdf_builder_canvas_multi_select', sanitize_text_field($_POST['canvas_multi_select']));
+            update_option('pdf_builder_canvas_multi_select', '1');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_multi_select to: ' . $_POST['canvas_multi_select']);
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_multi_select to: 1');
+        } else {
+            update_option('pdf_builder_canvas_multi_select', '0');
+            $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_multi_select to: 0');
         }
 
         // Mode de sélection
@@ -1114,9 +1130,13 @@ class AjaxHandler
 
         // Raccourcis clavier
         if (isset($_POST['canvas_keyboard_shortcuts'])) {
-            update_option('pdf_builder_canvas_keyboard_shortcuts', sanitize_text_field($_POST['canvas_keyboard_shortcuts']));
+            update_option('pdf_builder_canvas_keyboard_shortcuts', '1');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_keyboard_shortcuts to: ' . $_POST['canvas_keyboard_shortcuts']);
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_keyboard_shortcuts to: 1');
+        } else {
+            update_option('pdf_builder_canvas_keyboard_shortcuts', '0');
+            $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_keyboard_shortcuts to: 0');
         }
 
         error_log('PDF_BUILDER_DEBUG: saveInteractionsSettings updated ' . $updated . ' settings');
