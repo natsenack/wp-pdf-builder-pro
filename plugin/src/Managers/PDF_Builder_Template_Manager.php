@@ -65,10 +65,13 @@ class PdfBuilderTemplateManager
      */
     public function ajaxSaveTemplateV3()
     {
+        // Log avant le try pour capturer les erreurs fatales
+        error_log('PDF_BUILDER_DEBUG: ajaxSaveTemplateV3 method called');
+
         try {
             // Log pour debug
             error_log('PDF_BUILDER_DEBUG: ajaxSaveTemplateV3 started');
-            
+
             // Write to uploads directory for guaranteed access
             $upload_dir = wp_upload_dir();
             $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
