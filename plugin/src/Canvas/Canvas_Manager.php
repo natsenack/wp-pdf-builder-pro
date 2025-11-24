@@ -63,10 +63,12 @@ class Canvas_Manager
     {
         // Charger depuis les options séparées pour cohérence avec les modales
         $this->settings = [
+            'default_canvas_format' => get_option('pdf_builder_canvas_format', 'A4'),
+            'default_canvas_orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
+            'default_canvas_unit' => get_option('pdf_builder_canvas_unit', 'px'),
+            'default_canvas_dpi' => intval(get_option('pdf_builder_canvas_dpi', 96)),
             'default_canvas_width' => intval(get_option('pdf_builder_canvas_width', 794)),
             'default_canvas_height' => intval(get_option('pdf_builder_canvas_height', 1123)),
-            'default_canvas_unit' => get_option('pdf_builder_canvas_unit', 'px'),
-            'default_orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
             'canvas_background_color' => get_option('pdf_builder_canvas_bg_color', '#ffffff'),
             'canvas_show_transparency' => get_option('pdf_builder_canvas_show_transparency', false) == '1',
             'container_background_color' => get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa'),
@@ -258,7 +260,11 @@ class Canvas_Manager
         $settings = wp_json_encode($this->settings);
         return <<<JS
 (function() {
-    window.pdfBuilderCanvasSettings = {$settings};
+    // Fusionner avec les settings existants au lieu d'écraser
+    if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
+        window.pdfBuilderCanvasSettings = {};
+    }
+    Object.assign(window.pdfBuilderCanvasSettings, {$settings});
     if (typeof pdfBuilderSettings !== 'undefined') {
         pdfBuilderSettings.canvas = window.pdfBuilderCanvasSettings;
     }
