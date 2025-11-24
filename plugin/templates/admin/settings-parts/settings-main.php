@@ -1105,30 +1105,34 @@ document.addEventListener('DOMContentLoaded', function() {
                                     // Update global canvas settings with new values
                                     if (window.pdfBuilderCanvasSettings) {
                                         // Map form values to global settings
-                                        if (values.canvas_bg_color) window.pdfBuilderCanvasSettings.canvas_background_color = values.canvas_bg_color;
-                                        if (values.canvas_border_color) window.pdfBuilderCanvasSettings.border_color = values.canvas_border_color;
-                                        if (values.canvas_border_width !== undefined) window.pdfBuilderCanvasSettings.border_width = values.canvas_border_width;
-                                        if (values.canvas_shadow_enabled !== undefined) window.pdfBuilderCanvasSettings.shadow_enabled = values.canvas_shadow_enabled === '1' || values.canvas_shadow_enabled === true;
-                                        if (values.canvas_container_bg_color) window.pdfBuilderCanvasSettings.container_background_color = values.canvas_container_bg_color;
+                                        // Update window.pdfBuilderCanvasSettings with new values (removed - causes preview to show form defaults instead of saved values)
+                                        // if (values.canvas_bg_color) window.pdfBuilderCanvasSettings.canvas_background_color = values.canvas_bg_color;
+                                        // if (values.canvas_border_color) window.pdfBuilderCanvasSettings.border_color = values.canvas_border_color;
+                                        // if (values.canvas_border_width !== undefined) window.pdfBuilderCanvasSettings.border_width = values.canvas_border_width;
+                                        // if (values.canvas_shadow_enabled !== undefined) window.pdfBuilderCanvasSettings.shadow_enabled = values.canvas_shadow_enabled === '1' || values.canvas_shadow_enabled === true;
+                                        // if (values.canvas_container_bg_color) window.pdfBuilderCanvasSettings.container_background_color = values.canvas_container_bg_color;
 
                                         // Add more mappings as needed for other categories
                                         if (category === 'zoom') {
-                                            if (values.canvas_zoom_min !== undefined) window.pdfBuilderCanvasSettings.min_zoom = parseInt(values.canvas_zoom_min);
-                                            if (values.canvas_zoom_max !== undefined) window.pdfBuilderCanvasSettings.max_zoom = parseInt(values.canvas_zoom_max);
-                                            if (values.canvas_zoom_default !== undefined) window.pdfBuilderCanvasSettings.default_zoom = parseInt(values.canvas_zoom_default);
-                                            if (values.canvas_zoom_step !== undefined) window.pdfBuilderCanvasSettings.zoom_step = parseInt(values.canvas_zoom_step);
+                                            // Update window.pdfBuilderCanvasSettings with new values (removed - causes preview to show form defaults instead of saved values)
+                                            // if (values.canvas_zoom_min !== undefined) window.pdfBuilderCanvasSettings.min_zoom = parseInt(values.canvas_zoom_min);
+                                            // if (values.canvas_zoom_max !== undefined) window.pdfBuilderCanvasSettings.max_zoom = parseInt(values.canvas_zoom_max);
+                                            // if (values.canvas_zoom_default !== undefined) window.pdfBuilderCanvasSettings.default_zoom = parseInt(values.canvas_zoom_default);
+                                            // if (values.canvas_zoom_step !== undefined) window.pdfBuilderCanvasSettings.zoom_step = parseInt(values.canvas_zoom_step);
                                         }
 
                                         if (category === 'grille') {
-                                            if (values.canvas_grid_enabled !== undefined) window.pdfBuilderCanvasSettings.show_grid = values.canvas_grid_enabled === '1' || values.canvas_grid_enabled === true;
-                                            if (values.canvas_grid_size !== undefined) window.pdfBuilderCanvasSettings.grid_size = parseInt(values.canvas_grid_size);
-                                            if (values.canvas_guides_enabled !== undefined) window.pdfBuilderCanvasSettings.show_guides = values.canvas_guides_enabled === '1' || values.canvas_guides_enabled === true;
-                                            if (values.canvas_snap_to_grid !== undefined) window.pdfBuilderCanvasSettings.snap_to_grid = values.canvas_snap_to_grid === '1' || values.canvas_snap_to_grid === true;
+                                            // Update window.pdfBuilderCanvasSettings with new values (removed - causes preview to show form defaults instead of saved values)
+                                            // if (values.canvas_grid_enabled !== undefined) window.pdfBuilderCanvasSettings.show_grid = values.canvas_grid_enabled === '1' || values.canvas_grid_enabled === true;
+                                            // if (values.canvas_grid_size !== undefined) window.pdfBuilderCanvasSettings.grid_size = parseInt(values.canvas_grid_size);
+                                            // if (values.canvas_guides_enabled !== undefined) window.pdfBuilderCanvasSettings.show_guides = values.canvas_guides_enabled === '1' || values.canvas_guides_enabled === true;
+                                            // if (values.canvas_snap_to_grid !== undefined) window.pdfBuilderCanvasSettings.snap_to_grid = values.canvas_snap_to_grid === '1' || values.canvas_snap_to_grid === true;
                                         }
 
                                         if (category === 'dimensions') {
-                                            if (values.canvas_format) window.pdfBuilderCanvasSettings.default_canvas_format = values.canvas_format;
-                                            if (values.canvas_dpi) window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(values.canvas_dpi);
+                                            // Update window.pdfBuilderCanvasSettings with new values (removed - causes preview to show form defaults instead of saved values)
+                                            // if (values.canvas_format) window.pdfBuilderCanvasSettings.default_canvas_format = values.canvas_format;
+                                            // if (values.canvas_dpi) window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(values.canvas_dpi);
                                         }
                                     }
                                 }
@@ -1651,9 +1655,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const format = settings.default_canvas_format || 'A4';
         const dpi = settings.default_canvas_dpi || 96;
 
-        console.log('🔍 updateDimensionsCardPreview called with:', { format, dpi });
-        console.log('🔍 settings.default_canvas_dpi value:', settings.default_canvas_dpi, 'type:', typeof settings.default_canvas_dpi);
-        console.log('🔍 full settings object:', settings);
+        // Debug logs removed - issue fixed
 
         // Dimensions standard en mm pour chaque format
         const formatDimensionsMM = {
@@ -1672,31 +1674,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const widthPx = Math.round(dimensions.width * pixelsPerMM);
         const heightPx = Math.round(dimensions.height * pixelsPerMM);
 
-        console.log('📐 Calculated dimensions:', { widthPx, heightPx, dpi });
+        // Debug logs removed - issue fixed
 
         // Update card preview elements
         const cardWidth = document.getElementById('card-canvas-width');
         const cardHeight = document.getElementById('card-canvas-height');
         const cardDpi = document.getElementById('card-canvas-dpi');
 
-        console.log('🎯 DOM elements found:', {
-            cardWidth: !!cardWidth,
-            cardHeight: !!cardHeight,
-            cardDpi: !!cardDpi
-        });
+        // Debug logs removed - issue fixed
 
-        if (cardWidth) {
-            cardWidth.textContent = widthPx;
-            console.log('✅ Updated width to:', widthPx);
-        }
-        if (cardHeight) {
-            cardHeight.textContent = heightPx;
-            console.log('✅ Updated height to:', heightPx);
-        }
-        if (cardDpi) {
-            cardDpi.textContent = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
-            console.log('✅ Updated DPI to:', `${dpi} DPI - ${format}`);
-        }
+        // Debug logs removed - issue fixed
     }
 
     // Update apparence card preview
