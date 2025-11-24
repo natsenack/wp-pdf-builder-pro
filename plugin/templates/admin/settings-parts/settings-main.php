@@ -886,7 +886,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function hideModal(modal) {
         if (!modal) return;
         try {
-            // Restore original settings if dimensions modal was cancelled
+            // Restore original settings if dimensions or apparence modal was cancelled
             if (modal.getAttribute('data-category') === 'dimensions' && modal._originalDimensionsSettings) {
                 if (window.pdfBuilderCanvasSettings) {
                     window.pdfBuilderCanvasSettings.default_canvas_format = modal._originalDimensionsSettings.format;
@@ -898,6 +898,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 delete modal._originalDimensionsSettings;
+            }
+            if (modal.getAttribute('data-category') === 'apparence' && modal._originalApparenceSettings) {
+                if (window.pdfBuilderCanvasSettings) {
+                    window.pdfBuilderCanvasSettings.canvas_background_color = modal._originalApparenceSettings.bgColor;
+                    window.pdfBuilderCanvasSettings.border_color = modal._originalApparenceSettings.borderColor;
+                    window.pdfBuilderCanvasSettings.border_width = modal._originalApparenceSettings.borderWidth;
+                    window.pdfBuilderCanvasSettings.shadow_enabled = modal._originalApparenceSettings.shadowEnabled;
+                    window.pdfBuilderCanvasSettings.container_background_color = modal._originalApparenceSettings.containerBgColor;
+                    
+                    // Update preview with restored values
+                    if (typeof updateApparenceCardPreview === 'function') {
+                        updateApparenceCardPreview();
+                    }
+                }
+                delete modal._originalApparenceSettings;
             }
 
             modal.style.setProperty('display', 'none', 'important');
@@ -916,9 +931,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Initialize event listeners for this modal
                 initializeModalEventListeners(modal);
 
-                // Synchronize modal values with current settings for dimensions modal
-                if (modal.getAttribute('data-category') === 'dimensions') {
-                    synchronizeDimensionsModalValues(modal);
+                // Synchronize modal values with current settings for apparence modal
+                if (modal.getAttribute('data-category') === 'apparence') {
+                    synchronizeApparenceModalValues(modal);
                 }
 
                 // Verify modal is visible after a short delay
@@ -1092,6 +1107,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             // Clear original settings since save was successful
                             delete modal._originalDimensionsSettings;
+                            delete modal._originalApparenceSettings;
 
                             // Update window.pdfBuilderCanvasSettings with saved values for dimensions
                             if (category === 'dimensions' && data.data && data.data.saved) {
@@ -1112,10 +1128,34 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             }
 
+                            // Update window.pdfBuilderCanvasSettings with saved values for apparence
+                            if (category === 'apparence' && data.data && data.data.saved) {
+                                if (data.data.saved.canvas_bg_color !== undefined) {
+                                    window.pdfBuilderCanvasSettings.canvas_background_color = data.data.saved.canvas_bg_color;
+                                }
+                                if (data.data.saved.canvas_border_color !== undefined) {
+                                    window.pdfBuilderCanvasSettings.border_color = data.data.saved.canvas_border_color;
+                                }
+                                if (data.data.saved.canvas_border_width !== undefined) {
+                                    window.pdfBuilderCanvasSettings.border_width = parseInt(data.data.saved.canvas_border_width);
+                                }
+                                if (data.data.saved.canvas_shadow_enabled !== undefined) {
+                                    window.pdfBuilderCanvasSettings.shadow_enabled = data.data.saved.canvas_shadow_enabled === '1' || data.data.saved.canvas_shadow_enabled === true;
+                                }
+                                if (data.data.saved.canvas_container_bg_color !== undefined) {
+                                    window.pdfBuilderCanvasSettings.container_background_color = data.data.saved.canvas_container_bg_color;
+                                }
+                            }
+
                             // Update canvas previews after successful save
                             if (category === 'dimensions' && typeof updateDimensionsCardPreview === 'function') {
                                 setTimeout(function() {
                                     updateDimensionsCardPreview();
+                                }, 100);
+                            }
+                            if (category === 'apparence' && typeof updateApparenceCardPreview === 'function') {
+                                setTimeout(function() {
+                                    updateApparenceCardPreview();
                                 }, 100);
                             }
                         } else {
@@ -1888,8 +1928,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Real-time preview updates for apparence modal
+    function initializeApparenceRealTimePreview() {
+        // Listen for changes in apparence modal fields
+        document.addEventListener('change', function(event) {
+            const target = event.target;
+            const modal = target.closest('.canvas-modal[data-category="apparence"]');
+            
+            if (modal && (target.id === 'canvas_bg_color' || target.id === 'canvas_border_color' || 
+                         target.id === 'canvas_border_width' || target.id === 'canvas_shadow_enabled' ||
+                         target.id === 'canvas_container_bg_color')) {
+                // Update window.pdfBuilderCanvasSettings temporarily for preview
+                if (window.pdfBuilderCanvasSettings) {
+                    if (target.id === 'canvas_bg_color') {
+                        window.pdfBuilderCanvasSettings.canvas_background_color = target.value;
+                    } else if (target.id === 'canvas_border_color') {
+                        window.pdfBuilderCanvasSettings.border_color = target.value;
+                    } else if (target.id === 'canvas_border_width') {
+                        window.pdfBuilderCanvasSettings.border_width = parseInt(target.value);
+                    } else if (target.id === 'canvas_shadow_enabled') {
+                        window.pdfBuilderCanvasSettings.shadow_enabled = target.checked;
+                    } else if (target.id === 'canvas_container_bg_color') {
+                        window.pdfBuilderCanvasSettings.container_background_color = target.value;
+                    }
+                    
+                    // Update preview immediately
+                    if (typeof updateApparenceCardPreview === 'function') {
+                        updateApparenceCardPreview();
+                    }
+                }
+            }
+        });
+    }
+
     // Initialize real-time preview for dimensions
     initializeDimensionsRealTimePreview();
+
+    // Initialize real-time preview for apparence
+    initializeApparenceRealTimePreview();
 
     // Synchronize dimensions modal values with current settings
     function synchronizeDimensionsModalValues(modal) {
@@ -1910,6 +1986,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (dpiSelect) {
             dpiSelect.value = window.pdfBuilderCanvasSettings.default_canvas_dpi || 96;
+        }
+    }
+
+    // Synchronize apparence modal values with current settings
+    function synchronizeApparenceModalValues(modal) {
+        if (!modal || !window.pdfBuilderCanvasSettings) return;
+
+        // Store original values for restoration if modal is cancelled
+        modal._originalApparenceSettings = {
+            bgColor: window.pdfBuilderCanvasSettings.canvas_background_color,
+            borderColor: window.pdfBuilderCanvasSettings.border_color,
+            borderWidth: window.pdfBuilderCanvasSettings.border_width,
+            shadowEnabled: window.pdfBuilderCanvasSettings.shadow_enabled,
+            containerBgColor: window.pdfBuilderCanvasSettings.container_background_color
+        };
+
+        const bgColorInput = modal.querySelector('#canvas_bg_color');
+        const borderColorInput = modal.querySelector('#canvas_border_color');
+        const borderWidthInput = modal.querySelector('#canvas_border_width');
+        const shadowEnabledInput = modal.querySelector('#canvas_shadow_enabled');
+        const containerBgColorInput = modal.querySelector('#canvas_container_bg_color');
+
+        if (bgColorInput) {
+            bgColorInput.value = window.pdfBuilderCanvasSettings.canvas_background_color || '#ffffff';
+        }
+        if (borderColorInput) {
+            borderColorInput.value = window.pdfBuilderCanvasSettings.border_color || '#cccccc';
+        }
+        if (borderWidthInput) {
+            borderWidthInput.value = window.pdfBuilderCanvasSettings.border_width || 1;
+        }
+        if (shadowEnabledInput) {
+            shadowEnabledInput.checked = window.pdfBuilderCanvasSettings.shadow_enabled || false;
+        }
+        if (containerBgColorInput) {
+            containerBgColorInput.value = window.pdfBuilderCanvasSettings.container_background_color || '#f8f9fa';
         }
     }
 
