@@ -180,8 +180,13 @@ export function useSaveStateV2({
       }
 
       // Faire la requête
-
       const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+      const templateStructure = {
+        elements: cleanElements,
+        canvasWidth: 794, // Default A4 width in pixels
+        canvasHeight: 1123, // Default A4 height in pixels
+        version: '1.0'
+      };
       const response = await fetch(ajaxUrl, {
         method: 'POST',
         headers: {
@@ -192,8 +197,15 @@ export function useSaveStateV2({
           'action': 'pdf_builder_save_template',
           'nonce': nonce,
           'template_id': templateId.toString(),
-          'elements': JSON.stringify(cleanElements)
+          'template_data': JSON.stringify(templateStructure),
+          'template_name': `Template ${templateId.toString()}`
         })
+      });
+
+      console.log('[PDF Builder] useSaveStateV2 - Réponse HTTP:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
       });
 
       if (!response.ok) {
@@ -201,6 +213,7 @@ export function useSaveStateV2({
       }
 
       const data = await response.json();
+      console.log('[PDF Builder] useSaveStateV2 - Données JSON reçues:', data);
 
       if (data.data?.elements_saved) {
         debugSave('[SAVE V2] Réponse serveur - éléments sauvegardés:', data.data.elements_saved.length);
