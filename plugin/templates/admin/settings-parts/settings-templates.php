@@ -105,7 +105,8 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                         <div class="template-preview">
                             <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>
                             <p class="current-template">
-                                <strong>Actuellement :</strong> <?php echo esc_html($templates[$current_mappings[$status_key]]); ?>
+                                <strong>Assigné :</strong> <?php echo esc_html($templates[$current_mappings[$status_key]]); ?>
+                                <span class="assigned-badge">✓</span>
                             </p>
                             <?php else: ?>
                             <p class="no-template">Aucun template assigné</p>
@@ -186,6 +187,23 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                     color: #155724;
                     font-size: 13px;
                     margin: 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                .assigned-badge {
+                    background: #28a745;
+                    color: white;
+                    padding: 2px 6px;
+                    border-radius: 12px;
+                    font-size: 11px;
+                    font-weight: bold;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-width: 18px;
+                    height: 18px;
                 }
 
                 .no-template {
