@@ -1293,6 +1293,21 @@ class PdfBuilderAdmin
             $cache_bust = time(); // Unix timestamp - changes every second
             $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
 
+            // DEBUG: Log the script URL and check if file exists
+            $script_file_path = PDF_BUILDER_ASSETS_DIR . 'js/dist/pdf-builder-react.js';
+            error_log('PDF Builder React Script URL: ' . $react_script_url);
+            error_log('PDF Builder React Script File Path: ' . $script_file_path);
+            error_log('PDF Builder React Script File Exists: ' . (file_exists($script_file_path) ? 'YES' : 'NO'));
+
+            // Test if URL is accessible
+            $url_headers = @get_headers($react_script_url);
+            if ($url_headers) {
+                $status_code = substr($url_headers[0], 9, 3);
+                error_log('PDF Builder React Script URL Status: ' . $status_code);
+            } else {
+                error_log('PDF Builder React Script URL Status: UNABLE TO CHECK');
+            }
+
             wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
 
             // Charger les scripts de l'API Preview pour l'éditeur React
@@ -1424,6 +1439,17 @@ class PdfBuilderAdmin
             }
 
             console.log('✅ DEBUG: React and ReactDOM are available');
+
+            // Check if the pdf-builder-react script is loaded
+            var scriptElement = document.querySelector('script[src*=\"pdf-builder-react\"]');
+            if (scriptElement) {
+                console.log('📄 DEBUG: pdf-builder-react script element found:', scriptElement.src);
+                if (!scriptElement.onload && !scriptElement.onerror) {
+                    console.log('⚠️ DEBUG: Script element exists but no load/error handlers set');
+                }
+            } else {
+                console.log('❌ DEBUG: pdf-builder-react script element NOT found in DOM');
+            }
 
             if (typeof window.pdfBuilderReact === 'undefined') {
                 console.log('❌ DEBUG: window.pdfBuilderReact is undefined - script may not have loaded yet');
