@@ -463,13 +463,17 @@ if (
 
 <script>
 // Update zoom card preview
-function updateZoomCardPreview() {
-    // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
-    const settings = window.pdfBuilderCanvasSettings || {};
-    const minZoom = settings.min_zoom || settings.default_zoom_min || 10;
-    const maxZoom = settings.max_zoom || settings.default_zoom_max || 500;
-    const defaultZoom = settings.default_zoom || 100;
-    const stepZoom = settings.zoom_step || 25;
+window.updateZoomCardPreview = function() {
+    // Try to get values from modal inputs first (real-time), then from settings
+    const minZoomInput = document.getElementById("zoom_min");
+    const maxZoomInput = document.getElementById("zoom_max");
+    const defaultZoomInput = document.getElementById("zoom_default");
+    const stepZoomInput = document.getElementById("zoom_step");
+
+    const minZoom = minZoomInput ? parseInt(minZoomInput.value) : (window.pdfBuilderCanvasSettings?.min_zoom || window.pdfBuilderCanvasSettings?.default_zoom_min || 10);
+    const maxZoom = maxZoomInput ? parseInt(maxZoomInput.value) : (window.pdfBuilderCanvasSettings?.max_zoom || window.pdfBuilderCanvasSettings?.default_zoom_max || 500);
+    const defaultZoom = defaultZoomInput ? parseInt(defaultZoomInput.value) : (window.pdfBuilderCanvasSettings?.default_zoom || 100);
+    const stepZoom = stepZoomInput ? parseInt(stepZoomInput.value) : (window.pdfBuilderCanvasSettings?.zoom_step || 25);
 
     // Update zoom level display
     const zoomLevel = document.querySelector('.zoom-level');
@@ -485,7 +489,7 @@ function updateZoomCardPreview() {
             <span>Pas: ${stepZoom}%</span>
         `;
     }
-}
+};
 
 // Tab switching functionality
 document.addEventListener('DOMContentLoaded', function() {
@@ -1680,11 +1684,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Update apparence card preview
-    function updateApparenceCardPreview() {
-        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
-        const settings = window.pdfBuilderCanvasSettings || {};
-        const bgColor = settings.canvas_background_color || '#ffffff';
-        const borderColor = settings.border_color || '#cccccc';
+    window.updateApparenceCardPreview = function() {
+        // Try to get values from modal inputs first (real-time), then from settings
+        const bgColorInput = document.getElementById("canvas_bg_color");
+        const borderColorInput = document.getElementById("canvas_border_color");
+
+        const bgColor = bgColorInput ? bgColorInput.value : (window.pdfBuilderCanvasSettings?.canvas_background_color || '#ffffff');
+        const borderColor = borderColorInput ? borderColorInput.value : (window.pdfBuilderCanvasSettings?.border_color || '#cccccc');
 
         // Update color previews in the card
         const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
@@ -1696,16 +1702,20 @@ document.addEventListener('DOMContentLoaded', function() {
         if (borderPreview && borderColor) {
             borderPreview.style.backgroundColor = borderColor;
         }
-    }
+    };
 
     // Update grille card preview
-    function updateGrilleCardPreview() {
+    window.updateGrilleCardPreview = function() {
+        // Try to get values from modal inputs first (real-time), then from settings
+        const gridEnabledInput = document.getElementById("canvas_grid_enabled");
+
+        const isGridEnabled = gridEnabledInput ? gridEnabledInput.checked : (window.pdfBuilderCanvasSettings?.show_grid === true || window.pdfBuilderCanvasSettings?.show_grid === '1');
+
         const gridCard = document.querySelector('.canvas-card[data-category="grille"]');
-        if (!gridCard || !window.pdfBuilderCanvasSettings) return;
+        if (!gridCard) return;
 
         const gridContainer = gridCard.querySelector('.grid-preview-container');
         if (gridContainer) {
-            const isGridEnabled = window.pdfBuilderCanvasSettings.show_grid === true || window.pdfBuilderCanvasSettings.show_grid === '1';
             if (isGridEnabled) {
                 gridContainer.classList.add('grid-active');
                 gridContainer.classList.remove('grid-inactive');
@@ -1714,7 +1724,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 gridContainer.classList.remove('grid-active');
             }
         }
-    }
+    };
 
     // Update interactions card preview
     function updateInteractionsCardPreview() {
@@ -1768,11 +1778,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Update export card preview
-    function updateExportCardPreview() {
-        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
-        const settings = window.pdfBuilderCanvasSettings || {};
-        const exportFormat = settings.export_format || 'pdf';
-        const exportQuality = settings.export_quality || 90;
+    window.updateExportCardPreview = function() {
+        // Try to get values from modal inputs first (real-time), then from settings
+        const exportFormatInput = document.getElementById("canvas_export_format");
+        const exportQualityInput = document.getElementById("canvas_export_quality");
+
+        const exportFormat = exportFormatInput ? exportFormatInput.value : (window.pdfBuilderCanvasSettings?.export_format || 'pdf');
+        const exportQuality = exportQualityInput ? parseInt(exportQualityInput.value) : (window.pdfBuilderCanvasSettings?.export_quality || 90);
 
         const exportCard = document.querySelector('.canvas-card[data-category="export"]');
         if (!exportCard) return;
@@ -1795,17 +1807,22 @@ document.addEventListener('DOMContentLoaded', function() {
             qualityFill.style.width = quality + '%';
             qualityText.textContent = quality + '%';
         }
-    }
+    };
 
     // Update performance card preview
-    function updatePerformanceCardPreview() {
-        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
-        const settings = window.pdfBuilderCanvasSettings || {};
-        const fpsTarget = settings.fps_target || 60;
-        const memoryJs = settings.memory_limit_js || 128;
-        const memoryPhp = settings.memory_limit_php || 256;
-        const lazyLoadingEditor = settings.lazy_loading_editor === true || settings.lazy_loading_editor === '1';
-        const lazyLoadingPlugin = settings.lazy_loading_plugin === true || settings.lazy_loading_plugin === '1';
+    window.updatePerformanceCardPreview = function() {
+        // Try to get values from modal inputs first (real-time), then from settings
+        const fpsTargetInput = document.getElementById("canvas_fps_target");
+        const memoryJsInput = document.getElementById("canvas_memory_limit_js");
+        const memoryPhpInput = document.getElementById("canvas_memory_limit_php");
+        const lazyLoadingEditorInput = document.getElementById("canvas_lazy_loading_editor");
+        const lazyLoadingPluginInput = document.getElementById("canvas_lazy_loading_plugin");
+
+        const fpsTarget = fpsTargetInput ? parseInt(fpsTargetInput.value) : (window.pdfBuilderCanvasSettings?.fps_target || 60);
+        const memoryJs = memoryJsInput ? parseInt(memoryJsInput.value) : (window.pdfBuilderCanvasSettings?.memory_limit_js || 128);
+        const memoryPhp = memoryPhpInput ? parseInt(memoryPhpInput.value) : (window.pdfBuilderCanvasSettings?.memory_limit_php || 256);
+        const lazyLoadingEditor = lazyLoadingEditorInput ? lazyLoadingEditorInput.checked : (window.pdfBuilderCanvasSettings?.lazy_loading_editor === true || window.pdfBuilderCanvasSettings?.lazy_loading_editor === '1');
+        const lazyLoadingPlugin = lazyLoadingPluginInput ? lazyLoadingPluginInput.checked : (window.pdfBuilderCanvasSettings?.lazy_loading_plugin === true || window.pdfBuilderCanvasSettings?.lazy_loading_plugin === '1');
 
         // Update FPS metric
         const fpsValue = document.querySelector('.canvas-card[data-category="performance"] .metric-value:first-child');
@@ -1829,15 +1846,18 @@ document.addEventListener('DOMContentLoaded', function() {
             statusIndicator.classList.toggle('active', isActive);
             statusIndicator.classList.toggle('inactive', !isActive);
         }
-    }
+    };
 
     // Update autosave card preview
-    function updateAutosaveCardPreview() {
-        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
-        const settings = window.pdfBuilderCanvasSettings || {};
-        const autosaveInterval = settings.autosave_interval || 300;
-        const autosaveEnabled = settings.autosave_enabled === true || settings.autosave_enabled === '1';
-        const versionsLimit = settings.versions_limit || 10;
+    window.updateAutosaveCardPreview = function() {
+        // Try to get values from modal inputs first (real-time), then from settings
+        const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
+        const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
+        const versionsLimitInput = document.getElementById("canvas_versions_limit");
+
+        const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : (window.pdfBuilderCanvasSettings?.autosave_interval || 300);
+        const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.autosave_enabled === true || window.pdfBuilderCanvasSettings?.autosave_enabled === '1');
+        const versionsLimit = versionsLimitInput ? parseInt(versionsLimitInput.value) : (window.pdfBuilderCanvasSettings?.versions_limit || 10);
 
         const autosaveCard = document.querySelector('.canvas-card[data-category="autosave"]');
         if (!autosaveCard) return;
@@ -1845,7 +1865,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update timer display
         const timerDisplay = autosaveCard.querySelector('.autosave-timer');
         if (timerDisplay) {
-            const minutes = Math.floor(parseInt(autosaveInterval) / 60);
+            const minutes = Math.floor(autosaveInterval / 60);
             timerDisplay.textContent = minutes + 'min';
         }
 
@@ -1871,7 +1891,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
-    }
+    };
 
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {

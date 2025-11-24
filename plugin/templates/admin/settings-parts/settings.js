@@ -189,4 +189,143 @@ document.addEventListener("DOMContentLoaded", function() {
         cardDpiSelect.addEventListener("change", updateCardPreview);
     }
 
+    // Add real-time updates for performance card
+    const fpsTargetSelect = document.getElementById("canvas_fps_target");
+    const memoryJsSelect = document.getElementById("canvas_memory_limit_js");
+    const memoryPhpSelect = document.getElementById("canvas_memory_limit_php");
+    const lazyLoadingEditorCheckbox = document.getElementById("canvas_lazy_loading_editor");
+    const lazyLoadingPluginCheckbox = document.getElementById("canvas_lazy_loading_plugin");
+
+    if (fpsTargetSelect) {
+        fpsTargetSelect.addEventListener("change", function() {
+            updatePerformanceCardPreview();
+        });
+    }
+    if (memoryJsSelect) {
+        memoryJsSelect.addEventListener("change", function() {
+            updatePerformanceCardPreview();
+        });
+    }
+    if (memoryPhpSelect) {
+        memoryPhpSelect.addEventListener("change", function() {
+            updatePerformanceCardPreview();
+        });
+    }
+    if (lazyLoadingEditorCheckbox) {
+        lazyLoadingEditorCheckbox.addEventListener("change", function() {
+            updatePerformanceCardPreview();
+        });
+    }
+    if (lazyLoadingPluginCheckbox) {
+        lazyLoadingPluginCheckbox.addEventListener("change", function() {
+            updatePerformanceCardPreview();
+        });
+    }
+
+    // Add real-time updates for autosave card
+    const autosaveEnabledCheckbox = document.getElementById("canvas_autosave_enabled");
+    const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
+    const versionsLimitInput = document.getElementById("canvas_versions_limit");
+
+    if (autosaveEnabledCheckbox) {
+        autosaveEnabledCheckbox.addEventListener("change", function() {
+            updateAutosaveCardPreview();
+        });
+    }
+    if (autosaveIntervalInput) {
+        autosaveIntervalInput.addEventListener("input", function() {
+            updateAutosaveCardPreview();
+        });
+    }
+    if (versionsLimitInput) {
+        versionsLimitInput.addEventListener("input", function() {
+            updateAutosaveCardPreview();
+        });
+    }
+
+    // Add real-time updates for apparence card
+    const bgColorInput = document.getElementById("canvas_bg_color");
+    const borderColorInput = document.getElementById("canvas_border_color");
+    const borderWidthInput = document.getElementById("canvas_border_width");
+    const shadowEnabledCheckbox = document.getElementById("canvas_shadow_enabled");
+    const containerBgColorInput = document.getElementById("canvas_container_bg_color");
+
+    if (bgColorInput) {
+        bgColorInput.addEventListener("input", function() {
+            updateApparenceCardPreview();
+        });
+    }
+    if (borderColorInput) {
+        borderColorInput.addEventListener("input", function() {
+            updateApparenceCardPreview();
+        });
+    }
+    if (borderWidthInput) {
+        borderWidthInput.addEventListener("input", function() {
+            updateApparenceCardPreview();
+        });
+    }
+    if (shadowEnabledCheckbox) {
+        shadowEnabledCheckbox.addEventListener("change", function() {
+            updateApparenceCardPreview();
+        });
+    }
+    if (containerBgColorInput) {
+        containerBgColorInput.addEventListener("input", function() {
+            updateApparenceCardPreview();
+        });
+    }
+
+    // Add real-time updates for zoom card
+    const zoomMinInput = document.getElementById("zoom_min");
+    const zoomMaxInput = document.getElementById("zoom_max");
+    const zoomDefaultInput = document.getElementById("zoom_default");
+    const zoomStepInput = document.getElementById("zoom_step");
+
+    if (zoomMinInput) {
+        zoomMinInput.addEventListener("input", function() {
+            updateZoomCardPreview();
+        });
+    }
+    if (zoomMaxInput) {
+        zoomMaxInput.addEventListener("input", function() {
+            updateZoomCardPreview();
+        });
+    }
+    if (zoomDefaultInput) {
+        zoomDefaultInput.addEventListener("input", function() {
+            updateZoomCardPreview();
+        });
+    }
+    if (zoomStepInput) {
+        zoomStepInput.addEventListener("input", function() {
+            updateZoomCardPreview();
+        });
+    }
+
+    // Add real-time updates for export card
+    const exportFormatSelect = document.getElementById("canvas_export_format");
+    const exportQualityInput = document.getElementById("canvas_export_quality");
+
+    if (exportFormatSelect) {
+        exportFormatSelect.addEventListener("change", function() {
+            updateExportCardPreview();
+        });
+    }
+    if (exportQualityInput) {
+        exportQualityInput.addEventListener("input", function() {
+            updateExportCardPreview();
+        });
+    }
+
+    // Add real-time updates for grille card
+    // Note: gridEnabledCheckbox is already declared above for legacy updates
+
+    if (gridEnabledCheckbox) {
+        // Add additional listener for the new preview update
+        gridEnabledCheckbox.addEventListener("change", function() {
+            updateGrilleCardPreview();
+        });
+    }
+
 });
