@@ -2099,6 +2099,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update autosave card preview
     window.updateAutosaveCardPreview = function() {
+        console.log('PDF_BUILDER_DEBUG: updateAutosaveCardPreview called');
         // Try to get values from modal inputs first (real-time), then from settings
         const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
         const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
@@ -2107,6 +2108,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : (window.pdfBuilderCanvasSettings?.autosave_interval || 5);
         const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.autosave_enabled === true || window.pdfBuilderCanvasSettings?.autosave_enabled === '1');
         const versionsLimit = versionsLimitInput ? parseInt(versionsLimitInput.value) : (window.pdfBuilderCanvasSettings?.versions_limit || 10);
+
+        console.log('PDF_BUILDER_DEBUG: autosaveInterval =', autosaveInterval, 'from input:', autosaveIntervalInput ? autosaveIntervalInput.value : 'N/A');
 
         const autosaveCard = document.querySelector('.canvas-card[data-category="autosave"]');
         if (!autosaveCard) return;
@@ -2175,25 +2178,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Real-time preview updates for dimensions modal
     function initializeDimensionsRealTimePreview() {
         // Listen for changes in dimensions modal fields
-        document.addEventListener('change', function(event) {
-            const target = event.target;
-            const modal = target.closest('.canvas-modal[data-category="dimensions"]');
-            
-            if (modal && (target.id === 'canvas_format' || target.id === 'canvas_dpi')) {
-                // Update window.pdfBuilderCanvasSettings temporarily for preview
-                if (window.pdfBuilderCanvasSettings) {
-                    if (target.id === 'canvas_format') {
-                        window.pdfBuilderCanvasSettings.default_canvas_format = target.value;
-                    } else if (target.id === 'canvas_dpi') {
-                        window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(target.value);
-                    }
-                    
-                    // Update preview immediately
-                    if (typeof updateDimensionsCardPreview === 'function') {
-                        updateDimensionsCardPreview();
+        ['change', 'input'].forEach(eventType => {
+            document.addEventListener(eventType, function(event) {
+                const target = event.target;
+                const modal = target.closest('.canvas-modal[data-category="dimensions"]');
+                
+                if (modal && (target.id === 'canvas_format' || target.id === 'canvas_dpi')) {
+                    // Update window.pdfBuilderCanvasSettings temporarily for preview
+                    if (window.pdfBuilderCanvasSettings) {
+                        if (target.id === 'canvas_format') {
+                            window.pdfBuilderCanvasSettings.default_canvas_format = target.value;
+                        } else if (target.id === 'canvas_dpi') {
+                            window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(target.value);
+                        }
+                        
+                        // Update preview immediately
+                        if (typeof updateDimensionsCardPreview === 'function') {
+                            updateDimensionsCardPreview();
+                        }
                     }
                 }
-            }
+            });
         });
     }
 
@@ -2408,27 +2413,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Real-time preview updates for autosave modal
     function initializeAutosaveRealTimePreview() {
         // Listen for changes in autosave modal fields
-        document.addEventListener('change', function(event) {
-            const target = event.target;
-            const modal = target.closest('.canvas-modal[data-category="autosave"]');
-            
-            if (modal && (target.id === 'canvas_autosave_enabled' || target.id === 'canvas_autosave_interval' || target.id === 'canvas_versions_limit')) {
-                // Update window.pdfBuilderCanvasSettings temporarily for preview
-                if (window.pdfBuilderCanvasSettings) {
-                    if (target.id === 'canvas_autosave_enabled') {
-                        window.pdfBuilderCanvasSettings.autosave_enabled = target.checked;
-                    } else if (target.id === 'canvas_autosave_interval') {
-                        window.pdfBuilderCanvasSettings.autosave_interval = parseInt(target.value);
-                    } else if (target.id === 'canvas_versions_limit') {
-                        window.pdfBuilderCanvasSettings.versions_limit = parseInt(target.value);
-                    }
-                    
-                    // Update preview immediately
-                    if (typeof updateAutosaveCardPreview === 'function') {
-                        updateAutosaveCardPreview();
+        ['change', 'input'].forEach(eventType => {
+            document.addEventListener(eventType, function(event) {
+                const target = event.target;
+                const modal = target.closest('.canvas-modal[data-category="autosave"]');
+                
+                if (modal && (target.id === 'canvas_autosave_enabled' || target.id === 'canvas_autosave_interval' || target.id === 'canvas_versions_limit')) {
+                    console.log('PDF_BUILDER_DEBUG: Autosave input changed:', target.id, '=', target.type === 'checkbox' ? target.checked : target.value);
+                    // Update window.pdfBuilderCanvasSettings temporarily for preview
+                    if (window.pdfBuilderCanvasSettings) {
+                        if (target.id === 'canvas_autosave_enabled') {
+                            window.pdfBuilderCanvasSettings.autosave_enabled = target.checked;
+                        } else if (target.id === 'canvas_autosave_interval') {
+                            window.pdfBuilderCanvasSettings.autosave_interval = parseInt(target.value);
+                        } else if (target.id === 'canvas_versions_limit') {
+                            window.pdfBuilderCanvasSettings.versions_limit = parseInt(target.value);
+                        }
+                        
+                        console.log('PDF_BUILDER_DEBUG: Updated window.pdfBuilderCanvasSettings.autosave_interval:', window.pdfBuilderCanvasSettings.autosave_interval);
+                        // Update preview immediately
+                        if (typeof updateAutosaveCardPreview === 'function') {
+                            updateAutosaveCardPreview();
+                        }
                     }
                 }
-            }
+            });
         });
     }
 
