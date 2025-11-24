@@ -2042,8 +2042,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update autosave card preview
     window.updateAutosaveCardPreview = function() {
-        console.log('🔄 updateAutosaveCardPreview called');
-
         // Try to get values from modal inputs first (real-time), then from settings
         const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
         const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
@@ -2053,22 +2051,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.autosave_enabled === true || window.pdfBuilderCanvasSettings?.autosave_enabled === '1');
         const versionsLimit = versionsLimitInput ? parseInt(versionsLimitInput.value) : (window.pdfBuilderCanvasSettings?.versions_limit || 10);
 
-        console.log('📊 Autosave settings:', { autosaveInterval, autosaveEnabled, versionsLimit });
-
         const autosaveCard = document.querySelector('.canvas-card[data-category="autosave"]');
-        if (!autosaveCard) {
-            console.log('❌ Autosave card not found');
-            return;
-        }
+        if (!autosaveCard) return;
 
         // Update timer display
         const timerDisplay = autosaveCard.querySelector('.autosave-timer');
         if (timerDisplay) {
             const minutes = Math.floor(autosaveInterval / 60);
             timerDisplay.textContent = minutes + 'min';
-            console.log('✅ Timer updated to:', minutes + 'min');
-        } else {
-            console.log('❌ Timer element not found');
         }
 
         // Update status
@@ -2076,20 +2066,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (statusIndicator) {
             if (autosaveEnabled) {
                 statusIndicator.classList.add('active');
-                console.log('✅ Status set to active');
             } else {
                 statusIndicator.classList.remove('active');
-                console.log('✅ Status set to inactive');
             }
-        } else {
-            console.log('❌ Status indicator not found');
         }
 
         // Update versions dots
         const versionDots = autosaveCard.querySelectorAll('.version-dot');
         if (versionDots.length > 0) {
             const limit = parseInt(versionsLimit);
-            console.log('📍 Updating', versionDots.length, 'version dots, limit:', limit);
             versionDots.forEach((dot, index) => {
                 if (index < limit) {
                     dot.style.display = 'block';
@@ -2097,8 +2082,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     dot.style.display = 'none';
                 }
             });
-        } else {
-            console.log('❌ Version dots not found');
         }
     };
 
