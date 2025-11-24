@@ -298,7 +298,7 @@ if ($woocommerce_active) {
     }
 
     // Détecter les statuts personnalisés et leurs plugins associés
-    $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
+    $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed', 'draft'];
 
     foreach ($order_statuses as $status_key => $status_name) {
         // Enlever le préfixe 'wc-' si présent
@@ -397,7 +397,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                 <div class="templates-status-grid">
                     <?php
                     // Définir les statuts WooCommerce par défaut
-                    $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
+                    $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed', 'draft'];
                     ?>
                     <?php foreach ($order_statuses as $status_key => $status_label): ?>
                     <?php
