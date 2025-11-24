@@ -1603,7 +1603,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Update dimensions card preview
         if (category === 'dimensions' || category === 'all') {
+            console.log('About to call updateDimensionsCardPreview');
             updateDimensionsCardPreview();
+            console.log('updateDimensionsCardPreview called successfully');
         }
 
         // Update apparence card preview
