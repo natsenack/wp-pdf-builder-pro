@@ -38,6 +38,7 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_generate_pdf_from_canvas', [$this, 'ajaxGeneratePdfFromCanvas']);
         add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajaxDownloadPdf']);
         add_action('wp_ajax_pdf_builder_save_template_v3', [$this, 'ajaxSaveTemplateV3']);
+        add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_auto_save_template', [$this, 'ajaxAutoSaveTemplateWrapper']);
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
