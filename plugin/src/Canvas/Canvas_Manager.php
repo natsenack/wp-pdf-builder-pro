@@ -116,7 +116,7 @@ class Canvas_Manager
             'limit_fps' => get_option('pdf_builder_canvas_limit_fps', '1') == '1',
             'max_fps' => intval(get_option('pdf_builder_canvas_fps_target', 60)),
             'auto_save_enabled' => get_option('pdf_builder_canvas_auto_save', '1') == '1',
-            'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 300)),
+            'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 5)),
             'auto_save_versions' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
             'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
             'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
@@ -186,7 +186,7 @@ class Canvas_Manager
             'limit_fps' => true,
             'max_fps' => 60,
             'auto_save_enabled' => true,
-            'auto_save_interval' => 300,
+            'auto_save_interval' => 5,
             'auto_save_versions' => 10,
             'undo_levels' => 50,
             'redo_levels' => 50,
@@ -404,7 +404,7 @@ JS;
             'undo_levels' => $this->getSetting('undo_levels', 50),
             'redo_levels' => $this->getSetting('redo_levels', 50),
             'auto_save' => $this->getSetting('auto_save_enabled', true),
-            'auto_save_interval' => $this->getSetting('auto_save_interval', 300),
+            'auto_save_interval' => $this->getSetting('auto_save_interval', 5),
             'auto_save_versions' => $this->getSetting('auto_save_versions', 10),
         ];
     }

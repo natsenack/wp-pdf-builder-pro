@@ -1698,9 +1698,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update autosave interval
         const intervalInput = modal.querySelector('#canvas_autosave_interval');
         if (intervalInput && values.canvas_autosave_interval !== undefined) {
-            // Convertir secondes en minutes pour l'affichage
-            const minutes = Math.floor(parseInt(values.canvas_autosave_interval) / 60);
-            intervalInput.value = minutes;
+            intervalInput.value = values.canvas_autosave_interval;
         }
 
         // Update history enabled
@@ -2049,7 +2047,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
         const versionsLimitInput = document.getElementById("canvas_versions_limit");
 
-        const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : (window.pdfBuilderCanvasSettings?.autosave_interval || 300);
+        const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : (window.pdfBuilderCanvasSettings?.autosave_interval || 5);
         const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.autosave_enabled === true || window.pdfBuilderCanvasSettings?.autosave_enabled === '1');
         const versionsLimit = versionsLimitInput ? parseInt(versionsLimitInput.value) : (window.pdfBuilderCanvasSettings?.versions_limit || 10);
 
@@ -2059,7 +2057,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update timer display
         const timerDisplay = autosaveCard.querySelector('.autosave-timer');
         if (timerDisplay) {
-            const minutes = Math.floor(autosaveInterval / 60);
+            const minutes = autosaveInterval;
             timerDisplay.textContent = minutes + 'min';
         }
 

@@ -1417,7 +1417,7 @@ class PdfBuilderAdmin
                 'limit_fps' => get_option('pdf_builder_canvas_limit_fps', '1') == '1',
                 'max_fps' => intval(get_option('pdf_builder_canvas_fps_target', 60)),
                 'auto_save_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') == '1',
-                'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 300)),
+                'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 5)),
                 'auto_save_versions' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
                 'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
                 'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),

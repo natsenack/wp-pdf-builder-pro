@@ -772,10 +772,7 @@ function pdf_builder_save_canvas_settings_handler() {
                             $value = $_POST[$post_key];
                             if (in_array($post_key, ['canvas_autosave_enabled', 'canvas_history_enabled'])) {
                                 $value = $value === '1';
-                            } elseif ($post_key === 'canvas_autosave_interval') {
-                                // Convertir minutes en secondes
-                                $value = intval($value) * 60;
-                            } elseif ($post_key === 'canvas_history_max') {
+                            } elseif (in_array($post_key, ['canvas_autosave_interval', 'canvas_history_max'])) {
                                 $value = intval($value);
                             }
                             update_option($option_key, $value);
@@ -1033,7 +1030,7 @@ function pdf_builder_get_canvas_settings_handler() {
                 'limit_fps' => get_option('pdf_builder_canvas_limit_fps', '1') == '1',
                 'max_fps' => intval(get_option('pdf_builder_canvas_fps_target', 60)),
                 'auto_save_enabled' => get_option('pdf_builder_canvas_auto_save', '1') == '1',
-                'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 300)),
+                'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 5)),
                 'auto_save_versions' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
                 'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
                 'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
@@ -1226,7 +1223,7 @@ function pdf_builder_get_all_canvas_settings_handler() {
             'limit_fps' => get_option('pdf_builder_canvas_limit_fps', '1') == '1',
             'max_fps' => intval(get_option('pdf_builder_canvas_fps_target', 60)),
             'auto_save_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') == '1',
-            'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 300)),
+            'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 5)),
             'auto_save_versions' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
             'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
             'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
