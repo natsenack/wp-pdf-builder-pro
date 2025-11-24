@@ -1186,6 +1186,15 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_orientation) {
                                     window.pdfBuilderCanvasSettings.default_canvas_orientation = data.data.saved.canvas_orientation;
                                 }
+
+                                // Déclencher l'événement pour mettre à jour l'éditeur React
+                                const event = new CustomEvent('pdfBuilderUpdateCanvasDimensions', {
+                                    detail: {
+                                        width: parseInt(data.data.saved.canvas_width),
+                                        height: parseInt(data.data.saved.canvas_height)
+                                    }
+                                });
+                                document.dispatchEvent(event);
                             }
 
                             // Update window.pdfBuilderCanvasSettings with saved values for apparence
