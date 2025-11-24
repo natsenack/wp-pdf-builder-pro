@@ -788,6 +788,16 @@ class AjaxHandler
                     break;
                 case 'interactions':
                     $saved = $this->saveInteractionsSettings();
+                    if ($saved) {
+                        $savedData = [
+                            'canvas_drag_enabled' => get_option('pdf_builder_canvas_drag_enabled', '1'),
+                            'canvas_resize_enabled' => get_option('pdf_builder_canvas_resize_enabled', '1'),
+                            'canvas_rotate_enabled' => get_option('pdf_builder_canvas_rotate_enabled', '1'),
+                            'canvas_multi_select' => get_option('pdf_builder_canvas_multi_select', '1'),
+                            'canvas_selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'bounding_box'),
+                            'canvas_keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1')
+                        ];
+                    }
                     break;
                 case 'export':
                     $saved = $this->saveExportSettings();
@@ -807,9 +817,14 @@ class AjaxHandler
             }
 
             if ($saved) {
-                wp_send_json_success([
+                $response = [
                     'message' => 'Paramètres ' . $category . ' sauvegardés avec succès'
-                ]);
+                ];
+                if (isset($savedData)) {
+                    $response['saved'] = $savedData;
+                    error_log('PDF_BUILDER_DEBUG: Returning saved data for ' . $category . ': ' . print_r($savedData, true));
+                }
+                wp_send_json_success($response);
             } else {
                 wp_send_json_error('Erreur lors de la sauvegarde des paramètres ' . $category);
             }
@@ -1059,41 +1074,52 @@ class AjaxHandler
     {
         $updated = 0;
 
+        // Debug log
+        error_log('PDF_BUILDER_DEBUG: saveInteractionsSettings called with POST data: ' . print_r($_POST, true));
+
         // Glisser-déposer activé
         if (isset($_POST['canvas_drag_enabled'])) {
             update_option('pdf_builder_canvas_drag_enabled', sanitize_text_field($_POST['canvas_drag_enabled']));
             $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_drag_enabled to: ' . $_POST['canvas_drag_enabled']);
         }
 
         // Redimensionnement activé
         if (isset($_POST['canvas_resize_enabled'])) {
             update_option('pdf_builder_canvas_resize_enabled', sanitize_text_field($_POST['canvas_resize_enabled']));
             $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_resize_enabled to: ' . $_POST['canvas_resize_enabled']);
         }
 
         // Rotation activée
         if (isset($_POST['canvas_rotate_enabled'])) {
             update_option('pdf_builder_canvas_rotate_enabled', sanitize_text_field($_POST['canvas_rotate_enabled']));
             $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_rotate_enabled to: ' . $_POST['canvas_rotate_enabled']);
         }
 
         // Sélection multiple
         if (isset($_POST['canvas_multi_select'])) {
             update_option('pdf_builder_canvas_multi_select', sanitize_text_field($_POST['canvas_multi_select']));
             $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_multi_select to: ' . $_POST['canvas_multi_select']);
         }
 
         // Mode de sélection
         if (isset($_POST['canvas_selection_mode'])) {
             update_option('pdf_builder_canvas_selection_mode', sanitize_text_field($_POST['canvas_selection_mode']));
             $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_selection_mode to: ' . $_POST['canvas_selection_mode']);
         }
 
         // Raccourcis clavier
         if (isset($_POST['canvas_keyboard_shortcuts'])) {
             update_option('pdf_builder_canvas_keyboard_shortcuts', sanitize_text_field($_POST['canvas_keyboard_shortcuts']));
             $updated++;
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_keyboard_shortcuts to: ' . $_POST['canvas_keyboard_shortcuts']);
         }
+
+        error_log('PDF_BUILDER_DEBUG: saveInteractionsSettings updated ' . $updated . ' settings');
 
         return $updated > 0;
     }

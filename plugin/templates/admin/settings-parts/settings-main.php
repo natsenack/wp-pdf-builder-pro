@@ -1127,7 +1127,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         formData.append('category', category || '');
                         formData.append('nonce', ajaxConfig.nonce || '');
 
-                        
+                        // Debug: Log form data
+                        console.log('PDF_BUILDER_DEBUG: Form data for category', category + ':');
+                        for (let [key, value] of formData.entries()) {
+                            console.log('PDF_BUILDER_DEBUG:', key, '=', value);
+                        }
+
                         
 
                     } catch (e) {
@@ -1153,12 +1158,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                     .then(response => {
                         clearTimeout(timeoutId);
+                        console.log('PDF_BUILDER_DEBUG: AJAX response status:', response.status);
                         if (!response.ok) {
                             throw new Error('HTTP ' + response.status);
                         }
                         return response.json();
                     })
                     .then(data => {
+                        console.log('PDF_BUILDER_DEBUG: AJAX response data:', data);
                         
                         if (data.success) {
                             hideModal(modal);
@@ -1289,6 +1296,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             // Update window.pdfBuilderCanvasSettings with saved values for interactions
                             if (category === 'interactions' && data.data && data.data.saved) {
+                                console.log('PDF_BUILDER_DEBUG: Updating interactions settings with:', data.data.saved);
                                 if (data.data.saved.canvas_drag_enabled !== undefined) {
                                     window.pdfBuilderCanvasSettings.drag_enabled = data.data.saved.canvas_drag_enabled === '1' || data.data.saved.canvas_drag_enabled === true;
                                 }
@@ -1307,6 +1315,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_keyboard_shortcuts !== undefined) {
                                     window.pdfBuilderCanvasSettings.keyboard_shortcuts = data.data.saved.canvas_keyboard_shortcuts === '1' || data.data.saved.canvas_keyboard_shortcuts === true;
                                 }
+                                console.log('PDF_BUILDER_DEBUG: Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
                             }
 
                             // Update canvas previews after successful save
@@ -1367,6 +1376,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                     .catch(error => {
                         clearTimeout(timeoutId);
+                        console.log('PDF_BUILDER_DEBUG: AJAX error:', error);
                         
                         this.textContent = originalText;
                         this.disabled = false;
