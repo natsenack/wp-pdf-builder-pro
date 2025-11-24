@@ -398,6 +398,9 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                     <?php foreach ($order_statuses as $status_key => $status_label): ?>
                     <div class="template-status-card">
                         <h4><?php echo esc_html($status_label); ?></h4>
+                        <small style="color: #666; font-weight: normal; display: block; margin-bottom: 10px;">
+                            Slug: <?php echo esc_html(str_replace('wc-', '', $status_key)); ?>
+                        </small>
                         <div class="template-selector">
                             <label for="template_<?php echo esc_attr($status_key); ?>">
                                 Template par défaut :
