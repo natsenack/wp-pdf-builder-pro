@@ -6,15 +6,106 @@
  * Updated: 2025-11-24 12:00:00
  */
 
+/**
+ * Détecte le plugin responsable d'un statut personnalisé WooCommerce
+ *
+ * @param string $status_key Le slug du statut (sans préfixe wc-)
+ * @return string|null Le nom du plugin ou null si non détecté
+ */
+function detect_custom_status_plugin($status_key) {
+    // Liste des plugins courants qui ajoutent des statuts personnalisés
+    $plugin_patterns = [
+        // WooCommerce Order Status Manager
+        'wc_order_status_manager' => ['order-status-manager-for-woocommerce', 'woocommerce-order-status-manager'],
+        // WooCommerce Table Rate Shipping (exemple générique)
+        'table_rate_shipping' => ['woocommerce-table-rate-shipping'],
+        // YITH WooCommerce Custom Order Status
+        'yith_custom_order_status' => ['yith-woocommerce-custom-order-status'],
+        // WooBeWoo Order Status
+        'woobewoo_order_status' => ['woo-order-status'],
+        // Custom Order Status for WooCommerce
+        'custom_order_status' => ['custom-order-status-for-woocommerce'],
+        // WooCommerce Order Status & Actions Manager
+        'order_status_actions' => ['woocommerce-order-status-actions-manager'],
+    ];
+
+    // Vérifier si ces plugins sont actifs
+    foreach ($plugin_patterns as $plugin_key => $plugin_slugs) {
+        foreach ($plugin_slugs as $plugin_slug) {
+            if (is_plugin_active($plugin_slug . '/' . $plugin_slug . '.php') ||
+                is_plugin_active($plugin_slug . '.php')) {
+                return get_plugin_display_name($plugin_key);
+            }
+        }
+    }
+
+    // Détection basée sur les patterns de statut courants
+    $status_patterns = [
+        'shipped' => 'Plugin d\'expédition (Shipped Order Status)',
+        'delivered' => 'Plugin de livraison',
+        'packed' => 'Plugin de préparation de commande',
+        'ready_to_ship' => 'Plugin d\'expédition',
+        'backordered' => 'Plugin de gestion des ruptures de stock',
+        'partial_shipment' => 'Plugin d\'expédition partielle',
+        'awaiting_payment' => 'Plugin de paiement personnalisé',
+        'payment_pending' => 'Plugin de paiement personnalisé',
+        'on_hold_custom' => 'Plugin de statut personnalisé',
+    ];
+
+    if (isset($status_patterns[$status_key])) {
+        return $status_patterns[$status_key];
+    }
+
+    // Si on ne peut pas détecter le plugin spécifique
+    return 'Plugin tiers non identifié';
+}
+
+/**
+ * Retourne le nom d'affichage d'un plugin
+ *
+ * @param string $plugin_key La clé du plugin
+ * @return string Le nom d'affichage
+ */
+function get_plugin_display_name($plugin_key) {
+    $plugin_names = [
+        'wc_order_status_manager' => 'WooCommerce Order Status Manager',
+        'yith_custom_order_status' => 'YITH WooCommerce Custom Order Status',
+        'woobewoo_order_status' => 'WooBeWoo Order Status',
+        'custom_order_status' => 'Custom Order Status for WooCommerce',
+        'order_status_actions' => 'WooCommerce Order Status & Actions Manager',
+        'table_rate_shipping' => 'WooCommerce Table Rate Shipping',
+    ];
+
+    return isset($plugin_names[$plugin_key]) ? $plugin_names[$plugin_key] : ucfirst(str_replace('_', ' ', $plugin_key));
+}
+
 // Vérifier si WooCommerce est actif
 $woocommerce_active = class_exists('WooCommerce');
 
 // Récupérer les statuts de commande WooCommerce (incluant les statuts personnalisés)
 $order_statuses = [];
+$custom_status_plugins = [];
 if ($woocommerce_active && class_exists('WC_Order')) {
     $order_statuses = WC_Order::get_statuses();
-    // Note: WC_Order::get_statuses() inclut automatiquement les statuts personnalisés
-    // ajoutés par des plugins tiers via les hooks WooCommerce
+
+    // Détecter les statuts personnalisés et leurs plugins associés
+    $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
+
+    foreach ($order_statuses as $status_key => $status_name) {
+        // Enlever le préfixe 'wc-' si présent
+        $clean_status_key = str_replace('wc-', '', $status_key);
+
+        if (!in_array($clean_status_key, $default_statuses)) {
+            // C'est un statut personnalisé, essayer de détecter le plugin responsable
+            $plugin_name = detect_custom_status_plugin($clean_status_key);
+            if ($plugin_name) {
+                $custom_status_plugins[] = $plugin_name;
+            }
+        }
+    }
+
+    // Éliminer les doublons
+    $custom_status_plugins = array_unique($custom_status_plugins);
 }
 
 // Récupérer les templates disponibles depuis les posts WordPress
@@ -65,7 +156,18 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
 }
 ?>
 <div class="templates-status-wrapper">
-            <h2>📋 Templates par Statut de Commande</h2>
+            <h2 style="display: flex; justify-content: space-between; align-items: center;">
+                <span>📋 Templates par Statut de Commande</span>
+                <?php if (!empty($custom_status_plugins)): ?>
+                <span style="font-size: 14px; font-weight: normal; color: #666;">
+                    🔌 Plugins détectés: <?php echo esc_html(implode(', ', $custom_status_plugins)); ?>
+                </span>
+                <?php elseif ($woocommerce_active && !empty($order_statuses)): ?>
+                <span style="font-size: 14px; font-weight: normal; color: #28a745;">
+                    ✅ Statuts WooCommerce standards uniquement
+                </span>
+                <?php endif; ?>
+            </h2>
 
             <?php if (!$woocommerce_active): ?>
             <div class="notice notice-warning">

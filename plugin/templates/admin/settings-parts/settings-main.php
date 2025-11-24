@@ -18,91 +18,6 @@ if (class_exists('PDF_Builder\\Security\\Role_Manager')) {
     \PDF_Builder\Security\Role_Manager::check_and_block_access();
 }
 
-/**
- * Détecte les plugins qui utilisent des slugs personnalisés pour les statuts WooCommerce
- * et retourne un indicateur pour l'affichage dans l'onglet
- */
-function pdf_builder_get_order_status_plugin_indicator() {
-    // Liste des plugins connus qui modifient les statuts de commande WooCommerce
-    $custom_status_plugins = [
-        'woocommerce-order-status-manager/woocommerce-order-status-manager.php' => 'WooCommerce Order Status Manager',
-        'custom-order-status-for-woocommerce/custom-order-status-for-woocommerce.php' => 'Custom Order Status for WooCommerce',
-        'yith-woocommerce-custom-order-status/init.php' => 'YITH WooCommerce Custom Order Status',
-        'woo-order-status-manager/woo-order-status-manager.php' => 'WooCommerce Order Status Manager',
-        'order-status-manager-for-woocommerce/order-status-manager-for-woocommerce.php' => 'Order Status Manager for WooCommerce',
-        'wc-custom-order-status/wc-custom-order-status.php' => 'WC Custom Order Status',
-        'woocommerce-order-status/woocommerce-order-status.php' => 'WooCommerce Order Status',
-        'order-status-customizer/order-status-customizer.php' => 'Order Status Customizer'
-    ];
-
-    $active_plugins = [];
-
-    // Vérifier si WooCommerce est installé et activé
-    if (!class_exists('WooCommerce')) {
-        return ' <small style="color: #dc3545;">(WooCommerce requis)</small>';
-    }
-
-    // Vérifier les plugins actifs
-    foreach ($custom_status_plugins as $plugin_file => $plugin_name) {
-        if (is_plugin_active($plugin_file)) {
-            $active_plugins[] = $plugin_name;
-        }
-    }
-
-    // Vérifier aussi les plugins qui pourraient être actifs mais avec des noms différents
-    $all_plugins = get_plugins();
-    foreach ($all_plugins as $plugin_file => $plugin_data) {
-        $plugin_name_lower = strtolower($plugin_data['Name']);
-
-        // Chercher des plugins avec "order status" ou "custom status" dans le nom
-        if ((strpos($plugin_name_lower, 'order status') !== false ||
-             strpos($plugin_name_lower, 'custom status') !== false ||
-             strpos($plugin_name_lower, 'status manager') !== false) &&
-            is_plugin_active($plugin_file) &&
-            !in_array($plugin_data['Name'], $active_plugins)) {
-
-            $active_plugins[] = $plugin_data['Name'];
-        }
-    }
-
-    // Vérifier s'il y a des statuts personnalisés enregistrés
-    $custom_statuses = [];
-    if (function_exists('wc_get_order_statuses') && class_exists('WooCommerce')) {
-        $all_statuses = wc_get_order_statuses();
-        $default_statuses = [
-            'wc-pending' => 'En attente de paiement',
-            'wc-processing' => 'En cours',
-            'wc-on-hold' => 'En attente',
-            'wc-completed' => 'Terminée',
-            'wc-cancelled' => 'Annulée',
-            'wc-refunded' => 'Remboursée',
-            'wc-failed' => 'Échec'
-        ];
-
-        foreach ($all_statuses as $status_key => $status_name) {
-            if (!isset($default_statuses[$status_key])) {
-                $custom_statuses[] = $status_name;
-            }
-        }
-    }
-
-    // Construire l'indicateur
-    $indicator = '';
-
-    if (!empty($active_plugins)) {
-        $plugin_names = implode(', ', array_slice($active_plugins, 0, 2)); // Limiter à 2 plugins pour éviter un texte trop long
-        if (count($active_plugins) > 2) {
-            $plugin_names .= '...';
-        }
-        $indicator = ' <small style="color: #17a2b8;">(Plugin: ' . esc_html($plugin_names) . ')</small>';
-    } elseif (!empty($custom_statuses)) {
-        $status_count = count($custom_statuses);
-        $indicator = ' <small style="color: #ffc107;">(' . $status_count . ' statut' . ($status_count > 1 ? 's' : '') . ' personnalisé' . ($status_count > 1 ? 's' : '') . ')</small>';
-    }
-
-    return $indicator;
-}
-
 // Charger les styles CSS
 require_once dirname(__FILE__) . '/settings-styles.php';
 
@@ -359,7 +274,7 @@ if (
             </a>
             <a href="#templates" class="nav-tab" data-tab="templates">
                 <span class="tab-icon">📋</span>
-                <span class="tab-text">Templates par statut<?php echo pdf_builder_get_order_status_plugin_indicator(); ?></span>
+                <span class="tab-text">Templates par statut</span>
             </a>
             <a href="#developpeur" class="nav-tab" data-tab="developpeur">
                 <span class="tab-icon">👨‍💻</span>
