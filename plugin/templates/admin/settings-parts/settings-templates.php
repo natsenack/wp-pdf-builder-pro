@@ -85,8 +85,30 @@ $woocommerce_active = class_exists('WooCommerce');
 // Récupérer les statuts de commande WooCommerce (incluant les statuts personnalisés)
 $order_statuses = [];
 $custom_status_plugins = [];
-if ($woocommerce_active && class_exists('WC_Order')) {
-    $order_statuses = WC_Order::get_statuses();
+if ($woocommerce_active) {
+    // Méthode compatible avec toutes les versions de WooCommerce
+    if (function_exists('wc_get_order_statuses')) {
+        // WooCommerce 3.0+
+        $order_statuses = wc_get_order_statuses();
+    } elseif (class_exists('WC_Order') && method_exists('WC_Order', 'get_statuses')) {
+        // Version alternative
+        $order_statuses = WC_Order::get_statuses();
+    } else {
+        // Fallback: récupérer manuellement depuis les options
+        $order_statuses = get_option('wc_order_statuses', []);
+        if (empty($order_statuses)) {
+            // Statuts par défaut si rien n'est trouvé
+            $order_statuses = [
+                'wc-pending' => 'En attente de paiement',
+                'wc-processing' => 'En cours',
+                'wc-on-hold' => 'En attente',
+                'wc-completed' => 'Terminée',
+                'wc-cancelled' => 'Annulée',
+                'wc-refunded' => 'Remboursée',
+                'wc-failed' => 'Échec'
+            ];
+        }
+    }
 
     // Détecter les statuts personnalisés et leurs plugins associés
     $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'];
