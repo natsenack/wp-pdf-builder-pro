@@ -824,6 +824,109 @@ function pdf_builder_save_canvas_settings_handler() {
                     return;
             }
 
+            // Update the combined canvas settings option for consistency
+            $combined_settings = get_option('pdf_builder_canvas_settings', []);
+            
+            // Map saved values to combined settings keys
+            $mappings = [
+                'dimensions' => [
+                    'canvas_format' => 'default_canvas_format',
+                    'canvas_orientation' => 'default_canvas_orientation', 
+                    'canvas_dpi' => 'default_canvas_dpi',
+                    'canvas_width' => 'canvas_width',
+                    'canvas_height' => 'canvas_height',
+                ],
+                'apparence' => [
+                    'canvas_background_color' => 'canvas_background_color',
+                    'canvas_container_bg_color' => 'container_background_color',
+                    'canvas_border_color' => 'border_color',
+                    'canvas_border_width' => 'border_width',
+                    'canvas_shadow_enabled' => 'shadow_enabled',
+                ],
+                'zoom' => [
+                    'canvas_zoom_default' => 'default_zoom',
+                    'canvas_zoom_min' => 'min_zoom',
+                    'canvas_zoom_max' => 'max_zoom',
+                    'canvas_zoom_step' => 'zoom_step',
+                    'canvas_zoom_with_wheel' => 'zoom_with_wheel',
+                    'canvas_pan_enabled' => 'pan_with_mouse',
+                ],
+                'marges' => [
+                    'canvas_margin_top' => 'margin_top',
+                    'canvas_margin_right' => 'margin_right',
+                    'canvas_margin_bottom' => 'margin_bottom',
+                    'canvas_margin_left' => 'margin_left',
+                    'canvas_show_margins' => 'show_margins',
+                ],
+                'grille' => [
+                    'canvas_grid_enabled' => 'show_grid',
+                    'canvas_grid_size' => 'grid_size',
+                    'canvas_grid_color' => 'grid_color',
+                    'canvas_snap_to_grid' => 'snap_to_grid',
+                    'canvas_guides_enabled' => 'show_guides',
+                    'canvas_snap_to_elements' => 'snap_to_elements',
+                    'canvas_snap_tolerance' => 'snap_tolerance',
+                ],
+                'interactions' => [
+                    'canvas_multi_select' => 'multi_select',
+                    'canvas_copy_paste_enabled' => 'copy_paste_enabled',
+                    'canvas_show_resize_handles' => 'show_resize_handles',
+                    'canvas_handle_size' => 'handle_size',
+                    'canvas_handle_color' => 'handle_color',
+                    'canvas_rotate_enabled' => 'enable_rotation',
+                    'canvas_rotation_step' => 'rotation_step',
+                ],
+                'export' => [
+                    'canvas_export_format' => 'export_format',
+                    'canvas_export_quality' => 'export_quality',
+                    'canvas_compress_images' => 'compress_images',
+                    'canvas_image_quality' => 'image_quality',
+                    'canvas_max_image_size' => 'max_image_size',
+                    'canvas_include_metadata' => 'include_metadata',
+                    'canvas_pdf_author' => 'pdf_author',
+                    'canvas_pdf_subject' => 'pdf_subject',
+                    'canvas_auto_crop' => 'auto_crop',
+                    'canvas_embed_fonts' => 'embed_fonts',
+                    'canvas_optimize_for_web' => 'optimize_for_web',
+                ],
+                'autosave' => [
+                    'canvas_autosave_enabled' => 'auto_save_enabled',
+                    'canvas_autosave_interval' => 'auto_save_interval',
+                    'canvas_history_enabled' => 'history_enabled',
+                    'canvas_history_max' => 'auto_save_versions',
+                ],
+                'performance' => [
+                    'canvas_fps_target' => 'max_fps',
+                    'canvas_memory_limit_js' => 'memory_limit_js',
+                    'canvas_memory_limit_php' => 'memory_limit_php',
+                    'canvas_response_timeout' => 'response_timeout',
+                    'canvas_lazy_loading_editor' => 'lazy_loading_editor',
+                    'canvas_preload_critical' => 'preload_critical',
+                    'canvas_lazy_loading_plugin' => 'lazy_loading_plugin',
+                ],
+                'debug' => [
+                    'canvas_debug_enabled' => 'debug_enabled',
+                    'canvas_performance_monitoring' => 'performance_monitoring',
+                    'canvas_error_reporting' => 'error_reporting',
+                ],
+            ];
+            
+            if (isset($mappings[$category])) {
+                foreach ($mappings[$category] as $saved_key => $combined_key) {
+                    if (isset($saved_values[$saved_key])) {
+                        // Convert types appropriately
+                        $value = $saved_values[$saved_key];
+                        if (in_array($combined_key, ['default_canvas_dpi', 'canvas_width', 'canvas_height', 'border_width', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left', 'grid_size', 'snap_tolerance', 'handle_size', 'rotation_step', 'export_quality', 'image_quality', 'max_image_size', 'auto_save_interval', 'auto_save_versions', 'max_fps'])) {
+                            $value = intval($value);
+                        } elseif (in_array($combined_key, ['shadow_enabled', 'show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 'show_guides', 'multi_select', 'copy_paste_enabled', 'show_resize_handles', 'enable_rotation', 'compress_images', 'include_metadata', 'auto_crop', 'embed_fonts', 'optimize_for_web', 'auto_save_enabled', 'lazy_loading_editor', 'preload_critical', 'lazy_loading_plugin', 'debug_enabled', 'performance_monitoring', 'error_reporting'])) {
+                            $value = (bool)$value;
+                        }
+                        $combined_settings[$combined_key] = $value;
+                    }
+                }
+                update_option('pdf_builder_canvas_settings', $combined_settings);
+            }
+
             send_ajax_response(true, 'Paramètres ' . $category . ' sauvegardés avec succès.', ['saved' => $saved_values, 'category' => $category]);
 
         } catch (Exception $e) {
