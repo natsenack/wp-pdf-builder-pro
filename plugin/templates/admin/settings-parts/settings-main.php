@@ -1735,11 +1735,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (bgPreview && bgColor) {
             bgPreview.style.backgroundColor = bgColor;
-            console.log('✅ BG color set to:', bgColor);
+            console.log('✅ BG color set to:', bgColor, 'element style:', bgPreview.style.backgroundColor);
         }
         if (borderPreview && borderColor) {
             borderPreview.style.backgroundColor = borderColor;
-            console.log('✅ Border color set to:', borderColor);
+            console.log('✅ Border color set to:', borderColor, 'element style:', borderPreview.style.backgroundColor);
         }
     }
 
