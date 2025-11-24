@@ -13,7 +13,9 @@ if (!defined('ABSPATH')) {
 function send_ajax_response($success, $message = '', $data = [])
 {
     if ($success) {
-        wp_send_json_success(array_merge(['message' => $message], $data));
+        $merged = array_merge(['message' => $message], $data);
+        error_log('send_ajax_response merged: ' . json_encode($merged));
+        wp_send_json_success($merged);
     } else {
         wp_send_json_error(['message' => $message]);
     }
@@ -926,6 +928,10 @@ function pdf_builder_save_canvas_settings_handler() {
                 }
                 update_option('pdf_builder_canvas_settings', $combined_settings);
             }
+
+            // Debug log
+            error_log('AJAX save - category: ' . $category . ', saved_values: ' . json_encode($saved_values));
+            error_log('data to send: ' . json_encode(['saved' => $saved_values, 'category' => $category]));
 
             send_ajax_response(true, 'Paramètres ' . $category . ' sauvegardés avec succès.', ['saved' => $saved_values, 'category' => $category]);
 
