@@ -3096,16 +3096,30 @@ class PdfBuilderAdmin
 
         // Initialize React editor when DOM is ready
         function initReactEditor() {
+            console.log('🔍 DEBUG: initReactEditor called');
+
             if (typeof window.pdfBuilderReact === 'undefined') {
+                console.log('❌ DEBUG: window.pdfBuilderReact is undefined');
                 return false;
             }
+
+            console.log('✅ DEBUG: window.pdfBuilderReact exists:', window.pdfBuilderReact);
 
             if (typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function') {
+                console.log('❌ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is not a function');
                 return false;
             }
 
-            var result = window.pdfBuilderReact.initPDFBuilderReact();
-            return result;
+            console.log('✅ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is a function');
+
+            try {
+                var result = window.pdfBuilderReact.initPDFBuilderReact();
+                console.log('✅ DEBUG: initPDFBuilderReact returned:', result);
+                return result;
+            } catch (error) {
+                console.log('❌ DEBUG: Error calling initPDFBuilderReact:', error);
+                return false;
+            }
         }
 
         function loadExistingTemplateData() {
