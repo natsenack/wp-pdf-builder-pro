@@ -353,6 +353,21 @@ export function useTemplate() {
       const normalizedElements = normalizeElementsBeforeSave(state.elements as any);
       debugElementState(normalizedElements as any, 'AVANT SAUVEGARDE');
 
+      // 🔍 DEBUG: Log complet des propriétés des éléments avant sauvegarde
+      console.log('[PDF_BUILDER_FRONTEND] Éléments avant normalisation:', state.elements);
+      console.log('[PDF_BUILDER_FRONTEND] Éléments après normalisation:', normalizedElements);
+      
+      // Vérifier les propriétés spéciales
+      normalizedElements.forEach((el, idx) => {
+        console.log(`[PDF_BUILDER_FRONTEND] Élément ${idx} (${el.type}) propriétés:`, Object.keys(el));
+        // Chercher des propriétés avec emoji ou "interactions"
+        Object.keys(el).forEach(key => {
+          if (key.includes('🎯') || key.includes('interactions') || key.includes('comportement') || key.includes('behavior')) {
+            console.log(`[PDF_BUILDER_FRONTEND] Propriété spéciale trouvée: ${key} =`, el[key]);
+          }
+        });
+      });
+
       // Structure simple et propre pour la sauvegarde
       const templateData = {
         elements: normalizedElements,

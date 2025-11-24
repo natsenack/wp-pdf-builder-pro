@@ -89,6 +89,11 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
       const value = normalized[key];
       const type = typeof value;
 
+      // DEBUG: Log des propriétés spéciales
+      if (key.includes('🎯') || key.includes('interactions') || key.includes('comportement') || key.includes('behavior')) {
+        console.log(`[NORMALIZE] Propriété spéciale détectée: ${key} (type: ${type}) =`, value);
+      }
+
       // Garder: string, number, boolean, null, undefined
       // Garder: objects simples et arrays
       // REJETER: functions, symbols, dates (sauf si sérialisées)
@@ -108,6 +113,9 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
         } catch {
           console.warn(`⚠️  [SAVE NORMALIZE] Propriété non sérialisable ${key} skippée`, value);
         }
+      } else {
+        // Propriétés rejetées (functions, etc.)
+        console.warn(`⚠️  [SAVE NORMALIZE] Propriété rejetée: ${key} (type: ${type})`);
       }
     });
 
