@@ -295,10 +295,22 @@ class PDFEditorPreviewIntegration {
             console.log('[PDF Builder] Utilisation de window.pdfBuilderReact.getCurrentTemplate()');
             try {
                 const data = window.pdfBuilderReact.getCurrentTemplate();
-                console.log('[PDF Builder] Données récupérées depuis React editor:', data);
-                return data;
+                console.log('[PDF Builder] Données récupérées depuis React editor (getCurrentTemplate):', data);
+                if (data) return data;
             } catch (error) {
-                console.error('[PDF Builder] Erreur lors de la récupération depuis React editor:', error);
+                console.error('[PDF Builder] Erreur getCurrentTemplate:', error);
+            }
+        }
+
+        // Fallback: Éditeur React - getEditorState
+        if (window.pdfBuilderReact && typeof window.pdfBuilderReact.getEditorState === 'function') {
+            console.log('[PDF Builder] Test de window.pdfBuilderReact.getEditorState()');
+            try {
+                const data = window.pdfBuilderReact.getEditorState();
+                console.log('[PDF Builder] Données récupérées depuis React editor (getEditorState):', data);
+                if (data) return data;
+            } catch (error) {
+                console.error('[PDF Builder] Erreur getEditorState:', error);
             }
         }
 
@@ -314,29 +326,33 @@ class PDFEditorPreviewIntegration {
         }
 
         // Template par défaut pour les tests
+        console.log('[PDF Builder] Utilisation du template par défaut (test)');
         return {
+            templateId: 'autosave-test-' + Date.now(),
             template: {
+                name: 'Auto-save Test Template',
                 elements: [
                     {
                         type: 'text',
-                        content: 'APERÇU PDF BUILDER PRO',
+                        content: 'TEMPLATE DE TEST AUTO-SAVE',
                         x: 50,
                         y: 50,
-                        width: 300,
+                        width: 400,
                         height: 40,
-                        fontSize: 18,
+                        fontSize: 20,
                         fontFamily: 'Arial',
                         color: '#000000',
-                        textAlign: 'center'
+                        fontWeight: 'bold'
                     },
                     {
                         type: 'text',
-                        content: 'Template de démonstration',
+                        content: 'Sauvegardé automatiquement le ' + new Date().toLocaleString(),
                         x: 50,
                         y: 100,
-                        width: 300,
+                        width: 400,
                         height: 30,
                         fontSize: 14,
+                        fontFamily: 'Arial',
                         color: '#666666'
                     }
                 ]
