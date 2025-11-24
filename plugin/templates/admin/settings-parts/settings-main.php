@@ -974,6 +974,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 delete modal._originalApparenceSettings;
             }
+            if (modal.getAttribute('data-category') === 'interactions' && modal._originalInteractionsSettings) {
+                if (window.pdfBuilderCanvasSettings) {
+                    window.pdfBuilderCanvasSettings.drag_enabled = modal._originalInteractionsSettings.dragEnabled;
+                    window.pdfBuilderCanvasSettings.resize_enabled = modal._originalInteractionsSettings.resizeEnabled;
+                    window.pdfBuilderCanvasSettings.rotate_enabled = modal._originalInteractionsSettings.rotateEnabled;
+                    window.pdfBuilderCanvasSettings.multi_select = modal._originalInteractionsSettings.multiSelect;
+                    window.pdfBuilderCanvasSettings.selection_mode = modal._originalInteractionsSettings.selectionMode;
+                    window.pdfBuilderCanvasSettings.keyboard_shortcuts = modal._originalInteractionsSettings.keyboardShortcuts;
+                    
+                    // Update preview with restored values
+                    if (typeof updateInteractionsCardPreview === 'function') {
+                        updateInteractionsCardPreview();
+                    }
+                }
+                delete modal._originalInteractionsSettings;
+            }
 
             modal.style.setProperty('display', 'none', 'important');
         } catch (e) {
@@ -994,6 +1010,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Synchronize modal values with current settings for apparence modal
                 if (modal.getAttribute('data-category') === 'apparence') {
                     synchronizeApparenceModalValues(modal);
+                }
+
+                // Synchronize modal values with current settings for interactions modal
+                if (modal.getAttribute('data-category') === 'interactions') {
+                    synchronizeInteractionsModalValues(modal);
                 }
 
                 // Verify modal is visible after a short delay
@@ -1175,6 +1196,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Clear original settings since save was successful
                             delete modal._originalDimensionsSettings;
                             delete modal._originalApparenceSettings;
+                            delete modal._originalInteractionsSettings;
 
                             // Update window.pdfBuilderCanvasSettings with saved values for dimensions
                             if (category === 'dimensions' && data.data && data.data.saved) {
@@ -2251,6 +2273,50 @@ document.addEventListener('DOMContentLoaded', function() {
         if (containerBgColorInput) {
             containerBgColorInput.value = window.pdfBuilderCanvasSettings.container_background_color || '#f8f9fa';
         }
+    }
+
+    // Synchronize interactions modal values with current settings
+    function synchronizeInteractionsModalValues(modal) {
+        if (!modal || !window.pdfBuilderCanvasSettings) return;
+
+        // Store original values for restoration if modal is cancelled
+        modal._originalInteractionsSettings = {
+            dragEnabled: window.pdfBuilderCanvasSettings.drag_enabled,
+            resizeEnabled: window.pdfBuilderCanvasSettings.resize_enabled,
+            rotateEnabled: window.pdfBuilderCanvasSettings.rotate_enabled,
+            multiSelect: window.pdfBuilderCanvasSettings.multi_select,
+            selectionMode: window.pdfBuilderCanvasSettings.selection_mode,
+            keyboardShortcuts: window.pdfBuilderCanvasSettings.keyboard_shortcuts
+        };
+
+        const dragCheckbox = modal.querySelector('#canvas_drag_enabled');
+        const resizeCheckbox = modal.querySelector('#canvas_resize_enabled');
+        const rotateCheckbox = modal.querySelector('#canvas_rotate_enabled');
+        const multiSelectCheckbox = modal.querySelector('#canvas_multi_select');
+        const selectionModeSelect = modal.querySelector('#canvas_selection_mode');
+        const keyboardCheckbox = modal.querySelector('#canvas_keyboard_shortcuts');
+
+        if (dragCheckbox) {
+            dragCheckbox.checked = window.pdfBuilderCanvasSettings.drag_enabled !== undefined ? window.pdfBuilderCanvasSettings.drag_enabled : true;
+        }
+        if (resizeCheckbox) {
+            resizeCheckbox.checked = window.pdfBuilderCanvasSettings.resize_enabled !== undefined ? window.pdfBuilderCanvasSettings.resize_enabled : true;
+        }
+        if (rotateCheckbox) {
+            rotateCheckbox.checked = window.pdfBuilderCanvasSettings.rotate_enabled !== undefined ? window.pdfBuilderCanvasSettings.rotate_enabled : true;
+        }
+        if (multiSelectCheckbox) {
+            multiSelectCheckbox.checked = window.pdfBuilderCanvasSettings.multi_select !== undefined ? window.pdfBuilderCanvasSettings.multi_select : true;
+        }
+        if (selectionModeSelect) {
+            selectionModeSelect.value = window.pdfBuilderCanvasSettings.selection_mode || 'bounding_box';
+        }
+        if (keyboardCheckbox) {
+            keyboardCheckbox.checked = window.pdfBuilderCanvasSettings.keyboard_shortcuts !== undefined ? window.pdfBuilderCanvasSettings.keyboard_shortcuts : true;
+        }
+
+        // Apply dependency logic after synchronization
+        updateSelectionModeDependency(modal);
     }
 
 })();</script>
