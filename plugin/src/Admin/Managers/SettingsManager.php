@@ -412,7 +412,7 @@ class SettingsManager
             'export_format' => get_option('pdf_builder_canvas_export_format', 'png'),
             'export_quality' => intval(get_option('pdf_builder_canvas_export_quality', 90)),
             'autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') === '1',
-            'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 30)),
+            'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 300)),
         ];
     }
 }

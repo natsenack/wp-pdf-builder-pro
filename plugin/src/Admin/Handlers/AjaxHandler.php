@@ -1217,9 +1217,11 @@ class AjaxHandler
 
         // Intervalle de sauvegarde
         if (isset($_POST['canvas_autosave_interval'])) {
-            $interval = intval($_POST['canvas_autosave_interval']);
-            if ($interval >= 1 && $interval <= 60) {
-                update_option('pdf_builder_canvas_autosave_interval', $interval);
+            $interval_minutes = intval($_POST['canvas_autosave_interval']);
+            if ($interval_minutes >= 1 && $interval_minutes <= 60) {
+                // Convertir minutes en secondes pour le stockage
+                $interval_seconds = $interval_minutes * 60;
+                update_option('pdf_builder_canvas_autosave_interval', $interval_seconds);
                 $updated++;
             }
         }

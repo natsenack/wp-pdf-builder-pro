@@ -714,7 +714,7 @@ class PdfBuilderCore
             'limit_fps' => isset($_POST['limit_fps']),
             'max_fps' => isset($_POST['max_fps']) ? intval($_POST['max_fps']) : 60,
             'auto_save_enabled' => isset($_POST['auto_save_enabled']),
-            'auto_save_interval' => isset($_POST['auto_save_interval']) ? intval($_POST['auto_save_interval']) : 30,
+            'auto_save_interval' => isset($_POST['auto_save_interval']) ? intval($_POST['auto_save_interval']) : 300,
             'auto_save_versions' => isset($_POST['auto_save_versions']) ? intval($_POST['auto_save_versions']) : 10,
             'undo_levels' => isset($_POST['undo_levels']) ? intval($_POST['undo_levels']) : 50,
             'redo_levels' => isset($_POST['redo_levels']) ? intval($_POST['redo_levels']) : 50,

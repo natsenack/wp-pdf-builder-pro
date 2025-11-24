@@ -75,12 +75,12 @@ $canvas_settings_js = [
     'lazy_loading_plugin' => get_option('pdf_builder_canvas_lazy_loading_plugin', '1') == '1',
     
     'auto_save_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') == '1',
-    'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 30)),
+    'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 300)),
     'auto_save_versions' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
     
     // Autosave - paramètres avec noms cohérents
     'autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') == '1',
-    'autosave_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 30)),
+    'autosave_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 300)),
     'versions_limit' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
     'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
     'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
