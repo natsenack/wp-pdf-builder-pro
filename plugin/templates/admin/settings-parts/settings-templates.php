@@ -17,11 +17,11 @@ if ($woocommerce_active && function_exists('wc_get_order_statuses')) {
     // ajoutés par des plugins tiers via les hooks WooCommerce
 }
 
-// Récupérer les templates disponibles (tous les templates publiés, pas seulement ceux de l'utilisateur actuel)
+// Récupérer les templates disponibles
 $templates = [];
 global $wpdb;
 $templates_query = $wpdb->get_results("
-    SELECT ID, post_title, post_author
+    SELECT ID, post_title
     FROM {$wpdb->posts}
     WHERE post_type = 'pdf_template'
     AND post_status = 'publish'
@@ -30,40 +30,7 @@ $templates_query = $wpdb->get_results("
 
 if ($templates_query) {
     foreach ($templates_query as $template) {
-        $author_info = get_userdata($template['post_author']);
-        $author_name = $author_info ? $author_info->display_name : 'Système';
-
-        // Ajouter l'info de l'auteur dans le titre pour différencier
-        $display_title = $template['post_title'];
-        if ($template['post_author'] != get_current_user_id()) {
-            $display_title .= ' (' . $author_name . ')';
-        }
-
-        $templates[$template['ID']] = $display_title;
-    }
-}
-
-// Ajouter les templates système/par défaut s'ils ne sont pas déjà présents
-if (class_exists('PDF_Builder\TemplateDefaults')) {
-    $system_templates = \PDF_Builder\TemplateDefaults::get_free_templates();
-    foreach ($system_templates as $key => $template_data) {
-        // Vérifier si ce template système existe déjà
-        $existing_system = get_posts([
-            'post_type' => 'pdf_template',
-            'meta_query' => [
-                [
-                    'key' => '_pdf_template_key',
-                    'value' => $key
-                ]
-            ],
-            'posts_per_page' => 1
-        ]);
-
-        if (empty($existing_system)) {
-            // Ajouter le template système avec un ID spécial (négatif pour éviter les conflits)
-            $system_id = 'system_' . $key;
-            $templates[$system_id] = '📋 ' . $template_data['name'] . ' (Modèle système)';
-        }
+        $templates[$template['ID']] = $template['post_title'];
     }
 }
 
