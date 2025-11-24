@@ -125,13 +125,13 @@ class PreviewImageAPI
     }
 
     /**
-     * Handler pour l'endpoint REST /preview
+     * Handler pour l'endpoint REST /preview - VERSION SIMPLIFIEE JOUR 1-2
+     * Pour commencer doucement : juste validation et réponse de base
      */
     public function handleRestPreview($request)
     {
-        $start_time = microtime(true);
         try {
-        // Récupération des paramètres
+            // Récupération des paramètres
             $params = array(
                 'template_id' => $request->getParam('templateId'),
                 'order_id' => $request->getParam('orderId'),
@@ -140,30 +140,28 @@ class PreviewImageAPI
                 'quality' => $request->getParam('quality') ?: 150,
                 'format' => $request->getParam('format') ?: 'png'
             );
-        // Validation des paramètres
+
+            // Validation des paramètres (Jour 1-2)
             $validated_params = $this->validateRestParams($params);
-        // Rate limiting
-            $this->checkRateLimit();
-        // Génération avec cache
-            $result = $this->generateWithCache($validated_params);
-        // Log des performances
 
-
-            return new WP_REST_Response(array(
+            // Pour l'instant, juste retourner une réponse de succès
+            // La génération réelle viendra plus tard
+            return new \WP_REST_Response(array(
                 'success' => true,
-                'data' => $result,
-                'performance' => array(
-                    'duration' => round(microtime(true) - $start_time, 3),
-                    'cached' => $result['cached'] ?? false
+                'message' => 'Endpoint Preview opérationnel - Jour 1-2 validé',
+                'data' => array(
+                    'validated_params' => $validated_params,
+                    'ready_for_generation' => false, // À implémenter dans les jours suivants
+                    'version' => '1.0-jour1-2'
                 )
             ), 200);
-        } catch (Exception $e) {
-            return new WP_Error('preview_generation_failed', $e->getMessage(), array(
-                    'status' => 500,
-                    'performance' => array(
-                        'duration' => round(microtime(true) - $start_time, 3)
-                    )
-                ));
+
+        } catch (\Exception $e) {
+            return new \WP_Error(
+                'preview_validation_error',
+                'Erreur de validation: ' . $e->getMessage(),
+                array('status' => 400)
+            );
         }
     }
 
