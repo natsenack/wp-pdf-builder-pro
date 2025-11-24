@@ -46,6 +46,18 @@ export function useSaveStateV2({
   onSaveSuccess,
   onSaveError
 }: UseSaveStateV2Options): UseSaveStateV2Return {
+
+  // DEBUG: Logs détaillés
+  console.log('[PDF Builder] useSaveStateV2 appelée avec:', {
+    templateId,
+    elementsCount: elements?.length || 0,
+    nonce: nonce ? 'DEFINED' : 'UNDEFINED',
+    autoSaveInterval,
+    hasOnSaveStart: !!onSaveStart,
+    hasOnSaveSuccess: !!onSaveSuccess,
+    hasOnSaveError: !!onSaveError
+  });
+
   // État
   const [state, setState] = useState<SaveState>('idle');
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);

@@ -46,6 +46,17 @@ export function useAutoSave(): UseAutoSaveReturn {
     (window.pdfBuilderCanvasSettings as { auto_save_enabled?: boolean })?.auto_save_enabled === true ||
     (window.pdfBuilderCanvasSettings as { autosave_enabled?: boolean })?.autosave_enabled === true;
 
+  // DEBUG: Logs détaillés
+  console.log('[PDF Builder] useAutoSave - Configuration:', {
+    nonce: nonce ? 'DEFINED' : 'UNDEFINED',
+    autoSaveIntervalSetting,
+    autoSaveInterval,
+    autoSaveEnabled,
+    pdfBuilderCanvasSettings: window.pdfBuilderCanvasSettings,
+    pdfBuilderData: window.pdfBuilderData,
+    pdfBuilderReactData: window.pdfBuilderReactData
+  });
+
   // Utiliser useSaveStateV2
   const {
     state: saveState,
