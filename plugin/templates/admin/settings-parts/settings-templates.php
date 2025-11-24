@@ -46,6 +46,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
     }
 }
 ?>
+<div class="templates-status-wrapper">
             <h2>📋 Templates par Statut de Commande</h2>
 
             <?php if (!$woocommerce_active): ?>
@@ -196,6 +197,8 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                 margin-bottom: 20px;
             }
             </style>
+
+</div>
 
             <script>
             function resetTemplatesStatus() {

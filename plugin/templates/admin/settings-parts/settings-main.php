@@ -449,15 +449,6 @@ if (
     cursor: not-allowed;
 }
 
-/* Styles pour les onglets */
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
 .gdpr-disabled-section {
     opacity: 0.5;
     pointer-events: none;
