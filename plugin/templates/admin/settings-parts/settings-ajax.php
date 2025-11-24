@@ -506,9 +506,22 @@ function pdf_builder_save_settings_handler() {
                     $template_mappings = [];
                     foreach ($value as $status => $template_id) {
                         $status = sanitize_text_field($status);
-                        $template_id = intval($template_id);
-                        if ($template_id > 0) {
-                            $template_mappings[$status] = $template_id;
+
+                        // Gérer les deux types de templates : WordPress posts (numériques) et custom templates (custom_ID)
+                        if (!empty($template_id)) {
+                            if (strpos($template_id, 'custom_') === 0) {
+                                // Template custom : extraire l'ID numérique après 'custom_'
+                                $custom_id = str_replace('custom_', '', $template_id);
+                                if (is_numeric($custom_id)) {
+                                    $template_mappings[$status] = 'custom_' . intval($custom_id);
+                                }
+                            } else {
+                                // Template WordPress : ID numérique direct
+                                $numeric_id = intval($template_id);
+                                if ($numeric_id > 0) {
+                                    $template_mappings[$status] = $numeric_id;
+                                }
+                            }
                         }
                     }
                     update_option('pdf_builder_order_status_templates', $template_mappings);

@@ -17,10 +17,10 @@ if ($woocommerce_active && function_exists('wc_get_order_statuses')) {
     // ajoutés par des plugins tiers via les hooks WooCommerce
 }
 
-// Récupérer les templates disponibles
-$templates = [];
+// Récupérer les templates disponibles depuis les posts WordPress
+$templates_wp = [];
 global $wpdb;
-$templates_query = $wpdb->get_results("
+$templates_wp_query = $wpdb->get_results("
     SELECT ID, post_title
     FROM {$wpdb->posts}
     WHERE post_type = 'pdf_template'
@@ -28,11 +28,29 @@ $templates_query = $wpdb->get_results("
     ORDER BY post_title ASC
 ", ARRAY_A);
 
-if ($templates_query) {
-    foreach ($templates_query as $template) {
-        $templates[$template['ID']] = $template['post_title'];
+if ($templates_wp_query) {
+    foreach ($templates_wp_query as $template) {
+        $templates_wp[$template['ID']] = $template['post_title'];
     }
 }
+
+// Récupérer les templates disponibles depuis la table custom pdf_builder_templates
+$templates_custom = [];
+$table_templates = $wpdb->prefix . 'pdf_builder_templates';
+$templates_custom_query = $wpdb->get_results("
+    SELECT id, name
+    FROM {$table_templates}
+    ORDER BY name ASC
+", ARRAY_A);
+
+if ($templates_custom_query) {
+    foreach ($templates_custom_query as $template) {
+        $templates_custom['custom_' . $template['id']] = $template['name'];
+    }
+}
+
+// Fusionner les deux sources de templates
+$templates = array_merge($templates_wp, $templates_custom);
 
 // Récupérer et nettoyer les mappings actuels
 $current_mappings = get_option('pdf_builder_order_status_templates', []);
