@@ -15,7 +15,17 @@ import { createRoot } from 'react-dom/client';
 
 // Imports synchrones des composants lourds (plus de lazy loading pour éviter les chunks webpack)
 import { PDFBuilder } from './PDFBuilder.tsx';
-import * as globalApi from './api/global-api';
+import {
+  registerEditorInstance,
+  loadTemplate,
+  getEditorState,
+  setEditorState,
+  getCurrentTemplate,
+  exportTemplate,
+  saveTemplate,
+  resetAPI,
+  updateCanvasDimensions
+} from './api/global-api';
 
 // Composant ErrorBoundary pour capturer les erreurs de rendu
 class ErrorBoundary extends React.Component {
@@ -96,11 +106,6 @@ async function initPDFBuilderReact() {
 
     // Composants déjà chargés de manière synchrone
     if (DEBUG_VERBOSE) debugLog('✅ Components loaded synchronously, initializing React...');
-
-    // Exposer l'API globale
-    Object.assign(window, globalApi);
-
-    if (DEBUG_VERBOSE) debugLog('✅ Global API exposed, initializing React...');
 
     // Masquer le loading et afficher l'éditeur
     const loadingEl = document.getElementById('pdf-builder-react-loading');
