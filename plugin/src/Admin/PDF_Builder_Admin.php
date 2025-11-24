@@ -3113,14 +3113,18 @@ class PdfBuilderAdmin
 
         // Initialize React editor when DOM is ready
         function initReactEditor() {
-            console.log('🔍 DEBUG: initReactEditor called - checking window.pdfBuilderReact');
+            console.log('🔍 DEBUG: initReactEditor called - checking React availability');
 
-            // Check if React dependencies are loaded
-            console.log('🔍 DEBUG: React available:', typeof window.React);
-            console.log('🔍 DEBUG: ReactDOM available:', typeof window.ReactDOM);
+            // First check if React dependencies are loaded
+            if (typeof window.React === 'undefined' || typeof window.ReactDOM === 'undefined') {
+                console.log('⏳ DEBUG: React or ReactDOM not yet loaded, waiting...');
+                return false;
+            }
+
+            console.log('✅ DEBUG: React and ReactDOM are available');
 
             if (typeof window.pdfBuilderReact === 'undefined') {
-                console.log('❌ DEBUG: window.pdfBuilderReact is undefined - script may not have loaded');
+                console.log('❌ DEBUG: window.pdfBuilderReact is undefined - script may not have loaded yet');
                 console.log('❌ DEBUG: Available window properties:', Object.keys(window).filter(key => key.includes('pdfBuilder') || key.includes('react')));
                 return false;
             }
@@ -3160,11 +3164,14 @@ class PdfBuilderAdmin
         // Initialize React editor immediately
         if (!initReactEditor()) {
             var initAttempts = 0;
-            var maxInitAttempts = 30; // 15 seconds max
+            var maxInitAttempts = 50; // 25 seconds max (increased from 30)
             var initInterval = setInterval(function() {
                 initAttempts++;
+                console.log('🔄 DEBUG: Attempt', initAttempts, 'to initialize React editor');
+
                 if (initReactEditor()) {
                     clearInterval(initInterval);
+                    console.log('✅ DEBUG: React editor initialized successfully on attempt', initAttempts);
 
                     // Now try to load existing data once
                     setTimeout(function() {
