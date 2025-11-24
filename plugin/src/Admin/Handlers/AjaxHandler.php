@@ -163,11 +163,18 @@ class AjaxHandler
      */
     public function ajaxSaveTemplateV3()
     {
+        error_log('PDF_BUILDER_DEBUG: AjaxHandler ajaxSaveTemplateV3 called');
+
         // Déléguer au template manager si disponible
         if ($this->admin->template_manager && method_exists($this->admin->template_manager, 'ajaxSaveTemplateV3')) {
+            error_log('PDF_BUILDER_DEBUG: Delegating to template_manager');
             $this->admin->template_manager->ajaxSaveTemplateV3();
             return;
         }
+
+        error_log('PDF_BUILDER_DEBUG: Template manager not available, using fallback');
+        error_log('PDF_BUILDER_DEBUG: template_manager exists: ' . (isset($this->admin->template_manager) ? 'yes' : 'no'));
+        error_log('PDF_BUILDER_DEBUG: method_exists check: ' . (method_exists($this->admin->template_manager ?? null, 'ajaxSaveTemplateV3') ? 'yes' : 'no'));
 
         // Implémentation de secours
         try {
