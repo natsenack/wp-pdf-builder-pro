@@ -2217,6 +2217,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize real-time preview for apparence
     initializeApparenceRealTimePreview();
 
+    // Initialize real-time preview for interactions
+    initializeInteractionsRealTimePreview();
+
     // Synchronize dimensions modal values with current settings
     function synchronizeDimensionsModalValues(modal) {
         if (!modal || !window.pdfBuilderCanvasSettings) return;
@@ -2317,6 +2320,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Apply dependency logic after synchronization
         updateSelectionModeDependency(modal);
+    }
+
+    // Real-time preview updates for interactions modal
+    function initializeInteractionsRealTimePreview() {
+        // Listen for changes in interactions modal fields
+        document.addEventListener('change', function(event) {
+            const target = event.target;
+            const modal = target.closest('.canvas-modal[data-category="interactions"]');
+            
+            if (modal && (target.id === 'canvas_drag_enabled' || target.id === 'canvas_resize_enabled' || 
+                         target.id === 'canvas_rotate_enabled' || target.id === 'canvas_multi_select' ||
+                         target.id === 'canvas_selection_mode' || target.id === 'canvas_keyboard_shortcuts')) {
+                // Update window.pdfBuilderCanvasSettings temporarily for preview
+                if (window.pdfBuilderCanvasSettings) {
+                    if (target.id === 'canvas_drag_enabled') {
+                        window.pdfBuilderCanvasSettings.drag_enabled = target.checked;
+                    } else if (target.id === 'canvas_resize_enabled') {
+                        window.pdfBuilderCanvasSettings.resize_enabled = target.checked;
+                    } else if (target.id === 'canvas_rotate_enabled') {
+                        window.pdfBuilderCanvasSettings.rotate_enabled = target.checked;
+                    } else if (target.id === 'canvas_multi_select') {
+                        window.pdfBuilderCanvasSettings.multi_select = target.checked;
+                    } else if (target.id === 'canvas_selection_mode') {
+                        window.pdfBuilderCanvasSettings.selection_mode = target.value;
+                    } else if (target.id === 'canvas_keyboard_shortcuts') {
+                        window.pdfBuilderCanvasSettings.keyboard_shortcuts = target.checked;
+                    }
+                    
+                    // Update preview immediately
+                    if (typeof updateInteractionsCardPreview === 'function') {
+                        updateInteractionsCardPreview();
+                    }
+                }
+            }
+        });
     }
 
 })();</script>
