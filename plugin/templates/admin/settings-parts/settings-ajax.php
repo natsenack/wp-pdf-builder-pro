@@ -826,7 +826,7 @@ function pdf_builder_save_canvas_settings_handler() {
                     break;
 
                 default:
-                    send_ajax_response(false, 'Catégorie de paramètres non reconnue: ' . $category);
+                    send_ajax_response(false, "Catégorie de paramètres non reconnue: " . $category);
                     return;
             }
 
