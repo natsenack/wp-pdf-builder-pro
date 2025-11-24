@@ -805,13 +805,24 @@ window.updateAutosaveCardPreview = function() {
 // ==========================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('[PDF Builder] Initialisation automatique - URL actuelle:', window.location.href);
+    console.log('[PDF Builder] Éléments DOM détectés:', {
+        pdfEditorCanvas: !!document.querySelector('#pdf-editor-canvas'),
+        pdfCanvasEditor: !!document.querySelector('.pdf-canvas-editor'),
+        pdfBuilderEditor: window.location.href.includes('pdf-builder-editor'),
+        pdfBuilderReactEditor: window.location.href.includes('pdf-builder-react-editor')
+    });
+
     // Initialiser l'intégration éditeur si on est dans l'éditeur
     if (document.querySelector('#pdf-editor-canvas') ||
         document.querySelector('.pdf-canvas-editor') ||
-        window.location.href.includes('pdf-builder-editor')) {
+        window.location.href.includes('pdf-builder-editor') ||
+        window.location.href.includes('pdf-builder-react-editor')) {
 
-
+        console.log('[PDF Builder] Condition éditeur remplie - création de PDFEditorPreviewIntegration');
         window.pdfEditorPreview = new PDFEditorPreviewIntegration(window.pdfCanvasEditor);
+    } else {
+        console.log('[PDF Builder] Condition éditeur NON remplie - pas d\'initialisation');
     }
 
     // Initialiser l'intégration metabox si on est dans une commande WooCommerce
