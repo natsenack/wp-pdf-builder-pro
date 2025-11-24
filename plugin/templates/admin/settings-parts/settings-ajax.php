@@ -772,7 +772,10 @@ function pdf_builder_save_canvas_settings_handler() {
                             $value = $_POST[$post_key];
                             if (in_array($post_key, ['canvas_autosave_enabled', 'canvas_history_enabled'])) {
                                 $value = $value === '1';
-                            } elseif (in_array($post_key, ['canvas_autosave_interval', 'canvas_history_max'])) {
+                            } elseif ($post_key === 'canvas_autosave_interval') {
+                                // Convertir minutes en secondes
+                                $value = intval($value) * 60;
+                            } elseif ($post_key === 'canvas_history_max') {
                                 $value = intval($value);
                             }
                             update_option($option_key, $value);
