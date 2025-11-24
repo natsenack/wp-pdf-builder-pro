@@ -166,15 +166,16 @@ class AjaxHandler
         error_log('PDF_BUILDER_DEBUG: AjaxHandler ajaxSaveTemplateV3 called');
 
         // Déléguer au template manager si disponible
-        if ($this->admin->template_manager && method_exists($this->admin->template_manager, 'ajaxSaveTemplateV3')) {
+        $template_manager = $this->admin->getTemplateManager();
+        if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
             error_log('PDF_BUILDER_DEBUG: Delegating to template_manager');
-            $this->admin->template_manager->ajaxSaveTemplateV3();
+            $template_manager->ajaxSaveTemplateV3();
             return;
         }
 
         error_log('PDF_BUILDER_DEBUG: Template manager not available, using fallback');
-        error_log('PDF_BUILDER_DEBUG: template_manager exists: ' . (isset($this->admin->template_manager) ? 'yes' : 'no'));
-        error_log('PDF_BUILDER_DEBUG: method_exists check: ' . (method_exists($this->admin->template_manager ?? null, 'ajaxSaveTemplateV3') ? 'yes' : 'no'));
+        error_log('PDF_BUILDER_DEBUG: template_manager: ' . ($template_manager ? 'exists' : 'null'));
+        error_log('PDF_BUILDER_DEBUG: method_exists check: ' . (method_exists($template_manager, 'ajaxSaveTemplateV3') ? 'yes' : 'no'));
 
         // Implémentation de secours
         try {
@@ -200,7 +201,8 @@ class AjaxHandler
             }
 
             // Sauvegarder le template
-            $result = $this->admin->saveTemplate($template_data, $template_name, $template_id);
+            // Note: Template manager should be available, this fallback shouldn't be reached
+            wp_send_json_error('Erreur: Template manager non disponible pour la sauvegarde');
 
             if ($result) {
                 wp_send_json_success([
@@ -260,8 +262,9 @@ class AjaxHandler
     public function ajaxLoadTemplate()
     {
         // Déléguer au template manager si disponible
-        if ($this->admin->template_manager && method_exists($this->admin->template_manager, 'ajaxLoadTemplate')) {
-            $this->admin->template_manager->ajaxLoadTemplate();
+        $template_manager = $this->admin->getTemplateManager();
+        if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
+            $template_manager->ajaxLoadTemplate();
             return;
         }
 
