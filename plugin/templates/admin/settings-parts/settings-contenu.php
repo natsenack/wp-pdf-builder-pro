@@ -190,12 +190,12 @@ input:checked + .toggle-slider:before {
                                 <div class="zoom-preview-container">
                                     <div class="zoom-indicator">
                                         <button class="zoom-btn zoom-minus" disabled>−</button>
-                                        <span class="zoom-level"></span>
+                                        <span class="zoom-level">100%</span>
                                         <button class="zoom-btn zoom-plus" disabled>+</button>
                                     </div>
                                     <div class="zoom-info">
-                                        <span></span>
-                                        <span></span>
+                                        <span>10% - 500%</span>
+                                        <span>Pas: 25%</span>
                                     </div>
                                 </div>
                             </div>
@@ -317,15 +317,15 @@ input:checked + .toggle-slider:before {
                                     <div class="performance-metrics">
                                         <div class="metric-item">
                                             <span class="metric-label">FPS</span>
-                                            <span class="metric-value"></span>
+                                            <span class="metric-value">60</span>
                                         </div>
                                         <div class="metric-item">
                                             <span class="metric-label">RAM JS</span>
-                                            <span class="metric-value"></span>
+                                            <span class="metric-value">256MB</span>
                                         </div>
                                         <div class="metric-item">
                                             <span class="metric-label">RAM PHP</span>
-                                            <span class="metric-value"></span>
+                                            <span class="metric-value">256MB</span>
                                         </div>
                                     </div>
                                     <div class="performance-status">

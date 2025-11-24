@@ -1721,6 +1721,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update canvas card previews in real-time
     window.updateCanvasPreviews = function(category) {
+        console.log('updateCanvasPreviews called with category:', category);
         updateDimensionsCardPreview();
 
         // Update apparence card preview
@@ -1942,6 +1943,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update performance card preview
     window.updatePerformanceCardPreview = function() {
+        console.log('updatePerformanceCardPreview called');
         // Try to get values from modal inputs first (real-time), then from settings
         const fpsTargetInput = document.getElementById("canvas_fps_target");
         const memoryJsInput = document.getElementById("canvas_memory_limit_js");
