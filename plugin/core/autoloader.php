@@ -59,7 +59,7 @@ class PdfBuilderAutoloader
 
             $file = self::$base_path . $base_dir . $relative_class . '.php';
 // Debug: uncomment for troubleshooting
-
+            error_log("Autoloader trying to load: $file for class: $class");
 
             // If the file exists, require it
             if (file_exists($file)) {
