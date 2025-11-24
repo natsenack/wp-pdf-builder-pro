@@ -4,6 +4,18 @@
  */
 
 // ==========================================
+// LOGS DE DIAGNOSTIC AU CHARGEMENT
+// ==========================================
+
+console.log('[PDF Builder] Script pdf-preview-integration.js chargé');
+console.log('[PDF Builder] Variables AJAX disponibles:', {
+    pdfBuilderAjax: typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax : 'NON DEFINI',
+    ajaxurl: typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax.ajaxurl : 'NON DEFINI',
+    nonce: typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax.nonce : 'NON DEFINI',
+    window_pdfBuilderCanvasSettings: typeof window.pdfBuilderCanvasSettings !== 'undefined' ? 'DEFINI' : 'NON DEFINI'
+});
+
+// ==========================================
 // INTÉGRATION DANS L'ÉDITEUR (Canvas)
 // ==========================================
 
@@ -105,32 +117,48 @@ class PDFEditorPreviewIntegration {
     }
 
     setupAutosave() {
+        console.log('[PDF Builder] Configuration de l\'auto-save');
+
         const autosaveEnabled = window.pdfBuilderCanvasSettings?.autosave_enabled !== false;
         const autosaveInterval = window.pdfBuilderCanvasSettings?.autosave_interval || 5; // minutes
 
+        console.log('[PDF Builder] Paramètres auto-save:', {
+            autosaveEnabled,
+            autosaveInterval,
+            pdfBuilderCanvasSettings: window.pdfBuilderCanvasSettings
+        });
+
         if (!autosaveEnabled) {
+            console.log('[PDF Builder] Auto-save désactivée');
             if (this.autosaveTimerDisplay) {
                 this.autosaveTimerDisplay.textContent = '💾 Sauvegarde auto désactivée';
             }
             return;
         }
 
+        console.log('[PDF Builder] Démarrage de l\'auto-save avec intervalle:', autosaveInterval, 'minutes');
         // Démarrer le timer d'auto-sauvegarde
         this.startAutosaveTimer(autosaveInterval);
 
         // Sauvegarde avant de quitter la page
         window.addEventListener('beforeunload', () => {
+            console.log('[PDF Builder] Sauvegarde avant de quitter la page');
             this.performAutosave();
         });
     }
 
     startAutosaveTimer(intervalMinutes) {
+        console.log('[PDF Builder] Démarrage du timer auto-save:', intervalMinutes, 'minutes');
+
         this.updateAutosaveTimer(intervalMinutes);
 
         this.autosaveTimer = setInterval(() => {
+            console.log('[PDF Builder] Timer auto-save déclenché - exécution de la sauvegarde');
             this.performAutosave();
             this.updateAutosaveTimer(intervalMinutes);
         }, intervalMinutes * 60 * 1000);
+
+        console.log('[PDF Builder] Timer auto-save configuré avec ID:', this.autosaveTimer);
     }
 
     updateAutosaveTimer(intervalMinutes) {
@@ -140,17 +168,28 @@ class PDFEditorPreviewIntegration {
     }
 
     async performAutosave() {
+        console.log('[PDF Builder] Début auto-sauvegarde');
+
         try {
+            console.log('[PDF Builder] Vérification des variables AJAX:', {
+                ajaxurl: pdfBuilderAjax?.ajaxurl,
+                nonce: pdfBuilderAjax?.nonce,
+                ajaxurlExists: typeof pdfBuilderAjax !== 'undefined'
+            });
+
             if (this.autosaveStatus) {
                 this.autosaveStatus.textContent = 'Sauvegarde en cours...';
                 this.autosaveStatus.style.color = '#ffa500';
             }
 
             const templateData = this.getTemplateData();
+            console.log('[PDF Builder] Données du template récupérées:', templateData);
+
             if (!templateData) {
                 throw new Error('Aucune donnée de template à sauvegarder');
             }
 
+            console.log('[PDF Builder] Préparation de la requête AJAX');
             // Envoyer via AJAX
             const response = await fetch(pdfBuilderAjax.ajaxurl, {
                 method: 'POST',
@@ -164,9 +203,17 @@ class PDFEditorPreviewIntegration {
                 })
             });
 
+            console.log('[PDF Builder] Réponse HTTP reçue:', {
+                status: response.status,
+                statusText: response.statusText,
+                ok: response.ok
+            });
+
             const result = await response.json();
+            console.log('[PDF Builder] Résultat JSON:', result);
 
             if (result.success) {
+                console.log('[PDF Builder] Auto-sauvegarde réussie');
                 if (this.autosaveStatus) {
                     this.autosaveStatus.textContent = 'Sauvegardé automatiquement';
                     this.autosaveStatus.style.color = '#28a745';
@@ -176,11 +223,14 @@ class PDFEditorPreviewIntegration {
                     }, 3000);
                 }
             } else {
+                console.error('[PDF Builder] Auto-sauvegarde échouée côté serveur:', result.data);
                 throw new Error(result.data || 'Erreur inconnue');
             }
 
         } catch (error) {
-            console.error('Erreur auto-sauvegarde:', error);
+            console.error('[PDF Builder] Erreur auto-sauvegarde:', error);
+            console.error('[PDF Builder] Stack trace:', error.stack);
+
             if (this.autosaveStatus) {
                 this.autosaveStatus.textContent = 'Erreur de sauvegarde';
                 this.autosaveStatus.style.color = '#dc3545';
