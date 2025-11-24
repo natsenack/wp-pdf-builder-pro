@@ -1642,7 +1642,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateDimensionsCardPreview() {
         // Attendre que window.pdfBuilderCanvasSettings soit chargé
         if (!window.pdfBuilderCanvasSettings) {
-            console.log('DEBUG: window.pdfBuilderCanvasSettings not loaded yet, retrying...');
             setTimeout(updateDimensionsCardPreview, 100);
             return;
         }
@@ -1650,14 +1649,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings
         const settings = window.pdfBuilderCanvasSettings;
         const format = settings.default_canvas_format || 'A4';
-        const dpi = settings.default_canvas_dpi || 96; // Utiliser 96 comme valeur par défaut cohérente
-
-        console.log('DEBUG updateDimensionsCardPreview:', {
-            settings_defined: !!window.pdfBuilderCanvasSettings,
-            default_canvas_dpi: settings.default_canvas_dpi,
-            dpi_used: dpi,
-            format: format
-        });
+        const dpi = settings.default_canvas_dpi || 96;
 
         // Dimensions standard en mm pour chaque format
         const formatDimensionsMM = {
