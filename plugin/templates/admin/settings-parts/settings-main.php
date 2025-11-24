@@ -2101,6 +2101,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Update autosave card preview
+    console.log('DEBUG: About to define updateAutosaveCardPreview function');
     window.updateAutosaveCardPreview = function() {
         try {
             console.log('DEBUG: updateAutosaveCardPreview START - function called successfully');
