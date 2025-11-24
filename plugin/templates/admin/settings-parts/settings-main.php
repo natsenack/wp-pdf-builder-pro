@@ -2180,6 +2180,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             initializeModals();
+            initializeAutosaveRealTimePreview();
             // Initialize all canvas previews on page load - wait longer for settings to be loaded
             setTimeout(function() {
                 if (typeof updateCanvasPreviews === 'function' && window.pdfBuilderCanvasSettings) {
@@ -2190,6 +2191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         // DOM already loaded
         initializeModals();
+        initializeAutosaveRealTimePreview();
         // Initialize all canvas previews on page load - wait longer for settings to be loaded
         setTimeout(function() {
             if (typeof updateCanvasPreviews === 'function' && window.pdfBuilderCanvasSettings) {
