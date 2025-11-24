@@ -1085,6 +1085,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(data => {
                         
                         if (data.success) {
+                            console.log('✅ AJAX save success for category:', category, 'data:', data);
                             
                             hideModal(modal);
                             this.textContent = originalText;
