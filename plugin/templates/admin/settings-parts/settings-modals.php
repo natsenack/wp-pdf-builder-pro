@@ -1,7 +1,7 @@
 <?php // Modal components - Updated: 2025-11-18 20:20:00 ?>
 
 <!-- Canvas Configuration Modals Dimensions & Format -->
-<div id="canvas-dimensions-modal" class="canvas-modal">
+<div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
@@ -97,7 +97,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Zoom & Navigation -->
-<div id="canvas-zoom-modal" class="canvas-modal">
+<div id="canvas-zoom-modal" class="canvas-modal" data-category="zoom">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
@@ -153,7 +153,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Apparence -->
-<div id="canvas-apparence-modal" class="canvas-modal">
+<div id="canvas-apparence-modal" class="canvas-modal" data-category="apparence">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
@@ -232,7 +232,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Grille & Guides -->
-<div id="canvas-grille-modal" class="canvas-modal">
+<div id="canvas-grille-modal" class="canvas-modal" data-category="grille">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
@@ -296,7 +296,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Interactions & Comportement-->
-<div id="canvas-interactions-modal" class="canvas-modal">
+<div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
@@ -389,7 +389,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Export & Qualité -->
-<div id="canvas-export-modal" class="canvas-modal">
+<div id="canvas-export-modal" class="canvas-modal" data-category="export">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
@@ -435,7 +435,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Performance -->
-<div id="canvas-performance-modal" class="canvas-modal">
+<div id="canvas-performance-modal" class="canvas-modal" data-category="performance">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
@@ -558,7 +558,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Sauvegarde Auto -->
-<div id="canvas-autosave-modal" class="canvas-modal">
+<div id="canvas-autosave-modal" class="canvas-modal" data-category="autosave">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
@@ -609,7 +609,7 @@
     </div>
 </div>
 <!-- Canvas Configuration Modals Debug -->
-<div id="canvas-debug-modal" class="canvas-modal">
+<div id="canvas-debug-modal" class="canvas-modal" data-category="debug">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
