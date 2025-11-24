@@ -2963,6 +2963,15 @@ class PdfBuilderAdmin
         error_log('PDF Builder React Script File Path: ' . $script_file_path);
         error_log('PDF Builder React Script File Exists: ' . (file_exists($script_file_path) ? 'YES' : 'NO'));
 
+        // Test if URL is accessible
+        $url_headers = @get_headers($react_script_url);
+        if ($url_headers) {
+            $status_code = substr($url_headers[0], 9, 3);
+            error_log('PDF Builder React Script URL Status: ' . $status_code);
+        } else {
+            error_log('PDF Builder React Script URL Status: UNABLE TO CHECK');
+        }
+
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['react', 'react-dom'], $version_param, true);
 
         // Charger les scripts de l'API Preview pour l'éditeur React
@@ -3104,10 +3113,11 @@ class PdfBuilderAdmin
 
         // Initialize React editor when DOM is ready
         function initReactEditor() {
-            console.log('🔍 DEBUG: initReactEditor called');
+            console.log('🔍 DEBUG: initReactEditor called - checking window.pdfBuilderReact');
 
             if (typeof window.pdfBuilderReact === 'undefined') {
-                console.log('❌ DEBUG: window.pdfBuilderReact is undefined');
+                console.log('❌ DEBUG: window.pdfBuilderReact is undefined - script may not have loaded');
+                console.log('❌ DEBUG: Available window properties:', Object.keys(window).filter(key => key.includes('pdfBuilder') || key.includes('react')));
                 return false;
             }
 
@@ -3115,6 +3125,7 @@ class PdfBuilderAdmin
 
             if (typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function') {
                 console.log('❌ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is not a function');
+                console.log('❌ DEBUG: Available methods:', Object.keys(window.pdfBuilderReact));
                 return false;
             }
 
