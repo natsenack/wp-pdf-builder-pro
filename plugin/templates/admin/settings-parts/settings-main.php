@@ -1652,6 +1652,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const dpi = settings.default_canvas_dpi || 96;
 
         console.log('🔍 updateDimensionsCardPreview called with:', { format, dpi });
+        console.log('🔍 settings.default_canvas_dpi value:', settings.default_canvas_dpi, 'type:', typeof settings.default_canvas_dpi);
+        console.log('🔍 full settings object:', settings);
 
         // Dimensions standard en mm pour chaque format
         const formatDimensionsMM = {
