@@ -219,6 +219,9 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_test_cache_integration_ajax');
     add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_clear_all_cache_ajax');
     add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_get_cache_metrics_ajax');
+    add_action('wp_ajax_pdf_builder_optimize_database', 'pdf_builder_optimize_database_ajax');
+    add_action('wp_ajax_pdf_builder_repair_templates', 'pdf_builder_repair_templates_ajax');
+    add_action('wp_ajax_pdf_builder_remove_temp_files', 'pdf_builder_remove_temp_files_ajax');
     add_action('pdf_builder_daily_backup', 'pdf_builder_execute_daily_backup');
     add_action('pdf_builder_cleanup_old_backups', 'pdf_builder_cleanup_old_backups');
     add_action('pdf_builder_weekly_maintenance', 'pdf_builder_execute_weekly_maintenance');

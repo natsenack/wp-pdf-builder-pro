@@ -241,6 +241,236 @@ function pdf_builder_get_cache_metrics_ajax() {
 }
 
 /**
+ * AJAX Handler - Optimiser la base de données
+ */
+function pdf_builder_optimize_database_ajax() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    try {
+        $optimized_tables = [];
+
+        // Optimiser les tables du plugin
+        global $wpdb;
+
+        // Tables principales du plugin
+        $tables_to_optimize = [
+            $wpdb->prefix . 'pdf_builder_templates',
+            $wpdb->prefix . 'pdf_builder_elements',
+            $wpdb->prefix . 'pdf_builder_settings'
+        ];
+
+        foreach ($tables_to_optimize as $table) {
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table'") == $table) {
+                $result = $wpdb->query("OPTIMIZE TABLE $table");
+                if ($result !== false) {
+                    $optimized_tables[] = $table;
+                }
+            }
+        }
+
+        // Nettoyer les options orphelines
+        $cleaned_options = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_%' AND option_value = ''");
+
+        $message = 'Base de données optimisée avec succès';
+        if (!empty($optimized_tables)) {
+            $message .= ' (' . count($optimized_tables) . ' tables optimisées)';
+        }
+        if ($cleaned_options > 0) {
+            $message .= ", $cleaned_options options nettoyées";
+        }
+
+        wp_send_json_success([
+            'message' => $message,
+            'optimized_tables' => $optimized_tables,
+            'cleaned_options' => intval($cleaned_options),
+            'timestamp' => current_time('mysql')
+        ]);
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de l\'optimisation: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX Handler - Réparer les templates
+ */
+function pdf_builder_repair_templates_ajax() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    try {
+        $repaired_items = [];
+
+        // 1. Vérifier et réparer les templates WordPress
+        $wp_templates = get_posts([
+            'post_type' => 'pdf_template',
+            'posts_per_page' => -1,
+            'post_status' => 'any'
+        ]);
+
+        $fixed_wp_templates = 0;
+        foreach ($wp_templates as $template) {
+            // Vérifier si le template a des métadonnées valides
+            $template_data = get_post_meta($template->ID, 'pdf_template_data', true);
+            if (empty($template_data)) {
+                // Créer des métadonnées par défaut
+                $default_data = [
+                    'version' => '1.0',
+                    'created' => current_time('mysql'),
+                    'modified' => current_time('mysql')
+                ];
+                update_post_meta($template->ID, 'pdf_template_data', $default_data);
+                $fixed_wp_templates++;
+            }
+        }
+
+        if ($fixed_wp_templates > 0) {
+            $repaired_items[] = "$fixed_wp_templates templates WordPress réparés";
+        }
+
+        // 2. Vérifier et réparer les templates dans la base de données personnalisée
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'pdf_builder_templates';
+
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) {
+            $db_templates = $wpdb->get_results("SELECT id, template_data FROM $table_name");
+
+            $fixed_db_templates = 0;
+            foreach ($db_templates as $template) {
+                $template_data = json_decode($template->template_data, true);
+                if (json_last_error() !== JSON_ERROR_NONE || !is_array($template_data)) {
+                    // Données JSON corrompues, créer des données par défaut
+                    $default_data = [
+                        'id' => $template->id,
+                        'name' => 'Template réparé',
+                        'version' => '1.0',
+                        'created' => current_time('mysql'),
+                        'modified' => current_time('mysql'),
+                        'elements' => []
+                    ];
+                    $wpdb->update(
+                        $table_name,
+                        ['template_data' => json_encode($default_data)],
+                        ['id' => $template->id]
+                    );
+                    $fixed_db_templates++;
+                }
+            }
+
+            if ($fixed_db_templates > 0) {
+                $repaired_items[] = "$fixed_db_templates templates DB réparés";
+            }
+        }
+
+        $message = 'Templates réparés avec succès';
+        if (!empty($repaired_items)) {
+            $message .= ' (' . implode(', ', $repaired_items) . ')';
+        }
+
+        wp_send_json_success([
+            'message' => $message,
+            'repaired_items' => $repaired_items,
+            'timestamp' => current_time('mysql')
+        ]);
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la réparation: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX Handler - Supprimer les fichiers temporaires
+ */
+function pdf_builder_remove_temp_files_ajax() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    try {
+        $removed_items = [];
+
+        // 1. Supprimer les fichiers temporaires du plugin
+        $upload_dir = wp_upload_dir();
+        $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+
+        $temp_files_deleted = 0;
+        if (is_dir($temp_dir)) {
+            $files = glob($temp_dir . '/*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    // Vérifier si le fichier a plus de 24h
+                    if (filemtime($file) < (time() - 86400)) {
+                        if (unlink($file)) {
+                            $temp_files_deleted++;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($temp_files_deleted > 0) {
+            $removed_items[] = "$temp_files_deleted fichiers temporaires supprimés";
+        }
+
+        // 2. Nettoyer les transients expirés
+        global $wpdb;
+        $expired_transients = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%' AND option_value < " . time());
+
+        if ($expired_transients > 0) {
+            $removed_items[] = "$expired_transients transients expirés nettoyés";
+        }
+
+        // 3. Nettoyer les options temporaires
+        $temp_options_deleted = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_temp_%'");
+
+        if ($temp_options_deleted > 0) {
+            $removed_items[] = "$temp_options_deleted options temporaires supprimées";
+        }
+
+        $message = 'Fichiers temporaires supprimés avec succès';
+        if (!empty($removed_items)) {
+            $message .= ' (' . implode(', ', $removed_items) . ')';
+        }
+
+        wp_send_json_success([
+            'message' => $message,
+            'removed_items' => $removed_items,
+            'timestamp' => current_time('mysql')
+        ]);
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
+    }
+}
+
+/**
  * Fonction utilitaire pour calculer la taille d'un dossier
  */
 function pdf_builder_get_folder_size($dir) {
