@@ -272,6 +272,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 {(() => {
                   const format = (window as any).pdfBuilderCanvasSettings?.default_canvas_format || 'A4';
                   const dpi = (window as any).pdfBuilderCanvasSettings?.default_canvas_dpi || 96;
+                  const orientation = (window as any).pdfBuilderCanvasSettings?.default_canvas_orientation || 'portrait';
                   const paperFormats = (window as any).pdfBuilderPaperFormats || {
                     'A4': { width: 210, height: 297 },
                     'A3': { width: 297, height: 420 },
@@ -280,8 +281,21 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                     'Legal': { width: 215.9, height: 355.6 },
                     'Tabloid': { width: 279.4, height: 431.8 }
                   };
-                  const dims = paperFormats[format] || paperFormats['A4'];
-                  return `${format}: ${dims.width}×${dims.height}mm (${dpi} DPI)`;
+
+                  // Récupérer les dimensions en mm
+                  const dimsMM = paperFormats[format] || paperFormats['A4'];
+
+                  // Calculer les dimensions en pixels avec le DPI actuel
+                  const pixelsPerMM = dpi / 25.4;
+                  let widthPx = Math.round(dimsMM.width * pixelsPerMM);
+                  let heightPx = Math.round(dimsMM.height * pixelsPerMM);
+
+                  // Inverser si orientation paysage
+                  if (orientation === 'landscape') {
+                    [widthPx, heightPx] = [heightPx, widthPx];
+                  }
+
+                  return `${format}: ${widthPx}×${heightPx}px (${dpi} DPI)`;
                 })()}
               </div>
               
