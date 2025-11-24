@@ -7,91 +7,214 @@
  */
 
 /**
- * Détecte le plugin responsable d'un statut personnalisé WooCommerce
+ * Détecte dynamiquement le plugin responsable d'un statut personnalisé WooCommerce
  *
  * @param string $status_key Le slug du statut (sans préfixe wc-)
  * @return string|null Le nom du plugin ou null si non détecté
  */
 function detect_custom_status_plugin($status_key) {
-    // Liste des plugins courants qui ajoutent des statuts personnalisés
-    $plugin_patterns = [
+    // 1. D'abord, vérifier les options WooCommerce pour les statuts personnalisés
+    $custom_statuses = get_option('wc_order_statuses', []);
+    if (!empty($custom_statuses) && isset($custom_statuses['wc-' . $status_key])) {
+        $status_data = $custom_statuses['wc-' . $status_key];
+        if (is_array($status_data) && isset($status_data['label'])) {
+            // C'est un statut ajouté via l'interface WooCommerce native ou un plugin
+            // Chercher dans les logs d'activation ou les transients si possible
+            return detect_plugin_from_status_data($status_data, $status_key);
+        }
+    }
+
+    // 2. Chercher dans les plugins actifs qui modifient les statuts WooCommerce
+    $detected_plugin = detect_plugin_from_active_plugins($status_key);
+    if ($detected_plugin) {
+        return $detected_plugin;
+    }
+
+    // 3. Analyse des patterns connue (fallback)
+    return detect_plugin_from_patterns($status_key);
+}
+
+/**
+ * Détecte le plugin en analysant les données du statut personnalisé
+ */
+function detect_plugin_from_status_data($status_data, $status_key) {
+    global $wpdb;
+
+    // Chercher dans les options des plugins connus
+    $plugin_indicators = [
         // WooCommerce Order Status Manager
         'wc_order_status_manager' => [
-            'order-status-manager-for-woocommerce',
-            'woocommerce-order-status-manager',
-            'wc-order-status-manager'
+            'options' => ['wc_order_status_manager', 'wc_osm_'],
+            'transient_prefix' => 'wc_osm_'
         ],
-        // YITH WooCommerce Custom Order Status
+        // YITH Custom Order Status
         'yith_custom_order_status' => [
-            'yith-woocommerce-custom-order-status',
-            'yith-custom-order-status'
-        ],
-        // WooBeWoo Order Status
-        'woobewoo_order_status' => [
-            'woo-order-status',
-            'woobewoo-order-status'
+            'options' => ['yith_wccos', 'yith_custom_order_status'],
+            'transient_prefix' => 'yith_wccos_'
         ],
         // Custom Order Status for WooCommerce
         'custom_order_status' => [
-            'custom-order-status-for-woocommerce',
-            'custom-order-status'
-        ],
-        // WooCommerce Order Status & Actions Manager
-        'order_status_actions' => [
-            'woocommerce-order-status-actions-manager',
-            'order-status-actions-manager'
-        ],
-        // WooCommerce Table Rate Shipping
-        'table_rate_shipping' => [
-            'woocommerce-table-rate-shipping',
-            'table-rate-shipping'
-        ],
-        // WooCommerce Shipment Tracking
-        'shipment_tracking' => [
-            'woocommerce-shipment-tracking',
-            'shipment-tracking'
-        ],
-        // Dokan (Marketplace)
-        'dokan' => [
-            'dokan',
-            'dokan-lite'
-        ],
-        // WC Vendors
-        'wc_vendors' => [
-            'wc-vendors',
-            'woocommerce-vendors'
-        ],
-        // Product Vendors
-        'product_vendors' => [
-            'woocommerce-product-vendors',
-            'product-vendors'
+            'options' => ['custom_order_status', 'alg_wc_custom_order_status'],
+            'transient_prefix' => 'alg_wc_cos_'
         ],
     ];
 
-    // Vérifier si ces plugins sont actifs
-    foreach ($plugin_patterns as $plugin_key => $plugin_slugs) {
-        foreach ($plugin_slugs as $plugin_slug) {
-            // Essayer différents patterns de noms de fichiers
-            $possible_files = [
-                $plugin_slug . '/' . $plugin_slug . '.php',
-                $plugin_slug . '.php',
-                $plugin_slug . '/index.php',
-                $plugin_slug . '/main.php',
-                $plugin_slug . '/' . str_replace('-', '_', $plugin_slug) . '.php'
-            ];
+    foreach ($plugin_indicators as $plugin_key => $indicators) {
+        // Vérifier les options
+        foreach ($indicators['options'] as $option_pattern) {
+            $option_exists = $wpdb->get_var($wpdb->prepare(
+                "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s LIMIT 1",
+                $option_pattern . '%'
+            ));
+            if ($option_exists) {
+                return get_plugin_display_name($plugin_key);
+            }
+        }
 
-            foreach ($possible_files as $file) {
-                if (is_plugin_active($file)) {
-                    return get_plugin_display_name($plugin_key);
-                }
+        // Vérifier les transients
+        if (!empty($indicators['transient_prefix'])) {
+            $transient_exists = $wpdb->get_var($wpdb->prepare(
+                "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s LIMIT 1",
+                '_transient_' . $indicators['transient_prefix'] . '%'
+            ));
+            if ($transient_exists) {
+                return get_plugin_display_name($plugin_key);
             }
         }
     }
 
-    // Détection basée sur les patterns de statut courants
+    // Si on trouve des données de statut mais pas de plugin spécifique,
+    // c'est probablement ajouté via code personnalisé ou interface WooCommerce
+    return 'Statut personnalisé WooCommerce';
+}
+
+/**
+ * Détecte le plugin en analysant les plugins actifs
+ */
+function detect_plugin_from_active_plugins($status_key) {
+    global $wpdb;
+
+    // Obtenir tous les plugins actifs
+    $active_plugins = get_option('active_plugins', []);
+
+    // 1. D'abord, analyser les options de la base de données pour les plugins actifs
+    foreach ($active_plugins as $plugin_file) {
+        $plugin_slug = dirname($plugin_file); // Obtenir le slug du plugin
+
+        // Chercher des options liées aux statuts WooCommerce pour ce plugin
+        $plugin_options = $wpdb->get_results($wpdb->prepare(
+            "SELECT option_name, option_value FROM {$wpdb->options}
+             WHERE option_name LIKE %s
+             AND (option_name LIKE '%status%' OR option_name LIKE '%order%')
+             LIMIT 5",
+            $plugin_slug . '%'
+        ));
+
+        if (!empty($plugin_options)) {
+            // Ce plugin a des options liées aux statuts/commandes
+            $plugin_name = get_plugin_display_name_from_file($plugin_file);
+            if ($plugin_name && $plugin_name !== 'Plugin inconnu') {
+                return $plugin_name;
+            }
+        }
+    }
+
+    // 2. Chercher dans les transients pour les plugins qui modifient les statuts
+    foreach ($active_plugins as $plugin_file) {
+        $plugin_slug = dirname($plugin_file);
+
+        $transient_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT option_name FROM {$wpdb->options}
+             WHERE option_name LIKE %s
+             AND (option_name LIKE '%status%' OR option_name LIKE '%order%')
+             LIMIT 1",
+            '_transient_' . $plugin_slug . '%'
+        ));
+
+        if ($transient_exists) {
+            $plugin_name = get_plugin_display_name_from_file($plugin_file);
+            if ($plugin_name && $plugin_name !== 'Plugin inconnu') {
+                return $plugin_name;
+            }
+        }
+    }
+
+    // 3. Liste de plugins connus qui modifient les statuts (fallback)
+    $known_status_plugins = [
+        'woocommerce-order-status-manager' => 'WooCommerce Order Status Manager',
+        'wc-order-status-manager' => 'WooCommerce Order Status Manager',
+        'yith-woocommerce-custom-order-status' => 'YITH WooCommerce Custom Order Status',
+        'custom-order-status-for-woocommerce' => 'Custom Order Status for WooCommerce',
+        'woocommerce-order-status-actions-manager' => 'WooCommerce Order Status & Actions Manager',
+        'woo-order-status' => 'WooBeWoo Order Status',
+        'woocommerce-shipment-tracking' => 'WooCommerce Shipment Tracking',
+        'dokan' => 'Dokan (Marketplace)',
+        'dokan-lite' => 'Dokan Lite (Marketplace)',
+        'wc-vendors' => 'WC Vendors (Marketplace)',
+        'woocommerce-product-vendors' => 'WooCommerce Product Vendors',
+    ];
+
+    // Vérifier si ces plugins connus sont actifs
+    foreach ($active_plugins as $plugin_file) {
+        $plugin_slug = dirname($plugin_file);
+
+        if (isset($known_status_plugins[$plugin_slug])) {
+            return $known_status_plugins[$plugin_slug];
+        }
+
+        // Vérifier aussi le nom du fichier principal
+        $plugin_main_file = basename($plugin_file, '.php');
+        if (isset($known_status_plugins[$plugin_main_file])) {
+            return $known_status_plugins[$plugin_main_file];
+        }
+    }
+
+    // 4. Analyse des headers des plugins pour détecter les fonctionnalités
+    foreach ($active_plugins as $plugin_file) {
+        $plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_file);
+
+        // Chercher des mots-clés dans la description ou le nom
+        $search_text = strtolower($plugin_data['Name'] . ' ' . $plugin_data['Description']);
+
+        if (strpos($search_text, 'status') !== false && strpos($search_text, 'order') !== false) {
+            return $plugin_data['Name'];
+        }
+
+        if (strpos($search_text, 'expédition') !== false || strpos($search_text, 'shipping') !== false) {
+            return $plugin_data['Name'] . ' (Expédition)';
+        }
+
+        if (strpos($search_text, 'marketplace') !== false || strpos($search_text, 'vendor') !== false) {
+            return $plugin_data['Name'] . ' (Marketplace)';
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Obtient le nom d'affichage d'un plugin depuis son fichier
+ */
+function get_plugin_display_name_from_file($plugin_file) {
+    $plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_file);
+
+    if (!empty($plugin_data['Name'])) {
+        return $plugin_data['Name'];
+    }
+
+    // Fallback: utiliser le slug du plugin
+    $plugin_slug = dirname($plugin_file);
+    return ucwords(str_replace(['-', '_'], ' ', $plugin_slug));
+}
+
+/**
+ * Détecte le plugin basé sur des patterns de statut connus (fallback)
+ */
+function detect_plugin_from_patterns($status_key) {
+    // Patterns de statut organisés par catégorie de plugin
     $status_patterns = [
-        // Statuts d'expédition
-        'shipped' => 'Plugin d\'expédition (ex: WooCommerce Shipment Tracking)',
+        // Expédition
+        'shipped' => 'Plugin d\'expédition',
         'delivered' => 'Plugin de livraison',
         'ready_to_ship' => 'Plugin d\'expédition',
         'partial_shipment' => 'Plugin d\'expédition partielle',
@@ -99,39 +222,32 @@ function detect_custom_status_plugin($status_key) {
         'out_for_delivery' => 'Plugin de livraison',
         'shipped_partial' => 'Plugin d\'expédition partielle',
 
-        // Statuts de préparation
+        // Préparation
         'packed' => 'Plugin de préparation de commande',
         'packing' => 'Plugin de préparation de commande',
         'ready_for_pickup' => 'Plugin de préparation de commande',
         'prepared' => 'Plugin de préparation de commande',
 
-        // Statuts de paiement
+        // Paiement
         'awaiting_payment' => 'Plugin de paiement personnalisé',
         'payment_pending' => 'Plugin de paiement personnalisé',
         'payment_confirmed' => 'Plugin de paiement personnalisé',
         'payment_failed' => 'Plugin de paiement personnalisé',
         'payment_cancelled' => 'Plugin de paiement personnalisé',
 
-        // Statuts de retour/remboursement
+        // Retours
         'return_requested' => 'Plugin de gestion des retours',
         'return_approved' => 'Plugin de gestion des retours',
         'return_received' => 'Plugin de gestion des retours',
         'refund_pending' => 'Plugin de remboursement personnalisé',
         'refund_issued' => 'Plugin de remboursement personnalisé',
 
-        // Statuts marketplace
-        'vendor_pending' => 'Plugin marketplace (Dokan/WC Vendors)',
-        'vendor_approved' => 'Plugin marketplace (Dokan/WC Vendors)',
-        'vendor_rejected' => 'Plugin marketplace (Dokan/WC Vendors)',
-        'commission_pending' => 'Plugin marketplace (Dokan/WC Vendors)',
-        'commission_paid' => 'Plugin marketplace (Dokan/WC Vendors)',
-
-        // Statuts génériques
-        'on_hold_custom' => 'Plugin de statut personnalisé',
-        'custom_status' => 'Plugin de statut personnalisé',
-        'pending_custom' => 'Plugin de statut personnalisé',
-        'processing_custom' => 'Plugin de statut personnalisé',
-        'completed_custom' => 'Plugin de statut personnalisé',
+        // Marketplace
+        'vendor_pending' => 'Plugin marketplace',
+        'vendor_approved' => 'Plugin marketplace',
+        'vendor_rejected' => 'Plugin marketplace',
+        'commission_pending' => 'Plugin marketplace',
+        'commission_paid' => 'Plugin marketplace',
     ];
 
     // Recherche exacte
@@ -140,25 +256,13 @@ function detect_custom_status_plugin($status_key) {
     }
 
     // Recherche par pattern partiel
-    foreach ($status_patterns as $pattern => $plugin) {
+    foreach ($status_patterns as $pattern => $plugin_type) {
         if (strpos($status_key, $pattern) !== false || strpos($pattern, $status_key) !== false) {
-            return $plugin;
+            return $plugin_type;
         }
     }
 
-    // Dernière tentative: vérifier si c'est un statut ajouté par code personnalisé
-    // en regardant les options WooCommerce
-    $custom_statuses = get_option('wc_order_statuses', []);
-    if (!empty($custom_statuses) && isset($custom_statuses['wc-' . $status_key])) {
-        $status_data = $custom_statuses['wc-' . $status_key];
-        if (is_array($status_data) && isset($status_data['label'])) {
-            // C'est probablement un statut ajouté via l'interface WooCommerce
-            return 'Statut personnalisé WooCommerce';
-        }
-    }
-
-    // Si on ne peut pas détecter le plugin spécifique
-    return 'Plugin tiers non identifié';
+    return null;
 }
 
 /**
@@ -226,15 +330,6 @@ if ($woocommerce_active) {
             // C'est un statut personnalisé, essayer de détecter le plugin responsable
             $plugin_name = detect_custom_status_plugin($clean_status_key);
 
-            // Debug: Afficher les informations de détection
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log("PDF Builder Debug - Statut personnalisé détecté:");
-                error_log("  Clé originale: " . $status_key);
-                error_log("  Clé nettoyée: " . $clean_status_key);
-                error_log("  Nom du statut: " . $status_name);
-                error_log("  Plugin détecté: " . ($plugin_name ?: 'AUCUN'));
-            }
-
             if ($plugin_name) {
                 $custom_status_plugins[] = $plugin_name;
             }
@@ -298,21 +393,6 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                 <?php if (!empty($custom_status_plugins)): ?>
                 <span style="font-size: 14px; font-weight: normal; color: #666;">
                     🔌 Plugins détectés: <?php echo esc_html(implode(', ', $custom_status_plugins)); ?>
-                    <?php if (defined('WP_DEBUG') && WP_DEBUG && !empty($order_statuses)): ?>
-                    <br><small style="color: #999;">
-                        Debug: <?php
-                        $debug_info = [];
-                        foreach ($order_statuses as $status_key => $status_name) {
-                            $clean_status_key = str_replace('wc-', '', $status_key);
-                            if (!in_array($clean_status_key, ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed'])) {
-                                $plugin_name = detect_custom_status_plugin($clean_status_key);
-                                $debug_info[] = $clean_status_key . ' → ' . ($plugin_name ?: 'NON IDENTIFIÉ');
-                            }
-                        }
-                        echo implode(' | ', $debug_info);
-                        ?>
-                    </small>
-                    <?php endif; ?>
                 </span>
                 <?php elseif ($woocommerce_active && !empty($order_statuses)): ?>
                 <span style="font-size: 14px; font-weight: normal; color: #28a745;">
