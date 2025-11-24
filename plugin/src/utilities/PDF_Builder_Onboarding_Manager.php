@@ -62,6 +62,7 @@ class PDF_Builder_Onboarding_Manager {
         add_action('wp_ajax_pdf_builder_update_onboarding_step', [$this, 'ajax_update_onboarding_step']);
         add_action('wp_ajax_pdf_builder_save_template_assignment', [$this, 'ajax_save_template_assignment']);
         add_action('wp_ajax_pdf_builder_mark_onboarding_complete', [$this, 'ajax_mark_onboarding_complete']);
+        add_action('wp_ajax_pdf_builder_autosave_template', [$this, 'ajax_autosave_template']);
     }
 
     /**
@@ -1399,6 +1400,39 @@ class PDF_Builder_Onboarding_Manager {
         }
 
         return $templates;
+    }
+
+    /**
+     * AJAX handler pour l'auto-sauvegarde du template
+     */
+    public function ajax_autosave_template() {
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_canvas_nonce')) {
+            wp_send_json_error('Nonce invalide');
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error('Permissions insuffisantes');
+        }
+
+        $template_data = json_decode(stripslashes($_POST['template_data']), true);
+
+        if (!$template_data) {
+            wp_send_json_error('Données de template invalides');
+        }
+
+        // Sauvegarder dans une option temporaire ou meta
+        $user_id = get_current_user_id();
+        $template_id = $template_data['templateId'] ?? 'current';
+        $key = "pdf_builder_autosave_{$user_id}_{$template_id}";
+
+        update_option($key, $template_data);
+
+        // Log de la sauvegarde
+        error_log("PDF Builder: Auto-sauvegarde template {$template_id} pour user {$user_id}");
+
+        wp_send_json_success('Sauvegarde automatique réussie');
     }
 
     /**

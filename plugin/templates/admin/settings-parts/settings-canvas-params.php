@@ -94,6 +94,7 @@ $canvas_settings_js = [
 ?>
 <script>
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings_js); ?>;
+window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>';
 
 // Dimensions standard des formats de papier en mm (centralisées)
 window.pdfBuilderPaperFormats = <?php echo wp_json_encode(\PDF_Builder\PAPER_FORMATS); ?>;

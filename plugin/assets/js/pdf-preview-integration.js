@@ -11,12 +11,17 @@ class PDFEditorPreviewIntegration {
     constructor(canvasEditor) {
         this.canvasEditor = canvasEditor;
         this.previewBtn = null;
+        this.autosaveTimer = null;
+        this.autosaveStatus = null;
+        this.autosaveTimerDisplay = null;
         this.init();
     }
 
     init() {
         this.createPreviewButton();
+        this.createAutosaveUI();
         this.bindEvents();
+        this.setupAutosave();
     }
 
     createPreviewButton() {
@@ -53,6 +58,36 @@ class PDFEditorPreviewIntegration {
         }
     }
 
+    createAutosaveUI() {
+        // Créer les éléments d'auto-sauvegarde
+        const autosaveContainer = document.createElement('div');
+        autosaveContainer.id = 'pdf-editor-autosave-container';
+        autosaveContainer.style.cssText = `
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 12px;
+            color: #666;
+            vertical-align: middle;
+        `;
+
+        autosaveContainer.innerHTML = `
+            <span class="autosave-timer">💾 Sauvegarde auto dans 5 min</span>
+            <span class="autosave-status" style="margin-left: 10px;">Prêt</span>
+        `;
+
+        // L'ajouter à la barre d'outils
+        const toolbar = document.querySelector('.pdf-editor-toolbar') ||
+                       document.querySelector('#pdf-editor-toolbar') ||
+                       document.querySelector('.toolbar');
+
+        if (toolbar) {
+            toolbar.appendChild(autosaveContainer);
+        }
+
+        this.autosaveTimerDisplay = autosaveContainer.querySelector('.autosave-timer');
+        this.autosaveStatus = autosaveContainer.querySelector('.autosave-status');
+    }
+
     bindEvents() {
         if (this.previewBtn) {
             this.previewBtn.addEventListener('click', () => {
@@ -67,6 +102,94 @@ class PDFEditorPreviewIntegration {
                 this.generatePreview();
             }
         });
+    }
+
+    setupAutosave() {
+        const autosaveEnabled = window.pdfBuilderCanvasSettings?.autosave_enabled !== false;
+        const autosaveInterval = window.pdfBuilderCanvasSettings?.autosave_interval || 5; // minutes
+
+        if (!autosaveEnabled) {
+            if (this.autosaveTimerDisplay) {
+                this.autosaveTimerDisplay.textContent = '💾 Sauvegarde auto désactivée';
+            }
+            return;
+        }
+
+        // Démarrer le timer d'auto-sauvegarde
+        this.startAutosaveTimer(autosaveInterval);
+
+        // Sauvegarde avant de quitter la page
+        window.addEventListener('beforeunload', () => {
+            this.performAutosave();
+        });
+    }
+
+    startAutosaveTimer(intervalMinutes) {
+        this.updateAutosaveTimer(intervalMinutes);
+
+        this.autosaveTimer = setInterval(() => {
+            this.performAutosave();
+            this.updateAutosaveTimer(intervalMinutes);
+        }, intervalMinutes * 60 * 1000);
+    }
+
+    updateAutosaveTimer(intervalMinutes) {
+        if (this.autosaveTimerDisplay) {
+            this.autosaveTimerDisplay.textContent = `💾 Sauvegarde auto dans ${intervalMinutes} min`;
+        }
+    }
+
+    async performAutosave() {
+        try {
+            if (this.autosaveStatus) {
+                this.autosaveStatus.textContent = 'Sauvegarde en cours...';
+                this.autosaveStatus.style.color = '#ffa500';
+            }
+
+            const templateData = this.getTemplateData();
+            if (!templateData) {
+                throw new Error('Aucune donnée de template à sauvegarder');
+            }
+
+            // Envoyer via AJAX
+            const response = await fetch(ajaxurl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_autosave_template',
+                    template_data: JSON.stringify(templateData),
+                    nonce: window.pdfBuilderCanvasSettings?.nonce || ''
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                if (this.autosaveStatus) {
+                    this.autosaveStatus.textContent = 'Sauvegardé automatiquement';
+                    this.autosaveStatus.style.color = '#28a745';
+                    setTimeout(() => {
+                        this.autosaveStatus.textContent = 'Prêt';
+                        this.autosaveStatus.style.color = '#666';
+                    }, 3000);
+                }
+            } else {
+                throw new Error(result.data || 'Erreur inconnue');
+            }
+
+        } catch (error) {
+            console.error('Erreur auto-sauvegarde:', error);
+            if (this.autosaveStatus) {
+                this.autosaveStatus.textContent = 'Erreur de sauvegarde';
+                this.autosaveStatus.style.color = '#dc3545';
+                setTimeout(() => {
+                    this.autosaveStatus.textContent = 'Prêt';
+                    this.autosaveStatus.style.color = '#666';
+                }, 5000);
+            }
+        }
     }
 
     async generatePreview() {
