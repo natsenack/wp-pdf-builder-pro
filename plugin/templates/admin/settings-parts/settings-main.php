@@ -1674,7 +1674,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const widthPx = Math.round(dimensions.width * pixelsPerMM);
         const heightPx = Math.round(dimensions.height * pixelsPerMM);
 
-        // Debug logs removed - issue fixed
+        console.log('DEBUG: dpi =', dpi, 'type:', typeof dpi, 'pixelsPerMM =', pixelsPerMM, 'widthPx =', widthPx, 'heightPx =', heightPx);
 
         // Update card preview elements
         const cardWidth = document.getElementById('card-canvas-width');
