@@ -1098,14 +1098,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                 // Get the saved values from the response or use current form values
                                 const form = modal.querySelector('form');
                                 if (form) {
+                                    // Collect form data - TEMPORARILY DISABLED
+                                    /*
                                     const formData = new FormData(form);
                                     const values = {};
                                     for (let [key, value] of formData.entries()) {
                                         values[key] = value;
                                     }
                                     updateModalValues(category, values);
+                                    */
 
-                                    // Update window.pdfBuilderCanvasSettings with form values
+                                    // Update window.pdfBuilderCanvasSettings with form values - TEMPORARILY DISABLED FOR DEBUGGING
+                                    /*
                                     console.log('Updating settings with form values for category:', category);
                                     if (category === 'dimensions') {
                                         if (values.canvas_format) {
@@ -1144,40 +1148,47 @@ document.addEventListener('DOMContentLoaded', function() {
                                             window.pdfBuilderCanvasSettings.shadow_enabled = values.canvas_shadow_enabled === '1' || values.canvas_shadow_enabled === true;
                                         }
                                     }
+                                    */
 
-                            // Update previews if function exists
-                            if (typeof updateCanvasPreviews === 'function') {
-                                
-                                // Add small delay to ensure DOM updates are complete
-                                setTimeout(() => {
-                                    updateCanvasPreviews(category);
-                                }, 50);
+                                    // Update previews if function exists - TEMPORARILY DISABLED
+                                    /*
+                                    if (typeof updateCanvasPreviews === 'function') {
+                                        
+                                        // Add small delay to ensure DOM updates are complete
+                                        setTimeout(() => {
+                                            updateCanvasPreviews(category);
+                                        }, 50);
+                                    }
+                                    */
+
+                                    // Update window.pdfBuilderCanvasSettings for real-time canvas updates
+                                    // Note: Removed updateWindowCanvasSettings() call as it causes AJAX errors
+                                    // if (category === 'apparence') {
+                                    //     updateWindowCanvasSettings();
+                                    // }
+
+                                    // Dispatch custom event for real-time canvas updates - TEMPORARILY DISABLED
+                                    /*
+                                    if (category === 'apparence') {
+                                        
+                                        const updateEvent = new CustomEvent('pdfBuilderCanvasSettingsUpdated', {
+                                            detail: { category: 'apparence' }
+                                        });
+                                        window.dispatchEvent(updateEvent);
+                                    }
+                                    */
+
+                                    // Afficher notification de succès - TEMPORARILY DISABLED
+                                    /*
+                                    if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
+                                        window.pdfBuilderNotifications.showToast('Paramètres sauvegardés avec succès !', 'success', 4000);
+                                    } else if (window.PDF_Builder_Notification_Manager) {
+                                        window.PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success', 4000);
                             }
-
-                            // Update window.pdfBuilderCanvasSettings for real-time canvas updates
-                            // Note: Removed updateWindowCanvasSettings() call as it causes AJAX errors
-                            // if (category === 'apparence') {
-                            //     updateWindowCanvasSettings();
-                            // }
-
-                            // Dispatch custom event for real-time canvas updates
-                            if (category === 'apparence') {
-                                
-                                const updateEvent = new CustomEvent('pdfBuilderCanvasSettingsUpdated', {
-                                    detail: { category: 'apparence' }
-                                });
-                                window.dispatchEvent(updateEvent);
-                            }
-
-                            // Afficher notification de succès
-                            if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
-                                window.pdfBuilderNotifications.showToast('Paramètres sauvegardés avec succès !', 'success', 4000);
-                            } else if (window.PDF_Builder_Notification_Manager) {
-                                window.PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success', 4000);
-                            }
+                            */
                         } else {
                             // Erreur de sauvegarde - afficher notification d'erreur
-                            const errorMessage = data.data?.message || 'Erreur inconnue lors de la sauvegarde';
+                            const errorMessage = (data.data && data.data.message) || 'Erreur inconnue lors de la sauvegarde';
                             if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
                                 window.pdfBuilderNotifications.showToast('Erreur de sauvegarde: ' + errorMessage, 'error', 6000);
                             } else if (window.PDF_Builder_Notification_Manager) {
