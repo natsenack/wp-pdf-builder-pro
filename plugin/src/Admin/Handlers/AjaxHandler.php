@@ -811,7 +811,7 @@ class AjaxHandler
                         $savedData = [
                             'canvas_autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1'),
                             'canvas_autosave_interval' => get_option('pdf_builder_canvas_autosave_interval', '5'),
-                            'canvas_versions_limit' => get_option('pdf_builder_canvas_versions_limit', '10')
+                            'canvas_history_max' => get_option('pdf_builder_canvas_history_max', '50')
                         ];
                     }
                     break;
@@ -1273,6 +1273,15 @@ class AjaxHandler
             $interval = intval($_POST['canvas_autosave_interval']);
             if ($interval >= 1 && $interval <= 60) {
                 update_option('pdf_builder_canvas_autosave_interval', $interval);
+                $updated++;
+            }
+        }
+
+        // Nombre maximum d'historique
+        if (isset($_POST['canvas_history_max'])) {
+            $max = intval($_POST['canvas_history_max']);
+            if ($max >= 5 && $max <= 200) {
+                update_option('pdf_builder_canvas_history_max', $max);
                 $updated++;
             }
         }

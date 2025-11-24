@@ -1294,6 +1294,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_versions_limit !== undefined) {
                                     window.pdfBuilderCanvasSettings.versions_limit = parseInt(data.data.saved.canvas_versions_limit);
                                 }
+                                if (data.data.saved.canvas_history_max !== undefined) {
+                                    window.pdfBuilderCanvasSettings.versions_limit = parseInt(data.data.saved.canvas_history_max);
+                                }
                             }
 
                             // Update window.pdfBuilderCanvasSettings with saved values for export
@@ -2103,7 +2106,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Try to get values from modal inputs first (real-time), then from settings
         const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
         const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
-        const versionsLimitInput = document.getElementById("canvas_versions_limit");
+        const versionsLimitInput = document.getElementById("canvas_history_max");
 
         const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : (window.pdfBuilderCanvasSettings?.autosave_interval || 5);
         const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.autosave_enabled === true || window.pdfBuilderCanvasSettings?.autosave_enabled === '1');
@@ -2362,7 +2365,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const autosaveEnabledCheckbox = modal.querySelector('#canvas_autosave_enabled');
         const autosaveIntervalInput = modal.querySelector('#canvas_autosave_interval');
-        const versionsLimitInput = modal.querySelector('#canvas_versions_limit');
+        const versionsLimitInput = modal.querySelector('#canvas_history_max');
 
         if (autosaveEnabledCheckbox) {
             autosaveEnabledCheckbox.checked = window.pdfBuilderCanvasSettings.autosave_enabled ?? true;
@@ -2412,13 +2415,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Real-time preview updates for autosave modal
     function initializeAutosaveRealTimePreview() {
+        console.log('PDF_BUILDER_DEBUG: initializeAutosaveRealTimePreview called');
         // Listen for changes in autosave modal fields
         ['change', 'input'].forEach(eventType => {
             document.addEventListener(eventType, function(event) {
                 const target = event.target;
                 const modal = target.closest('.canvas-modal[data-category="autosave"]');
                 
-                if (modal && (target.id === 'canvas_autosave_enabled' || target.id === 'canvas_autosave_interval' || target.id === 'canvas_versions_limit')) {
+                if (modal && (target.id === 'canvas_autosave_enabled' || target.id === 'canvas_autosave_interval' || target.id === 'canvas_history_max')) {
                     console.log('PDF_BUILDER_DEBUG: Autosave input changed:', target.id, '=', target.type === 'checkbox' ? target.checked : target.value);
                     // Update window.pdfBuilderCanvasSettings temporarily for preview
                     if (window.pdfBuilderCanvasSettings) {
@@ -2426,7 +2430,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             window.pdfBuilderCanvasSettings.autosave_enabled = target.checked;
                         } else if (target.id === 'canvas_autosave_interval') {
                             window.pdfBuilderCanvasSettings.autosave_interval = parseInt(target.value);
-                        } else if (target.id === 'canvas_versions_limit') {
+                        } else if (target.id === 'canvas_history_max') {
                             window.pdfBuilderCanvasSettings.versions_limit = parseInt(target.value);
                         }
                         

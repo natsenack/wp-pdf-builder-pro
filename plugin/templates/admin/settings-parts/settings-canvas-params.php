@@ -83,7 +83,7 @@ $canvas_settings_js = [
     // Autosave - paramètres avec noms cohérents
     'autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') == '1',
     'autosave_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 5)),
-    'versions_limit' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
+    'versions_limit' => intval(get_option('pdf_builder_canvas_history_max', 50)),
     'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
     'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
     'enable_keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1') == '1',
