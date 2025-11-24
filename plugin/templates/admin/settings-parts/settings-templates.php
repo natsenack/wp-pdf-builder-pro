@@ -81,44 +81,46 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                 </div>
             </div>
 
-            <div class="templates-status-grid">
-                <?php foreach ($order_statuses as $status_key => $status_label): ?>
-                <div class="template-status-card">
-                    <h4><?php echo esc_html($status_label); ?></h4>
-                    <div class="template-selector">
-                        <label for="template_<?php echo esc_attr($status_key); ?>">
-                            Template par défaut :
-                        </label>
-                        <select name="order_status_templates[<?php echo esc_attr($status_key); ?>]"
-                                id="template_<?php echo esc_attr($status_key); ?>"
-                                class="template-select">
-                            <option value="">-- Aucun template --</option>
-                            <?php foreach ($templates as $template_id => $template_title): ?>
-                            <option value="<?php echo esc_attr($template_id); ?>"
-                                    <?php selected($current_mappings[$status_key] ?? '', $template_id); ?>>
-                                <?php echo esc_html($template_title); ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
+            <form method="post" action="" id="templates-status-form">
+                <div class="templates-status-grid">
+                    <?php foreach ($order_statuses as $status_key => $status_label): ?>
+                    <div class="template-status-card">
+                        <h4><?php echo esc_html($status_label); ?></h4>
+                        <div class="template-selector">
+                            <label for="template_<?php echo esc_attr($status_key); ?>">
+                                Template par défaut :
+                            </label>
+                            <select name="order_status_templates[<?php echo esc_attr($status_key); ?>]"
+                                    id="template_<?php echo esc_attr($status_key); ?>"
+                                    class="template-select">
+                                <option value="">-- Aucun template --</option>
+                                <?php foreach ($templates as $template_id => $template_title): ?>
+                                <option value="<?php echo esc_attr($template_id); ?>"
+                                        <?php selected($current_mappings[$status_key] ?? '', $template_id); ?>>
+                                    <?php echo esc_html($template_title); ?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="template-preview">
+                            <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>
+                            <p class="current-template">
+                                <strong>Actuellement :</strong> <?php echo esc_html($templates[$current_mappings[$status_key]]); ?>
+                            </p>
+                            <?php else: ?>
+                            <p class="no-template">Aucun template assigné</p>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <div class="template-preview">
-                        <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>
-                        <p class="current-template">
-                            <strong>Actuellement :</strong> <?php echo esc_html($templates[$current_mappings[$status_key]]); ?>
-                        </p>
-                        <?php else: ?>
-                        <p class="no-template">Aucun template assigné</p>
-                        <?php endif; ?>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
-            </div>
 
-            <div class="templates-status-actions">
-                <button type="button" class="button button-secondary" onclick="resetTemplatesStatus()">
-                    🔄 Réinitialiser
-                </button>
-            </div>
+                <div class="templates-status-actions">
+                    <button type="button" class="button button-secondary" onclick="resetTemplatesStatus()">
+                        🔄 Réinitialiser
+                    </button>
+                </div>
+            </form>
 
             <?php endif; ?>
 
