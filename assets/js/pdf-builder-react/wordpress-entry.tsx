@@ -3,6 +3,9 @@
  * Ce fichier est chargé par WordPress pour initialiser l'éditeur React
  */
 
+// DEBUG: Log when script starts loading
+console.log('🔧 DEBUG: pdf-builder-react.js script started loading');
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
@@ -93,6 +96,7 @@ declare global {
   interface Window {
     initPDFBuilderReact: typeof initPDFBuilderReact;
     pdfBuilderReact: {
+      initPDFBuilderReact: typeof initPDFBuilderReact;
       loadTemplate: typeof loadTemplate;
       getEditorState: typeof getEditorState;
       setEditorState: typeof setEditorState;
@@ -109,7 +113,9 @@ declare global {
 window.initPDFBuilderReact = initPDFBuilderReact;
 
 // Exporter l'API complète pour WordPress
+console.log('🔧 DEBUG: About to assign window.pdfBuilderReact');
 window.pdfBuilderReact = {
+  initPDFBuilderReact,
   loadTemplate,
   getEditorState,
   setEditorState,
@@ -119,3 +125,4 @@ window.pdfBuilderReact = {
   registerEditorInstance,
   resetAPI
 };
+console.log('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);

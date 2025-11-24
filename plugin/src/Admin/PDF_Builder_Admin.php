@@ -2947,6 +2947,7 @@ class PdfBuilderAdmin
         $verbose_enabled = isset($developer_settings['debug_javascript_verbose']) && $developer_settings['debug_javascript_verbose'];
         // ✅ Default is FALSE - logs only shown when explicitly enabled
         // ✅ Never set pdfBuilderDebug=true as it interferes with conditional logging
+        // Force deployment: 2025-11-24
         $inline_script = "window.PDF_BUILDER_VERBOSE = " . ($verbose_enabled ? 'true' : 'false') . ";";
         wp_add_inline_script('react-dom', $inline_script);
 
