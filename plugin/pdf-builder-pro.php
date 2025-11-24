@@ -37,13 +37,14 @@ register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
 require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
 require_once PDF_BUILDER_PLUGIN_DIR . 'api/PreviewImageAPI.php';
 
-// Initialiser l'autoloader
-if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
-    \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
-}
-
-// Initialiser l'API Preview après que WordPress soit chargé
+// Initialiser l'autoloader et l'API Preview après que WordPress soit chargé
 add_action('init', function() {
+    // Initialiser l'autoloader
+    if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
+        \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
+    }
+
+    // Initialiser l'API Preview
     new \PDF_Builder\Api\PreviewImageAPI();
 });
 
