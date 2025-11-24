@@ -11,9 +11,9 @@ $woocommerce_active = class_exists('WooCommerce');
 
 // Récupérer les statuts de commande WooCommerce (incluant les statuts personnalisés)
 $order_statuses = [];
-if ($woocommerce_active && function_exists('wc_get_order_statuses')) {
-    $order_statuses = wc_get_order_statuses();
-    // Note: wc_get_order_statuses() inclut automatiquement les statuts personnalisés
+if ($woocommerce_active && class_exists('WC_Order')) {
+    $order_statuses = WC_Order::get_statuses();
+    // Note: WC_Order::get_statuses() inclut automatiquement les statuts personnalisés
     // ajoutés par des plugins tiers via les hooks WooCommerce
 }
 
