@@ -560,10 +560,6 @@ function pdf_builder_save_canvas_settings_handler() {
 
         $category = sanitize_text_field($_POST['category'] ?? 'dimensions');
 
-        // DEBUG: Log received data
-        error_log('PDF_BUILDER_DEBUG: AJAX save called for category: ' . $category);
-        error_log('PDF_BUILDER_DEBUG: POST data: ' . print_r($_POST, true));
-
         try {
             $saved_values = [];
 
@@ -832,12 +828,7 @@ function pdf_builder_save_canvas_settings_handler() {
 
             send_ajax_response(true, 'Paramètres ' . $category . ' sauvegardés avec succès.', ['saved' => $saved_values, 'category' => $category]);
 
-            // DEBUG: Log successful save
-            error_log('PDF_BUILDER_DEBUG: Successfully saved ' . $category . ' settings: ' . print_r($saved_values, true));
-
         } catch (Exception $e) {
-            // DEBUG: Log error
-            error_log('PDF_BUILDER_DEBUG: Error saving ' . $category . ' settings: ' . $e->getMessage());
             send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     } else {

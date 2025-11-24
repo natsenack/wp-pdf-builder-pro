@@ -469,6 +469,13 @@ if (window.pdfBuilderCanvasSettings) {
 } else {
     console.log('❌ window.pdfBuilderCanvasSettings is not defined');
 }
+// Debug: Check if window.pdfBuilderCanvasSettings is available
+console.log('🔍 window.pdfBuilderCanvasSettings at script start:', window.pdfBuilderCanvasSettings);
+if (window.pdfBuilderCanvasSettings) {
+    console.log('✅ window.pdfBuilderCanvasSettings content:', window.pdfBuilderCanvasSettings);
+} else {
+    console.log('❌ window.pdfBuilderCanvasSettings is not defined');
+}
 // Update zoom card preview
 function updateZoomCardPreview() {
     // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
@@ -1710,10 +1717,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update interactions card preview
     function updateInteractionsCardPreview() {
-        const dragEnabled = document.getElementById('canvas_drag_enabled');
-        const resizeEnabled = document.getElementById('canvas_resize_enabled');
-        const multiSelect = document.getElementById('canvas_multi_select');
-        const selectionMode = document.getElementById('canvas_selection_mode');
+        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
+        const settings = window.pdfBuilderCanvasSettings || {};
+        const dragEnabled = settings.drag_enabled === true || settings.drag_enabled === '1';
+        const resizeEnabled = settings.resize_enabled === true || settings.resize_enabled === '1';
+        const multiSelect = settings.multi_select === true || settings.multi_select === '1';
+        const selectionMode = settings.selection_mode || 'rectangle';
 
         const interactionsCard = document.querySelector('.canvas-card[data-category="interactions"]');
         if (!interactionsCard) return;
@@ -1721,21 +1730,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const miniCanvas = interactionsCard.querySelector('.mini-canvas');
         if (miniCanvas) {
             // Update drag state
-            if (dragEnabled && dragEnabled.checked) {
+            if (dragEnabled) {
                 miniCanvas.classList.add('drag-enabled');
             } else {
                 miniCanvas.classList.remove('drag-enabled');
             }
 
             // Update resize state
-            if (resizeEnabled && resizeEnabled.checked) {
+            if (resizeEnabled) {
                 miniCanvas.classList.add('resize-enabled');
             } else {
                 miniCanvas.classList.remove('resize-enabled');
             }
 
             // Update multi-select state
-            if (multiSelect && multiSelect.checked) {
+            if (multiSelect) {
                 miniCanvas.classList.add('multi-select-enabled');
             } else {
                 miniCanvas.classList.remove('multi-select-enabled');
@@ -1746,13 +1755,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const modeIcons = interactionsCard.querySelectorAll('.mode-icon');
         modeIcons.forEach(icon => icon.classList.remove('active'));
 
-        if (selectionMode && modeIcons.length > 0) {
-            const modeValue = selectionMode.value;
-            if (modeValue === 'rectangle' && modeIcons[0]) {
+        if (modeIcons.length > 0) {
+            if (selectionMode === 'rectangle' && modeIcons[0]) {
                 modeIcons[0].classList.add('active');
-            } else if (modeValue === 'lasso' && modeIcons[1]) {
+            } else if (selectionMode === 'lasso' && modeIcons[1]) {
                 modeIcons[1].classList.add('active');
-            } else if (modeValue === 'click' && modeIcons[2]) {
+            } else if (selectionMode === 'click' && modeIcons[2]) {
                 modeIcons[2].classList.add('active');
             }
         }
@@ -1760,8 +1768,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update export card preview
     function updateExportCardPreview() {
-        const exportFormat = document.getElementById('canvas_export_format');
-        const exportQuality = document.getElementById('canvas_export_quality');
+        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
+        const settings = window.pdfBuilderCanvasSettings || {};
+        const exportFormat = settings.export_format || 'pdf';
+        const exportQuality = settings.export_quality || 90;
 
         const exportCard = document.querySelector('.canvas-card[data-category="export"]');
         if (!exportCard) return;
@@ -1770,19 +1780,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const formatBadges = exportCard.querySelectorAll('.format-badge');
         formatBadges.forEach(badge => badge.classList.remove('active'));
 
-        if (exportFormat) {
-            const activeBadge = exportCard.querySelector(`.format-badge.${exportFormat.value.toLowerCase()}`);
-            if (activeBadge) {
-                activeBadge.classList.add('active');
-            }
+        const activeBadge = exportCard.querySelector(`.format-badge.${exportFormat.toLowerCase()}`);
+        if (activeBadge) {
+            activeBadge.classList.add('active');
         }
 
         // Update quality bar
         const qualityFill = exportCard.querySelector('.quality-fill');
         const qualityText = exportCard.querySelector('.quality-text');
 
-        if (exportQuality && qualityFill && qualityText) {
-            const quality = parseInt(exportQuality.value);
+        if (qualityFill && qualityText) {
+            const quality = parseInt(exportQuality);
             qualityFill.style.width = quality + '%';
             qualityText.textContent = quality + '%';
         }
@@ -1790,31 +1798,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update performance card preview
     function updatePerformanceCardPreview() {
-        const fpsTarget = document.getElementById('canvas_fps_target');
-        const memoryJs = document.getElementById('canvas_memory_limit_js');
-        const memoryPhp = document.getElementById('canvas_memory_limit_php');
-        const lazyLoadingEditor = document.getElementById('canvas_lazy_loading_editor');
-        const lazyLoadingPlugin = document.getElementById('canvas_lazy_loading_plugin');
+        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
+        const settings = window.pdfBuilderCanvasSettings || {};
+        const fpsTarget = settings.fps_target || 60;
+        const memoryJs = settings.memory_limit_js || 128;
+        const memoryPhp = settings.memory_limit_php || 256;
+        const lazyLoadingEditor = settings.lazy_loading_editor === true || settings.lazy_loading_editor === '1';
+        const lazyLoadingPlugin = settings.lazy_loading_plugin === true || settings.lazy_loading_plugin === '1';
 
         // Update FPS metric
         const fpsValue = document.querySelector('.canvas-card[data-category="performance"] .metric-value:first-child');
-        if (fpsTarget && fpsValue) {
-            fpsValue.textContent = fpsTarget.value;
+        if (fpsValue) {
+            fpsValue.textContent = fpsTarget;
         }
 
         // Update memory metrics
         const memoryValues = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-value');
-        if (memoryJs && memoryValues[1]) {
-            memoryValues[1].textContent = memoryJs.value + 'MB';
+        if (memoryValues[1]) {
+            memoryValues[1].textContent = memoryJs + 'MB';
         }
-        if (memoryPhp && memoryValues[2]) {
-            memoryValues[2].textContent = memoryPhp.value + 'MB';
+        if (memoryValues[2]) {
+            memoryValues[2].textContent = memoryPhp + 'MB';
         }
 
         // Update lazy loading status
         const statusIndicator = document.querySelector('.canvas-card[data-category="performance"] .status-indicator');
-        if (statusIndicator && lazyLoadingEditor && lazyLoadingPlugin) {
-            const isActive = lazyLoadingEditor.checked && lazyLoadingPlugin.checked;
+        if (statusIndicator) {
+            const isActive = lazyLoadingEditor && lazyLoadingPlugin;
             statusIndicator.classList.toggle('active', isActive);
             statusIndicator.classList.toggle('inactive', !isActive);
         }
@@ -1822,24 +1832,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update autosave card preview
     function updateAutosaveCardPreview() {
-        const autosaveInterval = document.getElementById('canvas_autosave_interval');
-        const autosaveEnabled = document.getElementById('canvas_autosave_enabled');
-        const versionsLimit = document.getElementById('canvas_versions_limit');
+        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
+        const settings = window.pdfBuilderCanvasSettings || {};
+        const autosaveInterval = settings.autosave_interval || 300;
+        const autosaveEnabled = settings.autosave_enabled === true || settings.autosave_enabled === '1';
+        const versionsLimit = settings.versions_limit || 10;
 
         const autosaveCard = document.querySelector('.canvas-card[data-category="autosave"]');
         if (!autosaveCard) return;
 
         // Update timer display
         const timerDisplay = autosaveCard.querySelector('.autosave-timer');
-        if (autosaveInterval && timerDisplay) {
-            const minutes = Math.floor(parseInt(autosaveInterval.value) / 60);
+        if (timerDisplay) {
+            const minutes = Math.floor(parseInt(autosaveInterval) / 60);
             timerDisplay.textContent = minutes + 'min';
         }
 
         // Update status
         const statusIndicator = autosaveCard.querySelector('.autosave-status');
-        if (autosaveEnabled && statusIndicator) {
-            if (autosaveEnabled.checked) {
+        if (statusIndicator) {
+            if (autosaveEnabled) {
                 statusIndicator.classList.add('active');
             } else {
                 statusIndicator.classList.remove('active');
@@ -1848,8 +1860,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Update versions dots
         const versionDots = autosaveCard.querySelectorAll('.version-dot');
-        if (versionsLimit && versionDots.length > 0) {
-            const limit = parseInt(versionsLimit.value);
+        if (versionDots.length > 0) {
+            const limit = parseInt(versionsLimit);
             versionDots.forEach((dot, index) => {
                 if (index < limit) {
                     dot.style.display = 'block';
