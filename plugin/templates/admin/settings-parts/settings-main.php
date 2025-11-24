@@ -1183,15 +1183,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             */
                         } else {
                             // Erreur de sauvegarde - afficher notification d'erreur
-                            const errorMessage = (data.data && data.data.message) || 'Erreur inconnue lors de la sauvegarde';
+                            const errorMessage = (data.data && data.data.message) || 'Unknown error during save';
                             if (window.pdfBuilderNotifications) {
                                 if (window.pdfBuilderNotifications.showToast) {
-                                    window.pdfBuilderNotifications.showToast('Erreur de sauvegarde: ' + errorMessage, 'error', 6000);
+                                    window.pdfBuilderNotifications.showToast('Save error: ' + errorMessage, 'error', 6000);
                                 }
                             }
                             if (window.PDF_Builder_Notification_Manager) {
                                 if (window.PDF_Builder_Notification_Manager.show_toast) {
-                                    window.PDF_Builder_Notification_Manager.show_toast('Erreur de sauvegarde: ' + errorMessage, 'error', 6000);
+                                    window.PDF_Builder_Notification_Manager.show_toast('Save error: ' + errorMessage, 'error', 6000);
                                 }
                             }
                             throw new Error(errorMessage);
