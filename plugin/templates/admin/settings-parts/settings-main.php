@@ -1151,6 +1151,93 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             }
 
+                            // Update window.pdfBuilderCanvasSettings with saved values for performance
+                            if (category === 'performance' && data.data && data.data.saved) {
+                                if (data.data.saved.canvas_fps_target !== undefined) {
+                                    window.pdfBuilderCanvasSettings.fps_target = parseInt(data.data.saved.canvas_fps_target);
+                                }
+                                if (data.data.saved.canvas_memory_limit_js !== undefined) {
+                                    window.pdfBuilderCanvasSettings.memory_limit_js = parseInt(data.data.saved.canvas_memory_limit_js);
+                                }
+                                if (data.data.saved.canvas_memory_limit_php !== undefined) {
+                                    window.pdfBuilderCanvasSettings.memory_limit_php = parseInt(data.data.saved.canvas_memory_limit_php);
+                                }
+                                if (data.data.saved.canvas_lazy_loading_editor !== undefined) {
+                                    window.pdfBuilderCanvasSettings.lazy_loading_editor = data.data.saved.canvas_lazy_loading_editor === '1' || data.data.saved.canvas_lazy_loading_editor === true;
+                                }
+                                if (data.data.saved.canvas_lazy_loading_plugin !== undefined) {
+                                    window.pdfBuilderCanvasSettings.lazy_loading_plugin = data.data.saved.canvas_lazy_loading_plugin === '1' || data.data.saved.canvas_lazy_loading_plugin === true;
+                                }
+                            }
+
+                            // Update window.pdfBuilderCanvasSettings with saved values for autosave
+                            if (category === 'autosave' && data.data && data.data.saved) {
+                                if (data.data.saved.canvas_autosave_enabled !== undefined) {
+                                    window.pdfBuilderCanvasSettings.autosave_enabled = data.data.saved.canvas_autosave_enabled === '1' || data.data.saved.canvas_autosave_enabled === true;
+                                }
+                                if (data.data.saved.canvas_autosave_interval !== undefined) {
+                                    window.pdfBuilderCanvasSettings.autosave_interval = parseInt(data.data.saved.canvas_autosave_interval);
+                                }
+                                if (data.data.saved.canvas_versions_limit !== undefined) {
+                                    window.pdfBuilderCanvasSettings.versions_limit = parseInt(data.data.saved.canvas_versions_limit);
+                                }
+                            }
+
+                            // Update window.pdfBuilderCanvasSettings with saved values for export
+                            if (category === 'export' && data.data && data.data.saved) {
+                                if (data.data.saved.canvas_export_format !== undefined) {
+                                    window.pdfBuilderCanvasSettings.export_format = data.data.saved.canvas_export_format;
+                                }
+                                if (data.data.saved.canvas_export_quality !== undefined) {
+                                    window.pdfBuilderCanvasSettings.export_quality = parseInt(data.data.saved.canvas_export_quality);
+                                }
+                            }
+
+                            // Update window.pdfBuilderCanvasSettings with saved values for zoom
+                            if (category === 'zoom' && data.data && data.data.saved) {
+                                if (data.data.saved.zoom_min !== undefined) {
+                                    window.pdfBuilderCanvasSettings.min_zoom = parseInt(data.data.saved.zoom_min);
+                                }
+                                if (data.data.saved.zoom_max !== undefined) {
+                                    window.pdfBuilderCanvasSettings.max_zoom = parseInt(data.data.saved.zoom_max);
+                                }
+                                if (data.data.saved.zoom_default !== undefined) {
+                                    window.pdfBuilderCanvasSettings.default_zoom = parseInt(data.data.saved.zoom_default);
+                                }
+                                if (data.data.saved.zoom_step !== undefined) {
+                                    window.pdfBuilderCanvasSettings.zoom_step = parseInt(data.data.saved.zoom_step);
+                                }
+                            }
+
+                            // Update window.pdfBuilderCanvasSettings with saved values for grille
+                            if (category === 'grille' && data.data && data.data.saved) {
+                                if (data.data.saved.canvas_grid_enabled !== undefined) {
+                                    window.pdfBuilderCanvasSettings.show_grid = data.data.saved.canvas_grid_enabled === '1' || data.data.saved.canvas_grid_enabled === true;
+                                }
+                                if (data.data.saved.canvas_grid_size !== undefined) {
+                                    window.pdfBuilderCanvasSettings.grid_size = parseInt(data.data.saved.canvas_grid_size);
+                                }
+                                if (data.data.saved.canvas_snap_to_grid !== undefined) {
+                                    window.pdfBuilderCanvasSettings.snap_to_grid = data.data.saved.canvas_snap_to_grid === '1' || data.data.saved.canvas_snap_to_grid === true;
+                                }
+                            }
+
+                            // Update window.pdfBuilderCanvasSettings with saved values for interactions
+                            if (category === 'interactions' && data.data && data.data.saved) {
+                                if (data.data.saved.canvas_drag_enabled !== undefined) {
+                                    window.pdfBuilderCanvasSettings.drag_enabled = data.data.saved.canvas_drag_enabled === '1' || data.data.saved.canvas_drag_enabled === true;
+                                }
+                                if (data.data.saved.canvas_resize_enabled !== undefined) {
+                                    window.pdfBuilderCanvasSettings.resize_enabled = data.data.saved.canvas_resize_enabled === '1' || data.data.saved.canvas_resize_enabled === true;
+                                }
+                                if (data.data.saved.canvas_multi_select !== undefined) {
+                                    window.pdfBuilderCanvasSettings.multi_select = data.data.saved.canvas_multi_select === '1' || data.data.saved.canvas_multi_select === true;
+                                }
+                                if (data.data.saved.canvas_selection_mode !== undefined) {
+                                    window.pdfBuilderCanvasSettings.selection_mode = data.data.saved.canvas_selection_mode;
+                                }
+                            }
+
                             // Update canvas previews after successful save
                             if (category === 'dimensions' && typeof updateDimensionsCardPreview === 'function') {
                                 setTimeout(function() {
@@ -1160,6 +1247,36 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (category === 'apparence' && typeof updateApparenceCardPreview === 'function') {
                                 setTimeout(function() {
                                     updateApparenceCardPreview();
+                                }, 100);
+                            }
+                            if (category === 'performance' && typeof updatePerformanceCardPreview === 'function') {
+                                setTimeout(function() {
+                                    updatePerformanceCardPreview();
+                                }, 100);
+                            }
+                            if (category === 'autosave' && typeof updateAutosaveCardPreview === 'function') {
+                                setTimeout(function() {
+                                    updateAutosaveCardPreview();
+                                }, 100);
+                            }
+                            if (category === 'export' && typeof updateExportCardPreview === 'function') {
+                                setTimeout(function() {
+                                    updateExportCardPreview();
+                                }, 100);
+                            }
+                            if (category === 'zoom' && typeof updateZoomCardPreview === 'function') {
+                                setTimeout(function() {
+                                    updateZoomCardPreview();
+                                }, 100);
+                            }
+                            if (category === 'grille' && typeof updateGrilleCardPreview === 'function') {
+                                setTimeout(function() {
+                                    updateGrilleCardPreview();
+                                }, 100);
+                            }
+                            if (category === 'interactions' && typeof updateInteractionsCardPreview === 'function') {
+                                setTimeout(function() {
+                                    updateInteractionsCardPreview();
                                 }, 100);
                             }
                         } else {
@@ -1727,13 +1844,17 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Update interactions card preview
-    function updateInteractionsCardPreview() {
-        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
-        const settings = window.pdfBuilderCanvasSettings || {};
-        const dragEnabled = settings.drag_enabled === true || settings.drag_enabled === '1';
-        const resizeEnabled = settings.resize_enabled === true || settings.resize_enabled === '1';
-        const multiSelect = settings.multi_select === true || settings.multi_select === '1';
-        const selectionMode = settings.selection_mode || 'rectangle';
+    window.updateInteractionsCardPreview = function() {
+        // Try to get values from modal inputs first (real-time), then from settings
+        const dragEnabledInput = document.getElementById("canvas_drag_enabled");
+        const resizeEnabledInput = document.getElementById("canvas_resize_enabled");
+        const multiSelectInput = document.getElementById("canvas_multi_select");
+        const selectionModeInput = document.getElementById("canvas_selection_mode");
+
+        const dragEnabled = dragEnabledInput ? dragEnabledInput.checked : (window.pdfBuilderCanvasSettings?.drag_enabled === true || window.pdfBuilderCanvasSettings?.drag_enabled === '1');
+        const resizeEnabled = resizeEnabledInput ? resizeEnabledInput.checked : (window.pdfBuilderCanvasSettings?.resize_enabled === true || window.pdfBuilderCanvasSettings?.resize_enabled === '1');
+        const multiSelect = multiSelectInput ? multiSelectInput.checked : (window.pdfBuilderCanvasSettings?.multi_select === true || window.pdfBuilderCanvasSettings?.multi_select === '1');
+        const selectionMode = selectionModeInput ? selectionModeInput.value : (window.pdfBuilderCanvasSettings?.selection_mode || 'rectangle');
 
         const interactionsCard = document.querySelector('.canvas-card[data-category="interactions"]');
         if (!interactionsCard) return;
@@ -1763,10 +1884,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Update selection mode indicator
-        const modeIcons = interactionsCard.querySelectorAll('.mode-icon');
-        modeIcons.forEach(icon => icon.classList.remove('active'));
+        const selectionModeIndicator = interactionsCard.querySelector('.selection-mode-indicator');
+        if (selectionModeIndicator) {
+            // Remove active class from all mode icons
+            const modeIcons = selectionModeIndicator.querySelectorAll('.mode-icon');
+            modeIcons.forEach(icon => icon.classList.remove('active'));
 
-        if (modeIcons.length > 0) {
+            // Add active class to current mode based on selection mode
             if (selectionMode === 'rectangle' && modeIcons[0]) {
                 modeIcons[0].classList.add('active');
             } else if (selectionMode === 'lasso' && modeIcons[1]) {
@@ -1775,7 +1899,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 modeIcons[2].classList.add('active');
             }
         }
-    }
+    };
 
     // Update export card preview
     window.updateExportCardPreview = function() {

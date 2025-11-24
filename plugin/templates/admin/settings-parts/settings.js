@@ -328,4 +328,31 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // Add real-time updates for interactions card
+    const dragEnabledCheckbox = document.getElementById("canvas_drag_enabled");
+    const resizeEnabledCheckbox = document.getElementById("canvas_resize_enabled");
+    const multiSelectCheckbox = document.getElementById("canvas_multi_select");
+    const selectionModeSelect = document.getElementById("canvas_selection_mode");
+
+    if (dragEnabledCheckbox) {
+        dragEnabledCheckbox.addEventListener("change", function() {
+            updateInteractionsCardPreview();
+        });
+    }
+    if (resizeEnabledCheckbox) {
+        resizeEnabledCheckbox.addEventListener("change", function() {
+            updateInteractionsCardPreview();
+        });
+    }
+    if (multiSelectCheckbox) {
+        multiSelectCheckbox.addEventListener("change", function() {
+            updateInteractionsCardPreview();
+        });
+    }
+    if (selectionModeSelect) {
+        selectionModeSelect.addEventListener("change", function() {
+            updateInteractionsCardPreview();
+        });
+    }
+
 });
