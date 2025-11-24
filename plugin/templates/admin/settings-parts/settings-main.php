@@ -462,20 +462,6 @@ if (
 
 
 <script>
-// Debug: Check if window.pdfBuilderCanvasSettings is available
-console.log('🔍 window.pdfBuilderCanvasSettings at script start:', window.pdfBuilderCanvasSettings);
-if (window.pdfBuilderCanvasSettings) {
-    console.log('✅ window.pdfBuilderCanvasSettings content:', window.pdfBuilderCanvasSettings);
-} else {
-    console.log('❌ window.pdfBuilderCanvasSettings is not defined');
-}
-// Debug: Check if window.pdfBuilderCanvasSettings is available
-console.log('🔍 window.pdfBuilderCanvasSettings at script start:', window.pdfBuilderCanvasSettings);
-if (window.pdfBuilderCanvasSettings) {
-    console.log('✅ window.pdfBuilderCanvasSettings content:', window.pdfBuilderCanvasSettings);
-} else {
-    console.log('❌ window.pdfBuilderCanvasSettings is not defined');
-}
 // Update zoom card preview
 function updateZoomCardPreview() {
     // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
@@ -549,23 +535,19 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mettre à jour l'indicateur de sécurité (enable_logging)
         const enableLoggingCheckbox = document.getElementById('enable_logging');
         const securityStatus = document.getElementById('security-status-indicator');
-        console.log('Security status element found:', !!securityStatus, 'checkbox checked:', enableLoggingCheckbox ? enableLoggingCheckbox.checked : 'N/A');
         if (enableLoggingCheckbox && securityStatus) {
             const isActive = enableLoggingCheckbox.checked;
             securityStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
             securityStatus.style.background = isActive ? '#28a745' : '#dc3545';
-            console.log('Updated security status to:', securityStatus.textContent);
         }
 
         // Mettre à jour l'indicateur RGPD (gdpr_enabled)
         const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
         const rgpdStatus = document.getElementById('rgpd-status-indicator');
-        console.log('RGPD status element found:', !!rgpdStatus, 'checkbox checked:', gdprEnabledCheckbox ? gdprEnabledCheckbox.checked : 'N/A');
         if (gdprEnabledCheckbox && rgpdStatus) {
             const isActive = gdprEnabledCheckbox.checked;
             rgpdStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
             rgpdStatus.style.background = isActive ? '#28a745' : '#dc3545';
-            console.log('Updated RGPD status to:', rgpdStatus.textContent);
         }
 
         // Mettre à jour les indicateurs système
@@ -1085,105 +1067,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(data => {
                         
                         if (data.success) {
-                            console.log('✅ AJAX save success for category:', category, 'data:', data);
-                            console.log('Data.data:', data.data);
-                            console.log('Data.data.saved:', data.data.saved);
-                            
                             hideModal(modal);
                             this.textContent = originalText;
                             this.disabled = false;
-
-                            // Update modal values with saved data
-                            /* if (typeof updateModalValues === 'function') {
-                                // Get the saved values from the response or use current form values
-                                const form = modal.querySelector('form');
-                                if (form) {
-                                    const formData = new FormData(form);
-                                    const values = {};
-                                    formData.forEach(function(value, key) {
-                                        values[key] = value;
-                                    });
-                                    updateModalValues(category, values);
-
-                                    // Update window.pdfBuilderCanvasSettings with form values
-                                    if (category === 'dimensions') {
-                                        if (values.canvas_format) {
-                                            window.pdfBuilderCanvasSettings.default_canvas_format = values.canvas_format;
-                                        }
-                                        if (values.canvas_orientation) {
-                                            window.pdfBuilderCanvasSettings.default_canvas_orientation = values.canvas_orientation;
-                                        }
-                                        if (values.canvas_dpi) {
-                                            window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(values.canvas_dpi);
-                                        }
-                                        if (data.data) {
-                                            if (data.data.saved) {
-                                                if (data.data.saved.canvas_width) {
-                                                    window.pdfBuilderCanvasSettings.canvas_width = parseInt(data.data.saved.canvas_width);
-                                                }
-                                                if (data.data.saved.canvas_height) {
-                                                    window.pdfBuilderCanvasSettings.canvas_height = parseInt(data.data.saved.canvas_height);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (category === 'apparence') {
-                                        if (values.canvas_bg_color) {
-                                            window.pdfBuilderCanvasSettings.canvas_background_color = values.canvas_bg_color;
-                                        }
-                                        if (values.canvas_border_color) {
-                                            window.pdfBuilderCanvasSettings.border_color = values.canvas_border_color;
-                                        }
-                                        if (values.canvas_container_bg_color) {
-                                            window.pdfBuilderCanvasSettings.container_background_color = values.canvas_container_bg_color;
-                                        }
-                                        if (values.canvas_border_width) {
-                                            window.pdfBuilderCanvasSettings.border_width = parseInt(values.canvas_border_width);
-                                        }
-                                        if (values.canvas_shadow_enabled !== undefined) {
-                                            window.pdfBuilderCanvasSettings.shadow_enabled = values.canvas_shadow_enabled == '1';
-                                        }
-                                    }
-
-                                    // Update previews if function exists - TEMPORARILY DISABLED
-                            */
-                                    /*
-                                    if (typeof updateCanvasPreviews === 'function') {
-                                        
-                                        // Add small delay to ensure DOM updates are complete
-                                        setTimeout(() => {
-                                            updateCanvasPreviews(category);
-                                        }, 50);
-                                    }
-                                    */
-
-                                    // Update window.pdfBuilderCanvasSettings for real-time canvas updates
-                                    // Note: Removed updateWindowCanvasSettings() call as it causes AJAX errors
-                                    // if (category === 'apparence') {
-                                    //     updateWindowCanvasSettings();
-                                    // }
-
-                                    // Dispatch custom event for real-time canvas updates - TEMPORARILY DISABLED
-                                    /*
-                                    if (category === 'apparence') {
-                                        
-                                        const updateEvent = new CustomEvent('pdfBuilderCanvasSettingsUpdated', {
-                                            detail: { category: 'apparence' }
-                                        });
-                                        window.dispatchEvent(updateEvent);
-                                    }
-                                    */
-
-                                    // Afficher notification de succès - TEMPORARILY DISABLED
-                                    /*
-                                    if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.showToast) {
-                                        window.pdfBuilderNotifications.showToast('Paramètres sauvegardés avec succès !', 'success', 4000);
-                                    } else if (window.PDF_Builder_Notification_Manager) {
-                                        window.PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success', 4000);
-                            }
-                            */
                         } else {
-                            // Erreur de sauvegarde - afficher notification d'erreur
                             const errorMessage = (data.data && data.data.message) || 'Unknown error during save';
                             if (window.pdfBuilderNotifications) {
                                 if (window.pdfBuilderNotifications.showToast) {
@@ -1706,28 +1593,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update apparence card preview
     function updateApparenceCardPreview() {
-        console.log('🎨 updateApparenceCardPreview called');
-
         // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
         const settings = window.pdfBuilderCanvasSettings || {};
         const bgColor = settings.canvas_background_color || '#ffffff';
         const borderColor = settings.border_color || '#cccccc';
 
-        console.log('Colors:', { bgColor, borderColor });
-
         // Update color previews in the card
         const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
         const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
 
-        console.log('Elements found:', { bgPreview: !!bgPreview, borderPreview: !!borderPreview });
-
         if (bgPreview && bgColor) {
             bgPreview.style.backgroundColor = bgColor;
-            console.log('✅ BG color set to:', bgColor, 'element style:', bgPreview.style.backgroundColor);
         }
         if (borderPreview && borderColor) {
             borderPreview.style.backgroundColor = borderColor;
-            console.log('✅ Border color set to:', borderColor, 'element style:', borderPreview.style.backgroundColor);
         }
     }
 
