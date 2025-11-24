@@ -159,6 +159,13 @@ class PDFEditorPreviewIntegration {
         }, intervalMinutes * 60 * 1000);
 
         console.log('[PDF Builder] Timer auto-save configuré avec ID:', this.autosaveTimer);
+
+        // TEST RAPIDE : Déclencher une sauvegarde dans 10 secondes pour tester
+        console.log('[PDF Builder] ⏰ Test rapide : sauvegarde dans 10 secondes...');
+        setTimeout(() => {
+            console.log('[PDF Builder] 🚀 Déclenchement test manuel de l\'auto-save');
+            this.performAutosave();
+        }, 10000);
     }
 
     updateAutosaveTimer(intervalMinutes) {
@@ -269,17 +276,40 @@ class PDFEditorPreviewIntegration {
     }
 
     getTemplateData() {
+        console.log('[PDF Builder] getTemplateData() appelée');
+        console.log('[PDF Builder] this.canvasEditor:', this.canvasEditor);
+        console.log('[PDF Builder] window.pdfCanvasEditor:', window.pdfCanvasEditor);
+
         // Adapter selon votre structure de données d'éditeur
         if (this.canvasEditor && typeof this.canvasEditor.getTemplateData === 'function') {
-            return this.canvasEditor.getTemplateData();
+            console.log('[PDF Builder] Utilisation de this.canvasEditor.getTemplateData()');
+            const data = this.canvasEditor.getTemplateData();
+            console.log('[PDF Builder] Données récupérées depuis canvasEditor:', data);
+            return data;
+        }
+
+        console.log('[PDF Builder] canvasEditor non disponible, test des fallbacks');
+
+        // Fallback: Éditeur React
+        if (window.pdfBuilderReact && typeof window.pdfBuilderReact.getCurrentTemplate === 'function') {
+            console.log('[PDF Builder] Utilisation de window.pdfBuilderReact.getCurrentTemplate()');
+            try {
+                const data = window.pdfBuilderReact.getCurrentTemplate();
+                console.log('[PDF Builder] Données récupérées depuis React editor:', data);
+                return data;
+            } catch (error) {
+                console.error('[PDF Builder] Erreur lors de la récupération depuis React editor:', error);
+            }
         }
 
         // Fallback: chercher dans le localStorage ou les variables globales
         if (window.pdfEditorTemplate) {
+            console.log('[PDF Builder] Utilisation de window.pdfEditorTemplate');
             return window.pdfEditorTemplate;
         }
 
         if (localStorage.getItem('pdf-builder-template')) {
+            console.log('[PDF Builder] Utilisation du localStorage');
             return JSON.parse(localStorage.getItem('pdf-builder-template'));
         }
 
