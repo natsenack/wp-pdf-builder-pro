@@ -17,7 +17,6 @@ declare global {
 interface HeaderProps {
   templateName: string;
   templateDescription: string;
-  templateTags: string[];
   canvasWidth: number;
   canvasHeight: number;
   marginTop: number;
@@ -38,7 +37,6 @@ interface HeaderProps {
 export const Header = memo(function Header({
   templateName,
   templateDescription,
-  templateTags,
   canvasWidth,
   canvasHeight,
   marginTop,
@@ -75,14 +73,12 @@ export const Header = memo(function Header({
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
-  const [editedTemplateTags, setEditedTemplateTags] = useState<string[]>(templateTags);
   const [editedCanvasWidth, setEditedCanvasWidth] = useState(canvasWidth);
   const [editedCanvasHeight, setEditedCanvasHeight] = useState(canvasHeight);
   const [editedMarginTop, setEditedMarginTop] = useState(marginTop);
   const [editedMarginBottom, setEditedMarginBottom] = useState(marginBottom);
   const [editedShowGuides, setEditedShowGuides] = useState(showGuides);
   const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
-  const [newTag, setNewTag] = useState('');
   const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
 
   // Utiliser le hook usePreview pour la gestion de l'aperçu
@@ -116,10 +112,6 @@ export const Header = memo(function Header({
   useEffect(() => {
     setEditedTemplateDescription(templateDescription);
   }, [templateDescription]);
-
-  useEffect(() => {
-    setEditedTemplateTags(templateTags);
-  }, [templateTags]);
 
   useEffect(() => {
     setEditedCanvasWidth(canvasWidth);
@@ -660,91 +652,6 @@ export const Header = memo(function Header({
                 />
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#333' }}>
-                  Étiquettes (Tags)
-                </label>
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                  {editedTemplateTags.map((tag, index) => (
-                    <span
-                      key={index}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        padding: '4px 8px',
-                        backgroundColor: '#e3f2fd',
-                        color: '#1565c0',
-                        borderRadius: '12px',
-                        fontSize: '12px',
-                        fontWeight: '500'
-                      }}
-                    >
-                      {tag}
-                      <button
-                        onClick={() => setEditedTemplateTags(editedTemplateTags.filter((_, i) => i !== index))}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: '#1565c0',
-                          cursor: 'pointer',
-                          fontSize: '14px',
-                          padding: '0',
-                          lineHeight: '1'
-                        }}
-                        title="Supprimer cette étiquette"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <input
-                    type="text"
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter' && newTag.trim()) {
-                        e.preventDefault();
-                        setEditedTemplateTags([...editedTemplateTags, newTag.trim()]);
-                        setNewTag('');
-                      }
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: '8px 12px',
-                      border: '1px solid #ddd',
-                      borderRadius: '4px',
-                      fontSize: '14px'
-                    }}
-                    placeholder="Ajouter une étiquette..."
-                  />
-                  <button
-                    onClick={() => {
-                      if (newTag.trim()) {
-                        setEditedTemplateTags([...editedTemplateTags, newTag.trim()]);
-                        setNewTag('');
-                      }
-                    }}
-                    style={{
-                      padding: '8px 12px',
-                      border: '1px solid #007bff',
-                      borderRadius: '4px',
-                      backgroundColor: '#007bff',
-                      color: '#ffffff',
-                      cursor: 'pointer',
-                      fontSize: '14px'
-                    }}
-                  >
-                    Ajouter
-                  </button>
-                </div>
-                <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                  Appuyez sur Entrée ou cliquez sur &quot;Ajouter&quot; pour ajouter une étiquette
-                </div>
-              </div>
-
               <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '16px', marginTop: '16px' }}>
                 <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
                   Paramètres avancés
@@ -951,7 +858,6 @@ export const Header = memo(function Header({
                     onUpdateTemplateSettings({
                       name: editedTemplateName,
                       description: editedTemplateDescription,
-                      tags: editedTemplateTags,
                       marginTop: editedMarginTop,
                       marginBottom: editedMarginBottom,
                       showGuides: editedShowGuides,

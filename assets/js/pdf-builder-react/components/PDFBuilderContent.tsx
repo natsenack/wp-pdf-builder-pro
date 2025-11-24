@@ -43,7 +43,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   const {
     templateName,
     templateDescription,
-    templateTags,
     canvasWidth,
     canvasHeight,
     marginTop,
@@ -213,7 +212,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
         <Header
           templateName={templateName || ''}
           templateDescription={templateDescription || ''}
-          templateTags={templateTags || []}
           canvasWidth={canvasWidth || 794}
           canvasHeight={canvasHeight || 1123}
           marginTop={marginTop || 20}
