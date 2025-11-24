@@ -1640,13 +1640,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     function updateDimensionsCardPreview() {
-        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
-        const settings = window.pdfBuilderCanvasSettings || {};
+        // Attendre que window.pdfBuilderCanvasSettings soit chargé
+        if (!window.pdfBuilderCanvasSettings) {
+            console.log('DEBUG: window.pdfBuilderCanvasSettings not loaded yet, retrying...');
+            setTimeout(updateDimensionsCardPreview, 100);
+            return;
+        }
+
+        // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings
+        const settings = window.pdfBuilderCanvasSettings;
         const format = settings.default_canvas_format || 'A4';
-        const dpi = settings.default_canvas_dpi || 150;
+        const dpi = settings.default_canvas_dpi || 96; // Utiliser 96 comme valeur par défaut cohérente
 
         console.log('DEBUG updateDimensionsCardPreview:', {
-            settings: settings,
+            settings_defined: !!window.pdfBuilderCanvasSettings,
             default_canvas_dpi: settings.default_canvas_dpi,
             dpi_used: dpi,
             format: format
@@ -1883,22 +1890,22 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             initializeModals();
-            // Initialize all canvas previews on page load
+            // Initialize all canvas previews on page load - wait longer for settings to be loaded
             setTimeout(function() {
-                if (typeof updateCanvasPreviews === 'function') {
+                if (typeof updateCanvasPreviews === 'function' && window.pdfBuilderCanvasSettings) {
                     updateCanvasPreviews('all');
                 }
-            }, 100);
+            }, 500); // Increased from 100ms to 500ms
         });
     } else {
         // DOM already loaded
         initializeModals();
-        // Initialize all canvas previews on page load
+        // Initialize all canvas previews on page load - wait longer for settings to be loaded
         setTimeout(function() {
-            if (typeof updateCanvasPreviews === 'function') {
+            if (typeof updateCanvasPreviews === 'function' && window.pdfBuilderCanvasSettings) {
                 updateCanvasPreviews('all');
             }
-        }, 100);
+        }, 500); // Increased from 100ms to 500ms
     }
 
     // Also try to initialize after a short delay as backup

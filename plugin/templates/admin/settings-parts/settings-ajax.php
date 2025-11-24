@@ -327,10 +327,8 @@ function pdf_builder_save_settings_handler() {
 
                 // Paramètres canvas (toutes catégories) - seulement les champs qui existent dans les modals
                 $canvas_option_mappings = [
-                    // Dimensions
-                    'canvas_format' => 'pdf_builder_canvas_format',
-                    'canvas_orientation' => 'pdf_builder_canvas_orientation',
-                    'canvas_dpi' => 'pdf_builder_canvas_dpi',
+                    // Dimensions - géré séparément dans la logique switch
+                    // 'canvas_dpi' => 'pdf_builder_canvas_dpi', // REMOVED: géré dans case 'dimensions'
 
                     // Apparence
                     'canvas_bg_color' => 'pdf_builder_canvas_bg_color',
