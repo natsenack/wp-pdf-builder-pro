@@ -297,6 +297,9 @@ if ($woocommerce_active) {
         }
     }
 
+    // Détecter les statuts personnalisés et leurs plugins associés
+    $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed', 'draft'];
+
     // DEBUG: Afficher les statuts pour déboguer
     echo '<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc;">';
     echo '<strong>DEBUG - Tous les statuts WooCommerce :</strong><br>';
