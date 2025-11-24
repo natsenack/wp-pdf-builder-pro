@@ -16,44 +16,145 @@ function detect_custom_status_plugin($status_key) {
     // Liste des plugins courants qui ajoutent des statuts personnalisés
     $plugin_patterns = [
         // WooCommerce Order Status Manager
-        'wc_order_status_manager' => ['order-status-manager-for-woocommerce', 'woocommerce-order-status-manager'],
-        // WooCommerce Table Rate Shipping (exemple générique)
-        'table_rate_shipping' => ['woocommerce-table-rate-shipping'],
+        'wc_order_status_manager' => [
+            'order-status-manager-for-woocommerce',
+            'woocommerce-order-status-manager',
+            'wc-order-status-manager'
+        ],
         // YITH WooCommerce Custom Order Status
-        'yith_custom_order_status' => ['yith-woocommerce-custom-order-status'],
+        'yith_custom_order_status' => [
+            'yith-woocommerce-custom-order-status',
+            'yith-custom-order-status'
+        ],
         // WooBeWoo Order Status
-        'woobewoo_order_status' => ['woo-order-status'],
+        'woobewoo_order_status' => [
+            'woo-order-status',
+            'woobewoo-order-status'
+        ],
         // Custom Order Status for WooCommerce
-        'custom_order_status' => ['custom-order-status-for-woocommerce'],
+        'custom_order_status' => [
+            'custom-order-status-for-woocommerce',
+            'custom-order-status'
+        ],
         // WooCommerce Order Status & Actions Manager
-        'order_status_actions' => ['woocommerce-order-status-actions-manager'],
+        'order_status_actions' => [
+            'woocommerce-order-status-actions-manager',
+            'order-status-actions-manager'
+        ],
+        // WooCommerce Table Rate Shipping
+        'table_rate_shipping' => [
+            'woocommerce-table-rate-shipping',
+            'table-rate-shipping'
+        ],
+        // WooCommerce Shipment Tracking
+        'shipment_tracking' => [
+            'woocommerce-shipment-tracking',
+            'shipment-tracking'
+        ],
+        // Dokan (Marketplace)
+        'dokan' => [
+            'dokan',
+            'dokan-lite'
+        ],
+        // WC Vendors
+        'wc_vendors' => [
+            'wc-vendors',
+            'woocommerce-vendors'
+        ],
+        // Product Vendors
+        'product_vendors' => [
+            'woocommerce-product-vendors',
+            'product-vendors'
+        ],
     ];
 
     // Vérifier si ces plugins sont actifs
     foreach ($plugin_patterns as $plugin_key => $plugin_slugs) {
         foreach ($plugin_slugs as $plugin_slug) {
-            if (is_plugin_active($plugin_slug . '/' . $plugin_slug . '.php') ||
-                is_plugin_active($plugin_slug . '.php')) {
-                return get_plugin_display_name($plugin_key);
+            // Essayer différents patterns de noms de fichiers
+            $possible_files = [
+                $plugin_slug . '/' . $plugin_slug . '.php',
+                $plugin_slug . '.php',
+                $plugin_slug . '/index.php',
+                $plugin_slug . '/main.php',
+                $plugin_slug . '/' . str_replace('-', '_', $plugin_slug) . '.php'
+            ];
+
+            foreach ($possible_files as $file) {
+                if (is_plugin_active($file)) {
+                    return get_plugin_display_name($plugin_key);
+                }
             }
         }
     }
 
     // Détection basée sur les patterns de statut courants
     $status_patterns = [
-        'shipped' => 'Plugin d\'expédition (Shipped Order Status)',
+        // Statuts d'expédition
+        'shipped' => 'Plugin d\'expédition (ex: WooCommerce Shipment Tracking)',
         'delivered' => 'Plugin de livraison',
-        'packed' => 'Plugin de préparation de commande',
         'ready_to_ship' => 'Plugin d\'expédition',
-        'backordered' => 'Plugin de gestion des ruptures de stock',
         'partial_shipment' => 'Plugin d\'expédition partielle',
+        'in_transit' => 'Plugin de suivi d\'expédition',
+        'out_for_delivery' => 'Plugin de livraison',
+        'shipped_partial' => 'Plugin d\'expédition partielle',
+
+        // Statuts de préparation
+        'packed' => 'Plugin de préparation de commande',
+        'packing' => 'Plugin de préparation de commande',
+        'ready_for_pickup' => 'Plugin de préparation de commande',
+        'prepared' => 'Plugin de préparation de commande',
+
+        // Statuts de paiement
         'awaiting_payment' => 'Plugin de paiement personnalisé',
         'payment_pending' => 'Plugin de paiement personnalisé',
+        'payment_confirmed' => 'Plugin de paiement personnalisé',
+        'payment_failed' => 'Plugin de paiement personnalisé',
+        'payment_cancelled' => 'Plugin de paiement personnalisé',
+
+        // Statuts de retour/remboursement
+        'return_requested' => 'Plugin de gestion des retours',
+        'return_approved' => 'Plugin de gestion des retours',
+        'return_received' => 'Plugin de gestion des retours',
+        'refund_pending' => 'Plugin de remboursement personnalisé',
+        'refund_issued' => 'Plugin de remboursement personnalisé',
+
+        // Statuts marketplace
+        'vendor_pending' => 'Plugin marketplace (Dokan/WC Vendors)',
+        'vendor_approved' => 'Plugin marketplace (Dokan/WC Vendors)',
+        'vendor_rejected' => 'Plugin marketplace (Dokan/WC Vendors)',
+        'commission_pending' => 'Plugin marketplace (Dokan/WC Vendors)',
+        'commission_paid' => 'Plugin marketplace (Dokan/WC Vendors)',
+
+        // Statuts génériques
         'on_hold_custom' => 'Plugin de statut personnalisé',
+        'custom_status' => 'Plugin de statut personnalisé',
+        'pending_custom' => 'Plugin de statut personnalisé',
+        'processing_custom' => 'Plugin de statut personnalisé',
+        'completed_custom' => 'Plugin de statut personnalisé',
     ];
 
+    // Recherche exacte
     if (isset($status_patterns[$status_key])) {
         return $status_patterns[$status_key];
+    }
+
+    // Recherche par pattern partiel
+    foreach ($status_patterns as $pattern => $plugin) {
+        if (strpos($status_key, $pattern) !== false || strpos($pattern, $status_key) !== false) {
+            return $plugin;
+        }
+    }
+
+    // Dernière tentative: vérifier si c'est un statut ajouté par code personnalisé
+    // en regardant les options WooCommerce
+    $custom_statuses = get_option('wc_order_statuses', []);
+    if (!empty($custom_statuses) && isset($custom_statuses['wc-' . $status_key])) {
+        $status_data = $custom_statuses['wc-' . $status_key];
+        if (is_array($status_data) && isset($status_data['label'])) {
+            // C'est probablement un statut ajouté via l'interface WooCommerce
+            return 'Statut personnalisé WooCommerce';
+        }
     }
 
     // Si on ne peut pas détecter le plugin spécifique
@@ -74,6 +175,10 @@ function get_plugin_display_name($plugin_key) {
         'custom_order_status' => 'Custom Order Status for WooCommerce',
         'order_status_actions' => 'WooCommerce Order Status & Actions Manager',
         'table_rate_shipping' => 'WooCommerce Table Rate Shipping',
+        'shipment_tracking' => 'WooCommerce Shipment Tracking',
+        'dokan' => 'Dokan (Marketplace)',
+        'wc_vendors' => 'WC Vendors (Marketplace)',
+        'product_vendors' => 'WooCommerce Product Vendors',
     ];
 
     return isset($plugin_names[$plugin_key]) ? $plugin_names[$plugin_key] : ucfirst(str_replace('_', ' ', $plugin_key));
