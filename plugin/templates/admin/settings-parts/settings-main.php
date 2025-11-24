@@ -2142,38 +2142,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     dot.style.display = 'none';
                 }
             });
-        }
-    };
-
-        // Update timer display
-        const timerDisplay = autosaveCard.querySelector('.autosave-timer');
-        if (timerDisplay) {
-            const minutes = autosaveInterval;
-            timerDisplay.textContent = minutes + 'min';
-        }
-
-        // Update status
-        const statusIndicator = autosaveCard.querySelector('.autosave-status');
-        if (statusIndicator) {
-            if (autosaveEnabled) {
-                statusIndicator.classList.add('active');
-            } else {
-                statusIndicator.classList.remove('active');
-            }
-        }
-
-        // Update versions dots
-        const versionDots = autosaveCard.querySelectorAll('.version-dot');
-        if (versionDots.length > 0) {
-            const limit = parseInt(versionsLimit);
-            versionDots.forEach((dot, index) => {
-                if (index < limit) {
-                    dot.style.display = 'block';
-                } else {
-                    dot.style.display = 'none';
-                }
-            });
-        }
     };
 
     // Initialize when DOM is ready
@@ -2276,9 +2244,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize real-time preview for interactions
     initializeInteractionsRealTimePreview();
-
-    // Initialize real-time preview for autosave
-    initializeAutosaveRealTimePreview();
 
     // Synchronize dimensions modal values with current settings
     function synchronizeDimensionsModalValues(modal) {
@@ -2476,4 +2441,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-})();</script>
+</script>
