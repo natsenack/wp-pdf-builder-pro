@@ -1857,7 +1857,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Update dimensions card preview
-    function updateDimensionsCardPreview() {
+    window.updateDimensionsCardPreview = function() {
         console.log('updateDimensionsCardPreview called');
         // Try to get values from modal inputs first (real-time), then from settings
         const formatInput = document.getElementById("canvas_format");
