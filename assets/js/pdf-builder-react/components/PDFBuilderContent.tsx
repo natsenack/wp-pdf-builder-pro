@@ -269,7 +269,20 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                   zIndex: 10
                 }}
               >
-                {(window as any).pdfBuilderCanvasSettings?.default_canvas_format || 'A4'}: {width}×{height}px ({(window as any).pdfBuilderCanvasSettings?.default_canvas_dpi || 96} DPI)
+                {(() => {
+                  const format = (window as any).pdfBuilderCanvasSettings?.default_canvas_format || 'A4';
+                  const dpi = (window as any).pdfBuilderCanvasSettings?.default_canvas_dpi || 96;
+                  const paperFormats = (window as any).pdfBuilderPaperFormats || {
+                    'A4': { width: 210, height: 297 },
+                    'A3': { width: 297, height: 420 },
+                    'A5': { width: 148, height: 210 },
+                    'Letter': { width: 215.9, height: 279.4 },
+                    'Legal': { width: 215.9, height: 355.6 },
+                    'Tabloid': { width: 279.4, height: 431.8 }
+                  };
+                  const dims = paperFormats[format] || paperFormats['A4'];
+                  return `${format}: ${dims.width}×${dims.height}mm (${dpi} DPI)`;
+                })()}
               </div>
               
               {/* ✅ Loading spinner overlay */}
