@@ -19,8 +19,6 @@ interface HeaderProps {
   templateDescription: string;
   canvasWidth: number;
   canvasHeight: number;
-  marginTop: number;
-  marginBottom: number;
   showGuides: boolean;
   snapToGrid: boolean;
   isNewTemplate: boolean;
@@ -39,8 +37,6 @@ export const Header = memo(function Header({
   templateDescription,
   canvasWidth,
   canvasHeight,
-  marginTop,
-  marginBottom,
   showGuides,
   snapToGrid,
   isNewTemplate,
@@ -75,8 +71,6 @@ export const Header = memo(function Header({
   const [editedTemplateDescription, setEditedTemplateDescription] = useState(templateDescription);
   const [editedCanvasWidth, setEditedCanvasWidth] = useState(canvasWidth);
   const [editedCanvasHeight, setEditedCanvasHeight] = useState(canvasHeight);
-  const [editedMarginTop, setEditedMarginTop] = useState(marginTop);
-  const [editedMarginBottom, setEditedMarginBottom] = useState(marginBottom);
   const [editedShowGuides, setEditedShowGuides] = useState(showGuides);
   const [editedSnapToGrid, setEditedSnapToGrid] = useState(snapToGrid);
   const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
@@ -120,14 +114,6 @@ export const Header = memo(function Header({
   useEffect(() => {
     setEditedCanvasHeight(canvasHeight);
   }, [canvasHeight]);
-
-  useEffect(() => {
-    setEditedMarginTop(marginTop);
-  }, [marginTop]);
-
-  useEffect(() => {
-    setEditedMarginBottom(marginBottom);
-  }, [marginBottom]);
 
   useEffect(() => {
     setEditedShowGuides(showGuides);
@@ -706,41 +692,6 @@ export const Header = memo(function Header({
                     </div>
                   </div>
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
-                      Marge supérieure (px)
-                    </label>
-                    <input
-                      type="number"
-                      value={editedMarginTop}
-                      onChange={(e) => setEditedMarginTop(Number(e.target.value))}
-                      style={{
-                        width: '100%',
-                        padding: '6px 8px',
-                        border: '1px solid #ddd',
-                        borderRadius: '3px',
-                        fontSize: '12px'
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#555' }}>
-                      Marge inférieure (px)
-                    </label>
-                    <input
-                      type="number"
-                      value={editedMarginBottom}
-                      onChange={(e) => setEditedMarginBottom(Number(e.target.value))}
-                      style={{
-                        width: '100%',
-                        padding: '6px 8px',
-                        border: '1px solid #ddd',
-                        borderRadius: '3px',
-                        fontSize: '12px'
-                      }}
-                    />
-                  </div>
                 </div>
 
                 <div style={{ marginTop: '12px' }}>
@@ -858,8 +809,6 @@ export const Header = memo(function Header({
                     onUpdateTemplateSettings({
                       name: editedTemplateName,
                       description: editedTemplateDescription,
-                      marginTop: editedMarginTop,
-                      marginBottom: editedMarginBottom,
                       showGuides: editedShowGuides,
                       snapToGrid: editedSnapToGrid
                     });

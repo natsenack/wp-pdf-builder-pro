@@ -499,6 +499,21 @@ function pdf_builder_save_settings_handler() {
                     update_option('pdf_builder_performance_monitoring', $_POST['performance_monitoring'] === '1' ? 1 : 0);
                 }
 
+                // Paramètres des templates par statut de commande
+                // Supporte les statuts WooCommerce standards et personnalisés (ajoutés par plugins tiers)
+                $value = $get_post_value('order_status_templates');
+                if ($value !== null && is_array($value)) {
+                    $template_mappings = [];
+                    foreach ($value as $status => $template_id) {
+                        $status = sanitize_text_field($status);
+                        $template_id = intval($template_id);
+                        if ($template_id > 0) {
+                            $template_mappings[$status] = $template_id;
+                        }
+                    }
+                    update_option('pdf_builder_order_status_templates', $template_mappings);
+                }
+
                 // Return the new PDF options to the client for verification
                 $saved = [
                     'pdf_metadata_enabled' => get_option('pdf_builder_pdf_metadata_enabled', 0) ? '1' : '0',

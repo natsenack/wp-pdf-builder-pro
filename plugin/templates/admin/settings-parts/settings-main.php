@@ -272,6 +272,10 @@ if (
                 <span class="tab-icon">🎨</span>
                 <span class="tab-text">Contenu & Design</span>
             </a>
+            <a href="#templates" class="nav-tab" data-tab="templates">
+                <span class="tab-icon">📋</span>
+                <span class="tab-text">Templates par statut</span>
+            </a>
             <a href="#developpeur" class="nav-tab" data-tab="developpeur">
                 <span class="tab-icon">👨‍💻</span>
                 <span class="tab-text">Développeur</span>
@@ -310,6 +314,10 @@ if (
 
     <div id="contenu" class="tab-content">
         <?php require_once 'settings-contenu.php'; ?>
+    </div>
+
+    <div id="templates" class="tab-content">
+        <?php require_once 'settings-templates.php'; ?>
     </div>
 
     <div id="developpeur" class="tab-content">
