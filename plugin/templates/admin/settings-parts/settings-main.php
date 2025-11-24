@@ -1143,6 +1143,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             // Update window.pdfBuilderCanvasSettings with saved values from response
                             if (data.data && data.data.saved) {
+                                console.log('💾 Updating settings with saved data:', data.data.saved, 'for category:', category);
                                 const saved = data.data.saved;
                                 if (category === 'dimensions') {
                                     if (saved.canvas_format) window.pdfBuilderCanvasSettings.default_canvas_format = saved.canvas_format;
