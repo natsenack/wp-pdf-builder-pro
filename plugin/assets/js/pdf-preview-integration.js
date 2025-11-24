@@ -152,7 +152,7 @@ class PDFEditorPreviewIntegration {
             }
 
             // Envoyer via AJAX
-            const response = await fetch(ajaxurl, {
+            const response = await fetch(pdfBuilderAjax.ajaxurl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -160,7 +160,7 @@ class PDFEditorPreviewIntegration {
                 body: new URLSearchParams({
                     action: 'pdf_builder_autosave_template',
                     template_data: JSON.stringify(templateData),
-                    nonce: window.pdfBuilderCanvasSettings?.nonce || ''
+                    nonce: pdfBuilderAjax.nonce
                 })
             });
 
