@@ -1094,7 +1094,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             this.disabled = false;
 
                             // Update modal values with saved data
-                            if (typeof updateModalValues === 'function') {
+                            /* if (typeof updateModalValues === 'function') {
                                 // Get the saved values from the response or use current form values
                                 const form = modal.querySelector('form');
                                 if (form) {
@@ -1146,6 +1146,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     }
 
                                     // Update previews if function exists - TEMPORARILY DISABLED
+                            */
                                     /*
                                     if (typeof updateCanvasPreviews === 'function') {
                                         
