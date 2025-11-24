@@ -105,9 +105,9 @@ function detect_plugin_from_active_plugins($status_key) {
         $plugin_options = $wpdb->get_results($wpdb->prepare(
             "SELECT option_name, option_value FROM {$wpdb->options}
              WHERE option_name LIKE %s
-             AND (option_name LIKE '%status%' OR option_name LIKE '%order%')
+             AND (option_name LIKE %s OR option_name LIKE %s)
              LIMIT 5",
-            $plugin_slug . '%'
+            $plugin_slug . '%', '%status%', '%order%'
         ));
 
         if (!empty($plugin_options)) {
@@ -126,9 +126,9 @@ function detect_plugin_from_active_plugins($status_key) {
         $transient_exists = $wpdb->get_var($wpdb->prepare(
             "SELECT option_name FROM {$wpdb->options}
              WHERE option_name LIKE %s
-             AND (option_name LIKE '%status%' OR option_name LIKE '%order%')
+             AND (option_name LIKE %s OR option_name LIKE %s)
              LIMIT 1",
-            '_transient_' . $plugin_slug . '%'
+            '_transient_' . $plugin_slug . '%', '%status%', '%order%'
         ));
 
         if ($transient_exists) {
