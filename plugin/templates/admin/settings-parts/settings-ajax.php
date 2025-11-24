@@ -506,7 +506,66 @@ function pdf_builder_save_settings_handler() {
                     $template_mappings = [];
                     foreach ($value as $status => $template_id) {
                         $status = sanitize_text_field($status);
-                        $template_id = intval($template_id);
+
+                        // Gérer les templates système (commencent par 'system_')
+                        if (is_string($template_id) && strpos($template_id, 'system_') === 0) {
+                            $system_key = str_replace('system_', '', $template_id);
+
+                            // Créer une instance du template système pour l'utilisateur actuel si elle n'existe pas
+                            if (class_exists('PDF_Builder\TemplateDefaults')) {
+                                $system_templates = \PDF_Builder\TemplateDefaults::get_free_templates();
+                                if (isset($system_templates[$system_key])) {
+                                    $template_data = $system_templates[$system_key];
+
+                                    // Vérifier si l'utilisateur a déjà ce template
+                                    $existing = get_posts([
+                                        'post_type' => 'pdf_template',
+                                        'author' => get_current_user_id(),
+                                        'meta_query' => [
+                                            [
+                                                'key' => '_pdf_template_key',
+                                                'value' => $system_key
+                                            ]
+                                        ],
+                                        'posts_per_page' => 1
+                                    ]);
+
+                                    if (empty($existing)) {
+                                        // Créer le template pour l'utilisateur
+                                        $post_id = wp_insert_post([
+                                            'post_title' => $template_data['name'],
+                                            'post_content' => $template_data['description'],
+                                            'post_type' => 'pdf_template',
+                                            'post_author' => get_current_user_id(),
+                                            'post_status' => 'publish'
+                                        ]);
+
+                                        if ($post_id && !is_wp_error($post_id)) {
+                                            update_post_meta($post_id, '_pdf_template_key', $system_key);
+                                            update_post_meta($post_id, '_pdf_template_data_json', wp_json_encode($template_data['elements']));
+                                            update_post_meta($post_id, '_pdf_template_is_free', true);
+                                            update_post_meta($post_id, '_pdf_template_category', $template_data['category']);
+                                            $template_id = $post_id;
+                                        } else {
+                                            // Erreur de création, ignorer ce mapping
+                                            continue;
+                                        }
+                                    } else {
+                                        // Utiliser le template existant
+                                        $template_id = $existing[0]->ID;
+                                    }
+                                } else {
+                                    // Template système invalide, ignorer
+                                    continue;
+                                }
+                            } else {
+                                // Classe TemplateDefaults non disponible, ignorer
+                                continue;
+                            }
+                        } else {
+                            $template_id = intval($template_id);
+                        }
+
                         if ($template_id > 0) {
                             $template_mappings[$status] = $template_id;
                         }
