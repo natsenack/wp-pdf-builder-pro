@@ -47,6 +47,11 @@ $canvas_settings_js = [
     'rotation_step' => intval(get_option('pdf_builder_canvas_rotation_step', 15)),
     'multi_select' => get_option('pdf_builder_canvas_multi_select', '1') == '1',
     'copy_paste_enabled' => get_option('pdf_builder_canvas_copy_paste_enabled', '1') == '1',
+    
+    // Interactions - paramètres manquants
+    'drag_enabled' => get_option('pdf_builder_canvas_drag_enabled', '1') == '1',
+    'resize_enabled' => get_option('pdf_builder_canvas_resize_enabled', '1') == '1',
+    'selection_mode' => get_option('pdf_builder_canvas_selection_mode', 'rectangle'),
     'export_quality' => get_option('pdf_builder_canvas_export_quality', 90),
     'export_format' => get_option('pdf_builder_canvas_export_format', 'png'),
     'compress_images' => get_option('pdf_builder_canvas_compress_images', '1') == '1',
@@ -61,9 +66,22 @@ $canvas_settings_js = [
     'enable_hardware_acceleration' => get_option('pdf_builder_canvas_enable_hardware_acceleration', '1') == '1',
     'limit_fps' => get_option('pdf_builder_canvas_limit_fps', '1') == '1',
     'max_fps' => intval(get_option('pdf_builder_canvas_fps_target', 60)),
+    
+    // Performance - paramètres manquants
+    'fps_target' => intval(get_option('pdf_builder_canvas_fps_target', 60)),
+    'memory_limit_js' => intval(get_option('pdf_builder_canvas_memory_limit_js', 128)),
+    'memory_limit_php' => intval(get_option('pdf_builder_canvas_memory_limit_php', 256)),
+    'lazy_loading_editor' => get_option('pdf_builder_canvas_lazy_loading_editor', '1') == '1',
+    'lazy_loading_plugin' => get_option('pdf_builder_canvas_lazy_loading_plugin', '1') == '1',
+    
     'auto_save_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') == '1',
     'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 30)),
     'auto_save_versions' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
+    
+    // Autosave - paramètres avec noms cohérents
+    'autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') == '1',
+    'autosave_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 30)),
+    'versions_limit' => intval(get_option('pdf_builder_canvas_auto_save_versions', 10)),
     'undo_levels' => intval(get_option('pdf_builder_canvas_undo_levels', 50)),
     'redo_levels' => intval(get_option('pdf_builder_canvas_redo_levels', 50)),
     'enable_keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', '1') == '1',
