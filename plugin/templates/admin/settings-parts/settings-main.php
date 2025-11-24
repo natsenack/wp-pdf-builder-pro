@@ -1151,6 +1151,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                     if (saved.canvas_width) window.pdfBuilderCanvasSettings.canvas_width = parseInt(saved.canvas_width);
                                     if (saved.canvas_height) window.pdfBuilderCanvasSettings.canvas_height = parseInt(saved.canvas_height);
                                 }
+                                if (category === 'apparence') {
+                                    if (saved.canvas_bg_color) window.pdfBuilderCanvasSettings.canvas_background_color = saved.canvas_bg_color;
+                                    if (saved.canvas_container_bg_color) window.pdfBuilderCanvasSettings.container_background_color = saved.canvas_container_bg_color;
+                                    if (saved.canvas_border_color) window.pdfBuilderCanvasSettings.border_color = saved.canvas_border_color;
+                                    if (saved.canvas_border_width) window.pdfBuilderCanvasSettings.border_width = parseInt(saved.canvas_border_width);
+                                    if (saved.canvas_shadow_enabled !== undefined) window.pdfBuilderCanvasSettings.shadow_enabled = saved.canvas_shadow_enabled === '1' || saved.canvas_shadow_enabled === true;
+                                }
                                 // Add mappings for other categories as needed
                             }
 
