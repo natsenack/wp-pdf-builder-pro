@@ -573,6 +573,44 @@ document.addEventListener('DOMContentLoaded', function() {
         updateSystemStatusIndicators();
     }
 
+    // Fonction pour mettre à jour les indicateurs des templates assignés
+    function updateTemplateStatusIndicators() {
+        // Parcourir tous les selects de templates
+        const templateSelects = document.querySelectorAll('.template-select');
+        
+        templateSelects.forEach(select => {
+            const selectValue = select.value;
+            const selectId = select.id;
+            
+            // Trouver le conteneur parent (.template-status-card)
+            const card = select.closest('.template-status-card');
+            if (!card) return;
+            
+            // Trouver la section preview dans cette card
+            const previewDiv = card.querySelector('.template-preview');
+            if (!previewDiv) return;
+            
+            // Créer ou mettre à jour l'indicateur
+            if (selectValue && selectValue !== '') {
+                // Template assigné - récupérer le texte de l'option sélectionnée
+                const selectedOption = select.querySelector(`option[value="${selectValue}"]`);
+                const templateName = selectedOption ? selectedOption.textContent : 'Template inconnu';
+                
+                previewDiv.innerHTML = `
+                    <p class="current-template">
+                        <strong>Assigné :</strong> ${templateName}
+                        <span class="assigned-badge">✓</span>
+                    </p>
+                `;
+            } else {
+                // Aucun template assigné
+                previewDiv.innerHTML = `
+                    <p class="no-template">Aucun template assigné</p>
+                `;
+            }
+        });
+    }
+
     // Fonction pour mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Système
     function updateSystemStatusIndicators() {
         // Indicateur Cache & Performance
@@ -776,6 +814,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Mettre à jour l'état des contrôles RGPD
                     toggleRGPDControls();
+
+                    // Mettre à jour les indicateurs des templates assignés
+                    updateTemplateStatusIndicators();
 
                     // Remettre le texte original après 2 secondes
                     setTimeout(() => {
