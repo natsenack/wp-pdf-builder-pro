@@ -1651,6 +1651,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const format = settings.default_canvas_format || 'A4';
         const dpi = settings.default_canvas_dpi || 96;
 
+        console.log('🔍 updateDimensionsCardPreview called with:', { format, dpi });
+
         // Dimensions standard en mm pour chaque format
         const formatDimensionsMM = {
             'A4': { width: 210, height: 297 },
@@ -1668,19 +1670,30 @@ document.addEventListener('DOMContentLoaded', function() {
         const widthPx = Math.round(dimensions.width * pixelsPerMM);
         const heightPx = Math.round(dimensions.height * pixelsPerMM);
 
+        console.log('📐 Calculated dimensions:', { widthPx, heightPx, dpi });
+
         // Update card preview elements
         const cardWidth = document.getElementById('card-canvas-width');
         const cardHeight = document.getElementById('card-canvas-height');
         const cardDpi = document.getElementById('card-canvas-dpi');
 
+        console.log('🎯 DOM elements found:', {
+            cardWidth: !!cardWidth,
+            cardHeight: !!cardHeight,
+            cardDpi: !!cardDpi
+        });
+
         if (cardWidth) {
             cardWidth.textContent = widthPx;
+            console.log('✅ Updated width to:', widthPx);
         }
         if (cardHeight) {
             cardHeight.textContent = heightPx;
+            console.log('✅ Updated height to:', heightPx);
         }
         if (cardDpi) {
             cardDpi.textContent = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
+            console.log('✅ Updated DPI to:', `${dpi} DPI - ${format}`);
         }
     }
 
