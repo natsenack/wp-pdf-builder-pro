@@ -3115,6 +3115,10 @@ class PdfBuilderAdmin
         function initReactEditor() {
             console.log('🔍 DEBUG: initReactEditor called - checking window.pdfBuilderReact');
 
+            // Check if React dependencies are loaded
+            console.log('🔍 DEBUG: React available:', typeof window.React);
+            console.log('🔍 DEBUG: ReactDOM available:', typeof window.ReactDOM);
+
             if (typeof window.pdfBuilderReact === 'undefined') {
                 console.log('❌ DEBUG: window.pdfBuilderReact is undefined - script may not have loaded');
                 console.log('❌ DEBUG: Available window properties:', Object.keys(window).filter(key => key.includes('pdfBuilder') || key.includes('react')));
