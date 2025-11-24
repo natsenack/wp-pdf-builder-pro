@@ -18,14 +18,18 @@ class PdfBuilderAutoloader
      * Plugin base path
      */
     private static $base_path;
-/**
+    /**
      * Namespace to path mappings
      */
     private static $prefixes = [
         'PDF_Builder\\' => 'src/',
-    ];
-
-    /**
+        'PDF_Builder\Api\\' => 'api/',
+        'PDF_Builder\Data\\' => 'data/',
+        'PDF_Builder\Generators\\' => 'generators/',
+        'PDF_Builder\Interfaces\\' => 'interfaces/',
+        'PDF_Builder\Templates\\' => 'templates/',
+        'PDF_Builder\Core\\' => 'core/',
+    ];    /**
      * Initialize the autoloader
      */
     public static function init($base_path)
@@ -78,6 +82,3 @@ class PdfBuilderAutoloader
         return false;
     }
 }
-
-// Initialize the autoloader
-PdfBuilderAutoloader::init(dirname(__DIR__));
