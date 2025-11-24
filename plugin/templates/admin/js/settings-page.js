@@ -230,7 +230,12 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
-                
+                console.error('AJAX Error for pdf_builder_get_cache_metrics:', {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    responseText: xhr.responseText,
+                    error: error
+                });
             }
         });
     }
