@@ -392,7 +392,8 @@ export function useTemplate() {
 
       if (!result.success) {
         console.error('[PDF_BUILDER_FRONTEND] Server returned error:', result.data);
-        throw new Error(result.data || 'Erreur lors de la sauvegarde');
+        const errorMessage = result.data || 'Unknown error during save';
+        throw new Error(errorMessage);
       }
 
       console.log('[PDF_BUILDER_FRONTEND] Save successful! Template ID:', result.data?.template_id);

@@ -87,12 +87,13 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
 
   // Wrapper pour sauvegarder avec auto-save
   const saveTemplateWithAutoSave = useCallback(async () => {
-    try {
-      // Déclencher l'auto-save en arrière-plan (ne pas attendre)
-      triggerSave();
-    } catch (autoSaveError) {
-      console.warn('[PDF_BUILDER] Auto-save trigger failed, but manual save will proceed:', autoSaveError);
-    }
+    // Temporairement désactiver le trigger auto-save pour éviter les conflits
+    // try {
+    //   // Déclencher l'auto-save en arrière-plan (ne pas attendre)
+    //   triggerSave();
+    // } catch (autoSaveError) {
+    //   console.warn('[PDF_BUILDER] Auto-save trigger failed, but manual save will proceed:', autoSaveError);
+    // }
 
     try {
       // Effectuer la sauvegarde manuelle
@@ -107,7 +108,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
       console.error('[PDF_BUILDER] Manual save failed:', manualSaveError);
       throw manualSaveError; // Re-throw pour que l'UI montre l'erreur
     }
-  }, [saveTemplate, triggerSave]);
+  }, [saveTemplate]);
 
   return (
     <>
