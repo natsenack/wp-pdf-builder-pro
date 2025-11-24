@@ -468,8 +468,55 @@ class PDFMetaboxPreviewIntegration {
 }
 
 // ==========================================
-// INITIALISATION AUTOMATIQUE
+// FONCTIONS GLOBALES POUR LES CARTES DE PARAMÈTRES
 // ==========================================
+
+/**
+ * Met à jour la prévisualisation de la carte dimensions
+ */
+window.updateDimensionsCardPreview = function() {
+    const formatSelect = document.getElementById("canvas_format");
+    const orientationSelect = document.getElementById("canvas_orientation");
+    const dpiSelect = document.getElementById("canvas_dpi");
+
+    if (!formatSelect || !orientationSelect || !dpiSelect) return;
+
+    const format = formatSelect.value;
+    const orientation = orientationSelect.value;
+    const dpi = parseInt(dpiSelect.value);
+
+    // Dimensions en mm pour chaque format
+    const formatDimensions = {
+        'A4': {width: 210, height: 297},
+        'A3': {width: 297, height: 420},
+        'A5': {width: 148, height: 210},
+        'Letter': {width: 215.9, height: 279.4},
+        'Legal': {width: 215.9, height: 355.6},
+        'Tabloid': {width: 279.4, height: 431.8}
+    };
+
+    let dimensions = formatDimensions[format] || formatDimensions['A4'];
+
+    // Inverser si portrait
+    if (orientation === 'portrait') {
+        dimensions = {width: dimensions.height, height: dimensions.width};
+    }
+
+    // Convertir en pixels
+    const widthPx = Math.round((dimensions.width / 25.4) * dpi);
+    const heightPx = Math.round((dimensions.height / 25.4) * dpi);
+
+    // Mettre à jour les displays
+    const widthDisplay = document.getElementById("card-canvas-width");
+    const heightDisplay = document.getElementById("card-canvas-height");
+    const dpiDisplay = document.getElementById("card-canvas-dpi");
+
+    if (widthDisplay) widthDisplay.textContent = widthPx + 'px';
+    if (heightDisplay) heightDisplay.textContent = heightPx + 'px';
+    if (dpiDisplay) {
+        dpiDisplay.textContent = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
+    }
+};
 
 /**
  * Met à jour la prévisualisation de la carte performance
@@ -522,8 +569,6 @@ window.updatePerformanceCardPreview = function() {
             statusTextEl.textContent = statusText;
         }
     }
-};
-
 /**
  * Met à jour la prévisualisation de la carte apparence
  */
@@ -673,81 +718,6 @@ window.updateExportCardPreview = function() {
             badge.classList.add('active');
         }
     });
-};
-
-// ==========================================
-// FONCTIONS GLOBALES DE PRÉVISUALISATION DES CARTES
-// ==========================================
-
-/**
- * Met à jour la prévisualisation de la carte dimensions
- */
-window.updateDimensionsCardPreview = function() {
-    const widthInput = document.getElementById("canvas_width");
-    const heightInput = document.getElementById("canvas_height");
-    const unitSelect = document.getElementById("canvas_unit");
-
-    if (!widthInput || !heightInput || !unitSelect) return;
-
-    const width = parseInt(widthInput.value);
-    const height = parseInt(heightInput.value);
-    const unit = unitSelect.value;
-
-    // Mettre à jour les valeurs dans la carte dimensions
-    const dimensionValues = document.querySelectorAll('.canvas-card[data-category="dimensions"] .dimension-value');
-
-    if (dimensionValues.length >= 2) {
-        dimensionValues[0].textContent = `${width} ${unit}`;
-        dimensionValues[1].textContent = `${height} ${unit}`;
-    }
-
-    // Calculer et afficher le ratio
-    const ratioValue = document.querySelector('.canvas-card[data-category="dimensions"] .ratio-value');
-    if (ratioValue && width > 0 && height > 0) {
-        const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
-        const divisor = gcd(width, height);
-        const ratio = `${width/divisor}:${height/divisor}`;
-        ratioValue.textContent = ratio;
-    }
-};
-
-/**
- * Met à jour la prévisualisation de la carte auto-save
- */
-window.updateAutosaveCardPreview = function() {
-    const intervalInput = document.getElementById("canvas_autosave_interval");
-    const enabledCheckbox = document.getElementById("canvas_autosave_enabled");
-
-    if (!intervalInput || !enabledCheckbox) return;
-
-    const interval = parseInt(intervalInput.value);
-    const enabled = enabledCheckbox.checked;
-
-    // Mettre à jour l'indicateur de statut
-    const statusIndicator = document.querySelector('.canvas-card[data-category="autosave"] .status-indicator');
-    if (statusIndicator) {
-        const statusDot = statusIndicator.querySelector('.status-dot');
-        const statusText = statusIndicator.querySelector('.status-text');
-
-        if (enabled) {
-            if (statusDot) statusDot.style.backgroundColor = '#28a745';
-            if (statusText) statusText.textContent = `Activé (${interval}s)`;
-        } else {
-            if (statusDot) statusDot.style.backgroundColor = '#dc3545';
-            if (statusText) statusText.textContent = 'Désactivé';
-        }
-    }
-
-    // Mettre à jour la barre de progression simulée
-    const progressBar = document.querySelector('.canvas-card[data-category="autosave"] .progress-fill');
-    if (progressBar && enabled) {
-        // Simuler une progression basée sur le temps écoulé
-        const now = Date.now();
-        const progress = ((now % (interval * 1000)) / (interval * 1000)) * 100;
-        progressBar.style.width = `${progress}%`;
-    } else if (progressBar) {
-        progressBar.style.width = '0%';
-    }
 };
 
 // ==========================================
