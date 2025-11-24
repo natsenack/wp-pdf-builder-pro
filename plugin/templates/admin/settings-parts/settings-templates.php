@@ -555,12 +555,12 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
 
                 /* Styles pour les statuts personnalisés */
                 .custom-status-card {
-                    border-color: #ff6b35;
-                    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+                    border-color: #007cba;
+                    background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%);
                 }
 
                 .custom-status-card h4 {
-                    border-bottom-color: #ff6b35;
+                    border-bottom-color: #007cba;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
@@ -568,7 +568,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
 
                 .custom-status-indicator {
                     font-size: 14px;
-                    background: #ff6b35;
+                    background: #007cba;
                     color: white;
                     padding: 2px 6px;
                     border-radius: 10px;
