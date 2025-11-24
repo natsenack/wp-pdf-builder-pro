@@ -451,40 +451,19 @@ export const Header = memo(function Header({
 
         <button
           onClick={() => {
-
             openPreviewModal();
           }}
-          onMouseEnter={() => setHoveredButton('preview-image')}
+          onMouseEnter={() => setHoveredButton('preview')}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...secondaryButtonStyles,
             opacity: isSaving ? 0.6 : 1,
             pointerEvents: isSaving ? 'none' : 'auto'
           }}
-          title="Générer un aperçu image du PDF"
+          title="Générer un aperçu du PDF (Image ou PDF)"
         >
-          <span>📸</span>
-          <span>Aperçu Image</span>
-        </button>
-
-        <button
-          onClick={() => {
-
-            // Pour PDF, définir le format et ouvrir directement
-            setPreviewFormat('pdf');
-            openPreviewModal();
-          }}
-          onMouseEnter={() => setHoveredButton('preview-pdf')}
-          onMouseLeave={() => setHoveredButton(null)}
-          style={{
-            ...secondaryButtonStyles,
-            opacity: isSaving ? 0.6 : 1,
-            pointerEvents: isSaving ? 'none' : 'auto'
-          }}
-          title="Ouvrir le PDF dans un nouvel onglet"
-        >
-          <span>📄</span>
-          <span>Aperçu PDF</span>
+          <span>👁️</span>
+          <span>Aperçu</span>
         </button>
 
         <div style={{ width: '1px', height: '24px', backgroundColor: '#e0e0e0' }} />
