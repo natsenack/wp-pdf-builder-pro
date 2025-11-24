@@ -468,6 +468,259 @@ class PDFMetaboxPreviewIntegration {
 }
 
 // ==========================================
+// FONCTIONS GLOBALES POUR LES CARTES DE PARAMÈTRES
+// ==========================================
+
+/**
+ * Met à jour la prévisualisation de la carte dimensions
+ */
+window.updateDimensionsCardPreview = function() {
+    const formatSelect = document.getElementById("canvas_format");
+    const orientationSelect = document.getElementById("canvas_orientation");
+    const dpiSelect = document.getElementById("canvas_dpi");
+
+    if (!formatSelect || !orientationSelect || !dpiSelect) return;
+
+    const format = formatSelect.value;
+    const orientation = orientationSelect.value;
+    const dpi = parseInt(dpiSelect.value);
+
+    // Dimensions en mm pour chaque format
+    const formatDimensions = {
+        'A4': {width: 210, height: 297},
+        'A3': {width: 297, height: 420},
+        'A5': {width: 148, height: 210},
+        'Letter': {width: 215.9, height: 279.4},
+        'Legal': {width: 215.9, height: 355.6},
+        'Tabloid': {width: 279.4, height: 431.8}
+    };
+
+    let dimensions = formatDimensions[format] || formatDimensions['A4'];
+
+    // Inverser si portrait
+    if (orientation === 'portrait') {
+        dimensions = {width: dimensions.height, height: dimensions.width};
+    }
+
+    // Convertir en pixels
+    const widthPx = Math.round((dimensions.width / 25.4) * dpi);
+    const heightPx = Math.round((dimensions.height / 25.4) * dpi);
+
+    // Mettre à jour les displays
+    const widthDisplay = document.getElementById("card-canvas-width");
+    const heightDisplay = document.getElementById("card-canvas-height");
+    const dpiDisplay = document.getElementById("card-canvas-dpi");
+
+    if (widthDisplay) widthDisplay.textContent = widthPx + 'px';
+    if (heightDisplay) heightDisplay.textContent = heightPx + 'px';
+    if (dpiDisplay) {
+        dpiDisplay.textContent = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
+    }
+};
+
+/**
+ * Met à jour la prévisualisation de la carte performance
+ */
+window.updatePerformanceCardPreview = function() {
+    const fpsSelect = document.getElementById("canvas_fps_target");
+    const memoryJsInput = document.getElementById("canvas_memory_limit_js");
+    const memoryPhpInput = document.getElementById("canvas_memory_limit_php");
+
+    if (!fpsSelect || !memoryJsInput || !memoryPhpInput) return;
+
+    const fps = parseInt(fpsSelect.value);
+    const memoryJs = parseInt(memoryJsInput.value);
+    const memoryPhp = parseInt(memoryPhpInput.value);
+
+    // Mettre à jour les valeurs dans la carte performance
+    const metricValues = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-value');
+
+    if (metricValues.length >= 3) {
+        // FPS
+        let fpsStatus = '🔴 Faible';
+        if (fps >= 30) fpsStatus = '🟢 Bon';
+        else if (fps >= 15) fpsStatus = '🟡 Moyen';
+        metricValues[0].innerHTML = `${fps}<br><small>${fpsStatus}</small>`;
+
+        // RAM JS
+        let memoryJsStatus = '🔴 Faible';
+        if (memoryJs >= 128) memoryJsStatus = '🟢 Bon';
+        else if (memoryJs >= 64) memoryJsStatus = '🟡 Moyen';
+        metricValues[1].innerHTML = `${memoryJs}MB<br><small>${memoryJsStatus}</small>`;
+
+        // RAM PHP
+        let memoryPhpStatus = '🔴 Faible';
+        if (memoryPhp >= 256) memoryPhpStatus = '🟢 Bon';
+        else if (memoryPhp >= 128) memoryPhpStatus = '🟡 Moyen';
+        metricValues[2].innerHTML = `${memoryPhp}MB<br><small>${memoryPhpStatus}</small>`;
+    }
+
+    // Mettre à jour l'indicateur de statut
+    const statusIndicator = document.querySelector('.canvas-card[data-category="performance"] .status-indicator');
+    if (statusIndicator) {
+        const lazyLoading = document.getElementById("canvas_lazy_loading_editor")?.checked;
+        const statusText = lazyLoading ? 'Lazy Loading Activé' : 'Lazy Loading Désactivé';
+        const statusDot = statusIndicator.querySelector('.status-dot');
+        if (statusDot) {
+            statusDot.style.backgroundColor = lazyLoading ? '#28a745' : '#dc3545';
+        }
+        const statusTextEl = statusIndicator.querySelector('.status-text');
+        if (statusTextEl) {
+            statusTextEl.textContent = statusText;
+        }
+    }
+/**
+ * Met à jour la prévisualisation de la carte apparence
+ */
+window.updateApparenceCardPreview = function() {
+    const bgColorInput = document.getElementById("canvas_background_color");
+    const borderColorInput = document.getElementById("canvas_border_color");
+    const borderWidthInput = document.getElementById("canvas_border_width");
+
+    // Mettre à jour les previews de couleur
+    const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
+    const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
+
+    if (bgPreview && bgColorInput) {
+        bgPreview.style.backgroundColor = bgColorInput.value;
+    }
+
+    if (borderPreview && borderColorInput && borderWidthInput) {
+        borderPreview.style.border = `${borderWidthInput.value}px solid ${borderColorInput.value}`;
+    }
+};
+
+/**
+ * Met à jour la prévisualisation de la carte grille
+ */
+window.updateGrilleCardPreview = function() {
+    const gridEnabled = document.getElementById("canvas_grid_enabled")?.checked;
+    const snapToGrid = document.getElementById("canvas_snap_to_grid")?.checked;
+    const showGuides = document.getElementById("canvas_show_guides")?.checked;
+
+    const gridContainer = document.querySelector('.canvas-card[data-category="grille"] .grid-preview-container');
+
+    if (!gridContainer) return;
+
+    // Activer/désactiver la grille
+    if (gridEnabled) {
+        gridContainer.classList.add('grid-enabled');
+        gridContainer.classList.remove('grid-disabled');
+    } else {
+        gridContainer.classList.add('grid-disabled');
+        gridContainer.classList.remove('grid-enabled');
+    }
+
+    // Afficher/cacher les guides
+    const guideLines = gridContainer.querySelectorAll('.guide-line');
+    guideLines.forEach(guide => {
+        if (showGuides) {
+            guide.classList.add('active');
+        } else {
+            guide.classList.remove('active');
+        }
+    });
+
+    // Mettre à jour l'indicateur de snap
+    const snapIndicator = gridContainer.querySelector('.snap-indicator');
+    if (snapIndicator) {
+        if (snapToGrid && gridEnabled) {
+            snapIndicator.textContent = '🔗 Snap activé';
+            snapIndicator.style.color = '#28a745';
+        } else {
+            snapIndicator.textContent = '🔗 Snap désactivé';
+            snapIndicator.style.color = '#6c757d';
+        }
+    }
+};
+
+/**
+ * Met à jour la prévisualisation de la carte zoom
+ */
+window.updateZoomCardPreview = function() {
+    const zoomMin = document.getElementById("canvas_zoom_min")?.value || 10;
+    const zoomMax = document.getElementById("canvas_zoom_max")?.value || 500;
+    const zoomStep = document.getElementById("canvas_zoom_step")?.value || 25;
+    const defaultZoom = document.getElementById("canvas_zoom_default")?.value || 100;
+
+    const zoomLevel = document.querySelector('.canvas-card[data-category="zoom"] .zoom-level');
+    const zoomInfo = document.querySelector('.canvas-card[data-category="zoom"] .zoom-info');
+
+    if (zoomLevel) {
+        zoomLevel.textContent = `${defaultZoom}%`;
+    }
+
+    if (zoomInfo) {
+        zoomInfo.innerHTML = `<span>${zoomMin}% - ${zoomMax}%</span><span>Pas: ${zoomStep}%</span>`;
+    }
+};
+
+/**
+ * Met à jour la prévisualisation de la carte interactions
+ */
+window.updateInteractionsCardPreview = function() {
+    const selectionMode = document.getElementById("canvas_selection_mode")?.value || 'click';
+    const keyboardShortcuts = document.getElementById("canvas_keyboard_shortcuts")?.checked;
+
+    const modeIcons = document.querySelectorAll('.canvas-card[data-category="interactions"] .mode-icon');
+    const statusIndicator = document.querySelector('.canvas-card[data-category="interactions"] .status-indicator');
+
+    // Mettre à jour les icônes de mode
+    modeIcons.forEach(icon => {
+        icon.classList.remove('active');
+        if ((selectionMode === 'rectangle' && icon.title === 'Rectangle') ||
+            (selectionMode === 'lasso' && icon.title === 'Lasso') ||
+            (selectionMode === 'click' && icon.title === 'Clic')) {
+            icon.classList.add('active');
+        }
+    });
+
+    // Mettre à jour l'indicateur de statut
+    if (statusIndicator) {
+        if (keyboardShortcuts) {
+            statusIndicator.textContent = 'Raccourcis activés';
+            statusIndicator.className = 'status-indicator enabled';
+        } else {
+            statusIndicator.textContent = 'Raccourcis désactivés';
+            statusIndicator.className = 'status-indicator disabled';
+        }
+    }
+};
+
+/**
+ * Met à jour la prévisualisation de la carte export
+ */
+window.updateExportCardPreview = function() {
+    const exportQuality = document.getElementById("canvas_export_quality")?.value || 90;
+    const exportFormats = document.querySelectorAll('input[name="canvas_export_formats[]"]:checked');
+
+    const qualityFill = document.querySelector('.canvas-card[data-category="export"] .quality-fill');
+    const qualityText = document.querySelector('.canvas-card[data-category="export"] .quality-text');
+    const formatBadges = document.querySelectorAll('.canvas-card[data-category="export"] .format-badge');
+
+    // Mettre à jour la barre de qualité
+    if (qualityFill) {
+        qualityFill.style.width = `${exportQuality}%`;
+    }
+    if (qualityText) {
+        qualityText.textContent = `${exportQuality}%`;
+    }
+
+    // Mettre à jour les badges de format
+    formatBadges.forEach(badge => {
+        badge.classList.remove('active');
+    });
+
+    exportFormats.forEach(checkbox => {
+        const format = checkbox.value.toLowerCase();
+        const badge = document.querySelector(`.canvas-card[data-category="export"] .format-badge.${format}`);
+        if (badge) {
+            badge.classList.add('active');
+        }
+    });
+};
+
+// ==========================================
 // INITIALISATION AUTOMATIQUE
 // ==========================================
 
