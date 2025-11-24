@@ -299,6 +299,7 @@ if ($woocommerce_active) {
 
     // Détecter les statuts personnalisés et leurs plugins associés
     $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed', 'draft', 'checkout-draft'];
+    $status_plugins = []; // Association statut => plugin
 
     foreach ($order_statuses as $status_key => $status_name) {
         // Enlever le préfixe 'wc-' si présent
@@ -310,6 +311,7 @@ if ($woocommerce_active) {
 
             if ($plugin_name) {
                 $custom_status_plugins[] = $plugin_name;
+                $status_plugins[$status_key] = $plugin_name; // Stocker l'association
             }
         }
     }
@@ -409,7 +411,11 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                         <h4>
                             <?php echo esc_html($status_label); ?>
                             <?php if ($is_custom_status): ?>
-                            <span class="custom-status-indicator" title="Slug détecté et lié au plugin">🔍</span>
+                            <?php
+                            $detected_plugin = isset($status_plugins[$status_key]) ? $status_plugins[$status_key] : 'Plugin inconnu';
+                            $tooltip_text = "Slug personnalisé détecté - ajouté par: {$detected_plugin}";
+                            ?>
+                            <span class="custom-status-indicator" title="<?php echo esc_attr($tooltip_text); ?>">🔍</span>
                             <?php endif; ?>
                         </h4>
                         <div class="template-selector">
