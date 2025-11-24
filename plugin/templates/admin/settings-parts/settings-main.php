@@ -1645,6 +1645,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const format = settings.default_canvas_format || 'A4';
         const dpi = settings.default_canvas_dpi || 150;
 
+        console.log('DEBUG updateDimensionsCardPreview:', {
+            settings: settings,
+            default_canvas_dpi: settings.default_canvas_dpi,
+            dpi_used: dpi,
+            format: format
+        });
+
         // Dimensions standard en mm pour chaque format
         const formatDimensionsMM = {
             'A4': { width: 210, height: 297 },
