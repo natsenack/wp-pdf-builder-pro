@@ -1152,9 +1152,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                     if (saved.canvas_height) window.pdfBuilderCanvasSettings.canvas_height = parseInt(saved.canvas_height);
                                 }
                                 if (category === 'apparence') {
-                                    if (saved.canvas_bg_color) window.pdfBuilderCanvasSettings.canvas_background_color = saved.canvas_bg_color;
+                                    console.log('🎨 Updating apparence in window.pdfBuilderCanvasSettings');
+                                    if (saved.canvas_bg_color) {
+                                        window.pdfBuilderCanvasSettings.canvas_background_color = saved.canvas_bg_color;
+                                        console.log('BG color updated to:', saved.canvas_bg_color);
+                                    }
+                                    if (saved.canvas_border_color) {
+                                        window.pdfBuilderCanvasSettings.border_color = saved.canvas_border_color;
+                                        console.log('Border color updated to:', saved.canvas_border_color);
+                                    }
                                     if (saved.canvas_container_bg_color) window.pdfBuilderCanvasSettings.container_background_color = saved.canvas_container_bg_color;
-                                    if (saved.canvas_border_color) window.pdfBuilderCanvasSettings.border_color = saved.canvas_border_color;
                                     if (saved.canvas_border_width) window.pdfBuilderCanvasSettings.border_width = parseInt(saved.canvas_border_width);
                                     if (saved.canvas_shadow_enabled !== undefined) window.pdfBuilderCanvasSettings.shadow_enabled = saved.canvas_shadow_enabled === '1' || saved.canvas_shadow_enabled === true;
                                 }
@@ -1710,20 +1717,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update apparence card preview
     function updateApparenceCardPreview() {
+        console.log('🎨 updateApparenceCardPreview called');
+
         // Récupérer les valeurs depuis window.pdfBuilderCanvasSettings ou utiliser les valeurs par défaut
         const settings = window.pdfBuilderCanvasSettings || {};
         const bgColor = settings.canvas_background_color || '#ffffff';
         const borderColor = settings.border_color || '#cccccc';
 
+        console.log('Colors:', { bgColor, borderColor });
+
         // Update color previews in the card
         const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
         const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
 
+        console.log('Elements found:', { bgPreview: !!bgPreview, borderPreview: !!borderPreview });
+
         if (bgPreview && bgColor) {
             bgPreview.style.backgroundColor = bgColor;
+            console.log('✅ BG color set to:', bgColor);
         }
         if (borderPreview && borderColor) {
             borderPreview.style.backgroundColor = borderColor;
+            console.log('✅ Border color set to:', borderColor);
         }
     }
 
