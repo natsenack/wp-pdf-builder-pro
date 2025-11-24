@@ -297,8 +297,15 @@ if ($woocommerce_active) {
         }
     }
 
-    // Détecter les statuts personnalisés et leurs plugins associés
-    $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed', 'draft'];
+    // DEBUG: Afficher les statuts pour déboguer
+    echo '<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc;">';
+    echo '<strong>DEBUG - Tous les statuts WooCommerce :</strong><br>';
+    foreach ($order_statuses as $status_key => $status_name) {
+        $clean_status_key = str_replace('wc-', '', $status_key);
+        $is_custom = !in_array($clean_status_key, $default_statuses);
+        echo "Clé: {$status_key} | Nettoyé: {$clean_status_key} | Nom: {$status_name} | Personnalisé: " . ($is_custom ? 'OUI' : 'NON') . '<br>';
+    }
+    echo '</div>';
 
     foreach ($order_statuses as $status_key => $status_name) {
         // Enlever le préfixe 'wc-' si présent
