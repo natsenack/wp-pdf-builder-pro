@@ -1294,18 +1294,20 @@ class PdfBuilderAdmin
             $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
 
             // DEBUG: Log the script URL and check if file exists
-            $script_file_path = PDF_BUILDER_ASSETS_DIR . 'js/dist/pdf-builder-react.js';
-            error_log('PDF Builder React Script URL: ' . $react_script_url);
-            error_log('PDF Builder React Script File Path: ' . $script_file_path);
-            error_log('PDF Builder React Script File Exists: ' . (file_exists($script_file_path) ? 'YES' : 'NO'));
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                $script_file_path = PDF_BUILDER_ASSETS_DIR . 'js/dist/pdf-builder-react.js';
+                error_log('PDF Builder React Script URL: ' . $react_script_url);
+                error_log('PDF Builder React Script File Path: ' . $script_file_path);
+                error_log('PDF Builder React Script File Exists: ' . (file_exists($script_file_path) ? 'YES' : 'NO'));
 
-            // Test if URL is accessible
-            $url_headers = @get_headers($react_script_url);
-            if ($url_headers) {
-                $status_code = substr($url_headers[0], 9, 3);
-                error_log('PDF Builder React Script URL Status: ' . $status_code);
-            } else {
-                error_log('PDF Builder React Script URL Status: UNABLE TO CHECK');
+                // Test if URL is accessible
+                $url_headers = @get_headers($react_script_url);
+                if ($url_headers) {
+                    $status_code = substr($url_headers[0], 9, 3);
+                    error_log('PDF Builder React Script URL Status: ' . $status_code);
+                } else {
+                    error_log('PDF Builder React Script URL Status: UNABLE TO CHECK');
+                }
             }
 
             wp_enqueue_script('pdf-builder-react', $react_script_url, [], $version_param, true);
@@ -1338,6 +1340,7 @@ class PdfBuilderAdmin
                 'nonce' => wp_create_nonce('pdf_builder_nonce'),
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 1,
+                'debug' => defined('WP_DEBUG') && WP_DEBUG, // Conditionner les logs JS sur WP_DEBUG
                 'strings' => [
                     'loading' => __('Chargement de l\'éditeur React...', 'pdf-builder-pro'),
                     'error' => __('Erreur lors du chargement', 'pdf-builder-pro'),
@@ -1430,74 +1433,81 @@ class PdfBuilderAdmin
             $init_script = "
         // Initialize React editor when DOM is ready
         function initReactEditor() {
-            console.log('🔍 DEBUG: initReactEditor called - checking React availability');
+            // Fonction utilitaire pour les logs conditionnels
+            function debugLog() {
+                if (typeof pdfBuilderData !== 'undefined' && pdfBuilderData.debug) {
+                    console.log.apply(console, arguments);
+                }
+            }
+
+            debugLog('🔍 DEBUG: initReactEditor called - checking React availability');
 
             // First check if React dependencies are loaded
             if (typeof window.React === 'undefined' || typeof window.ReactDOM === 'undefined') {
-                console.log('⏳ DEBUG: React or ReactDOM not yet loaded, waiting...');
+                debugLog('⏳ DEBUG: React or ReactDOM not yet loaded, waiting...');
                 return false;
             }
 
-            console.log('✅ DEBUG: React and ReactDOM are available');
+            debugLog('✅ DEBUG: React and ReactDOM are available');
 
             // Check if the pdf-builder-react script is loaded
             var scriptElement = document.querySelector('script[src*=\"pdf-builder-react\"]');
             if (scriptElement) {
-                console.log('📄 DEBUG: pdf-builder-react script element found:', scriptElement.src);
+                debugLog('📄 DEBUG: pdf-builder-react script element found:', scriptElement.src);
                 if (!scriptElement.onload && !scriptElement.onerror) {
-                    console.log('⚠️ DEBUG: Script element exists but no load/error handlers set - adding them now');
+                    debugLog('⚠️ DEBUG: Script element exists but no load/error handlers set - adding them now');
 
                     // Add load and error handlers to monitor script loading
                     scriptElement.onload = function() {
-                        console.log('✅ DEBUG: pdf-builder-react script loaded successfully');
+                        debugLog('✅ DEBUG: pdf-builder-react script loaded successfully');
                         // Try to initialize again after script loads
                         setTimeout(function() {
                             if (typeof window.pdfBuilderReact !== 'undefined') {
-                                console.log('✅ DEBUG: window.pdfBuilderReact now available after script load');
+                                debugLog('✅ DEBUG: window.pdfBuilderReact now available after script load');
                                 initReactEditor();
                             } else {
-                                console.log('❌ DEBUG: window.pdfBuilderReact still undefined after script load');
+                                debugLog('❌ DEBUG: window.pdfBuilderReact still undefined after script load');
                             }
                         }, 100);
                     };
 
                     scriptElement.onerror = function() {
-                        console.log('❌ DEBUG: Failed to load pdf-builder-react script');
+                        debugLog('❌ DEBUG: Failed to load pdf-builder-react script');
                     };
                 }
             } else {
-                console.log('❌ DEBUG: pdf-builder-react script element NOT found in DOM');
+                debugLog('❌ DEBUG: pdf-builder-react script element NOT found in DOM');
             }
 
             if (typeof window.pdfBuilderReact === 'undefined') {
-                console.log('❌ DEBUG: window.pdfBuilderReact is undefined - script may not have loaded yet');
-                console.log('❌ DEBUG: Available window properties:', Object.keys(window).filter(key => key.includes('pdfBuilder') || key.includes('react')));
+                debugLog('❌ DEBUG: window.pdfBuilderReact is undefined - script may not have loaded yet');
+                debugLog('❌ DEBUG: Available window properties:', Object.keys(window).filter(key => key.includes('pdfBuilder') || key.includes('react')));
 
                 // If script element exists but pdfBuilderReact is not available, the script might still be loading
                 if (scriptElement && !scriptElement.onload) {
-                    console.log('⏳ DEBUG: Script element exists but no handlers - script might still be loading, will retry initialization');
+                    debugLog('⏳ DEBUG: Script element exists but no handlers - script might still be loading, will retry initialization');
                     return false;
                 }
 
                 return false;
             }
 
-            console.log('✅ DEBUG: window.pdfBuilderReact exists:', window.pdfBuilderReact);
+            debugLog('✅ DEBUG: window.pdfBuilderReact exists:', window.pdfBuilderReact);
 
             if (typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function') {
-                console.log('❌ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is not a function');
-                console.log('❌ DEBUG: Available methods:', Object.keys(window.pdfBuilderReact));
+                debugLog('❌ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is not a function');
+                debugLog('❌ DEBUG: Available methods:', Object.keys(window.pdfBuilderReact));
                 return false;
             }
 
-            console.log('✅ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is a function');
+            debugLog('✅ DEBUG: window.pdfBuilderReact.initPDFBuilderReact is a function');
 
             try {
                 var result = window.pdfBuilderReact.initPDFBuilderReact();
-                console.log('✅ DEBUG: initPDFBuilderReact returned:', result);
+                debugLog('✅ DEBUG: initPDFBuilderReact returned:', result);
                 return result;
             } catch (error) {
-                console.log('❌ DEBUG: Error calling initPDFBuilderReact:', error);
+                debugLog('❌ DEBUG: Error calling initPDFBuilderReact:', error);
                 return false;
             }
         }
@@ -1520,11 +1530,15 @@ class PdfBuilderAdmin
             var maxInitAttempts = 50; // 25 seconds max (increased from 30)
             var initInterval = setInterval(function() {
                 initAttempts++;
-                console.log('🔄 DEBUG: Attempt', initAttempts, 'to initialize React editor');
+                if (typeof pdfBuilderData !== 'undefined' && pdfBuilderData.debug) {
+                    console.log('🔄 DEBUG: Attempt', initAttempts, 'to initialize React editor');
+                }
 
                 if (initReactEditor()) {
                     clearInterval(initInterval);
-                    console.log('✅ DEBUG: React editor initialized successfully on attempt', initAttempts);
+                    if (typeof pdfBuilderData !== 'undefined' && pdfBuilderData.debug) {
+                        console.log('✅ DEBUG: React editor initialized successfully on attempt', initAttempts);
+                    }
 
                     // Now try to load existing data once
                     setTimeout(function() {

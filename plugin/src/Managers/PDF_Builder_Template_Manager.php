@@ -65,12 +65,19 @@ class PdfBuilderTemplateManager
      */
     public function ajaxSaveTemplateV3()
     {
+        // Fonction utilitaire pour les logs conditionnels
+        $debugLog = function($message) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                $debugLog(' . $message);
+            }
+        };
+
         // Log avant le try pour capturer les erreurs fatales
-        error_log('PDF_BUILDER_DEBUG: ajaxSaveTemplateV3 method called');
+        $debugLog('ajaxSaveTemplateV3 method called');
 
         try {
             // Log pour debug
-            error_log('PDF_BUILDER_DEBUG: ajaxSaveTemplateV3 started');
+            $debugLog('ajaxSaveTemplateV3 started');
 
             // Write to uploads directory for guaranteed access
             $upload_dir = wp_upload_dir();
@@ -80,49 +87,47 @@ class PdfBuilderTemplateManager
 
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
-                error_log('PDF_BUILDER_DEBUG: Permission check failed');
+                $debugLog('Permission check failed');
                 \wp_send_json_error('Permissions insuffisantes');
                 return;
             }
-            error_log('PDF_BUILDER_DEBUG: Permission check passed');
+            $debugLog('Permission check passed');
 
             // Vérification du nonce
             $nonce_valid = false;
             if (isset($_POST['nonce'])) {
-                error_log('PDF_BUILDER_DEBUG: Nonce received: ' . $_POST['nonce']);
+                $debugLog('Nonce received: ' . $_POST['nonce']);
                 $nonce_valid = \wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce') ||
                               \wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions') ||
                               \wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
             } else {
-                error_log('PDF_BUILDER_DEBUG: No nonce in POST data');
+                $debugLog('No nonce in POST data');
             }
 
             if (!$nonce_valid) {
-                error_log('PDF_BUILDER_DEBUG: Nonce validation failed');
+                $debugLog('Nonce validation failed');
                 \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
-            error_log('PDF_BUILDER_DEBUG: Nonce validation passed');
+            $debugLog('Nonce validation passed');
 
             // Récupération et nettoyage des données
-            error_log('PDF_BUILDER_DEBUG: Starting data processing');
-            
-            // Support pour les données JSON (nouvelle méthode) et FormData (ancienne)
+            $debugLog('Starting data processing');            // Support pour les données JSON (nouvelle méthode) et FormData (ancienne)
             
             $json_data = null;
             if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
-                error_log('PDF_BUILDER_DEBUG: Processing JSON data');
+                $debugLog('Processing JSON data');
                 $json_input = file_get_contents('php://input');
                 
                 $json_data = json_decode($json_input, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    error_log('PDF_BUILDER_DEBUG: JSON decode error: ' . json_last_error_msg());
+                    $debugLog('JSON decode error: ' . json_last_error_msg());
                     \wp_send_json_error('Données JSON invalides dans le corps de la requête: ' . json_last_error_msg());
                     return;
                 }
-                error_log('PDF_BUILDER_DEBUG: JSON data decoded successfully');
+                $debugLog('JSON data decoded successfully');
             } else {
-                error_log('PDF_BUILDER_DEBUG: Processing FormData');
+                $debugLog('Processing FormData');
             }
 
             // Support pour les clés camelCase (frontend) et snake_case (ancien)
@@ -140,7 +145,7 @@ class PdfBuilderTemplateManager
                               (isset($json_data['template_id']) ? \intval($json_data['template_id']) : 0);
             } else {
                 // Données FormData
-                error_log('PDF_BUILDER_DEBUG: Processing FormData fields');
+                $debugLog(Processing FormData fields');
                 $template_data = isset($_POST['template_data']) ? \trim(\wp_unslash($_POST['template_data'])) : 
                                 (isset($_POST['templateData']) ? \trim(\wp_unslash($_POST['templateData'])) : '');
                 $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : 
@@ -149,7 +154,7 @@ class PdfBuilderTemplateManager
                               (isset($_POST['templateId']) ? \intval($_POST['templateId']) : 0);
             }
 
-            error_log('PDF_BUILDER_DEBUG: Template data extracted - Name: ' . $template_name . ', ID: ' . $template_id . ', Data length: ' . strlen($template_data));
+            $debugLog(Template data extracted - Name: ' . $template_name . ', ID: ' . $template_id . ', Data length: ' . strlen($template_data));
 
             
 
@@ -271,13 +276,13 @@ class PdfBuilderTemplateManager
             }
 
             // Validation des données obligatoires
-            error_log('PDF_BUILDER_DEBUG: Validating required data - Template data empty: ' . (empty($template_data) ? 'YES' : 'NO') . ', Template name empty: ' . (empty($template_name) ? 'YES' : 'NO'));
+            $debugLog(Validating required data - Template data empty: ' . (empty($template_data) ? 'YES' : 'NO') . ', Template name empty: ' . (empty($template_name) ? 'YES' : 'NO'));
             if (empty($template_data) || empty($template_name)) {
                 
                 \wp_send_json_error('Données template ou nom manquant');
                 return;
             }
-            error_log('PDF_BUILDER_DEBUG: Required data validation passed');
+            $debugLog(Required data validation passed');
 
             // Sauvegarde en utilisant les posts WordPress ou la table personnalisée
             try {

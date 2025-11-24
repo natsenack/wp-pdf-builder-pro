@@ -163,19 +163,26 @@ class AjaxHandler
      */
     public function ajaxSaveTemplateV3()
     {
-        error_log('PDF_BUILDER_DEBUG: AjaxHandler ajaxSaveTemplateV3 called');
+        // Fonction utilitaire pour les logs conditionnels
+        $debugLog = function($message) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('PDF_BUILDER_DEBUG: ' . $message);
+            }
+        };
+
+        $debugLog('AjaxHandler ajaxSaveTemplateV3 called');
 
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
         if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
-            error_log('PDF_BUILDER_DEBUG: Delegating to template_manager');
+            $debugLog('Delegating to template_manager');
             $template_manager->ajaxSaveTemplateV3();
             return;
         }
 
-        error_log('PDF_BUILDER_DEBUG: Template manager not available, using fallback');
-        error_log('PDF_BUILDER_DEBUG: template_manager: ' . ($template_manager ? 'exists' : 'null'));
-        error_log('PDF_BUILDER_DEBUG: method_exists check: ' . (method_exists($template_manager, 'ajaxSaveTemplateV3') ? 'yes' : 'no'));
+        $debugLog('Template manager not available, using fallback');
+        $debugLog('template_manager: ' . ($template_manager ? 'exists' : 'null'));
+        $debugLog('method_exists check: ' . (method_exists($template_manager, 'ajaxSaveTemplateV3') ? 'yes' : 'no'));
 
         // Implémentation de secours
         try {
