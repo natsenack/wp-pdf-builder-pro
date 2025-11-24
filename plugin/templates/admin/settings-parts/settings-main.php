@@ -1841,4 +1841,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 2000);
 
+    // Real-time preview updates for dimensions modal
+    function initializeDimensionsRealTimePreview() {
+        // Listen for changes in dimensions modal fields
+        document.addEventListener('change', function(event) {
+            const target = event.target;
+            const modal = target.closest('.canvas-modal[data-category="dimensions"]');
+            
+            if (modal && (target.id === 'canvas_format' || target.id === 'canvas_dpi')) {
+                // Update window.pdfBuilderCanvasSettings temporarily for preview
+                if (window.pdfBuilderCanvasSettings) {
+                    if (target.id === 'canvas_format') {
+                        window.pdfBuilderCanvasSettings.default_canvas_format = target.value;
+                    } else if (target.id === 'canvas_dpi') {
+                        window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(target.value);
+                    }
+                    
+                    // Update preview immediately
+                    if (typeof updateDimensionsCardPreview === 'function') {
+                        updateDimensionsCardPreview();
+                    }
+                }
+            }
+        });
+    }
+
+    // Initialize real-time preview for dimensions
+    initializeDimensionsRealTimePreview();
+
 })();</script>
