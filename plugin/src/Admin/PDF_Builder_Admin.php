@@ -219,6 +219,9 @@ class PdfBuilderAdmin
      */
     private function initHooks()
     {
+        // 🔧 DIAGNOSTIC ET CORRECTION AUTO-SAVE
+        add_action('admin_init', [$this, 'diagnose_and_fix_autosave']);
+
         // Enregistrer le custom post type pour les templates
         add_action('init', [$this, 'register_template_post_type']);
 
@@ -3469,10 +3472,43 @@ class PdfBuilderAdmin
 
     /**
      * Récupère les utilitaires de données
-    /**
      */
     public function getDataUtils()
     {
         return $this->data_utils;
+    }
+
+    /**
+     * 🔧 DIAGNOSTIC ET CORRECTION DE L'AUTO-SAVE
+     * Force l'activation de l'auto-save si désactivé
+     */
+    public function diagnose_and_fix_autosave()
+    {
+        // Ne s'exécuter que sur les pages PDF Builder
+        if (!isset($_GET['page']) || strpos($_GET['page'], 'pdf-builder') === false) {
+            return;
+        }
+
+        // Vérifier et corriger les options d'auto-save
+        $auto_save_enabled = get_option('pdf_builder_canvas_auto_save', '1');
+        $autosave_enabled = get_option('pdf_builder_canvas_autosave_enabled', '1');
+
+        // Forcer l'activation si désactivé
+        if ($auto_save_enabled !== '1') {
+            update_option('pdf_builder_canvas_auto_save', '1');
+            error_log('PDF Builder: Auto-save forcé à ON (était: ' . $auto_save_enabled . ')');
+        }
+
+        if ($autosave_enabled !== '1') {
+            update_option('pdf_builder_canvas_autosave_enabled', '1');
+            error_log('PDF Builder: Autosave forcé à ON (était: ' . $autosave_enabled . ')');
+        }
+
+        // S'assurer que l'intervalle est raisonnable
+        $interval = intval(get_option('pdf_builder_canvas_auto_save_interval', 5));
+        if ($interval <= 0) {
+            update_option('pdf_builder_canvas_auto_save_interval', 5);
+            error_log('PDF Builder: Intervalle auto-save corrigé à 5 minutes (était: ' . $interval . ')');
+        }
     }
 }
