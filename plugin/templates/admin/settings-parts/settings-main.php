@@ -2614,6 +2614,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('DOMContentLoaded', function() {
             initializeModals();
             initializeAutosaveRealTimePreview();
+            initializeTemplatesRealTimePreview();
 
             // Initialize all previews with saved data from database
             setTimeout(function() {
@@ -2626,6 +2627,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // DOM already loaded
         initializeModals();
         initializeAutosaveRealTimePreview();
+        initializeTemplatesRealTimePreview();
 
         // Initialize all previews with saved data from database
         setTimeout(function() {
@@ -2708,6 +2710,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 'canvas_history_max': (value) => parseInt(value)
             },
             updateFunction: 'updateAutosaveCardPreview'
+        },
+        templates: {
+            fields: ['template_library_enabled'],
+            updateFunction: function() {
+                // Mise à jour directe de l'indicateur templates
+                const checkbox = document.getElementById('template_library_enabled');
+                const indicator = document.querySelector('.template-library-indicator');
+                if (checkbox && indicator) {
+                    const isEnabled = checkbox.checked;
+                    indicator.style.background = isEnabled ? '#28a745' : '#dc3545';
+                    indicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
+                }
+            }
         }
     };
 
@@ -2736,7 +2751,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.pdfBuilderCanvasSettings[settingKey] = value;
 
                         // Mettre à jour la preview immédiatement
-                        if (typeof window[config.updateFunction] === 'function') {
+                        if (typeof config.updateFunction === 'function') {
+                            config.updateFunction();
+                        } else if (typeof window[config.updateFunction] === 'function') {
                             window[config.updateFunction]();
                         }
                     }
@@ -2760,6 +2777,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function initializeAutosaveRealTimePreview() {
         initializeRealTimePreview('autosave');
+    }
+
+    function initializeTemplatesRealTimePreview() {
+        initializeRealTimePreview('templates');
     }
     function initializeApparenceRealTimePreview() {
         // Listen for changes in apparence modal fields
@@ -2804,6 +2825,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize real-time preview for autosave
     initializeAutosaveRealTimePreview();
+
+    // Initialize real-time preview for templates
+    initializeTemplatesRealTimePreview();
 
     // ==========================================
     // SYSTÈME CENTRALISÉ DE GESTION DES MODALES
