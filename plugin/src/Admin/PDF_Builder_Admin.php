@@ -223,7 +223,8 @@ class PdfBuilderAdmin
         add_action('admin_init', [$this, 'diagnose_and_fix_autosave']);
 
         // 🔧 MISE À JOUR DES NOMS DE TEMPLATES (TEMPORAIRE)
-        add_action('admin_init', [$this, 'update_template_names']);
+        // Désactiver temporairement la mise à jour automatique des noms
+        // add_action('admin_init', [$this, 'update_template_names']);
 
         // Enregistrer le custom post type pour les templates
         add_action('init', [$this, 'register_template_post_type']);
@@ -1369,8 +1370,8 @@ class PdfBuilderAdmin
             if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
                 $template_id = intval($_GET['template_id']);
 
-                // Forcer la mise à jour des noms avant de charger
-                $this->update_template_names();
+        // Désactiver temporairement la mise à jour automatique des noms
+        // $this->update_template_names();
 
                 $existing_template_data = $this->template_processor->loadTemplateRobust($template_id);
                 if ($existing_template_data && isset($existing_template_data['elements'])) {
