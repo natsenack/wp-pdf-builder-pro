@@ -336,12 +336,23 @@ class PDFPreviewAPI {
                 #pdf-preview-image {
                     max-width: 100% !important;
                     height: auto !important;
-                    border: 1px solid #ddd !important;
-                    border-radius: 4px !important;
+                    border: none !important;
+                    border-radius: 0 !important;
                     transition: transform 0.3s ease !important;
                     object-fit: contain !important;
                     display: block !important;
-                    margin: 0 auto !important;
+                    transform-origin: center center !important;
+                }
+
+                #pdf-preview-image-container {
+                    overflow: hidden !important;
+                    border: 1px solid #ddd !important;
+                    border-radius: 4px !important;
+                    max-height: 60vh !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    background: #f9f9f9 !important;
                 }
             `;
             document.head.appendChild(styleSheet);
@@ -390,15 +401,21 @@ class PDFPreviewAPI {
         actions.id = 'pdf-preview-actions';
         actions.style.cssText = 'margin-bottom: 10px;';
 
-        // Image container
+        // Image container avec overflow hidden
+        const imageContainer = document.createElement('div');
+        imageContainer.id = 'pdf-preview-image-container';
+        imageContainer.style.cssText = 'overflow: hidden; border: 1px solid #ddd; border-radius: 4px; max-height: 60vh; display: flex; align-items: center; justify-content: center;';
+
         const img = document.createElement('img');
         img.id = 'pdf-preview-image';
         img.alt = 'Aperçu PDF';
-        img.style.cssText = 'max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; object-fit: contain; display: block; margin: 0 auto;';
+        img.style.cssText = 'max-width: 100%; height: auto; object-fit: contain; display: block; transform-origin: center center; transition: transform 0.3s ease;';
+
+        imageContainer.appendChild(img);
 
         wrapper.appendChild(header);
         wrapper.appendChild(actions);
-        wrapper.appendChild(img);
+        wrapper.appendChild(imageContainer);
         modal.appendChild(wrapper);
 
         // Gestionnaire de fermeture
