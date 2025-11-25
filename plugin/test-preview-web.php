@@ -83,15 +83,7 @@ if (!current_user_can('manage_options')) {
                 </ul>
             </div>
 
-            <div class='test-section'>
-                <h3>📊 Template de test</h3>
-                <p>Utilise <strong>SampleDataProvider</strong> avec données statiques :</p>
-                <ul>
-                    <li>Texte : 'Test Jours 3-4 - Génération PDF avec DomPDF'</li>
-                    <li>Configuration : 'Configuration optimisée (DPI, compression, mémoire)'</li>
-                    <li>Données : 'Données statiques - Pas de variables dynamiques'</li>
-                </ul>
-            </div>
+        <button class='btn' onclick='testPreviewModal()'>🎨 Tester la Modal d'Aperçu</button>
         </div>
 
         <!-- Image Tests (Jours 5-7) -->
@@ -166,7 +158,34 @@ if (!current_user_can('manage_options')) {
             }
         }
 
-        async function runImageTest() {
+        async function testPreviewModal() {
+            const resultDiv = document.getElementById('pdf-test-result');
+            resultDiv.innerHTML = '<div class="status info">🎨 Test de la modal d\'aperçu...</div>';
+
+            try {
+                // Simuler un appel à l'API Preview pour tester la modal
+                if (window.pdfPreviewAPI) {
+                    // Créer des données de test fictives
+                    const testData = {
+                        templateId: 1,
+                        format: 'png',
+                        quality: 150,
+                        context: 'editor'
+                    };
+
+                    const result = await window.pdfPreviewAPI.generateEditorPreview(testData);
+                    if (result) {
+                        resultDiv.innerHTML = '<div class="status success">✅ Modal d\'aperçu fonctionnelle - Image générée et affichée</div>';
+                    } else {
+                        resultDiv.innerHTML = '<div class="status error">❌ Échec de génération d\'aperçu</div>';
+                    }
+                } else {
+                    resultDiv.innerHTML = '<div class="status error">❌ API Preview non disponible</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="status error">❌ Erreur test modal : ' + error.message + '</div>';
+            }
+        }
             const resultDiv = document.getElementById('image-test-result');
             resultDiv.innerHTML = '<div class="status info">🔄 Test Images en cours...</div>';
 
@@ -187,6 +206,35 @@ if (!current_user_can('manage_options')) {
 
             } catch (error) {
                 resultDiv.innerHTML = '<div class="status error">❌ Erreur réseau : ' + error.message + '</div>';
+            }
+        }
+
+        async function testPreviewModal() {
+            const resultDiv = document.getElementById('pdf-test-result');
+            resultDiv.innerHTML = '<div class="status info">🎨 Test de la modal d\'aperçu...</div>';
+
+            try {
+                // Simuler un appel à l'API Preview pour tester la modal
+                if (window.pdfPreviewAPI) {
+                    // Créer des données de test fictives
+                    const testData = {
+                        templateId: 1,
+                        format: 'png',
+                        quality: 150,
+                        context: 'editor'
+                    };
+
+                    const result = await window.pdfPreviewAPI.generateEditorPreview(testData);
+                    if (result) {
+                        resultDiv.innerHTML = '<div class="status success">✅ Modal d\'aperçu fonctionnelle - Image générée et affichée</div>';
+                    } else {
+                        resultDiv.innerHTML = '<div class="status error">❌ Échec de génération d\'aperçu</div>';
+                    }
+                } else {
+                    resultDiv.innerHTML = '<div class="status error">❌ API Preview non disponible</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="status error">❌ Erreur test modal : ' + error.message + '</div>';
             }
         }
     </script>
