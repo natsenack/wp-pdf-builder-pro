@@ -31,14 +31,14 @@ export function useAutoSave(): UseAutoSaveReturn {
     '';
 
   // Récupérer l'intervalle de sauvegarde auto depuis les settings
-  // Par défaut: 30 secondes si paramètre non défini
+  // Par défaut: 5 minutes si paramètre non défini
   const autoSaveIntervalSetting = (window.pdfBuilderCanvasSettings as { auto_save_interval?: number })?.auto_save_interval ||
     (window.pdfBuilderCanvasSettings as { autosave_interval?: number })?.autosave_interval ||
     window.pdfBuilderData?.auto_save_interval ||
     (window.pdfBuilderReactData as { auto_save_interval?: number })?.auto_save_interval ||
-    30; // 30 secondes par défaut
+    5; // 5 minutes par défaut
   
-  const autoSaveInterval = Math.max(10, autoSaveIntervalSetting) * 1000; // Convertir en ms, min 10s
+  const autoSaveInterval = Math.max(1, autoSaveIntervalSetting) * 60 * 1000; // Convertir minutes en ms, min 1 min
 
   // Vérifier si l'auto-save est activé dans les settings
   // Doit être explicitement TRUE pour être activé

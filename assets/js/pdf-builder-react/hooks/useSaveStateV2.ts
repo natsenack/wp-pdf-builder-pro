@@ -41,7 +41,7 @@ export function useSaveStateV2({
   templateId,
   elements,
   nonce,
-  autoSaveInterval = 30000, // 30 secondes par défaut (au lieu de désactivé)
+  autoSaveInterval = 300000, // 5 minutes par défaut (300000 ms)
   onSaveStart,
   onSaveSuccess,
   onSaveError

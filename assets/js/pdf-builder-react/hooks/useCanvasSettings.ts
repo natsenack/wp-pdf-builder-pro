@@ -273,7 +273,7 @@ export const getDefaultCanvasSettings = () => ({
     limit_fps: true,
     max_fps: 60,
     auto_save_enabled: true,
-    auto_save_interval: 30,
+    auto_save_interval: 5, // 5 minutes par défaut (comme PHP)
     auto_save_versions: 10,
     undo_levels: 50,
     redo_levels: 50,
