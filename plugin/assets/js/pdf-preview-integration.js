@@ -789,19 +789,29 @@ window.updateDimensionsCardPreview = function() {
     const dpi = window.pdfBuilderCanvasSettings?.default_canvas_dpi || 96;
     const orientation = window.pdfBuilderCanvasSettings?.default_canvas_orientation || 'portrait';
 
-    if (!window.pdfBuilderCanvasSettings?.getDimensionsFromFormat) {
-        console.error('PDF_BUILDER_DEBUG: getDimensionsFromFormat function not available');
-        return;
+    // Get paper dimensions in mm
+    const paperFormats = window.pdfBuilderPaperFormats || {
+        'A4': { width: 210, height: 297 },
+        'A3': { width: 297, height: 420 },
+        'A5': { width: 148, height: 210 },
+        'Letter': { width: 215.9, height: 279.4 },
+        'Legal': { width: 215.9, height: 355.6 },
+        'Tabloid': { width: 279.4, height: 431.8 }
+    };
+
+    const dimsMM = paperFormats[format] || paperFormats['A4'];
+    let widthMm = dimsMM.width;
+    let heightMm = dimsMM.height;
+
+    // Swap if landscape
+    if (orientation === 'landscape') {
+        [widthMm, heightMm] = [heightMm, widthMm];
     }
 
-    // Calculate dimensions in mm first
-    const mmDimensions = window.pdfBuilderCanvasSettings.getDimensionsFromFormat(format, orientation);
-    const widthMm = mmDimensions.width;
-    const heightMm = mmDimensions.height;
-
-    // Convert to pixels
-    const widthPx = Math.round((widthMm / 25.4) * dpi);
-    const heightPx = Math.round((heightMm / 25.4) * dpi);
+    // Convert to pixels with current DPI
+    const pixelsPerMM = dpi / 25.4;
+    const widthPx = Math.round(widthMm * pixelsPerMM);
+    const heightPx = Math.round(heightMm * pixelsPerMM);
 
     // Mettre à jour les valeurs dans la carte dimensions
     const widthElement = document.getElementById('card-canvas-width');
