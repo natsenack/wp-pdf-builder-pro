@@ -101,7 +101,7 @@
                 </section>
             </form>
 
-            <script>
+            <script type="text/plain">
             function toggleAdvancedSection() {
                 const section = document.getElementById('advanced-section');
                 const toggle = document.getElementById('advanced-toggle');

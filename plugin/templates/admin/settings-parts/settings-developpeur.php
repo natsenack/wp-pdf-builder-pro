@@ -651,7 +651,7 @@
 
          </form>
 
-<script>
+<script type="text/plain">
 // Monitoring des performances
 document.addEventListener('DOMContentLoaded', function() {
     // Bouton Test FPS
