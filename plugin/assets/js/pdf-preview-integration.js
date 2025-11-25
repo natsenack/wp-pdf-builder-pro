@@ -1098,7 +1098,8 @@ window.CanvasPreviewManager = {
         if (input) {
             return input.type === 'number' ? parseInt(input.value) : input.value;
         }
-        return window.pdfBuilderCanvasSettings?.[settingKey] || defaultValue;
+        // Priorité aux settings sauvegardés, puis valeur par défaut
+        return window.pdfBuilderCanvasSettings?.[settingKey] !== undefined ? window.pdfBuilderCanvasSettings[settingKey] : defaultValue;
     },
 
     /**
