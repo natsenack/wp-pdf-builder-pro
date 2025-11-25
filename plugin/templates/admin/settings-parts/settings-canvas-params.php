@@ -1,13 +1,11 @@
-﻿<?php
+<?php
 /**
  * Paramètres canvas pour JavaScript
  * Définit les paramètres canvas globalement avant le chargement du JS
  */
 
 // Assurer que les constantes sont chargées
-if (!defined('\PDF_Builder\PAPER_FORMATS')) {
-    require_once plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'core/Conventions.php';
-}
+require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/core/Conventions.php';
 
 // Récupérer les paramètres canvas depuis les options séparées (synchronisées)
 $canvas_settings_js = [

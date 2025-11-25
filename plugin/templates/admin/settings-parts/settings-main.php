@@ -1,4 +1,4 @@
-﻿<?php
+?php
 /**
  * PDF Builder Pro - Main Settings Logic
  * Core settings processing and HTML structure
