@@ -748,9 +748,8 @@ function pdf_builder_save_settings_ajax() {
 
             // Sauvegarder les paramètres templates
             $settings = array(
-                'template_library' => isset($_POST['template_library']) ? '1' : '0',
-                'custom_templates' => isset($_POST['custom_templates']) ? '1' : '0',
-                'template_sharing' => isset($_POST['template_sharing']) ? '1' : '0',
+                'template_library_enabled' => isset($_POST['template_library_enabled']) ? '1' : '0',
+                'default_template' => sanitize_text_field($_POST['default_template'] ?? 'blank'),
             );
 
             foreach ($settings as $key => $value) {
