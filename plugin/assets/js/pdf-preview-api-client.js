@@ -4,29 +4,11 @@
  * Intégration complète de l'API Preview 1.4
  */
 
-// Fonctions de debug conditionnel
-function isDebugEnabled() {
-    // Debug activé seulement si explicitement forcé
-    return window.location.search.includes('debug=force');
-}
-
-function debugLog(...args) {
-    if (isDebugEnabled()) {
-
-    }
-}
-
-function debugError(...args) {
-    if (isDebugEnabled()) {
-
-    }
-}
-
-function debugWarn(...args) {
-    if (isDebugEnabled()) {
-
-    }
-}
+// Fonctions de debug conditionnel - DÉSACTIVÉES pour performance
+function isDebugEnabled() { return false; }
+function debugLog(...args) { }
+function debugError(...args) { }
+function debugWarn(...args) { }
 
 class PDFPreviewAPI {
     constructor() {
@@ -45,7 +27,6 @@ class PDFPreviewAPI {
         this.canDrag = false; // Flag pour savoir si le drag est autorisé
         this.containerRect = null; // Cache des dimensions du conteneur
         this.animationFrameId = null; // Pour optimiser les transformations
-        this.dragStartTime = 0; // Pour mesurer la performance
         this.maxPanX = 0; // Limites pré-calculées
         this.maxPanY = 0; // Limites pré-calculées
         this.needsConstrain = false; // Flag pour les contraintes
@@ -72,7 +53,7 @@ class PDFPreviewAPI {
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
-            debugLog('📤 Envoi requête preview éditeur...');
+            
 
             const response = await fetch(this.endpoint, {
                 method: 'POST',
@@ -82,7 +63,7 @@ class PDFPreviewAPI {
             const result = await response.json();
 
             if (result.success) {
-                debugLog('✅ Aperçu éditeur généré:', result.data);
+                
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'editor');
                 return result.data;
@@ -123,7 +104,7 @@ class PDFPreviewAPI {
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
-            debugLog('📤 Envoi requête preview commande...', orderId);
+            
 
             const response = await fetch(this.endpoint, {
                 method: 'POST',
@@ -133,7 +114,7 @@ class PDFPreviewAPI {
             const result = await response.json();
 
             if (result.success) {
-                debugLog('✅ Aperçu commande généré:', result.data);
+                
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'metabox', orderId);
                 return result.data;
@@ -236,7 +217,7 @@ class PDFPreviewAPI {
         // Afficher la modal en togglant la classe
         previewModal.classList.add('visible');
 
-        debugLog('🖼️ Aperçu affiché:', imageUrl);
+        
     }
 
     /**
@@ -464,11 +445,8 @@ class PDFPreviewAPI {
         const scale = this.currentZoom / 100;
         const rotation = this.currentRotation;
 
-        // Transformation CSS optimisée avec concaténation (plus rapide que template literals)
-        const transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ') rotate(' + rotation + 'deg)';
-
-        // Appliquer directement (pas de vérifications inutiles)
-        img.style.transform = transform;
+        // Template literals optimisés pour les navigateurs modernes
+        img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale}) rotate(${rotation}deg)`;
         img.style.transformOrigin = 'center center';
     }
 
@@ -681,7 +659,6 @@ class PDFPreviewAPI {
         this.isDragging = true;
         this.lastMouseX = e.clientX;
         this.lastMouseY = e.clientY;
-        this.dragStartTime = performance.now();
         this.needsConstrain = false; // Reset le flag
         img.style.cursor = 'grabbing';
     }
@@ -740,32 +717,7 @@ class PDFPreviewAPI {
         if (this.isDragging) {
             this.isDragging = false;
             img.style.cursor = this.currentZoom > 100 ? 'grab' : 'default';
-
-            // Mesurer et logger la performance du drag
-            const dragDuration = performance.now() - this.dragStartTime;
-            if (dragDuration > 100) { // Seulement pour les drags significatifs
-                debugLog(`⏱️ Drag terminé en ${dragDuration.toFixed(1)}ms`);
-            }
-
-            // Mesure détaillée des performances pour le debugging
-            this.measureDragPerformance();
         }
-    }
-
-    /**
-     * Mesure les performances du drag/pan pour le debugging
-     */
-    measureDragPerformance() {
-        if (!this.dragStartTime) return;
-
-        const duration = performance.now() - this.dragStartTime;
-        const fps = 1000 / duration;
-
-        // Log détaillé des performances
-        console.log(`[PDF Preview] Drag performance: ${duration.toFixed(2)}ms (${fps.toFixed(1)}fps)`);
-
-        // Reset pour la prochaine mesure
-        this.dragStartTime = null;
     }
 
     /**
@@ -843,7 +795,7 @@ class PDFPreviewAPI {
         link.click();
         document.body.removeChild(link);
 
-        debugLog('📥 Téléchargement démarré:', imageUrl);
+        
     }
 
     /**
@@ -871,7 +823,7 @@ class PDFPreviewAPI {
         ');
         printWindow.document.close();
 
-        debugLog('🖨️ Impression démarrée');
+        
     }
 
     /**
@@ -924,8 +876,8 @@ window.generateOrderPreview = (templateData, orderId, options) => {
     return window.pdfPreviewAPI.generateOrderPreview(templateData, orderId, options);
 };
 
-debugLog('🎯 API Preview 1.4 initialisée et prête à l\'emploi !');
-debugLog('📖 Utilisation:');
+
+
 debugLog('   - generateEditorPreview(templateData)');
 debugLog('   - generateOrderPreview(templateData, orderId)');
 
