@@ -58,7 +58,7 @@ if (!current_user_can('manage_options')) {
     <script>
         var pdfBuilderAjax = {
             ajaxurl: '<?php echo admin_url('admin-ajax.php'); ?>',
-            nonce: '<?php echo wp_create_nonce('wp_pdf_preview_nonce'); ?>'
+            nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
         };
     </script>
 
