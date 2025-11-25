@@ -629,40 +629,49 @@ class PDFMetaboxPreviewIntegration {
  * Met à jour la prévisualisation de la carte performance
  */
 window.updatePerformanceCardPreview = function() {
-    const values = window.CanvasPreviewManager.getCardValues('performance');
-    const { fps_target: fps, memory_limit_js: memoryJs, lazy_loading_editor: lazyLoading } = values;
+    console.log('updatePerformanceCardPreview called');
+    try {
+        const values = window.CanvasPreviewManager.getCardValues('performance');
+        console.log('updatePerformanceCardPreview - values:', values);
+        const { fps_target: fps, memory_limit_js: memoryJs, lazy_loading_editor: lazyLoading } = values;
 
-    // Fonction helper pour déterminer le statut
-    const getStatus = (value, thresholds) => {
-        if (value >= thresholds.good) return { text: '🟢 Bon', color: '#28a745' };
-        if (value >= thresholds.medium) return { text: '🟡 Moyen', color: '#ffc107' };
-        return { text: '🔴 Faible', color: '#dc3545' };
-    };
+        // Fonction helper pour déterminer le statut
+        const getStatus = (value, thresholds) => {
+            if (value >= thresholds.good) return { text: '🟢 Bon', color: '#28a745' };
+            if (value >= thresholds.medium) return { text: '🟡 Moyen', color: '#ffc107' };
+            return { text: '🔴 Faible', color: '#dc3545' };
+        };
 
-    // Mettre à jour les métriques
-    const metricValues = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-value');
-    if (metricValues.length >= 3) {
-        // FPS
-        const fpsStatus = getStatus(fps, { good: 30, medium: 15 });
-        metricValues[0].innerHTML = `${fps}<br><small>${fpsStatus.text}</small>`;
+        // Mettre à jour les métriques
+        const metricValues = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-value');
+        if (metricValues.length >= 3) {
+            // FPS
+            const fpsStatus = getStatus(fps, { good: 30, medium: 15 });
+            metricValues[0].innerHTML = `${fps}<br><small>${fpsStatus.text}</small>`;
 
-        // RAM JS
-        const memoryStatus = getStatus(memoryJs, { good: 128, medium: 64 });
-        metricValues[1].innerHTML = `${memoryJs}MB<br><small>${memoryStatus.text}</small>`;
+            // RAM JS
+            const memoryStatus = getStatus(memoryJs, { good: 128, medium: 64 });
+            metricValues[1].innerHTML = `${memoryJs}MB<br><small>${memoryStatus.text}</small>`;
 
-        // RAM PHP - valeur fixe
-        metricValues[2].innerHTML = `256MB<br><small>🟢 Bon</small>`;
-    }
+            // RAM PHP - valeur fixe
+            metricValues[2].innerHTML = `256MB<br><small>🟢 Bon</small>`;
+        }
 
-    // Mettre à jour l'indicateur de statut
-    const statusIndicator = window.CanvasPreviewManager.getCardElement('performance', '.status-indicator');
-    if (statusIndicator) {
-        const statusText = lazyLoading ? 'Lazy Loading Activé' : 'Lazy Loading Désactivé';
-        const statusDot = statusIndicator.querySelector('.status-dot');
-        const statusTextEl = statusIndicator.querySelector('.status-text');
+        // Mettre à jour l'indicateur de statut
+        const statusIndicator = window.CanvasPreviewManager.getCardElement('performance', '.status-indicator');
+        if (statusIndicator) {
+            const statusText = lazyLoading ? 'Lazy Loading Activé' : 'Lazy Loading Désactivé';
+            const statusDot = statusIndicator.querySelector('.status-dot');
+            const statusTextEl = statusIndicator.querySelector('.status-text');
 
-        window.CanvasPreviewManager.updateElement(statusDot, 'style.backgroundColor', lazyLoading ? '#28a745' : '#dc3545');
-        window.CanvasPreviewManager.updateElement(statusTextEl, 'textContent', statusText);
+            window.CanvasPreviewManager.updateElement(statusDot, 'style.backgroundColor', lazyLoading ? '#28a745' : '#dc3545');
+            window.CanvasPreviewManager.updateElement(statusTextEl, 'textContent', statusText);
+        }
+        
+        console.log('updatePerformanceCardPreview completed successfully');
+    } catch (error) {
+        console.error('Error in updatePerformanceCardPreview:', error);
+        throw error; // Re-throw to be caught by updatePreviews
     }
 };
 
@@ -670,15 +679,24 @@ window.updatePerformanceCardPreview = function() {
  * Met à jour la prévisualisation de la carte apparence
  */
 window.updateApparenceCardPreview = function() {
-    const values = window.CanvasPreviewManager.getCardValues('apparence');
-    const { canvas_background_color: bgColor, border_color: borderColor, border_width: borderWidth } = values;
+    console.log('updateApparenceCardPreview called');
+    try {
+        const values = window.CanvasPreviewManager.getCardValues('apparence');
+        console.log('updateApparenceCardPreview - values:', values);
+        const { canvas_background_color: bgColor, border_color: borderColor, border_width: borderWidth } = values;
 
-    // Mettre à jour les previews de couleur
-    const bgPreview = window.CanvasPreviewManager.getCardElement('apparence', '.color-preview.bg');
-    const borderPreview = window.CanvasPreviewManager.getCardElement('apparence', '.color-preview.border');
+        // Mettre à jour les previews de couleur
+        const bgPreview = window.CanvasPreviewManager.getCardElement('apparence', '.color-preview.bg');
+        const borderPreview = window.CanvasPreviewManager.getCardElement('apparence', '.color-preview.border');
 
-    window.CanvasPreviewManager.updateElement(bgPreview, 'style.backgroundColor', bgColor);
-    window.CanvasPreviewManager.updateElement(borderPreview, 'style.border', `${borderWidth}px solid ${borderColor}`);
+        window.CanvasPreviewManager.updateElement(bgPreview, 'style.backgroundColor', bgColor);
+        window.CanvasPreviewManager.updateElement(borderPreview, 'style.border', `${borderWidth}px solid ${borderColor}`);
+        
+        console.log('updateApparenceCardPreview completed successfully');
+    } catch (error) {
+        console.error('Error in updateApparenceCardPreview:', error);
+        throw error; // Re-throw to be caught by updatePreviews
+    }
 };
 
 /**
@@ -1049,13 +1067,27 @@ window.CanvasPreviewManager = {
      * Met à jour toutes les previews ou une catégorie spécifique
      */
     updatePreviews: function(category = 'all') {
+        console.log('CanvasPreviewManager.updatePreviews called with category:', category);
         PDFBuilderLogger.debug('CanvasPreviewManager.updatePreviews called with category:', category);
 
         Object.keys(this.cardConfigs).forEach(cardCategory => {
             if (category === 'all' || category === cardCategory) {
                 const config = this.cardConfigs[cardCategory];
                 if (typeof window[config.updateFunction] === 'function') {
-                    window[config.updateFunction]();
+                    try {
+                        console.log('Calling update function:', config.updateFunction, 'for category:', cardCategory);
+                        PDFBuilderLogger.debug('Calling update function:', config.updateFunction);
+                        window[config.updateFunction]();
+                        console.log('Update function completed successfully:', config.updateFunction);
+                        PDFBuilderLogger.debug('Update function completed:', config.updateFunction);
+                    } catch (error) {
+                        console.error('Error in update function:', config.updateFunction, 'Error:', error);
+                        PDFBuilderLogger.error('Error in update function:', config.updateFunction, error);
+                        // Continue with other functions instead of stopping
+                    }
+                } else {
+                    console.warn('Update function not found:', config.updateFunction);
+                    PDFBuilderLogger.warn('Update function not found:', config.updateFunction);
                 }
             }
         });
@@ -1107,41 +1139,50 @@ window.CanvasPreviewManager = {
  * Met à jour la prévisualisation de la carte dimensions
  */
 window.updateDimensionsCardPreview = function() {
-    const values = window.CanvasPreviewManager.getCardValues('dimensions');
-    const { default_canvas_format: format, default_canvas_dpi: dpi, default_canvas_orientation: orientation } = values;
+    console.log('updateDimensionsCardPreview called');
+    try {
+        const values = window.CanvasPreviewManager.getCardValues('dimensions');
+        console.log('updateDimensionsCardPreview - values:', values);
+        const { default_canvas_format: format, default_canvas_dpi: dpi, default_canvas_orientation: orientation } = values;
 
-    // Get paper dimensions in mm
-    const paperFormats = window.pdfBuilderPaperFormats || {
-        'A4': { width: 210, height: 297 },
-        'A3': { width: 297, height: 420 },
-        'A5': { width: 148, height: 210 },
-        'Letter': { width: 215.9, height: 279.4 },
-        'Legal': { width: 215.9, height: 355.6 },
-        'Tabloid': { width: 279.4, height: 431.8 }
-    };
+        // Get paper dimensions in mm
+        const paperFormats = window.pdfBuilderPaperFormats || {
+            'A4': { width: 210, height: 297 },
+            'A3': { width: 297, height: 420 },
+            'A5': { width: 148, height: 210 },
+            'Letter': { width: 215.9, height: 279.4 },
+            'Legal': { width: 215.9, height: 355.6 },
+            'Tabloid': { width: 279.4, height: 431.8 }
+        };
 
-    const dimsMM = paperFormats[format] || paperFormats['A4'];
-    let widthMm = dimsMM.width;
-    let heightMm = dimsMM.height;
+        const dimsMM = paperFormats[format] || paperFormats['A4'];
+        let widthMm = dimsMM.width;
+        let heightMm = dimsMM.height;
 
-    // Swap if landscape
-    if (orientation === 'landscape') {
-        [widthMm, heightMm] = [heightMm, widthMm];
+        // Swap if landscape
+        if (orientation === 'landscape') {
+            [widthMm, heightMm] = [heightMm, widthMm];
+        }
+
+        // Convert to pixels with current DPI
+        const pixelsPerMM = dpi / 25.4;
+        const widthPx = Math.round(widthMm * pixelsPerMM);
+        const heightPx = Math.round(heightMm * pixelsPerMM);
+
+        // Mettre à jour les valeurs dans la carte dimensions
+        const widthElement = window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-width');
+        const heightElement = window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-height');
+        const dpiElement = window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-dpi');
+
+        window.CanvasPreviewManager.updateElement(widthElement, 'textContent', widthPx);
+        window.CanvasPreviewManager.updateElement(heightElement, 'textContent', heightPx);
+        window.CanvasPreviewManager.updateElement(dpiElement, 'textContent', `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`);
+        
+        console.log('updateDimensionsCardPreview completed successfully');
+    } catch (error) {
+        console.error('Error in updateDimensionsCardPreview:', error);
+        throw error; // Re-throw to be caught by updatePreviews
     }
-
-    // Convert to pixels with current DPI
-    const pixelsPerMM = dpi / 25.4;
-    const widthPx = Math.round(widthMm * pixelsPerMM);
-    const heightPx = Math.round(heightMm * pixelsPerMM);
-
-    // Mettre à jour les valeurs dans la carte dimensions
-    const widthElement = window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-width');
-    const heightElement = window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-height');
-    const dpiElement = window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-dpi');
-
-    window.CanvasPreviewManager.updateElement(widthElement, 'textContent', widthPx);
-    window.CanvasPreviewManager.updateElement(heightElement, 'textContent', heightPx);
-    window.CanvasPreviewManager.updateElement(dpiElement, 'textContent', `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`);
 };
 
 /**

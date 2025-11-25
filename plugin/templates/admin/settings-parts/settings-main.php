@@ -2230,10 +2230,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Utiliser le système centralisé CanvasPreviewManager si disponible
         if (window.CanvasPreviewManager && typeof window.CanvasPreviewManager.updatePreviews === 'function') {
-            window.CanvasPreviewManager.updatePreviews(category);
+            console.log('Using CanvasPreviewManager.updatePreviews for category:', category);
+            try {
+                window.CanvasPreviewManager.updatePreviews(category);
+                console.log('CanvasPreviewManager.updatePreviews completed successfully');
+            } catch (error) {
+                console.error('Error in CanvasPreviewManager.updatePreviews:', error);
+            }
             return;
         }
 
+        console.log('CanvasPreviewManager not available, using fallback logic');
         // Fallback vers l'ancienne logique si CanvasPreviewManager n'est pas disponible
         if (typeof window.updateDimensionsCardPreview === 'function') {
             window.updateDimensionsCardPreview();
