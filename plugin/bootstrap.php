@@ -697,8 +697,8 @@ function pdf_builder_load_bootstrap()
     
     // Utiliser la classe alias qui garantit la disponibilité
     if (class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
-        // Ne pas instancier ici - laisser le système normal gérer l'initialisation
-        // La classe sera disponible quand nécessaire
+        // Instancier explicitement pour s'assurer que les hooks AJAX sont enregistrés
+        PDF_Builder_Onboarding_Manager_Alias::get_instance();
     } elseif (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
         \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
     }

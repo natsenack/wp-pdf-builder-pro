@@ -1424,7 +1424,7 @@ class PDF_Builder_Onboarding_Manager {
      */
     public function ajax_autosave_template() {
         // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_canvas_nonce')) {
+        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
             wp_send_json_error('Nonce invalide');
         }
 
