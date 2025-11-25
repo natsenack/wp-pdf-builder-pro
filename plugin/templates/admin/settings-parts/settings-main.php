@@ -469,7 +469,7 @@ if (
 </style>
 
 
-<script type="text/plain">
+<script>
 // Update zoom card preview
 window.updateZoomCardPreview = function() {
     // Try to get values from modal inputs first (real-time), then from settings
