@@ -863,8 +863,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Erreur de connexion lors de la sauvegarde');
             });
         });
-    } else {
-        
     }
 
     // Initialize zoom card preview with real values
@@ -880,7 +878,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Canvas configuration modals functionality - Version stable
-(function() {
+{
     'use strict';
 
     // Configuration
@@ -2201,10 +2199,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
-        });
-    }
-
-    // Real-time preview updates for apparence modal
+    });
     function initializeApparenceRealTimePreview() {
         // Listen for changes in apparence modal fields
         document.addEventListener('change', function(event) {
@@ -2440,4 +2435,4 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
     });
-    }</script>
+}</script>
