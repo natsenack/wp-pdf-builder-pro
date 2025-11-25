@@ -1081,6 +1081,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function initializeModalEventListeners(modal) {
+        if (!modal) return;
+
+        const category = modal.getAttribute('data-category');
+        pdfBuilderDebug('Initializing event listeners for modal category:', category);
+
+        // Remove existing listeners to prevent duplicates
+        const inputs = modal.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.removeEventListener('input', handleInputChange);
+            input.removeEventListener('change', handleInputChange);
+        });
+
+        // Add real-time update listeners
+        inputs.forEach(input => {
+            input.addEventListener('input', handleInputChange);
+            input.addEventListener('change', handleInputChange);
+        });
+
+        function handleInputChange(event) {
+            const input = event.target;
+            const inputId = input.id;
+            pdfBuilderDebug('Input changed:', inputId, 'Value:', input.value);
+
+            // Update previews based on input type
+            if (category === 'dimensions' || inputId === 'canvas_format' || inputId === 'canvas_dpi' || inputId === 'canvas_orientation') {
+                if (typeof window.updateDimensionsCardPreview === 'function') {
+                    window.updateDimensionsCardPreview();
+                }
+            }
+
+            if (category === 'zoom' || inputId === 'canvas_zoom') {
+                if (typeof window.updateZoomCardPreview === 'function') {
+                    window.updateZoomCardPreview();
+                }
+            }
+
+            if (category === 'autosave' || inputId === 'canvas_autosave') {
+                if (typeof window.updateAutosaveCardPreview === 'function') {
+                    window.updateAutosaveCardPreview();
+                }
+            }
+        }
+    }
+
     function initializeModals() {
         if (isInitialized) return;
 
