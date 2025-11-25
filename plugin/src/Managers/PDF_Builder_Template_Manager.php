@@ -358,6 +358,7 @@ class PdfBuilderTemplateManager
                         id mediumint(9) NOT NULL AUTO_INCREMENT,
                         name varchar(255) NOT NULL,
                         template_data longtext NOT NULL,
+                        thumbnail_url varchar(500) DEFAULT '',
                         user_id bigint(20) unsigned NOT NULL DEFAULT 0,
                         is_default tinyint(1) NOT NULL DEFAULT 0,
                         created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -396,6 +397,18 @@ class PdfBuilderTemplateManager
 
                     if ($result === false) {
                         throw new \Exception('Erreur de mise à jour dans la table personnalisée: ' . $wpdb->last_error);
+                    }
+                    
+                    // Générer le thumbnail du template
+                    $thumbnail_url = $this->generateTemplateThumbnail($template_id, $saved_decoded);
+                    if ($thumbnail_url) {
+                        $wpdb->update(
+                            $table_templates,
+                            array('thumbnail_url' => $thumbnail_url),
+                            array('id' => $template_id),
+                            array('%s'),
+                            array('%d')
+                        );
                     }
                     
                     // ✅ CRITICAL: Log what was actually saved - especially order_number elements
@@ -1004,5 +1017,76 @@ class PdfBuilderTemplateManager
         }
 
         return $errors;
+    }
+
+    /**
+     * Génère un thumbnail pour le template
+     */
+    private function generateTemplateThumbnail($template_id, $template_data)
+    {
+        try {
+            // Utiliser le PreviewGenerator pour créer un aperçu
+            $preview_generator = new \PDF_Builder\Managers\PdfBuilderPreviewGenerator($template_data, 'thumbnail', 0);
+            $preview_url = $preview_generator->generatePreview();
+            
+            if ($preview_url) {
+                // Convertir le PDF en image thumbnail
+                $thumbnail_url = $this->convertPdfToThumbnail($preview_url, $template_id);
+                return $thumbnail_url;
+            }
+        } catch (\Exception $e) {
+            // Log l'erreur mais ne pas échouer la sauvegarde
+            $debugLog = function($message) {
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('PDF_BUILDER_DEBUG: ' . $message);
+                }
+            };
+            $debugLog('Erreur génération thumbnail template ' . $template_id . ': ' . $e->getMessage());
+        }
+        
+        return false;
+    }
+
+    /**
+     * Convertit un PDF en thumbnail PNG
+     */
+    private function convertPdfToThumbnail($pdf_url, $template_id)
+    {
+        try {
+            // Pour l'instant, retourner une URL placeholder
+            // TODO: Implémenter la conversion PDF vers PNG avec ImageMagick ou GD
+            $upload_dir = wp_upload_dir();
+            $thumbnail_dir = $upload_dir['basedir'] . '/pdf-builder-thumbnails/';
+            
+            if (!file_exists($thumbnail_dir)) {
+                wp_mkdir_p($thumbnail_dir);
+            }
+            
+            $thumbnail_filename = 'template-' . $template_id . '-thumb.png';
+            $thumbnail_path = $thumbnail_dir . $thumbnail_filename;
+            
+            // Créer un thumbnail placeholder simple (rectangle coloré avec le nom du template)
+            $image = imagecreatetruecolor(300, 200);
+            $bg_color = imagecolorallocate($image, 240, 240, 240);
+            $text_color = imagecolorallocate($image, 100, 100, 100);
+            
+            imagefill($image, 0, 0, $bg_color);
+            imagestring($image, 5, 20, 80, 'Template ' . $template_id, $text_color);
+            
+            imagepng($image, $thumbnail_path);
+            imagedestroy($image);
+            
+            $relative_path = str_replace($upload_dir['basedir'], '', $thumbnail_path);
+            return $upload_dir['baseurl'] . $relative_path;
+            
+        } catch (\Exception $e) {
+            $debugLog = function($message) {
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('PDF_BUILDER_DEBUG: ' . $message);
+                }
+            };
+            $debugLog('Erreur conversion PDF vers thumbnail: ' . $e->getMessage());
+            return false;
+        }
     }
 }

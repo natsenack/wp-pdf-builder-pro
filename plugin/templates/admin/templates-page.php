@@ -150,7 +150,7 @@ var pdfBuilderAjax = {
             // Récupérer tous les templates pour debug
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $templates = $wpdb->get_results("SELECT id, name, created_at, updated_at, is_default, template_data FROM $table_templates ORDER BY id", ARRAY_A);
+            $templates = $wpdb->get_results("SELECT id, name, thumbnail_url, created_at, updated_at, is_default, template_data FROM $table_templates ORDER BY id", ARRAY_A);
 
             if (!empty($templates)) {
                 echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">';
@@ -158,6 +158,7 @@ var pdfBuilderAjax = {
                 foreach ($templates as $template) {
                     $template_id = $template['id'];
                     $template_name = esc_html($template['name']);
+                    $thumbnail_url = isset($template['thumbnail_url']) ? $template['thumbnail_url'] : '';
                     $created_at = isset($template['created_at']) ? $template['created_at'] : null;
                     $updated_at = isset($template['updated_at']) ? $template['updated_at'] : null;
                     $is_default = isset($template['is_default']) ? (bool)$template['is_default'] : false;
@@ -235,7 +236,13 @@ var pdfBuilderAjax = {
                     echo '</div>';
 
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
-                    echo '<div style="font-size: 3rem; margin-bottom: 10px;">' . $icon . '</div>';
+                    if (!empty($thumbnail_url)) {
+                        echo '<div style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa;">';
+                        echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_attr($template_name) . '" style="width: 100%; height: 100%; object-fit: cover;" />';
+                        echo '</div>';
+                    } else {
+                        echo '<div style="font-size: 3rem; margin-bottom: 10px;">' . $icon . '</div>';
+                    }
                     echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
                     echo '<p style="color: #666; margin: 5px 0;">' . $description . '</p>';
                     echo '</div>';
