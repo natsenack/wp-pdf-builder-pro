@@ -45,6 +45,8 @@ class PDFPreviewAPI {
         this.canDrag = false; // Flag pour savoir si le drag est autorisé
         this.containerRect = null; // Cache des dimensions du conteneur
         this.animationFrameId = null; // Pour optimiser les transformations
+        this.lastConstrainTime = 0; // Pour throttler constrainPan
+        this.dragStartTime = 0; // Pour mesurer la performance
     }
 
     /**
@@ -454,7 +456,20 @@ class PDFPreviewAPI {
      * Met à jour la transformation de l'image
      */
     updateImageTransform(img) {
-        img.style.transform = 'translate(' + this.currentPanX + 'px, ' + this.currentPanY + 'px) scale(' + (this.currentZoom / 100) + ') rotate(' + this.currentRotation + 'deg)';
+        // Variables locales pour la performance
+        const panX = this.currentPanX;
+        const panY = this.currentPanY;
+        const scale = this.currentZoom / 100;
+        const rotation = this.currentRotation;
+
+        // Utiliser template literal pour la performance
+        img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale}) rotate(${rotation}deg)`;
+        img.style.transformOrigin = 'center center';
+
+        // Optimisation CSS pour les performances de transformation
+        if (!img.style.willChange) {
+            img.style.willChange = 'transform';
+        }
     }
 
     /**
@@ -650,7 +665,6 @@ class PDFPreviewAPI {
         this.canDrag = this.currentZoom > 100; // STRICTEMENT > 100%
 
         if (!this.canDrag) {
-            debugLog('🚫 Drag impossible: zoom ≤ 100%');
             return;
         }
 
@@ -658,40 +672,45 @@ class PDFPreviewAPI {
         this.isDragging = true;
         this.lastMouseX = e.clientX;
         this.lastMouseY = e.clientY;
+        this.dragStartTime = performance.now();
         img.style.cursor = 'grabbing';
-
-        debugLog('🖱️ Drag commencé:', { x: e.clientX, y: e.clientY, zoom: this.currentZoom });
     }    /**
      * Gestionnaire mousemove
      */
     handleMouseMove(e, img) {
         if (!this.isDragging || !this.canDrag) return;
 
-        const deltaX = e.clientX - this.lastMouseX;
-        const deltaY = e.clientY - this.lastMouseY;
+        // Utiliser des variables locales pour la performance
+        const clientX = e.clientX;
+        const clientY = e.clientY;
+        const deltaX = clientX - this.lastMouseX;
+        const deltaY = clientY - this.lastMouseY;
 
+        // Accumuler le pan sans contraintes pour la fluidité
         this.currentPanX += deltaX;
         this.currentPanY += deltaY;
 
-        // Limiter le pan pour éviter que l'image sorte complètement
-        this.constrainPan(img);
+        // Throttler les contraintes (max 60fps / ~16ms)
+        const now = performance.now();
+        const shouldConstrain = (now - this.lastConstrainTime) > 16;
+
+        if (shouldConstrain) {
+            this.constrainPan(img);
+            this.lastConstrainTime = now;
+        }
 
         // Utiliser requestAnimationFrame pour des transformations fluides
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
         }
+
         this.animationFrameId = requestAnimationFrame(() => {
             this.updateImageTransform(img);
             this.animationFrameId = null;
         });
 
-        this.lastMouseX = e.clientX;
-        this.lastMouseY = e.clientY;
-
-        // Log moins fréquent pour éviter de ralentir
-        if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-            debugLog('🖱️ Drag en cours:', { deltaX, deltaY, panX: this.currentPanX, panY: this.currentPanY });
-        }
+        this.lastMouseX = clientX;
+        this.lastMouseY = clientY;
     }
 
     /**
@@ -701,7 +720,12 @@ class PDFPreviewAPI {
         if (this.isDragging) {
             this.isDragging = false;
             img.style.cursor = this.currentZoom > 100 ? 'grab' : 'default';
-            debugLog('🖱️ Drag terminé');
+
+            // Mesurer et logger la performance du drag
+            const dragDuration = performance.now() - this.dragStartTime;
+            if (dragDuration > 100) { // Seulement pour les drags significatifs
+                debugLog(`⏱️ Drag terminé en ${dragDuration.toFixed(1)}ms`);
+            }
         }
     }
 
@@ -733,35 +757,33 @@ class PDFPreviewAPI {
     constrainPan(img) {
         if (!this.containerRect) return;
 
-        // Utiliser les dimensions naturelles de l'image pour les calculs
+        // Variables locales pour la performance
         const naturalWidth = img.naturalWidth;
         const naturalHeight = img.naturalHeight;
+        const scale = this.currentZoom / 100;
+        const containerWidth = this.containerRect.width;
+        const containerHeight = this.containerRect.height;
 
         // Calculer les dimensions après zoom
-        const scale = this.currentZoom / 100;
         const scaledWidth = naturalWidth * scale;
         const scaledHeight = naturalHeight * scale;
 
         // Calculer les limites de pan (l'image doit rester visible)
-        const maxPanX = Math.max(0, (scaledWidth - this.containerRect.width) / 2);
-        const maxPanY = Math.max(0, (scaledHeight - this.containerRect.height) / 2);
+        const maxPanX = Math.max(0, (scaledWidth - containerWidth) / 2);
+        const maxPanY = Math.max(0, (scaledHeight - containerHeight) / 2);
+
+        // Variables locales pour les valeurs actuelles
+        let panX = this.currentPanX;
+        let panY = this.currentPanY;
 
         // Appliquer les contraintes de manière fluide
-        const oldPanX = this.currentPanX;
-        const oldPanY = this.currentPanY;
+        panX = Math.max(-maxPanX, Math.min(maxPanX, panX));
+        panY = Math.max(-maxPanY, Math.min(maxPanY, panY));
 
-        this.currentPanX = Math.max(-maxPanX, Math.min(maxPanX, this.currentPanX));
-        this.currentPanY = Math.max(-maxPanY, Math.min(maxPanY, this.currentPanY));
-
-        // Log seulement si les valeurs ont changé significativement
-        if (Math.abs(this.currentPanX - oldPanX) > 1 || Math.abs(this.currentPanY - oldPanY) > 1) {
-            debugLog('🔒 Pan contraint:', {
-                natural: { w: naturalWidth, h: naturalHeight },
-                scaled: { w: scaledWidth, h: scaledHeight },
-                container: { w: this.containerRect.width, h: this.containerRect.height },
-                limits: { x: maxPanX, y: maxPanY },
-                current: { x: this.currentPanX, y: this.currentPanY }
-            });
+        // Mettre à jour seulement si nécessaire
+        if (panX !== this.currentPanX || panY !== this.currentPanY) {
+            this.currentPanX = panX;
+            this.currentPanY = panY;
         }
     }    /**
      * Ajoute les boutons d'action à l'aperçu
