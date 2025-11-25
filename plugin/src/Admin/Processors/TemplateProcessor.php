@@ -50,9 +50,9 @@ class TemplateProcessor
         // Essayer de décoder le JSON
         $template_data = json_decode($template['template_data'], true);
         if (json_last_error() === JSON_ERROR_NONE) {
-            // Ajouter le nom du template depuis la base de données
-            if (isset($template['name']) && !isset($template_data['name'])) {
-                $template_data['name'] = $template['name'];
+            // S'assurer qu'il y a toujours un nom de template
+            if (!isset($template_data['name']) || empty($template_data['name'])) {
+                $template_data['name'] = !empty($template['name']) ? $template['name'] : 'Template ' . $template_id;
             }
             return $template_data;
         }
