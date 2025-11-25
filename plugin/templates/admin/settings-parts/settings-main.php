@@ -330,9 +330,6 @@ window.PDF_Builder_Preview_Manager = {
 
         const data = window.pdfBuilderSavedSettings;
 
-        // Debug: Afficher la valeur reçue
-        console.log('Template library enabled value:', data.template_library_enabled);
-
         // Mettre à jour l'indicateur de la bibliothèque de templates
         const templateLibraryIndicator = document.querySelector('.template-library-indicator');
         if (templateLibraryIndicator) {
