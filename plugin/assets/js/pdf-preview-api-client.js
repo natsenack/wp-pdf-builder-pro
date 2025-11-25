@@ -47,6 +47,9 @@ class PDFPreviewAPI {
         this.animationFrameId = null; // Pour optimiser les transformations
         this.lastConstrainTime = 0; // Pour throttler constrainPan
         this.dragStartTime = 0; // Pour mesurer la performance
+        this.maxPanX = 0; // Limites pré-calculées
+        this.maxPanY = 0; // Limites pré-calculées
+        this.needsConstrain = false; // Flag pour différer les contraintes
     }
 
     /**
@@ -456,17 +459,20 @@ class PDFPreviewAPI {
      * Met à jour la transformation de l'image
      */
     updateImageTransform(img) {
-        // Variables locales pour la performance
+        // Variables locales ultra-optimisées
         const panX = this.currentPanX;
         const panY = this.currentPanY;
         const scale = this.currentZoom / 100;
         const rotation = this.currentRotation;
 
-        // Utiliser template literal pour la performance
-        img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale}) rotate(${rotation}deg)`;
+        // Transformation CSS optimisée avec template literal
+        const transform = `translate(${panX}px, ${panY}px) scale(${scale}) rotate(${rotation}deg)`;
+
+        // Appliquer la transformation de manière optimisée
+        img.style.transform = transform;
         img.style.transformOrigin = 'center center';
 
-        // Optimisation CSS pour les performances de transformation
+        // Optimisation GPU (will-change) - appliqué une seule fois
         if (!img.style.willChange) {
             img.style.willChange = 'transform';
         }
@@ -662,44 +668,75 @@ class PDFPreviewAPI {
         // Vérifier si le pan est possible (zoom > 100% UNIQUEMENT)
         const container = img.parentElement;
         this.containerRect = container.getBoundingClientRect();
+        const scale = this.currentZoom / 100;
         this.canDrag = this.currentZoom > 100; // STRICTEMENT > 100%
 
         if (!this.canDrag) {
             return;
         }
 
+        // Pré-calculer les limites de pan pour la performance maximale
+        const naturalWidth = img.naturalWidth;
+        const naturalHeight = img.naturalHeight;
+        const scaledWidth = naturalWidth * scale;
+        const scaledHeight = naturalHeight * scale;
+        this.maxPanX = Math.max(0, (scaledWidth - this.containerRect.width) / 2);
+        this.maxPanY = Math.max(0, (scaledHeight - this.containerRect.height) / 2);
+
         e.preventDefault();
         this.isDragging = true;
         this.lastMouseX = e.clientX;
         this.lastMouseY = e.clientY;
         this.dragStartTime = performance.now();
+        this.needsConstrain = false; // Reset le flag
         img.style.cursor = 'grabbing';
-    }    /**
+    }
+
+    /**
      * Gestionnaire mousemove
      */
     handleMouseMove(e, img) {
         if (!this.isDragging || !this.canDrag) return;
 
-        // Utiliser des variables locales pour la performance
+        // Variables locales ultra-optimisées
         const clientX = e.clientX;
         const clientY = e.clientY;
-        const deltaX = clientX - this.lastMouseX;
-        const deltaY = clientY - this.lastMouseY;
 
-        // Accumuler le pan sans contraintes pour la fluidité
+        // Calcul des deltas avec variables locales
+        const lastX = this.lastMouseX;
+        const lastY = this.lastMouseY;
+        const deltaX = clientX - lastX;
+        const deltaY = clientY - lastY;
+
+        // Accumuler le pan immédiatement (fluidité maximale)
         this.currentPanX += deltaX;
         this.currentPanY += deltaY;
 
-        // Throttler les contraintes (max 60fps / ~16ms)
+        // Throttling très léger des contraintes (30fps / ~32ms pour la fluidité)
         const now = performance.now();
-        const shouldConstrain = (now - this.lastConstrainTime) > 16;
+        if ((now - this.lastConstrainTime) > 32) {
+            // Appliquer les contraintes avec les limites pré-calculées
+            let panX = this.currentPanX;
+            let panY = this.currentPanY;
 
-        if (shouldConstrain) {
-            this.constrainPan(img);
+            // Contraintes ultra-rapides avec limites pré-calculées
+            if (this.maxPanX > 0) {
+                panX = panX < -this.maxPanX ? -this.maxPanX : (panX > this.maxPanX ? this.maxPanX : panX);
+            }
+            if (this.maxPanY > 0) {
+                panY = panY < -this.maxPanY ? -this.maxPanY : (panY > this.maxPanY ? this.maxPanY : panY);
+            }
+
+            // Mettre à jour seulement si nécessaire
+            if (panX !== this.currentPanX || panY !== this.currentPanY) {
+                this.currentPanX = panX;
+                this.currentPanY = panY;
+            }
+
             this.lastConstrainTime = now;
         }
 
-        // Utiliser requestAnimationFrame pour des transformations fluides
+        // RequestAnimationFrame pour les transformations (fluidité 60fps)
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
         }
@@ -709,6 +746,7 @@ class PDFPreviewAPI {
             this.animationFrameId = null;
         });
 
+        // Mettre à jour les dernières positions
         this.lastMouseX = clientX;
         this.lastMouseY = clientY;
     }
@@ -726,7 +764,26 @@ class PDFPreviewAPI {
             if (dragDuration > 100) { // Seulement pour les drags significatifs
                 debugLog(`⏱️ Drag terminé en ${dragDuration.toFixed(1)}ms`);
             }
+
+            // Mesure détaillée des performances pour le debugging
+            this.measureDragPerformance();
         }
+    }
+
+    /**
+     * Mesure les performances du drag/pan pour le debugging
+     */
+    measureDragPerformance() {
+        if (!this.dragStartTime) return;
+
+        const duration = performance.now() - this.dragStartTime;
+        const fps = 1000 / duration;
+
+        // Log détaillé des performances
+        console.log(`[PDF Preview] Drag performance: ${duration.toFixed(2)}ms (${fps.toFixed(1)}fps)`);
+
+        // Reset pour la prochaine mesure
+        this.dragStartTime = null;
     }
 
     /**
@@ -753,34 +810,22 @@ class PDFPreviewAPI {
 
     /**
      * Contraint le pan pour éviter que l'image sorte complètement du conteneur
+     * NOTE: Maintenant inline dans handleMouseMove pour la performance maximale
      */
-    constrainPan(img) {
-        if (!this.containerRect) return;
+    constrainPan() {
+        // Cette méthode est maintenant obsolète - les contraintes sont inline dans handleMouseMove
+        // Gardée pour compatibilité si utilisée ailleurs
+        if (!this.containerRect || !this.canDrag) return;
 
-        // Variables locales pour la performance
-        const naturalWidth = img.naturalWidth;
-        const naturalHeight = img.naturalHeight;
-        const scale = this.currentZoom / 100;
-        const containerWidth = this.containerRect.width;
-        const containerHeight = this.containerRect.height;
+        const maxPanX = this.maxPanX || 0;
+        const maxPanY = this.maxPanY || 0;
 
-        // Calculer les dimensions après zoom
-        const scaledWidth = naturalWidth * scale;
-        const scaledHeight = naturalHeight * scale;
-
-        // Calculer les limites de pan (l'image doit rester visible)
-        const maxPanX = Math.max(0, (scaledWidth - containerWidth) / 2);
-        const maxPanY = Math.max(0, (scaledHeight - containerHeight) / 2);
-
-        // Variables locales pour les valeurs actuelles
         let panX = this.currentPanX;
         let panY = this.currentPanY;
 
-        // Appliquer les contraintes de manière fluide
         panX = Math.max(-maxPanX, Math.min(maxPanX, panX));
         panY = Math.max(-maxPanY, Math.min(maxPanY, panY));
 
-        // Mettre à jour seulement si nécessaire
         if (panX !== this.currentPanX || panY !== this.currentPanY) {
             this.currentPanX = panX;
             this.currentPanY = panY;
