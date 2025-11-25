@@ -33,6 +33,9 @@ register_activation_hook(__FILE__, 'pdf_builder_activate');
 // Hook de désactivation
 register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
 
+// Charger le bootstrap du plugin (initialisation des utilitaires)
+require_once PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
+
 // Initialiser l'API Preview (Jour 1-2 : API Preview Basique)
 require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
 require_once PDF_BUILDER_PLUGIN_DIR . 'api/PreviewImageAPI.php';
