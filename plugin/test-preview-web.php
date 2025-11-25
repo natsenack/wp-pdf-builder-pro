@@ -13,9 +13,14 @@ if (!defined('ABSPATH')) {
     }
 }
 
-// Security check - only allow admins
-if (!current_user_can('manage_options')) {
+// Security check - only allow admins (skip in standalone mode)
+if (defined('ABSPATH') && function_exists('current_user_can') && !current_user_can('manage_options')) {
     wp_die('Accès refusé - Permissions administrateur requises');
+} elseif (!defined('ABSPATH')) {
+    // Standalone mode - show warning
+    echo "<div style='background: #fff3cd; color: #856404; padding: 10px; margin: 10px 0; border: 1px solid #ffeaa7; border-radius: 4px;'>";
+    echo "<strong>⚠️ Mode Standalone:</strong> WordPress n'est pas chargé. Certaines fonctionnalités peuvent ne pas fonctionner correctement.";
+    echo "</div>";
 }
 ?>
 
@@ -57,13 +62,13 @@ if (!current_user_can('manage_options')) {
     <!-- Define necessary variables -->
     <script>
         var pdfBuilderAjax = {
-            ajaxurl: '<?php echo admin_url('admin-ajax.php'); ?>',
-            nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+            ajaxurl: '<?php echo defined('ABSPATH') && function_exists('admin_url') ? admin_url('admin-ajax.php') : '/wp-admin/admin-ajax.php'; ?>',
+            nonce: '<?php echo defined('ABSPATH') && function_exists('wp_create_nonce') ? wp_create_nonce('pdf_builder_order_actions') : 'standalone_test_nonce'; ?>'
         };
     </script>
 
     <!-- Load PDF Preview API Client -->
-    <script src="<?php echo plugin_dir_url(__FILE__); ?>assets/js/pdf-preview-api-client.js"></script>
+    <script src="<?php echo defined('ABSPATH') && function_exists('plugin_dir_url') ? plugin_dir_url(__FILE__) : './'; ?>assets/js/pdf-preview-api-client.js"></script>
 </head>
 <body>
     <div class='container'>

@@ -47,8 +47,11 @@
                 display: flex !important;
                 gap: 10px !important;
                 align-items: center !important;
-                margin-bottom: 15px !important;
+                margin-bottom: 20px !important;
+                padding-bottom: 15px !important;
+                border-bottom: 1px solid #eee !important;
                 flex-wrap: wrap !important;
+                justify-content: space-between !important;
             }
             #pdf-preview-zoom {
                 display: flex !important;
@@ -62,6 +65,70 @@
                 min-width: 45px !important;
                 font-size: 12px !important;
                 color: #666 !important;
+            }
+            #pdf-preview-actions {
+                display: flex !important;
+                gap: 10px !important;
+                align-items: center !important;
+                margin-top: 15px !important;
+                padding-top: 15px !important;
+                border-top: 1px solid #eee !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+            }
+            .pdf-preview-action-btn {
+                border: none !important;
+                padding: 8px 16px !important;
+                border-radius: 4px !important;
+                cursor: pointer !important;
+                font-size: 14px !important;
+                transition: background-color 0.2s ease !important;
+            }
+            .pdf-preview-action-btn.download-btn {
+                background: #007cba !important;
+                color: white !important;
+            }
+            .pdf-preview-action-btn.download-btn:hover {
+                background: #005a87 !important;
+            }
+            .pdf-preview-action-btn.print-btn {
+                background: #46b450 !important;
+                color: white !important;
+            }
+            .pdf-preview-action-btn.print-btn:hover {
+                background: #3d8b40 !important;
+            }
+            .pdf-preview-action-btn.regenerate-btn {
+                background: #f56e28 !important;
+                color: white !important;
+            }
+            .pdf-preview-action-btn.regenerate-btn:hover {
+                background: #e55a1f !important;
+            }
+            .pdf-preview-zoom-btn {
+                background: #f1f1f1 !important;
+                border: 1px solid #ddd !important;
+                padding: 5px 10px !important;
+                border-radius: 4px !important;
+                cursor: pointer !important;
+                font-size: 14px !important;
+                transition: background-color 0.2s ease !important;
+            }
+            .pdf-preview-zoom-btn:hover {
+                background: #e9e9e9 !important;
+            }
+            .pdf-preview-reset-btn {
+                background: #007cba !important;
+                color: white !important;
+                border: none !important;
+                padding: 5px 10px !important;
+                border-radius: 4px !important;
+                cursor: pointer !important;
+                font-size: 14px !important;
+                transition: background-color 0.2s ease !important;
+            }
+            .pdf-preview-reset-btn:hover {
+                background: #005a87 !important;
             }
             #pdf-preview-loading {
                 display: none !important;
@@ -387,12 +454,10 @@ class PDFPreviewAPI {
         // Contrôles de zoom et rotation
         const controls = document.createElement('div');
         controls.id = 'pdf-preview-controls';
-        controls.style.cssText = 'margin-bottom: 15px;';
 
         // Actions container
         const actions = document.createElement('div');
         actions.id = 'pdf-preview-actions';
-        actions.style.cssText = 'margin-bottom: 15px;';
 
         // Indicateur de chargement
         const loading = document.createElement('div');
@@ -448,15 +513,7 @@ class PDFPreviewAPI {
         // Bouton de téléchargement
         const downloadBtn = document.createElement('button');
         downloadBtn.textContent = '📥 Télécharger';
-        downloadBtn.style.cssText = `
-            background: #007cba;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
-        `;
+        downloadBtn.className = 'pdf-preview-action-btn download-btn';
         downloadBtn.addEventListener('click', () => {
             this.downloadPreview(imageUrl);
         });
@@ -464,15 +521,7 @@ class PDFPreviewAPI {
         // Bouton d'impression
         const printBtn = document.createElement('button');
         printBtn.textContent = '🖨️ Imprimer';
-        printBtn.style.cssText = `
-            background: #46b450;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
-        `;
+        printBtn.className = 'pdf-preview-action-btn print-btn';
         printBtn.addEventListener('click', () => {
             this.printPreview(imageUrl);
         });
@@ -481,12 +530,7 @@ class PDFPreviewAPI {
         if (context === 'metabox') {
             const regenerateBtn = document.createElement('button');
             regenerateBtn.textContent = '🔄 Régénérer';
-            regenerateBtn.style.cssText = `
-                background: #f56e28;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
+            regenerateBtn.className = 'pdf-preview-action-btn regenerate-btn';
                 cursor: pointer;
             `;
             regenerateBtn.addEventListener('click', () => {
@@ -515,13 +559,7 @@ class PDFPreviewAPI {
 
         const zoomOutBtn = document.createElement('button');
         zoomOutBtn.textContent = '🔍-';
-        zoomOutBtn.style.cssText = `
-            background: #f1f1f1;
-            border: 1px solid #ddd;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        `;
+        zoomOutBtn.className = 'pdf-preview-zoom-btn';
         zoomOutBtn.addEventListener('click', () => this.zoomImage(img, -25));
 
         const zoomSlider = document.createElement('input');
@@ -538,13 +576,7 @@ class PDFPreviewAPI {
 
         const zoomInBtn = document.createElement('button');
         zoomInBtn.textContent = '🔍+';
-        zoomInBtn.style.cssText = `
-            background: #f1f1f1;
-            border: 1px solid #ddd;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        `;
+        zoomInBtn.className = 'pdf-preview-zoom-btn';
         zoomInBtn.addEventListener('click', () => this.zoomImage(img, 25));
 
         zoomContainer.appendChild(zoomOutBtn);
@@ -556,40 +588,19 @@ class PDFPreviewAPI {
         const rotateLeftBtn = document.createElement('button');
         rotateLeftBtn.textContent = '↺';
         rotateLeftBtn.title = 'Rotation gauche';
-        rotateLeftBtn.style.cssText = `
-            background: #f1f1f1;
-            border: 1px solid #ddd;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 15px;
-        `;
+        rotateLeftBtn.className = 'pdf-preview-zoom-btn';
         rotateLeftBtn.addEventListener('click', () => this.rotateImage(img, -90));
 
         const rotateRightBtn = document.createElement('button');
         rotateRightBtn.textContent = '↻';
         rotateRightBtn.title = 'Rotation droite';
-        rotateRightBtn.style.cssText = `
-            background: #f1f1f1;
-            border: 1px solid #ddd;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        `;
+        rotateRightBtn.className = 'pdf-preview-zoom-btn';
         rotateRightBtn.addEventListener('click', () => this.rotateImage(img, 90));
 
         const resetBtn = document.createElement('button');
         resetBtn.textContent = '🔄 Reset';
         resetBtn.title = 'Réinitialiser zoom et rotation';
-        resetBtn.style.cssText = `
-            background: #007cba;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 15px;
-        `;
+        resetBtn.className = 'pdf-preview-reset-btn';
         resetBtn.addEventListener('click', () => this.resetImage(img, zoomSlider, zoomValue));
 
         controlsContainer.appendChild(zoomContainer);
