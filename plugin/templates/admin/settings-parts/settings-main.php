@@ -1378,6 +1378,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Update canvas previews after successful save
                             console.log('PDF_BUILDER_DEBUG: window.updateDimensionsCardPreview exists:', typeof window.updateDimensionsCardPreview);
                             if (category === 'dimensions' && typeof window.updateDimensionsCardPreview === 'function') {
+                                console.log('PDF_BUILDER_DEBUG: Function code:', window.updateDimensionsCardPreview.toString());
                                 console.log('PDF_BUILDER_DEBUG: Calling updateDimensionsCardPreview');
                                 try {
                                     window.updateDimensionsCardPreview();
