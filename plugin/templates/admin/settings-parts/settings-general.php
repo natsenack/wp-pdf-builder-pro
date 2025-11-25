@@ -88,7 +88,7 @@
                     </article>
                 </form>
 
-               <script type="text/plain">
+               <script>
                 jQuery(document).ready(function($) {
                     // Fonction de validation des champs entreprise
                     function validateCompanyFields() {

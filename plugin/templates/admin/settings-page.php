@@ -28,4 +28,5 @@ require_once $settings_parts_dir . 'settings-scripts.php';
 require_once $settings_parts_dir . 'settings-modals.php';
 
 // Dummy script to close any unclosed script tags
+?>
 <script></script>

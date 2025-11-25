@@ -210,7 +210,7 @@
                     }
                 </style>
 
-                <script type="text/plain">
+                <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const roleToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
                         const selectedCount = document.getElementById('selected-count');

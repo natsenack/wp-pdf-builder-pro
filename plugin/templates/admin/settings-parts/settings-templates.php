@@ -630,7 +630,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
 
 </div>
 
-            <script type="text/plain">
+            <script>
             function resetTemplatesStatus() {
                 if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les assignations de templates ?')) {
                     document.querySelectorAll('.template-select').forEach(select => {

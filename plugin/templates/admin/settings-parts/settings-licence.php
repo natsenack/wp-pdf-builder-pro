@@ -415,7 +415,7 @@
                     </div>
                     <?php endif; ?>
 
-                <script type="text/plain">
+                <script>
                     function showDeactivateModal() {
                         var modal = document.getElementById('deactivate_modal');
                         if (modal) {

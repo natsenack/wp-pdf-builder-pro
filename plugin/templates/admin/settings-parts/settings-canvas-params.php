@@ -109,7 +109,7 @@ $canvas_settings_js = [
 
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 ?>
-<script type="text/plain">
+<script>
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings_js); ?>;
 window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>';
 

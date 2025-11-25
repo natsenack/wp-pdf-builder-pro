@@ -657,7 +657,7 @@
     </div>
 </div>
 
-<script type="text/plain">
+<script>
 // Preview FPS en temps réel
 document.addEventListener('DOMContentLoaded', function() {
     const fpsSelect = document.getElementById('canvas_fps_target');
