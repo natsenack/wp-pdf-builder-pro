@@ -342,9 +342,27 @@ class AjaxHandler
             $template = $this->admin->template_processor->loadTemplateRobust($template_id);
 
             if ($template) {
+                // Récupérer le nom du template depuis les données JSON en priorité, sinon depuis la DB
+                $template_name = '';
+                if (isset($template['name']) && !empty($template['name'])) {
+                    $template_name = $template['name'];
+                } elseif (isset($template['template_name']) && !empty($template['template_name'])) {
+                    $template_name = $template['template_name'];
+                } else {
+                    // Fallback vers la colonne name de la DB
+                    global $wpdb;
+                    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+                    $db_template = $wpdb->get_row($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+                    if ($db_template && !empty($db_template['name'])) {
+                        $template_name = $db_template['name'];
+                    } else {
+                        $template_name = 'Template ' . $template_id;
+                    }
+                }
+
                 wp_send_json_success([
                     'template' => $template,
-                    'template_name' => $template['name'] ?? 'Template ' . $template_id,
+                    'template_name' => $template_name,
                     'message' => 'Template chargé avec succès'
                 ]);
             } else {
