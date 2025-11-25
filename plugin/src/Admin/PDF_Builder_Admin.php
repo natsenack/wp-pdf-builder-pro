@@ -1188,7 +1188,7 @@ class PdfBuilderAdmin
         // Localize ajaxurl for the integration script
         wp_localize_script('pdf-preview-integration', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_canvas_nonce')
+            'nonce' => wp_create_nonce('pdf_builder_order_actions')
         ]);
 
         // Charger les outils développeur de manière asynchrone pour éviter les blocages
