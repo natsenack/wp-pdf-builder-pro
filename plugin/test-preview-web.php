@@ -174,19 +174,26 @@ if (!current_user_can('manage_options')) {
                 const response = await fetch(window.location.href + '?run_test=images');
                 const html = await response.text();
 
+                console.log('Raw HTML response:', html); // Debug log
+
                 // Extract the result from the HTML
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const testResult = doc.getElementById('images-test-result-data');
 
+                console.log('Extracted testResult element:', testResult); // Debug log
+
                 if (testResult) {
+                    console.log('testResult innerHTML:', testResult.innerHTML); // Debug log
                     resultDiv.innerHTML = testResult.innerHTML;
                 } else {
                     resultDiv.innerHTML = '<div class="status error">❌ Erreur : Impossible de récupérer les résultats Images</div>';
+                    console.error('Could not find images-test-result-data element');
                 }
 
             } catch (error) {
                 resultDiv.innerHTML = '<div class="status error">❌ Erreur réseau : ' + error.message + '</div>';
+                console.error('Network error:', error);
             }
         }
     </script>
@@ -198,11 +205,14 @@ if (!current_user_can('manage_options')) {
 if (isset($_GET['run_test'])) {
     $test_type = $_GET['run_test'];
 
+    error_log("Test request received: " . $test_type); // Debug log
+
     echo "<div id='" . $test_type . "-test-result-data' style='display: none;'>";
 
     if ($test_type === 'pdf') {
         run_pdf_test();
     } elseif ($test_type === 'images') {
+        error_log("Running image test"); // Debug log
         run_image_test();
     }
 
@@ -251,6 +261,7 @@ function run_pdf_test() {
 }
 
 function run_image_test() {
+    error_log("run_image_test() function called"); // Debug log
     echo '<div class="status info">🔄 Test de conversion d\'images en cours...</div>';
 
     try {
