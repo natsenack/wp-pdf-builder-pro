@@ -44,12 +44,12 @@ class PDFPreviewAPI {
         this.dragListeners = null;
         this.canDrag = false; // Flag pour savoir si le drag est autorisé
         this.containerRect = null; // Cache des dimensions du conteneur
-        this.animationFrameId = null; // Pour optimiser les transformations
         this.dragStartTime = 0; // Pour mesurer la performance des drags
         this.maxPanX = 0; // Limites pré-calculées
         this.maxPanY = 0; // Limites pré-calculées
         this.needsConstrain = false; // Flag pour les contraintes
-        this.moveCounter = 0; // Compteur pour logs conditionnels
+        this.cachedScale = 1; // Cache du scale pour éviter division répétée
+        this.cachedRotation = 0; // Cache de la rotation
     }
 
     /**
@@ -456,22 +456,15 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Met à jour la transformation de l'image - VERSION ULTRA-OPTIMISEE
+     * Met à jour la transformation de l'image - VERSION ULTRA-OPTIMISEE AVEC CACHE
      */
     updateImageTransform(img) {
-        // Variables locales ultra-rapides
+        // Utilisation des valeurs cachées pour performance maximale
         const panX = this.currentPanX;
         const panY = this.currentPanY;
-        const scale = this.currentZoom / 100;
-        const rotation = this.currentRotation;
 
-        // Log stratégique conditionnel - transformation appliquée
-        if (isDebugEnabled()) {
-            debugLog(`🎨 Transform update - Pan: (${panX.toFixed(1)}, ${panY.toFixed(1)}), Scale: ${scale.toFixed(2)}, Rotate: ${rotation}°`);
-        }
-
-        // Template literals optimisés pour les navigateurs modernes
-        img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale}) rotate(${rotation}deg)`;
+        // Application directe avec cache
+        img.style.transform = `translate(${panX}px, ${panY}px) scale(${this.cachedScale}) rotate(${this.cachedRotation}deg)`;
         img.style.transformOrigin = 'center center';
     }
 
@@ -556,6 +549,7 @@ class PDFPreviewAPI {
      */
     zoomImage(img, delta) {
         this.currentZoom = Math.max(25, Math.min(300, this.currentZoom + delta));
+        this.cachedScale = this.currentZoom / 100; // Mettre à jour le cache
         this.updateImageTransform(img);
         this.updateZoomUI();
         this.updateDragState(img);
@@ -566,6 +560,7 @@ class PDFPreviewAPI {
      */
     setZoom(img, zoom) {
         this.currentZoom = zoom;
+        this.cachedScale = this.currentZoom / 100; // Mettre à jour le cache
         this.updateImageTransform(img);
         this.updateZoomUI();
         this.updateDragState(img);
@@ -576,6 +571,7 @@ class PDFPreviewAPI {
      */
     rotateImage(img, degrees) {
         this.currentRotation = (this.currentRotation + degrees) % 360;
+        this.cachedRotation = this.currentRotation; // Mettre à jour le cache
         this.updateImageTransform(img);
     }
 
@@ -587,6 +583,8 @@ class PDFPreviewAPI {
         this.currentRotation = 0;
         this.currentPanX = 0;
         this.currentPanY = 0;
+        this.cachedScale = 1; // Reset cache
+        this.cachedRotation = 0; // Reset cache
         this.updateImageTransform(img);
         this.updateZoomUI();
         this.updateDragState(img);
@@ -680,11 +678,6 @@ class PDFPreviewAPI {
         this.maxPanX = Math.max(0, (scaledWidth - this.containerRect.width) / 2);
         this.maxPanY = Math.max(0, (scaledHeight - this.containerRect.height) / 2);
 
-        // Log stratégique conditionnel - début du drag
-        if (isDebugEnabled()) {
-            debugLog(`🖱️ Drag start - Zoom: ${this.currentZoom}%, Pan: (${this.currentPanX}, ${this.currentPanY}), Limits: (${this.maxPanX}, ${this.maxPanY})`);
-        }
-
         e.preventDefault();
         this.isDragging = true;
         this.lastMouseX = e.clientX;
@@ -728,21 +721,8 @@ class PDFPreviewAPI {
         this.currentPanX = newPanX;
         this.currentPanY = newPanY;
 
-        // Log stratégique conditionnel - tous les 10 mouvements pour éviter pollution
-        if (isDebugEnabled() && !this.moveCounter) {
-            this.moveCounter = 0;
-        }
-        if (isDebugEnabled() && ++this.moveCounter % 10 === 0) {
-            debugLog(`📍 Mouse move #${this.moveCounter} - Delta: (${deltaX.toFixed(1)}, ${deltaY.toFixed(1)}), Pan: (${newPanX.toFixed(1)}, ${newPanY.toFixed(1)})`);
-        }
-
-        // RequestAnimationFrame optimisé - une seule frame active
-        if (!this.animationFrameId) {
-            this.animationFrameId = requestAnimationFrame(() => {
-                this.updateImageTransform(img);
-                this.animationFrameId = null;
-            });
-        }
+        // APPLICATION DIRECTE SANS RAF pour performance maximale (20+ FPS)
+        this.updateImageTransform(img);
 
         // Mettre à jour les positions souris
         this.lastMouseX = clientX;
@@ -757,15 +737,9 @@ class PDFPreviewAPI {
             this.isDragging = false;
             img.style.cursor = this.currentZoom > 100 ? 'grab' : 'default';
 
-            // Log stratégique conditionnel - fin du drag
-            if (isDebugEnabled()) {
-                debugLog(`🖱️ Drag end - Final pan: (${this.currentPanX.toFixed(1)}, ${this.currentPanY.toFixed(1)}), Moves: ${this.moveCounter || 0}`);
-                this.moveCounter = 0; // Reset counter
-            }
-
             // Mesurer et logger la performance du drag
             const dragDuration = performance.now() - this.dragStartTime;
-            if (dragDuration > 50) { // Seulement pour les drags significatifs (>50ms)
+            if (dragDuration > 10) { // Seulement pour les drags significatifs (>10ms)
                 const fps = 1000 / dragDuration;
                 console.log(`[PDF Preview] Drag performance: ${dragDuration.toFixed(2)}ms (${fps.toFixed(1)}fps)`);
             }
