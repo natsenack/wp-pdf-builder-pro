@@ -36,10 +36,103 @@ export function useTemplate() {
   // Charger un template existant
   const loadExistingTemplate = useCallback(async (templateId: string) => {
     try {
-      // ✅ CRITICAL: Add timestamp to AJAX URL to prevent caching
-      // This ensures F5 and Ctrl+F5 load fresh data from server
-      // The server also sends no-cache headers, this is backup
-      const cacheBreaker = Date.now();
+      // ✅ PRIORITÉ: Utiliser les données localisées si disponibles (plus rapide et fiable)
+      if (window.pdfBuilderData?.existingTemplate && window.pdfBuilderData?.hasExistingData) {
+        const templateData = window.pdfBuilderData.existingTemplate;
+        console.log('📋 [LOAD TEMPLATE] Utilisation des données localisées pour template:', templateId, 'Nom:', templateData.name);
+
+        // Parse JSON strings if needed
+        let elements = [];
+        let canvasData = null;
+        try {
+          if (typeof templateData.elements === 'string') {
+            elements = JSON.parse(templateData.elements);
+          } else if (Array.isArray(templateData.elements)) {
+            elements = templateData.elements;
+          } else {
+            elements = [];
+          }
+
+          if (templateData.canvasWidth && templateData.canvasHeight) {
+            canvasData = {
+              width: templateData.canvasWidth,
+              height: templateData.canvasHeight
+            };
+          } else if (typeof templateData.canvas === 'string') {
+            canvasData = JSON.parse(templateData.canvas);
+          } else if (templateData.canvas && typeof templateData.canvas === 'object') {
+            canvasData = templateData.canvas;
+          } else {
+            canvasData = { width: 210, height: 297 };
+          }
+        } catch (parseError) {
+          debugError('❌ [LOAD TEMPLATE] Erreur de parsing des données localisées:', parseError);
+          elements = [];
+          canvasData = { width: 210, height: 297 };
+        }
+
+        const normalizedElements = normalizeElementsAfterLoad(elements as any);
+        const enrichedElements = normalizedElements.map((el: Record<string, unknown>) => {
+          let enrichedElement = { ...el };
+          if (el.type === 'company_logo' && !el.src && !el.logoUrl) {
+            const logoUrl = (el.defaultSrc as string) || '';
+            if (logoUrl) {
+              enrichedElement.src = logoUrl;
+            }
+          }
+          if (enrichedElement.createdAt) {
+            try {
+              const createdAt = new Date(enrichedElement.createdAt as string | number | Date);
+              enrichedElement.createdAt = isNaN(createdAt.getTime()) ? new Date() : createdAt;
+            } catch {
+              enrichedElement.createdAt = new Date();
+            }
+          } else {
+            enrichedElement.createdAt = new Date();
+          }
+          if (enrichedElement.updatedAt) {
+            try {
+              const updatedAt = new Date(enrichedElement.updatedAt as string | number | Date);
+              enrichedElement.updatedAt = isNaN(updatedAt.getTime()) ? new Date() : updatedAt;
+            } catch {
+              enrichedElement.updatedAt = new Date();
+            }
+          } else {
+            enrichedElement.updatedAt = new Date();
+          }
+          return enrichedElement;
+        });
+
+        let lastSavedDate: Date;
+        try {
+          if (templateData.updated_at) {
+            lastSavedDate = new Date(templateData.updated_at);
+            if (isNaN(lastSavedDate.getTime())) {
+              lastSavedDate = new Date();
+            }
+          } else {
+            lastSavedDate = new Date();
+          }
+        } catch {
+          lastSavedDate = new Date();
+        }
+
+        dispatch({
+          type: 'LOAD_TEMPLATE',
+          payload: {
+            id: templateId,
+            name: templateData.name || `Template ${templateId}`,
+            elements: enrichedElements,
+            canvas: canvasData,
+            lastSaved: lastSavedDate
+          } as LoadTemplatePayload
+        });
+
+        return true;
+      }
+
+      // ✅ FALLBACK: Utiliser AJAX si les données localisées ne sont pas disponibles
+      console.log('📋 [LOAD TEMPLATE] Données localisées non disponibles, utilisation AJAX pour template:', templateId);
 
       // Détecter le navigateur pour des en-têtes spécifiques
       const isChrome = typeof navigator !== 'undefined' &&
