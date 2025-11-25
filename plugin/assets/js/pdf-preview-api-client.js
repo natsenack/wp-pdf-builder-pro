@@ -420,7 +420,7 @@ class PDFPreviewAPI {
         if (!controlsContainer) {
             controlsContainer = document.createElement('div');
             controlsContainer.id = 'pdf-preview-controls';
-            controlsContainer.style.cssText = 'display: flex; gap: 10px; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; flex-wrap: wrap; justify-content: space-between;';
+            controlsContainer.style.cssText = 'display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;';
 
             // Insérer avant les actions
             const actionsContainer = modal.querySelector('#pdf-preview-actions');
@@ -428,7 +428,17 @@ class PDFPreviewAPI {
         }
         controlsContainer.innerHTML = '';
 
-        // Contrôles de zoom
+        // Header pour les contrôles
+        const controlsHeader = document.createElement('div');
+        controlsHeader.className = 'pdf-preview-controls-header';
+        controlsHeader.textContent = 'Zoom & Rotation';
+        controlsHeader.style.cssText = 'font-weight: bold; font-size: 14px; color: #1d2327; margin-bottom: 10px;';
+        controlsContainer.appendChild(controlsHeader);
+
+        // Conteneur pour les contrôles
+        const controlsContent = document.createElement('div');
+        controlsContent.style.cssText = 'display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: space-between;';
+        controlsContainer.appendChild(controlsContent);
         const zoomContainer = document.createElement('div');
         zoomContainer.id = 'pdf-preview-zoom';
         zoomContainer.style.cssText = 'display: flex; align-items: center; gap: 5px;';
@@ -481,10 +491,10 @@ class PDFPreviewAPI {
         resetBtn.className = 'pdf-preview-reset-btn';
         resetBtn.addEventListener('click', () => this.resetImage(img));
 
-        controlsContainer.appendChild(zoomContainer);
-        controlsContainer.appendChild(rotateLeftBtn);
-        controlsContainer.appendChild(rotateRightBtn);
-        controlsContainer.appendChild(resetBtn);
+        controlsContent.appendChild(zoomContainer);
+        controlsContent.appendChild(rotateLeftBtn);
+        controlsContent.appendChild(rotateRightBtn);
+        controlsContent.appendChild(resetBtn);
     }
 
     /**
@@ -539,6 +549,13 @@ class PDFPreviewAPI {
     addPreviewActions(modal, imageUrl, context) {
         const actionsContainer = modal.querySelector('#pdf-preview-actions');
         actionsContainer.innerHTML = '';
+
+        // Header pour les actions
+        const actionsHeader = document.createElement('div');
+        actionsHeader.className = 'pdf-preview-actions-header';
+        actionsHeader.textContent = 'Actions';
+        actionsHeader.style.cssText = 'font-weight: bold; font-size: 14px; color: #1d2327; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;';
+        actionsContainer.appendChild(actionsHeader);
 
         // Bouton de téléchargement
         const downloadBtn = document.createElement('button');
