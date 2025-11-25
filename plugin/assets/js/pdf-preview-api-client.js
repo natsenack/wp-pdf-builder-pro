@@ -49,6 +49,7 @@ class PDFPreviewAPI {
         this.maxPanX = 0; // Limites pré-calculées
         this.maxPanY = 0; // Limites pré-calculées
         this.needsConstrain = false; // Flag pour les contraintes
+        this.moveCounter = 0; // Compteur pour logs conditionnels
     }
 
     /**
@@ -464,6 +465,11 @@ class PDFPreviewAPI {
         const scale = this.currentZoom / 100;
         const rotation = this.currentRotation;
 
+        // Log stratégique conditionnel - transformation appliquée
+        if (isDebugEnabled()) {
+            debugLog(`🎨 Transform update - Pan: (${panX.toFixed(1)}, ${panY.toFixed(1)}), Scale: ${scale.toFixed(2)}, Rotate: ${rotation}°`);
+        }
+
         // Template literals optimisés pour les navigateurs modernes
         img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale}) rotate(${rotation}deg)`;
         img.style.transformOrigin = 'center center';
@@ -674,6 +680,11 @@ class PDFPreviewAPI {
         this.maxPanX = Math.max(0, (scaledWidth - this.containerRect.width) / 2);
         this.maxPanY = Math.max(0, (scaledHeight - this.containerRect.height) / 2);
 
+        // Log stratégique conditionnel - début du drag
+        if (isDebugEnabled()) {
+            debugLog(`🖱️ Drag start - Zoom: ${this.currentZoom}%, Pan: (${this.currentPanX}, ${this.currentPanY}), Limits: (${this.maxPanX}, ${this.maxPanY})`);
+        }
+
         e.preventDefault();
         this.isDragging = true;
         this.lastMouseX = e.clientX;
@@ -717,6 +728,14 @@ class PDFPreviewAPI {
         this.currentPanX = newPanX;
         this.currentPanY = newPanY;
 
+        // Log stratégique conditionnel - tous les 10 mouvements pour éviter pollution
+        if (isDebugEnabled() && !this.moveCounter) {
+            this.moveCounter = 0;
+        }
+        if (isDebugEnabled() && ++this.moveCounter % 10 === 0) {
+            debugLog(`📍 Mouse move #${this.moveCounter} - Delta: (${deltaX.toFixed(1)}, ${deltaY.toFixed(1)}), Pan: (${newPanX.toFixed(1)}, ${newPanY.toFixed(1)})`);
+        }
+
         // RequestAnimationFrame optimisé - une seule frame active
         if (!this.animationFrameId) {
             this.animationFrameId = requestAnimationFrame(() => {
@@ -737,6 +756,12 @@ class PDFPreviewAPI {
         if (this.isDragging) {
             this.isDragging = false;
             img.style.cursor = this.currentZoom > 100 ? 'grab' : 'default';
+
+            // Log stratégique conditionnel - fin du drag
+            if (isDebugEnabled()) {
+                debugLog(`🖱️ Drag end - Final pan: (${this.currentPanX.toFixed(1)}, ${this.currentPanY.toFixed(1)}), Moves: ${this.moveCounter || 0}`);
+                this.moveCounter = 0; // Reset counter
+            }
 
             // Mesurer et logger la performance du drag
             const dragDuration = performance.now() - this.dragStartTime;
