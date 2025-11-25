@@ -34,6 +34,8 @@ class PDFPreviewAPI {
         this.nonce = pdfBuilderAjax?.nonce || '';
         this.isGenerating = false;
         this.cache = new Map();
+        this.currentZoom = 100;
+        this.currentRotation = 0;
     }
 
     /**
@@ -190,18 +192,26 @@ class PDFPreviewAPI {
             document.body.appendChild(previewModal);
         }
 
+        // Réinitialiser le zoom et la rotation
+        this.currentZoom = 100;
+        this.currentRotation = 0;
+
         const img = previewModal.querySelector('#pdf-preview-image');
         const title = previewModal.querySelector('#pdf-preview-title');
 
         img.src = imageUrl;
         img.style.maxWidth = '100%';
         img.style.height = 'auto';
+        this.updateImageTransform(img);
 
         if (context === 'editor') {
             title.textContent = '👁️ Aperçu du Template';
         } else {
             title.textContent = `📄 Aperçu Commande #${orderId}`;
         }
+
+        // Ajouter les contrôles de zoom et rotation
+        this.addZoomControls(previewModal, img);
 
         // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
@@ -294,6 +304,35 @@ class PDFPreviewAPI {
                 .pdf-preview-action-btn.regenerate-btn:hover {
                     background: #e55a1f !important;
                 }
+
+                .pdf-preview-zoom-btn {
+                    background: #f1f1f1 !important;
+                    border: 1px solid #ddd !important;
+                    padding: 5px 10px !important;
+                    border-radius: 4px !important;
+                    cursor: pointer !important;
+                    font-size: 14px !important;
+                    transition: background-color 0.2s ease !important;
+                }
+
+                .pdf-preview-zoom-btn:hover {
+                    background: #e9e9e9 !important;
+                }
+
+                .pdf-preview-reset-btn {
+                    background: #007cba !important;
+                    color: white !important;
+                    border: none !important;
+                    padding: 5px 10px !important;
+                    border-radius: 4px !important;
+                    cursor: pointer !important;
+                    font-size: 14px !important;
+                    transition: background-color 0.2s ease !important;
+                }
+
+                .pdf-preview-reset-btn:hover {
+                    background: #005a87 !important;
+                }
             `;
             document.head.appendChild(styleSheet);
 
@@ -363,6 +402,135 @@ class PDFPreviewAPI {
         });
 
         return modal;
+    }
+
+    /**
+     * Met à jour la transformation de l'image
+     */
+    updateImageTransform(img) {
+        img.style.transform = 'scale(' + (this.currentZoom / 100) + ') rotate(' + this.currentRotation + 'deg)';
+    }
+
+    /**
+     * Ajoute les contrôles de zoom et rotation
+     */
+    addZoomControls(modal, img) {
+        // Créer le conteneur de contrôles s'il n'existe pas
+        let controlsContainer = modal.querySelector('#pdf-preview-controls');
+        if (!controlsContainer) {
+            controlsContainer = document.createElement('div');
+            controlsContainer.id = 'pdf-preview-controls';
+            controlsContainer.style.cssText = 'display: flex; gap: 10px; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; flex-wrap: wrap; justify-content: space-between;';
+
+            // Insérer avant les actions
+            const actionsContainer = modal.querySelector('#pdf-preview-actions');
+            modal.querySelector('#pdf-preview-modal-wrapper').insertBefore(controlsContainer, actionsContainer);
+        }
+        controlsContainer.innerHTML = '';
+
+        // Contrôles de zoom
+        const zoomContainer = document.createElement('div');
+        zoomContainer.id = 'pdf-preview-zoom';
+        zoomContainer.style.cssText = 'display: flex; align-items: center; gap: 5px;';
+
+        const zoomOutBtn = document.createElement('button');
+        zoomOutBtn.textContent = '🔍-';
+        zoomOutBtn.className = 'pdf-preview-zoom-btn';
+        zoomOutBtn.addEventListener('click', () => this.zoomImage(img, -25));
+
+        const zoomSlider = document.createElement('input');
+        zoomSlider.type = 'range';
+        zoomSlider.id = 'pdf-preview-zoom-slider';
+        zoomSlider.min = '25';
+        zoomSlider.max = '300';
+        zoomSlider.value = this.currentZoom;
+        zoomSlider.style.cssText = 'width: 120px;';
+        zoomSlider.addEventListener('input', (e) => this.setZoom(img, parseInt(e.target.value)));
+
+        const zoomValue = document.createElement('span');
+        zoomValue.id = 'pdf-preview-zoom-value';
+        zoomValue.textContent = this.currentZoom + '%';
+        zoomValue.style.cssText = 'min-width: 45px; font-size: 12px; color: #666;';
+
+        const zoomInBtn = document.createElement('button');
+        zoomInBtn.textContent = '🔍+';
+        zoomInBtn.className = 'pdf-preview-zoom-btn';
+        zoomInBtn.addEventListener('click', () => this.zoomImage(img, 25));
+
+        zoomContainer.appendChild(zoomOutBtn);
+        zoomContainer.appendChild(zoomSlider);
+        zoomContainer.appendChild(zoomValue);
+        zoomContainer.appendChild(zoomInBtn);
+
+        // Contrôles de rotation
+        const rotateLeftBtn = document.createElement('button');
+        rotateLeftBtn.textContent = '↺';
+        rotateLeftBtn.title = 'Rotation gauche';
+        rotateLeftBtn.className = 'pdf-preview-zoom-btn';
+        rotateLeftBtn.addEventListener('click', () => this.rotateImage(img, -90));
+
+        const rotateRightBtn = document.createElement('button');
+        rotateRightBtn.textContent = '↻';
+        rotateRightBtn.title = 'Rotation droite';
+        rotateRightBtn.className = 'pdf-preview-zoom-btn';
+        rotateRightBtn.addEventListener('click', () => this.rotateImage(img, 90));
+
+        const resetBtn = document.createElement('button');
+        resetBtn.textContent = '🔄 Reset';
+        resetBtn.title = 'Réinitialiser zoom et rotation';
+        resetBtn.className = 'pdf-preview-reset-btn';
+        resetBtn.addEventListener('click', () => this.resetImage(img));
+
+        controlsContainer.appendChild(zoomContainer);
+        controlsContainer.appendChild(rotateLeftBtn);
+        controlsContainer.appendChild(rotateRightBtn);
+        controlsContainer.appendChild(resetBtn);
+    }
+
+    /**
+     * Zoom l'image
+     */
+    zoomImage(img, delta) {
+        this.currentZoom = Math.max(25, Math.min(300, this.currentZoom + delta));
+        this.updateImageTransform(img);
+        this.updateZoomUI();
+    }
+
+    /**
+     * Définit le zoom directement
+     */
+    setZoom(img, zoom) {
+        this.currentZoom = zoom;
+        this.updateImageTransform(img);
+        this.updateZoomUI();
+    }
+
+    /**
+     * Tourne l'image
+     */
+    rotateImage(img, degrees) {
+        this.currentRotation = (this.currentRotation + degrees) % 360;
+        this.updateImageTransform(img);
+    }
+
+    /**
+     * Réinitialise l'image
+     */
+    resetImage(img) {
+        this.currentZoom = 100;
+        this.currentRotation = 0;
+        this.updateImageTransform(img);
+        this.updateZoomUI();
+    }
+
+    /**
+     * Met à jour l'interface utilisateur du zoom
+     */
+    updateZoomUI() {
+        const slider = document.getElementById('pdf-preview-zoom-slider');
+        const value = document.getElementById('pdf-preview-zoom-value');
+        if (slider) slider.value = this.currentZoom;
+        if (value) value.textContent = this.currentZoom + '%';
     }
 
     /**
