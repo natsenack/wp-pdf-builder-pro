@@ -166,6 +166,17 @@ class PDFEditorPreviewIntegration {
     setupAutosave() {
         autosaveLogger.info('Configuration de l\'auto-save');
 
+        // Vérifier si le système React est actif (éditeur React)
+        const isReactEditor = window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact;
+        if (isReactEditor) {
+            autosaveLogger.info('Système React détecté - désactivation auto-save JavaScript (géré par React)');
+            if (this.autosaveTimerDisplay) {
+                this.autosaveTimerDisplay.textContent = '💾 Auto-save React actif';
+                this.autosaveTimerDisplay.style.color = '#28a745';
+            }
+            return;
+        }
+
         const autosaveEnabled = window.pdfBuilderCanvasSettings?.autosave_enabled !== false;
         const autosaveInterval = window.pdfBuilderCanvasSettings?.autosave_interval || 5; // minutes
 
