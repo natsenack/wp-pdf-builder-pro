@@ -784,17 +784,24 @@ window.updateExportCardPreview = function() {
  * Met à jour la prévisualisation de la carte dimensions
  */
 window.updateDimensionsCardPreview = function() {
-    // Use saved settings if available, otherwise fall back to default values
-    const width = window.pdfBuilderCanvasSettings?.canvas_width || window.pdfBuilderCanvasSettings?.default_canvas_width;
-    const height = window.pdfBuilderCanvasSettings?.canvas_height || window.pdfBuilderCanvasSettings?.default_canvas_height;
-    const unit = window.pdfBuilderCanvasSettings?.canvas_unit || window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
-    const dpi = window.pdfBuilderCanvasSettings?.canvas_dpi || window.pdfBuilderCanvasSettings?.default_canvas_dpi || 96;
-    const format = window.pdfBuilderCanvasSettings?.canvas_format || window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4';
+    // Get current format and DPI
+    const format = window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4';
+    const dpi = window.pdfBuilderCanvasSettings?.default_canvas_dpi || 96;
+    const orientation = window.pdfBuilderCanvasSettings?.default_canvas_orientation || 'portrait';
 
-    if (!width || !height) {
-        console.error('PDF_BUILDER_DEBUG: Missing dimensions in updateDimensionsCardPreview');
+    if (!window.pdfBuilderCanvasSettings?.getDimensionsFromFormat) {
+        console.error('PDF_BUILDER_DEBUG: getDimensionsFromFormat function not available');
         return;
     }
+
+    // Calculate dimensions in mm first
+    const mmDimensions = window.pdfBuilderCanvasSettings.getDimensionsFromFormat(format, orientation);
+    const widthMm = mmDimensions.width;
+    const heightMm = mmDimensions.height;
+
+    // Convert to pixels
+    const widthPx = Math.round((widthMm / 25.4) * dpi);
+    const heightPx = Math.round((heightMm / 25.4) * dpi);
 
     // Mettre à jour les valeurs dans la carte dimensions
     const widthElement = document.getElementById('card-canvas-width');
@@ -802,19 +809,19 @@ window.updateDimensionsCardPreview = function() {
     const dpiElement = document.getElementById('card-canvas-dpi');
 
     if (widthElement) {
-        widthElement.textContent = width;
+        widthElement.textContent = widthPx;
     } else {
         console.error('PDF_BUILDER_DEBUG: card-canvas-width element not found');
     }
 
     if (heightElement) {
-        heightElement.textContent = height;
+        heightElement.textContent = heightPx;
     } else {
         console.error('PDF_BUILDER_DEBUG: card-canvas-height element not found');
     }
 
     if (dpiElement) {
-        dpiElement.textContent = `${dpi} DPI - ${format} (${width}×${height}${unit})`;
+        dpiElement.textContent = `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`;
     } else {
         console.error('PDF_BUILDER_DEBUG: card-canvas-dpi element not found');
     }
