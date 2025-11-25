@@ -89,6 +89,7 @@ POST /wp-json/wp-pdf-builder-pro/v1/preview
 - [x] Cache fichier temporaire
 - [x] Tests conversion tous formats
 - **Note** : Implémenté avec fallback Imagick→GD, contrôle qualité, et génération de clés cache
+- **Refactorisation** : Classe `ImageConverter` séparée pour éviter fichier trop volumineux (846 lignes → -250 lignes)
 
 ### **Semaine 2 : Interface & Intégration (14-20 déc)**
 
