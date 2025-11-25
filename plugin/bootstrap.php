@@ -825,7 +825,18 @@ function pdf_builder_load_core_on_demand()
             'pdf_builder_save_template',
             'pdf_builder_load_template',
             'pdf_builder_auto_save_template',
-            'pdf_builder_flush_rest_cache'
+            'pdf_builder_flush_rest_cache',
+            // Actions AJAX de l'Onboarding Manager
+            'pdf_builder_complete_onboarding_step',
+            'pdf_builder_skip_onboarding',
+            'pdf_builder_reset_onboarding',
+            'pdf_builder_load_onboarding_step',
+            'pdf_builder_save_template_selection',
+            'pdf_builder_save_freemium_mode',
+            'pdf_builder_update_onboarding_step',
+            'pdf_builder_save_template_assignment',
+            'pdf_builder_mark_onboarding_complete',
+            'pdf_builder_autosave_template'
         ];
         if (in_array($_REQUEST['action'], $pdf_builder_ajax_actions)) {
             $load_core = true;
