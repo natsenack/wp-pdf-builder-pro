@@ -222,6 +222,9 @@ class PdfBuilderAdmin
         // 🔧 DIAGNOSTIC ET CORRECTION AUTO-SAVE
         add_action('admin_init', [$this, 'diagnose_and_fix_autosave']);
 
+        // 🔧 MIGRATION BASE DE DONNÉES
+        add_action('admin_init', [$this, 'run_database_migrations']);
+
         // 🔧 MISE À JOUR DES NOMS DE TEMPLATES (TEMPORAIRE)
         // Désactiver temporairement la mise à jour automatique des noms
         // add_action('admin_init', [$this, 'update_template_names']);
@@ -3527,6 +3530,34 @@ class PdfBuilderAdmin
      * 🔧 MISE À JOUR TEMPORAIRE DES NOMS DE TEMPLATES
      * Met à jour les noms des templates existants pour éviter "Template 1"
      */
+    /**
+     * Migration de base de données pour ajouter les colonnes manquantes
+     */
+    public function run_database_migrations()
+    {
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        // Vérifier et ajouter la colonne thumbnail_url
+        $columns = $wpdb->get_results("DESCRIBE $table_templates");
+        $thumbnail_exists = false;
+        foreach ($columns as $column) {
+            if ($column->Field === 'thumbnail_url') {
+                $thumbnail_exists = true;
+                break;
+            }
+        }
+
+        if (!$thumbnail_exists) {
+            $sql = "ALTER TABLE $table_templates ADD COLUMN thumbnail_url VARCHAR(500) DEFAULT '' AFTER template_data";
+            $result = $wpdb->query($sql);
+            if ($result !== false) {
+                error_log('PDF Builder: Colonne thumbnail_url ajoutée avec succès');
+            } else {
+                error_log('PDF Builder: Erreur lors de l\'ajout de la colonne thumbnail_url: ' . $wpdb->last_error);
+            }
+        }
+    }
     public function update_template_names()
     {
         // Ne s'exécuter que pour les admins
