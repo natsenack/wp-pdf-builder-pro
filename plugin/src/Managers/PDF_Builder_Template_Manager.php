@@ -133,6 +133,13 @@ class PdfBuilderTemplateManager
             // Support pour les clés camelCase (frontend) et snake_case (ancien)
             $template_data = '';
             $template_name = '';
+            $template_description = '';
+            $show_guides = false;
+            $snap_to_grid = false;
+            $margin_top = 0;
+            $margin_bottom = 0;
+            $canvas_width = 0;
+            $canvas_height = 0;
             $template_id = 0;
 
             if ($json_data) {
@@ -141,6 +148,20 @@ class PdfBuilderTemplateManager
                                 (isset($json_data['template_data']) ? $json_data['template_data'] : '');
                 $template_name = isset($json_data['templateName']) ? \sanitize_text_field($json_data['templateName']) : 
                                 (isset($json_data['template_name']) ? \sanitize_text_field($json_data['template_name']) : '');
+                $template_description = isset($json_data['templateDescription']) ? \sanitize_text_field($json_data['templateDescription']) : 
+                                      (isset($json_data['template_description']) ? \sanitize_text_field($json_data['template_description']) : '');
+                $show_guides = isset($json_data['showGuides']) ? (bool)$json_data['showGuides'] : 
+                              (isset($json_data['show_guides']) ? (bool)$json_data['show_guides'] : false);
+                $snap_to_grid = isset($json_data['snapToGrid']) ? (bool)$json_data['snapToGrid'] : 
+                               (isset($json_data['snap_to_grid']) ? (bool)$json_data['snap_to_grid'] : false);
+                $margin_top = isset($json_data['marginTop']) ? \intval($json_data['marginTop']) : 
+                             (isset($json_data['margin_top']) ? \intval($json_data['margin_top']) : 0);
+                $margin_bottom = isset($json_data['marginBottom']) ? \intval($json_data['marginBottom']) : 
+                                (isset($json_data['margin_bottom']) ? \intval($json_data['margin_bottom']) : 0);
+                $canvas_width = isset($json_data['canvasWidth']) ? \intval($json_data['canvasWidth']) : 
+                               (isset($json_data['canvas_width']) ? \intval($json_data['canvas_width']) : 0);
+                $canvas_height = isset($json_data['canvasHeight']) ? \intval($json_data['canvasHeight']) : 
+                                (isset($json_data['canvas_height']) ? \intval($json_data['canvas_height']) : 0);
                 $template_id = isset($json_data['templateId']) ? \intval($json_data['templateId']) : 
                               (isset($json_data['template_id']) ? \intval($json_data['template_id']) : 0);
             } else {
@@ -150,6 +171,14 @@ class PdfBuilderTemplateManager
                                 (isset($_POST['templateData']) ? \trim(\wp_unslash($_POST['templateData'])) : '');
                 $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : 
                                 (isset($_POST['templateName']) ? \sanitize_text_field($_POST['templateName']) : '');
+                $template_description = isset($_POST['template_description']) ? \sanitize_text_field($_POST['template_description']) : 
+                                      (isset($_POST['templateDescription']) ? \sanitize_text_field($_POST['templateDescription']) : '');
+                $show_guides = isset($_POST['show_guides']) ? (bool)$_POST['show_guides'] : false;
+                $snap_to_grid = isset($_POST['snap_to_grid']) ? (bool)$_POST['snap_to_grid'] : false;
+                $margin_top = isset($_POST['margin_top']) ? \intval($_POST['margin_top']) : 0;
+                $margin_bottom = isset($_POST['margin_bottom']) ? \intval($_POST['margin_bottom']) : 0;
+                $canvas_width = isset($_POST['canvas_width']) ? \intval($_POST['canvas_width']) : 0;
+                $canvas_height = isset($_POST['canvas_height']) ? \intval($_POST['canvas_height']) : 0;
                 $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 
                               (isset($_POST['templateId']) ? \intval($_POST['templateId']) : 0);
             }
@@ -246,7 +275,14 @@ class PdfBuilderTemplateManager
                                    (isset($canvas_data['canvasWidth']) ? $canvas_data['canvasWidth'] : 794),
                     'canvasHeight' => isset($canvas_data['height']) ? $canvas_data['height'] : 
                                     (isset($canvas_data['canvasHeight']) ? $canvas_data['canvasHeight'] : 1123),
-                    'version' => '1.0'
+                    'version' => '1.0',
+                    // Ajouter les paramètres du template
+                    'name' => $template_name,
+                    'description' => $template_description,
+                    'showGuides' => $show_guides,
+                    'snapToGrid' => $snap_to_grid,
+                    'marginTop' => $margin_top,
+                    'marginBottom' => $margin_bottom
                 ];
 
                 $template_data = \wp_json_encode($template_structure);
@@ -257,6 +293,30 @@ class PdfBuilderTemplateManager
                 }
                 
                 
+            } else {
+                // template_data est fourni, l'enrichir avec les paramètres du template
+                $decoded_data = \json_decode($template_data, true);
+                if (\json_last_error() !== JSON_ERROR_NONE) {
+                    $json_error = \json_last_error_msg();
+                    
+                    \wp_send_json_error('Données template JSON invalides: ' . $json_error);
+                    return;
+                }
+
+                // Enrichir avec les paramètres du template
+                $decoded_data['name'] = $template_name;
+                $decoded_data['description'] = $template_description;
+                $decoded_data['showGuides'] = $show_guides;
+                $decoded_data['snapToGrid'] = $snap_to_grid;
+                $decoded_data['marginTop'] = $margin_top;
+                $decoded_data['marginBottom'] = $margin_bottom;
+
+                $template_data = \wp_json_encode($decoded_data);
+                if ($template_data === false) {
+                    
+                    \wp_send_json_error('Erreur lors de l\'encodage des données template enrichies');
+                    return;
+                }
             }            // Validation du JSON
             $decoded_test = \json_decode($template_data, true);
             if (\json_last_error() !== JSON_ERROR_NONE) {

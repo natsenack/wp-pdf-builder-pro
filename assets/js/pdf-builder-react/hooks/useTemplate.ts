@@ -466,15 +466,31 @@ export function useTemplate() {
         elements: normalizedElements,
         canvasWidth: canvasWidth,
         canvasHeight: canvasHeight,
-        version: '1.0'
+        version: '1.0',
+        // Inclure les paramètres du template
+        name: state.template.name,
+        description: state.template.description,
+        showGuides: state.template.showGuides,
+        snapToGrid: state.template.snapToGrid,
+        marginTop: state.template.marginTop,
+        marginBottom: state.template.marginBottom
       };
       
       const formData = new FormData();
       formData.append('action', 'pdf_builder_save_template');
       formData.append('template_id', templateId);
       formData.append('template_name', state.template.name || 'Nouveau template');
+      formData.append('template_description', state.template.description || '');
       formData.append('template_data', JSON.stringify(templateData));
       formData.append('nonce', window.pdfBuilderData?.nonce || '');
+
+      // Ajouter les paramètres du template
+      formData.append('show_guides', state.template.showGuides ? '1' : '0');
+      formData.append('snap_to_grid', state.template.snapToGrid ? '1' : '0');
+      formData.append('margin_top', (state.template.marginTop || 0).toString());
+      formData.append('margin_bottom', (state.template.marginBottom || 0).toString());
+      formData.append('canvas_width', (state.template.canvasWidth || canvasWidth).toString());
+      formData.append('canvas_height', (state.template.canvasHeight || canvasHeight).toString());
 
       console.log('[PDF_BUILDER_FRONTEND] Data to send:');
       console.log('- Template ID:', templateId);
