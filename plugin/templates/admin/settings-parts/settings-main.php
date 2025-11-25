@@ -473,30 +473,44 @@ if (
 // Update zoom card preview
 window.updateZoomCardPreview = function() {
     console.log('PDF_BUILDER_DEBUG: updateZoomCardPreview called');
-    // Try to get values from modal inputs first (real-time), then from settings
-    const minZoomInput = document.getElementById("zoom_min");
-    const maxZoomInput = document.getElementById("zoom_max");
-    const defaultZoomInput = document.getElementById("zoom_default");
-    const stepZoomInput = document.getElementById("zoom_step");
+    try {
+        // Try to get values from modal inputs first (real-time), then from settings
+        const minZoomInput = document.getElementById("zoom_min");
+        const maxZoomInput = document.getElementById("zoom_max");
+        const defaultZoomInput = document.getElementById("zoom_default");
+        const stepZoomInput = document.getElementById("zoom_step");
 
-    const minZoom = minZoomInput ? parseInt(minZoomInput.value) : (window.pdfBuilderCanvasSettings?.min_zoom || window.pdfBuilderCanvasSettings?.default_zoom_min || 10);
-    const maxZoom = maxZoomInput ? parseInt(maxZoomInput.value) : (window.pdfBuilderCanvasSettings?.max_zoom || window.pdfBuilderCanvasSettings?.default_zoom_max || 500);
-    const defaultZoom = defaultZoomInput ? parseInt(defaultZoomInput.value) : (window.pdfBuilderCanvasSettings?.default_zoom || 100);
-    const stepZoom = stepZoomInput ? parseInt(stepZoomInput.value) : (window.pdfBuilderCanvasSettings?.zoom_step || 25);
+        const minZoom = minZoomInput ? parseInt(minZoomInput.value) : (window.pdfBuilderCanvasSettings?.min_zoom || window.pdfBuilderCanvasSettings?.default_zoom_min || 10);
+        const maxZoom = maxZoomInput ? parseInt(maxZoomInput.value) : (window.pdfBuilderCanvasSettings?.max_zoom || window.pdfBuilderCanvasSettings?.default_zoom_max || 500);
+        const defaultZoom = defaultZoomInput ? parseInt(defaultZoomInput.value) : (window.pdfBuilderCanvasSettings?.default_zoom || 100);
+        const stepZoom = stepZoomInput ? parseInt(stepZoomInput.value) : (window.pdfBuilderCanvasSettings?.zoom_step || 25);
 
-    // Update zoom level display
-    const zoomLevel = document.querySelector('.zoom-level');
-    if (zoomLevel) {
-        zoomLevel.textContent = `${defaultZoom}%`;
-    }
+        console.log('PDF_BUILDER_DEBUG: zoom values - min:', minZoom, 'max:', maxZoom, 'default:', defaultZoom, 'step:', stepZoom);
 
-    // Update zoom info
-    const zoomInfo = document.querySelector('.zoom-info');
-    if (zoomInfo) {
-        zoomInfo.innerHTML = `
-            <span>${minZoom}% - ${maxZoom}%</span>
-            <span>Pas: ${stepZoom}%</span>
-        `;
+        // Update zoom level display
+        const zoomLevel = document.querySelector('.zoom-level');
+        if (zoomLevel) {
+            zoomLevel.textContent = `${defaultZoom}%`;
+            console.log('PDF_BUILDER_DEBUG: Updated zoom level to:', defaultZoom + '%');
+        } else {
+            console.log('PDF_BUILDER_DEBUG: zoomLevel element not found');
+        }
+
+        // Update zoom info
+        const zoomInfo = document.querySelector('.zoom-info');
+        if (zoomInfo) {
+            zoomInfo.innerHTML = `
+                <span>${minZoom}% - ${maxZoom}%</span>
+                <span>Pas: ${stepZoom}%</span>
+            `;
+            console.log('PDF_BUILDER_DEBUG: Updated zoom info');
+        } else {
+            console.log('PDF_BUILDER_DEBUG: zoomInfo element not found');
+        }
+
+        console.log('PDF_BUILDER_DEBUG: updateZoomCardPreview completed successfully');
+    } catch (error) {
+        console.error('PDF_BUILDER_DEBUG: Error in updateZoomCardPreview:', error);
     }
 };
 
@@ -1889,49 +1903,67 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update dimensions card preview
     window.updateDimensionsCardPreview = function() {
         console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview called');
-        // Try to get values from modal inputs first (real-time), then from settings
-        const formatInput = document.getElementById("canvas_format");
-        const dpiInput = document.getElementById("canvas_dpi");
+        try {
+            // Try to get values from modal inputs first (real-time), then from settings
+            const formatInput = document.getElementById("canvas_format");
+            const dpiInput = document.getElementById("canvas_dpi");
 
-        const format = formatInput ? formatInput.value : (window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4');
-        const dpi = dpiInput ? parseInt(dpiInput.value) : (parseInt(window.pdfBuilderCanvasSettings?.default_canvas_dpi) || 96);
+            console.log('PDF_BUILDER_DEBUG: formatInput:', formatInput, 'dpiInput:', dpiInput);
 
-        // Orientation is always portrait for now
-        const orientation = 'portrait';
+            const format = formatInput ? formatInput.value : (window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4');
+            const dpi = dpiInput ? parseInt(dpiInput.value) : (parseInt(window.pdfBuilderCanvasSettings?.default_canvas_dpi) || 96);
 
-        // Utiliser les dimensions standard centralisées
-        const formatDimensions = window.pdfBuilderPaperFormats || {
-            'A4': { width: 210, height: 297 },
-            'A3': { width: 297, height: 420 },
-            'A5': { width: 148, height: 210 },
-            'Letter': { width: 215.9, height: 279.4 },
-            'Legal': { width: 215.9, height: 355.6 },
-            'Tabloid': { width: 279.4, height: 431.8 }
-        };
+            console.log('PDF_BUILDER_DEBUG: format:', format, 'dpi:', dpi);
 
-        const dimensions = formatDimensions[format] || formatDimensions['A4'];
+            // Orientation is always portrait for now
+            const orientation = 'portrait';
 
-        // Calculer les dimensions en pixels
-        const pixelsPerMM = dpi / 25.4;
-        const widthPx = Math.round(dimensions.width * pixelsPerMM);
-        const heightPx = Math.round(dimensions.height * pixelsPerMM);
+            // Utiliser les dimensions standard centralisées
+            const formatDimensions = window.pdfBuilderPaperFormats || {
+                'A4': { width: 210, height: 297 },
+                'A3': { width: 297, height: 420 },
+                'A5': { width: 148, height: 210 },
+                'Letter': { width: 215.9, height: 279.4 },
+                'Legal': { width: 215.9, height: 355.6 },
+                'Tabloid': { width: 279.4, height: 431.8 }
+            };
 
-        // Mettre à jour les éléments HTML
-        const widthEl = document.getElementById('card-canvas-width');
-        const heightEl = document.getElementById('card-canvas-height');
-        const dpiEl = document.getElementById('card-canvas-dpi');
+            const dimensions = formatDimensions[format] || formatDimensions['A4'];
+            console.log('PDF_BUILDER_DEBUG: dimensions:', dimensions);
 
-        if (widthEl) {
-            widthEl.textContent = widthPx;
-        }
+            // Calculer les dimensions en pixels
+            const pixelsPerMM = dpi / 25.4;
+            const widthPx = Math.round(dimensions.width * pixelsPerMM);
+            const heightPx = Math.round(dimensions.height * pixelsPerMM);
 
-        if (heightEl) {
-            heightEl.textContent = heightPx;
-        }
+            console.log('PDF_BUILDER_DEBUG: widthPx:', widthPx, 'heightPx:', heightPx);
 
-        if (dpiEl) {
-            const dpiText = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
-            dpiEl.textContent = dpiText;
+            // Mettre à jour les éléments HTML
+            const widthEl = document.getElementById('card-canvas-width');
+            const heightEl = document.getElementById('card-canvas-height');
+            const dpiEl = document.getElementById('card-canvas-dpi');
+
+            console.log('PDF_BUILDER_DEBUG: widthEl:', widthEl, 'heightEl:', heightEl, 'dpiEl:', dpiEl);
+
+            if (widthEl) {
+                widthEl.textContent = widthPx;
+                console.log('PDF_BUILDER_DEBUG: Updated widthEl to:', widthPx);
+            }
+
+            if (heightEl) {
+                heightEl.textContent = heightPx;
+                console.log('PDF_BUILDER_DEBUG: Updated heightEl to:', heightPx);
+            }
+
+            if (dpiEl) {
+                const dpiText = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
+                dpiEl.textContent = dpiText;
+                console.log('PDF_BUILDER_DEBUG: Updated dpiEl to:', dpiText);
+            }
+
+            console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview completed successfully');
+        } catch (error) {
+            console.error('PDF_BUILDER_DEBUG: Error in updateDimensionsCardPreview:', error);
         }
     }
 
@@ -2111,46 +2143,64 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update autosave card preview
     window.updateAutosaveCardPreview = function() {
         console.log('PDF_BUILDER_DEBUG: updateAutosaveCardPreview called');
-        // Try to get values from modal inputs first (real-time), then from settings
-        const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
-        const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
-        const versionsLimitInput = document.getElementById("canvas_history_max");
+        try {
+            // Try to get values from modal inputs first (real-time), then from settings
+            const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
+            const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
+            const versionsLimitInput = document.getElementById("canvas_history_max");
 
-        const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : (window.pdfBuilderCanvasSettings?.autosave_interval || 5);
-        const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.autosave_enabled === true || window.pdfBuilderCanvasSettings?.autosave_enabled === '1');
-        const versionsLimit = versionsLimitInput ? parseInt(versionsLimitInput.value) : (window.pdfBuilderCanvasSettings?.versions_limit || 10);
+            const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : (window.pdfBuilderCanvasSettings?.autosave_interval || 5);
+            const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.autosave_enabled === true || window.pdfBuilderCanvasSettings?.autosave_enabled === '1');
+            const versionsLimit = versionsLimitInput ? parseInt(versionsLimitInput.value) : (window.pdfBuilderCanvasSettings?.versions_limit || 10);
 
-        const autosaveCard = document.querySelector('.canvas-card[data-category="autosave"]');
-        if (!autosaveCard) return;
+            console.log('PDF_BUILDER_DEBUG: autosave values - enabled:', autosaveEnabled, 'interval:', autosaveInterval, 'versionsLimit:', versionsLimit);
 
-        // Update timer display
-        const timerDisplay = autosaveCard.querySelector('.autosave-timer');
-        if (timerDisplay) {
-            const minutes = autosaveInterval;
-            timerDisplay.textContent = minutes + 'min';
-        }
+            const autosaveCard = document.querySelector('.canvas-card[data-category="autosave"]');
+            console.log('PDF_BUILDER_DEBUG: autosaveCard found:', autosaveCard);
+            if (!autosaveCard) return;
 
-        // Update status
-        const statusIndicator = autosaveCard.querySelector('.autosave-status');
-        if (statusIndicator) {
-            if (autosaveEnabled) {
-                statusIndicator.classList.add('active');
+            // Update timer display
+            const timerDisplay = autosaveCard.querySelector('.autosave-timer');
+            if (timerDisplay) {
+                const minutes = autosaveInterval;
+                timerDisplay.textContent = minutes + 'min';
+                console.log('PDF_BUILDER_DEBUG: Updated timer display to:', minutes + 'min');
             } else {
-                statusIndicator.classList.remove('active');
+                console.log('PDF_BUILDER_DEBUG: timerDisplay element not found');
             }
-        }
 
-        // Update versions dots
-        const versionDots = autosaveCard.querySelectorAll('.version-dot');
-        if (versionDots.length > 0) {
-            const limit = parseInt(versionsLimit);
-            versionDots.forEach((dot, index) => {
-                if (index < limit) {
-                    dot.style.display = 'block';
+            // Update status
+            const statusIndicator = autosaveCard.querySelector('.autosave-status');
+            if (statusIndicator) {
+                if (autosaveEnabled) {
+                    statusIndicator.classList.add('active');
                 } else {
-                    dot.style.display = 'none';
+                    statusIndicator.classList.remove('active');
                 }
-            });
+                console.log('PDF_BUILDER_DEBUG: Updated status indicator');
+            } else {
+                console.log('PDF_BUILDER_DEBUG: statusIndicator element not found');
+            }
+
+            // Update versions dots
+            const versionDots = autosaveCard.querySelectorAll('.version-dot');
+            if (versionDots.length > 0) {
+                const limit = parseInt(versionsLimit);
+                versionDots.forEach((dot, index) => {
+                    if (index < limit) {
+                        dot.style.display = 'block';
+                    } else {
+                        dot.style.display = 'none';
+                    }
+                });
+                console.log('PDF_BUILDER_DEBUG: Updated version dots, showing:', limit);
+            } else {
+                console.log('PDF_BUILDER_DEBUG: versionDots elements not found');
+            }
+
+            console.log('PDF_BUILDER_DEBUG: updateAutosaveCardPreview completed successfully');
+        } catch (error) {
+            console.error('PDF_BUILDER_DEBUG: Error in updateAutosaveCardPreview:', error);
         }
     };
 
