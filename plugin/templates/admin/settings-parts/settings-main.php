@@ -1377,49 +1377,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             // Update canvas previews after successful save
                             console.log('PDF_BUILDER_DEBUG: Updating previews for category:', category);
-                            if (category === 'dimensions' && typeof updateDimensionsCardPreview === 'function') {
+                            if (category === 'dimensions' && typeof window.updateDimensionsCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updateDimensionsCardPreview');
                                 setTimeout(function() {
-                                    updateDimensionsCardPreview();
+                                    window.updateDimensionsCardPreview();
                                 }, 100);
                             }
-                            if (category === 'apparence' && typeof updateApparenceCardPreview === 'function') {
+                            if (category === 'apparence' && typeof window.updateApparenceCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updateApparenceCardPreview');
                                 setTimeout(function() {
-                                    updateApparenceCardPreview();
+                                    window.updateApparenceCardPreview();
                                 }, 100);
                             }
-                            if (category === 'performance' && typeof updatePerformanceCardPreview === 'function') {
+                            if (category === 'performance' && typeof window.updatePerformanceCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updatePerformanceCardPreview');
                                 setTimeout(function() {
-                                    updatePerformanceCardPreview();
+                                    window.updatePerformanceCardPreview();
                                 }, 100);
                             }
-                            if (category === 'autosave' && typeof updateAutosaveCardPreview === 'function') {
+                            if (category === 'autosave' && typeof window.updateAutosaveCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updateAutosaveCardPreview');
                                 setTimeout(function() {
-                                    updateAutosaveCardPreview();
+                                    window.updateAutosaveCardPreview();
                                 }, 100);
                             }
-                            if (category === 'export' && typeof updateExportCardPreview === 'function') {
+                            if (category === 'export' && typeof window.updateExportCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updateExportCardPreview');
                                 setTimeout(function() {
-                                    updateExportCardPreview();
+                                    window.updateExportCardPreview();
                                 }, 100);
                             }
-                            if (category === 'zoom' && typeof updateZoomCardPreview === 'function') {
+                            if (category === 'zoom' && typeof window.updateZoomCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updateZoomCardPreview');
                                 setTimeout(function() {
-                                    updateZoomCardPreview();
+                                    window.updateZoomCardPreview();
                                 }, 100);
                             }
-                            if (category === 'grille' && typeof updateGrilleCardPreview === 'function') {
+                            if (category === 'grille' && typeof window.updateGrilleCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updateGrilleCardPreview');
                                 setTimeout(function() {
-                                    updateGrilleCardPreview();
+                                    window.updateGrilleCardPreview();
                                 }, 100);
                             }
-                            if (category === 'interactions' && typeof updateInteractionsCardPreview === 'function') {
+                            if (category === 'interactions' && typeof window.updateInteractionsCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updateInteractionsCardPreview');
                                 setTimeout(function() {
                                     updateInteractionsCardPreview();
@@ -1862,43 +1862,57 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to update canvas card previews in real-time
     window.updateCanvasPreviews = function(category) {
         console.log('updateCanvasPreviews called with category:', category);
-        if (typeof updateDimensionsCardPreview === 'function') {
-            updateDimensionsCardPreview();
+        if (typeof window.updateDimensionsCardPreview === 'function') {
+            window.updateDimensionsCardPreview();
         }
 
         // Update apparence card preview
         if (category === 'apparence' || category === 'all') {
-            updateApparenceCardPreview();
+            if (typeof window.updateApparenceCardPreview === 'function') {
+                window.updateApparenceCardPreview();
+            }
         }
 
         // Update grille card preview
         if (category === 'grille' || category === 'all') {
-            updateGrilleCardPreview();
+            if (typeof window.updateGrilleCardPreview === 'function') {
+                window.updateGrilleCardPreview();
+            }
         }
 
         // Update zoom card preview
         if (category === 'zoom' || category === 'all') {
-            updateZoomCardPreview();
+            if (typeof window.updateZoomCardPreview === 'function') {
+                window.updateZoomCardPreview();
+            }
         }
 
         // Update interactions card preview
         if (category === 'interactions' || category === 'all') {
-            updateInteractionsCardPreview();
+            if (typeof window.updateInteractionsCardPreview === 'function') {
+                window.updateInteractionsCardPreview();
+            }
         }
 
         // Update export card preview
         if (category === 'export' || category === 'all') {
-            updateExportCardPreview();
+            if (typeof window.updateExportCardPreview === 'function') {
+                window.updateExportCardPreview();
+            }
         }
 
         // Update performance card preview
         if (category === 'performance' || category === 'all') {
-            updatePerformanceCardPreview();
+            if (typeof window.updatePerformanceCardPreview === 'function') {
+                window.updatePerformanceCardPreview();
+            }
         }
 
         // Update autosave card preview
         if (category === 'autosave' || category === 'all') {
-            updateAutosaveCardPreview();
+            if (typeof window.updateAutosaveCardPreview === 'function') {
+                window.updateAutosaveCardPreview();
+            }
         }
     };
 
