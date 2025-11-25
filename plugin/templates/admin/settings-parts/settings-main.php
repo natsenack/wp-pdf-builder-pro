@@ -472,6 +472,7 @@ if (
 <script>
 // Update zoom card preview
 window.updateZoomCardPreview = function() {
+    console.log('PDF_BUILDER_DEBUG: updateZoomCardPreview called');
     // Try to get values from modal inputs first (real-time), then from settings
     const minZoomInput = document.getElementById("zoom_min");
     const maxZoomInput = document.getElementById("zoom_max");
@@ -1361,42 +1362,51 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
 
                             // Update canvas previews after successful save
+                            console.log('PDF_BUILDER_DEBUG: Updating previews for category:', category);
                             if (category === 'dimensions' && typeof updateDimensionsCardPreview === 'function') {
+                                console.log('PDF_BUILDER_DEBUG: Calling updateDimensionsCardPreview');
                                 setTimeout(function() {
                                     updateDimensionsCardPreview();
                                 }, 100);
                             }
                             if (category === 'apparence' && typeof updateApparenceCardPreview === 'function') {
+                                console.log('PDF_BUILDER_DEBUG: Calling updateApparenceCardPreview');
                                 setTimeout(function() {
                                     updateApparenceCardPreview();
                                 }, 100);
                             }
                             if (category === 'performance' && typeof updatePerformanceCardPreview === 'function') {
+                                console.log('PDF_BUILDER_DEBUG: Calling updatePerformanceCardPreview');
                                 setTimeout(function() {
                                     updatePerformanceCardPreview();
                                 }, 100);
                             }
                             if (category === 'autosave' && typeof updateAutosaveCardPreview === 'function') {
+                                console.log('PDF_BUILDER_DEBUG: Calling updateAutosaveCardPreview');
                                 setTimeout(function() {
                                     updateAutosaveCardPreview();
                                 }, 100);
                             }
                             if (category === 'export' && typeof updateExportCardPreview === 'function') {
+                                console.log('PDF_BUILDER_DEBUG: Calling updateExportCardPreview');
                                 setTimeout(function() {
                                     updateExportCardPreview();
                                 }, 100);
                             }
                             if (category === 'zoom' && typeof updateZoomCardPreview === 'function') {
+                                console.log('PDF_BUILDER_DEBUG: Calling updateZoomCardPreview');
                                 setTimeout(function() {
                                     updateZoomCardPreview();
                                 }, 100);
                             }
                             if (category === 'grille' && typeof updateGrilleCardPreview === 'function') {
+                                console.log('PDF_BUILDER_DEBUG: Calling updateGrilleCardPreview');
                                 setTimeout(function() {
                                     updateGrilleCardPreview();
                                 }, 100);
                             }
                             if (category === 'interactions' && typeof updateInteractionsCardPreview === 'function') {
+                                console.log('PDF_BUILDER_DEBUG: Calling updateInteractionsCardPreview');
                                 setTimeout(function() {
                                     updateInteractionsCardPreview();
                                 }, 100);
@@ -1878,7 +1888,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     window.updateDimensionsCardPreview = function() {
-        console.log('updateDimensionsCardPreview called');
+        console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview called');
         // Try to get values from modal inputs first (real-time), then from settings
         const formatInput = document.getElementById("canvas_format");
         const dpiInput = document.getElementById("canvas_dpi");
@@ -2100,6 +2110,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update autosave card preview
     window.updateAutosaveCardPreview = function() {
+        console.log('PDF_BUILDER_DEBUG: updateAutosaveCardPreview called');
         // Try to get values from modal inputs first (real-time), then from settings
         const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
         const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
