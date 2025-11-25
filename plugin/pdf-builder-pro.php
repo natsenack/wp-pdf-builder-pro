@@ -82,6 +82,9 @@ if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
     $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
     if (file_exists($onboarding_path)) {
         require_once $onboarding_path;
+    } else {
+        // Log d'erreur si le fichier n'existe pas
+        error_log('PDF Builder: Fichier Onboarding Manager introuvable: ' . $onboarding_path);
     }
 }
 
@@ -91,6 +94,19 @@ if (!class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
         class PDF_Builder_Onboarding_Manager_Alias extends PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager {}
     } else {
         class PDF_Builder_Onboarding_Manager_Alias extends PDF_Builder_Onboarding_Manager_Standalone {}
+    }
+}
+
+// Vérification finale et création de l'instance
+if (!class_exists('PDF_Builder_Onboarding_Manager')) {
+    // Créer un alias global pour la compatibilité
+    class_alias('PDF_Builder_Onboarding_Manager_Alias', 'PDF_Builder_Onboarding_Manager');
+    
+    // Créer l'instance immédiatement pour s'assurer que les hooks sont enregistrés
+    try {
+        PDF_Builder_Onboarding_Manager_Alias::get_instance();
+    } catch (Exception $e) {
+        error_log('PDF Builder: Erreur lors de la création de l\'instance Onboarding Manager: ' . $e->getMessage());
     }
 }
 
