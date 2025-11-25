@@ -329,15 +329,15 @@ window.PDF_Builder_Preview_Manager = {
         // Mettre à jour les indicateurs développeur
         const debugModeIndicator = document.querySelector('.debug-mode-indicator');
         if (debugModeIndicator) {
-            debugModeIndicator.className = data.debug_mode ?
-                'debug-mode-indicator enabled' : 'debug-mode-indicator disabled';
+            // Changer la couleur selon l'état du mode debug
+            debugModeIndicator.style.color = data.debug_mode ? '#28a745' : '#dc3545';
             debugModeIndicator.textContent = data.debug_mode ? 'Activé' : 'Désactivé';
         }
 
         const developerEnabledIndicator = document.querySelector('.developer-enabled-indicator');
         if (developerEnabledIndicator) {
-            developerEnabledIndicator.className = data.developer_enabled ?
-                'developer-enabled-indicator enabled' : 'developer-enabled-indicator disabled';
+            // Changer la couleur selon l'état du mode développeur
+            developerEnabledIndicator.style.color = data.developer_enabled ? '#28a745' : '#dc3545';
             developerEnabledIndicator.textContent = data.developer_enabled ? 'Activé' : 'Désactivé';
         }
 
