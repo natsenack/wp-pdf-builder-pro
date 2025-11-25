@@ -1030,11 +1030,11 @@ window.updateZoomCardPreview = function() {
     const zoomInput = document.getElementById("canvas_zoom");
     const zoom = zoomInput ? parseInt(zoomInput.value) : (window.pdfBuilderCanvasSettings?.default_canvas_zoom || 100);
 
-    const zoomElement = document.getElementById('card-canvas-zoom');
+    const zoomElement = document.querySelector('.zoom-level');
     if (zoomElement) {
         zoomElement.textContent = `${zoom}%`;
     } else {
-        console.error('PDF_BUILDER_DEBUG: card-canvas-zoom element not found');
+        console.error('PDF_BUILDER_DEBUG: .zoom-level element not found');
     }
 };
 
@@ -1046,11 +1046,11 @@ window.updateAutosaveCardPreview = function() {
     const autosaveInput = document.getElementById("canvas_autosave");
     const autosave = autosaveInput ? parseInt(autosaveInput.value) : (window.pdfBuilderCanvasSettings?.default_canvas_autosave || 30);
 
-    const autosaveElement = document.getElementById('card-canvas-autosave');
+    const autosaveElement = document.querySelector('.autosave-timer');
     if (autosaveElement) {
-        autosaveElement.textContent = `${autosave}s`;
+        autosaveElement.textContent = `${autosave}min`;
     } else {
-        console.error('PDF_BUILDER_DEBUG: card-canvas-autosave element not found');
+        console.error('PDF_BUILDER_DEBUG: .autosave-timer element not found');
     }
 };
 
