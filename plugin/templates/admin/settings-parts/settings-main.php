@@ -2274,6 +2274,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize real-time preview for interactions
     initializeInteractionsRealTimePreview();
 
+    // Initialize real-time preview for autosave
+    initializeAutosaveRealTimePreview();
+
     // Synchronize dimensions modal values with current settings
     function synchronizeDimensionsModalValues(modal) {
         if (!modal || !window.pdfBuilderCanvasSettings) return;
@@ -2437,7 +2440,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Real-time preview updates for apparence modal
+    // Real-time preview updates for autosave modal
+    function initializeAutosaveRealTimePreview() {
         // Listen for changes in autosave modal fields
         ['change', 'input'].forEach(function(eventType) {
             document.addEventListener(eventType, function(event) {
@@ -2466,7 +2470,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
-    });
+        });
+    }
 }
 </script>
 
