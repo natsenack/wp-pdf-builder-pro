@@ -21,13 +21,13 @@ window.PDFBuilderLogger = {
 
     debug: function(message, ...args) {
         if (this.currentLevel <= this.levels.DEBUG) {
-            console.log(`[PDF Builder DEBUG] ${message}`, ...args);
+            PDFBuilderLogger.debug(message, ...args);
         }
     },
 
     info: function(message, ...args) {
         if (this.currentLevel <= this.levels.INFO) {
-            console.log(`[PDF Builder] ${message}`, ...args);
+            PDFBuilderLogger.info(message, ...args);
         }
     },
 
@@ -183,34 +183,34 @@ class PDFEditorPreviewIntegration {
             return;
         }
 
-        console.log('[PDF Builder] Démarrage de l\'auto-save avec intervalle:', autosaveInterval, 'minutes');
+        PDFBuilderLogger.info('Démarrage de l\'auto-save avec intervalle:', autosaveInterval, 'minutes');
         // Démarrer le timer d'auto-sauvegarde
         this.startAutosaveTimer(autosaveInterval);
 
         // Sauvegarde avant de quitter la page
         window.addEventListener('beforeunload', () => {
-            console.log('[PDF Builder] Sauvegarde avant de quitter la page');
+            PDFBuilderLogger.info('Sauvegarde avant de quitter la page');
             this.performAutosave();
         });
     }
 
     startAutosaveTimer(intervalMinutes) {
-        console.log('[PDF Builder] Démarrage du timer auto-save:', intervalMinutes, 'minutes');
+        PDFBuilderLogger.info('Démarrage du timer auto-save:', intervalMinutes, 'minutes');
 
         this.updateAutosaveTimer(intervalMinutes);
 
         this.autosaveTimer = setInterval(() => {
-            console.log('[PDF Builder] Timer auto-save déclenché - exécution de la sauvegarde');
+            PDFBuilderLogger.info('Timer auto-save déclenché - exécution de la sauvegarde');
             this.performAutosave();
             this.updateAutosaveTimer(intervalMinutes);
         }, intervalMinutes * 60 * 1000);
 
-        console.log('[PDF Builder] Timer auto-save configuré avec ID:', this.autosaveTimer);
+        PDFBuilderLogger.info('Timer auto-save configuré avec ID:', this.autosaveTimer);
 
         // TEST RAPIDE : Déclencher une sauvegarde dans 10 secondes pour tester
-        console.log('[PDF Builder] ⏰ Test rapide : sauvegarde dans 10 secondes...');
+        PDFBuilderLogger.info('⏰ Test rapide : sauvegarde dans 10 secondes...');
         setTimeout(() => {
-            console.log('[PDF Builder] 🚀 Déclenchement test manuel de l\'auto-save');
+            PDFBuilderLogger.info('🚀 Déclenchement test manuel de l\'auto-save');
             this.performAutosave();
         }, 10000);
     }
@@ -222,10 +222,10 @@ class PDFEditorPreviewIntegration {
     }
 
     async performAutosave() {
-        console.log('[PDF Builder] Début auto-sauvegarde');
+        PDFBuilderLogger.info('Début auto-sauvegarde');
 
         try {
-            console.log('[PDF Builder] Vérification des variables AJAX:', {
+            PDFBuilderLogger.debug('Vérification des variables AJAX:', {
                 ajaxurl: pdfBuilderAjax?.ajaxurl,
                 nonce: pdfBuilderAjax?.nonce,
                 ajaxurlExists: typeof pdfBuilderAjax !== 'undefined'
@@ -237,13 +237,13 @@ class PDFEditorPreviewIntegration {
             }
 
             const templateData = this.getTemplateData();
-            console.log('[PDF Builder] Données du template récupérées:', templateData);
+            PDFBuilderLogger.debug('Données du template récupérées:', templateData);
 
             if (!templateData) {
                 throw new Error('Aucune donnée de template à sauvegarder');
             }
 
-            console.log('[PDF Builder] Préparation de la requête AJAX');
+            PDFBuilderLogger.debug('Préparation de la requête AJAX');
             // Envoyer via AJAX
             const response = await fetch(pdfBuilderAjax.ajaxurl, {
                 method: 'POST',
@@ -257,17 +257,17 @@ class PDFEditorPreviewIntegration {
                 })
             });
 
-            console.log('[PDF Builder] Réponse HTTP reçue:', {
+            PDFBuilderLogger.debug('Réponse HTTP reçue:', {
                 status: response.status,
                 statusText: response.statusText,
                 ok: response.ok
             });
 
             const result = await response.json();
-            console.log('[PDF Builder] Résultat JSON:', result);
+            PDFBuilderLogger.debug('Résultat JSON:', result);
 
             if (result.success) {
-                console.log('[PDF Builder] Auto-sauvegarde réussie');
+                PDFBuilderLogger.info('Auto-sauvegarde réussie');
                 if (this.autosaveStatus) {
                     this.autosaveStatus.textContent = 'Sauvegardé automatiquement';
                     this.autosaveStatus.style.color = '#28a745';
@@ -323,26 +323,26 @@ class PDFEditorPreviewIntegration {
     }
 
     getTemplateData() {
-        console.log('[PDF Builder] getTemplateData() appelée');
-        console.log('[PDF Builder] this.canvasEditor:', this.canvasEditor);
-        console.log('[PDF Builder] window.pdfCanvasEditor:', window.pdfCanvasEditor);
+        PDFBuilderLogger.debug('getTemplateData() appelée');
+        PDFBuilderLogger.debug('this.canvasEditor:', this.canvasEditor);
+        PDFBuilderLogger.debug('window.pdfCanvasEditor:', window.pdfCanvasEditor);
 
         // Adapter selon votre structure de données d'éditeur
         if (this.canvasEditor && typeof this.canvasEditor.getTemplateData === 'function') {
-            console.log('[PDF Builder] Utilisation de this.canvasEditor.getTemplateData()');
+            PDFBuilderLogger.debug('Utilisation de this.canvasEditor.getTemplateData()');
             const data = this.canvasEditor.getTemplateData();
-            console.log('[PDF Builder] Données récupérées depuis canvasEditor:', data);
+            PDFBuilderLogger.debug('Données récupérées depuis canvasEditor:', data);
             return data;
         }
 
-        console.log('[PDF Builder] canvasEditor non disponible, test des fallbacks');
+        PDFBuilderLogger.debug('canvasEditor non disponible, test des fallbacks');
 
         // Fallback: Éditeur React
         if (window.pdfBuilderReact && typeof window.pdfBuilderReact.getCurrentTemplate === 'function') {
-            console.log('[PDF Builder] Utilisation de window.pdfBuilderReact.getCurrentTemplate()');
+            PDFBuilderLogger.debug('Utilisation de window.pdfBuilderReact.getCurrentTemplate()');
             try {
                 const data = window.pdfBuilderReact.getCurrentTemplate();
-                console.log('[PDF Builder] Données récupérées depuis React editor (getCurrentTemplate):', data);
+                PDFBuilderLogger.debug('Données récupérées depuis React editor (getCurrentTemplate):', data);
                 if (data) return data;
             } catch (error) {
                 console.error('[PDF Builder] Erreur getCurrentTemplate:', error);
@@ -351,10 +351,10 @@ class PDFEditorPreviewIntegration {
 
         // Fallback: Éditeur React - getEditorState
         if (window.pdfBuilderReact && typeof window.pdfBuilderReact.getEditorState === 'function') {
-            console.log('[PDF Builder] Test de window.pdfBuilderReact.getEditorState()');
+            PDFBuilderLogger.debug('Test de window.pdfBuilderReact.getEditorState()');
             try {
                 const data = window.pdfBuilderReact.getEditorState();
-                console.log('[PDF Builder] Données récupérées depuis React editor (getEditorState):', data);
+                PDFBuilderLogger.debug('Données récupérées depuis React editor (getEditorState):', data);
                 if (data) return data;
             } catch (error) {
                 console.error('[PDF Builder] Erreur getEditorState:', error);
@@ -363,17 +363,17 @@ class PDFEditorPreviewIntegration {
 
         // Fallback: chercher dans le localStorage ou les variables globales
         if (window.pdfEditorTemplate) {
-            console.log('[PDF Builder] Utilisation de window.pdfEditorTemplate');
+            PDFBuilderLogger.debug('Utilisation de window.pdfEditorTemplate');
             return window.pdfEditorTemplate;
         }
 
         if (localStorage.getItem('pdf-builder-template')) {
-            console.log('[PDF Builder] Utilisation du localStorage');
+            PDFBuilderLogger.debug('Utilisation du localStorage');
             return JSON.parse(localStorage.getItem('pdf-builder-template'));
         }
 
         // Template par défaut pour les tests
-        console.log('[PDF Builder] Utilisation du template par défaut (test)');
+        PDFBuilderLogger.debug('Utilisation du template par défaut (test)');
         return {
             templateId: 'autosave-test-' + Date.now(),
             template: {
@@ -927,8 +927,8 @@ window.updateAutosaveCardPreview = function() {
 // ==========================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('[PDF Builder] Initialisation automatique - URL actuelle:', window.location.href);
-    console.log('[PDF Builder] Éléments DOM détectés:', {
+    PDFBuilderLogger.info('Initialisation automatique - URL actuelle:', window.location.href);
+    PDFBuilderLogger.debug('Éléments DOM détectés:', {
         pdfEditorCanvas: !!document.querySelector('#pdf-editor-canvas'),
         pdfCanvasEditor: !!document.querySelector('.pdf-canvas-editor'),
         pdfBuilderEditor: window.location.href.includes('pdf-builder-editor'),
@@ -941,10 +941,10 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href.includes('pdf-builder-editor') ||
         window.location.href.includes('pdf-builder-react-editor')) {
 
-        console.log('[PDF Builder] Condition éditeur remplie - création de PDFEditorPreviewIntegration');
+        PDFBuilderLogger.info('Condition éditeur remplie - création de PDFEditorPreviewIntegration');
         window.pdfEditorPreview = new PDFEditorPreviewIntegration(window.pdfCanvasEditor);
     } else {
-        console.log('[PDF Builder] Condition éditeur NON remplie - pas d\'initialisation');
+        PDFBuilderLogger.debug('Condition éditeur NON remplie - pas d\'initialisation');
     }
 
     // Initialiser l'intégration metabox si on est dans une commande WooCommerce
@@ -1125,7 +1125,7 @@ window.CanvasPreviewManager = {
      * Met à jour toutes les previews ou une catégorie spécifique
      */
     updatePreviews: function(category = 'all') {
-        console.log('CanvasPreviewManager.updatePreviews called with category:', category);
+        PDFBuilderLogger.debug('CanvasPreviewManager.updatePreviews called with category:', category);
 
         Object.keys(this.cardConfigs).forEach(cardCategory => {
             if (category === 'all' || category === cardCategory) {
@@ -1148,7 +1148,7 @@ window.CanvasPreviewManager = {
 
         if (!config) return;
 
-        console.log('Initializing real-time updates for modal category:', category);
+        PDFBuilderLogger.debug('Initializing real-time updates for modal category:', category);
 
         // Supprimer les anciens listeners
         const inputs = modal.querySelectorAll('input, select');
@@ -1169,7 +1169,7 @@ window.CanvasPreviewManager = {
      */
     handleInputChange: function(event, category) {
         const input = event.target;
-        console.log('Input changed:', input.id, 'Value:', input.value, 'Category:', category);
+        PDFBuilderLogger.debug('Input changed:', input.id, 'Value:', input.value, 'Category:', category);
 
         // Mettre à jour la preview correspondante
         const config = this.cardConfigs[category];
