@@ -330,6 +330,9 @@ window.PDF_Builder_Preview_Manager = {
 
         const data = window.pdfBuilderSavedSettings;
 
+        // Debug: Afficher la valeur reçue
+        console.log('Template library enabled value:', data.template_library_enabled);
+
         // Mettre à jour l'indicateur de la bibliothèque de templates
         const templateLibraryIndicator = document.querySelector('.template-library-indicator');
         if (templateLibraryIndicator) {
@@ -892,10 +895,18 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById(target).classList.add('active');
 
             // Update canvas previews when switching to contenu tab
-            if (target === 'contenu' && window.CanvasPreviewManager && typeof window.CanvasPreviewManager.updatePreviews === 'function') {
-                setTimeout(function() {
-                    window.CanvasPreviewManager.updatePreviews('all');
-                }, 200);
+            if (target === 'contenu') {
+                if (window.CanvasPreviewManager && typeof window.CanvasPreviewManager.updatePreviews === 'function') {
+                    setTimeout(function() {
+                        window.CanvasPreviewManager.updatePreviews('all');
+                    }, 200);
+                }
+                // Also initialize templates preview when switching to contenu tab
+                if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeTemplatesPreview === 'function') {
+                    setTimeout(function() {
+                        window.PDF_Builder_Preview_Manager.initializeTemplatesPreview();
+                    }, 200);
+                }
             }
 
             // Update URL hash without scrolling
