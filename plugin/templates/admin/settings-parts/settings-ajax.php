@@ -21,6 +21,261 @@ function send_ajax_response($success, $message = '', $data = [])
     }
 }
 
+/**
+ * Système centralisé de gestion des réponses AJAX
+ */
+class PDF_Builder_Ajax_Response_Manager {
+
+    /**
+     * Configuration des réponses par type d'action
+     */
+    private static $response_configs = [
+        'save_settings' => [
+            'success_message' => 'Tous les paramètres ont été sauvegardés avec succès.',
+            'error_message' => 'Erreur lors de la sauvegarde des paramètres.',
+            'include_saved_options' => true
+        ],
+        'save_canvas' => [
+            'success_message' => 'Paramètres canvas sauvegardés avec succès.',
+            'error_message' => 'Erreur lors de la sauvegarde des paramètres canvas.',
+            'include_saved_options' => false
+        ],
+        'save_dimensions' => [
+            'success_message' => 'Dimensions sauvegardées avec succès.',
+            'error_message' => 'Erreur lors de la sauvegarde des dimensions.',
+            'include_saved_options' => false
+        ],
+        'save_apparence' => [
+            'success_message' => 'Paramètres d\'apparence sauvegardés avec succès.',
+            'error_message' => 'Erreur lors de la sauvegarde des paramètres d\'apparence.',
+            'include_saved_options' => false
+        ],
+        'save_grille' => [
+            'success_message' => 'Paramètres de grille sauvegardés avec succès.',
+            'error_message' => 'Erreur lors de la sauvegarde des paramètres de grille.',
+            'include_saved_options' => false
+        ],
+        'save_interaction' => [
+            'success_message' => 'Paramètres d\'interaction sauvegardés avec succès.',
+            'error_message' => 'Erreur lors de la sauvegarde des paramètres d\'interaction.',
+            'include_saved_options' => false
+        ],
+        'save_performance' => [
+            'success_message' => 'Paramètres de performance sauvegardés avec succès.',
+            'error_message' => 'Erreur lors de la sauvegarde des paramètres de performance.',
+            'include_saved_options' => false
+        ],
+        'save_securite' => [
+            'success_message' => 'Paramètres de sécurité sauvegardés avec succès.',
+            'error_message' => 'Erreur lors de la sauvegarde des paramètres de sécurité.',
+            'include_saved_options' => false
+        ],
+        'save_contenu' => [
+            'success_message' => 'Paramètres de contenu sauvegardés avec succès.',
+            'error_message' => 'Erreur lors de la sauvegarde des paramètres de contenu.',
+            'include_saved_options' => false
+        ]
+    ];
+
+    /**
+     * Envoie une réponse AJAX de succès
+     */
+    public static function send_success($action, $data = []) {
+        $config = self::$response_configs[$action] ?? [
+            'success_message' => 'Opération réussie.',
+            'include_saved_options' => false
+        ];
+
+        $response_data = $data;
+
+        if ($config['include_saved_options']) {
+            $response_data['saved_options'] = self::get_saved_options();
+        }
+
+        send_ajax_response(true, $config['success_message'], $response_data);
+    }
+
+    /**
+     * Envoie une réponse AJAX d'erreur
+     */
+    public static function send_error($action, $custom_message = null) {
+        $config = self::$response_configs[$action] ?? [
+            'error_message' => 'Une erreur est survenue.'
+        ];
+
+        $message = $custom_message ?: $config['error_message'];
+        send_ajax_response(false, $message);
+    }
+
+    /**
+     * Récupère les options sauvegardées pour la réponse
+     */
+    private static function get_saved_options() {
+        return [
+            'pdf_metadata_enabled' => get_option('pdf_builder_pdf_metadata_enabled', 0) ? '1' : '0',
+            'pdf_print_optimized' => get_option('pdf_builder_pdf_print_optimized', 0) ? '1' : '0',
+            'pdf_cache_enabled' => get_option('pdf_builder_pdf_cache_enabled', 0) ? '1' : '0',
+            'pdf_quality' => get_option('pdf_builder_pdf_quality', 'high'),
+            'pdf_page_size' => get_option('pdf_builder_pdf_page_size', 'A4'),
+            'pdf_orientation' => get_option('pdf_builder_pdf_orientation', 'portrait'),
+            'pdf_compression' => get_option('pdf_builder_pdf_compression', 'medium'),
+            'debug_mode' => get_option('pdf_builder_debug_mode', 0) ? '1' : '0',
+            'cache_enabled' => get_option('pdf_builder_cache_enabled', 1) ? '1' : '0',
+            'systeme_auto_maintenance' => get_option('pdf_builder_auto_maintenance', 1) ? '1' : '0',
+            'systeme_auto_backup' => get_option('pdf_builder_auto_backup', 1) ? '1' : '0',
+            'gdpr_enabled' => get_option('pdf_builder_gdpr_enabled', 0) ? '1' : '0'
+        ];
+    }
+}
+
+/**
+ * Système centralisé de gestion des options WordPress
+ */
+class PDF_Builder_Options_Manager {
+
+    /**
+     * Configuration des options et leurs validateurs
+     */
+    private static $option_configs = [
+        // Debug & Logging
+        'pdf_builder_debug_mode' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_log_level' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_log_file_size' => ['type' => 'int', 'sanitize' => 'intval'],
+        'pdf_builder_log_retention' => ['type' => 'int', 'sanitize' => 'intval'],
+
+        // Company Info
+        'pdf_builder_company_phone_manual' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_company_siret' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_company_vat' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_company_rcs' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_company_capital' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+
+        // Cache
+        'pdf_builder_cache_enabled' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_cache_compression' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_cache_auto_cleanup' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_cache_max_size' => ['type' => 'int', 'sanitize' => 'intval'],
+        'pdf_builder_cache_ttl' => ['type' => 'int', 'sanitize' => 'intval'],
+
+        // Maintenance
+        'pdf_builder_auto_maintenance' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_performance_auto_optimization' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_auto_backup' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_backup_retention' => ['type' => 'int', 'sanitize' => 'intval'],
+        'pdf_builder_auto_backup_frequency' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+
+        // Security
+        'pdf_builder_allowed_roles' => ['type' => 'array'],
+        'pdf_builder_security_level' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_enable_logging' => ['type' => 'boolean', 'sanitize' => 'intval'],
+
+        // GDPR
+        'pdf_builder_gdpr_enabled' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_gdpr_consent_required' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_gdpr_data_retention' => ['type' => 'int', 'sanitize' => 'intval'],
+        'pdf_builder_gdpr_audit_enabled' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_gdpr_encryption_enabled' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_gdpr_consent_analytics' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_gdpr_consent_templates' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_gdpr_consent_marketing' => ['type' => 'boolean', 'sanitize' => 'intval'],
+
+        // PDF Settings
+        'pdf_builder_pdf_quality' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_pdf_page_size' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_pdf_orientation' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_pdf_cache_enabled' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_pdf_compression' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_pdf_metadata_enabled' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_pdf_print_optimized' => ['type' => 'boolean', 'sanitize' => 'intval'],
+
+        // Templates
+        'pdf_builder_default_template' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_template_library_enabled' => ['type' => 'boolean', 'sanitize' => 'intval'],
+
+        // Canvas Settings
+        'pdf_builder_canvas_width' => ['type' => 'int', 'sanitize' => 'intval'],
+        'pdf_builder_canvas_height' => ['type' => 'int', 'sanitize' => 'intval'],
+        'pdf_builder_canvas_settings' => ['type' => 'array'],
+
+        // Order Status Templates
+        'pdf_builder_order_status_templates' => ['type' => 'array'],
+    ];
+
+    /**
+     * Sauvegarde une option avec validation automatique
+     */
+    public static function save_option($key, $value) {
+        if (!isset(self::$option_configs[$key])) {
+            error_log("PDF Builder: Option inconnue '$key'");
+            return false;
+        }
+
+        $config = self::$option_configs[$key];
+
+        // Validation et sanitisation
+        $sanitized_value = self::sanitize_value($value, $config);
+
+        // Sauvegarde
+        $result = update_option($key, $sanitized_value);
+
+        if ($result) {
+            error_log("PDF Builder: Option '$key' sauvegardée avec succès");
+        }
+
+        return $result;
+    }
+
+    /**
+     * Sanitise une valeur selon sa configuration
+     */
+    private static function sanitize_value($value, $config) {
+        // Gestion des checkboxes (string '1'/'0' vers boolean)
+        if ($config['type'] === 'boolean') {
+            $value = $value === '1' || $value === 1 || $value === true;
+        }
+
+        // Application de la fonction de sanitisation
+        if (isset($config['sanitize']) && function_exists($config['sanitize'])) {
+            $value = call_user_func($config['sanitize'], $value);
+        }
+
+        // Conversion finale pour les types spécifiques
+        switch ($config['type']) {
+            case 'boolean':
+                return $value ? 1 : 0;
+            case 'int':
+                return intval($value);
+            case 'array':
+                return is_array($value) ? $value : [];
+            default:
+                return $value;
+        }
+    }
+
+    /**
+     * Sauvegarde multiple d'options
+     */
+    public static function save_options($options) {
+        $saved = [];
+        $errors = [];
+
+        foreach ($options as $key => $value) {
+            try {
+                if (self::save_option($key, $value)) {
+                    $saved[] = $key;
+                } else {
+                    $errors[] = $key;
+                }
+            } catch (Exception $e) {
+                $errors[] = $key;
+                error_log("PDF Builder: Erreur sauvegarde option '$key': " . $e->getMessage());
+            }
+        }
+
+        return ['saved' => $saved, 'errors' => $errors];
+    }
+}
+
 // AJAX Handlers
 function pdf_builder_clear_cache_handler() {
     if (wp_verify_nonce($_POST['security'], 'pdf_builder_ajax')) {
@@ -102,229 +357,229 @@ function pdf_builder_save_settings_handler() {
                 // Paramètres généraux
                 $value = $get_post_value('debug_mode');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_mode', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_mode', $value);
                 }
                 $value = $get_post_value('log_level');
                 if ($value !== null) {
-                    update_option('pdf_builder_log_level', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_log_level', $value);
                 }
 
                 // Paramètres entreprise
                 $value = $get_post_value('company_phone_manual');
                 if ($value !== null) {
-                    update_option('pdf_builder_company_phone_manual', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_company_phone_manual', $value);
                 }
                 $value = $get_post_value('company_siret');
                 if ($value !== null) {
-                    update_option('pdf_builder_company_siret', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_company_siret', $value);
                 }
                 $value = $get_post_value('company_vat');
                 if ($value !== null) {
-                    update_option('pdf_builder_company_vat', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_company_vat', $value);
                 }
                 $value = $get_post_value('company_rcs');
                 if ($value !== null) {
-                    update_option('pdf_builder_company_rcs', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_company_rcs', $value);
                 }
                 $value = $get_post_value('company_capital');
                 if ($value !== null) {
-                    update_option('pdf_builder_company_capital', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_company_capital', $value);
                 }
 
                 // Paramètres cache
                 $value = $get_post_value('cache_enabled');
                 if ($value !== null) {
-                    update_option('pdf_builder_cache_enabled', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_cache_enabled', $value);
                 }
                 $value = $get_post_value('cache_compression');
                 if ($value !== null) {
-                    update_option('pdf_builder_cache_compression', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_cache_compression', $value);
                 }
                 $value = $get_post_value('cache_auto_cleanup');
                 if ($value !== null) {
-                    update_option('pdf_builder_cache_auto_cleanup', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_cache_auto_cleanup', $value);
                 }
                 $value = $get_post_value('cache_max_size');
                 if ($value !== null) {
-                    update_option('pdf_builder_cache_max_size', intval($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_cache_max_size', $value);
                 }
                 $value = $get_post_value('cache_ttl');
                 if ($value !== null) {
-                    update_option('pdf_builder_cache_ttl', intval($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_cache_ttl', $value);
                 }
 
                 // Paramètres système
                 $value = $get_post_value('systeme_auto_maintenance');
                 if ($value !== null) {
-                    update_option('pdf_builder_auto_maintenance', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_auto_maintenance', $value);
                 }
                 $value = $get_post_value('performance_auto_optimization');
                 if ($value !== null) {
-                    update_option('pdf_builder_performance_auto_optimization', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_performance_auto_optimization', $value);
                 }
                 $value = $get_post_value('systeme_auto_backup');
                 if ($value !== null) {
-                    update_option('pdf_builder_auto_backup', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_auto_backup', $value);
                 }
                 $value = $get_post_value('systeme_backup_retention');
                 if ($value !== null) {
-                    update_option('pdf_builder_backup_retention', intval($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_backup_retention', $value);
                 }
                 $value = $get_post_value('systeme_auto_backup_frequency');
                 if ($value !== null) {
-                    update_option('pdf_builder_auto_backup_frequency', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_auto_backup_frequency', $value);
                 }
 
                 // Paramètres d'accès (rôles)
                 $value = $get_post_value('pdf_builder_allowed_roles');
                 if ($value !== null && is_array($value)) {
-                    update_option('pdf_builder_allowed_roles', $value);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_allowed_roles', $value);
                 }
 
                 // Paramètres de sécurité
                 $value = $get_post_value('security_level');
                 if ($value !== null) {
-                    update_option('pdf_builder_security_level', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_security_level', $value);
                 }
                 $value = $get_post_value('enable_logging');
                 if ($value !== null) {
-                    update_option('pdf_builder_enable_logging', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_enable_logging', $value);
                 }
                 $value = $get_post_value('gdpr_enabled');
                 if ($value !== null) {
-                    update_option('pdf_builder_gdpr_enabled', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_gdpr_enabled', $value);
                 }
                 $value = $get_post_value('gdpr_consent_required');
                 if ($value !== null) {
-                    update_option('pdf_builder_gdpr_consent_required', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_gdpr_consent_required', $value);
                 }
                 $value = $get_post_value('gdpr_data_retention');
                 if ($value !== null) {
-                    update_option('pdf_builder_gdpr_data_retention', intval($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_gdpr_data_retention', $value);
                 }
                 $value = $get_post_value('gdpr_audit_enabled');
                 if ($value !== null) {
-                    update_option('pdf_builder_gdpr_audit_enabled', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_gdpr_audit_enabled', $value);
                 }
                 $value = $get_post_value('gdpr_encryption_enabled');
                 if ($value !== null) {
-                    update_option('pdf_builder_gdpr_encryption_enabled', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_gdpr_encryption_enabled', $value);
                 }
                 $value = $get_post_value('gdpr_consent_analytics');
                 if ($value !== null) {
-                    update_option('pdf_builder_gdpr_consent_analytics', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_gdpr_consent_analytics', $value);
                 }
                 $value = $get_post_value('gdpr_consent_templates');
                 if ($value !== null) {
-                    update_option('pdf_builder_gdpr_consent_templates', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_gdpr_consent_templates', $value);
                 }
                 $value = $get_post_value('gdpr_consent_marketing');
                 if ($value !== null) {
-                    update_option('pdf_builder_gdpr_consent_marketing', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_gdpr_consent_marketing', $value);
                 }
 
                 // Paramètres PDF
                 $value = $get_post_value('pdf_quality');
                 if ($value !== null) {
-                    update_option('pdf_builder_pdf_quality', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_pdf_quality', $value);
                 }
                 $value = $get_post_value('pdf_page_size');
                 if ($value !== null) {
-                    update_option('pdf_builder_pdf_page_size', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_pdf_page_size', $value);
                 }
                 $value = $get_post_value('pdf_orientation');
                 if ($value !== null) {
-                    update_option('pdf_builder_pdf_orientation', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_pdf_orientation', $value);
                 }
                 $value = $get_post_value('pdf_cache_enabled');
                 if ($value !== null) {
-                    update_option('pdf_builder_pdf_cache_enabled', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_pdf_cache_enabled', $value);
                 }
                 $value = $get_post_value('pdf_compression');
                 if ($value !== null) {
-                    update_option('pdf_builder_pdf_compression', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_pdf_compression', $value);
                 }
                 $value = $get_post_value('pdf_metadata_enabled');
                 if ($value !== null) {
-                    update_option('pdf_builder_pdf_metadata_enabled', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_pdf_metadata_enabled', $value);
                 }
                 $value = $get_post_value('pdf_print_optimized');
                 if ($value !== null) {
-                    update_option('pdf_builder_pdf_print_optimized', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_pdf_print_optimized', $value);
                 }
 
                 // Paramètres de contenu
                 $value = $get_post_value('default_template');
                 if ($value !== null) {
-                    update_option('pdf_builder_default_template', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_default_template', $value);
                 }
                 $value = $get_post_value('template_library_enabled');
                 if ($value !== null) {
-                    update_option('pdf_builder_template_library_enabled', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_template_library_enabled', $value);
                 }
 
                 // Paramètres développeur
                 $value = $get_post_value('developer_enabled');
                 if ($value !== null) {
-                    update_option('pdf_builder_developer_enabled', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_developer_enabled', $value);
                 }
                 $value = $get_post_value('developer_password');
                 if ($value !== null) {
-                    update_option('pdf_builder_developer_password', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_developer_password', $value);
                 }
                 $value = $get_post_value('license_test_mode');
                 if ($value !== null) {
-                    update_option('pdf_builder_license_test_mode', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_license_test_mode', $value);
                 }
                 $value = $get_post_value('debug_php_errors');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_php_errors', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_php_errors', $value);
                 }
                 $value = $get_post_value('debug_javascript');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_javascript', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_javascript', $value);
                 }
                 $value = $get_post_value('debug_javascript_verbose');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_javascript_verbose', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_javascript_verbose', $value);
                 }
                 $value = $get_post_value('debug_ajax');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_ajax', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_ajax', $value);
                 }
                 $value = $get_post_value('debug_performance');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_performance', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_performance', $value);
                 }
                 $value = $get_post_value('debug_database');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_database', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_database', $value);
                 }
                 $value = $get_post_value('log_file_size');
                 if ($value !== null) {
-                    update_option('pdf_builder_log_file_size', intval($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_log_file_size', $value);
                 }
                 $value = $get_post_value('log_retention');
                 if ($value !== null) {
-                    update_option('pdf_builder_log_retention', intval($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_log_retention', $value);
                 }
                 $value = $get_post_value('force_https');
                 if ($value !== null) {
-                    update_option('pdf_builder_force_https', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_force_https', $value);
                 }
                 $value = $get_post_value('performance_monitoring');
                 if ($value !== null) {
-                    update_option('pdf_builder_performance_monitoring', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_performance_monitoring', $value);
                 }
 
                 // Paramètres licence
                 $value = $get_post_value('enable_expiration_notifications');
                 if ($value !== null) {
-                    update_option('pdf_builder_license_enable_notifications', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_license_enable_notifications', $value);
                 }
                 $value = $get_post_value('notification_email');
                 if ($value !== null) {
-                    update_option('pdf_builder_license_notification_email', sanitize_email($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_license_notification_email', $value);
                 }
 
                 // Paramètres canvas (toutes catégories) - seulement les champs qui existent dans les modals
@@ -430,8 +685,8 @@ function pdf_builder_save_settings_handler() {
                 $height_px = round(($dimensions['height'] / 25.4) * $dpi); // 1123px pour A4
 
                 // Sauvegarder les dimensions calculées
-                update_option('pdf_builder_canvas_width', $width_px);
-                update_option('pdf_builder_canvas_height', $height_px);
+                PDF_Builder_Options_Manager::save_option('pdf_builder_canvas_width', $width_px);
+                PDF_Builder_Options_Manager::save_option('pdf_builder_canvas_height', $height_px);
 
                 // Mettre à jour l'option globale des paramètres canvas pour l'éditeur React
                 $canvas_settings = [
@@ -446,50 +701,50 @@ function pdf_builder_save_settings_handler() {
                 // Paramètres développeur
                 $value = $get_post_value('developer_enabled');
                 if ($value !== null) {
-                    update_option('pdf_builder_developer_enabled', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_developer_enabled', $value);
                 }
                 $value = $get_post_value('developer_password');
                 if ($value !== null) {
-                    update_option('pdf_builder_developer_password', sanitize_text_field($value));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_developer_password', $value);
                 }
                 $value = $get_post_value('debug_php_errors');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_php_errors', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_php_errors', $value);
                 }
                 $value = $get_post_value('debug_javascript');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_javascript', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_javascript', $value);
                 }
                 $value = $get_post_value('debug_javascript_verbose');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_javascript_verbose', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_javascript_verbose', $value);
                 }
                 $value = $get_post_value('debug_ajax');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_ajax', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_ajax', $value);
                 }
                 $value = $get_post_value('debug_performance');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_performance', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_performance', $value);
                 }
                 $value = $get_post_value('debug_database');
                 if ($value !== null) {
-                    update_option('pdf_builder_debug_database', $value === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_debug_database', $value);
                 }
                 if (isset($_POST['log_level'])) {
-                    update_option('pdf_builder_log_level', intval($_POST['log_level']));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_log_level', intval($_POST['log_level']));
                 }
                 if (isset($_POST['log_file_size'])) {
-                    update_option('pdf_builder_log_file_size', intval($_POST['log_file_size']));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_log_file_size', intval($_POST['log_file_size']));
                 }
                 if (isset($_POST['log_retention'])) {
-                    update_option('pdf_builder_log_retention', intval($_POST['log_retention']));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_log_retention', intval($_POST['log_retention']));
                 }
                 if (isset($_POST['force_https'])) {
-                    update_option('pdf_builder_force_https', $_POST['force_https'] === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_force_https', $_POST['force_https']);
                 }
                 if (isset($_POST['performance_monitoring'])) {
-                    update_option('pdf_builder_performance_monitoring', $_POST['performance_monitoring'] === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_performance_monitoring', $_POST['performance_monitoring']);
                 }
 
                 // Paramètres des templates par statut de commande
@@ -551,10 +806,10 @@ function pdf_builder_save_settings_handler() {
             case 'contenu':
                 // Paramètres de contenu et canvas
                 if (isset($_POST['default_template'])) {
-                    update_option('pdf_builder_default_template', sanitize_text_field($_POST['default_template']));
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_default_template', sanitize_text_field($_POST['default_template']));
                 }
                 if (isset($_POST['template_library_enabled'])) {
-                    update_option('pdf_builder_template_library_enabled', $_POST['template_library_enabled'] === '1' ? 1 : 0);
+                    PDF_Builder_Options_Manager::save_option('pdf_builder_template_library_enabled', $_POST['template_library_enabled']);
                 }
                 
                 $saved = [

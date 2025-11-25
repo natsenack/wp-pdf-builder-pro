@@ -12,7 +12,11 @@ window.PDFBuilderLogger = {
     currentLevel: 1, // INFO par défaut
 
     setLevel: function(level) {
-        this.currentLevel = this.levels[level] || 1;
+        if (typeof level === 'string') {
+            this.currentLevel = this.levels[level.toUpperCase()] || 1;
+        } else {
+            this.currentLevel = level;
+        }
     },
 
     debug: function(message, ...args) {
@@ -37,6 +41,16 @@ window.PDFBuilderLogger = {
         if (this.currentLevel <= this.levels.ERROR) {
             console.error(`[PDF Builder ERROR] ${message}`, ...args);
         }
+    },
+
+    // Méthode pour logger avec contexte
+    context: function(context) {
+        return {
+            debug: (msg, ...args) => this.debug(`[${context}] ${msg}`, ...args),
+            info: (msg, ...args) => this.info(`[${context}] ${msg}`, ...args),
+            warn: (msg, ...args) => this.warn(`[${context}] ${msg}`, ...args),
+            error: (msg, ...args) => this.error(`[${context}] ${msg}`, ...args)
+        };
     }
 };
 
@@ -44,6 +58,9 @@ window.PDFBuilderLogger = {
 if (typeof PDF_BUILDER_DEBUG_ENABLED !== 'undefined') {
     window.PDFBuilderLogger.setLevel(PDF_BUILDER_DEBUG_ENABLED ? 'DEBUG' : 'INFO');
 }
+
+// Logger spécialisé pour l'auto-save
+const autosaveLogger = window.PDFBuilderLogger.context('AutoSave');
 
 // ==========================================
 // INTÉGRATION DANS L'ÉDITEUR (Canvas)
@@ -147,19 +164,19 @@ class PDFEditorPreviewIntegration {
     }
 
     setupAutosave() {
-        console.log('[PDF Builder] Configuration de l\'auto-save');
+        autosaveLogger.info('Configuration de l\'auto-save');
 
         const autosaveEnabled = window.pdfBuilderCanvasSettings?.autosave_enabled !== false;
         const autosaveInterval = window.pdfBuilderCanvasSettings?.autosave_interval || 5; // minutes
 
-        console.log('[PDF Builder] Paramètres auto-save:', {
+        autosaveLogger.debug('Paramètres auto-save:', {
             autosaveEnabled,
             autosaveInterval,
             pdfBuilderCanvasSettings: window.pdfBuilderCanvasSettings
         });
 
         if (!autosaveEnabled) {
-            console.log('[PDF Builder] Auto-save désactivée');
+            autosaveLogger.info('Auto-save désactivée');
             if (this.autosaveTimerDisplay) {
                 this.autosaveTimerDisplay.textContent = '💾 Sauvegarde auto désactivée';
             }
@@ -955,9 +972,80 @@ document.addEventListener('DOMContentLoaded', function() {
 // ==========================================
 
 /**
- * Génère un aperçu rapide (détection automatique du contexte)
+ * Système AJAX centralisé pour PDF Builder
  */
-window.generateQuickPreview = async function(templateData = null, orderId = null) {
+window.PDFBuilderAjax = {
+    /**
+     * Effectue une requête AJAX avec gestion d'erreurs unifiée
+     */
+    request: async function(action, data = {}, options = {}) {
+        const logger = window.PDFBuilderLogger.context('AJAX');
+
+        try {
+            // Vérification des variables AJAX
+            if (typeof pdfBuilderAjax === 'undefined') {
+                throw new Error('Variables AJAX non définies');
+            }
+
+            const ajaxData = {
+                action: action,
+                nonce: pdfBuilderAjax.nonce,
+                ...data
+            };
+
+            logger.debug('Préparation de la requête AJAX', { action, data: ajaxData });
+
+            const response = await fetch(pdfBuilderAjax.ajaxurl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(ajaxData),
+                ...options
+            });
+
+            logger.debug('Réponse HTTP reçue', { status: response.status });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP ${response.status}`);
+            }
+
+            const result = await response.json();
+            logger.debug('Résultat JSON', result);
+
+            if (!result.success) {
+                throw new Error(result.data?.message || 'Erreur serveur inconnue');
+            }
+
+            return result.data;
+
+        } catch (error) {
+            logger.error('Erreur AJAX', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Gestionnaire d'erreurs AJAX unifié
+     */
+    handleError: function(error, context = 'Opération') {
+        const logger = window.PDFBuilderLogger.context('ErrorHandler');
+
+        logger.error(`${context} échouée`, error);
+
+        // Afficher un message d'erreur à l'utilisateur
+        const message = error.message || 'Une erreur inattendue s\'est produite';
+
+        // Essayer différentes méthodes de notification
+        if (window.pdfBuilderNotifications?.showToast) {
+            window.pdfBuilderNotifications.showToast(`${context}: ${message}`, 'error', 6000);
+        } else if (window.PDF_Builder_Notification_Manager?.show_toast) {
+            window.PDF_Builder_Notification_Manager.show_toast(`${context}: ${message}`, 'error', 6000);
+        } else {
+            alert(`${context}: ${message}`);
+        }
+    }
+};
     try {
         // Détection automatique du contexte
         const isEditor = document.querySelector('#pdf-editor-canvas') ||
