@@ -177,7 +177,7 @@ if (!current_user_can('manage_options')) {
                 // Extract the result from the HTML
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
-                const testResult = doc.getElementById('image-test-result-data');
+                const testResult = doc.getElementById('images-test-result-data');
 
                 if (testResult) {
                     resultDiv.innerHTML = testResult.innerHTML;
