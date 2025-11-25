@@ -11,7 +11,79 @@
   --breakpoint-xl: 1440px;
 }
 
-/* ===== ANIMATIONS ET TRANSITIONS FLUIDES - PHASE 2 ===== */
+/* ===== COMPOSANTS RESPONSIVE ===== */
+
+/* Element Library Responsive */
+.element-library-mobile {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 40vh !important;
+  z-index: 1000 !important;
+  border-radius: 12px 12px 0 0 !important;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.element-library-tablet {
+  width: 240px !important;
+}
+
+.element-library-desktop {
+  width: 280px !important;
+}
+
+/* Properties Panel Responsive */
+.properties-panel-mobile {
+  margin: 8px !important;
+  border-radius: 8px !important;
+}
+
+.properties-panel-tablet {
+  width: 280px !important;
+}
+
+.properties-panel-desktop {
+  width: 320px !important;
+}
+
+/* Toolbar Responsive */
+.toolbar-mobile {
+  position: fixed !important;
+  top: 10px !important;
+  left: 10px !important;
+  right: 10px !important;
+  z-index: 999 !important;
+  max-height: 60px !important;
+}
+
+.toolbar-tablet {
+  max-height: 120px !important;
+}
+
+.toolbar-desktop {
+  max-height: 140px !important;
+}
+
+/* Boutons tactiles optimisés */
+@media (max-width: var(--breakpoint-sm)) {
+  .pdf-builder-toolbar button,
+  .pdf-element-library button {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    font-size: 16px !important; /* Empêche le zoom sur iOS */
+  }
+}
+
+/* Animations responsives */
+@media (prefers-reduced-motion: no-preference) {
+  .element-library-mobile,
+  .toolbar-mobile {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* ===== FIN COMPOSANTS RESPONSIVE ===== */
 
 /* Transitions générales pour une UX fluide */
 * {

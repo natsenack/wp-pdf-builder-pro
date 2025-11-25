@@ -1,4 +1,6 @@
 import React from 'react';
+import { useIsMobile, useIsTablet } from '../../hooks/useResponsive';
+import { ResponsiveContainer } from '../ui/Responsive';
 
 // Définition des éléments WooCommerce (migration depuis l'ancien éditeur)
 const WOOCOMMERCE_ELEMENTS = [
@@ -379,6 +381,9 @@ interface ElementLibraryProps {
 }
 
 export function ElementLibrary({ onElementSelect, className }: ElementLibraryProps) {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+
   const handleElementClick = (elementType: string) => {
     if (onElementSelect) {
       onElementSelect(elementType);
@@ -400,54 +405,52 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
   };
 
   return (
-    <div className={`pdf-element-library ${className || ''}`} style={{
-      width: '280px',
-      height: '100%',
-      backgroundColor: '#f8f9fa',
-      borderRight: '1px solid #e9ecef',
-      display: '-webkit-box',
-      display: '-webkit-flex',
-      display: '-moz-box',
-      display: '-ms-flexbox',
-      display: 'flex',
-      WebkitBoxOrient: 'vertical',
-      WebkitBoxDirection: 'normal',
-      WebkitFlexDirection: 'column',
-      MozBoxOrient: 'vertical',
-      MozBoxDirection: 'normal',
-      msFlexDirection: 'column',
-      flexDirection: 'column',
-      overflow: 'hidden'
-    }}>
-      {/* Header de la sidebar */}
+    <ResponsiveContainer
+      className={`pdf-element-library ${className || ''}`}
+      mobileClass="element-library-mobile"
+      tabletClass="element-library-tablet"
+      desktopClass="element-library-desktop"
+    >
       <div style={{
-        padding: '16px',
-        borderBottom: '1px solid #e9ecef',
-        backgroundColor: '#ffffff'
+        width: isMobile ? '100%' : isTablet ? '240px' : '280px',
+        height: '100%',
+        backgroundColor: '#f8f9fa',
+        borderRight: isMobile ? 'none' : '1px solid #e9ecef',
+        borderBottom: isMobile ? '1px solid #e9ecef' : 'none',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
       }}>
-        <h3 style={{
-          margin: 0,
-          fontSize: '16px',
-          fontWeight: '600',
-          color: '#495057'
+        {/* Header de la sidebar */}
+        <div style={{
+          padding: isMobile ? '12px' : '16px',
+          borderBottom: '1px solid #e9ecef',
+          backgroundColor: '#ffffff'
         }}>
-          📦 Éléments WooCommerce
-        </h3>
-        <p style={{
-          margin: '4px 0 0 0',
-          fontSize: '12px',
-          color: '#6c757d'
-        }}>
-          Glissez les éléments sur le canvas
-        </p>
-      </div>
+          <h3 style={{
+            margin: 0,
+            fontSize: isMobile ? '14px' : '16px',
+            fontWeight: '600',
+            color: '#495057'
+          }}>
+            📦 Éléments WooCommerce
+          </h3>
+          <p style={{
+            margin: '4px 0 0 0',
+            fontSize: isMobile ? '11px' : '12px',
+            color: '#6c757d',
+            display: isMobile ? 'none' : 'block'
+          }}>
+            Glissez les éléments sur le canvas
+          </p>
+        </div>
 
-      {/* Liste des éléments */}
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        padding: '8px'
-      }}>
+        {/* Liste des éléments */}
+        <div style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: isMobile ? '12px' : '8px'
+        }}>
         <div style={{
           display: '-webkit-grid',
           display: '-moz-grid',
@@ -577,5 +580,6 @@ export function ElementLibrary({ onElementSelect, className }: ElementLibraryPro
         Cliquez sur un élément pour l&apos;ajouter
       </div>
     </div>
+    </ResponsiveContainer>
   );
 }

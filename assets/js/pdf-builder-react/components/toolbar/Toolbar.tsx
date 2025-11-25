@@ -1,6 +1,8 @@
 import React from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
+import { useIsMobile, useIsTablet } from '../../hooks/useResponsive';
+import { ResponsiveContainer } from '../ui/Responsive';
 import { BuilderMode } from '../../types/elements';
 
 interface ToolbarProps {
@@ -10,6 +12,8 @@ interface ToolbarProps {
 export function Toolbar({ className }: ToolbarProps) {
   const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides, setCanvas } = useBuilder();
   const canvasSettings = useCanvasSettings();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
 
   // Vérifications de sécurité
   if (!state) {
@@ -86,34 +90,55 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   return (
-    <div className={`pdf-builder-toolbar ${className || ''}`} style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '12px',
-      padding: '16px',
-      backgroundColor: '#ffffff',
-      border: '1px solid #e1e5e9',
-      borderRadius: '8px',
-      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-      maxHeight: '140px'
-    }}>
-      {/* Première ligne : Outils + Actions principales + Informations */}
-      <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-        {/* Outils de création */}
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '220px' }}>
-          <div style={{
-            fontSize: '13px',
-            fontWeight: '600',
-            color: '#374151',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            borderLeft: '3px solid #3b82f6',
-            paddingLeft: '8px'
-          }}>
-            Outils
-          </div>
-          <div style={{
+    <ResponsiveContainer
+      className={`pdf-builder-toolbar ${className || ''}`}
+      mobileClass="toolbar-mobile"
+      tabletClass="toolbar-tablet"
+      desktopClass="toolbar-desktop"
+    >
+      <div style={{
+        display: 'flex',
+        flexDirection: isMobile ? 'row' : 'column',
+        gap: isMobile ? '8px' : '12px',
+        padding: isMobile ? '8px' : '16px',
+        backgroundColor: '#ffffff',
+        border: '1px solid #e1e5e9',
+        borderRadius: '8px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        maxHeight: isMobile ? 'auto' : '140px',
+        overflowX: isMobile ? 'auto' : 'visible',
+        overflowY: isMobile ? 'visible' : 'auto'
+      }}>
+        {/* Première ligne : Outils + Actions principales + Informations */}
+        <div style={{
+          display: 'flex',
+          gap: isMobile ? '8px' : '16px',
+          alignItems: isMobile ? 'center' : 'flex-start',
+          flexDirection: isMobile ? 'column' : 'row',
+          minWidth: isMobile ? 'auto' : '220px'
+        }}>
+          {/* Outils de création */}
+          <section style={{
             display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            minWidth: isMobile ? 'auto' : '220px',
+            flex: isMobile ? '1' : 'none'
+          }}>
+            <div style={{
+              fontSize: isMobile ? '11px' : '13px',
+              fontWeight: '600',
+              color: '#374151',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              borderLeft: '3px solid #3b82f6',
+              paddingLeft: '8px',
+              display: isMobile ? 'none' : 'block'
+            }}>
+              Outils
+            </div>
+            <div style={{
+              display: 'flex',
             flexWrap: 'wrap',
             gap: '6px',
             maxHeight: '80px',
@@ -477,5 +502,6 @@ export function Toolbar({ className }: ToolbarProps) {
         </section>
       </div>
     </div>
+    </ResponsiveContainer>
   );
 }
