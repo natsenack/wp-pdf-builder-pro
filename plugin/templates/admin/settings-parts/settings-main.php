@@ -340,8 +340,8 @@ window.PDF_Builder_Preview_Manager = {
         console.log('Indicator element found:', templateLibraryIndicator);
 
         if (templateLibraryIndicator) {
-            // Changer la couleur et le texte selon l'état de la bibliothèque
-            const isEnabled = data.template_library_enabled;
+            // Convertir explicitement en boolean (0, "0", false deviennent false)
+            const isEnabled = Boolean(data.template_library_enabled && data.template_library_enabled !== "0" && data.template_library_enabled !== 0);
             console.log('Setting indicator to:', isEnabled ? 'ACTIF' : 'INACTIF');
 
             templateLibraryIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
