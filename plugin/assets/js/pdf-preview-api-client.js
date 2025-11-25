@@ -50,6 +50,8 @@ class PDFPreviewAPI {
         this.needsConstrain = false; // Flag pour les contraintes
         this.cachedScale = 1; // Cache du scale pour éviter division répétée
         this.cachedRotation = 0; // Cache de la rotation
+        this.imageWidth = 0; // Dimensions de l'image chargée
+        this.imageHeight = 0; // Dimensions de l'image chargée
     }
 
     /**
@@ -219,6 +221,8 @@ class PDFPreviewAPI {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => {
+            this.imageWidth = img.naturalWidth;
+            this.imageHeight = img.naturalHeight;
             canvas.width = img.naturalWidth;
             canvas.height = img.naturalHeight;
             const ctx = canvas.getContext('2d');
@@ -666,9 +670,9 @@ class PDFPreviewAPI {
     /**
      * Gestionnaire mousedown
      */
-    handleMouseDown(e, img) {
+    handleMouseDown(e, canvas) {
         // Vérifier si le pan est possible (zoom > 100% UNIQUEMENT)
-        const container = img.parentElement;
+        const container = canvas.parentElement;
         this.containerRect = container.getBoundingClientRect();
         const scale = this.currentZoom / 100;
         this.canDrag = this.currentZoom > 100; // STRICTEMENT > 100%
@@ -678,8 +682,8 @@ class PDFPreviewAPI {
         }
 
         // Pré-calculer les limites de pan pour la performance maximale
-        const naturalWidth = img.naturalWidth;
-        const naturalHeight = img.naturalHeight;
+        const naturalWidth = this.imageWidth;
+        const naturalHeight = this.imageHeight;
         const scaledWidth = naturalWidth * scale;
         const scaledHeight = naturalHeight * scale;
         this.maxPanX = Math.max(0, (scaledWidth - this.containerRect.width) / 2);
@@ -691,13 +695,14 @@ class PDFPreviewAPI {
         this.lastMouseY = e.clientY;
         this.dragStartTime = performance.now(); // Mesure performance des drags
         this.needsConstrain = false; // Reset le flag
-        img.style.cursor = 'grabbing';
+        canvas.style.cursor = 'grabbing';
+        canvas.style.transition = 'none'; // Désactiver la transition pendant le drag pour performance
     }
 
     /**
      * Gestionnaire mousemove - VERSION ULTRA-OPTIMISEE
      */
-    handleMouseMove(e, img) {
+    handleMouseMove(e, canvas) {
         if (!this.isDragging || !this.canDrag) return;
 
         // Variables locales ultra-optimisées pour éviter les accès répétés
@@ -729,7 +734,7 @@ class PDFPreviewAPI {
         this.currentPanY = newPanY;
 
         // APPLICATION DIRECTE SANS RAF pour performance maximale (20+ FPS)
-        this.updateCanvasTransform(img);
+        this.updateCanvasTransform(canvas);
 
         // Mettre à jour les positions souris
         this.lastMouseX = clientX;
@@ -739,10 +744,11 @@ class PDFPreviewAPI {
     /**
      * Gestionnaire mouseup
      */
-    handleMouseUp(img) {
+    handleMouseUp(canvas) {
         if (this.isDragging) {
             this.isDragging = false;
-            img.style.cursor = this.currentZoom > 100 ? 'grab' : 'default';
+            canvas.style.cursor = this.currentZoom > 100 ? 'grab' : 'default';
+            canvas.style.transition = 'transform 0.3s ease'; // Réactiver la transition après le drag
 
             // Mesurer et logger la performance du drag
             const dragDuration = performance.now() - this.dragStartTime;
@@ -756,22 +762,22 @@ class PDFPreviewAPI {
     /**
      * Gestionnaire mouseenter
      */
-    handleMouseEnter(img) {
+    handleMouseEnter(canvas) {
         // À 100% zoom exactement, le drag est TOUJOURS désactivé
         if (this.currentZoom <= 100) {
-            img.style.cursor = 'default';
+            canvas.style.cursor = 'default';
             return;
         }
 
-        img.style.cursor = 'grab';
+        canvas.style.cursor = 'grab';
     }
 
     /**
      * Gestionnaire mouseleave
      */
-    handleMouseLeave(img) {
+    handleMouseLeave(canvas) {
         if (!this.isDragging) {
-            img.style.cursor = 'default';
+            canvas.style.cursor = 'default';
         }
     }
 
