@@ -2261,31 +2261,123 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 2000);
 
-    // Real-time preview updates for dimensions modal
-    function initializeDimensionsRealTimePreview() {
-        // Listen for changes in dimensions modal fields
+    // ==========================================
+    // SYSTÈME CENTRALISÉ DES PREVIEWS TEMPS RÉEL
+    // ==========================================
+
+    // Configuration des champs qui déclenchent des previews temps réel
+    const RealTimePreviewConfigs = {
+        dimensions: {
+            fields: ['canvas_format', 'canvas_dpi', 'canvas_orientation'],
+            settingMappings: {
+                'canvas_format': 'default_canvas_format',
+                'canvas_dpi': 'default_canvas_dpi',
+                'canvas_orientation': 'default_canvas_orientation'
+            },
+            valueTransformers: {
+                'canvas_dpi': (value) => parseInt(value)
+            },
+            updateFunction: 'updateDimensionsCardPreview'
+        },
+        apparence: {
+            fields: ['canvas_bg_color', 'canvas_border_color', 'canvas_border_width', 'canvas_shadow_enabled', 'canvas_container_bg_color'],
+            settingMappings: {
+                'canvas_bg_color': 'canvas_background_color',
+                'canvas_border_color': 'border_color',
+                'canvas_border_width': 'border_width',
+                'canvas_shadow_enabled': 'shadow_enabled',
+                'canvas_container_bg_color': 'container_background_color'
+            },
+            valueTransformers: {
+                'canvas_border_width': (value) => parseInt(value),
+                'canvas_shadow_enabled': (value) => value === 'on' || value === true
+            },
+            updateFunction: 'updateApparenceCardPreview'
+        },
+        interactions: {
+            fields: ['canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_selection_mode', 'canvas_keyboard_shortcuts'],
+            settingMappings: {
+                'canvas_drag_enabled': 'drag_enabled',
+                'canvas_resize_enabled': 'resize_enabled',
+                'canvas_rotate_enabled': 'rotate_enabled',
+                'canvas_multi_select': 'multi_select',
+                'canvas_selection_mode': 'selection_mode',
+                'canvas_keyboard_shortcuts': 'keyboard_shortcuts'
+            },
+            valueTransformers: {
+                'canvas_drag_enabled': (value) => value === 'on' || value === true,
+                'canvas_resize_enabled': (value) => value === 'on' || value === true,
+                'canvas_rotate_enabled': (value) => value === 'on' || value === true,
+                'canvas_multi_select': (value) => value === 'on' || value === true,
+                'canvas_keyboard_shortcuts': (value) => value === 'on' || value === true
+            },
+            updateFunction: 'updateInteractionsCardPreview'
+        },
+        autosave: {
+            fields: ['canvas_autosave_enabled', 'canvas_autosave_interval', 'canvas_history_max'],
+            settingMappings: {
+                'canvas_autosave_enabled': 'autosave_enabled',
+                'canvas_autosave_interval': 'autosave_interval',
+                'canvas_history_max': 'versions_limit'
+            },
+            valueTransformers: {
+                'canvas_autosave_enabled': (value) => value === 'on' || value === true,
+                'canvas_autosave_interval': (value) => parseInt(value),
+                'canvas_history_max': (value) => parseInt(value)
+            },
+            updateFunction: 'updateAutosaveCardPreview'
+        }
+    };
+
+    // Fonction générique d'initialisation des previews temps réel
+    function initializeRealTimePreview(category) {
+        const config = RealTimePreviewConfigs[category];
+        if (!config) return;
+
+        // Écouter les changements sur les champs configurés
         ['change', 'input'].forEach(eventType => {
             document.addEventListener(eventType, function(event) {
                 const target = event.target;
-                const modal = target.closest('.canvas-modal[data-category="dimensions"]');
+                const modal = target.closest(`.canvas-modal[data-category="${category}"]`);
 
-                if (modal && (target.id === 'canvas_format' || target.id === 'canvas_dpi')) {
-                    // Update window.pdfBuilderCanvasSettings temporarily for preview
+                if (modal && config.fields.includes(target.id)) {
+                    // Mettre à jour window.pdfBuilderCanvasSettings temporairement
                     if (window.pdfBuilderCanvasSettings) {
-                        if (target.id === 'canvas_format') {
-                            window.pdfBuilderCanvasSettings.default_canvas_format = target.value;
-                        } else if (target.id === 'canvas_dpi') {
-                            window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(target.value);
+                        const settingKey = config.settingMappings[target.id];
+                        let value = target.type === 'checkbox' ? target.checked : target.value;
+
+                        // Appliquer la transformation si elle existe
+                        if (config.valueTransformers && config.valueTransformers[target.id]) {
+                            value = config.valueTransformers[target.id](value);
                         }
 
-                        // Update preview immediately
-                        if (typeof updateDimensionsCardPreview === 'function') {
-                            updateDimensionsCardPreview();
+                        window.pdfBuilderCanvasSettings[settingKey] = value;
+
+                        // Mettre à jour la preview immédiatement
+                        if (typeof window[config.updateFunction] === 'function') {
+                            window[config.updateFunction]();
                         }
                     }
                 }
             });
         });
+    }
+
+    // Remplacer les fonctions individuelles par des appels génériques
+    function initializeDimensionsRealTimePreview() {
+        initializeRealTimePreview('dimensions');
+    }
+
+    function initializeApparenceRealTimePreview() {
+        initializeRealTimePreview('apparence');
+    }
+
+    function initializeInteractionsRealTimePreview() {
+        initializeRealTimePreview('interactions');
+    }
+
+    function initializeAutosaveRealTimePreview() {
+        initializeRealTimePreview('autosave');
     }
     function initializeApparenceRealTimePreview() {
         // Listen for changes in apparence modal fields
@@ -2331,132 +2423,96 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize real-time preview for autosave
     initializeAutosaveRealTimePreview();
 
-    // Synchronize dimensions modal values with current settings
+    // ==========================================
+    // SYSTÈME CENTRALISÉ DE GESTION DES MODALES
+    // ==========================================
+
+    // Configuration centralisée des modales
+    const ModalConfigs = {
+        dimensions: {
+            fields: [
+                { id: 'canvas_format', setting: 'default_canvas_format', default: 'A4' },
+                { id: 'canvas_dpi', setting: 'default_canvas_dpi', default: 96 },
+                { id: 'canvas_orientation', setting: 'default_canvas_orientation', default: 'portrait' }
+            ]
+        },
+        apparence: {
+            fields: [
+                { id: 'canvas_bg_color', setting: 'canvas_background_color', default: '#ffffff' },
+                { id: 'canvas_border_color', setting: 'border_color', default: '#cccccc' },
+                { id: 'canvas_border_width', setting: 'border_width', default: 1 },
+                { id: 'canvas_shadow_enabled', setting: 'shadow_enabled', default: false, type: 'checkbox' },
+                { id: 'canvas_container_bg_color', setting: 'container_background_color', default: '#f8f9fa' }
+            ]
+        },
+        interactions: {
+            fields: [
+                { id: 'canvas_drag_enabled', setting: 'drag_enabled', default: true, type: 'checkbox' },
+                { id: 'canvas_resize_enabled', setting: 'resize_enabled', default: true, type: 'checkbox' },
+                { id: 'canvas_rotate_enabled', setting: 'rotate_enabled', default: true, type: 'checkbox' },
+                { id: 'canvas_multi_select', setting: 'multi_select', default: true, type: 'checkbox' },
+                { id: 'canvas_selection_mode', setting: 'selection_mode', default: 'bounding_box' },
+                { id: 'canvas_keyboard_shortcuts', setting: 'keyboard_shortcuts', default: true, type: 'checkbox' }
+            ],
+            onSync: function(modal) { updateSelectionModeDependency(modal); }
+        },
+        autosave: {
+            fields: [
+                { id: 'canvas_autosave_enabled', setting: 'autosave_enabled', default: true, type: 'checkbox' },
+                { id: 'canvas_autosave_interval', setting: 'autosave_interval', default: 5 },
+                { id: 'canvas_history_max', setting: 'versions_limit', default: 10 }
+            ]
+        }
+    };
+
+    // Fonction générique de synchronisation des modales
+    function synchronizeModalValues(modal, category) {
+        if (!modal || !window.pdfBuilderCanvasSettings) return;
+
+        const config = ModalConfigs[category];
+        if (!config) return;
+
+        // Stocker les valeurs originales pour restauration si annulé
+        const originalValues = {};
+        config.fields.forEach(field => {
+            originalValues[field.setting] = window.pdfBuilderCanvasSettings[field.setting];
+        });
+        modal[`_original${category.charAt(0).toUpperCase() + category.slice(1)}Settings`] = originalValues;
+
+        // Appliquer les valeurs actuelles aux inputs
+        config.fields.forEach(field => {
+            const element = modal.querySelector(`#${field.id}`);
+            if (element) {
+                const value = window.pdfBuilderCanvasSettings[field.setting] ?? field.default;
+                if (field.type === 'checkbox') {
+                    element.checked = value;
+                } else {
+                    element.value = value;
+                }
+            }
+        });
+
+        // Callback personnalisé si défini
+        if (config.onSync) {
+            config.onSync(modal);
+        }
+    }
+
+    // Remplacer les fonctions individuelles par des appels génériques
     function synchronizeDimensionsModalValues(modal) {
-        if (!modal || !window.pdfBuilderCanvasSettings) return;
-
-        // Store original values for restoration if modal is cancelled
-        modal._originalDimensionsSettings = {
-            format: window.pdfBuilderCanvasSettings.default_canvas_format,
-            dpi: window.pdfBuilderCanvasSettings.default_canvas_dpi
-        };
-
-        const formatSelect = modal.querySelector('#canvas_format');
-        const dpiSelect = modal.querySelector('#canvas_dpi');
-
-        if (formatSelect) {
-            formatSelect.value = window.pdfBuilderCanvasSettings.default_canvas_format || 'A4';
-        }
-
-        if (dpiSelect) {
-            dpiSelect.value = window.pdfBuilderCanvasSettings.default_canvas_dpi || 96;
-        }
+        synchronizeModalValues(modal, 'dimensions');
     }
 
-    // Synchronize apparence modal values with current settings
     function synchronizeApparenceModalValues(modal) {
-        if (!modal || !window.pdfBuilderCanvasSettings) return;
-
-        // Store original values for restoration if modal is cancelled
-        modal._originalApparenceSettings = {
-            bgColor: window.pdfBuilderCanvasSettings.canvas_background_color,
-            borderColor: window.pdfBuilderCanvasSettings.border_color,
-            borderWidth: window.pdfBuilderCanvasSettings.border_width,
-            shadowEnabled: window.pdfBuilderCanvasSettings.shadow_enabled,
-            containerBgColor: window.pdfBuilderCanvasSettings.container_background_color
-        };
-
-        const bgColorInput = modal.querySelector('#canvas_bg_color');
-        const borderColorInput = modal.querySelector('#canvas_border_color');
-        const borderWidthInput = modal.querySelector('#canvas_border_width');
-        const shadowEnabledInput = modal.querySelector('#canvas_shadow_enabled');
-        const containerBgColorInput = modal.querySelector('#canvas_container_bg_color');
-
-        if (bgColorInput) {
-            bgColorInput.value = window.pdfBuilderCanvasSettings.canvas_background_color || '#ffffff';
-        }
-        if (borderColorInput) {
-            borderColorInput.value = window.pdfBuilderCanvasSettings.border_color || '#cccccc';
-        }
-        if (borderWidthInput) {
-            borderWidthInput.value = window.pdfBuilderCanvasSettings.border_width || 1;
-        }
-        if (shadowEnabledInput) {
-            shadowEnabledInput.checked = window.pdfBuilderCanvasSettings.shadow_enabled || false;
-        }
-        if (containerBgColorInput) {
-            containerBgColorInput.value = window.pdfBuilderCanvasSettings.container_background_color || '#f8f9fa';
-        }
+        synchronizeModalValues(modal, 'apparence');
     }
 
-    // Synchronize interactions modal values with current settings
     function synchronizeInteractionsModalValues(modal) {
-        if (!modal || !window.pdfBuilderCanvasSettings) return;
-
-        // Store original values for restoration if modal is cancelled
-        modal._originalInteractionsSettings = {
-            dragEnabled: window.pdfBuilderCanvasSettings.drag_enabled,
-            resizeEnabled: window.pdfBuilderCanvasSettings.resize_enabled,
-            rotateEnabled: window.pdfBuilderCanvasSettings.rotate_enabled,
-            multiSelect: window.pdfBuilderCanvasSettings.multi_select,
-            selectionMode: window.pdfBuilderCanvasSettings.selection_mode,
-            keyboardShortcuts: window.pdfBuilderCanvasSettings.keyboard_shortcuts
-        };
-
-        const dragCheckbox = modal.querySelector('#canvas_drag_enabled');
-        const resizeCheckbox = modal.querySelector('#canvas_resize_enabled');
-        const rotateCheckbox = modal.querySelector('#canvas_rotate_enabled');
-        const multiSelectCheckbox = modal.querySelector('#canvas_multi_select');
-        const selectionModeSelect = modal.querySelector('#canvas_selection_mode');
-        const keyboardCheckbox = modal.querySelector('#canvas_keyboard_shortcuts');
-
-        if (dragCheckbox) {
-            dragCheckbox.checked = window.pdfBuilderCanvasSettings.drag_enabled ?? true;
-        }
-        if (resizeCheckbox) {
-            resizeCheckbox.checked = window.pdfBuilderCanvasSettings.resize_enabled ?? true;
-        }
-        if (rotateCheckbox) {
-            rotateCheckbox.checked = window.pdfBuilderCanvasSettings.rotate_enabled ?? true;
-        }
-        if (multiSelectCheckbox) {
-            multiSelectCheckbox.checked = window.pdfBuilderCanvasSettings.multi_select ?? true;
-        }
-        if (selectionModeSelect) {
-            selectionModeSelect.value = window.pdfBuilderCanvasSettings.selection_mode || 'bounding_box';
-        }
-        if (keyboardCheckbox) {
-            keyboardCheckbox.checked = window.pdfBuilderCanvasSettings.keyboard_shortcuts ?? true;
-        }
-
-        // Apply dependency logic after synchronization
-        updateSelectionModeDependency(modal);
+        synchronizeModalValues(modal, 'interactions');
     }
 
-    // Synchronize autosave modal values with current settings
     function synchronizeAutosaveModalValues(modal) {
-        if (!modal || !window.pdfBuilderCanvasSettings) return;
-
-        // Store original values for restoration if modal is cancelled
-        modal._originalAutosaveSettings = {
-            autosaveEnabled: window.pdfBuilderCanvasSettings.autosave_enabled,
-            autosaveInterval: window.pdfBuilderCanvasSettings.autosave_interval,
-            versionsLimit: window.pdfBuilderCanvasSettings.versions_limit
-        };
-
-        const autosaveEnabledCheckbox = modal.querySelector('#canvas_autosave_enabled');
-        const autosaveIntervalInput = modal.querySelector('#canvas_autosave_interval');
-        const versionsLimitInput = modal.querySelector('#canvas_history_max');
-
-        if (autosaveEnabledCheckbox) {
-            autosaveEnabledCheckbox.checked = window.pdfBuilderCanvasSettings.autosave_enabled ?? true;
-        }
-        if (autosaveIntervalInput) {
-            autosaveIntervalInput.value = window.pdfBuilderCanvasSettings.autosave_interval ?? 5;
-        }
-        if (versionsLimitInput) {
-            versionsLimitInput.value = window.pdfBuilderCanvasSettings.versions_limit ?? 10;
-        }
+        synchronizeModalValues(modal, 'autosave');
     }
 
     // Real-time preview updates for interactions modal

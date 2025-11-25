@@ -1,19 +1,49 @@
 /**
- * Exemple d'intégration de l'API Preview 1.4 dans l'interface
- * À intégrer dans votre éditeur ou metabox WooCommerce
+ * Système de logging centralisé pour PDF Builder
  */
+window.PDFBuilderLogger = {
+    levels: {
+        DEBUG: 0,
+        INFO: 1,
+        WARN: 2,
+        ERROR: 3
+    },
 
-// ==========================================
-// LOGS DE DIAGNOSTIC AU CHARGEMENT
-// ==========================================
+    currentLevel: 1, // INFO par défaut
 
-console.log('[PDF Builder] Script pdf-preview-integration.js chargé');
-console.log('[PDF Builder] Variables AJAX disponibles:', {
-    pdfBuilderAjax: typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax : 'NON DEFINI',
-    ajaxurl: typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax.ajaxurl : 'NON DEFINI',
-    nonce: typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax.nonce : 'NON DEFINI',
-    window_pdfBuilderCanvasSettings: typeof window.pdfBuilderCanvasSettings !== 'undefined' ? 'DEFINI' : 'NON DEFINI'
-});
+    setLevel: function(level) {
+        this.currentLevel = this.levels[level] || 1;
+    },
+
+    debug: function(message, ...args) {
+        if (this.currentLevel <= this.levels.DEBUG) {
+            console.log(`[PDF Builder DEBUG] ${message}`, ...args);
+        }
+    },
+
+    info: function(message, ...args) {
+        if (this.currentLevel <= this.levels.INFO) {
+            console.log(`[PDF Builder] ${message}`, ...args);
+        }
+    },
+
+    warn: function(message, ...args) {
+        if (this.currentLevel <= this.levels.WARN) {
+            console.warn(`[PDF Builder WARN] ${message}`, ...args);
+        }
+    },
+
+    error: function(message, ...args) {
+        if (this.currentLevel <= this.levels.ERROR) {
+            console.error(`[PDF Builder ERROR] ${message}`, ...args);
+        }
+    }
+};
+
+// Configuration du niveau de log basé sur les settings WordPress
+if (typeof PDF_BUILDER_DEBUG_ENABLED !== 'undefined') {
+    window.PDFBuilderLogger.setLevel(PDF_BUILDER_DEBUG_ENABLED ? 'DEBUG' : 'INFO');
+}
 
 // ==========================================
 // INTÉGRATION DANS L'ÉDITEUR (Canvas)
