@@ -160,6 +160,9 @@ class PDF_Builder_Settings_Loader {
             'cache_ttl' => $settings['pdf_builder_cache_ttl'] ?? 3600,
             'cache_compression' => $settings['pdf_builder_cache_compression'] ?? true,
 
+            // Templates
+            'template_library_enabled' => $settings['pdf_builder_template_library_enabled'] ?? true,
+
             // Développeur
             'developer_enabled' => $settings['pdf_builder_developer_enabled'] ?? false,
             'debug_mode' => $settings['pdf_builder_debug_mode'] ?? false,
@@ -219,6 +222,7 @@ window.PDF_Builder_Preview_Manager = {
         this.initializeCompanyPreview();
         this.initializePDFPreview();
         this.initializeCachePreview();
+        this.initializeTemplatesPreview();
         this.initializeDeveloperPreview();
         this.initializeCanvasPreviews();
 
@@ -316,6 +320,25 @@ window.PDF_Builder_Preview_Manager = {
         }
 
         pdfBuilderDebug('Cache preview initialized');
+    },
+
+    /**
+     * Preview des paramètres templates
+     */
+    initializeTemplatesPreview: function() {
+        if (!window.pdfBuilderSavedSettings) return;
+
+        const data = window.pdfBuilderSavedSettings;
+
+        // Mettre à jour l'indicateur de la bibliothèque de templates
+        const templateLibraryIndicator = document.querySelector('.template-library-indicator');
+        if (templateLibraryIndicator) {
+            // Changer la couleur et le texte selon l'état de la bibliothèque
+            templateLibraryIndicator.style.background = data.template_library_enabled ? '#28a745' : '#dc3545';
+            templateLibraryIndicator.textContent = data.template_library_enabled ? 'ACTIF' : 'INACTIF';
+        }
+
+        pdfBuilderDebug('Templates preview initialized');
     },
 
     /**

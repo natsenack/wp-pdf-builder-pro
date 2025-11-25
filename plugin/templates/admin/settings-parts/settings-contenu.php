@@ -438,7 +438,7 @@ input:checked + .toggle-slider:before {
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                     <span style="display: inline-flex; align-items: center; gap: 10px;">
                         📋 Templates
-                        <span style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
+                        <span class="template-library-indicator" style="font-size: 12px; background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;">ACTIF</span>
                     </span>
                 </h3>
 
