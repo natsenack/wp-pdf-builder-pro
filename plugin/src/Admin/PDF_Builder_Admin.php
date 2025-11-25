@@ -94,6 +94,16 @@ class PdfBuilderAdmin
             $this->predefined_templates_manager = new \PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager();
         }
 
+        // Charger manuellement le Thumbnail Manager si nécessaire
+        if (!class_exists('PDF_Builder\Managers\PdfBuilderThumbnailManager')) {
+            // Chemin absolu depuis ce fichier
+            $plugin_root = dirname(dirname(dirname(__DIR__)));
+            $thumbnail_manager_file = $plugin_root . '/src/Managers/PDF_Builder_Thumbnail_Manager.php';
+            if (file_exists($thumbnail_manager_file)) {
+                require_once $thumbnail_manager_file;
+            }
+        }
+
         // Initialiser le manager de thumbnails
         $this->thumbnail_manager = \PDF_Builder\Managers\PdfBuilderThumbnailManager::getInstance();
 

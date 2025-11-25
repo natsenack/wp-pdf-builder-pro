@@ -596,6 +596,11 @@ function pdf_builder_load_bootstrap()
     pdf_builder_load_core();
     pdf_builder_load_new_classes();
 
+    // Charger manuellement le Thumbnail Manager pour s'assurer qu'il est disponible
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Thumbnail_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Thumbnail_Manager.php';
+    }
+
     // CHARGER LE TEST D'INTÉGRATION DU CACHE (seulement en mode développeur)
     $developer_mode = get_option('pdf_builder_developer_enabled', false);
     if ($developer_mode && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php')) {
