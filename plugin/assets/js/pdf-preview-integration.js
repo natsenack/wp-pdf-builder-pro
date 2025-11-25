@@ -629,15 +629,10 @@ class PDFMetaboxPreviewIntegration {
  * Met à jour la prévisualisation de la carte performance
  */
 window.updatePerformanceCardPreview = function() {
-    const fpsSelect = document.getElementById("canvas_fps_target");
-    const memoryJsInput = document.getElementById("canvas_memory_limit_js");
-    const memoryPhpInput = document.getElementById("canvas_memory_limit_php");
-
-    if (!fpsSelect || !memoryJsInput || !memoryPhpInput) return;
-
-    const fps = parseInt(fpsSelect.value);
-    const memoryJs = parseInt(memoryJsInput.value);
-    const memoryPhp = parseInt(memoryPhpInput.value);
+    const config = window.CanvasPreviewManager.cardConfigs.performance;
+    const fps = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
+    const memoryJs = window.CanvasPreviewManager.getValue(config.inputs[1], config.settings[1], config.defaults[1]);
+    const lazyLoading = window.CanvasPreviewManager.getValue(config.inputs[2], config.settings[2], config.defaults[2]);
 
     // Mettre à jour les valeurs dans la carte performance
     const metricValues = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-value');
@@ -655,17 +650,13 @@ window.updatePerformanceCardPreview = function() {
         else if (memoryJs >= 64) memoryJsStatus = '🟡 Moyen';
         metricValues[1].innerHTML = `${memoryJs}MB<br><small>${memoryJsStatus}</small>`;
 
-        // RAM PHP
-        let memoryPhpStatus = '🔴 Faible';
-        if (memoryPhp >= 256) memoryPhpStatus = '🟢 Bon';
-        else if (memoryPhp >= 128) memoryPhpStatus = '🟡 Moyen';
-        metricValues[2].innerHTML = `${memoryPhp}MB<br><small>${memoryPhpStatus}</small>`;
+        // RAM PHP - valeur fixe pour l'instant
+        metricValues[2].innerHTML = `256MB<br><small>🟢 Bon</small>`;
     }
 
     // Mettre à jour l'indicateur de statut
     const statusIndicator = document.querySelector('.canvas-card[data-category="performance"] .status-indicator');
     if (statusIndicator) {
-        const lazyLoading = document.getElementById("canvas_lazy_loading_editor")?.checked;
         const statusText = lazyLoading ? 'Lazy Loading Activé' : 'Lazy Loading Désactivé';
         const statusDot = statusIndicator.querySelector('.status-dot');
         if (statusDot) {
@@ -682,20 +673,21 @@ window.updatePerformanceCardPreview = function() {
  * Met à jour la prévisualisation de la carte apparence
  */
 window.updateApparenceCardPreview = function() {
-    const bgColorInput = document.getElementById("canvas_background_color");
-    const borderColorInput = document.getElementById("canvas_border_color");
-    const borderWidthInput = document.getElementById("canvas_border_width");
+    const config = window.CanvasPreviewManager.cardConfigs.apparence;
+    const bgColor = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
+    const borderColor = window.CanvasPreviewManager.getValue(config.inputs[1], config.settings[1], config.defaults[1]);
+    const borderWidth = window.CanvasPreviewManager.getValue(config.inputs[2], config.settings[2], config.defaults[2]);
 
     // Mettre à jour les previews de couleur
     const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
     const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
 
-    if (bgPreview && bgColorInput) {
-        bgPreview.style.backgroundColor = bgColorInput.value;
+    if (bgPreview) {
+        bgPreview.style.backgroundColor = bgColor;
     }
 
-    if (borderPreview && borderColorInput && borderWidthInput) {
-        borderPreview.style.border = `${borderWidthInput.value}px solid ${borderColorInput.value}`;
+    if (borderPreview) {
+        borderPreview.style.border = `${borderWidth}px solid ${borderColor}`;
     }
 };
 
@@ -703,9 +695,10 @@ window.updateApparenceCardPreview = function() {
  * Met à jour la prévisualisation de la carte grille
  */
 window.updateGrilleCardPreview = function() {
-    const gridEnabled = document.getElementById("canvas_grid_enabled")?.checked;
-    const snapToGrid = document.getElementById("canvas_snap_to_grid")?.checked;
-    const showGuides = document.getElementById("canvas_show_guides")?.checked;
+    const config = window.CanvasPreviewManager.cardConfigs.grille;
+    const gridEnabled = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
+    const snapToGrid = window.CanvasPreviewManager.getValue(config.inputs[1], config.settings[1], config.defaults[1]);
+    const showGuides = window.CanvasPreviewManager.getValue(config.inputs[2], config.settings[2], config.defaults[2]);
 
     const gridContainer = document.querySelector('.canvas-card[data-category="grille"] .grid-preview-container');
 
@@ -744,37 +737,17 @@ window.updateGrilleCardPreview = function() {
 };
 
 /**
- * Met à jour la prévisualisation de la carte zoom
+ * Ancienne fonction updateZoomCardPreview - remplacée par celle utilisant CanvasPreviewManager
+ * Gardée pour compatibilité temporaire
  */
-window.updateZoomCardPreview = function() {
-    // Use saved settings if available, otherwise fall back to input values
-    const zoomMin = window.pdfBuilderCanvasSettings?.min_zoom ||
-                   (document.getElementById("canvas_zoom_min")?.value || 10);
-    const zoomMax = window.pdfBuilderCanvasSettings?.max_zoom ||
-                   (document.getElementById("canvas_zoom_max")?.value || 500);
-    const zoomStep = window.pdfBuilderCanvasSettings?.zoom_step ||
-                    (document.getElementById("canvas_zoom_step")?.value || 25);
-    const defaultZoom = window.pdfBuilderCanvasSettings?.default_zoom ||
-                       (document.getElementById("canvas_zoom_default")?.value || 100);
-
-    const zoomLevel = document.querySelector('.canvas-card[data-category="zoom"] .zoom-level');
-    const zoomInfo = document.querySelector('.canvas-card[data-category="zoom"] .zoom-info');
-
-    if (zoomLevel) {
-        zoomLevel.textContent = `${defaultZoom}%`;
-    }
-
-    if (zoomInfo) {
-        zoomInfo.innerHTML = `<span>${zoomMin}% - ${zoomMax}%</span><span>Pas: ${zoomStep}%</span>`;
-    }
-};
 
 /**
  * Met à jour la prévisualisation de la carte interactions
  */
 window.updateInteractionsCardPreview = function() {
-    const selectionMode = document.getElementById("canvas_selection_mode")?.value || 'click';
-    const keyboardShortcuts = document.getElementById("canvas_keyboard_shortcuts")?.checked;
+    const config = window.CanvasPreviewManager.cardConfigs.interactions;
+    const selectionMode = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
+    const keyboardShortcuts = window.CanvasPreviewManager.getValue(config.inputs[1], config.settings[1], config.defaults[1]);
 
     const modeIcons = document.querySelectorAll('.canvas-card[data-category="interactions"] .mode-icon');
     const statusIndicator = document.querySelector('.canvas-card[data-category="interactions"] .status-indicator');
@@ -805,12 +778,11 @@ window.updateInteractionsCardPreview = function() {
  * Met à jour la prévisualisation de la carte export
  */
 window.updateExportCardPreview = function() {
-    const exportQuality = document.getElementById("canvas_export_quality")?.value || 90;
-    const exportFormats = document.querySelectorAll('input[name="canvas_export_formats[]"]:checked');
+    const config = window.CanvasPreviewManager.cardConfigs.export;
+    const exportQuality = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
 
     const qualityFill = document.querySelector('.canvas-card[data-category="export"] .quality-fill');
     const qualityText = document.querySelector('.canvas-card[data-category="export"] .quality-text');
-    const formatBadges = document.querySelectorAll('.canvas-card[data-category="export"] .format-badge');
 
     // Mettre à jour la barre de qualité
     if (qualityFill) {
@@ -819,19 +791,6 @@ window.updateExportCardPreview = function() {
     if (qualityText) {
         qualityText.textContent = `${exportQuality}%`;
     }
-
-    // Mettre à jour les badges de format
-    formatBadges.forEach(badge => {
-        badge.classList.remove('active');
-    });
-
-    exportFormats.forEach(checkbox => {
-        const format = checkbox.value.toLowerCase();
-        const badge = document.querySelector(`.canvas-card[data-category="export"] .format-badge.${format}`);
-        if (badge) {
-            badge.classList.add('active');
-        }
-    });
 };
 
 // ==========================================
@@ -839,65 +798,9 @@ window.updateExportCardPreview = function() {
 // ==========================================
 
 /**
- * Met à jour la prévisualisation de la carte dimensions
- */
-window.updateDimensionsCardPreview = function() {
-    // Prioritize modal input values for real-time updates, fall back to saved settings
-    const formatInput = document.getElementById("canvas_format");
-    const dpiInput = document.getElementById("canvas_dpi");
-    const orientationInput = document.getElementById("canvas_orientation");
-
-    const format = formatInput ? formatInput.value : (window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4');
-    const dpi = dpiInput ? parseInt(dpiInput.value) : (window.pdfBuilderCanvasSettings?.default_canvas_dpi || 96);
-    const orientation = orientationInput ? orientationInput.value : (window.pdfBuilderCanvasSettings?.default_canvas_orientation || 'portrait');
-
-    // Get paper dimensions in mm
-    const paperFormats = window.pdfBuilderPaperFormats || {
-        'A4': { width: 210, height: 297 },
-        'A3': { width: 297, height: 420 },
-        'A5': { width: 148, height: 210 },
-        'Letter': { width: 215.9, height: 279.4 },
-        'Legal': { width: 215.9, height: 355.6 },
-        'Tabloid': { width: 279.4, height: 431.8 }
-    };
-
-    const dimsMM = paperFormats[format] || paperFormats['A4'];
-    let widthMm = dimsMM.width;
-    let heightMm = dimsMM.height;
-
-    // Swap if landscape
-    if (orientation === 'landscape') {
-        [widthMm, heightMm] = [heightMm, widthMm];
-    }
-
-    // Convert to pixels with current DPI
-    const pixelsPerMM = dpi / 25.4;
-    const widthPx = Math.round(widthMm * pixelsPerMM);
-    const heightPx = Math.round(heightMm * pixelsPerMM);
-
-    // Mettre à jour les valeurs dans la carte dimensions
-    const widthElement = document.getElementById('card-canvas-width');
-    const heightElement = document.getElementById('card-canvas-height');
-    const dpiElement = document.getElementById('card-canvas-dpi');
-
-    if (widthElement) {
-        widthElement.textContent = widthPx;
-    } else {
-        console.error('PDF_BUILDER_DEBUG: card-canvas-width element not found');
-    }
-
-    if (heightElement) {
-        heightElement.textContent = heightPx;
-    } else {
-        console.error('PDF_BUILDER_DEBUG: card-canvas-height element not found');
-    }
-
-    if (dpiElement) {
-        dpiElement.textContent = `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`;
-    } else {
-        console.error('PDF_BUILDER_DEBUG: card-canvas-dpi element not found');
-    }
-};/**
+ * Ancienne fonction updateDimensionsCardPreview - remplacée par celle utilisant CanvasPreviewManager
+ * Gardée pour compatibilité temporaire
+ *//**
  * Ancienne fonction updateAutosaveCardPreview - remplacée par celle utilisant CanvasPreviewManager
  * Gardée pour compatibilité temporaire
  */
@@ -1076,17 +979,53 @@ window.CanvasPreviewManager = {
             defaults: ['A4', 96, 'portrait'],
             updateFunction: 'updateDimensionsCardPreview'
         },
+        apparence: {
+            inputs: ['canvas_bg_color', 'canvas_border_color', 'canvas_border_width'],
+            settings: ['canvas_background_color', 'border_color', 'border_width'],
+            defaults: ['#ffffff', '#cccccc', 1],
+            updateFunction: 'updateApparenceCardPreview'
+        },
+        grille: {
+            inputs: ['canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_show_guides'],
+            settings: ['show_grid', 'snap_to_grid', 'show_guides'],
+            defaults: [true, true, true],
+            updateFunction: 'updateGrilleCardPreview'
+        },
         zoom: {
             inputs: ['canvas_zoom'],
             settings: ['default_canvas_zoom'],
             defaults: [100],
             updateFunction: 'updateZoomCardPreview'
         },
+        interactions: {
+            inputs: ['canvas_selection_mode', 'canvas_keyboard_shortcuts'],
+            settings: ['selection_mode', 'keyboard_shortcuts'],
+            defaults: ['click', true],
+            updateFunction: 'updateInteractionsCardPreview'
+        },
+        export: {
+            inputs: ['canvas_export_quality'],
+            settings: ['export_quality'],
+            defaults: [90],
+            updateFunction: 'updateExportCardPreview'
+        },
+        performance: {
+            inputs: ['canvas_fps_target', 'canvas_memory_limit_js', 'canvas_lazy_loading_editor'],
+            settings: ['fps_target', 'memory_limit_js', 'lazy_loading_editor'],
+            defaults: [60, 128, true],
+            updateFunction: 'updatePerformanceCardPreview'
+        },
         autosave: {
             inputs: ['canvas_autosave_interval'],
             settings: ['autosave_interval'],
             defaults: [5],
             updateFunction: 'updateAutosaveCardPreview'
+        },
+        debug: {
+            inputs: ['canvas_debug_enabled'],
+            settings: ['debug_mode'],
+            defaults: [false],
+            updateFunction: 'updateDebugCardPreview'
         }
     },
 
@@ -1262,6 +1201,21 @@ window.updateAutosaveCardPreview = function() {
         }
     } else {
         console.error('PDF_BUILDER_DEBUG: autosave-status element not found');
+    }
+};
+
+/**
+ * Met à jour la prévisualisation de la carte debug
+ */
+window.updateDebugCardPreview = function() {
+    const config = window.CanvasPreviewManager.cardConfigs.debug;
+    const debugEnabled = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
+
+    const statusIndicator = document.querySelector('.canvas-card[data-category="debug"] .status-indicator');
+    if (statusIndicator) {
+        const statusText = debugEnabled ? 'Debug Activé' : 'Debug Désactivé';
+        statusIndicator.textContent = statusText;
+        statusIndicator.className = `status-indicator ${debugEnabled ? 'enabled' : 'disabled'}`;
     }
 };
 
