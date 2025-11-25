@@ -3533,11 +3533,7 @@ class PdfBuilderAdmin
             return;
         }
 
-        // Toujours exécuter pour s'assurer que c'est à jour
-        // $update_done = get_option('pdf_builder_template_names_updated', false);
-        // if ($update_done) {
-        //     return;
-        // }
+        error_log('PDF Builder: Démarrage de update_template_names()');
 
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
@@ -3545,11 +3541,15 @@ class PdfBuilderAdmin
         // Récupérer tous les templates
         $templates = $wpdb->get_results("SELECT id, name, template_data FROM $table_templates", ARRAY_A);
 
+        error_log('PDF Builder: ' . count($templates) . ' templates trouvés');
+
         $updated_count = 0;
         foreach ($templates as $template) {
             $template_id = $template['id'];
             $current_name = $template['name'];
             $template_data = json_decode($template['template_data'], true);
+
+            error_log('PDF Builder: Template ' . $template_id . ' - Nom actuel: "' . $current_name . '", Données JSON name: "' . ($template_data['name'] ?? 'NON DÉFINI') . '"');
 
             // Générer un nouveau nom si nécessaire
             $new_name = $current_name;
@@ -3557,18 +3557,24 @@ class PdfBuilderAdmin
                 if (isset($template_data['name']) && !empty($template_data['name'])) {
                     $new_name = $template_data['name'];
                 } else {
-                    // Essayer de deviner le type de template
+                    // Essayer de deviner le type de template basé sur les éléments
                     if (isset($template_data['elements']) && is_array($template_data['elements'])) {
                         $has_invoice_elements = false;
                         $has_quote_elements = false;
+                        $has_order_elements = false;
 
                         foreach ($template_data['elements'] as $element) {
                             $content = isset($element['content']) ? strtolower($element['content']) : '';
-                            if (strpos($content, 'facture') !== false || strpos($content, 'invoice') !== false) {
+                            $type = isset($element['type']) ? strtolower($element['type']) : '';
+
+                            if (strpos($content, 'facture') !== false || strpos($content, 'invoice') !== false || $type === 'invoice_number') {
                                 $has_invoice_elements = true;
                             }
-                            if (strpos($content, 'devis') !== false || strpos($content, 'quote') !== false) {
+                            if (strpos($content, 'devis') !== false || strpos($content, 'quote') !== false || $type === 'quote_number') {
                                 $has_quote_elements = true;
+                            }
+                            if ($type === 'order_number') {
+                                $has_order_elements = true;
                             }
                         }
 
@@ -3576,6 +3582,8 @@ class PdfBuilderAdmin
                             $new_name = 'Facture ' . $template_id;
                         } elseif ($has_quote_elements) {
                             $new_name = 'Devis ' . $template_id;
+                        } elseif ($has_order_elements) {
+                            $new_name = 'Commande ' . $template_id;
                         } else {
                             $new_name = 'Template ' . $template_id;
                         }
@@ -3610,14 +3618,10 @@ class PdfBuilderAdmin
                     ['%s'],
                     ['%d']
                 );
+                error_log('PDF Builder: Données JSON du template ' . $template_id . ' mises à jour avec le nom: "' . $new_name . '"');
             }
         }
 
-        if ($updated_count > 0) {
-            error_log('PDF Builder: Mise à jour des noms de templates terminée - ' . $updated_count . ' templates mis à jour');
-        }
-
-        // Marquer comme fait (commenté pour permettre la ré-exécution)
-        // update_option('pdf_builder_template_names_updated', true);
+        error_log('PDF Builder: update_template_names() terminé - ' . $updated_count . ' templates mis à jour');
     }
 }
