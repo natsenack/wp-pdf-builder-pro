@@ -1053,8 +1053,8 @@ class PdfBuilderTemplateManager
     private function convertPdfToThumbnail($pdf_url, $template_id)
     {
         try {
-            // Pour l'instant, retourner une URL placeholder
-            // TODO: Implémenter la conversion PDF vers PNG avec ImageMagick ou GD
+            // Pour l'instant, créer un thumbnail simple basé sur les données du template
+            // TODO: Améliorer avec une vraie conversion PDF vers image
             $upload_dir = wp_upload_dir();
             $thumbnail_dir = $upload_dir['basedir'] . '/pdf-builder-thumbnails/';
             
@@ -1065,19 +1065,26 @@ class PdfBuilderTemplateManager
             $thumbnail_filename = 'template-' . $template_id . '-thumb.png';
             $thumbnail_path = $thumbnail_dir . $thumbnail_filename;
             
-            // Créer un thumbnail placeholder simple (rectangle coloré avec le nom du template)
-            $image = imagecreatetruecolor(300, 200);
-            $bg_color = imagecolorallocate($image, 240, 240, 240);
-            $text_color = imagecolorallocate($image, 100, 100, 100);
+            // Récupérer les données du template pour créer un aperçu
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+            $template = $wpdb->get_row(
+                $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+                ARRAY_A
+            );
             
-            imagefill($image, 0, 0, $bg_color);
-            imagestring($image, 5, 20, 80, 'Template ' . $template_id, $text_color);
+            if ($template) {
+                $template_data = json_decode($template['template_data'], true);
+                $thumbnail_path = $this->generateTemplatePreviewImage($template_data, $thumbnail_path);
+            } else {
+                // Fallback vers un thumbnail simple
+                $thumbnail_path = $this->generateSimpleThumbnail($template_id, $thumbnail_path);
+            }
             
-            imagepng($image, $thumbnail_path);
-            imagedestroy($image);
-            
-            $relative_path = str_replace($upload_dir['basedir'], '', $thumbnail_path);
-            return $upload_dir['baseurl'] . $relative_path;
+            if (file_exists($thumbnail_path)) {
+                $relative_path = str_replace($upload_dir['basedir'], '', $thumbnail_path);
+                return $upload_dir['baseurl'] . $relative_path;
+            }
             
         } catch (\Exception $e) {
             $debugLog = function($message) {
@@ -1086,7 +1093,105 @@ class PdfBuilderTemplateManager
                 }
             };
             $debugLog('Erreur conversion PDF vers thumbnail: ' . $e->getMessage());
-            return false;
         }
+        
+        return false;
+    }
+
+    /**
+     * Génère une image d'aperçu simple du template
+     */
+    private function generateSimpleThumbnail($template_id, $thumbnail_path)
+    {
+        $image = imagecreatetruecolor(300, 200);
+        $bg_color = imagecolorallocate($image, 255, 255, 255);
+        $text_color = imagecolorallocate($image, 100, 100, 100);
+        $border_color = imagecolorallocate($image, 200, 200, 200);
+        
+        imagefill($image, 0, 0, $bg_color);
+        imagerectangle($image, 0, 0, 299, 199, $border_color);
+        imagestring($image, 5, 20, 80, 'Template ' . $template_id, $text_color);
+        
+        imagepng($image, $thumbnail_path);
+        imagedestroy($image);
+        
+        return $thumbnail_path;
+    }
+
+    /**
+     * Génère une image d'aperçu du template basée sur ses éléments
+     */
+    private function generateTemplatePreviewImage($template_data, $thumbnail_path)
+    {
+        $image = imagecreatetruecolor(300, 200);
+        $white = imagecolorallocate($image, 255, 255, 255);
+        $black = imagecolorallocate($image, 0, 0, 0);
+        $gray = imagecolorallocate($image, 150, 150, 150);
+        $blue = imagecolorallocate($image, 0, 123, 255);
+        
+        imagefill($image, 0, 0, $white);
+        
+        // Dessiner un cadre
+        imagerectangle($image, 5, 5, 295, 195, $gray);
+        
+        // Analyser les éléments du template pour créer un aperçu représentatif
+        if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+            $element_count = count($template_data['elements']);
+            
+            // Dessiner quelques éléments représentatifs
+            $y = 20;
+            
+            // Titre
+            if (isset($template_data['name'])) {
+                imagestring($image, 4, 15, $y, substr($template_data['name'], 0, 25), $black);
+                $y += 25;
+            }
+            
+            // Quelques éléments
+            $displayed_elements = 0;
+            foreach ($template_data['elements'] as $element) {
+                if ($displayed_elements >= 3) break; // Limiter à 3 éléments
+                
+                if (isset($element['type'])) {
+                    $element_type = $element['type'];
+                    $element_text = '';
+                    
+                    switch ($element_type) {
+                        case 'text':
+                        case 'dynamic-text':
+                            $element_text = isset($element['content']) ? substr($element['content'], 0, 20) : 'Texte';
+                            break;
+                        case 'company_logo':
+                            $element_text = '[Logo]';
+                            break;
+                        case 'order_number':
+                            $element_text = 'N° Commande: 12345';
+                            break;
+                        case 'invoice_number':
+                            $element_text = 'Facture N° 001';
+                            break;
+                        case 'product_table':
+                            $element_text = '[Tableau produits]';
+                            break;
+                        default:
+                            $element_text = ucfirst(str_replace('_', ' ', $element_type));
+                    }
+                    
+                    if (!empty($element_text)) {
+                        imagestring($image, 2, 15, $y, $element_text, $blue);
+                        $y += 15;
+                        $displayed_elements++;
+                    }
+                }
+            }
+            
+            // Nombre total d'éléments
+            imagestring($image, 1, 15, 170, $element_count . ' éléments', $gray);
+        }
+        
+        imagepng($image, $thumbnail_path);
+        imagedestroy($image);
+        
+        return $thumbnail_path;
     }
 }
