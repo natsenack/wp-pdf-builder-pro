@@ -351,13 +351,13 @@ class PDFPreviewAPI {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
         `;
 
-        const title = document.createElement('h3');
+        const title = document.createElement('h4');
         title.id = 'pdf-preview-title';
         title.textContent = 'Aperçu PDF';
-        title.style.cssText = 'margin: 0; color: #1d2327;';
+        title.style.cssText = 'margin: 0; color: #1d2327; font-size: 16px; font-weight: 600;';
 
         const closeBtn = document.createElement('button');
         closeBtn.id = 'pdf-preview-close';
@@ -365,9 +365,11 @@ class PDFPreviewAPI {
         closeBtn.style.cssText = `
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
             color: #666;
+            padding: 0;
+            line-height: 1;
         `;
 
         header.appendChild(title);
@@ -376,7 +378,7 @@ class PDFPreviewAPI {
         // Actions container
         const actions = document.createElement('div');
         actions.id = 'pdf-preview-actions';
-        actions.style.cssText = 'margin-bottom: 15px;';
+        actions.style.cssText = 'margin-bottom: 10px;';
 
         // Image container
         const img = document.createElement('img');
@@ -420,7 +422,7 @@ class PDFPreviewAPI {
         if (!controlsContainer) {
             controlsContainer = document.createElement('div');
             controlsContainer.id = 'pdf-preview-controls';
-            controlsContainer.style.cssText = 'display: flex; gap: 10px; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; flex-wrap: wrap; justify-content: space-between;';
+            controlsContainer.style.cssText = 'display: flex; gap: 10px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; flex-wrap: wrap; justify-content: space-between;';
 
             // Insérer avant les actions
             const actionsContainer = modal.querySelector('#pdf-preview-actions');
