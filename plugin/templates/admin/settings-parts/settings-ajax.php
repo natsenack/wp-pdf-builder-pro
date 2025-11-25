@@ -1494,46 +1494,5 @@ function pdf_builder_get_all_canvas_settings_handler() {
     }
 }
 
-/**
- * AJAX handler for running settings tests (Days 5-7)
- */
-function pdf_builder_run_settings_tests_ajax() {
-    try {
-        // Check nonce for security
-        if (!wp_verify_nonce($_POST['security'] ?? '', 'pdf_builder_ajax')) {
-            send_ajax_response(false, 'Sécurité: Nonce invalide');
-            return;
-        }
-
-        // Check user capabilities
-        if (!current_user_can('manage_options')) {
-            send_ajax_response(false, 'Permissions insuffisantes');
-            return;
-        }
-
-        // Capture output from test script
-        ob_start();
-
-        // Include and run the test script
-        $test_file = plugin_dir_path(__FILE__) . 'test-settings.php';
-        if (file_exists($test_file)) {
-            include $test_file;
-        } else {
-            echo "❌ Fichier de test introuvable: " . $test_file . "\n";
-        }
-
-        $output = ob_get_clean();
-
-        // Clean up the output (remove HTML/PHP warnings if any)
-        $output = strip_tags($output);
-        $output = htmlspecialchars_decode($output);
-
-        send_ajax_response(true, 'Tests exécutés avec succès', ['output' => $output]);
-
-    } catch (Exception $e) {
-        send_ajax_response(false, 'Erreur lors de l\'exécution des tests: ' . $e->getMessage());
-    }
-}
-
 // Hook AJAX actions - MOVED to pdf-builder-pro.php for global registration
 // REMOVED: Canvas settings actions moved to PDF_Builder_Admin to avoid duplication

@@ -82,17 +82,6 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">Tests fonctionnels</th>
-                            <td>
-                                <button type="button" id="test-settings-btn" class="button button-primary" style="background-color: #007cba; border-color: #007cba; color: white; font-weight: bold; padding: 10px 15px;">
-                                    🧪 Test Settings (Jours 5-7)
-                                </button>
-                                <span id="test-settings-results" style="margin-left: 10px;"></span>
-                                <div id="test-settings-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; color: #155724; font-family: monospace; white-space: pre-wrap;"></div>
-                                <p class="description">Exécute les tests de conversion d'images (PDF→PNG/JPG) et vérifie les fonctionnalités des jours 5-7</p>
-                            </td>
-                        </tr>
-                        <tr>
                             <th scope="row">Vider le cache</th>
                             <td>
                                 <button type="button" id="clear-cache-general-btn" class="button button-secondary" style="background-color: #dc3232; border-color: #dc3232; color: white; font-weight: bold; padding: 10px 15px;">
