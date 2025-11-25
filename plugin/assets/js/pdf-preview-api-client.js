@@ -212,15 +212,24 @@ class PDFPreviewAPI {
         this.currentPanX = 0;
         this.currentPanY = 0;
 
-        const img = previewModal.querySelector('#pdf-preview-image');
+        const canvas = previewModal.querySelector('#pdf-preview-canvas');
         const title = previewModal.querySelector('#pdf-preview-title');
 
+        // Load image and draw on canvas
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            this.updateCanvasTransform(canvas);
+        };
         img.src = imageUrl;
-        this.updateImageTransform(img);
 
-        // Initialiser le drag/pan de l'image
-        this.initImageDrag(img);
-        this.updateDragState(img);
+        // Initialiser le drag/pan du canvas
+        this.initCanvasDrag(canvas);
+        this.updateDragState(canvas);
 
         if (context === 'editor') {
             title.textContent = '👁️ Aperçu du Template';
@@ -229,7 +238,7 @@ class PDFPreviewAPI {
         }
 
         // Ajouter les contrôles de zoom et rotation
-        this.addZoomControls(previewModal, img);
+        this.addZoomControls(previewModal, canvas);
 
         // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
@@ -353,13 +362,12 @@ class PDFPreviewAPI {
                     background: #005a87 !important;
                 }
 
-                #pdf-preview-image {
+                #pdf-preview-canvas {
                     max-width: 100% !important;
                     height: auto !important;
                     border: none !important;
                     border-radius: 0 !important;
                     transition: transform 0.3s ease !important;
-                    object-fit: contain !important;
                     display: block !important;
                     transform-origin: center center !important;
                 }
@@ -426,12 +434,11 @@ class PDFPreviewAPI {
         imageContainer.id = 'pdf-preview-image-container';
         imageContainer.style.cssText = 'overflow: hidden; border: 1px solid #ddd; border-radius: 4px; max-height: 60vh; display: flex; align-items: center; justify-content: center;';
 
-        const img = document.createElement('img');
-        img.id = 'pdf-preview-image';
-        img.alt = 'Aperçu PDF';
-        img.style.cssText = 'max-width: 100%; height: auto; object-fit: contain; display: block; transform-origin: center center; transition: transform 0.3s ease;';
+        const canvas = document.createElement('canvas');
+        canvas.id = 'pdf-preview-canvas';
+        canvas.style.cssText = 'max-width: 100%; height: auto; display: block; transform-origin: center center; transition: transform 0.3s ease;';
 
-        imageContainer.appendChild(img);
+        imageContainer.appendChild(canvas);
 
         wrapper.appendChild(header);
         wrapper.appendChild(actions);
@@ -456,22 +463,22 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Met à jour la transformation de l'image - VERSION ULTRA-OPTIMISEE AVEC CACHE
+     * Met à jour la transformation du canvas - VERSION ULTRA-OPTIMISEE AVEC CACHE
      */
-    updateImageTransform(img) {
+    updateCanvasTransform(canvas) {
         // Utilisation des valeurs cachées pour performance maximale
         const panX = this.currentPanX;
         const panY = this.currentPanY;
 
         // Application directe avec cache
-        img.style.transform = `translate(${panX}px, ${panY}px) scale(${this.cachedScale}) rotate(${this.cachedRotation}deg)`;
-        img.style.transformOrigin = 'center center';
+        canvas.style.transform = `translate(${panX}px, ${panY}px) scale(${this.cachedScale}) rotate(${this.cachedRotation}deg)`;
+        canvas.style.transformOrigin = 'center center';
     }
 
     /**
      * Ajoute les contrôles de zoom et rotation
      */
-    addZoomControls(modal, img) {
+    addZoomControls(modal, canvas) {
         // Créer le conteneur de contrôles s'il n'existe pas
         let controlsContainer = modal.querySelector('#pdf-preview-controls');
         if (!controlsContainer) {
@@ -493,7 +500,7 @@ class PDFPreviewAPI {
         const zoomOutBtn = document.createElement('button');
         zoomOutBtn.textContent = '🔍-';
         zoomOutBtn.className = 'pdf-preview-zoom-btn';
-        zoomOutBtn.addEventListener('click', () => this.zoomImage(img, -25));
+        zoomOutBtn.addEventListener('click', () => this.zoomCanvas(canvas, -25));
 
         const zoomSlider = document.createElement('input');
         zoomSlider.type = 'range';
@@ -502,7 +509,7 @@ class PDFPreviewAPI {
         zoomSlider.max = '300';
         zoomSlider.value = this.currentZoom;
         zoomSlider.style.cssText = 'width: 120px;';
-        zoomSlider.addEventListener('input', (e) => this.setZoom(img, parseInt(e.target.value)));
+        zoomSlider.addEventListener('input', (e) => this.setZoomCanvas(canvas, parseInt(e.target.value)));
 
         const zoomValue = document.createElement('span');
         zoomValue.id = 'pdf-preview-zoom-value';
@@ -512,7 +519,7 @@ class PDFPreviewAPI {
         const zoomInBtn = document.createElement('button');
         zoomInBtn.textContent = '🔍+';
         zoomInBtn.className = 'pdf-preview-zoom-btn';
-        zoomInBtn.addEventListener('click', () => this.zoomImage(img, 25));
+        zoomInBtn.addEventListener('click', () => this.zoomCanvas(canvas, 25));
 
         zoomContainer.appendChild(zoomOutBtn);
         zoomContainer.appendChild(zoomSlider);
@@ -524,19 +531,19 @@ class PDFPreviewAPI {
         rotateLeftBtn.textContent = '↺';
         rotateLeftBtn.title = 'Rotation gauche';
         rotateLeftBtn.className = 'pdf-preview-zoom-btn';
-        rotateLeftBtn.addEventListener('click', () => this.rotateImage(img, -90));
+        rotateLeftBtn.addEventListener('click', () => this.rotateCanvas(canvas, -90));
 
         const rotateRightBtn = document.createElement('button');
         rotateRightBtn.textContent = '↻';
         rotateRightBtn.title = 'Rotation droite';
         rotateRightBtn.className = 'pdf-preview-zoom-btn';
-        rotateRightBtn.addEventListener('click', () => this.rotateImage(img, 90));
+        rotateRightBtn.addEventListener('click', () => this.rotateCanvas(canvas, 90));
 
         const resetBtn = document.createElement('button');
         resetBtn.textContent = '🔄 Reset';
         resetBtn.title = 'Réinitialiser zoom et rotation';
         resetBtn.className = 'pdf-preview-reset-btn';
-        resetBtn.addEventListener('click', () => this.resetImage(img));
+        resetBtn.addEventListener('click', () => this.resetCanvas(canvas));
 
         controlsContainer.appendChild(zoomContainer);
         controlsContainer.appendChild(rotateLeftBtn);
@@ -545,49 +552,49 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Zoom l'image
+     * Zoom le canvas
      */
-    zoomImage(img, delta) {
+    zoomCanvas(canvas, delta) {
         this.currentZoom = Math.max(25, Math.min(300, this.currentZoom + delta));
         this.cachedScale = this.currentZoom / 100; // Mettre à jour le cache
-        this.updateImageTransform(img);
+        this.updateCanvasTransform(canvas);
         this.updateZoomUI();
-        this.updateDragState(img);
+        this.updateDragState(canvas);
     }
 
     /**
      * Définit le zoom directement
      */
-    setZoom(img, zoom) {
+    setZoomCanvas(canvas, zoom) {
         this.currentZoom = zoom;
         this.cachedScale = this.currentZoom / 100; // Mettre à jour le cache
-        this.updateImageTransform(img);
+        this.updateCanvasTransform(canvas);
         this.updateZoomUI();
-        this.updateDragState(img);
+        this.updateDragState(canvas);
     }
 
     /**
-     * Tourne l'image
+     * Tourne le canvas
      */
-    rotateImage(img, degrees) {
+    rotateCanvas(canvas, degrees) {
         this.currentRotation = (this.currentRotation + degrees) % 360;
         this.cachedRotation = this.currentRotation; // Mettre à jour le cache
-        this.updateImageTransform(img);
+        this.updateCanvasTransform(canvas);
     }
 
     /**
-     * Réinitialise l'image
+     * Réinitialise le canvas
      */
-    resetImage(img) {
+    resetCanvas(canvas) {
         this.currentZoom = 100;
         this.currentRotation = 0;
         this.currentPanX = 0;
         this.currentPanY = 0;
         this.cachedScale = 1; // Reset cache
         this.cachedRotation = 0; // Reset cache
-        this.updateImageTransform(img);
+        this.updateCanvasTransform(canvas);
         this.updateZoomUI();
-        this.updateDragState(img);
+        this.updateDragState(canvas);
     }
 
     /**
@@ -615,25 +622,25 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Initialise le drag/pan de l'image
+     * Initialise le drag/pan du canvas
      */
-    initImageDrag(img) {
+    initCanvasDrag(canvas) {
         // Supprimer les anciens event listeners s'ils existent
         this.cleanupDragListeners();
 
         // Stocker les références pour pouvoir les supprimer plus tard
         this.dragListeners = {
-            mousedown: (e) => this.handleMouseDown(e, img),
-            mousemove: (e) => this.handleMouseMove(e, img),
-            mouseup: () => this.handleMouseUp(img),
-            mouseenter: () => this.handleMouseEnter(img),
-            mouseleave: () => this.handleMouseLeave(img)
+            mousedown: (e) => this.handleMouseDown(e, canvas),
+            mousemove: (e) => this.handleMouseMove(e, canvas),
+            mouseup: () => this.handleMouseUp(canvas),
+            mouseenter: () => this.handleMouseEnter(canvas),
+            mouseleave: () => this.handleMouseLeave(canvas)
         };        // Ajouter les nouveaux event listeners
-        img.addEventListener('mousedown', this.dragListeners.mousedown);
+        canvas.addEventListener('mousedown', this.dragListeners.mousedown);
         document.addEventListener('mousemove', this.dragListeners.mousemove);
         document.addEventListener('mouseup', this.dragListeners.mouseup);
-        img.addEventListener('mouseenter', this.dragListeners.mouseenter);
-        img.addEventListener('mouseleave', this.dragListeners.mouseleave);
+        canvas.addEventListener('mouseenter', this.dragListeners.mouseenter);
+        canvas.addEventListener('mouseleave', this.dragListeners.mouseleave);
     }
 
     /**
@@ -643,11 +650,11 @@ class PDFPreviewAPI {
         if (!this.dragListeners) return;
 
         // Supprimer tous les listeners existants
-        const img = document.querySelector('#pdf-preview-image');
-        if (img) {
-            img.removeEventListener('mousedown', this.dragListeners.mousedown);
-            img.removeEventListener('mouseenter', this.dragListeners.mouseenter);
-            img.removeEventListener('mouseleave', this.dragListeners.mouseleave);
+        const canvas = document.querySelector('#pdf-preview-canvas');
+        if (canvas) {
+            canvas.removeEventListener('mousedown', this.dragListeners.mousedown);
+            canvas.removeEventListener('mouseenter', this.dragListeners.mouseenter);
+            canvas.removeEventListener('mouseleave', this.dragListeners.mouseleave);
         }
 
         document.removeEventListener('mousemove', this.dragListeners.mousemove);
@@ -722,7 +729,7 @@ class PDFPreviewAPI {
         this.currentPanY = newPanY;
 
         // APPLICATION DIRECTE SANS RAF pour performance maximale (20+ FPS)
-        this.updateImageTransform(img);
+        this.updateCanvasTransform(img);
 
         // Mettre à jour les positions souris
         this.lastMouseX = clientX;
