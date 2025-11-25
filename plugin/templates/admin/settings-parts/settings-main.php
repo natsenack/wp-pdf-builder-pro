@@ -523,6 +523,9 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         update_option('pdf_builder_pdf_metadata_enabled', isset($_POST['pdf_metadata_enabled']) ? 1 : 0);
         update_option('pdf_builder_pdf_print_optimized', isset($_POST['pdf_print_optimized']) ? 1 : 0);
         update_option('pdf_builder_template_library_enabled', isset($_POST['template_library_enabled']) ? 1 : 0);
+        if (isset($_POST['default_template'])) {
+            update_option('pdf_builder_default_template', sanitize_text_field($_POST['default_template']));
+        }
     } else {
         $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
     }
