@@ -1928,6 +1928,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('PDF_BUILDER_DEBUG: Test 2 - variable assignment:', test);
         console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview completed successfully');
     };
+    console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview function assigned to window');
 
     // Update apparence card preview
     window.updateApparenceCardPreview = function() {
