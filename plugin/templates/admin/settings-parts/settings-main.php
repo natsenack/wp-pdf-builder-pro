@@ -1923,63 +1923,19 @@ document.addEventListener('DOMContentLoaded', function() {
     window.updateDimensionsCardPreview = function() {
         console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview EXECUTED - function called successfully');
         try {
-            // Try to get values from modal inputs first (real-time), then from settings
-            const formatInput = document.getElementById("canvas_format");
-            const dpiInput = document.getElementById("canvas_dpi");
+            console.log('PDF_BUILDER_DEBUG: Starting function execution');
 
-            console.log('PDF_BUILDER_DEBUG: formatInput:', formatInput, 'value:', formatInput ? formatInput.value : 'null');
-            console.log('PDF_BUILDER_DEBUG: dpiInput:', dpiInput, 'value:', dpiInput ? dpiInput.value : 'null');
-            console.log('PDF_BUILDER_DEBUG: window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
-
-            const format = formatInput ? formatInput.value : (window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4');
-            const dpi = dpiInput ? parseInt(dpiInput.value) : (parseInt(window.pdfBuilderCanvasSettings?.default_canvas_dpi) || 96);
-
-            console.log('PDF_BUILDER_DEBUG: format:', format, 'dpi:', dpi);
-
-            // Orientation is always portrait for now
-            const orientation = 'portrait';
-
-            // Utiliser les dimensions standard centralisées
-            const formatDimensions = window.pdfBuilderPaperFormats || {
-                'A4': { width: 210, height: 297 },
-                'A3': { width: 297, height: 420 },
-                'A5': { width: 148, height: 210 },
-                'Letter': { width: 215.9, height: 279.4 },
-                'Legal': { width: 215.9, height: 355.6 },
-                'Tabloid': { width: 279.4, height: 431.8 }
-            };
-
-            const dimensions = formatDimensions[format] || formatDimensions['A4'];
-            console.log('PDF_BUILDER_DEBUG: dimensions:', dimensions);
-
-            // Calculer les dimensions en pixels
-            const pixelsPerMM = dpi / 25.4;
-            const widthPx = Math.round(dimensions.width * pixelsPerMM);
-            const heightPx = Math.round(dimensions.height * pixelsPerMM);
-
-            console.log('PDF_BUILDER_DEBUG: widthPx:', widthPx, 'heightPx:', heightPx);
-
-            // Mettre à jour les éléments HTML
-            const widthEl = document.getElementById('card-canvas-width');
-            const heightEl = document.getElementById('card-canvas-height');
+            // Simple test: try to update just the DPI display
             const dpiEl = document.getElementById('card-canvas-dpi');
-
-            console.log('PDF_BUILDER_DEBUG: widthEl:', widthEl, 'heightEl:', heightEl, 'dpiEl:', dpiEl);
-
-            if (widthEl) {
-                widthEl.textContent = widthPx;
-                console.log('PDF_BUILDER_DEBUG: Updated widthEl to:', widthPx);
-            }
-
-            if (heightEl) {
-                heightEl.textContent = heightPx;
-                console.log('PDF_BUILDER_DEBUG: Updated heightEl to:', heightPx);
-            }
+            console.log('PDF_BUILDER_DEBUG: dpiEl found:', dpiEl);
 
             if (dpiEl) {
-                const dpiText = `${dpi} DPI - ${format} (${dimensions.width.toFixed(1)}×${dimensions.height.toFixed(1)}mm)`;
-                dpiEl.textContent = dpiText;
-                console.log('PDF_BUILDER_DEBUG: Updated dpiEl to:', dpiText);
+                const testText = `TEST UPDATE - ${Date.now()}`;
+                console.log('PDF_BUILDER_DEBUG: Setting dpiEl text to:', testText);
+                dpiEl.textContent = testText;
+                console.log('PDF_BUILDER_DEBUG: dpiEl updated successfully');
+            } else {
+                console.log('PDF_BUILDER_DEBUG: dpiEl not found!');
             }
 
             console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview completed successfully');
