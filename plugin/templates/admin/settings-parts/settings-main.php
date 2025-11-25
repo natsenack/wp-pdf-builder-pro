@@ -865,9 +865,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById(target).classList.add('active');
 
             // Update canvas previews when switching to contenu tab
-            if (target === 'contenu' && typeof updateCanvasPreviews === 'function') {
+            if (target === 'contenu' && window.CanvasPreviewManager && typeof window.CanvasPreviewManager.updatePreviews === 'function') {
                 setTimeout(function() {
-                    updateCanvasPreviews('all');
+                    window.CanvasPreviewManager.updatePreviews('all');
                 }, 200);
             }
 

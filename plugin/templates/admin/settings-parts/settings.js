@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", function() {
     
 
     window.updateZoomPreview = function() {
-        window.updateCanvasPreviews("performance");
+        if (window.CanvasPreviewManager && typeof window.CanvasPreviewManager.updatePreviews === 'function') {
+            window.CanvasPreviewManager.updatePreviews("performance");
+        }
     };
 
     // Ajouter des event listeners pour les dimensions en temps réel
