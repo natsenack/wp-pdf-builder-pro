@@ -380,6 +380,11 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'plugin/core/sanitizer.php';
     }
 
+    // Charger les mappings centralisés
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'plugin/core/mappings.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'plugin/core/mappings.php';
+    }
+
     // Charger la classe d'administration depuis src/
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
