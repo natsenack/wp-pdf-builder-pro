@@ -629,43 +629,40 @@ class PDFMetaboxPreviewIntegration {
  * Met à jour la prévisualisation de la carte performance
  */
 window.updatePerformanceCardPreview = function() {
-    const config = window.CanvasPreviewManager.cardConfigs.performance;
-    const fps = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
-    const memoryJs = window.CanvasPreviewManager.getValue(config.inputs[1], config.settings[1], config.defaults[1]);
-    const lazyLoading = window.CanvasPreviewManager.getValue(config.inputs[2], config.settings[2], config.defaults[2]);
+    const values = window.CanvasPreviewManager.getCardValues('performance');
+    const { fps_target: fps, memory_limit_js: memoryJs, lazy_loading_editor: lazyLoading } = values;
 
-    // Mettre à jour les valeurs dans la carte performance
+    // Fonction helper pour déterminer le statut
+    const getStatus = (value, thresholds) => {
+        if (value >= thresholds.good) return { text: '🟢 Bon', color: '#28a745' };
+        if (value >= thresholds.medium) return { text: '🟡 Moyen', color: '#ffc107' };
+        return { text: '🔴 Faible', color: '#dc3545' };
+    };
+
+    // Mettre à jour les métriques
     const metricValues = document.querySelectorAll('.canvas-card[data-category="performance"] .metric-value');
-
     if (metricValues.length >= 3) {
         // FPS
-        let fpsStatus = '🔴 Faible';
-        if (fps >= 30) fpsStatus = '🟢 Bon';
-        else if (fps >= 15) fpsStatus = '🟡 Moyen';
-        metricValues[0].innerHTML = `${fps}<br><small>${fpsStatus}</small>`;
+        const fpsStatus = getStatus(fps, { good: 30, medium: 15 });
+        metricValues[0].innerHTML = `${fps}<br><small>${fpsStatus.text}</small>`;
 
         // RAM JS
-        let memoryJsStatus = '🔴 Faible';
-        if (memoryJs >= 128) memoryJsStatus = '🟢 Bon';
-        else if (memoryJs >= 64) memoryJsStatus = '🟡 Moyen';
-        metricValues[1].innerHTML = `${memoryJs}MB<br><small>${memoryJsStatus}</small>`;
+        const memoryStatus = getStatus(memoryJs, { good: 128, medium: 64 });
+        metricValues[1].innerHTML = `${memoryJs}MB<br><small>${memoryStatus.text}</small>`;
 
-        // RAM PHP - valeur fixe pour l'instant
+        // RAM PHP - valeur fixe
         metricValues[2].innerHTML = `256MB<br><small>🟢 Bon</small>`;
     }
 
     // Mettre à jour l'indicateur de statut
-    const statusIndicator = document.querySelector('.canvas-card[data-category="performance"] .status-indicator');
+    const statusIndicator = window.CanvasPreviewManager.getCardElement('performance', '.status-indicator');
     if (statusIndicator) {
         const statusText = lazyLoading ? 'Lazy Loading Activé' : 'Lazy Loading Désactivé';
         const statusDot = statusIndicator.querySelector('.status-dot');
-        if (statusDot) {
-            statusDot.style.backgroundColor = lazyLoading ? '#28a745' : '#dc3545';
-        }
         const statusTextEl = statusIndicator.querySelector('.status-text');
-        if (statusTextEl) {
-            statusTextEl.textContent = statusText;
-        }
+
+        window.CanvasPreviewManager.updateElement(statusDot, 'style.backgroundColor', lazyLoading ? '#28a745' : '#dc3545');
+        window.CanvasPreviewManager.updateElement(statusTextEl, 'textContent', statusText);
     }
 };
 
@@ -673,66 +670,41 @@ window.updatePerformanceCardPreview = function() {
  * Met à jour la prévisualisation de la carte apparence
  */
 window.updateApparenceCardPreview = function() {
-    const config = window.CanvasPreviewManager.cardConfigs.apparence;
-    const bgColor = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
-    const borderColor = window.CanvasPreviewManager.getValue(config.inputs[1], config.settings[1], config.defaults[1]);
-    const borderWidth = window.CanvasPreviewManager.getValue(config.inputs[2], config.settings[2], config.defaults[2]);
+    const values = window.CanvasPreviewManager.getCardValues('apparence');
+    const { canvas_background_color: bgColor, border_color: borderColor, border_width: borderWidth } = values;
 
     // Mettre à jour les previews de couleur
-    const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
-    const borderPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.border');
+    const bgPreview = window.CanvasPreviewManager.getCardElement('apparence', '.color-preview.bg');
+    const borderPreview = window.CanvasPreviewManager.getCardElement('apparence', '.color-preview.border');
 
-    if (bgPreview) {
-        bgPreview.style.backgroundColor = bgColor;
-    }
-
-    if (borderPreview) {
-        borderPreview.style.border = `${borderWidth}px solid ${borderColor}`;
-    }
+    window.CanvasPreviewManager.updateElement(bgPreview, 'style.backgroundColor', bgColor);
+    window.CanvasPreviewManager.updateElement(borderPreview, 'style.border', `${borderWidth}px solid ${borderColor}`);
 };
 
 /**
  * Met à jour la prévisualisation de la carte grille
  */
 window.updateGrilleCardPreview = function() {
-    const config = window.CanvasPreviewManager.cardConfigs.grille;
-    const gridEnabled = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
-    const snapToGrid = window.CanvasPreviewManager.getValue(config.inputs[1], config.settings[1], config.defaults[1]);
-    const showGuides = window.CanvasPreviewManager.getValue(config.inputs[2], config.settings[2], config.defaults[2]);
+    const values = window.CanvasPreviewManager.getCardValues('grille');
+    const { show_grid: gridEnabled, snap_to_grid: snapToGrid, show_guides: showGuides } = values;
 
-    const gridContainer = document.querySelector('.canvas-card[data-category="grille"] .grid-preview-container');
-
+    const gridContainer = window.CanvasPreviewManager.getCardElement('grille', '.grid-preview-container');
     if (!gridContainer) return;
 
     // Activer/désactiver la grille
-    if (gridEnabled) {
-        gridContainer.classList.add('grid-enabled');
-        gridContainer.classList.remove('grid-disabled');
-    } else {
-        gridContainer.classList.add('grid-disabled');
-        gridContainer.classList.remove('grid-enabled');
-    }
+    gridContainer.classList.toggle('grid-enabled', gridEnabled);
+    gridContainer.classList.toggle('grid-disabled', !gridEnabled);
 
     // Afficher/cacher les guides
     const guideLines = gridContainer.querySelectorAll('.guide-line');
-    guideLines.forEach(guide => {
-        if (showGuides) {
-            guide.classList.add('active');
-        } else {
-            guide.classList.remove('active');
-        }
-    });
+    guideLines.forEach(guide => guide.classList.toggle('active', showGuides));
 
     // Mettre à jour l'indicateur de snap
     const snapIndicator = gridContainer.querySelector('.snap-indicator');
     if (snapIndicator) {
-        if (snapToGrid && gridEnabled) {
-            snapIndicator.textContent = '🔗 Snap activé';
-            snapIndicator.style.color = '#28a745';
-        } else {
-            snapIndicator.textContent = '🔗 Snap désactivé';
-            snapIndicator.style.color = '#6c757d';
-        }
+        const isActive = snapToGrid && gridEnabled;
+        snapIndicator.textContent = isActive ? '🔗 Snap activé' : '🔗 Snap désactivé';
+        snapIndicator.style.color = isActive ? '#28a745' : '#6c757d';
     }
 };
 
@@ -745,32 +717,26 @@ window.updateGrilleCardPreview = function() {
  * Met à jour la prévisualisation de la carte interactions
  */
 window.updateInteractionsCardPreview = function() {
-    const config = window.CanvasPreviewManager.cardConfigs.interactions;
-    const selectionMode = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
-    const keyboardShortcuts = window.CanvasPreviewManager.getValue(config.inputs[1], config.settings[1], config.defaults[1]);
+    const values = window.CanvasPreviewManager.getCardValues('interactions');
+    const { selection_mode: selectionMode, keyboard_shortcuts: keyboardShortcuts } = values;
 
     const modeIcons = document.querySelectorAll('.canvas-card[data-category="interactions"] .mode-icon');
-    const statusIndicator = document.querySelector('.canvas-card[data-category="interactions"] .status-indicator');
+    const statusIndicator = window.CanvasPreviewManager.getCardElement('interactions', '.status-indicator');
 
     // Mettre à jour les icônes de mode
     modeIcons.forEach(icon => {
         icon.classList.remove('active');
-        if ((selectionMode === 'rectangle' && icon.title === 'Rectangle') ||
-            (selectionMode === 'lasso' && icon.title === 'Lasso') ||
-            (selectionMode === 'click' && icon.title === 'Clic')) {
-            icon.classList.add('active');
-        }
+        const isActive = (selectionMode === 'rectangle' && icon.title === 'Rectangle') ||
+                        (selectionMode === 'lasso' && icon.title === 'Lasso') ||
+                        (selectionMode === 'click' && icon.title === 'Clic');
+        if (isActive) icon.classList.add('active');
     });
 
     // Mettre à jour l'indicateur de statut
     if (statusIndicator) {
-        if (keyboardShortcuts) {
-            statusIndicator.textContent = 'Raccourcis activés';
-            statusIndicator.className = 'status-indicator enabled';
-        } else {
-            statusIndicator.textContent = 'Raccourcis désactivés';
-            statusIndicator.className = 'status-indicator disabled';
-        }
+        const isEnabled = keyboardShortcuts;
+        statusIndicator.textContent = isEnabled ? 'Raccourcis activés' : 'Raccourcis désactivés';
+        statusIndicator.className = `status-indicator ${isEnabled ? 'enabled' : 'disabled'}`;
     }
 };
 
@@ -778,19 +744,14 @@ window.updateInteractionsCardPreview = function() {
  * Met à jour la prévisualisation de la carte export
  */
 window.updateExportCardPreview = function() {
-    const config = window.CanvasPreviewManager.cardConfigs.export;
-    const exportQuality = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
+    const values = window.CanvasPreviewManager.getCardValues('export');
+    const { export_quality: exportQuality } = values;
 
-    const qualityFill = document.querySelector('.canvas-card[data-category="export"] .quality-fill');
-    const qualityText = document.querySelector('.canvas-card[data-category="export"] .quality-text');
+    const qualityFill = window.CanvasPreviewManager.getCardElement('export', '.quality-fill');
+    const qualityText = window.CanvasPreviewManager.getCardElement('export', '.quality-text');
 
-    // Mettre à jour la barre de qualité
-    if (qualityFill) {
-        qualityFill.style.width = `${exportQuality}%`;
-    }
-    if (qualityText) {
-        qualityText.textContent = `${exportQuality}%`;
-    }
+    window.CanvasPreviewManager.updateElement(qualityFill, 'style.width', `${exportQuality}%`);
+    window.CanvasPreviewManager.updateElement(qualityText, 'textContent', `${exportQuality}%`);
 };
 
 // ==========================================
@@ -1042,6 +1003,49 @@ window.CanvasPreviewManager = {
     },
 
     /**
+     * Récupère toutes les valeurs d'une carte
+     */
+    getCardValues: function(category) {
+        const config = this.cardConfigs[category];
+        if (!config) return {};
+
+        const values = {};
+        config.inputs.forEach((inputId, index) => {
+            values[config.settings[index]] = this.getValue(inputId, config.settings[index], config.defaults[index]);
+        });
+        return values;
+    },
+
+    /**
+     * Récupère un élément DOM d'une carte avec un sélecteur relatif
+     */
+    getCardElement: function(category, selector) {
+        return document.querySelector(`.canvas-card[data-category="${category}"] ${selector}`);
+    },
+
+    /**
+     * Met à jour un élément avec gestion d'erreur
+     */
+    updateElement: function(element, property, value) {
+        if (!element) {
+            PDFBuilderLogger.debug(`Element not found for ${property}`);
+            return false;
+        }
+        try {
+            if (property === 'textContent') element.textContent = value;
+            else if (property === 'innerHTML') element.innerHTML = value;
+            else if (property === 'style') Object.assign(element.style, value);
+            else if (property === 'className') element.className = value;
+            else if (property.startsWith('style.')) element.style[property.split('.')[1]] = value;
+            else element[property] = value;
+            return true;
+        } catch (e) {
+            PDFBuilderLogger.error(`Error updating element ${property}:`, e);
+            return false;
+        }
+    },
+
+    /**
      * Met à jour toutes les previews ou une catégorie spécifique
      */
     updatePreviews: function(category = 'all') {
@@ -1103,11 +1107,8 @@ window.CanvasPreviewManager = {
  * Met à jour la prévisualisation de la carte dimensions
  */
 window.updateDimensionsCardPreview = function() {
-    const config = window.CanvasPreviewManager.cardConfigs.dimensions;
-
-    const format = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
-    const dpi = window.CanvasPreviewManager.getValue(config.inputs[1], config.settings[1], config.defaults[1]);
-    const orientation = window.CanvasPreviewManager.getValue(config.inputs[2], config.settings[2], config.defaults[2]);
+    const values = window.CanvasPreviewManager.getCardValues('dimensions');
+    const { default_canvas_format: format, default_canvas_dpi: dpi, default_canvas_orientation: orientation } = values;
 
     // Get paper dimensions in mm
     const paperFormats = window.pdfBuilderPaperFormats || {
@@ -1134,84 +1135,56 @@ window.updateDimensionsCardPreview = function() {
     const heightPx = Math.round(heightMm * pixelsPerMM);
 
     // Mettre à jour les valeurs dans la carte dimensions
-    const widthElement = document.getElementById('card-canvas-width');
-    const heightElement = document.getElementById('card-canvas-height');
-    const dpiElement = document.getElementById('card-canvas-dpi');
+    const widthElement = window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-width');
+    const heightElement = window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-height');
+    const dpiElement = window.CanvasPreviewManager.getCardElement('dimensions', '#card-canvas-dpi');
 
-    if (widthElement) {
-        widthElement.textContent = widthPx;
-    } else {
-        console.error('PDF_BUILDER_DEBUG: card-canvas-width element not found');
-    }
-
-    if (heightElement) {
-        heightElement.textContent = heightPx;
-    } else {
-        console.error('PDF_BUILDER_DEBUG: card-canvas-height element not found');
-    }
-
-    if (dpiElement) {
-        dpiElement.textContent = `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`;
-    } else {
-        console.error('PDF_BUILDER_DEBUG: card-canvas-dpi element not found');
-    }
+    window.CanvasPreviewManager.updateElement(widthElement, 'textContent', widthPx);
+    window.CanvasPreviewManager.updateElement(heightElement, 'textContent', heightPx);
+    window.CanvasPreviewManager.updateElement(dpiElement, 'textContent', `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`);
 };
 
 /**
  * Met à jour la prévisualisation de la carte zoom
  */
 window.updateZoomCardPreview = function() {
-    const config = window.CanvasPreviewManager.cardConfigs.zoom;
-    const zoom = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
+    const values = window.CanvasPreviewManager.getCardValues('zoom');
+    const { default_canvas_zoom: zoom } = values;
 
-    const zoomElement = document.querySelector('.zoom-level');
-    if (zoomElement) {
-        zoomElement.textContent = `${zoom}%`;
-    } else {
-        console.error('PDF_BUILDER_DEBUG: .zoom-level element not found');
-    }
+    const zoomElement = window.CanvasPreviewManager.getCardElement('zoom', '.zoom-level');
+    window.CanvasPreviewManager.updateElement(zoomElement, 'textContent', `${zoom}%`);
 };
 
 /**
  * Met à jour la prévisualisation de la carte sauvegarde automatique
  */
 window.updateAutosaveCardPreview = function() {
-    const config = window.CanvasPreviewManager.cardConfigs.autosave;
-    const autosave = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
+    const values = window.CanvasPreviewManager.getCardValues('autosave');
+    const { autosave_interval: autosave } = values;
 
     // Also get the enabled status
     const enabledInput = document.getElementById('canvas_autosave_enabled');
     const enabled = enabledInput ? enabledInput.checked :
                    (window.pdfBuilderCanvasSettings?.autosave_enabled !== undefined ? window.pdfBuilderCanvasSettings.autosave_enabled : true);
 
-    const autosaveElement = document.querySelector('.autosave-timer');
-    const statusElement = document.querySelector('.canvas-card[data-category="autosave"] .autosave-status');
+    const autosaveElement = window.CanvasPreviewManager.getCardElement('autosave', '.autosave-timer');
+    const statusElement = window.CanvasPreviewManager.getCardElement('autosave', '.autosave-status');
 
-    if (autosaveElement) {
-        autosaveElement.textContent = `${autosave}min`;
-    } else {
-        console.error('PDF_BUILDER_DEBUG: .autosave-timer element not found');
-    }
-
-    if (statusElement) {
-        if (enabled) {
-            statusElement.classList.add('active');
-        } else {
-            statusElement.classList.remove('active');
-        }
-    } else {
-        console.error('PDF_BUILDER_DEBUG: autosave-status element not found');
-    }
+    window.CanvasPreviewManager.updateElement(autosaveElement, 'textContent', `${autosave}min`);
+    window.CanvasPreviewManager.updateElement(statusElement, 'textContent', enabled ? 'Activé' : 'Désactivé');
 };
 
 /**
  * Met à jour la prévisualisation de la carte debug
  */
+/**
+ * Met à jour la prévisualisation de la carte debug
+ */
 window.updateDebugCardPreview = function() {
-    const config = window.CanvasPreviewManager.cardConfigs.debug;
-    const debugEnabled = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
+    const values = window.CanvasPreviewManager.getCardValues('debug');
+    const { debug_mode: debugEnabled } = values;
 
-    const statusIndicator = document.querySelector('.canvas-card[data-category="debug"] .status-indicator');
+    const statusIndicator = window.CanvasPreviewManager.getCardElement('debug', '.status-indicator');
     if (statusIndicator) {
         const statusText = debugEnabled ? 'Debug Activé' : 'Debug Désactivé';
         statusIndicator.textContent = statusText;
