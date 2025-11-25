@@ -1438,11 +1438,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 window.PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + error.message, 'error', 6000);
                             }
                         }
-                    });
-                });
             });
-
-            // Initialize zoom preview if function exists
+        });
+            });
+});
+});            // Initialize zoom preview if function exists
             // Removed automatic updateZoomPreview call to prevent conflicts with manual modal updates
             // if (typeof updateZoomPreview === 'function') {
             //     // Delay initialization to ensure DOM is ready
@@ -2439,5 +2439,5 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
-        });
+    }); } });
     }</script>
