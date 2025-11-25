@@ -494,16 +494,18 @@ function pdf_builder_load_for_ajax()
 }
 function pdf_builder_handle_preview_ajax()
 {
+    // Logs de débogage pour erreur 400
+    error_log("=== PDF BUILDER PREVIEW AJAX DEBUG ===");
+    error_log("POST data: " . print_r($_POST, true));
+    error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
+
     // Charger le bootstrap
     pdf_builder_load_for_ajax();
-    // Le bootstrap a instancié PreviewImageAPI qui a re-enregistré les actions AJAX.
-    // Maintenant, appelons directement la méthode generatePreview si PreviewImageAPI existe
+
     if (class_exists('PDF_Builder\\Api\\PreviewImageAPI')) {
-        // Créer une nouvelle instance et appeler generatePreview directement
         $api = new \PDF_Builder\Api\PreviewImageAPI();
         $api->generatePreview();
     } else {
-    // Fallback: envoyer une erreur JSON
         header('Content-Type: application/json; charset=UTF-8', true);
         http_response_code(500);
         echo json_encode([

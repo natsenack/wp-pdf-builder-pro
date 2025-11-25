@@ -231,21 +231,30 @@ class PreviewImageAPI
         $start_time = microtime(true);
         try {
         // VALIDATION TRÈS SIMPLE INLINE
+            error_log("=== PREVIEW API VALIDATION START ===");
             // Vérification nonce
             if (!isset($_POST['nonce'])) {
+                error_log("ERROR: Missing nonce");
                 throw new \Exception('Missing nonce');
             }
+            error_log("Nonce present: " . $_POST['nonce']);
 
             if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+                error_log("ERROR: Invalid nonce - expected pdf_builder_order_actions");
                 throw new \Exception('Invalid nonce');
             }
+            error_log("Nonce valid");
 
             // Vérification permissions
             $context = sanitize_text_field($_POST['context'] ?? 'editor');
+            error_log("Context: " . $context);
             $required_cap = $this->getRequiredCapability($context);
+            error_log("Required capability: " . $required_cap);
             if (!current_user_can($required_cap)) {
+                error_log("ERROR: Insufficient permissions - user cannot " . $required_cap);
                 throw new \Exception('Insufficient permissions');
             }
+            error_log("Permissions OK");
 
 
 
