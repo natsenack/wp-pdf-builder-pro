@@ -94,6 +94,9 @@ class PdfBuilderAdmin
             $this->predefined_templates_manager = new \PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager();
         }
 
+        // Initialiser le manager de thumbnails
+        $this->thumbnail_manager = \PDF_Builder\Managers\PdfBuilderThumbnailManager::getInstance();
+
         $this->initHooks();
     }
 
@@ -3535,28 +3538,9 @@ class PdfBuilderAdmin
      */
     public function run_database_migrations()
     {
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-        // Vérifier et ajouter la colonne thumbnail_url
-        $columns = $wpdb->get_results("DESCRIBE $table_templates");
-        $thumbnail_exists = false;
-        foreach ($columns as $column) {
-            if ($column->Field === 'thumbnail_url') {
-                $thumbnail_exists = true;
-                break;
-            }
-        }
-
-        if (!$thumbnail_exists) {
-            $sql = "ALTER TABLE $table_templates ADD COLUMN thumbnail_url VARCHAR(500) DEFAULT '' AFTER template_data";
-            $result = $wpdb->query($sql);
-            if ($result !== false) {
-                error_log('PDF Builder: Colonne thumbnail_url ajoutée avec succès');
-            } else {
-                error_log('PDF Builder: Erreur lors de l\'ajout de la colonne thumbnail_url: ' . $wpdb->last_error);
-            }
-        }
+        // Déléguer les migrations de thumbnails au Thumbnail Manager
+        $thumbnail_manager = \PDF_Builder\Managers\PdfBuilderThumbnailManager::getInstance();
+        $thumbnail_manager->runDatabaseMigrations();
     }
     public function update_template_names()
     {
