@@ -4,11 +4,29 @@
  * Intégration complète de l'API Preview 1.4
  */
 
-// Fonctions de debug conditionnel - DÉSACTIVÉES pour performance
-function isDebugEnabled() { return false; }
-function debugLog(...args) { }
-function debugError(...args) { }
-function debugWarn(...args) { }
+// Fonctions de debug conditionnel - RÉACTIVÉES pour mesurer les FPS
+function isDebugEnabled() {
+    // Debug activé seulement si explicitement forcé
+    return window.location.search.includes('debug=force');
+}
+
+function debugLog(...args) {
+    if (isDebugEnabled()) {
+        console.log(...args);
+    }
+}
+
+function debugError(...args) {
+    if (isDebugEnabled()) {
+        console.error(...args);
+    }
+}
+
+function debugWarn(...args) {
+    if (isDebugEnabled()) {
+        console.warn(...args);
+    }
+}
 
 class PDFPreviewAPI {
     constructor() {
@@ -27,6 +45,7 @@ class PDFPreviewAPI {
         this.canDrag = false; // Flag pour savoir si le drag est autorisé
         this.containerRect = null; // Cache des dimensions du conteneur
         this.animationFrameId = null; // Pour optimiser les transformations
+        this.dragStartTime = 0; // Pour mesurer la performance des drags
         this.maxPanX = 0; // Limites pré-calculées
         this.maxPanY = 0; // Limites pré-calculées
         this.needsConstrain = false; // Flag pour les contraintes
@@ -659,6 +678,7 @@ class PDFPreviewAPI {
         this.isDragging = true;
         this.lastMouseX = e.clientX;
         this.lastMouseY = e.clientY;
+        this.dragStartTime = performance.now(); // Mesure performance des drags
         this.needsConstrain = false; // Reset le flag
         img.style.cursor = 'grabbing';
     }
@@ -717,6 +737,13 @@ class PDFPreviewAPI {
         if (this.isDragging) {
             this.isDragging = false;
             img.style.cursor = this.currentZoom > 100 ? 'grab' : 'default';
+
+            // Mesurer et logger la performance du drag
+            const dragDuration = performance.now() - this.dragStartTime;
+            if (dragDuration > 50) { // Seulement pour les drags significatifs (>50ms)
+                const fps = 1000 / dragDuration;
+                console.log(`[PDF Preview] Drag performance: ${dragDuration.toFixed(2)}ms (${fps.toFixed(1)}fps)`);
+            }
         }
     }
 
