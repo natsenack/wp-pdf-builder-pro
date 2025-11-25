@@ -556,18 +556,39 @@ function pdf_builder_load_bootstrap()
             require_once $utility_path;
         }
     }
+    if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
+        // Fallback: charger manuellement si la classe n'est pas trouvée
+        $notification_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Notification_Manager.php';
+        if (file_exists($notification_path)) {
+            require_once $notification_path;
+        }
+    }
     if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
         \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance();
     }
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
     // Les utilitaires sont déjà chargés ci-dessus
+    if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+        // Fallback: charger manuellement si la classe n'est pas trouvée
+        $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
+        if (file_exists($onboarding_path)) {
+            require_once $onboarding_path;
+        }
+    }
     if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
         \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
     }
 
     // INITIALISER LE GESTIONNAIRE RGPD
     // Les utilitaires sont déjà chargés ci-dessus
+    if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
+        // Fallback: charger manuellement si la classe n'est pas trouvée
+        $gdpr_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_GDPR_Manager.php';
+        if (file_exists($gdpr_path)) {
+            require_once $gdpr_path;
+        }
+    }
     if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
         \PDF_Builder\Utilities\PDF_Builder_GDPR_Manager::get_instance();
     }
