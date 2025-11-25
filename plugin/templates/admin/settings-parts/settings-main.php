@@ -1378,7 +1378,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Update canvas previews after successful save
                             console.log('PDF_BUILDER_DEBUG: window.updateDimensionsCardPreview exists:', typeof window.updateDimensionsCardPreview);
                             if (category === 'dimensions' && typeof window.updateDimensionsCardPreview === 'function') {
-                                console.log('PDF_BUILDER_DEBUG: Function code:', window.updateDimensionsCardPreview.toString());
                                 console.log('PDF_BUILDER_DEBUG: Calling updateDimensionsCardPreview');
                                 try {
                                     window.updateDimensionsCardPreview();
@@ -1922,21 +1921,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     window.updateDimensionsCardPreview = function() {
-        alert('PDF_BUILDER_DEBUG: updateDimensionsCardPreview EXECUTED');
-        console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview EXECUTED - function called successfully');
-        console.log('PDF_BUILDER_DEBUG: Test 1 - basic execution');
-        var test = 'test';
-        console.log('PDF_BUILDER_DEBUG: Test 2 - variable assignment:', test);
-        console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview completed successfully');
+        console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview called - using saved settings');
+        // This function is now defined in pdf-preview-integration.js with proper logic
     };
-    console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview function assigned to window');
-    // Test call
-    try {
-        window.updateDimensionsCardPreview();
-        console.log('PDF_BUILDER_DEBUG: Test call successful');
-    } catch (e) {
-        console.error('PDF_BUILDER_DEBUG: Test call failed:', e);
-    }
 
     // Update apparence card preview
     window.updateApparenceCardPreview = function() {

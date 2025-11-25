@@ -689,10 +689,15 @@ window.updateGrilleCardPreview = function() {
  * Met à jour la prévisualisation de la carte zoom
  */
 window.updateZoomCardPreview = function() {
-    const zoomMin = document.getElementById("canvas_zoom_min")?.value || 10;
-    const zoomMax = document.getElementById("canvas_zoom_max")?.value || 500;
-    const zoomStep = document.getElementById("canvas_zoom_step")?.value || 25;
-    const defaultZoom = document.getElementById("canvas_zoom_default")?.value || 100;
+    // Use saved settings if available, otherwise fall back to input values
+    const zoomMin = window.pdfBuilderCanvasSettings?.canvas_zoom_min || 
+                   (document.getElementById("canvas_zoom_min")?.value || 10);
+    const zoomMax = window.pdfBuilderCanvasSettings?.canvas_zoom_max || 
+                   (document.getElementById("canvas_zoom_max")?.value || 500);
+    const zoomStep = window.pdfBuilderCanvasSettings?.canvas_zoom_step || 
+                    (document.getElementById("canvas_zoom_step")?.value || 25);
+    const defaultZoom = window.pdfBuilderCanvasSettings?.canvas_zoom_default || 
+                       (document.getElementById("canvas_zoom_default")?.value || 100);
 
     const zoomLevel = document.querySelector('.canvas-card[data-category="zoom"] .zoom-level');
     const zoomInfo = document.querySelector('.canvas-card[data-category="zoom"] .zoom-info');
@@ -779,15 +784,15 @@ window.updateExportCardPreview = function() {
  * Met à jour la prévisualisation de la carte dimensions
  */
 window.updateDimensionsCardPreview = function() {
-    const widthInput = document.getElementById("canvas_width");
-    const heightInput = document.getElementById("canvas_height");
-    const unitSelect = document.getElementById("canvas_unit");
+    // Use saved settings if available, otherwise fall back to input values
+    const width = window.pdfBuilderCanvasSettings?.canvas_width ? parseInt(window.pdfBuilderCanvasSettings.canvas_width) :
+                 (document.getElementById("canvas_width") ? parseInt(document.getElementById("canvas_width").value) : null);
+    const height = window.pdfBuilderCanvasSettings?.canvas_height ? parseInt(window.pdfBuilderCanvasSettings.canvas_height) :
+                  (document.getElementById("canvas_height") ? parseInt(document.getElementById("canvas_height").value) : null);
+    const unit = window.pdfBuilderCanvasSettings?.canvas_unit || 
+                 (document.getElementById("canvas_unit") ? document.getElementById("canvas_unit").value : 'mm');
 
-    if (!widthInput || !heightInput || !unitSelect) return;
-
-    const width = parseInt(widthInput.value);
-    const height = parseInt(heightInput.value);
-    const unit = unitSelect.value;
+    if (width === null || height === null) return;
 
     // Mettre à jour les valeurs dans la carte dimensions
     const dimensionValues = document.querySelectorAll('.canvas-card[data-category="dimensions"] .dimension-value');
@@ -811,13 +816,13 @@ window.updateDimensionsCardPreview = function() {
  * Met à jour la prévisualisation de la carte auto-save
  */
 window.updateAutosaveCardPreview = function() {
-    const intervalInput = document.getElementById("canvas_autosave_interval");
-    const enabledCheckbox = document.getElementById("canvas_autosave_enabled");
+    // Use saved settings if available, otherwise fall back to input values
+    const interval = window.pdfBuilderCanvasSettings?.canvas_autosave_interval ? parseInt(window.pdfBuilderCanvasSettings.canvas_autosave_interval) :
+                    (document.getElementById("canvas_autosave_interval") ? parseInt(document.getElementById("canvas_autosave_interval").value) : null);
+    const enabled = window.pdfBuilderCanvasSettings?.canvas_autosave_enabled !== undefined ? window.pdfBuilderCanvasSettings.canvas_autosave_enabled :
+                   (document.getElementById("canvas_autosave_enabled") ? document.getElementById("canvas_autosave_enabled").checked : false);
 
-    if (!intervalInput || !enabledCheckbox) return;
-
-    const interval = parseInt(intervalInput.value);
-    const enabled = enabledCheckbox.checked;
+    if (interval === null) return;
 
     // Mettre à jour l'indicateur de statut
     const statusIndicator = document.querySelector('.canvas-card[data-category="autosave"] .status-indicator');
