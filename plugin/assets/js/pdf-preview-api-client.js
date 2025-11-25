@@ -589,6 +589,16 @@ class PDFPreviewAPI {
     }
 
     /**
+     * Met à jour l'interface utilisateur du zoom
+     */
+    updateZoomUI() {
+        const slider = document.getElementById('pdf-preview-zoom-slider');
+        const value = document.getElementById('pdf-preview-zoom-value');
+        if (slider) slider.value = this.currentZoom;
+        if (value) value.textContent = this.currentZoom + '%';
+    }
+
+    /**
      * Initialise le drag/pan de l'image
      */
     initImageDrag(img) {
