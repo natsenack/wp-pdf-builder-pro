@@ -2143,6 +2143,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    // Real-time preview updates for autosave modal
+    function initializeAutosaveRealTimePreview() {
+        // Listen for changes in autosave modal fields
+        ['change', 'input'].forEach(function(eventType) {
+            document.addEventListener(eventType, function(event) {
+                const target = event.target;
+                const modal = target.closest('.canvas-modal[data-category="autosave"]');
+
+                if (modal && (target.id === 'canvas_autosave_enabled' || target.id === 'canvas_autosave_interval' || target.id === 'canvas_history_max')) {
+                    // Update window.pdfBuilderCanvasSettings temporarily for preview
+                    if (window.pdfBuilderCanvasSettings) {
+                        if (target.id === 'canvas_autosave_enabled') {
+                            window.pdfBuilderCanvasSettings.autosave_enabled = target.checked;
+                        } else if (target.id === 'canvas_autosave_interval') {
+                            window.pdfBuilderCanvasSettings.autosave_interval = parseInt(target.value);
+                        } else if (target.id === 'canvas_history_max') {
+                            window.pdfBuilderCanvasSettings.versions_limit = parseInt(target.value);
+                        }
+
+                        // Update preview immediately
+                        if (typeof updateAutosaveCardPreview === 'function') {
+                            updateAutosaveCardPreview();
+                        } else {
+                            console.warn('updateAutosaveCardPreview function not found');
+                        }
+                    } else {
+                        console.warn('window.pdfBuilderCanvasSettings not available');
+                    }
+                }
+            });
+        });
+    }
+
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
@@ -2404,8 +2437,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Real-time preview updates for autosave modal
-    function initializeAutosaveRealTimePreview() {
+    // Real-time preview updates for apparence modal
         // Listen for changes in autosave modal fields
         ['change', 'input'].forEach(function(eventType) {
             document.addEventListener(eventType, function(event) {
