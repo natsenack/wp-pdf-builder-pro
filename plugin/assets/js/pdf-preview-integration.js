@@ -898,40 +898,9 @@ window.updateDimensionsCardPreview = function() {
         console.error('PDF_BUILDER_DEBUG: card-canvas-dpi element not found');
     }
 };/**
- * Met à jour la prévisualisation de la carte auto-save
+ * Ancienne fonction updateAutosaveCardPreview - remplacée par celle utilisant CanvasPreviewManager
+ * Gardée pour compatibilité temporaire
  */
-window.updateAutosaveCardPreview = function() {
-    // Use saved settings if available, otherwise fall back to input values
-    const interval = window.pdfBuilderCanvasSettings?.autosave_interval ? parseInt(window.pdfBuilderCanvasSettings.autosave_interval) :
-                    (document.getElementById("canvas_autosave_interval") ? parseInt(document.getElementById("canvas_autosave_interval").value) : null);
-    const enabled = window.pdfBuilderCanvasSettings?.autosave_enabled !== undefined ? window.pdfBuilderCanvasSettings.autosave_enabled :
-                   (document.getElementById("canvas_autosave_enabled") ? document.getElementById("canvas_autosave_enabled").checked : false);
-
-    if (interval === null) {
-        console.error('PDF_BUILDER_DEBUG: Missing autosave interval');
-        return;
-    }
-
-    // Mettre à jour l'indicateur de statut
-    const timerElement = document.querySelector('.canvas-card[data-category="autosave"] .autosave-timer');
-    const statusElement = document.querySelector('.canvas-card[data-category="autosave"] .autosave-status');
-
-    if (timerElement) {
-        timerElement.textContent = `${interval}min`;
-    } else {
-        console.error('PDF_BUILDER_DEBUG: autosave-timer element not found');
-    }
-
-    if (statusElement) {
-        if (enabled) {
-            statusElement.classList.add('active');
-        } else {
-            statusElement.classList.remove('active');
-        }
-    } else {
-        console.error('PDF_BUILDER_DEBUG: autosave-status element not found');
-    }
-};
 
 // ==========================================
 // INITIALISATION AUTOMATIQUE
@@ -1114,9 +1083,9 @@ window.CanvasPreviewManager = {
             updateFunction: 'updateZoomCardPreview'
         },
         autosave: {
-            inputs: ['canvas_autosave'],
-            settings: ['default_canvas_autosave'],
-            defaults: [30],
+            inputs: ['canvas_autosave_interval'],
+            settings: ['autosave_interval'],
+            defaults: [5],
             updateFunction: 'updateAutosaveCardPreview'
         }
     },
@@ -1270,13 +1239,32 @@ window.updateAutosaveCardPreview = function() {
     const config = window.CanvasPreviewManager.cardConfigs.autosave;
     const autosave = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
 
+    // Also get the enabled status
+    const enabledInput = document.getElementById('canvas_autosave_enabled');
+    const enabled = enabledInput ? enabledInput.checked :
+                   (window.pdfBuilderCanvasSettings?.autosave_enabled !== undefined ? window.pdfBuilderCanvasSettings.autosave_enabled : true);
+
     const autosaveElement = document.querySelector('.autosave-timer');
+    const statusElement = document.querySelector('.canvas-card[data-category="autosave"] .autosave-status');
+
     if (autosaveElement) {
         autosaveElement.textContent = `${autosave}min`;
     } else {
         console.error('PDF_BUILDER_DEBUG: .autosave-timer element not found');
     }
+
+    if (statusElement) {
+        if (enabled) {
+            statusElement.classList.add('active');
+        } else {
+            statusElement.classList.remove('active');
+        }
+    } else {
+        console.error('PDF_BUILDER_DEBUG: autosave-status element not found');
+    }
 };
+
+
 
 
 
