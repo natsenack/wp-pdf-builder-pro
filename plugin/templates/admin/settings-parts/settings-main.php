@@ -1925,12 +1925,18 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             console.log('PDF_BUILDER_DEBUG: Starting function execution');
 
+            // Get values from saved settings, not from modal inputs (since we're updating the preview)
+            const format = window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4';
+            const dpi = parseInt(window.pdfBuilderCanvasSettings?.default_canvas_dpi) || 96;
+
+            console.log('PDF_BUILDER_DEBUG: Using saved values - format:', format, 'dpi:', dpi);
+
             // Simple test: try to update just the DPI display
             const dpiEl = document.getElementById('card-canvas-dpi');
             console.log('PDF_BUILDER_DEBUG: dpiEl found:', dpiEl);
 
             if (dpiEl) {
-                const testText = `TEST UPDATE - ${Date.now()}`;
+                const testText = `${dpi} DPI - ${format} (SAVED)`;
                 console.log('PDF_BUILDER_DEBUG: Setting dpiEl text to:', testText);
                 dpiEl.textContent = testText;
                 console.log('PDF_BUILDER_DEBUG: dpiEl updated successfully');
