@@ -557,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (target === 'contenu' && typeof updateCanvasPreviews === 'function') {
                 setTimeout(function() {
                     updateCanvasPreviews('all');
-                }, 50);
+                }, 200);
             }
 
             // Update URL hash without scrolling
@@ -904,7 +904,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.updateCanvasPreviews) {
             window.updateCanvasPreviews('all');
         }
-    }, 100);
+    }, 500);
 });
 
 // Canvas configuration modals functionality - Version stable
