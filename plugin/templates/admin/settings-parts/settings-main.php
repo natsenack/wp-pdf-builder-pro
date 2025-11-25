@@ -326,16 +326,26 @@ window.PDF_Builder_Preview_Manager = {
      * Preview des paramètres templates
      */
     initializeTemplatesPreview: function() {
-        if (!window.pdfBuilderSavedSettings) return;
+        if (!window.pdfBuilderSavedSettings) {
+            console.log('pdfBuilderSavedSettings not available');
+            return;
+        }
 
         const data = window.pdfBuilderSavedSettings;
+        console.log('Template library enabled value:', data.template_library_enabled);
+        console.log('All saved settings:', data);
 
         // Mettre à jour l'indicateur de la bibliothèque de templates
         const templateLibraryIndicator = document.querySelector('.template-library-indicator');
+        console.log('Indicator element found:', templateLibraryIndicator);
+
         if (templateLibraryIndicator) {
             // Changer la couleur et le texte selon l'état de la bibliothèque
-            templateLibraryIndicator.style.background = data.template_library_enabled ? '#28a745' : '#dc3545';
-            templateLibraryIndicator.textContent = data.template_library_enabled ? 'ACTIF' : 'INACTIF';
+            const isEnabled = data.template_library_enabled;
+            console.log('Setting indicator to:', isEnabled ? 'ACTIF' : 'INACTIF');
+
+            templateLibraryIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
+            templateLibraryIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
         }
 
         pdfBuilderDebug('Templates preview initialized');
