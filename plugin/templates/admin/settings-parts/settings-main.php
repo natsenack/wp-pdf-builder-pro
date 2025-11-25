@@ -21,6 +21,157 @@ if (class_exists('PDF_Builder\\Security\\Role_Manager')) {
 // Charger les styles CSS
 require_once dirname(__FILE__) . '/settings-styles.php';
 
+/**
+ * Système centralisé de chargement des paramètres sauvegardés
+ */
+class PDF_Builder_Settings_Loader {
+
+    /**
+     * Configuration des paramètres à charger avec leurs valeurs par défaut
+     */
+    private static $settings_config = [
+        // Paramètres généraux
+        'pdf_builder_settings' => [],
+        'pdf_builder_canvas_settings' => [],
+
+        // Licence
+        'pdf_builder_license_test_key' => '',
+        'pdf_builder_license_test_mode_enabled' => false,
+
+        // Cache
+        'pdf_builder_cache_enabled' => false,
+        'pdf_builder_cache_ttl' => 3600,
+        'pdf_builder_cache_compression' => true,
+        'pdf_builder_cache_auto_cleanup' => true,
+        'pdf_builder_cache_max_size' => 100,
+
+        // Entreprise
+        'pdf_builder_company_phone_manual' => '',
+        'pdf_builder_company_siret' => '',
+        'pdf_builder_company_vat' => '',
+        'pdf_builder_company_rcs' => '',
+        'pdf_builder_company_capital' => '',
+
+        // PDF
+        'pdf_builder_pdf_quality' => 'high',
+        'pdf_builder_default_format' => 'A4',
+        'pdf_builder_default_orientation' => 'portrait',
+
+        // Développeur
+        'pdf_builder_developer_enabled' => false,
+        'pdf_builder_developer_password' => '',
+        'pdf_builder_debug_php_errors' => false,
+        'pdf_builder_debug_javascript' => false,
+        'pdf_builder_debug_javascript_verbose' => false,
+        'pdf_builder_debug_ajax' => false,
+        'pdf_builder_debug_performance' => false,
+        'pdf_builder_debug_database' => false,
+        'pdf_builder_log_level' => 3,
+        'pdf_builder_log_file_size' => 10,
+        'pdf_builder_log_retention' => 30,
+        'pdf_builder_force_https' => false,
+        'pdf_builder_performance_monitoring' => false,
+
+        // Système
+        'pdf_builder_auto_maintenance' => true,
+        'pdf_builder_performance_auto_optimization' => false,
+        'pdf_builder_auto_backup' => true,
+        'pdf_builder_backup_retention' => 30,
+        'pdf_builder_auto_backup_frequency' => 'daily',
+
+        // Sécurité
+        'pdf_builder_allowed_roles' => [],
+        'pdf_builder_security_level' => 'medium',
+        'pdf_builder_enable_logging' => true,
+
+        // GDPR
+        'pdf_builder_gdpr_enabled' => false,
+        'pdf_builder_gdpr_consent_required' => false,
+        'pdf_builder_gdpr_data_retention' => 365,
+        'pdf_builder_gdpr_audit_enabled' => false,
+        'pdf_builder_gdpr_encryption_enabled' => false,
+        'pdf_builder_gdpr_consent_analytics' => false,
+        'pdf_builder_gdpr_consent_templates' => false,
+        'pdf_builder_gdpr_consent_marketing' => false,
+
+        // Templates
+        'pdf_builder_default_template' => 'blank',
+        'pdf_builder_template_library_enabled' => true,
+        'pdf_builder_order_status_templates' => [],
+
+        // Canvas
+        'pdf_builder_canvas_width' => 794,
+        'pdf_builder_canvas_height' => 1123,
+    ];
+
+    /**
+     * Charge tous les paramètres sauvegardés depuis la base de données
+     */
+    public static function load_all_settings() {
+        $settings = [];
+
+        foreach (self::$settings_config as $option_key => $default_value) {
+            $settings[$option_key] = get_option($option_key, $default_value);
+        }
+
+        // Traitement spécial pour license_test_mode
+        $settings['license_test_mode'] = $settings['pdf_builder_license_test_mode_enabled'];
+
+        // Log le chargement si debug activé
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('PDF Builder: Paramètres chargés depuis BDD: ' . count($settings) . ' options');
+        }
+
+        return $settings;
+    }
+
+    /**
+     * Charge un paramètre spécifique
+     */
+    public static function load_setting($key, $default = null) {
+        if (!isset(self::$settings_config[$key])) {
+            error_log("PDF Builder: Paramètre inconnu '$key'");
+            return $default;
+        }
+
+        $default_value = $default ?? self::$settings_config[$key];
+        return get_option($key, $default_value);
+    }
+
+    /**
+     * Prépare les données pour les previews JavaScript
+     */
+    public static function prepare_preview_data($settings) {
+        return [
+            // Entreprise
+            'company_phone_manual' => $settings['pdf_builder_company_phone_manual'] ?? '',
+            'company_siret' => $settings['pdf_builder_company_siret'] ?? '',
+            'company_vat' => $settings['pdf_builder_company_vat'] ?? '',
+            'company_rcs' => $settings['pdf_builder_company_rcs'] ?? '',
+            'company_capital' => $settings['pdf_builder_company_capital'] ?? '',
+
+            // PDF
+            'pdf_quality' => $settings['pdf_builder_pdf_quality'] ?? 'high',
+            'default_format' => $settings['pdf_builder_default_format'] ?? 'A4',
+            'default_orientation' => $settings['pdf_builder_default_orientation'] ?? 'portrait',
+
+            // Cache
+            'cache_enabled' => $settings['pdf_builder_cache_enabled'] ?? false,
+            'cache_ttl' => $settings['pdf_builder_cache_ttl'] ?? 3600,
+            'cache_compression' => $settings['pdf_builder_cache_compression'] ?? true,
+
+            // Développeur
+            'developer_enabled' => $settings['pdf_builder_developer_enabled'] ?? false,
+            'debug_mode' => $settings['pdf_builder_debug_mode'] ?? false,
+
+            // Canvas
+            'canvas_width' => $settings['pdf_builder_canvas_width'] ?? 794,
+            'canvas_height' => $settings['pdf_builder_canvas_height'] ?? 1123,
+            'canvas_settings' => $settings['pdf_builder_canvas_settings'] ?? [],
+        ];
+    }
+}
+
 // Debug: Page loaded
 if (defined('WP_DEBUG') && WP_DEBUG) {
 
@@ -28,54 +179,214 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 
 // Initialize
 $notices = [];
-$settings = get_option('pdf_builder_settings', []);
-$canvas_settings = get_option('pdf_builder_canvas_settings', []);
-// Charger la clé de test de licence si elle existe
-$license_test_key = get_option('pdf_builder_license_test_key', '');
-$license_test_mode = get_option('pdf_builder_license_test_mode_enabled', false);
-$settings['license_test_mode'] = $license_test_mode;
 
-// Charger les paramètres individuels sauvegardés via AJAX
-$settings['cache_enabled'] = get_option('pdf_builder_cache_enabled', false);
-$settings['cache_ttl'] = get_option('pdf_builder_cache_ttl', 3600);
-$settings['cache_compression'] = get_option('pdf_builder_cache_compression', true);
-$settings['cache_auto_cleanup'] = get_option('pdf_builder_cache_auto_cleanup', true);
-$settings['cache_max_size'] = get_option('pdf_builder_cache_max_size', 100);
-$settings['company_phone_manual'] = get_option('pdf_builder_company_phone_manual', '');
-$settings['company_siret'] = get_option('pdf_builder_company_siret', '');
-$settings['company_vat'] = get_option('pdf_builder_company_vat', '');
-$settings['company_rcs'] = get_option('pdf_builder_company_rcs', '');
-$settings['company_capital'] = get_option('pdf_builder_company_capital', '');
-$settings['pdf_quality'] = get_option('pdf_builder_pdf_quality', 'high');
-$settings['default_format'] = get_option('pdf_builder_default_format', 'A4');
-$settings['default_orientation'] = get_option('pdf_builder_default_orientation', 'portrait');
+// Charger TOUS les paramètres sauvegardés de manière centralisée
+$all_settings = PDF_Builder_Settings_Loader::load_all_settings();
 
-// Charger les paramètres développeur
-$settings['developer_enabled'] = get_option('pdf_builder_developer_enabled', false);
-$settings['developer_password'] = get_option('pdf_builder_developer_password', '');
-$settings['debug_php_errors'] = get_option('pdf_builder_debug_php_errors', false);
-$settings['debug_javascript'] = get_option('pdf_builder_debug_javascript', false);
-$settings['debug_javascript_verbose'] = get_option('pdf_builder_debug_javascript_verbose', false);
-$settings['debug_ajax'] = get_option('pdf_builder_debug_ajax', false);
-$settings['debug_performance'] = get_option('pdf_builder_debug_performance', false);
-$settings['debug_database'] = get_option('pdf_builder_debug_database', false);
-$settings['log_level'] = get_option('pdf_builder_log_level', 3);
-$settings['log_file_size'] = get_option('pdf_builder_log_file_size', 10);
-$settings['log_retention'] = get_option('pdf_builder_log_retention', 30);
-$settings['force_https'] = get_option('pdf_builder_force_https', false);
-$settings['performance_monitoring'] = get_option('pdf_builder_performance_monitoring', false);
+// Extraire les paramètres principaux
+$settings = $all_settings['pdf_builder_settings'];
+$canvas_settings = $all_settings['pdf_builder_canvas_settings'];
 
-// Vérifier que les valeurs sont bien définies
-$company_phone_manual = $settings['company_phone_manual'] ?? '';
-$company_siret = $settings['company_siret'] ?? '';
-$company_vat = $settings['company_vat'] ?? '';
-$company_rcs = $settings['company_rcs'] ?? '';
-$company_capital = $settings['company_capital'] ?? '';
+// Préparer les données pour les previews
+$preview_data = PDF_Builder_Settings_Loader::prepare_preview_data($all_settings);
 
-// Variables pour la configuration PDF
-$pdf_quality = $settings['pdf_quality'] ?? 'high';
-$default_format = $settings['default_format'] ?? 'A4';
-$default_orientation = $settings['default_orientation'] ?? 'portrait';
+// Variables pour la rétrocompatibilité (utilisées dans les templates)
+$company_phone_manual = $preview_data['company_phone_manual'];
+$company_siret = $preview_data['company_siret'];
+$company_vat = $preview_data['company_vat'];
+$company_rcs = $preview_data['company_rcs'];
+$company_capital = $preview_data['company_capital'];
+$pdf_quality = $preview_data['pdf_quality'];
+$default_format = $preview_data['default_format'];
+$default_orientation = $preview_data['default_orientation'];
+
+// Passer les données sauvegardées au JavaScript pour les previews
+?>
+<script>
+// Données centralisées chargées depuis la base de données
+window.pdfBuilderSavedSettings = <?php echo json_encode($preview_data); ?>;
+window.pdfBuilderCanvasSettings = <?php echo json_encode($canvas_settings); ?>;
+
+// Système centralisé d'initialisation des previews avec données BDD
+window.PDF_Builder_Preview_Manager = {
+    /**
+     * Initialise toutes les previews avec les données sauvegardées
+     */
+    initializeAllPreviews: function() {
+        pdfBuilderDebug('Initializing all previews with saved data');
+
+        // Initialiser les previews individuelles
+        this.initializeCompanyPreview();
+        this.initializePDFPreview();
+        this.initializeCachePreview();
+        this.initializeDeveloperPreview();
+        this.initializeCanvasPreviews();
+
+        pdfBuilderDebug('All previews initialized with saved data');
+    },
+
+    /**
+     * Preview des informations entreprise
+     */
+    initializeCompanyPreview: function() {
+        if (!window.pdfBuilderSavedSettings) return;
+
+        const data = window.pdfBuilderSavedSettings;
+
+        // Mettre à jour les champs de preview entreprise
+        const phoneField = document.querySelector('.company-phone-preview');
+        if (phoneField && data.company_phone_manual) {
+            phoneField.textContent = data.company_phone_manual;
+        }
+
+        const siretField = document.querySelector('.company-siret-preview');
+        if (siretField && data.company_siret) {
+            siretField.textContent = data.company_siret;
+        }
+
+        const vatField = document.querySelector('.company-vat-preview');
+        if (vatField && data.company_vat) {
+            vatField.textContent = data.company_vat;
+        }
+
+        const rcsField = document.querySelector('.company-rcs-preview');
+        if (rcsField && data.company_rcs) {
+            rcsField.textContent = data.company_rcs;
+        }
+
+        const capitalField = document.querySelector('.company-capital-preview');
+        if (capitalField && data.company_capital) {
+            capitalField.textContent = data.company_capital + ' €';
+        }
+
+        pdfBuilderDebug('Company preview initialized');
+    },
+
+    /**
+     * Preview des paramètres PDF
+     */
+    initializePDFPreview: function() {
+        if (!window.pdfBuilderSavedSettings) return;
+
+        const data = window.pdfBuilderSavedSettings;
+
+        // Mettre à jour les champs de preview PDF
+        const qualityField = document.querySelector('.pdf-quality-preview');
+        if (qualityField && data.pdf_quality) {
+            qualityField.textContent = data.pdf_quality;
+        }
+
+        const formatField = document.querySelector('.pdf-format-preview');
+        if (formatField && data.default_format) {
+            formatField.textContent = data.default_format;
+        }
+
+        const orientationField = document.querySelector('.pdf-orientation-preview');
+        if (orientationField && data.default_orientation) {
+            orientationField.textContent = data.default_orientation;
+        }
+
+        pdfBuilderDebug('PDF preview initialized');
+    },
+
+    /**
+     * Preview des paramètres cache
+     */
+    initializeCachePreview: function() {
+        if (!window.pdfBuilderSavedSettings) return;
+
+        const data = window.pdfBuilderSavedSettings;
+
+        // Mettre à jour les indicateurs de cache
+        const cacheEnabledIndicator = document.querySelector('.cache-enabled-indicator');
+        if (cacheEnabledIndicator) {
+            cacheEnabledIndicator.className = data.cache_enabled ?
+                'cache-enabled-indicator enabled' : 'cache-enabled-indicator disabled';
+            cacheEnabledIndicator.textContent = data.cache_enabled ? 'Activé' : 'Désactivé';
+        }
+
+        const cacheTtlField = document.querySelector('.cache-ttl-preview');
+        if (cacheTtlField && data.cache_ttl) {
+            cacheTtlField.textContent = data.cache_ttl + ' secondes';
+        }
+
+        const cacheCompressionField = document.querySelector('.cache-compression-preview');
+        if (cacheCompressionField) {
+            cacheCompressionField.textContent = data.cache_compression ? 'Activée' : 'Désactivée';
+        }
+
+        pdfBuilderDebug('Cache preview initialized');
+    },
+
+    /**
+     * Preview des paramètres développeur
+     */
+    initializeDeveloperPreview: function() {
+        if (!window.pdfBuilderSavedSettings) return;
+
+        const data = window.pdfBuilderSavedSettings;
+
+        // Mettre à jour les indicateurs développeur
+        const debugModeIndicator = document.querySelector('.debug-mode-indicator');
+        if (debugModeIndicator) {
+            debugModeIndicator.className = data.debug_mode ?
+                'debug-mode-indicator enabled' : 'debug-mode-indicator disabled';
+            debugModeIndicator.textContent = data.debug_mode ? 'Activé' : 'Désactivé';
+        }
+
+        const developerEnabledIndicator = document.querySelector('.developer-enabled-indicator');
+        if (developerEnabledIndicator) {
+            developerEnabledIndicator.className = data.developer_enabled ?
+                'developer-enabled-indicator enabled' : 'developer-enabled-indicator disabled';
+            developerEnabledIndicator.textContent = data.developer_enabled ? 'Activé' : 'Désactivé';
+        }
+
+        pdfBuilderDebug('Developer preview initialized');
+    },
+
+    /**
+     * Initialise les previews canvas avec les données sauvegardées
+     */
+    initializeCanvasPreviews: function() {
+        if (!window.pdfBuilderCanvasSettings) return;
+
+        pdfBuilderDebug('Initializing canvas previews with saved settings');
+
+        // Délai pour s'assurer que le DOM est prêt
+        setTimeout(() => {
+            try {
+                // Initialiser les previews individuelles des cartes canvas
+                if (typeof updateDimensionsCardPreview === 'function') {
+                    updateDimensionsCardPreview();
+                }
+                if (typeof updateApparenceCardPreview === 'function') {
+                    updateApparenceCardPreview();
+                }
+                if (typeof updateInteractionsCardPreview === 'function') {
+                    updateInteractionsCardPreview();
+                }
+                if (typeof updatePerformanceCardPreview === 'function') {
+                    updatePerformanceCardPreview();
+                }
+                if (typeof updateZoomCardPreview === 'function') {
+                    updateZoomCardPreview();
+                }
+                if (typeof updateGridCardPreview === 'function') {
+                    updateGridCardPreview();
+                }
+                if (typeof updateAutosaveCardPreview === 'function') {
+                    updateAutosaveCardPreview();
+                }
+
+                pdfBuilderDebug('Canvas previews initialized successfully');
+            } catch (error) {
+                pdfBuilderError('Error initializing canvas previews:', error);
+            }
+        }, 100);
+    }
+};
+</script>
+<?php
 
 // Log ALL POST data at the beginning
 if (!empty($_POST)) {
@@ -2234,23 +2545,25 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('DOMContentLoaded', function() {
             initializeModals();
             initializeAutosaveRealTimePreview();
-            // Initialize all canvas previews on page load - wait longer for settings to be loaded
+
+            // Initialize all previews with saved data from database
             setTimeout(function() {
-                if (typeof updateCanvasPreviews === 'function' && window.pdfBuilderCanvasSettings) {
-                    updateCanvasPreviews('all');
+                if (window.PDF_Builder_Preview_Manager) {
+                    window.PDF_Builder_Preview_Manager.initializeAllPreviews();
                 }
-            }, 500); // Increased from 100ms to 500ms
+            }, 200); // Wait for data to be loaded
         });
     } else {
         // DOM already loaded
         initializeModals();
         initializeAutosaveRealTimePreview();
-        // Initialize all canvas previews on page load - wait longer for settings to be loaded
+
+        // Initialize all previews with saved data from database
         setTimeout(function() {
-            if (typeof updateCanvasPreviews === 'function' && window.pdfBuilderCanvasSettings) {
-                updateCanvasPreviews('all');
+            if (window.PDF_Builder_Preview_Manager) {
+                window.PDF_Builder_Preview_Manager.initializeAllPreviews();
             }
-        }, 500); // Increased from 100ms to 500ms
+        }, 200); // Wait for data to be loaded
     }
 
     // Also try to initialize after a short delay as backup
