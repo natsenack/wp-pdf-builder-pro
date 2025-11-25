@@ -1862,7 +1862,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to update canvas card previews in real-time
     window.updateCanvasPreviews = function(category) {
         console.log('updateCanvasPreviews called with category:', category);
-        updateDimensionsCardPreview();
+        if (typeof updateDimensionsCardPreview === 'function') {
+            updateDimensionsCardPreview();
+        }
 
         // Update apparence card preview
         if (category === 'apparence' || category === 'all') {
