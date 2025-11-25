@@ -1014,6 +1014,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Fonction pour mettre à jour l'indicateur de bibliothèque de templates
+    function updateTemplateLibraryIndicator() {
+        const templateLibraryCheckbox = document.getElementById('template_library_enabled');
+        const indicator = document.getElementById('template-library-indicator');
+        
+        if (templateLibraryCheckbox && indicator) {
+            const isActive = templateLibraryCheckbox.checked;
+            indicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
+            indicator.style.background = isActive ? '#28a745' : '#dc3545';
+        }
+    }
+
     // Fonction pour mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Système
     function updateSystemStatusIndicators() {
         // Indicateur Cache & Performance
@@ -1107,6 +1119,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser les indicateurs au chargement de la page
     updateSecurityStatusIndicators();
     toggleRGPDControls();
+    updateTemplateLibraryIndicator();
 
     // Ajouter un event listener pour le toggle RGPD principal
     const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
@@ -1136,19 +1149,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const backupCheckbox = document.getElementById('systeme_auto_backup');
     if (backupCheckbox) {
         backupCheckbox.addEventListener('change', updateSystemStatusIndicators);
-    }
-
-    // Event listener pour l'indicateur de bibliothèque de templates
-    const templateLibraryCheckbox = document.getElementById('template_library_enabled');
-    if (templateLibraryCheckbox) {
-        templateLibraryCheckbox.addEventListener('change', function() {
-            const indicator = document.getElementById('template-library-indicator');
-            if (indicator) {
-                const isActive = templateLibraryCheckbox.checked;
-                indicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
-                indicator.style.background = isActive ? '#28a745' : '#dc3545';
-            }
-        });
     }
 
     // Gestion du bouton flottant de sauvegarde
@@ -1254,6 +1254,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Mettre à jour les indicateurs des templates assignés
                     updateTemplateStatusIndicators();
+
+                    // Mettre à jour l'indicateur de bibliothèque de templates
+                    updateTemplateLibraryIndicator();
 
                     // Remettre le texte original après 2 secondes
                     setTimeout(() => {
