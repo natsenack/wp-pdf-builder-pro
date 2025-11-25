@@ -50,6 +50,20 @@ if (!current_user_can('manage_options')) {
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     </style>
+
+    <!-- Load jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Define necessary variables -->
+    <script>
+        var pdfBuilderAjax = {
+            ajaxurl: '<?php echo admin_url('admin-ajax.php'); ?>',
+            nonce: '<?php echo wp_create_nonce('wp_pdf_preview_nonce'); ?>'
+        };
+    </script>
+
+    <!-- Load PDF Preview API Client -->
+    <script src="<?php echo plugin_dir_url(__FILE__); ?>assets/js/pdf-preview-api-client.js"></script>
 </head>
 <body>
     <div class='container'>
