@@ -223,10 +223,25 @@ class PDFPreviewAPI {
         img.onload = () => {
             this.imageWidth = img.naturalWidth;
             this.imageHeight = img.naturalHeight;
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
+            
+            // Limiter la taille du canvas pour performance (max 1500px)
+            const maxCanvasSize = 1500;
+            let canvasWidth = img.naturalWidth;
+            let canvasHeight = img.naturalHeight;
+            
+            if (canvasWidth > maxCanvasSize || canvasHeight > maxCanvasSize) {
+                const ratio = Math.min(maxCanvasSize / canvasWidth, maxCanvasSize / canvasHeight);
+                canvasWidth *= ratio;
+                canvasHeight *= ratio;
+            }
+            
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            canvas.style.width = canvasWidth + 'px';
+            canvas.style.height = canvasHeight + 'px';
+            
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
+            ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
             this.updateCanvasTransform(canvas);
         };
         img.src = imageUrl;
@@ -374,6 +389,11 @@ class PDFPreviewAPI {
                     transition: transform 0.3s ease !important;
                     display: block !important;
                     transform-origin: center center !important;
+                    will-change: transform !important;
+                    backface-visibility: hidden !important;
+                    -webkit-backface-visibility: hidden !important;
+                    perspective: 1000px !important;
+                    -webkit-perspective: 1000px !important;
                 }
 
                 #pdf-preview-image-container {
@@ -474,8 +494,8 @@ class PDFPreviewAPI {
         const panX = this.currentPanX;
         const panY = this.currentPanY;
 
-        // Application directe avec cache
-        canvas.style.transform = `translate(${panX}px, ${panY}px) scale(${this.cachedScale}) rotate(${this.cachedRotation}deg)`;
+        // Application directe avec cache et hardware acceleration
+        canvas.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${this.cachedScale}) rotate(${this.cachedRotation}deg)`;
         canvas.style.transformOrigin = 'center center';
     }
 
@@ -697,6 +717,7 @@ class PDFPreviewAPI {
         this.needsConstrain = false; // Reset le flag
         canvas.style.cursor = 'grabbing';
         canvas.style.transition = 'none'; // Désactiver la transition pendant le drag pour performance
+        canvas.style.willChange = 'transform'; // Optimisation hardware acceleration
     }
 
     /**
@@ -749,6 +770,7 @@ class PDFPreviewAPI {
             this.isDragging = false;
             canvas.style.cursor = this.currentZoom > 100 ? 'grab' : 'default';
             canvas.style.transition = 'transform 0.3s ease'; // Réactiver la transition après le drag
+            canvas.style.willChange = 'auto'; // Reset hardware acceleration
 
             // Mesurer et logger la performance du drag
             const dragDuration = performance.now() - this.dragStartTime;
