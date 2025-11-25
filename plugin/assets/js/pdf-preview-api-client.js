@@ -200,8 +200,6 @@ class PDFPreviewAPI {
         const title = previewModal.querySelector('#pdf-preview-title');
 
         img.src = imageUrl;
-        img.style.maxWidth = '100%';
-        img.style.height = 'auto';
         this.updateImageTransform(img);
 
         if (context === 'editor') {
@@ -260,6 +258,7 @@ class PDFPreviewAPI {
                     max-width: 90vw !important;
                     max-height: 90vh !important;
                     overflow-y: auto !important;
+                    overflow-x: hidden !important;
                     box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
                     flex-shrink: 0 !important;
                     min-width: 300px !important;
@@ -333,6 +332,17 @@ class PDFPreviewAPI {
                 .pdf-preview-reset-btn:hover {
                     background: #005a87 !important;
                 }
+
+                #pdf-preview-image {
+                    max-width: 100% !important;
+                    height: auto !important;
+                    border: 1px solid #ddd !important;
+                    border-radius: 4px !important;
+                    transition: transform 0.3s ease !important;
+                    object-fit: contain !important;
+                    display: block !important;
+                    margin: 0 auto !important;
+                }
             `;
             document.head.appendChild(styleSheet);
 
@@ -384,7 +394,7 @@ class PDFPreviewAPI {
         const img = document.createElement('img');
         img.id = 'pdf-preview-image';
         img.alt = 'Aperçu PDF';
-        img.style.cssText = 'max-width: 100%; height: auto; border: 1px solid #ddd;';
+        img.style.cssText = 'max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; object-fit: contain; display: block; margin: 0 auto;';
 
         wrapper.appendChild(header);
         wrapper.appendChild(actions);
