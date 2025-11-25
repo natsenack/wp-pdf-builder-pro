@@ -580,7 +580,7 @@
                         <tr>
                             <th scope="row"><label for="canvas_autosave_interval">Intervalle (minutes)</label></th>
                             <td>
-                                <input type="number" id="canvas_autosave_interval" name="canvas_autosave_interval" value="<?php echo intval(get_option('pdf_builder_canvas_autosave_interval', 5)); ?>" min="1" max="60" />
+                                <input type="number" id="canvas_autosave_interval" name="canvas_autosave_interval" value="<?php echo intval(get_option('pdf_builder_canvas_auto_save_interval', 5)); ?>" min="1" max="60" />
                             </td>
                         </tr>
                         <tr>

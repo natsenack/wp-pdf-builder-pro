@@ -62,7 +62,7 @@ class PDF_Builder_Canvas_Mappings {
 
         // Auto-save
         'canvas_autosave_enabled' => 'pdf_builder_canvas_autosave_enabled',
-        'canvas_autosave_interval' => 'pdf_builder_canvas_autosave_interval',
+        'canvas_autosave_interval' => 'pdf_builder_canvas_auto_save_interval',
         'canvas_history_enabled' => 'pdf_builder_canvas_history_enabled',
         'canvas_history_max' => 'pdf_builder_canvas_history_max',
 
@@ -144,7 +144,7 @@ class PDF_Builder_Canvas_Mappings {
 
         'autosave' => [
             'canvas_autosave_enabled' => 'pdf_builder_canvas_autosave_enabled',
-            'canvas_autosave_interval' => 'pdf_builder_canvas_autosave_interval',
+            'canvas_autosave_interval' => 'pdf_builder_canvas_auto_save_interval',
             'canvas_history_enabled' => 'pdf_builder_canvas_history_enabled',
             'canvas_history_max' => 'pdf_builder_canvas_history_max',
             'canvas_auto_save_enabled' => 'pdf_builder_canvas_auto_save_enabled'

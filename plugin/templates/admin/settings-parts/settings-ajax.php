@@ -627,7 +627,7 @@ function pdf_builder_save_settings_handler() {
 
                     // Autosave
                     'canvas_autosave_enabled' => 'pdf_builder_canvas_autosave_enabled',
-                    'canvas_autosave_interval' => 'pdf_builder_canvas_autosave_interval',
+                    'canvas_autosave_interval' => 'pdf_builder_canvas_auto_save_interval',
                     'canvas_history_enabled' => 'pdf_builder_canvas_history_enabled',
                     'canvas_history_max' => 'pdf_builder_canvas_history_max',
 
@@ -1014,7 +1014,7 @@ function pdf_builder_save_canvas_settings_handler() {
                     // Sauvegarder les paramètres d'autosave
                     $autosave_mappings = [
                         'canvas_autosave_enabled' => 'pdf_builder_canvas_autosave_enabled',
-                        'canvas_autosave_interval' => 'pdf_builder_canvas_autosave_interval',
+                        'canvas_autosave_interval' => 'pdf_builder_canvas_auto_save_interval',
                         'canvas_history_enabled' => 'pdf_builder_canvas_history_enabled',
                         'canvas_history_max' => 'pdf_builder_canvas_history_max'
                     ];
@@ -1382,7 +1382,7 @@ function pdf_builder_get_canvas_settings_handler() {
             case 'autosave':
                 $values = [
                     'autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', true),
-                    'autosave_interval' => get_option('pdf_builder_canvas_autosave_interval', 5),
+                    'autosave_interval' => get_option('pdf_builder_canvas_auto_save_interval', 5),
                     'history_enabled' => get_option('pdf_builder_canvas_history_enabled', true),
                     'history_max' => get_option('pdf_builder_canvas_history_max', 50)
                 ];
