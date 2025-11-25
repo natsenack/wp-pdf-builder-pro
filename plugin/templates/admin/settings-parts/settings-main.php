@@ -555,7 +555,7 @@ if (
             <span class="current-tab-text">Général</span>
         </div>
         <div class="nav-tabs-container">
-            <a href="#general" class="nav-tab nav-tab-active" data-tab="general">
+            <a href="#general" class="nav-tab" data-tab="general">
                 <span class="tab-icon">⚙️</span>
                 <span class="tab-text">Général</span>
             </a>
@@ -599,7 +599,7 @@ if (
 ?>
 
     <!-- Tab Content Containers -->
-    <div id="general" class="tab-content active">
+    <div id="general" class="tab-content">
         <?php require_once 'settings-general.php'; ?>
     </div>
 
@@ -876,19 +876,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Check hash on load
-    const hash = window.location.hash.substring(1);
-    if (hash) {
-        const tab = document.querySelector('.nav-tab[href="#' + hash + '"]');
-        if (tab) {
-            tab.click();
+    // Check hash on load and initialize tabs properly
+    function initializeTabs() {
+        const hash = window.location.hash.substring(1);
+        let targetTab = 'general'; // Default tab
+
+        if (hash) {
+            const tabExists = document.querySelector('.nav-tab[href="#' + hash + '"]');
+            if (tabExists) {
+                targetTab = hash;
+            }
         }
-    } else {
-        const defaultTab = document.querySelector('.nav-tab[href="#general"]');
-        if (defaultTab) {
-            defaultTab.click();
+
+        // Set active tab and content without triggering click events
+        const activeTab = document.querySelector('.nav-tab[href="#' + targetTab + '"]');
+        const activeContent = document.getElementById(targetTab);
+
+        if (activeTab && activeContent) {
+            // Remove active classes from all tabs and contents
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('nav-tab-active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Add active classes to target tab and content
+            activeTab.classList.add('nav-tab-active');
+            activeContent.classList.add('active');
+
+            // Update mobile menu text
+            const currentTabText = document.querySelector('.current-tab-text');
+            if (currentTabText) {
+                const tabText = activeTab.querySelector('.tab-text');
+                if (tabText) {
+                    currentTabText.textContent = tabText.textContent;
+                }
+            }
         }
     }
+
+    // Initialize tabs on load
+    initializeTabs();
 
     // Fonction pour mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Sécurité
     function updateSecurityStatusIndicators() {
