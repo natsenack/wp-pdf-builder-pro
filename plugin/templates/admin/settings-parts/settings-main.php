@@ -2215,7 +2215,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener(eventType, function(event) {
                 const target = event.target;
                 const modal = target.closest('.canvas-modal[data-category="dimensions"]');
-                
+
                 if (modal && (target.id === 'canvas_format' || target.id === 'canvas_dpi')) {
                     // Update window.pdfBuilderCanvasSettings temporarily for preview
                     if (window.pdfBuilderCanvasSettings) {
@@ -2224,7 +2224,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         } else if (target.id === 'canvas_dpi') {
                             window.pdfBuilderCanvasSettings.default_canvas_dpi = parseInt(target.value);
                         }
-                        
+
                         // Update preview immediately
                         if (typeof updateDimensionsCardPreview === 'function') {
                             updateDimensionsCardPreview();
@@ -2232,7 +2232,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
-    });
+        });
+    }
     function initializeApparenceRealTimePreview() {
         // Listen for changes in apparence modal fields
         document.addEventListener('change', function(event) {
