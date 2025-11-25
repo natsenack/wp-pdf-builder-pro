@@ -690,13 +690,13 @@ window.updateGrilleCardPreview = function() {
  */
 window.updateZoomCardPreview = function() {
     // Use saved settings if available, otherwise fall back to input values
-    const zoomMin = window.pdfBuilderCanvasSettings?.canvas_zoom_min || 
+    const zoomMin = window.pdfBuilderCanvasSettings?.min_zoom ||
                    (document.getElementById("canvas_zoom_min")?.value || 10);
-    const zoomMax = window.pdfBuilderCanvasSettings?.canvas_zoom_max || 
+    const zoomMax = window.pdfBuilderCanvasSettings?.max_zoom ||
                    (document.getElementById("canvas_zoom_max")?.value || 500);
-    const zoomStep = window.pdfBuilderCanvasSettings?.canvas_zoom_step || 
+    const zoomStep = window.pdfBuilderCanvasSettings?.zoom_step ||
                     (document.getElementById("canvas_zoom_step")?.value || 25);
-    const defaultZoom = window.pdfBuilderCanvasSettings?.canvas_zoom_default || 
+    const defaultZoom = window.pdfBuilderCanvasSettings?.default_zoom ||
                        (document.getElementById("canvas_zoom_default")?.value || 100);
 
     const zoomLevel = document.querySelector('.canvas-card[data-category="zoom"] .zoom-level');
@@ -784,15 +784,15 @@ window.updateExportCardPreview = function() {
  * Met à jour la prévisualisation de la carte dimensions
  */
 window.updateDimensionsCardPreview = function() {
-    // Use saved settings if available, otherwise fall back to input values
-    const width = window.pdfBuilderCanvasSettings?.canvas_width ? parseInt(window.pdfBuilderCanvasSettings.canvas_width) :
-                 (document.getElementById("canvas_width") ? parseInt(document.getElementById("canvas_width").value) : null);
-    const height = window.pdfBuilderCanvasSettings?.canvas_height ? parseInt(window.pdfBuilderCanvasSettings.canvas_height) :
-                  (document.getElementById("canvas_height") ? parseInt(document.getElementById("canvas_height").value) : null);
-    const unit = window.pdfBuilderCanvasSettings?.canvas_unit || 
-                 (document.getElementById("canvas_unit") ? document.getElementById("canvas_unit").value : 'mm');
+    // Use saved settings if available, otherwise fall back to default values
+    const width = window.pdfBuilderCanvasSettings?.canvas_width || window.pdfBuilderCanvasSettings?.default_canvas_width;
+    const height = window.pdfBuilderCanvasSettings?.canvas_height || window.pdfBuilderCanvasSettings?.default_canvas_height;
+    const unit = window.pdfBuilderCanvasSettings?.canvas_unit || window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
 
-    if (width === null || height === null) return;
+    if (!width || !height) {
+        console.error('PDF_BUILDER_DEBUG: Missing dimensions in updateDimensionsCardPreview');
+        return;
+    }
 
     // Mettre à jour les valeurs dans la carte dimensions
     const dimensionValues = document.querySelectorAll('.canvas-card[data-category="dimensions"] .dimension-value');
@@ -800,6 +800,8 @@ window.updateDimensionsCardPreview = function() {
     if (dimensionValues.length >= 2) {
         dimensionValues[0].textContent = `${width} ${unit}`;
         dimensionValues[1].textContent = `${height} ${unit}`;
+    } else {
+        console.error('PDF_BUILDER_DEBUG: Dimension value elements not found');
     }
 
     // Calculer et afficher le ratio
@@ -810,16 +812,14 @@ window.updateDimensionsCardPreview = function() {
         const ratio = `${width/divisor}:${height/divisor}`;
         ratioValue.textContent = ratio;
     }
-};
-
-/**
+};/**
  * Met à jour la prévisualisation de la carte auto-save
  */
 window.updateAutosaveCardPreview = function() {
     // Use saved settings if available, otherwise fall back to input values
-    const interval = window.pdfBuilderCanvasSettings?.canvas_autosave_interval ? parseInt(window.pdfBuilderCanvasSettings.canvas_autosave_interval) :
+    const interval = window.pdfBuilderCanvasSettings?.autosave_interval ? parseInt(window.pdfBuilderCanvasSettings.autosave_interval) :
                     (document.getElementById("canvas_autosave_interval") ? parseInt(document.getElementById("canvas_autosave_interval").value) : null);
-    const enabled = window.pdfBuilderCanvasSettings?.canvas_autosave_enabled !== undefined ? window.pdfBuilderCanvasSettings.canvas_autosave_enabled :
+    const enabled = window.pdfBuilderCanvasSettings?.autosave_enabled !== undefined ? window.pdfBuilderCanvasSettings.autosave_enabled :
                    (document.getElementById("canvas_autosave_enabled") ? document.getElementById("canvas_autosave_enabled").checked : false);
 
     if (interval === null) return;
