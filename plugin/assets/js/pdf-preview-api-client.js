@@ -307,15 +307,15 @@ class PDFPreviewAPI {
                     background: white !important;
                     border-radius: 8px !important;
                     padding: 20px !important;
-                    max-width: 90vw !important;
-                    max-height: 90vh !important;
+                    max-width: 95vw !important;
+                    max-height: 95vh !important;
                     overflow-y: auto !important;
                     overflow-x: hidden !important;
                     box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
                     flex-shrink: 0 !important;
                     min-width: 300px !important;
                     position: relative !important;
-                    width: 500px !important;
+                    width: 90vw !important;
                     align-self: center !important;
                 }
 
