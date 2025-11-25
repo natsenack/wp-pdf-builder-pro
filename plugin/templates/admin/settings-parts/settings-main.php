@@ -470,9 +470,24 @@ if (
 
 
 <script>
+// Debug configuration
+const PDF_BUILDER_DEBUG_ENABLED = <?php echo $settings['debug_javascript'] ? 'true' : 'false'; ?>;
+const PDF_BUILDER_DEBUG_VERBOSE = <?php echo $settings['debug_javascript_verbose'] ? 'true' : 'false'; ?>;
+
+// Conditional debug logging function
+function pdfBuilderDebug(message, ...args) {
+    if (PDF_BUILDER_DEBUG_ENABLED) {
+        console.log('PDF_BUILDER_DEBUG:', message, ...args);
+    }
+}
+
+function pdfBuilderError(message, ...args) {
+    console.error('PDF_BUILDER_DEBUG:', message, ...args);
+}
+
 // Update zoom card preview
 window.updateZoomCardPreview = function() {
-    console.log('PDF_BUILDER_DEBUG: updateZoomCardPreview called');
+    pdfBuilderDebug('updateZoomCardPreview called');
     try {
         // Try to get values from modal inputs first (real-time), then from settings
         const minZoomInput = document.getElementById("zoom_min");
@@ -485,15 +500,15 @@ window.updateZoomCardPreview = function() {
         const defaultZoom = defaultZoomInput ? parseInt(defaultZoomInput.value) : (window.pdfBuilderCanvasSettings?.default_zoom || 100);
         const stepZoom = stepZoomInput ? parseInt(stepZoomInput.value) : (window.pdfBuilderCanvasSettings?.zoom_step || 25);
 
-        console.log('PDF_BUILDER_DEBUG: zoom values - min:', minZoom, 'max:', maxZoom, 'default:', defaultZoom, 'step:', stepZoom);
+        pdfBuilderDebug('zoom values - min:', minZoom, 'max:', maxZoom, 'default:', defaultZoom, 'step:', stepZoom);
 
         // Update zoom level display
         const zoomLevel = document.querySelector('.zoom-level');
         if (zoomLevel) {
             zoomLevel.textContent = `${defaultZoom}%`;
-            console.log('PDF_BUILDER_DEBUG: Updated zoom level to:', defaultZoom + '%');
+            pdfBuilderDebug('Updated zoom level to:', defaultZoom + '%');
         } else {
-            console.log('PDF_BUILDER_DEBUG: zoomLevel element not found');
+            pdfBuilderDebug('zoomLevel element not found');
         }
 
         // Update zoom info
@@ -503,14 +518,14 @@ window.updateZoomCardPreview = function() {
                 <span>${minZoom}% - ${maxZoom}%</span>
                 <span>Pas: ${stepZoom}%</span>
             `;
-            console.log('PDF_BUILDER_DEBUG: Updated zoom info');
+            pdfBuilderDebug('Updated zoom info');
         } else {
-            console.log('PDF_BUILDER_DEBUG: zoomInfo element not found');
+            pdfBuilderDebug('zoomInfo element not found');
         }
 
-        console.log('PDF_BUILDER_DEBUG: updateZoomCardPreview completed successfully');
+        pdfBuilderDebug('updateZoomCardPreview completed successfully');
     } catch (error) {
-        console.error('PDF_BUILDER_DEBUG: Error in updateZoomCardPreview:', error);
+        pdfBuilderError('Error in updateZoomCardPreview:', error);
     }
 };
 
@@ -1180,9 +1195,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         formData.append('nonce', ajaxConfig.nonce || '');
 
                         // Debug: Log form data
-                        console.log('PDF_BUILDER_DEBUG: Form data for category', category + ':');
-                        for (let [key, value] of formData.entries()) {
-                            console.log('PDF_BUILDER_DEBUG:', key, '=', value);
+                        pdfBuilderDebug('Form data for category', category + ':');
+                        if (PDF_BUILDER_DEBUG_VERBOSE) {
+                            for (let [key, value] of formData.entries()) {
+                                pdfBuilderDebug(key, '=', value);
+                            }
                         }
 
                         
@@ -1210,14 +1227,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                     .then(response => {
                         clearTimeout(timeoutId);
-                        console.log('PDF_BUILDER_DEBUG: AJAX response status:', response.status);
+                        pdfBuilderDebug('AJAX response status:', response.status);
                         if (!response.ok) {
                             throw new Error('HTTP ' + response.status);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log('PDF_BUILDER_DEBUG: AJAX response data:', data);
+                        pdfBuilderDebug('AJAX response data:', data);
                         
                         if (data.success) {
                             hideModal(modal);
@@ -1353,7 +1370,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             // Update window.pdfBuilderCanvasSettings with saved values for interactions
                             if (category === 'interactions' && data.data && data.data.saved) {
-                                console.log('PDF_BUILDER_DEBUG: Updating interactions settings with:', data.data.saved);
+                                pdfBuilderDebug('Updating interactions settings with:', data.data.saved);
                                 if (data.data.saved.canvas_drag_enabled !== undefined) {
                                     window.pdfBuilderCanvasSettings.drag_enabled = data.data.saved.canvas_drag_enabled === '1' || data.data.saved.canvas_drag_enabled === true;
                                 }
@@ -1372,24 +1389,24 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_keyboard_shortcuts !== undefined) {
                                     window.pdfBuilderCanvasSettings.keyboard_shortcuts = data.data.saved.canvas_keyboard_shortcuts === '1' || data.data.saved.canvas_keyboard_shortcuts === true;
                                 }
-                                console.log('PDF_BUILDER_DEBUG: Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+                                pdfBuilderDebug('Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
                             }
 
                             // Update canvas previews after successful save
-                            console.log('PDF_BUILDER_DEBUG: window.updateDimensionsCardPreview exists:', typeof window.updateDimensionsCardPreview);
                             if (category === 'dimensions' && typeof window.updateDimensionsCardPreview === 'function') {
-                                console.log('PDF_BUILDER_DEBUG: Calling updateDimensionsCardPreview');
                                 try {
                                     window.updateDimensionsCardPreview();
-                                    console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview called successfully');
                                 } catch (error) {
                                     console.error('PDF_BUILDER_DEBUG: Error calling updateDimensionsCardPreview:', error);
                                 }
                             }
                             if (category === 'apparence' && typeof window.updateApparenceCardPreview === 'function') {
-                                console.log('PDF_BUILDER_DEBUG: Calling updateApparenceCardPreview');
                                 setTimeout(function() {
-                                    window.updateApparenceCardPreview();
+                                    try {
+                                        window.updateApparenceCardPreview();
+                                    } catch (error) {
+                                        console.error('PDF_BUILDER_DEBUG: Error calling updateApparenceCardPreview:', error);
+                                    }
                                 }, 100);
                             }
                             if (category === 'performance' && typeof window.updatePerformanceCardPreview === 'function') {
@@ -1921,7 +1938,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     window.updateDimensionsCardPreview = function() {
-        console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview called - using saved settings');
+        pdfBuilderDebug('updateDimensionsCardPreview called - using saved settings');
         // This function is now defined in pdf-preview-integration.js with proper logic
     };
 
