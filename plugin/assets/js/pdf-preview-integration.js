@@ -1046,6 +1046,11 @@ window.PDFBuilderAjax = {
         }
     }
 };
+
+/**
+ * Fonction de génération automatique de preview selon le contexte
+ */
+window.generateAutoPreview = async function(templateData = null, orderId = null) {
     try {
         // Détection automatique du contexte
         const isEditor = document.querySelector('#pdf-editor-canvas') ||
