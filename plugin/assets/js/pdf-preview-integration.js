@@ -788,6 +788,8 @@ window.updateDimensionsCardPreview = function() {
     const width = window.pdfBuilderCanvasSettings?.canvas_width || window.pdfBuilderCanvasSettings?.default_canvas_width;
     const height = window.pdfBuilderCanvasSettings?.canvas_height || window.pdfBuilderCanvasSettings?.default_canvas_height;
     const unit = window.pdfBuilderCanvasSettings?.canvas_unit || window.pdfBuilderCanvasSettings?.default_canvas_unit || 'mm';
+    const dpi = window.pdfBuilderCanvasSettings?.canvas_dpi || window.pdfBuilderCanvasSettings?.default_canvas_dpi || 96;
+    const format = window.pdfBuilderCanvasSettings?.canvas_format || window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4';
 
     if (!width || !height) {
         console.error('PDF_BUILDER_DEBUG: Missing dimensions in updateDimensionsCardPreview');
@@ -795,22 +797,26 @@ window.updateDimensionsCardPreview = function() {
     }
 
     // Mettre à jour les valeurs dans la carte dimensions
-    const dimensionValues = document.querySelectorAll('.canvas-card[data-category="dimensions"] .dimension-value');
+    const widthElement = document.getElementById('card-canvas-width');
+    const heightElement = document.getElementById('card-canvas-height');
+    const dpiElement = document.getElementById('card-canvas-dpi');
 
-    if (dimensionValues.length >= 2) {
-        dimensionValues[0].textContent = `${width} ${unit}`;
-        dimensionValues[1].textContent = `${height} ${unit}`;
+    if (widthElement) {
+        widthElement.textContent = width;
     } else {
-        console.error('PDF_BUILDER_DEBUG: Dimension value elements not found');
+        console.error('PDF_BUILDER_DEBUG: card-canvas-width element not found');
     }
 
-    // Calculer et afficher le ratio
-    const ratioValue = document.querySelector('.canvas-card[data-category="dimensions"] .ratio-value');
-    if (ratioValue && width > 0 && height > 0) {
-        const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
-        const divisor = gcd(width, height);
-        const ratio = `${width/divisor}:${height/divisor}`;
-        ratioValue.textContent = ratio;
+    if (heightElement) {
+        heightElement.textContent = height;
+    } else {
+        console.error('PDF_BUILDER_DEBUG: card-canvas-height element not found');
+    }
+
+    if (dpiElement) {
+        dpiElement.textContent = `${dpi} DPI - ${format} (${width}×${height}${unit})`;
+    } else {
+        console.error('PDF_BUILDER_DEBUG: card-canvas-dpi element not found');
     }
 };/**
  * Met à jour la prévisualisation de la carte auto-save
@@ -822,32 +828,29 @@ window.updateAutosaveCardPreview = function() {
     const enabled = window.pdfBuilderCanvasSettings?.autosave_enabled !== undefined ? window.pdfBuilderCanvasSettings.autosave_enabled :
                    (document.getElementById("canvas_autosave_enabled") ? document.getElementById("canvas_autosave_enabled").checked : false);
 
-    if (interval === null) return;
-
-    // Mettre à jour l'indicateur de statut
-    const statusIndicator = document.querySelector('.canvas-card[data-category="autosave"] .status-indicator');
-    if (statusIndicator) {
-        const statusDot = statusIndicator.querySelector('.status-dot');
-        const statusText = statusIndicator.querySelector('.status-text');
-
-        if (enabled) {
-            if (statusDot) statusDot.style.backgroundColor = '#28a745';
-            if (statusText) statusText.textContent = `Activé (${interval}s)`;
-        } else {
-            if (statusDot) statusDot.style.backgroundColor = '#dc3545';
-            if (statusText) statusText.textContent = 'Désactivé';
-        }
+    if (interval === null) {
+        console.error('PDF_BUILDER_DEBUG: Missing autosave interval');
+        return;
     }
 
-    // Mettre à jour la barre de progression simulée
-    const progressBar = document.querySelector('.canvas-card[data-category="autosave"] .progress-fill');
-    if (progressBar && enabled) {
-        // Simuler une progression basée sur le temps écoulé
-        const now = Date.now();
-        const progress = ((now % (interval * 1000)) / (interval * 1000)) * 100;
-        progressBar.style.width = `${progress}%`;
-    } else if (progressBar) {
-        progressBar.style.width = '0%';
+    // Mettre à jour l'indicateur de statut
+    const timerElement = document.querySelector('.canvas-card[data-category="autosave"] .autosave-timer');
+    const statusElement = document.querySelector('.canvas-card[data-category="autosave"] .autosave-status');
+
+    if (timerElement) {
+        timerElement.textContent = `${interval}min`;
+    } else {
+        console.error('PDF_BUILDER_DEBUG: autosave-timer element not found');
+    }
+
+    if (statusElement) {
+        if (enabled) {
+            statusElement.classList.add('active');
+        } else {
+            statusElement.classList.remove('active');
+        }
+    } else {
+        console.error('PDF_BUILDER_DEBUG: autosave-status element not found');
     }
 };
 
