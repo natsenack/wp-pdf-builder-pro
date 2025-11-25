@@ -962,17 +962,109 @@ window.generateQuickPreview = async function(templateData = null, orderId = null
 };
 
 /**
+ * Système centralisé de gestion des previews de cartes canvas
+ */
+window.CanvasPreviewManager = {
+    // Configuration des cartes et leurs mappings
+    cardConfigs: {
+        dimensions: {
+            inputs: ['canvas_format', 'canvas_dpi', 'canvas_orientation'],
+            settings: ['default_canvas_format', 'default_canvas_dpi', 'default_canvas_orientation'],
+            defaults: ['A4', 96, 'portrait'],
+            updateFunction: 'updateDimensionsCardPreview'
+        },
+        zoom: {
+            inputs: ['canvas_zoom'],
+            settings: ['default_canvas_zoom'],
+            defaults: [100],
+            updateFunction: 'updateZoomCardPreview'
+        },
+        autosave: {
+            inputs: ['canvas_autosave'],
+            settings: ['default_canvas_autosave'],
+            defaults: [30],
+            updateFunction: 'updateAutosaveCardPreview'
+        }
+    },
+
+    /**
+     * Récupère une valeur depuis les inputs de modale ou les settings sauvegardés
+     */
+    getValue: function(inputId, settingKey, defaultValue) {
+        const input = document.getElementById(inputId);
+        if (input) {
+            return input.type === 'number' ? parseInt(input.value) : input.value;
+        }
+        return window.pdfBuilderCanvasSettings?.[settingKey] || defaultValue;
+    },
+
+    /**
+     * Met à jour toutes les previews ou une catégorie spécifique
+     */
+    updatePreviews: function(category = 'all') {
+        console.log('CanvasPreviewManager.updatePreviews called with category:', category);
+
+        Object.keys(this.cardConfigs).forEach(cardCategory => {
+            if (category === 'all' || category === cardCategory) {
+                const config = this.cardConfigs[cardCategory];
+                if (typeof window[config.updateFunction] === 'function') {
+                    window[config.updateFunction]();
+                }
+            }
+        });
+    },
+
+    /**
+     * Initialise les event listeners pour les mises à jour en temps réel
+     */
+    initializeRealTimeUpdates: function(modal) {
+        if (!modal) return;
+
+        const category = modal.getAttribute('data-category');
+        const config = this.cardConfigs[category];
+
+        if (!config) return;
+
+        console.log('Initializing real-time updates for modal category:', category);
+
+        // Supprimer les anciens listeners
+        const inputs = modal.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.removeEventListener('input', this.handleInputChange);
+            input.removeEventListener('change', this.handleInputChange);
+        });
+
+        // Ajouter les nouveaux listeners
+        inputs.forEach(input => {
+            input.addEventListener('input', (event) => this.handleInputChange(event, category));
+            input.addEventListener('change', (event) => this.handleInputChange(event, category));
+        });
+    },
+
+    /**
+     * Gestionnaire d'événement pour les changements d'input
+     */
+    handleInputChange: function(event, category) {
+        const input = event.target;
+        console.log('Input changed:', input.id, 'Value:', input.value, 'Category:', category);
+
+        // Mettre à jour la preview correspondante
+        const config = this.cardConfigs[category];
+        if (config && typeof window[config.updateFunction] === 'function') {
+            window[config.updateFunction]();
+        }
+    }
+};
+
+/**
  * Met à jour la prévisualisation de la carte dimensions
  */
 window.updateDimensionsCardPreview = function() {
-    // Prioritize modal input values for real-time updates, fall back to saved settings
-    const formatInput = document.getElementById("canvas_format");
-    const dpiInput = document.getElementById("canvas_dpi");
-    const orientationInput = document.getElementById("canvas_orientation");
+    const config = window.CanvasPreviewManager.cardConfigs.dimensions;
 
-    const format = formatInput ? formatInput.value : (window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4');
-    const dpi = dpiInput ? parseInt(dpiInput.value) : (window.pdfBuilderCanvasSettings?.default_canvas_dpi || 96);
-    const orientation = orientationInput ? orientationInput.value : (window.pdfBuilderCanvasSettings?.default_canvas_orientation || 'portrait');
+    const format = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
+    const dpi = window.CanvasPreviewManager.getValue(config.inputs[1], config.settings[1], config.defaults[1]);
+    const orientation = window.CanvasPreviewManager.getValue(config.inputs[2], config.settings[2], config.defaults[2]);
 
     // Get paper dimensions in mm
     const paperFormats = window.pdfBuilderPaperFormats || {
@@ -1026,9 +1118,8 @@ window.updateDimensionsCardPreview = function() {
  * Met à jour la prévisualisation de la carte zoom
  */
 window.updateZoomCardPreview = function() {
-    // Prioritize modal input values for real-time updates, fall back to saved settings
-    const zoomInput = document.getElementById("canvas_zoom");
-    const zoom = zoomInput ? parseInt(zoomInput.value) : (window.pdfBuilderCanvasSettings?.default_canvas_zoom || 100);
+    const config = window.CanvasPreviewManager.cardConfigs.zoom;
+    const zoom = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
 
     const zoomElement = document.querySelector('.zoom-level');
     if (zoomElement) {
@@ -1042,9 +1133,8 @@ window.updateZoomCardPreview = function() {
  * Met à jour la prévisualisation de la carte sauvegarde automatique
  */
 window.updateAutosaveCardPreview = function() {
-    // Prioritize modal input values for real-time updates, fall back to saved settings
-    const autosaveInput = document.getElementById("canvas_autosave");
-    const autosave = autosaveInput ? parseInt(autosaveInput.value) : (window.pdfBuilderCanvasSettings?.default_canvas_autosave || 30);
+    const config = window.CanvasPreviewManager.cardConfigs.autosave;
+    const autosave = window.CanvasPreviewManager.getValue(config.inputs[0], config.settings[0], config.defaults[0]);
 
     const autosaveElement = document.querySelector('.autosave-timer');
     if (autosaveElement) {
