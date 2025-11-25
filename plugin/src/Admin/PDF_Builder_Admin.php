@@ -222,6 +222,9 @@ class PdfBuilderAdmin
         // 🔧 DIAGNOSTIC ET CORRECTION AUTO-SAVE
         add_action('admin_init', [$this, 'diagnose_and_fix_autosave']);
 
+        // 🔧 MISE À JOUR DES NOMS DE TEMPLATES (TEMPORAIRE)
+        add_action('admin_init', [$this, 'update_template_names']);
+
         // Enregistrer le custom post type pour les templates
         add_action('init', [$this, 'register_template_post_type']);
 
@@ -3510,5 +3513,98 @@ class PdfBuilderAdmin
             update_option('pdf_builder_canvas_auto_save_interval', 5);
             error_log('PDF Builder: Intervalle auto-save corrigé à 5 minutes (était: ' . $interval . ')');
         }
+    }
+
+    /**
+     * 🔧 MISE À JOUR TEMPORAIRE DES NOMS DE TEMPLATES
+     * Met à jour les noms des templates existants pour éviter "Template 1"
+     */
+    public function update_template_names()
+    {
+        // Ne s'exécuter qu'une seule fois et seulement pour les admins
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        $update_done = get_option('pdf_builder_template_names_updated', false);
+        if ($update_done) {
+            return;
+        }
+
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        // Récupérer tous les templates
+        $templates = $wpdb->get_results("SELECT id, name, template_data FROM $table_templates", ARRAY_A);
+
+        foreach ($templates as $template) {
+            $template_id = $template['id'];
+            $current_name = $template['name'];
+            $template_data = json_decode($template['template_data'], true);
+
+            // Générer un nouveau nom si nécessaire
+            $new_name = $current_name;
+            if (empty($current_name) || $current_name === 'Template ' . $template_id) {
+                if (isset($template_data['name']) && !empty($template_data['name'])) {
+                    $new_name = $template_data['name'];
+                } else {
+                    // Essayer de deviner le type de template
+                    if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+                        $has_invoice_elements = false;
+                        $has_quote_elements = false;
+
+                        foreach ($template_data['elements'] as $element) {
+                            $content = isset($element['content']) ? strtolower($element['content']) : '';
+                            if (strpos($content, 'facture') !== false || strpos($content, 'invoice') !== false) {
+                                $has_invoice_elements = true;
+                            }
+                            if (strpos($content, 'devis') !== false || strpos($content, 'quote') !== false) {
+                                $has_quote_elements = true;
+                            }
+                        }
+
+                        if ($has_invoice_elements) {
+                            $new_name = 'Facture ' . $template_id;
+                        } elseif ($has_quote_elements) {
+                            $new_name = 'Devis ' . $template_id;
+                        } else {
+                            $new_name = 'Template ' . $template_id;
+                        }
+                    } else {
+                        $new_name = 'Template ' . $template_id;
+                    }
+                }
+            }
+
+            // Mettre à jour le nom dans la DB si nécessaire
+            if ($new_name !== $current_name) {
+                $wpdb->update(
+                    $table_templates,
+                    ['name' => $new_name],
+                    ['id' => $template_id],
+                    ['%s'],
+                    ['%d']
+                );
+                error_log('PDF Builder: Nom du template ' . $template_id . ' mis à jour: "' . $current_name . '" -> "' . $new_name . '"');
+            }
+
+            // S'assurer que le nom est aussi dans les données JSON
+            if (!isset($template_data['name']) || $template_data['name'] !== $new_name) {
+                $template_data['name'] = $new_name;
+                $updated_json = wp_json_encode($template_data);
+
+                $wpdb->update(
+                    $table_templates,
+                    ['template_data' => $updated_json],
+                    ['id' => $template_id],
+                    ['%s'],
+                    ['%d']
+                );
+            }
+        }
+
+        // Marquer comme fait
+        update_option('pdf_builder_template_names_updated', true);
+        error_log('PDF Builder: Mise à jour des noms de templates terminée');
     }
 }
