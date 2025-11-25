@@ -189,6 +189,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
     }
 }
+}
 
 // Handle cache clear
 if (
