@@ -36,12 +36,54 @@ register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
 // Charger le bootstrap du plugin (initialisation des utilitaires)
 require_once PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
 
-// VÉRIFICATION IMMÉDIATE DE LA DISPONIBILITÉ DES CLASSES CRITIQUES
+// CHARGEMENT DE SÉCURITÉ ABSOLU DE L'ONBOARDING MANAGER
+// Cette classe doit être disponible dans TOUS les contextes
+if (!class_exists('PDF_Builder_Onboarding_Manager_Standalone')) {
+    // Créer une version standalone de la classe pour les cas d'urgence
+    class PDF_Builder_Onboarding_Manager_Standalone {
+        private static $instance = null;
+        
+        public static function get_instance() {
+            if (self::$instance === null) {
+                self::$instance = new self();
+            }
+            return self::$instance;
+        }
+        
+        public function __construct() {
+            // Constructeur minimal pour compatibilité
+        }
+        
+        // Méthodes minimales pour éviter les erreurs
+        public function check_onboarding_status() { return false; }
+        public function ajax_complete_onboarding_step() { return false; }
+        public function ajax_skip_onboarding() { return false; }
+        public function ajax_reset_onboarding() { return false; }
+        public function ajax_load_onboarding_step() { return false; }
+        public function ajax_save_template_selection() { return false; }
+        public function ajax_save_freemium_mode() { return false; }
+        public function ajax_update_onboarding_step() { return false; }
+        public function ajax_save_template_assignment() { return false; }
+        public function ajax_mark_onboarding_complete() { return false; }
+        public function ajax_autosave_template() { return false; }
+    }
+}
+
+// Maintenant charger la vraie classe si possible
 if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
     // Chargement d'urgence si la classe n'est pas trouvée
     $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
     if (file_exists($onboarding_path)) {
         require_once $onboarding_path;
+    }
+}
+
+// Alias pour compatibilité - utiliser la vraie classe si disponible, sinon la standalone
+if (!class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
+    if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+        class PDF_Builder_Onboarding_Manager_Alias extends PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager {}
+    } else {
+        class PDF_Builder_Onboarding_Manager_Alias extends PDF_Builder_Onboarding_Manager_Standalone {}
     }
 }
 

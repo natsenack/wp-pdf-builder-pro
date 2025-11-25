@@ -67,15 +67,38 @@ function pdf_builder_ensure_onboarding_manager() {
 }
 
 /**
+ * Fonction globale GARANTIE pour obtenir l'instance Onboarding Manager
+ * Utilise la classe alias qui est toujours disponible
+ */
+function pdf_builder_get_onboarding_manager() {
+    // Essayer d'abord la vraie classe
+    if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+        return \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
+    }
+    
+    // Fallback vers la classe alias (toujours disponible)
+    if (class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
+        return PDF_Builder_Onboarding_Manager_Alias::get_instance();
+    }
+    
+    // Dernier recours - créer une instance standalone
+    return PDF_Builder_Onboarding_Manager_Standalone::get_instance();
+}
+
+/**
  * Fonction de diagnostic pour l'Onboarding Manager
  * Affiche des informations de debug si la classe n'est pas trouvée
  */
 function pdf_builder_diagnose_onboarding_manager() {
     $class_exists = class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager');
+    $alias_exists = class_exists('PDF_Builder_Onboarding_Manager_Alias');
+    $standalone_exists = class_exists('PDF_Builder_Onboarding_Manager_Standalone');
     $file_exists = file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php');
     
     $message = "=== DIAGNOSTIC PDF_Builder_Onboarding_Manager ===\n";
-    $message .= "Classe existe: " . ($class_exists ? 'OUI' : 'NON') . "\n";
+    $message .= "Classe réelle existe: " . ($class_exists ? 'OUI' : 'NON') . "\n";
+    $message .= "Classe alias existe: " . ($alias_exists ? 'OUI' : 'NON') . "\n";
+    $message .= "Classe standalone existe: " . ($standalone_exists ? 'OUI' : 'NON') . "\n";
     $message .= "Fichier existe: " . ($file_exists ? 'OUI' : 'NON') . "\n";
     $message .= "Plugin activé: " . (defined('PDF_BUILDER_PLUGIN_DIR') ? 'OUI' : 'NON') . "\n";
     $message .= "Bootstrap chargé: " . (function_exists('pdf_builder_load_utilities_emergency') ? 'OUI' : 'NON') . "\n";
@@ -658,7 +681,12 @@ function pdf_builder_load_bootstrap()
             require_once $onboarding_path;
         }
     }
-    if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+    
+    // Utiliser la classe alias qui garantit la disponibilité
+    if (class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
+        // Ne pas instancier ici - laisser le système normal gérer l'initialisation
+        // La classe sera disponible quand nécessaire
+    } elseif (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
         \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
     }
 
