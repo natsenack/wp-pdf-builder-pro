@@ -54,6 +54,7 @@ class PDFPreviewAPI {
         this.imageHeight = 0; // Dimensions de l'image chargée
         this.animationFrame = null; // Pour throttling des updates
         this.pendingUpdate = false; // Flag pour update pending
+        this.image = null; // Référence à l'image chargée pour redessin
     }
 
     /**
@@ -244,6 +245,7 @@ class PDFPreviewAPI {
             
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+            this.image = img; // Stocker l'image pour redessin
             this.updateCanvasTransform(canvas);
         };
         img.src = imageUrl;
@@ -388,9 +390,7 @@ class PDFPreviewAPI {
                     height: auto !important;
                     border: none !important;
                     border-radius: 0 !important;
-                    transition: transform 0.3s ease !important;
                     display: block !important;
-                    transform-origin: center center !important;
                     will-change: transform !important;
                     backface-visibility: hidden !important;
                     -webkit-backface-visibility: hidden !important;
@@ -489,16 +489,28 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Met à jour la transformation du canvas - VERSION ULTRA-OPTIMISEE AVEC CACHE
+     * Met à jour la transformation du canvas - VERSION CONTEXT 2D ULTRA-OPTIMISEE
      */
     updateCanvasTransform(canvas) {
-        // Utilisation des valeurs cachées pour performance maximale
-        const panX = this.currentPanX;
-        const panY = this.currentPanY;
+        if (!this.image) return;
 
-        // Application directe avec cache et hardware acceleration
-        canvas.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${this.cachedScale}) rotate(${this.cachedRotation}deg)`;
-        canvas.style.transformOrigin = 'center center';
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        // Clear et redessiner avec transformations
+        ctx.save();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Appliquer les transformations dans l'ordre: translate -> rotate -> scale
+        ctx.translate(centerX + this.currentPanX, centerY + this.currentPanY);
+        ctx.rotate(this.cachedRotation * Math.PI / 180);
+        ctx.scale(this.cachedScale, this.cachedScale);
+        ctx.translate(-centerX, -centerY);
+        
+        // Redessiner l'image
+        ctx.drawImage(this.image, 0, 0, canvas.width, canvas.height);
+        ctx.restore();
     }
 
     /**
@@ -718,8 +730,6 @@ class PDFPreviewAPI {
         this.dragStartTime = performance.now(); // Mesure performance des drags
         this.needsConstrain = false; // Reset le flag
         canvas.style.cursor = 'grabbing';
-        canvas.style.transition = 'none'; // Désactiver la transition pendant le drag pour performance
-        canvas.style.willChange = 'transform'; // Optimisation hardware acceleration
     }
 
     /**
@@ -780,8 +790,6 @@ class PDFPreviewAPI {
         if (this.isDragging) {
             this.isDragging = false;
             canvas.style.cursor = this.currentZoom > 100 ? 'grab' : 'default';
-            canvas.style.transition = 'transform 0.3s ease'; // Réactiver la transition après le drag
-            canvas.style.willChange = 'auto'; // Reset hardware acceleration
 
             // Mesurer et logger la performance du drag
             const dragDuration = performance.now() - this.dragStartTime;
