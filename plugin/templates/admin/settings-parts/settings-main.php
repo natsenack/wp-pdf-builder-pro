@@ -446,6 +446,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
             'cache_enabled' => isset($_POST['cache_enabled']),
             'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+            'template_library_enabled' => isset($_POST['template_library_enabled']),
             'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
             'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
             'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
