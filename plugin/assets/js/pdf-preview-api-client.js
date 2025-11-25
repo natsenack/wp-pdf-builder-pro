@@ -36,6 +36,12 @@ class PDFPreviewAPI {
         this.cache = new Map();
         this.currentZoom = 100;
         this.currentRotation = 0;
+        this.currentPanX = 0;
+        this.currentPanY = 0;
+        this.isDragging = false;
+        this.lastMouseX = 0;
+        this.lastMouseY = 0;
+        this.dragListeners = null;
     }
 
     /**
@@ -192,15 +198,20 @@ class PDFPreviewAPI {
             document.body.appendChild(previewModal);
         }
 
-        // Réinitialiser le zoom et la rotation
+        // Réinitialiser le zoom, la rotation et le pan
         this.currentZoom = 100;
         this.currentRotation = 0;
+        this.currentPanX = 0;
+        this.currentPanY = 0;
 
         const img = previewModal.querySelector('#pdf-preview-image');
         const title = previewModal.querySelector('#pdf-preview-title');
 
         img.src = imageUrl;
         this.updateImageTransform(img);
+
+        // Initialiser le drag/pan de l'image
+        this.initImageDrag(img);
 
         if (context === 'editor') {
             title.textContent = '👁️ Aperçu du Template';
@@ -421,12 +432,14 @@ class PDFPreviewAPI {
         // Gestionnaire de fermeture
         closeBtn.addEventListener('click', () => {
             modal.classList.remove('visible');
+            this.cleanupDragListeners();
         });
 
         // Fermeture en cliquant en dehors
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.remove('visible');
+                this.cleanupDragListeners();
             }
         });
 
@@ -437,7 +450,7 @@ class PDFPreviewAPI {
      * Met à jour la transformation de l'image
      */
     updateImageTransform(img) {
-        img.style.transform = 'scale(' + (this.currentZoom / 100) + ') rotate(' + this.currentRotation + 'deg)';
+        img.style.transform = 'translate(' + this.currentPanX + 'px, ' + this.currentPanY + 'px) scale(' + (this.currentZoom / 100) + ') rotate(' + this.currentRotation + 'deg)';
     }
 
     /**
@@ -560,6 +573,190 @@ class PDFPreviewAPI {
         const value = document.getElementById('pdf-preview-zoom-value');
         if (slider) slider.value = this.currentZoom;
         if (value) value.textContent = this.currentZoom + '%';
+    }
+
+    /**
+     * Initialise le drag/pan de l'image
+     */
+    initImageDrag(img) {
+        const container = img.parentElement;
+
+        // Supprimer les anciens event listeners s'ils existent
+        this.cleanupDragListeners();
+
+        // Stocker les références pour pouvoir les supprimer plus tard
+        this.dragListeners = {
+            mousedown: (e) => this.handleMouseDown(e, img),
+            mousemove: (e) => this.handleMouseMove(e, img, container),
+            mouseup: () => this.handleMouseUp(img),
+            mouseenter: () => this.handleMouseEnter(img),
+            mouseleave: () => this.handleMouseLeave(img)
+        };
+
+        // Ajouter les nouveaux event listeners
+        img.addEventListener('mousedown', this.dragListeners.mousedown);
+        document.addEventListener('mousemove', this.dragListeners.mousemove);
+        document.addEventListener('mouseup', this.dragListeners.mouseup);
+        img.addEventListener('mouseenter', this.dragListeners.mouseenter);
+        img.addEventListener('mouseleave', this.dragListeners.mouseleave);
+    }
+
+    /**
+     * Nettoie les event listeners de drag
+     */
+    cleanupDragListeners() {
+        if (!this.dragListeners) return;
+
+        // Supprimer tous les listeners existants
+        const img = document.querySelector('#pdf-preview-image');
+        if (img) {
+            img.removeEventListener('mousedown', this.dragListeners.mousedown);
+            img.removeEventListener('mouseenter', this.dragListeners.mouseenter);
+            img.removeEventListener('mouseleave', this.dragListeners.mouseleave);
+        }
+
+        document.removeEventListener('mousemove', this.dragListeners.mousemove);
+        document.removeEventListener('mouseup', this.dragListeners.mouseup);
+
+        this.dragListeners = null;
+    }
+
+    /**
+     * Gestionnaire mousedown
+     */
+    handleMouseDown(e, img) {
+        // Vérifier si le pan est possible (zoom > 100% OU image plus grande que le conteneur)
+        const container = img.parentElement;
+        const containerRect = container.getBoundingClientRect();
+        const scale = this.currentZoom / 100;
+        const canPan = this.currentZoom > 100 ||
+                      (img.naturalWidth * scale > containerRect.width) ||
+                      (img.naturalHeight * scale > containerRect.height);
+
+        if (!canPan) {
+            debugLog('🚫 Drag impossible:', {
+                zoom: this.currentZoom,
+                imgSize: { w: img.naturalWidth * scale, h: img.naturalHeight * scale },
+                containerSize: { w: containerRect.width, h: containerRect.height }
+            });
+            return;
+        }
+
+        e.preventDefault();
+        this.isDragging = true;
+        this.lastMouseX = e.clientX;
+        this.lastMouseY = e.clientY;
+        img.style.cursor = 'grabbing';
+
+        debugLog('🖱️ Drag commencé:', { x: e.clientX, y: e.clientY, zoom: this.currentZoom });
+    }    /**
+     * Gestionnaire mousemove
+     */
+    handleMouseMove(e, img, container) {
+        if (!this.isDragging) return;
+
+        // Vérifier si le pan est encore possible
+        const containerRect = container.getBoundingClientRect();
+        const scale = this.currentZoom / 100;
+        const canPan = this.currentZoom > 100 ||
+                      (img.naturalWidth * scale > containerRect.width) ||
+                      (img.naturalHeight * scale > containerRect.height);
+
+        if (!canPan) return;
+
+        const deltaX = e.clientX - this.lastMouseX;
+        const deltaY = e.clientY - this.lastMouseY;
+
+        this.currentPanX += deltaX;
+        this.currentPanY += deltaY;
+
+        // Limiter le pan pour éviter que l'image sorte complètement
+        this.constrainPan(img, container);
+
+        this.updateImageTransform(img);
+
+        this.lastMouseX = e.clientX;
+        this.lastMouseY = e.clientY;
+
+        debugLog('🖱️ Drag en cours:', { deltaX, deltaY, panX: this.currentPanX, panY: this.currentPanY });
+    }
+
+    /**
+     * Gestionnaire mouseup
+     */
+    handleMouseUp(img) {
+        if (this.isDragging) {
+            this.isDragging = false;
+
+            // Vérifier si le pan est encore possible pour le curseur
+            const container = img.parentElement;
+            const containerRect = container.getBoundingClientRect();
+            const scale = this.currentZoom / 100;
+            const canPan = this.currentZoom > 100 ||
+                          (img.naturalWidth * scale > containerRect.width) ||
+                          (img.naturalHeight * scale > containerRect.height);
+
+            img.style.cursor = canPan ? 'grab' : 'default';
+            debugLog('🖱️ Drag terminé');
+        }
+    }
+
+    /**
+     * Gestionnaire mouseenter
+     */
+    handleMouseEnter(img) {
+        // Vérifier si le pan est possible
+        const container = img.parentElement;
+        const containerRect = container.getBoundingClientRect();
+        const scale = this.currentZoom / 100;
+        const canPan = this.currentZoom > 100 ||
+                      (img.naturalWidth * scale > containerRect.width) ||
+                      (img.naturalHeight * scale > containerRect.height);
+
+        if (canPan) {
+            img.style.cursor = 'grab';
+        }
+    }
+
+    /**
+     * Gestionnaire mouseleave
+     */
+    handleMouseLeave(img) {
+        if (!this.isDragging) {
+            img.style.cursor = 'default';
+        }
+    }
+
+    /**
+     * Contraint le pan pour éviter que l'image sorte complètement du conteneur
+     */
+    constrainPan(img, container) {
+        const containerRect = container.getBoundingClientRect();
+
+        // Utiliser les dimensions naturelles de l'image pour les calculs
+        const naturalWidth = img.naturalWidth;
+        const naturalHeight = img.naturalHeight;
+
+        // Calculer les dimensions après zoom
+        const scale = this.currentZoom / 100;
+        const scaledWidth = naturalWidth * scale;
+        const scaledHeight = naturalHeight * scale;
+
+        // Calculer les limites de pan (l'image doit rester visible)
+        const maxPanX = Math.max(0, (scaledWidth - containerRect.width) / 2);
+        const maxPanY = Math.max(0, (scaledHeight - containerRect.height) / 2);
+
+        // Appliquer les contraintes
+        this.currentPanX = Math.max(-maxPanX, Math.min(maxPanX, this.currentPanX));
+        this.currentPanY = Math.max(-maxPanY, Math.min(maxPanY, this.currentPanY));
+
+        debugLog('🔒 Pan contraint:', {
+            natural: { w: naturalWidth, h: naturalHeight },
+            scaled: { w: scaledWidth, h: scaledHeight },
+            container: { w: containerRect.width, h: containerRect.height },
+            limits: { x: maxPanX, y: maxPanY },
+            current: { x: this.currentPanX, y: this.currentPanY }
+        });
     }
 
     /**
