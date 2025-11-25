@@ -300,8 +300,8 @@ window.PDF_Builder_Preview_Manager = {
         // Mettre à jour les indicateurs de cache
         const cacheEnabledIndicator = document.querySelector('.cache-enabled-indicator');
         if (cacheEnabledIndicator) {
-            cacheEnabledIndicator.className = data.cache_enabled ?
-                'cache-enabled-indicator enabled' : 'cache-enabled-indicator disabled';
+            // Changer la couleur selon l'état du cache
+            cacheEnabledIndicator.style.color = data.cache_enabled ? '#28a745' : '#dc3545';
             cacheEnabledIndicator.textContent = data.cache_enabled ? 'Activé' : 'Désactivé';
         }
 
