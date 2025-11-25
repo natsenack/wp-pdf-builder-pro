@@ -1,260 +1,86 @@
+/* eslint-disable no-undef */
 /**
  * PDF Builder Pro - Preview API Client
  * Intégration complète de l'API Preview 1.4
- * SOLUTION: Centrage modal avec injecteur CSS agressif
  */
 
-// ⚡ FORCE INJECTER LE CSS IMMÉDIATEMENT AU CHARGEMENT
-(function() {
-    if (!document.getElementById('pdf-preview-modal-styles-v2')) {
-        const style = document.createElement('style');
-        style.id = 'pdf-preview-modal-styles-v2';
-        style.textContent = `
-            #pdf-preview-modal {
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                background: rgba(0,0,0,0.8) !important;
-                display: none !important;
-                z-index: 99999 !important;
-            }
-            #pdf-preview-modal.visible {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-            }
-            #pdf-preview-modal-wrapper {
-                background: white !important;
-                border-radius: 8px !important;
-                padding: 20px !important;
-                max-width: 90vw !important;
-                max-height: 90vh !important;
-                overflow-y: auto !important;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
-                width: 800px !important;
-                position: relative !important;
-            }
-            #pdf-preview-image {
-                max-width: 100% !important;
-                height: auto !important;
-                border: 1px solid #ddd !important;
-                border-radius: 4px !important;
-                transition: transform 0.3s ease !important;
-            }
-            #pdf-preview-controls {
-                display: flex !important;
-                gap: 10px !important;
-                align-items: center !important;
-                margin-bottom: 20px !important;
-                padding-bottom: 15px !important;
-                border-bottom: 1px solid #eee !important;
-                flex-wrap: wrap !important;
-                justify-content: space-between !important;
-            }
-            #pdf-preview-zoom {
-                display: flex !important;
-                align-items: center !important;
-                gap: 5px !important;
-            }
-            #pdf-preview-zoom-slider {
-                width: 120px !important;
-            }
-            #pdf-preview-zoom-value {
-                min-width: 45px !important;
-                font-size: 12px !important;
-                color: #666 !important;
-            }
-            #pdf-preview-actions {
-                display: flex !important;
-                gap: 10px !important;
-                align-items: center !important;
-                margin-top: 15px !important;
-                padding-top: 15px !important;
-                border-top: 1px solid #eee !important;
-                flex-wrap: wrap !important;
-                justify-content: center !important;
-            }
-            .pdf-preview-action-btn {
-                border: none !important;
-                padding: 8px 16px !important;
-                border-radius: 4px !important;
-                cursor: pointer !important;
-                font-size: 14px !important;
-                transition: background-color 0.2s ease !important;
-            }
-            .pdf-preview-action-btn.download-btn {
-                background: #007cba !important;
-                color: white !important;
-            }
-            .pdf-preview-action-btn.download-btn:hover {
-                background: #005a87 !important;
-            }
-            .pdf-preview-action-btn.print-btn {
-                background: #46b450 !important;
-                color: white !important;
-            }
-            .pdf-preview-action-btn.print-btn:hover {
-                background: #3d8b40 !important;
-            }
-            .pdf-preview-action-btn.regenerate-btn {
-                background: #f56e28 !important;
-                color: white !important;
-            }
-            .pdf-preview-action-btn.regenerate-btn:hover {
-                background: #e55a1f !important;
-            }
-            .pdf-preview-zoom-btn {
-                background: #f1f1f1 !important;
-                border: 1px solid #ddd !important;
-                padding: 5px 10px !important;
-                border-radius: 4px !important;
-                cursor: pointer !important;
-                font-size: 14px !important;
-                transition: background-color 0.2s ease !important;
-            }
-            .pdf-preview-zoom-btn:hover {
-                background: #e9e9e9 !important;
-            }
-            .pdf-preview-reset-btn {
-                background: #007cba !important;
-                color: white !important;
-                border: none !important;
-                padding: 5px 10px !important;
-                border-radius: 4px !important;
-                cursor: pointer !important;
-                font-size: 14px !important;
-                transition: background-color 0.2s ease !important;
-            }
-            .pdf-preview-reset-btn:hover {
-                background: #005a87 !important;
-            }
-            #pdf-preview-loading {
-                display: none !important;
-                position: absolute !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                text-align: center !important;
-                z-index: 10 !important;
-            }
-            #pdf-preview-spinner {
-                border: 4px solid #f3f3f3 !important;
-                border-top: 4px solid #007cba !important;
-                border-radius: 50% !important;
-                width: 40px !important;
-                height: 40px !important;
-                animation: spin 1s linear infinite !important;
-                margin: 0 auto 10px !important;
-            }
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-            #pdf-preview-error {
-                display: none !important;
-                background: #ffebee !important;
-                color: #c62828 !important;
-                padding: 15px !important;
-                border-radius: 4px !important;
-                border: 1px solid #ffcdd2 !important;
-                text-align: center !important;
-            }
-            @media (max-width: 768px) {
-                #pdf-preview-modal-wrapper {
-                    width: 95vw !important;
-                    padding: 15px !important;
-                }
-                #pdf-preview-controls {
-                    flex-direction: column !important;
-                    align-items: stretch !important;
-                }
-                #pdf-preview-zoom {
-                    justify-content: center !important;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-})();
-
 // Fonctions de debug conditionnel
+function isDebugEnabled() {
+    // Debug activé seulement si explicitement forcé
+    return window.location.search.includes('debug=force');
+}
+
+function debugLog(...args) {
+    if (isDebugEnabled()) {
+
+    }
+}
+
+function debugError(...args) {
+    if (isDebugEnabled()) {
+
+    }
+}
+
+function debugWarn(...args) {
+    if (isDebugEnabled()) {
+
+    }
+}
+
 class PDFPreviewAPI {
     constructor() {
         this.endpoint = pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php';
         this.nonce = pdfBuilderAjax?.nonce || '';
         this.isGenerating = false;
         this.cache = new Map();
-
     }
 
     /**
      * Génère un aperçu depuis l'éditeur (données fictives)
      */
     async generateEditorPreview(templateData, options = {}) {
-        console.log('🔍 [API] generateEditorPreview appelée avec:', { templateData, options });
-
         if (this.isGenerating) {
-            console.log('🔍 [API] Génération déjà en cours, annulation');
+            debugWarn('⚠️ Génération déjà en cours...');
             return null;
         }
 
         this.isGenerating = true;
-        console.log('🔍 [API] Démarrage génération, affichage loader');
         this.showLoadingIndicator();
 
         try {
-            console.log('🔍 [API] Préparation FormData');
             const formData = new FormData();
             formData.append('action', 'wp_pdf_preview_image');
             formData.append('nonce', this.nonce);
-            console.log('🔍 [API] Nonce utilisé:', this.nonce);
             formData.append('context', 'editor');
             formData.append('template_data', JSON.stringify(templateData));
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
-            console.log('🔍 [API] Données FormData préparées');
-            console.log('🔍 [API] Endpoint:', this.endpoint);
+            debugLog('📤 Envoi requête preview éditeur...');
 
-            console.log('🔍 [API] Envoi requête fetch...');
             const response = await fetch(this.endpoint, {
                 method: 'POST',
                 body: formData
             });
 
-            console.log('🔍 [API] Réponse reçue - Status:', response.status, response.statusText);
-            console.log('🔍 [API] Headers:', Object.fromEntries(response.headers.entries()));
-
-            if (!response.ok) {
-                console.error('🔍 [API] ❌ Erreur HTTP:', response.status, response.statusText);
-                const errorText = await response.text();
-                console.error('🔍 [API] Corps erreur:', errorText);
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            console.log('🔍 [API] Parsing JSON réponse...');
             const result = await response.json();
-            console.log('🔍 [API] Résultat JSON:', result);
 
             if (result.success) {
-                console.log('🔍 [API] ✅ Succès, mise en cache et affichage');
+                debugLog('✅ Aperçu éditeur généré:', result.data);
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'editor');
                 return result.data;
             } else {
-                console.log('🔍 [API] ❌ Échec côté serveur:', result.message || 'Message non spécifié');
+                debugError('❌ Erreur génération éditeur:', result.data);
                 this.showError('Erreur lors de la génération de l\'aperçu');
                 return null;
             }
         } catch (error) {
-            console.error('🔍 [API] ❌ Exception attrapée:', error);
-            console.error('🔍 [API] Stack trace:', error.stack);
+            debugError('❌ Erreur réseau:', error);
             this.showError('Erreur de connexion');
             return null;
         } finally {
-            console.log('🔍 [API] Nettoyage - génération terminée');
             this.isGenerating = false;
             this.hideLoadingIndicator();
         }
@@ -265,7 +91,7 @@ class PDFPreviewAPI {
      */
     async generateOrderPreview(templateData, orderId, options = {}) {
         if (this.isGenerating) {
-
+            debugWarn('⚠️ Génération déjà en cours...');
             return null;
         }
 
@@ -282,7 +108,7 @@ class PDFPreviewAPI {
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
-
+            debugLog('📤 Envoi requête preview commande...', orderId);
 
             const response = await fetch(this.endpoint, {
                 method: 'POST',
@@ -292,17 +118,17 @@ class PDFPreviewAPI {
             const result = await response.json();
 
             if (result.success) {
-
+                debugLog('✅ Aperçu commande généré:', result.data);
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'metabox', orderId);
                 return result.data;
             } else {
-
+                debugError('❌ Erreur génération commande:', result.data);
                 this.showError('Erreur lors de la génération de l\'aperçu de commande');
                 return null;
             }
-        } catch {
-
+        } catch (error) {
+            debugError('❌ Erreur réseau:', error);
             this.showError('Erreur de connexion');
             return null;
         } finally {
@@ -355,11 +181,8 @@ class PDFPreviewAPI {
 
     /**
      * Affiche l'aperçu généré
-     * FIX CENTRAGE MODAL - Version 3.2.1
      */
     displayPreview(imageUrl, context, orderId = null) {
-
-        
         // Créer ou mettre à jour la modal d'aperçu
         let previewModal = document.getElementById('pdf-preview-modal');
         if (!previewModal) {
@@ -367,27 +190,8 @@ class PDFPreviewAPI {
             document.body.appendChild(previewModal);
         }
 
-        // Reset zoom and rotation
-        this.currentZoom = 100;
-        this.currentRotation = 0;
-
         const img = previewModal.querySelector('#pdf-preview-image');
         const title = previewModal.querySelector('#pdf-preview-title');
-
-        // Hide image initially, show loading
-        img.style.display = 'none';
-        this.showLoading('Chargement de l\'aperçu...');
-
-        img.onload = () => {
-            this.hideLoading();
-            img.style.display = 'block';
-            this.updateImageTransform(img);
-        };
-
-        img.onerror = () => {
-            this.hideLoading();
-            this.showError('Erreur lors du chargement de l\'image');
-        };
 
         img.src = imageUrl;
         img.style.maxWidth = '100%';
@@ -399,23 +203,102 @@ class PDFPreviewAPI {
             title.textContent = `📄 Aperçu Commande #${orderId}`;
         }
 
-        // Ajouter des boutons d'action et contrôles
+        // Ajouter des boutons d'action
         this.addPreviewActions(previewModal, imageUrl, context);
-        this.addZoomControls(previewModal, img);
 
-        // Afficher la modal en togglant la classe FLEX
+        // Afficher la modal en togglant la classe
         previewModal.classList.add('visible');
-        
 
-
-
-
+        debugLog('🖼️ Aperçu affiché:', imageUrl);
     }
 
     /**
-     * Crée la modal d'aperçu (CSS déjà injecté en haut du fichier)
+     * Crée la modal d'aperçu - FIXED CENTERING v3.3
      */
     createPreviewModal() {
+        // Ajouter une vraie feuille CSS pour le modal si elle n'existe pas
+        if (!document.getElementById('pdf-preview-modal-styles')) {
+            const styleSheet = document.createElement('style');
+            styleSheet.id = 'pdf-preview-modal-styles';
+            styleSheet.textContent = `
+                #pdf-preview-modal {
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                    background-color: rgba(0,0,0,0.8) !important;
+                    display: none !important;
+                    z-index: 99999 !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    flex-direction: column !important;
+                    visibility: visible !important;
+                    gap: 0 !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                }
+                
+                #pdf-preview-modal.visible {
+                    display: flex !important;
+                }
+                
+                #pdf-preview-modal-wrapper {
+                    background: white !important;
+                    border-radius: 8px !important;
+                    padding: 20px !important;
+                    max-width: 90vw !important;
+                    max-height: 90vh !important;
+                    overflow-y: auto !important;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
+                    flex-shrink: 0 !important;
+                    min-width: 300px !important;
+                    position: relative !important;
+                    width: 500px !important;
+                    align-self: center !important;
+                }
+
+                .pdf-preview-action-btn {
+                    border: none !important;
+                    padding: 8px 16px !important;
+                    border-radius: 4px !important;
+                    cursor: pointer !important;
+                    font-size: 14px !important;
+                    margin-right: 10px !important;
+                    transition: background-color 0.2s ease !important;
+                }
+
+                .pdf-preview-action-btn.download-btn {
+                    background: #007cba !important;
+                    color: white !important;
+                }
+
+                .pdf-preview-action-btn.download-btn:hover {
+                    background: #005a87 !important;
+                }
+
+                .pdf-preview-action-btn.print-btn {
+                    background: #46b450 !important;
+                    color: white !important;
+                }
+
+                .pdf-preview-action-btn.print-btn:hover {
+                    background: #3d8b40 !important;
+                }
+
+                .pdf-preview-action-btn.regenerate-btn {
+                    background: #f56e28 !important;
+                    color: white !important;
+                }
+
+                .pdf-preview-action-btn.regenerate-btn:hover {
+                    background: #e55a1f !important;
+                }
+            `;
+            document.head.appendChild(styleSheet);
+
+        }
+        
         const modal = document.createElement('div');
         modal.id = 'pdf-preview-modal';
         
@@ -451,40 +334,19 @@ class PDFPreviewAPI {
         header.appendChild(title);
         header.appendChild(closeBtn);
 
-        // Contrôles de zoom et rotation
-        const controls = document.createElement('div');
-        controls.id = 'pdf-preview-controls';
-
         // Actions container
         const actions = document.createElement('div');
         actions.id = 'pdf-preview-actions';
-
-        // Indicateur de chargement
-        const loading = document.createElement('div');
-        loading.id = 'pdf-preview-loading';
-        loading.innerHTML = `
-            <div id="pdf-preview-spinner"></div>
-            <div id="pdf-preview-loading-text">Chargement...</div>
-        `;
-
-        // Message d'erreur
-        const error = document.createElement('div');
-        error.id = 'pdf-preview-error';
-        error.innerHTML = `
-            <div id="pdf-preview-error-text">Erreur de chargement</div>
-        `;
+        actions.style.cssText = 'margin-bottom: 15px;';
 
         // Image container
         const img = document.createElement('img');
         img.id = 'pdf-preview-image';
         img.alt = 'Aperçu PDF';
-        img.style.cssText = 'max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;';
+        img.style.cssText = 'max-width: 100%; height: auto; border: 1px solid #ddd;';
 
         wrapper.appendChild(header);
-        wrapper.appendChild(controls);
         wrapper.appendChild(actions);
-        wrapper.appendChild(loading);
-        wrapper.appendChild(error);
         wrapper.appendChild(img);
         modal.appendChild(wrapper);
 
@@ -531,8 +393,6 @@ class PDFPreviewAPI {
             const regenerateBtn = document.createElement('button');
             regenerateBtn.textContent = '🔄 Régénérer';
             regenerateBtn.className = 'pdf-preview-action-btn regenerate-btn';
-                cursor: pointer;
-            `;
             regenerateBtn.addEventListener('click', () => {
                 // Cette fonction devra être appelée depuis le contexte parent
                 if (typeof window.regenerateOrderPreview === 'function') {
@@ -547,182 +407,18 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Ajoute les contrôles de zoom et rotation
-     */
-    addZoomControls(modal, img) {
-        const controlsContainer = modal.querySelector('#pdf-preview-controls');
-        controlsContainer.innerHTML = '';
-
-        // Contrôles de zoom
-        const zoomContainer = document.createElement('div');
-        zoomContainer.id = 'pdf-preview-zoom';
-
-        const zoomOutBtn = document.createElement('button');
-        zoomOutBtn.textContent = '🔍-';
-        zoomOutBtn.className = 'pdf-preview-zoom-btn';
-        zoomOutBtn.addEventListener('click', () => this.zoomImage(img, -25));
-
-        const zoomSlider = document.createElement('input');
-        zoomSlider.type = 'range';
-        zoomSlider.id = 'pdf-preview-zoom-slider';
-        zoomSlider.min = '25';
-        zoomSlider.max = '300';
-        zoomSlider.value = '100';
-        zoomSlider.addEventListener('input', (e) => this.setZoom(img, parseInt(e.target.value)));
-
-        const zoomValue = document.createElement('span');
-        zoomValue.id = 'pdf-preview-zoom-value';
-        zoomValue.textContent = '100%';
-
-        const zoomInBtn = document.createElement('button');
-        zoomInBtn.textContent = '🔍+';
-        zoomInBtn.className = 'pdf-preview-zoom-btn';
-        zoomInBtn.addEventListener('click', () => this.zoomImage(img, 25));
-
-        zoomContainer.appendChild(zoomOutBtn);
-        zoomContainer.appendChild(zoomSlider);
-        zoomContainer.appendChild(zoomValue);
-        zoomContainer.appendChild(zoomInBtn);
-
-        // Contrôles de rotation
-        const rotateLeftBtn = document.createElement('button');
-        rotateLeftBtn.textContent = '↺';
-        rotateLeftBtn.title = 'Rotation gauche';
-        rotateLeftBtn.className = 'pdf-preview-zoom-btn';
-        rotateLeftBtn.addEventListener('click', () => this.rotateImage(img, -90));
-
-        const rotateRightBtn = document.createElement('button');
-        rotateRightBtn.textContent = '↻';
-        rotateRightBtn.title = 'Rotation droite';
-        rotateRightBtn.className = 'pdf-preview-zoom-btn';
-        rotateRightBtn.addEventListener('click', () => this.rotateImage(img, 90));
-
-        const resetBtn = document.createElement('button');
-        resetBtn.textContent = '🔄 Reset';
-        resetBtn.title = 'Réinitialiser zoom et rotation';
-        resetBtn.className = 'pdf-preview-reset-btn';
-        resetBtn.addEventListener('click', () => this.resetImage(img, zoomSlider, zoomValue));
-
-        controlsContainer.appendChild(zoomContainer);
-        controlsContainer.appendChild(rotateLeftBtn);
-        controlsContainer.appendChild(rotateRightBtn);
-        controlsContainer.appendChild(resetBtn);
-    }
-
-    /**
-     * Met à jour la transformation de l'image
-     */
-    updateImageTransform(img) {
-        img.style.transform = `scale(${this.currentZoom / 100}) rotate(${this.currentRotation}deg)`;
-    }
-
-    /**
-     * Zoom l'image
-     */
-    zoomImage(img, delta) {
-        this.currentZoom = Math.max(25, Math.min(300, this.currentZoom + delta));
-        this.updateImageTransform(img);
-        this.updateZoomUI();
-    }
-
-    /**
-     * Définit le zoom directement
-     */
-    setZoom(img, zoom) {
-        this.currentZoom = zoom;
-        this.updateImageTransform(img);
-        this.updateZoomUI();
-    }
-
-    /**
-     * Met à jour l'interface utilisateur du zoom
-     */
-    updateZoomUI() {
-        const slider = document.getElementById('pdf-preview-zoom-slider');
-        const value = document.getElementById('pdf-preview-zoom-value');
-        if (slider) slider.value = this.currentZoom;
-        if (value) value.textContent = this.currentZoom + '%';
-    }
-
-    /**
-     * Tourne l'image
-     */
-    rotateImage(img, degrees) {
-        this.currentRotation = (this.currentRotation + degrees) % 360;
-        this.updateImageTransform(img);
-    }
-
-    /**
-     * Réinitialise l'image
-     */
-    resetImage(img, slider, value) {
-        this.currentZoom = 100;
-        this.currentRotation = 0;
-        this.updateImageTransform(img);
-        if (slider) slider.value = 100;
-        if (value) value.textContent = '100%';
-    }
-
-    /**
-     * Affiche l'indicateur de chargement
-     */
-    showLoading(message = 'Chargement...') {
-        const loading = document.getElementById('pdf-preview-loading');
-        const spinner = document.getElementById('pdf-preview-spinner');
-        const text = document.getElementById('pdf-preview-loading-text');
-
-        if (loading) {
-            loading.style.display = 'block';
-            if (text) text.textContent = message;
-        }
-    }
-
-    /**
-     * Cache l'indicateur de chargement
-     */
-    hideLoading() {
-        const loading = document.getElementById('pdf-preview-loading');
-        if (loading) {
-            loading.style.display = 'none';
-        }
-    }
-
-    /**
-     * Affiche un message d'erreur
-     */
-    showError(message) {
-        const error = document.getElementById('pdf-preview-error');
-        const text = document.getElementById('pdf-preview-error-text');
-
-        if (error) {
-            error.style.display = 'block';
-            if (text) text.textContent = message;
-        }
-    }
-
-    /**
-     * Cache le message d'erreur
-     */
-    hideError() {
-        const error = document.getElementById('pdf-preview-error');
-        if (error) {
-            error.style.display = 'none';
-        }
-    }
-
-    /**
      * Télécharge l'aperçu
      */
     downloadPreview(imageUrl) {
         const link = document.createElement('a');
         link.href = imageUrl;
-        link.download = `pdf-preview-${Date.now()}.png`;
+        link.download = 'pdf-preview-' + Date.now() + '.png';
         link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-
+        debugLog('📥 Téléchargement démarré:', imageUrl);
     }
 
     /**
@@ -730,27 +426,27 @@ class PDFPreviewAPI {
      */
     printPreview(imageUrl) {
         const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Aperçu PDF</title>
-                    <style>
-                        body { margin: 0; padding: 20px; text-align: center; }
-                        img { max-width: 100%; height: auto; }
-                        @media print {
-                            body { margin: 0; }
-                            img { max-width: 100%; height: auto; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <img src="${imageUrl}" alt="Aperçu PDF" onload="window.print(); window.close();" />
-                </body>
-            </html>
-        `);
+        printWindow.document.write('\
+            <html>\
+                <head>\
+                    <title>Aperçu PDF</title>\
+                    <style>\
+                        body { margin: 0; padding: 20px; text-align: center; }\
+                        img { max-width: 100%; height: auto; }\
+                        @media print {\
+                            body { margin: 0; }\
+                            img { max-width: 100%; height: auto; }\
+                        }\
+                    </style>\
+                </head>\
+                <body>\
+                    <img src="' + imageUrl + '" alt="Aperçu PDF" onload="window.print(); window.close();" />\
+                </body>\
+            </html>\
+        ');
         printWindow.document.close();
 
-
+        debugLog('🖨️ Impression démarrée');
     }
 
     /**
@@ -761,29 +457,8 @@ class PDFPreviewAPI {
         if (!loader) {
             loader = document.createElement('div');
             loader.id = 'pdf-preview-loader';
-            loader.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(255,255,255,0.9);
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                padding: 20px;
-                z-index: 10000;
-                display: none;
-                text-align: center;
-            `;
-            loader.innerHTML = `
-                <div style="border: 4px solid #f3f3f3; border-top: 4px solid #007cba; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
-                <div>Génération de l'aperçu...</div>
-                <style>
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                </style>
-            `;
+            loader.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 8px; padding: 20px; z-index: 10000; display: none; text-align: center;';
+            loader.innerHTML = '<div style="border: 4px solid #f3f3f3; border-top: 4px solid #007cba; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div><div>Génération de l\'aperçu...</div><style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>';
             document.body.appendChild(loader);
         }
         loader.style.display = 'block';
@@ -823,6 +498,11 @@ window.generateEditorPreview = (templateData, options) => {
 window.generateOrderPreview = (templateData, orderId, options) => {
     return window.pdfPreviewAPI.generateOrderPreview(templateData, orderId, options);
 };
+
+debugLog('🎯 API Preview 1.4 initialisée et prête à l\'emploi !');
+debugLog('📖 Utilisation:');
+debugLog('   - generateEditorPreview(templateData)');
+debugLog('   - generateOrderPreview(templateData, orderId)');
 
 
 
