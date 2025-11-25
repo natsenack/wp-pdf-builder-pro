@@ -627,9 +627,6 @@ if (
 // Canvas settings are now loaded in settings-canvas-params.php
 ?>
 
-    <!-- Hidden nonce field for AJAX requests -->
-    <input type="hidden" name="pdf_builder_settings_nonce" value="<?php echo wp_create_nonce('pdf_builder_settings_nonce'); ?>" />
-
     <!-- Tab Content Containers -->
     <div id="general" class="tab-content">
         <?php require_once 'settings-general.php'; ?>

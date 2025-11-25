@@ -1500,7 +1500,7 @@ function pdf_builder_get_all_canvas_settings_handler() {
 function pdf_builder_run_settings_tests_ajax() {
     try {
         // Check nonce for security
-        if (!wp_verify_nonce($_POST['security'] ?? '', 'pdf_builder_settings_nonce')) {
+        if (!wp_verify_nonce($_POST['security'] ?? '', 'pdf_builder_ajax')) {
             send_ajax_response(false, 'Sécurité: Nonce invalide');
             return;
         }

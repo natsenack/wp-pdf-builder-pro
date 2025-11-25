@@ -436,7 +436,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (outputDiv) outputDiv.style.display = 'none';
 
             // Récupérer le nonce de sécurité
-            const security = document.querySelector('input[name="pdf_builder_settings_nonce"]');
+            const security = pdf_builder_ajax.nonce;
             if (!security) {
                 if (resultsSpan) resultsSpan.innerHTML = '<span style="color: #dc3545;">❌ Erreur: Nonce de sécurité introuvable</span>';
                 testSettingsBtn.disabled = false;
@@ -446,7 +446,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Faire la requête AJAX
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', ajaxurl, true);
+            xhr.open('POST', pdf_builder_ajax.ajax_url, true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
             xhr.onreadystatechange = function() {
