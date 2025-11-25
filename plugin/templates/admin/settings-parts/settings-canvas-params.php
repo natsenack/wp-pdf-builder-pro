@@ -5,7 +5,19 @@
  */
 
 // Assurer que les constantes sont chargées
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/core/Conventions.php';
+if (!defined('\PDF_Builder\PAPER_FORMATS')) {
+    // Définir les constantes manuellement si non chargées
+    if (!defined('PDF_BUILDER\PAPER_FORMATS')) {
+        define('PDF_BUILDER\PAPER_FORMATS', [
+            'A4' => ['width' => 210, 'height' => 297],
+            'A3' => ['width' => 297, 'height' => 420],
+            'A5' => ['width' => 148, 'height' => 210],
+            'Letter' => ['width' => 215.9, 'height' => 279.4],
+            'Legal' => ['width' => 215.9, 'height' => 355.6],
+            'Tabloid' => ['width' => 279.4, 'height' => 431.8]
+        ]);
+    }
+}
 
 // Récupérer les paramètres canvas depuis les options séparées (synchronisées)
 $canvas_settings_js = [
