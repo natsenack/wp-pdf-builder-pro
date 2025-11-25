@@ -3,9 +3,20 @@
  * Ce fichier peut être exécuté dans la console du navigateur pour tester les optimisations
  */
 
+// Fonctions de debug conditionnel pour les tests
+function isDebugEnabled() {
+    return window.location.search.includes('debug=force');
+}
+
+function debugLog(...args) {
+    if (isDebugEnabled()) {
+        debugLog(...args);
+    }
+}
+
 // Test des calculs inline de contraintes
 function testInlineConstraints() {
-    console.log('🧪 Test des contraintes inline optimisées');
+    debugLog('🧪 Test des contraintes inline optimisées');
 
     // Simulation des propriétés de l'instance
     const instance = {
@@ -26,13 +37,13 @@ function testInlineConstraints() {
         panY = panY < -instance.maxPanY ? -instance.maxPanY : (panY > instance.maxPanY ? instance.maxPanY : panY);
     }
 
-    console.log(`✅ Contraintes appliquées: panX=${panX}, panY=${panY}`);
-    console.log(`📊 Limites: maxPanX=${instance.maxPanX}, maxPanY=${instance.maxPanY}`);
+    debugLog(`✅ Contraintes appliquées: panX=${panX}, panY=${panY}`);
+    debugLog(`📊 Limites: maxPanX=${instance.maxPanX}, maxPanY=${instance.maxPanY}`);
 }
 
 // Test du throttling à 32ms
 function testThrottling() {
-    console.log('🧪 Test du throttling à 32ms');
+    debugLog('🧪 Test du throttling à 32ms');
 
     let lastTime = 0;
     let callCount = 0;
@@ -42,7 +53,7 @@ function testThrottling() {
         if ((now - lastTime) > 32) {
             callCount++;
             lastTime = now;
-            console.log(`📞 Appel throttlé #${callCount} à ${now.toFixed(2)}ms`);
+            debugLog(`📞 Appel throttlé #${callCount} à ${now.toFixed(2)}ms`);
         }
     }
 
@@ -54,7 +65,7 @@ function testThrottling() {
 
 // Test des transformations CSS
 function testTransformUpdate() {
-    console.log('🧪 Test des transformations CSS optimisées');
+    debugLog('🧪 Test des transformations CSS optimisées');
 
     const img = document.createElement('img');
     document.body.appendChild(img);
@@ -70,8 +81,8 @@ function testTransformUpdate() {
     img.style.transform = transform;
     img.style.transformOrigin = 'center center';
 
-    console.log(`✅ Transformation appliquée: ${transform}`);
-    console.log(`🎨 Styles: transform-origin=${img.style.transformOrigin}`);
+    debugLog(`✅ Transformation appliquée: ${transform}`);
+    debugLog(`🎨 Styles: transform-origin=${img.style.transformOrigin}`);
 
     // Cleanup
     document.body.removeChild(img);
@@ -79,7 +90,7 @@ function testTransformUpdate() {
 
 // Test ULTRA-RAPIDE des FPS réels (sans logs)
 function testRealFPS() {
-    console.log('⚡ Test FPS réel - Mesure précise sans pollution');
+    debugLog('⚡ Test FPS réel - Mesure précise sans pollution');
 
     // Simulation du handleMouseMove optimisé
     let currentPanX = 0, currentPanY = 0;
@@ -123,26 +134,26 @@ function testRealFPS() {
     const totalTime = endTime - startTime;
     const fps = (iterations / totalTime) * 1000;
 
-    console.log(`🚀 Résultat: ${iterations} mouvements en ${totalTime.toFixed(2)}ms`);
-    console.log(`🎯 FPS réel: ${fps.toFixed(1)}fps (${(1000/fps).toFixed(3)}ms par mouvement)`);
-    console.log(`✅ Performance: ${fps > 1000 ? 'EXCELLENTE' : fps > 500 ? 'TRÈS BONNE' : 'BONNE'}`);
+    debugLog(`🚀 Résultat: ${iterations} mouvements en ${totalTime.toFixed(2)}ms`);
+    debugLog(`🎯 FPS réel: ${fps.toFixed(1)}fps (${(1000/fps).toFixed(3)}ms par mouvement)`);
+    debugLog(`✅ Performance: ${fps > 1000 ? 'EXCELLENTE' : fps > 500 ? 'TRÈS BONNE' : 'BONNE'}`);
 
     return fps;
 }
 
 // Fonction principale de test
 function runPerformanceTests() {
-    console.log('🚀 Démarrage des tests de performance du drag/pan');
-    console.log('================================================');
+    debugLog('🚀 Démarrage des tests de performance du drag/pan');
+    debugLog('================================================');
 
     testInlineConstraints();
     testThrottling();
     testTransformUpdate();
     testRealFPS(); // Test FPS réel ULTRA-RAPIDE
 
-    console.log('================================================');
-    console.log('✅ Tests terminés - Optimisations déployées');
-    console.log('🎯 Résultat attendu: Drag/pan fluide à 60fps+ minimum');
+    debugLog('================================================');
+    debugLog('✅ Tests terminés - Optimisations déployées');
+    debugLog('🎯 Résultat attendu: Drag/pan fluide à 60fps+ minimum');
 }
 
 // Exposer la fonction de test globalement
@@ -150,6 +161,6 @@ window.testPDFPreviewOptimizations = runPerformanceTests;
 
 // Auto-run si en mode debug
 if (window.location.search.includes('debug=force')) {
-    console.log('🔧 Mode debug activé - Lancement automatique des tests');
+    debugLog('🔧 Mode debug activé - Lancement automatique des tests');
     runPerformanceTests();
 }

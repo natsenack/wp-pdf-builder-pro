@@ -4,7 +4,7 @@
  * À intégrer dans votre éditeur ou metabox WooCommerce
  */
 
-// Fonctions de debug conditionnel
+// Fonctions de debug conditionnel - ACTIVÉES pour le système d'aperçu
 function isDebugEnabled() {
     // Debug activé seulement si explicitement forcé
     return window.location.search.includes('debug=force');
@@ -12,19 +12,19 @@ function isDebugEnabled() {
 
 function debugLog(...args) {
     if (isDebugEnabled()) {
-
+        console.log(...args);
     }
 }
 
 function debugError(...args) {
     if (isDebugEnabled()) {
-
+        console.error(...args);
     }
 }
 
 function debugWarn(...args) {
     if (isDebugEnabled()) {
-
+        console.warn(...args);
     }
 }
 
@@ -40,11 +40,15 @@ class PDFEditorPreviewIntegration {
     }
 
     init() {
+        debugLog('🎨 Initialisation intégration éditeur...');
         this.createPreviewButton();
         this.bindEvents();
+        debugLog('✅ Intégration éditeur initialisée');
     }
 
     createPreviewButton() {
+        debugLog('🔘 Création bouton aperçu éditeur...');
+
         // Créer le bouton d'aperçu dans la barre d'outils
         this.previewBtn = document.createElement('button');
         this.previewBtn.id = 'pdf-editor-preview-btn';
@@ -68,6 +72,7 @@ class PDFEditorPreviewIntegration {
 
         if (toolbar) {
             toolbar.appendChild(this.previewBtn);
+            debugLog('✅ Bouton aperçu ajouté à la toolbar');
         } else {
             // Fallback: l'ajouter au body avec position fixe
             this.previewBtn.style.position = 'fixed';
@@ -75,6 +80,7 @@ class PDFEditorPreviewIntegration {
             this.previewBtn.style.right = '10px';
             this.previewBtn.style.zIndex = '1000';
             document.body.appendChild(this.previewBtn);
+            debugLog('⚠️ Toolbar non trouvée, bouton ajouté en position fixe');
         }
     }
 
@@ -95,14 +101,19 @@ class PDFEditorPreviewIntegration {
     }
 
     async generatePreview() {
+        debugLog('🚀 Démarrage génération aperçu éditeur...');
+
         try {
             // Récupérer les données du template depuis l'éditeur
             const templateData = this.getTemplateData();
 
             if (!templateData) {
+                debugWarn('⚠️ Aucune donnée de template trouvée');
                 alert('Aucune donnée de template trouvée. Veuillez créer un template d\'abord.');
                 return;
             }
+
+            debugLog('📄 Données template récupérées:', templateData);
 
             // Générer l'aperçu
             const result = await window.generateEditorPreview(templateData, {
@@ -121,13 +132,18 @@ class PDFEditorPreviewIntegration {
     }
 
     getTemplateData() {
+        debugLog('🔍 Recherche données template...');
+
         // Adapter selon votre structure de données d'éditeur
         if (this.canvasEditor && typeof this.canvasEditor.getTemplateData === 'function') {
-            return this.canvasEditor.getTemplateData();
+            const data = this.canvasEditor.getTemplateData();
+            debugLog('✅ Données récupérées depuis canvasEditor');
+            return data;
         }
 
         // Fallback: chercher dans le localStorage ou les variables globales
         if (window.pdfEditorTemplate) {
+            debugLog('✅ Données récupérées depuis window.pdfEditorTemplate');
             return window.pdfEditorTemplate;
         }
 
@@ -180,11 +196,15 @@ class PDFMetaboxPreviewIntegration {
     }
 
     init() {
+        debugLog('🛒 Initialisation intégration metabox...');
         this.createPreviewButtons();
         this.bindEvents();
+        debugLog('✅ Intégration metabox initialisée');
     }
 
     createPreviewButtons() {
+        debugLog('🔘 Création boutons aperçu metabox...');
+
         // Créer un conteneur pour les boutons d'aperçu
         const buttonContainer = document.createElement('div');
         buttonContainer.id = 'pdf-metabox-preview-buttons';
@@ -233,19 +253,27 @@ class PDFMetaboxPreviewIntegration {
     }
 
     async generatePreview() {
+        debugLog('🚀 Démarrage génération aperçu commande...');
+
         try {
             if (!this.orderId) {
+                debugError('❌ ID de commande non trouvé');
                 alert('ID de commande non trouvé.');
                 return;
             }
+
+            debugLog('📦 ID commande:', this.orderId);
 
             // Récupérer les données du template depuis la metabox
             const templateData = this.getTemplateData();
 
             if (!templateData) {
+                debugWarn('⚠️ Aucune donnée de template trouvée');
                 alert('Aucune donnée de template trouvée. Veuillez sélectionner un template.');
                 return;
             }
+
+            debugLog('📄 Données template récupérées:', templateData);
 
             // Générer l'aperçu
             const result = await window.generateOrderPreview(templateData, this.orderId, {
@@ -411,6 +439,8 @@ document.addEventListener('DOMContentLoaded', function() {
  * Génère un aperçu rapide (détection automatique du contexte)
  */
 window.generateQuickPreview = async function(templateData = null, orderId = null) {
+    debugLog('⚡ Génération aperçu rapide démarrée...');
+
     try {
         // Détection automatique du contexte
         const isEditor = document.querySelector('#pdf-editor-canvas') ||
@@ -421,6 +451,8 @@ window.generateQuickPreview = async function(templateData = null, orderId = null
                          document.querySelector('#woocommerce-order-data') ||
                          (window.location.href.includes('post.php') &&
                           window.location.href.includes('action=edit'));
+
+        debugLog('🔍 Contexte détecté:', { isEditor, isMetabox });
 
         if (isEditor) {
             debugLog('🎨 Mode éditeur détecté');
