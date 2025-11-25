@@ -1922,22 +1922,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update dimensions card preview
     window.updateDimensionsCardPreview = function() {
         console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview EXECUTED - function called successfully');
-        console.log('PDF_BUILDER_DEBUG: About to find dpiEl');
-
-        // Simple hardcoded test first
-        const dpiEl = document.getElementById('card-canvas-dpi');
-        console.log('PDF_BUILDER_DEBUG: dpiEl found:', dpiEl);
-
-        if (dpiEl) {
-            console.log('PDF_BUILDER_DEBUG: Current text content:', dpiEl.textContent);
-            dpiEl.textContent = 'FUNCTION WORKS!';
-            console.log('PDF_BUILDER_DEBUG: Successfully updated dpiEl to:', dpiEl.textContent);
-        } else {
-            console.log('PDF_BUILDER_DEBUG: dpiEl not found!');
-        }
-
+        console.log('PDF_BUILDER_DEBUG: Test 1 - basic execution');
+        var test = 'test';
+        console.log('PDF_BUILDER_DEBUG: Test 2 - variable assignment:', test);
         console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview completed successfully');
-    }
+    };
 
     // Update apparence card preview
     window.updateApparenceCardPreview = function() {
