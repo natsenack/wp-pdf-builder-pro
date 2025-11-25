@@ -230,7 +230,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
-                
+                console.error('Erreur AJAX updateCacheMetrics:', status, error, xhr.responseText);
             }
         });
     }

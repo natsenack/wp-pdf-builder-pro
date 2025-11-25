@@ -203,9 +203,10 @@ function pdf_builder_get_cache_metrics_ajax() {
         $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
         $cache_size = 0;
 
-        if (is_dir($cache_dir) && is_readable($cache_dir)) {
-            $cache_size = pdf_builder_get_folder_size($cache_dir);
-        }
+        // Temporarily disable folder size calculation to avoid 500 errors
+        // if (is_dir($cache_dir) && is_readable($cache_dir)) {
+        //     $cache_size = pdf_builder_get_folder_size($cache_dir);
+        // }
 
         // Formater la taille intelligemment : Ko si < 1 Mo, sinon Mo
         if ($cache_size < 1048576) { // 1 Mo = 1048576 bytes
