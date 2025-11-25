@@ -200,8 +200,11 @@ if (!current_user_can('manage_options')) {
             resultDiv.innerHTML = '<div class="status info">🎨 Test de la modal d\'aperçu...</div>';
 
             try {
-                // Simuler un appel à l'API Preview pour tester la modal
+                console.log('🎨 [JS] Vérification API Preview disponible:', window.pdfPreviewAPI ? '✅ OUI' : '❌ NON');
+
                 if (window.pdfPreviewAPI) {
+                    console.log('🎨 [JS] API Preview trouvée, préparation données de test');
+
                     // Créer des données de test fictives
                     const testData = {
                         templateId: 1,
@@ -210,17 +213,29 @@ if (!current_user_can('manage_options')) {
                         context: 'editor'
                     };
 
+                    console.log('🎨 [JS] Données de test:', testData);
+                    console.log('🎨 [JS] Variables pdfBuilderAjax:', window.pdfBuilderAjax);
+
+                    console.log('🎨 [JS] Appel generateEditorPreview...');
                     const result = await window.pdfPreviewAPI.generateEditorPreview(testData);
+
+                    console.log('🎨 [JS] Résultat reçu:', result);
+
                     if (result) {
+                        console.log('🎨 [JS] ✅ Génération réussie, affichage modal');
                         resultDiv.innerHTML = '<div class="status success">✅ Modal d\'aperçu fonctionnelle - Image générée et affichée</div>';
                     } else {
+                        console.log('🎨 [JS] ❌ Génération échouée, pas de résultat');
                         resultDiv.innerHTML = '<div class="status error">❌ Échec de génération d\'aperçu</div>';
                     }
                 } else {
+                    console.log('🎨 [JS] ❌ API Preview non disponible');
                     resultDiv.innerHTML = '<div class="status error">❌ API Preview non disponible</div>';
                 }
             } catch (error) {
-                resultDiv.innerHTML = '<div class="status error">❌ Erreur réseau : ' + error.message + '</div>';
+                console.error('🎨 [JS] ❌ Erreur dans testPreviewModal:', error);
+                console.error('🎨 [JS] Détails erreur:', error.message, error.stack);
+                resultDiv.innerHTML = '<div class="status error">❌ Erreur test modal : ' + error.message + '</div>';
             }
         }
     </script>

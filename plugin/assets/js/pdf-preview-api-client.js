@@ -126,47 +126,68 @@ class PDFPreviewAPI {
      * Génère un aperçu depuis l'éditeur (données fictives)
      */
     async generateEditorPreview(templateData, options = {}) {
-        if (this.isGenerating) {
+        console.log('🔍 [API] generateEditorPreview appelée avec:', { templateData, options });
 
+        if (this.isGenerating) {
+            console.log('🔍 [API] Génération déjà en cours, annulation');
             return null;
         }
 
         this.isGenerating = true;
+        console.log('🔍 [API] Démarrage génération, affichage loader');
         this.showLoadingIndicator();
 
         try {
+            console.log('🔍 [API] Préparation FormData');
             const formData = new FormData();
             formData.append('action', 'wp_pdf_preview_image');
             formData.append('nonce', this.nonce);
+            console.log('🔍 [API] Nonce utilisé:', this.nonce);
             formData.append('context', 'editor');
             formData.append('template_data', JSON.stringify(templateData));
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
+            console.log('🔍 [API] Données FormData préparées');
+            console.log('🔍 [API] Endpoint:', this.endpoint);
 
-
+            console.log('🔍 [API] Envoi requête fetch...');
             const response = await fetch(this.endpoint, {
                 method: 'POST',
                 body: formData
             });
 
+            console.log('🔍 [API] Réponse reçue - Status:', response.status, response.statusText);
+            console.log('🔍 [API] Headers:', Object.fromEntries(response.headers.entries()));
+
+            if (!response.ok) {
+                console.error('🔍 [API] ❌ Erreur HTTP:', response.status, response.statusText);
+                const errorText = await response.text();
+                console.error('🔍 [API] Corps erreur:', errorText);
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            console.log('🔍 [API] Parsing JSON réponse...');
             const result = await response.json();
+            console.log('🔍 [API] Résultat JSON:', result);
 
             if (result.success) {
-
+                console.log('🔍 [API] ✅ Succès, mise en cache et affichage');
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'editor');
                 return result.data;
             } else {
-
+                console.log('🔍 [API] ❌ Échec côté serveur:', result.message || 'Message non spécifié');
                 this.showError('Erreur lors de la génération de l\'aperçu');
                 return null;
             }
-        } catch {
-
+        } catch (error) {
+            console.error('🔍 [API] ❌ Exception attrapée:', error);
+            console.error('🔍 [API] Stack trace:', error.stack);
             this.showError('Erreur de connexion');
             return null;
         } finally {
+            console.log('🔍 [API] Nettoyage - génération terminée');
             this.isGenerating = false;
             this.hideLoadingIndicator();
         }
