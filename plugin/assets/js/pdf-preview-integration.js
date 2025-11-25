@@ -21,13 +21,13 @@ window.PDFBuilderLogger = {
 
     debug: function(message, ...args) {
         if (this.currentLevel <= this.levels.DEBUG) {
-            PDFBuilderLogger.debug(message, ...args);
+            console.log(`[PDF Builder DEBUG] ${message}`, ...args);
         }
     },
 
     info: function(message, ...args) {
         if (this.currentLevel <= this.levels.INFO) {
-            PDFBuilderLogger.info(message, ...args);
+            console.log(`[PDF Builder] ${message}`, ...args);
         }
     },
 
