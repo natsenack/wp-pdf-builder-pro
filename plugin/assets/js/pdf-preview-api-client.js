@@ -52,6 +52,8 @@ class PDFPreviewAPI {
         this.cachedRotation = 0; // Cache de la rotation
         this.imageWidth = 0; // Dimensions de l'image chargée
         this.imageHeight = 0; // Dimensions de l'image chargée
+        this.animationFrame = null; // Pour throttling des updates
+        this.pendingUpdate = false; // Flag pour update pending
     }
 
     /**
@@ -224,8 +226,8 @@ class PDFPreviewAPI {
             this.imageWidth = img.naturalWidth;
             this.imageHeight = img.naturalHeight;
             
-            // Limiter la taille du canvas pour performance (max 1500px)
-            const maxCanvasSize = 1500;
+            // Limiter la taille du canvas pour performance (max 800px)
+            const maxCanvasSize = 800;
             let canvasWidth = img.naturalWidth;
             let canvasHeight = img.naturalHeight;
             
@@ -754,8 +756,17 @@ class PDFPreviewAPI {
         this.currentPanX = newPanX;
         this.currentPanY = newPanY;
 
-        // APPLICATION DIRECTE SANS RAF pour performance maximale (20+ FPS)
-        this.updateCanvasTransform(canvas);
+        // APPLICATION THROTTLEE avec RAF pour éviter surcharge
+        this.pendingUpdate = true;
+        if (!this.animationFrame) {
+            this.animationFrame = requestAnimationFrame(() => {
+                if (this.pendingUpdate) {
+                    this.updateCanvasTransform(canvas);
+                    this.pendingUpdate = false;
+                }
+                this.animationFrame = null;
+            });
+        }
 
         // Mettre à jour les positions souris
         this.lastMouseX = clientX;
