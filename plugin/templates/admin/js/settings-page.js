@@ -204,6 +204,14 @@ jQuery(document).ready(function($) {
 
     // Fonction pour mettre à jour les métriques du cache en temps réel
     function updateCacheMetrics() {
+        console.log('PDF Builder: updateCacheMetrics called');
+
+        // Vérifier que pdfBuilderAjax est disponible
+        if (typeof pdfBuilderAjax === 'undefined') {
+            console.error('PDF Builder: pdfBuilderAjax not available');
+            return;
+        }
+
         // Faire l'appel AJAX pour récupérer les métriques
         $.ajax({
             url: pdfBuilderAjax.ajaxurl,
@@ -213,6 +221,7 @@ jQuery(document).ready(function($) {
                 nonce: pdfBuilderAjax.nonce
             },
             success: function(response) {
+                console.log('PDF Builder: updateCacheMetrics success', response);
                 if (response.success && response.data.metrics) {
                     const metrics = response.data.metrics;
 
@@ -227,10 +236,18 @@ jQuery(document).ready(function($) {
 
                     // Mettre à jour le dernier nettoyage
                     updateMetricValue('Dernier nettoyage', metrics.last_cleanup);
+                } else {
+                    console.warn('PDF Builder: updateCacheMetrics response not successful', response);
                 }
             },
             error: function(xhr, status, error) {
                 console.error('Erreur AJAX updateCacheMetrics:', status, error, xhr.responseText);
+                console.error('Request details:', {
+                    url: pdfBuilderAjax.ajaxurl,
+                    nonce: pdfBuilderAjax.nonce,
+                    status: xhr.status,
+                    responseText: xhr.responseText
+                });
             }
         });
     }

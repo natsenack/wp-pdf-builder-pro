@@ -185,15 +185,19 @@ function pdf_builder_clear_all_cache_ajax() {
 function pdf_builder_get_cache_metrics_ajax() {
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
+        error_log('PDF Builder Cache Metrics: Permissions insuffisantes');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
 
     // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+        error_log('PDF Builder Cache Metrics: Nonce invalide ou manquant - Nonce reçu: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT'));
         wp_send_json_error('Nonce invalide');
         return;
     }
+
+    error_log('PDF Builder Cache Metrics: Début de traitement');
 
     try {
         $metrics = [];
@@ -218,6 +222,9 @@ function pdf_builder_get_cache_metrics_ajax() {
         // 2. Nombre de transients actifs
         global $wpdb;
         $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+        if ($wpdb->last_error) {
+            error_log('PDF Builder Cache Metrics: Erreur SQL transients - ' . $wpdb->last_error);
+        }
         $metrics['transient_count'] = intval($transient_count);
 
         // 3. État du cache
@@ -231,12 +238,15 @@ function pdf_builder_get_cache_metrics_ajax() {
         }
         $metrics['last_cleanup'] = $last_cleanup;
 
+        error_log('PDF Builder Cache Metrics: Succès - Métriques récupérées');
+
         wp_send_json_success([
             'metrics' => $metrics,
             'timestamp' => current_time('mysql')
         ]);
 
     } catch (Exception $e) {
+        error_log('PDF Builder Cache Metrics: Exception - ' . $e->getMessage());
         wp_send_json_error('Erreur lors de la récupération des métriques: ' . $e->getMessage());
     }
 }
