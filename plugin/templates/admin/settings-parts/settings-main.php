@@ -1377,6 +1377,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             // Update canvas previews after successful save
                             console.log('PDF_BUILDER_DEBUG: Updating previews for category:', category);
+                            console.log('PDF_BUILDER_DEBUG: window.updateDimensionsCardPreview exists:', typeof window.updateDimensionsCardPreview);
                             if (category === 'dimensions' && typeof window.updateDimensionsCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updateDimensionsCardPreview');
                                 setTimeout(function() {
@@ -1918,13 +1919,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     window.updateDimensionsCardPreview = function() {
-        console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview called');
+        console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview EXECUTED - function called successfully');
         try {
             // Try to get values from modal inputs first (real-time), then from settings
             const formatInput = document.getElementById("canvas_format");
             const dpiInput = document.getElementById("canvas_dpi");
 
-            console.log('PDF_BUILDER_DEBUG: formatInput:', formatInput, 'dpiInput:', dpiInput);
+            console.log('PDF_BUILDER_DEBUG: formatInput:', formatInput, 'value:', formatInput ? formatInput.value : 'null');
+            console.log('PDF_BUILDER_DEBUG: dpiInput:', dpiInput, 'value:', dpiInput ? dpiInput.value : 'null');
+            console.log('PDF_BUILDER_DEBUG: window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
 
             const format = formatInput ? formatInput.value : (window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4');
             const dpi = dpiInput ? parseInt(dpiInput.value) : (parseInt(window.pdfBuilderCanvasSettings?.default_canvas_dpi) || 96);
