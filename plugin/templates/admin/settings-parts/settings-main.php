@@ -1929,6 +1929,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview completed successfully');
     };
     console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview function assigned to window');
+    // Test call
+    try {
+        window.updateDimensionsCardPreview();
+        console.log('PDF_BUILDER_DEBUG: Test call successful');
+    } catch (e) {
+        console.error('PDF_BUILDER_DEBUG: Test call failed:', e);
+    }
 
     // Update apparence card preview
     window.updateApparenceCardPreview = function() {
