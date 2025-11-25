@@ -36,6 +36,22 @@ register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
 // Charger le bootstrap du plugin (initialisation des utilitaires)
 require_once PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
 
+// VÉRIFICATION IMMÉDIATE DE LA DISPONIBILITÉ DES CLASSES CRITIQUES
+if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+    // Chargement d'urgence si la classe n'est pas trouvée
+    $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
+    if (file_exists($onboarding_path)) {
+        require_once $onboarding_path;
+    }
+}
+
+// Hook très tôt pour garantir le chargement des utilitaires
+add_action('plugins_loaded', function() {
+    if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+        pdf_builder_ensure_onboarding_manager();
+    }
+}, 0); // Priorité 0 = exécution très tôt
+
 // Initialiser l'API Preview (Jour 1-2 : API Preview Basique)
 require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
 require_once PDF_BUILDER_PLUGIN_DIR . 'api/PreviewImageAPI.php';

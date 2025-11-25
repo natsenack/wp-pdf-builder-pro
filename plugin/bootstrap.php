@@ -66,6 +66,31 @@ function pdf_builder_ensure_onboarding_manager() {
     return class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager');
 }
 
+/**
+ * Fonction de diagnostic pour l'Onboarding Manager
+ * Affiche des informations de debug si la classe n'est pas trouvée
+ */
+function pdf_builder_diagnose_onboarding_manager() {
+    $class_exists = class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager');
+    $file_exists = file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php');
+    
+    $message = "=== DIAGNOSTIC PDF_Builder_Onboarding_Manager ===\n";
+    $message .= "Classe existe: " . ($class_exists ? 'OUI' : 'NON') . "\n";
+    $message .= "Fichier existe: " . ($file_exists ? 'OUI' : 'NON') . "\n";
+    $message .= "Plugin activé: " . (defined('PDF_BUILDER_PLUGIN_DIR') ? 'OUI' : 'NON') . "\n";
+    $message .= "Bootstrap chargé: " . (function_exists('pdf_builder_load_utilities_emergency') ? 'OUI' : 'NON') . "\n";
+    
+    if (!$class_exists) {
+        $message .= "Tentative de chargement d'urgence...\n";
+        pdf_builder_ensure_onboarding_manager();
+        $message .= "Après chargement: " . (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager') ? 'SUCCÈS' : 'ÉCHEC') . "\n";
+    }
+    
+    $message .= "===========================================\n";
+    
+    return $message;
+}
+
 // ============================================================================
 // ✅ BLOQUER LES NOTIFICATIONS WORDPRESS AVANT TOUT
 // ============================================================================

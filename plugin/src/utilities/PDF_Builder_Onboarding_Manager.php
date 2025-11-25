@@ -33,16 +33,33 @@ class PDF_Builder_Onboarding_Manager {
      * Constructeur privé (Singleton)
      */
     private function __construct() {
+        // Vérification de sécurité - s'assurer que WordPress est chargé
+        if (!defined('ABSPATH')) {
+            error_log('PDF_Builder_Onboarding_Manager: ABSPATH non défini - WordPress pas chargé');
+            return;
+        }
+        
         $this->init_hooks();
         $this->load_onboarding_options();
     }
 
     /**
-     * Obtenir l'instance unique
+     * Obtenir l'instance unique avec gestion d'erreur
      */
     public static function get_instance() {
         if (self::$instance === null) {
-            self::$instance = new self();
+            // Vérification avant instanciation
+            if (!class_exists('PDF_Builder_Onboarding_Manager')) {
+                error_log('PDF_Builder_Onboarding_Manager: Classe non trouvée lors de get_instance()');
+                return null;
+            }
+            
+            try {
+                self::$instance = new self();
+            } catch (Exception $e) {
+                error_log('PDF_Builder_Onboarding_Manager: Erreur lors de l\'instanciation: ' . $e->getMessage());
+                return null;
+            }
         }
         return self::$instance;
     }
