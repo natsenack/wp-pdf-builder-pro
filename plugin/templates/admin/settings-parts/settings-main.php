@@ -1922,25 +1922,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update dimensions card preview
     window.updateDimensionsCardPreview = function() {
         console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview EXECUTED - function called successfully');
-        try {
-            console.log('PDF_BUILDER_DEBUG: window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
-            if (window.pdfBuilderCanvasSettings) {
-                console.log('PDF_BUILDER_DEBUG: pdfBuilderCanvasSettings keys:', Object.keys(window.pdfBuilderCanvasSettings));
-            }
+        console.log('PDF_BUILDER_DEBUG: About to find dpiEl');
 
-            // Simple hardcoded test first
-            const dpiEl = document.getElementById('card-canvas-dpi');
-            console.log('PDF_BUILDER_DEBUG: dpiEl found:', !!dpiEl);
+        // Simple hardcoded test first
+        const dpiEl = document.getElementById('card-canvas-dpi');
+        console.log('PDF_BUILDER_DEBUG: dpiEl found:', dpiEl);
 
-            if (dpiEl) {
-                dpiEl.textContent = 'FUNCTION WORKS!';
-                console.log('PDF_BUILDER_DEBUG: Successfully updated dpiEl');
-            }
-
-            console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview completed successfully');
-        } catch (error) {
-            console.error('PDF_BUILDER_DEBUG: Error in updateDimensionsCardPreview:', error);
+        if (dpiEl) {
+            console.log('PDF_BUILDER_DEBUG: Current text content:', dpiEl.textContent);
+            dpiEl.textContent = 'FUNCTION WORKS!';
+            console.log('PDF_BUILDER_DEBUG: Successfully updated dpiEl to:', dpiEl.textContent);
+        } else {
+            console.log('PDF_BUILDER_DEBUG: dpiEl not found!');
         }
+
+        console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview completed successfully');
     }
 
     // Update apparence card preview
