@@ -42,6 +42,9 @@ class PDFPreviewAPI {
         this.lastMouseX = 0;
         this.lastMouseY = 0;
         this.dragListeners = null;
+        this.canDrag = false; // Flag pour savoir si le drag est autorisé
+        this.containerRect = null; // Cache des dimensions du conteneur
+        this.animationFrameId = null; // Pour optimiser les transformations
     }
 
     /**
@@ -212,6 +215,7 @@ class PDFPreviewAPI {
 
         // Initialiser le drag/pan de l'image
         this.initImageDrag(img);
+        this.updateDragState(img);
 
         if (context === 'editor') {
             title.textContent = '👁️ Aperçu du Template';
@@ -536,6 +540,7 @@ class PDFPreviewAPI {
         this.currentZoom = Math.max(25, Math.min(300, this.currentZoom + delta));
         this.updateImageTransform(img);
         this.updateZoomUI();
+        this.updateDragState(img);
     }
 
     /**
@@ -545,6 +550,7 @@ class PDFPreviewAPI {
         this.currentZoom = zoom;
         this.updateImageTransform(img);
         this.updateZoomUI();
+        this.updateDragState(img);
     }
 
     /**
@@ -561,39 +567,42 @@ class PDFPreviewAPI {
     resetImage(img) {
         this.currentZoom = 100;
         this.currentRotation = 0;
+        this.currentPanX = 0;
+        this.currentPanY = 0;
         this.updateImageTransform(img);
         this.updateZoomUI();
+        this.updateDragState(img);
     }
 
     /**
-     * Met à jour l'interface utilisateur du zoom
+     * Met à jour l'état du drag (dimensions du conteneur et flag canDrag)
      */
-    updateZoomUI() {
-        const slider = document.getElementById('pdf-preview-zoom-slider');
-        const value = document.getElementById('pdf-preview-zoom-value');
-        if (slider) slider.value = this.currentZoom;
-        if (value) value.textContent = this.currentZoom + '%';
+    updateDragState(img) {
+        const container = img.parentElement;
+        if (container) {
+            this.containerRect = container.getBoundingClientRect();
+            this.canDrag = this.currentZoom > 100; // STRICTEMENT > 100%
+
+            // Mettre à jour le curseur immédiatement
+            img.style.cursor = this.canDrag ? 'grab' : 'default';
+        }
     }
 
     /**
      * Initialise le drag/pan de l'image
      */
     initImageDrag(img) {
-        const container = img.parentElement;
-
         // Supprimer les anciens event listeners s'ils existent
         this.cleanupDragListeners();
 
         // Stocker les références pour pouvoir les supprimer plus tard
         this.dragListeners = {
             mousedown: (e) => this.handleMouseDown(e, img),
-            mousemove: (e) => this.handleMouseMove(e, img, container),
+            mousemove: (e) => this.handleMouseMove(e, img),
             mouseup: () => this.handleMouseUp(img),
             mouseenter: () => this.handleMouseEnter(img),
             mouseleave: () => this.handleMouseLeave(img)
-        };
-
-        // Ajouter les nouveaux event listeners
+        };        // Ajouter les nouveaux event listeners
         img.addEventListener('mousedown', this.dragListeners.mousedown);
         document.addEventListener('mousemove', this.dragListeners.mousemove);
         document.addEventListener('mouseup', this.dragListeners.mouseup);
@@ -625,20 +634,13 @@ class PDFPreviewAPI {
      * Gestionnaire mousedown
      */
     handleMouseDown(e, img) {
-        // Vérifier si le pan est possible (zoom > 100% OU image plus grande que le conteneur)
+        // Vérifier si le pan est possible (zoom > 100% UNIQUEMENT)
         const container = img.parentElement;
-        const containerRect = container.getBoundingClientRect();
-        const scale = this.currentZoom / 100;
-        const canPan = this.currentZoom > 100 ||
-                      (img.naturalWidth * scale > containerRect.width) ||
-                      (img.naturalHeight * scale > containerRect.height);
+        this.containerRect = container.getBoundingClientRect();
+        this.canDrag = this.currentZoom > 100; // STRICTEMENT > 100%
 
-        if (!canPan) {
-            debugLog('🚫 Drag impossible:', {
-                zoom: this.currentZoom,
-                imgSize: { w: img.naturalWidth * scale, h: img.naturalHeight * scale },
-                containerSize: { w: containerRect.width, h: containerRect.height }
-            });
+        if (!this.canDrag) {
+            debugLog('🚫 Drag impossible: zoom ≤ 100%');
             return;
         }
 
@@ -652,17 +654,8 @@ class PDFPreviewAPI {
     }    /**
      * Gestionnaire mousemove
      */
-    handleMouseMove(e, img, container) {
-        if (!this.isDragging) return;
-
-        // Vérifier si le pan est encore possible
-        const containerRect = container.getBoundingClientRect();
-        const scale = this.currentZoom / 100;
-        const canPan = this.currentZoom > 100 ||
-                      (img.naturalWidth * scale > containerRect.width) ||
-                      (img.naturalHeight * scale > containerRect.height);
-
-        if (!canPan) return;
+    handleMouseMove(e, img) {
+        if (!this.isDragging || !this.canDrag) return;
 
         const deltaX = e.clientX - this.lastMouseX;
         const deltaY = e.clientY - this.lastMouseY;
@@ -671,14 +664,24 @@ class PDFPreviewAPI {
         this.currentPanY += deltaY;
 
         // Limiter le pan pour éviter que l'image sorte complètement
-        this.constrainPan(img, container);
+        this.constrainPan(img);
 
-        this.updateImageTransform(img);
+        // Utiliser requestAnimationFrame pour des transformations fluides
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+        }
+        this.animationFrameId = requestAnimationFrame(() => {
+            this.updateImageTransform(img);
+            this.animationFrameId = null;
+        });
 
         this.lastMouseX = e.clientX;
         this.lastMouseY = e.clientY;
 
-        debugLog('🖱️ Drag en cours:', { deltaX, deltaY, panX: this.currentPanX, panY: this.currentPanY });
+        // Log moins fréquent pour éviter de ralentir
+        if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+            debugLog('🖱️ Drag en cours:', { deltaX, deltaY, panX: this.currentPanX, panY: this.currentPanY });
+        }
     }
 
     /**
@@ -687,16 +690,7 @@ class PDFPreviewAPI {
     handleMouseUp(img) {
         if (this.isDragging) {
             this.isDragging = false;
-
-            // Vérifier si le pan est encore possible pour le curseur
-            const container = img.parentElement;
-            const containerRect = container.getBoundingClientRect();
-            const scale = this.currentZoom / 100;
-            const canPan = this.currentZoom > 100 ||
-                          (img.naturalWidth * scale > containerRect.width) ||
-                          (img.naturalHeight * scale > containerRect.height);
-
-            img.style.cursor = canPan ? 'grab' : 'default';
+            img.style.cursor = this.currentZoom > 100 ? 'grab' : 'default';
             debugLog('🖱️ Drag terminé');
         }
     }
@@ -705,17 +699,13 @@ class PDFPreviewAPI {
      * Gestionnaire mouseenter
      */
     handleMouseEnter(img) {
-        // Vérifier si le pan est possible
-        const container = img.parentElement;
-        const containerRect = container.getBoundingClientRect();
-        const scale = this.currentZoom / 100;
-        const canPan = this.currentZoom > 100 ||
-                      (img.naturalWidth * scale > containerRect.width) ||
-                      (img.naturalHeight * scale > containerRect.height);
-
-        if (canPan) {
-            img.style.cursor = 'grab';
+        // À 100% zoom exactement, le drag est TOUJOURS désactivé
+        if (this.currentZoom <= 100) {
+            img.style.cursor = 'default';
+            return;
         }
+
+        img.style.cursor = 'grab';
     }
 
     /**
@@ -730,8 +720,8 @@ class PDFPreviewAPI {
     /**
      * Contraint le pan pour éviter que l'image sorte complètement du conteneur
      */
-    constrainPan(img, container) {
-        const containerRect = container.getBoundingClientRect();
+    constrainPan(img) {
+        if (!this.containerRect) return;
 
         // Utiliser les dimensions naturelles de l'image pour les calculs
         const naturalWidth = img.naturalWidth;
@@ -743,23 +733,27 @@ class PDFPreviewAPI {
         const scaledHeight = naturalHeight * scale;
 
         // Calculer les limites de pan (l'image doit rester visible)
-        const maxPanX = Math.max(0, (scaledWidth - containerRect.width) / 2);
-        const maxPanY = Math.max(0, (scaledHeight - containerRect.height) / 2);
+        const maxPanX = Math.max(0, (scaledWidth - this.containerRect.width) / 2);
+        const maxPanY = Math.max(0, (scaledHeight - this.containerRect.height) / 2);
 
-        // Appliquer les contraintes
+        // Appliquer les contraintes de manière fluide
+        const oldPanX = this.currentPanX;
+        const oldPanY = this.currentPanY;
+
         this.currentPanX = Math.max(-maxPanX, Math.min(maxPanX, this.currentPanX));
         this.currentPanY = Math.max(-maxPanY, Math.min(maxPanY, this.currentPanY));
 
-        debugLog('🔒 Pan contraint:', {
-            natural: { w: naturalWidth, h: naturalHeight },
-            scaled: { w: scaledWidth, h: scaledHeight },
-            container: { w: containerRect.width, h: containerRect.height },
-            limits: { x: maxPanX, y: maxPanY },
-            current: { x: this.currentPanX, y: this.currentPanY }
-        });
-    }
-
-    /**
+        // Log seulement si les valeurs ont changé significativement
+        if (Math.abs(this.currentPanX - oldPanX) > 1 || Math.abs(this.currentPanY - oldPanY) > 1) {
+            debugLog('🔒 Pan contraint:', {
+                natural: { w: naturalWidth, h: naturalHeight },
+                scaled: { w: scaledWidth, h: scaledHeight },
+                container: { w: this.containerRect.width, h: this.containerRect.height },
+                limits: { x: maxPanX, y: maxPanY },
+                current: { x: this.currentPanX, y: this.currentPanY }
+            });
+        }
+    }    /**
      * Ajoute les boutons d'action à l'aperçu
      */
     addPreviewActions(modal, imageUrl, context) {
