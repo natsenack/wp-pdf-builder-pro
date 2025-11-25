@@ -1923,25 +1923,18 @@ document.addEventListener('DOMContentLoaded', function() {
     window.updateDimensionsCardPreview = function() {
         console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview EXECUTED - function called successfully');
         try {
-            console.log('PDF_BUILDER_DEBUG: Starting function execution');
+            console.log('PDF_BUILDER_DEBUG: window.pdfBuilderCanvasSettings exists:', !!window.pdfBuilderCanvasSettings);
+            if (window.pdfBuilderCanvasSettings) {
+                console.log('PDF_BUILDER_DEBUG: pdfBuilderCanvasSettings keys:', Object.keys(window.pdfBuilderCanvasSettings));
+            }
 
-            // Get values from saved settings, not from modal inputs (since we're updating the preview)
-            const format = window.pdfBuilderCanvasSettings?.default_canvas_format || 'A4';
-            const dpi = parseInt(window.pdfBuilderCanvasSettings?.default_canvas_dpi) || 96;
-
-            console.log('PDF_BUILDER_DEBUG: Using saved values - format:', format, 'dpi:', dpi);
-
-            // Simple test: try to update just the DPI display
+            // Simple hardcoded test first
             const dpiEl = document.getElementById('card-canvas-dpi');
-            console.log('PDF_BUILDER_DEBUG: dpiEl found:', dpiEl);
+            console.log('PDF_BUILDER_DEBUG: dpiEl found:', !!dpiEl);
 
             if (dpiEl) {
-                const testText = `${dpi} DPI - ${format} (SAVED)`;
-                console.log('PDF_BUILDER_DEBUG: Setting dpiEl text to:', testText);
-                dpiEl.textContent = testText;
-                console.log('PDF_BUILDER_DEBUG: dpiEl updated successfully');
-            } else {
-                console.log('PDF_BUILDER_DEBUG: dpiEl not found!');
+                dpiEl.textContent = 'FUNCTION WORKS!';
+                console.log('PDF_BUILDER_DEBUG: Successfully updated dpiEl');
             }
 
             console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview completed successfully');
