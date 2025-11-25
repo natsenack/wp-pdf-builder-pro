@@ -1442,7 +1442,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             });
 });
-});            // Initialize zoom preview if function exists
+            // Initialize zoom preview if function exists
             // Removed automatic updateZoomPreview call to prevent conflicts with manual modal updates
             // if (typeof updateZoomPreview === 'function') {
             //     // Delay initialization to ensure DOM is ready
