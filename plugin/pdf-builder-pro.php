@@ -494,26 +494,15 @@ function pdf_builder_load_for_ajax()
 }
 function pdf_builder_handle_preview_ajax()
 {
-    // Ajouter des logs de débogage détaillés
-    error_log("=== PDF BUILDER PREVIEW AJAX START ===");
-    error_log("POST data: " . print_r($_POST, true));
-    error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
-
     // Charger le bootstrap
     pdf_builder_load_for_ajax();
-    error_log("Bootstrap loaded");
-
     // Le bootstrap a instancié PreviewImageAPI qui a re-enregistré les actions AJAX.
     // Maintenant, appelons directement la méthode generatePreview si PreviewImageAPI existe
     if (class_exists('PDF_Builder\\Api\\PreviewImageAPI')) {
-        error_log("PreviewImageAPI class found, creating instance");
         // Créer une nouvelle instance et appeler generatePreview directement
         $api = new \PDF_Builder\Api\PreviewImageAPI();
-        error_log("PreviewImageAPI instance created, calling generatePreview");
         $api->generatePreview();
-        error_log("generatePreview completed");
     } else {
-        error_log("ERROR: PreviewImageAPI class not found");
     // Fallback: envoyer une erreur JSON
         header('Content-Type: application/json; charset=UTF-8', true);
         http_response_code(500);
@@ -523,7 +512,6 @@ function pdf_builder_handle_preview_ajax()
         ]);
         exit;
     }
-    error_log("=== PDF BUILDER PREVIEW AJAX END ===");
 }
 
 /**

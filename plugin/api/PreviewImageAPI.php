@@ -227,7 +227,7 @@ class PreviewImageAPI
 // Set JSON header IMMÉDIATEMENT
         header('Content-Type: application/json; charset=UTF-8');
 // Enregistrer un handler d'erreur shutdown pour les erreurs fatales
-        register_shutdown_function(array($this, '_shutdown_handler'));
+        register_shutdown_function(array($this, 'shutdownHandler'));
         $start_time = microtime(true);
         try {
         // VALIDATION TRÈS SIMPLE INLINE
