@@ -161,7 +161,7 @@ class PDF_Builder_Settings_Loader {
             'cache_compression' => $settings['pdf_builder_cache_compression'] ?? true,
 
             // Templates
-            'template_library_enabled' => $settings['pdf_builder_template_library_enabled'] ?? true,
+            'template_library_enabled' => $settings['template_library_enabled'] ?? true,
 
             // Développeur
             'developer_enabled' => $settings['pdf_builder_developer_enabled'] ?? false,
