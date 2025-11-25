@@ -4,6 +4,11 @@
  * Définit les paramètres canvas globalement avant le chargement du JS
  */
 
+// Assurer que les constantes sont chargées
+if (!defined('\PDF_Builder\PAPER_FORMATS')) {
+    require_once plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'core/Conventions.php';
+}
+
 // Récupérer les paramètres canvas depuis les options séparées (synchronisées)
 $canvas_settings_js = [
     'default_canvas_format' => get_option('pdf_builder_canvas_format', 'A4'),
