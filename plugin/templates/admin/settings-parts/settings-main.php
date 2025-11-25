@@ -1921,6 +1921,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update dimensions card preview
     window.updateDimensionsCardPreview = function() {
+        alert('PDF_BUILDER_DEBUG: updateDimensionsCardPreview EXECUTED');
         console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview EXECUTED - function called successfully');
         console.log('PDF_BUILDER_DEBUG: Test 1 - basic execution');
         var test = 'test';
