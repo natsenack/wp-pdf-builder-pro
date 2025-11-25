@@ -158,35 +158,7 @@ if (!current_user_can('manage_options')) {
             }
         }
 
-        async function testPreviewModal() {
-            const resultDiv = document.getElementById('pdf-test-result');
-            resultDiv.innerHTML = '<div class="status info">🎨 Test de la modal d\'aperçu...</div>';
-
-            try {
-                // Simuler un appel à l'API Preview pour tester la modal
-                if (window.pdfPreviewAPI) {
-                    // Créer des données de test fictives
-                    const testData = {
-                        templateId: 1,
-                        format: 'png',
-                        quality: 150,
-                        context: 'editor'
-                    };
-
-                    const result = await window.pdfPreviewAPI.generateEditorPreview(testData);
-                    if (result) {
-                        resultDiv.innerHTML = '<div class="status success">✅ Modal d\'aperçu fonctionnelle - Image générée et affichée</div>';
-                    } else {
-                        resultDiv.innerHTML = '<div class="status error">❌ Échec de génération d\'aperçu</div>';
-                    }
-                } else {
-                    resultDiv.innerHTML = '<div class="status error">❌ API Preview non disponible</div>';
-                }
-            } catch (error) {
-                resultDiv.innerHTML = '<div class="status error">❌ Erreur test modal : ' + error.message + '</div>';
-            }
-        }
-            const resultDiv = document.getElementById('image-test-result');
+        async function runImageTest() {
             resultDiv.innerHTML = '<div class="status info">🔄 Test Images en cours...</div>';
 
             try {
@@ -234,7 +206,7 @@ if (!current_user_can('manage_options')) {
                     resultDiv.innerHTML = '<div class="status error">❌ API Preview non disponible</div>';
                 }
             } catch (error) {
-                resultDiv.innerHTML = '<div class="status error">❌ Erreur test modal : ' + error.message + '</div>';
+                resultDiv.innerHTML = '<div class="status error">❌ Erreur réseau : ' + error.message + '</div>';
             }
         }
     </script>
