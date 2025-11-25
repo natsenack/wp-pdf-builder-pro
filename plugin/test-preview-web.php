@@ -205,12 +205,32 @@ if (!current_user_can('manage_options')) {
                 if (window.pdfPreviewAPI) {
                     console.log('🎨 [JS] API Preview trouvée, préparation données de test');
 
-                    // Créer des données de test fictives
+                    // Créer des données de test fictives avec la structure attendue
                     const testData = {
-                        templateId: 1,
-                        format: 'png',
-                        quality: 150,
-                        context: 'editor'
+                        template: {
+                            elements: [
+                                {
+                                    type: 'text',
+                                    content: 'Aperçu PDF Builder Pro - Test Jours 8-10',
+                                    x: 50,
+                                    y: 50,
+                                    width: 300,
+                                    height: 40,
+                                    fontSize: 18,
+                                    color: '#2c3e50'
+                                },
+                                {
+                                    type: 'text',
+                                    content: 'Interface utilisateur avec contrôles zoom/rotation',
+                                    x: 50,
+                                    y: 100,
+                                    width: 400,
+                                    height: 30,
+                                    fontSize: 14,
+                                    color: '#7f8c8d'
+                                }
+                            ]
+                        }
                     };
 
                     console.log('🎨 [JS] Données de test:', testData);
