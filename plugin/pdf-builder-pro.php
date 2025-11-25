@@ -720,10 +720,13 @@ function pdf_builder_save_settings_ajax() {
         case 'pdf':
             // Sauvegarder les paramètres PDF
             $settings = array(
-                'pdf_quality' => sanitize_text_field($_POST['pdf_quality']),
-                'pdf_format' => sanitize_text_field($_POST['pdf_format']),
-                'pdf_compression' => isset($_POST['pdf_compression']) ? '1' : '0',
-                'pdf_metadata' => isset($_POST['pdf_metadata']) ? '1' : '0',
+                'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+                'pdf_page_size' => sanitize_text_field($_POST['pdf_page_size'] ?? 'A4'),
+                'pdf_orientation' => sanitize_text_field($_POST['pdf_orientation'] ?? 'portrait'),
+                'pdf_cache_enabled' => isset($_POST['pdf_cache_enabled']) ? '1' : '0',
+                'pdf_compression' => sanitize_text_field($_POST['pdf_compression'] ?? 'medium'),
+                'pdf_metadata_enabled' => isset($_POST['pdf_metadata_enabled']) ? '1' : '0',
+                'pdf_print_optimized' => isset($_POST['pdf_print_optimized']) ? '1' : '0',
             );
 
             foreach ($settings as $key => $value) {
@@ -790,10 +793,23 @@ function pdf_builder_save_settings_ajax() {
                 'cache_auto_cleanup' => $_POST['cache_auto_cleanup'] ?? '0',
                 'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
                 'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+                'performance_auto_optimization' => isset($_POST['performance_auto_optimization']) ? '1' : '0',
                 'auto_maintenance' => $_POST['systeme_auto_maintenance'] ?? '0',
                 'auto_backup' => $_POST['systeme_auto_backup'] ?? '0',
                 'auto_backup_frequency' => sanitize_text_field($_POST['systeme_auto_backup_frequency'] ?? $_POST['systeme_auto_backup_frequency_hidden'] ?? 'daily'),
                 'backup_retention' => intval($_POST['systeme_backup_retention'] ?? 30),
+            );
+
+            foreach ($settings as $key => $value) {
+                update_option('pdf_builder_' . $key, $value);
+            }
+            $saved_count++;
+            break;
+
+        case 'licence':
+            // Sauvegarder les paramètres licence
+            $settings = array(
+                'license_enable_notifications' => isset($_POST['enable_expiration_notifications']) ? '1' : '0',
             );
 
             foreach ($settings as $key => $value) {

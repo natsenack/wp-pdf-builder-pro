@@ -1117,6 +1117,40 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Ajouter des event listeners pour les indicateurs en temps réel
+    const enableLoggingCheckbox = document.getElementById('enable_logging');
+    if (enableLoggingCheckbox) {
+        enableLoggingCheckbox.addEventListener('change', updateSecurityStatusIndicators);
+    }
+
+    const cacheEnabledCheckbox = document.getElementById('general_cache_enabled');
+    if (cacheEnabledCheckbox) {
+        cacheEnabledCheckbox.addEventListener('change', updateSystemStatusIndicators);
+    }
+
+    const maintenanceCheckbox = document.getElementById('systeme_auto_maintenance');
+    if (maintenanceCheckbox) {
+        maintenanceCheckbox.addEventListener('change', updateSystemStatusIndicators);
+    }
+
+    const backupCheckbox = document.getElementById('systeme_auto_backup');
+    if (backupCheckbox) {
+        backupCheckbox.addEventListener('change', updateSystemStatusIndicators);
+    }
+
+    // Event listener pour l'indicateur de bibliothèque de templates
+    const templateLibraryCheckbox = document.getElementById('template_library_enabled');
+    if (templateLibraryCheckbox) {
+        templateLibraryCheckbox.addEventListener('change', function() {
+            const indicator = document.getElementById('template-library-indicator');
+            if (indicator) {
+                const isActive = templateLibraryCheckbox.checked;
+                indicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
+                indicator.style.background = isActive ? '#28a745' : '#dc3545';
+            }
+        });
+    }
+
     // Gestion du bouton flottant de sauvegarde
     const floatingSaveBtn = document.getElementById('floating-save-btn');
     if (floatingSaveBtn) {
