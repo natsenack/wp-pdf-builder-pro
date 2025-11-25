@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Paramètres canvas pour JavaScript
  * Définit les paramètres canvas globalement avant le chargement du JS

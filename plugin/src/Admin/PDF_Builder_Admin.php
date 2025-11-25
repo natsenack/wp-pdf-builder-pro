@@ -1043,6 +1043,12 @@ class PdfBuilderAdmin
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
+        // Charger le core si nécessaire
+        if (!function_exists('pdf_builder_load_core')) {
+            require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'bootstrap.php';
+        }
+        pdf_builder_load_core();
+
         // Enregistrer et charger le script pour la page des paramètres
 
         // Charger l'API globale de l'éditeur React pour la communication avec les modals
