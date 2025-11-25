@@ -161,7 +161,7 @@ class PDF_Builder_Settings_Loader {
             'cache_compression' => $settings['pdf_builder_cache_compression'] ?? true,
 
             // Templates
-            'template_library_enabled' => $settings['pdf_builder_settings']['template_library_enabled'] ?? true,
+            'template_library_enabled' => $settings['pdf_builder_template_library_enabled'] ?? true,
 
             // Développeur
             'developer_enabled' => $settings['pdf_builder_developer_enabled'] ?? false,
@@ -449,7 +449,6 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
             'cache_enabled' => isset($_POST['cache_enabled']),
             'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-            'template_library_enabled' => isset($_POST['template_library_enabled']),
             'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
             'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
             'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
@@ -523,6 +522,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         }
         update_option('pdf_builder_pdf_metadata_enabled', isset($_POST['pdf_metadata_enabled']) ? 1 : 0);
         update_option('pdf_builder_pdf_print_optimized', isset($_POST['pdf_print_optimized']) ? 1 : 0);
+        update_option('pdf_builder_template_library_enabled', isset($_POST['template_library_enabled']) ? 1 : 0);
     } else {
         $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
     }
