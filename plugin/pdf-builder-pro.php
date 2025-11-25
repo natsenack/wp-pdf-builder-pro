@@ -19,6 +19,10 @@ if (!defined('ABSPATH')) {
 
 // DEBUG: Log si le plugin se charge pendant AJAX
 if (defined('DOING_AJAX') && DOING_AJAX) {
+    // Log all AJAX requests for debugging
+    if (isset($_REQUEST['action'])) {
+        error_log('PDF Builder AJAX Request: ' . $_REQUEST['action'] . ' - From: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'unknown'));
+    }
 }
 
 // Définir les constantes du plugin
