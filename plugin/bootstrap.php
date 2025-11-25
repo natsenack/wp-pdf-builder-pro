@@ -11,6 +11,62 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 }
 
 // ============================================================================
+// ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
+// ============================================================================
+
+/**
+ * Fonction d'urgence pour charger les utilitaires si nécessaire
+ * Peut être appelée depuis n'importe où pour garantir la disponibilité des classes
+ */
+function pdf_builder_load_utilities_emergency() {
+    static $utilities_loaded = false;
+    
+    if ($utilities_loaded) {
+        return;
+    }
+    
+    $utilities = array(
+        'PDF_Builder_Notification_Manager.php',
+        'PDF_Builder_Onboarding_Manager.php',
+        'PDF_Builder_GDPR_Manager.php'
+    );
+    
+    foreach ($utilities as $utility) {
+        $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
+        if (file_exists($utility_path) && !class_exists('PDF_Builder\\Utilities\\' . str_replace('.php', '', $utility))) {
+            require_once $utility_path;
+        }
+    }
+    
+    $utilities_loaded = true;
+}
+
+// Charger d'urgence au démarrage de bootstrap
+pdf_builder_load_utilities_emergency();
+
+// ============================================================================
+// ✅ FONCTION GLOBALE DE VÉRIFICATION DE CLASSE
+// ============================================================================
+
+/**
+ * Fonction globale pour vérifier et charger la classe Onboarding Manager
+ * Peut être appelée depuis n'importe où dans le code
+ */
+function pdf_builder_ensure_onboarding_manager() {
+    if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+        pdf_builder_load_utilities_emergency();
+        
+        // Double vérification avec chargement manuel
+        $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
+        if (file_exists($onboarding_path)) {
+            require_once $onboarding_path;
+        }
+    }
+    
+    return class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager');
+}
+
+// ============================================================================
 // ✅ BLOQUER LES NOTIFICATIONS WORDPRESS AVANT TOUT
 // ============================================================================
 // Cette approche très tôt supprime les notifications AVANT qu'elles ne s'affichent
@@ -545,6 +601,7 @@ function pdf_builder_load_bootstrap()
 
     // INITIALISER LE GESTIONNAIRE DE NOTIFICATIONS
     // Charger explicitement les utilitaires avant l'initialisation
+    pdf_builder_load_utilities_emergency(); // Chargement d'urgence
     $utilities = array(
         'PDF_Builder_Notification_Manager.php',
         'PDF_Builder_Onboarding_Manager.php',
@@ -848,6 +905,9 @@ function pdf_builder_load_core_on_demand()
     if ($core_loaded) {
         return;
     }
+
+    // Chargement d'urgence des utilitaires dès le départ
+    pdf_builder_load_utilities_emergency();
 
     // Détection ultra-rapide
     $load_core = false;
