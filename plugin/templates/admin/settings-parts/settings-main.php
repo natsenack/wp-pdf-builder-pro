@@ -1376,13 +1376,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
 
                             // Update canvas previews after successful save
-                            console.log('PDF_BUILDER_DEBUG: Updating previews for category:', category);
                             console.log('PDF_BUILDER_DEBUG: window.updateDimensionsCardPreview exists:', typeof window.updateDimensionsCardPreview);
                             if (category === 'dimensions' && typeof window.updateDimensionsCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updateDimensionsCardPreview');
-                                setTimeout(function() {
+                                try {
                                     window.updateDimensionsCardPreview();
-                                }, 100);
+                                    console.log('PDF_BUILDER_DEBUG: updateDimensionsCardPreview called successfully');
+                                } catch (error) {
+                                    console.error('PDF_BUILDER_DEBUG: Error calling updateDimensionsCardPreview:', error);
+                                }
                             }
                             if (category === 'apparence' && typeof window.updateApparenceCardPreview === 'function') {
                                 console.log('PDF_BUILDER_DEBUG: Calling updateApparenceCardPreview');
