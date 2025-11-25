@@ -9,6 +9,8 @@ import { useTemplate } from '../hooks/useTemplate.ts';
 import { useAutoSave } from '../hooks/useAutoSave.ts';
 import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas.ts';
+import { injectResponsiveUtils } from '../utils/responsive.ts';
+import { useIsMobile, useIsTablet } from '../hooks/useResponsive.ts';
 
 // ✅ Add spin animation
 const spinStyles = `
@@ -39,6 +41,10 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [isPropertiesPanelOpen, setIsPropertiesPanelOpen] = useState(false);
   const [manualSaveSuccess, setManualSaveSuccess] = useState(false);
+
+  // Hooks responsives
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
 
   const {
     templateName,
@@ -73,6 +79,11 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
 
   // Hook pour les paramètres du canvas
   const canvasSettings = useCanvasSettings();
+
+  // Injection des utilitaires responsives
+  useEffect(() => {
+    injectResponsiveUtils();
+  }, []);
 
   // Effet pour gérer le scroll et ajuster le padding
   useEffect(() => {

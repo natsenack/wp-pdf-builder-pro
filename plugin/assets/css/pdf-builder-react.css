@@ -2,6 +2,15 @@
 /* PDF Builder Pro - React/TypeScript Styles */
 /* Generated: 2025-10-04T15:09:27.425Z */
 
+/* ===== CONSTANTES RESPONSIVE ===== */
+:root {
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 992px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1440px;
+}
+
 /* ===== ANIMATIONS ET TRANSITIONS FLUIDES - PHASE 2 ===== */
 
 /* Transitions générales pour une UX fluide */
@@ -548,7 +557,7 @@ body.pdf-builder-active #wpadminbar {
 }
 
 /* Media queries pour la réactivité */
-@media (max-width: 1200px) {
+@media (max-width: var(--breakpoint-lg)) {
   .editor-sidebar.left-sidebar {
     width: 320px; /* Bibliothèque d'Éléments - mobile */
   }
@@ -557,7 +566,7 @@ body.pdf-builder-active #wpadminbar {
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: var(--breakpoint-md)) {
   .editor-sidebar.left-sidebar {
     width: 220px;
   }
@@ -566,7 +575,7 @@ body.pdf-builder-active #wpadminbar {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: var(--breakpoint-sm)) {
   .editor-sidebar.left-sidebar,
   .editor-sidebar.right-sidebar {
     width: 200px;
@@ -1024,7 +1033,7 @@ body.pdf-builder-active #wpadminbar {
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
+@media (max-width: var(--breakpoint-sm)) {
   .pdf-builder-sidebar,
   .pdf-builder-properties {
     width: 250px;
@@ -1040,7 +1049,7 @@ body.pdf-builder-active #wpadminbar {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: var(--breakpoint-xs)) {
   .pdf-builder-sidebar,
   .pdf-builder-properties {
     display: none;
@@ -2489,7 +2498,7 @@ body.pdf-builder-active #wpadminbar {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: var(--breakpoint-sm)) {
   .properties-panel {
     width: 360px;
   }
@@ -2925,7 +2934,7 @@ body.pdf-builder-active #wpadminbar {
 }
 
 /* Responsive pour les écrans étroits */
-@media (max-width: 1200px) {
+@media (max-width: var(--breakpoint-lg)) {
   .variable-group {
     flex-direction: column;
     align-items: flex-start;
