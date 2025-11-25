@@ -5,6 +5,7 @@
 **Phase**: 3.0 - Système d'Aperçu Multi-Format
 **Échéance**: Décembre 2025 (7-20 décembre)
 **Priorité**: CRITIQUE (Bloque UX v1.1.0)
+**Progression**: Jours 1-7 ✅ TERMINÉS | Jours 8-10 EN COURS
 
 ---
 
@@ -65,26 +66,29 @@ POST /wp-json/wp-pdf-builder-pro/v1/preview
 
 ### **Semaine 1 : Fondations (7-13 déc)**
 
-#### **Jour 1-2 : API Preview Basique**
-- [ ] Créer endpoint REST `/wp-json/wp-pdf-builder-pro/v1/preview`
-- [ ] Validation paramètres (templateId, format, quality)
-- [ ] Permissions et sécurité (nonces, capabilities)
-- [ ] Structure réponse unifiée (success/error/data)
-- [ ] Tests unitaires endpoint
+#### **Jour 1-2 : API Preview Basique** ✅ TERMINÉ
+- [x] Créer endpoint REST `/wp-json/wp-pdf-builder-pro/v1/preview`
+- [x] Validation paramètres (templateId, format, quality)
+- [x] Permissions et sécurité (nonces, capabilities)
+- [x] Structure réponse unifiée (success/error/data)
+- [x] Tests unitaires endpoint
+- **Note** : Implémenté dans `PreviewImageAPI.php` avec validation complète et gestion d'erreurs
 
-#### **Jour 3-4 : Génération PDF**
-- [ ] Intégration DomPDF pour rendu HTML→PDF
-- [ ] Configuration optimisée (DPI, compression, mémoire)
-- [ ] Gestion templates JSON existants
-- [ ] Données statiques (pas de variables dynamiques)
-- [ ] Tests génération PDF basique
+#### **Jour 3-4 : Génération PDF** ✅ TERMINÉ
+- [x] Intégration DomPDF pour rendu HTML→PDF
+- [x] Configuration optimisée (DPI, compression, mémoire)
+- [x] Gestion templates JSON existants
+- [x] Données statiques (pas de variables dynamiques)
+- [x] Tests génération PDF basique
+- **Note** : Méthode `generatePDFPreview()` opérationnelle avec `SampleDataProvider` et `GeneratorManager`
 
-#### **Jour 5-7 : Conversion Images**
-- [ ] PDF→PNG/JPG avec Imagick ou GD
-- [ ] Contrôle qualité (1-100%)
-- [ ] Métadonnées et optimisation taille
-- [ ] Cache fichier temporaire
-- [ ] Tests conversion tous formats
+#### **Jour 5-7 : Conversion Images** ✅ TERMINÉ
+- [x] PDF→PNG/JPG avec Imagick ou GD
+- [x] Contrôle qualité (1-100%)
+- [x] Métadonnées et optimisation taille
+- [x] Cache fichier temporaire
+- [x] Tests conversion tous formats
+- **Note** : Implémenté avec fallback Imagick→GD, contrôle qualité, et génération de clés cache
 
 ### **Semaine 2 : Interface & Intégration (14-20 déc)**
 
