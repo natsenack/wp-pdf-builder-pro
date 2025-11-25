@@ -544,16 +544,20 @@ function pdf_builder_load_bootstrap()
     }
 
     // INITIALISER LE GESTIONNAIRE DE NOTIFICATIONS
+    pdf_builder_load_core_on_demand();
     if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
         \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance();
     }
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
+    // S'assurer que l'autoloader est chargé pour les utilitaires
+    pdf_builder_load_core_on_demand();
     if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
         \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
     }
 
     // INITIALISER LE GESTIONNAIRE RGPD
+    pdf_builder_load_core_on_demand();
     if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
         \PDF_Builder\Utilities\PDF_Builder_GDPR_Manager::get_instance();
     }
