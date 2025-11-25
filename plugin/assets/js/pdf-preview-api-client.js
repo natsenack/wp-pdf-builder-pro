@@ -45,11 +45,10 @@ class PDFPreviewAPI {
         this.canDrag = false; // Flag pour savoir si le drag est autorisé
         this.containerRect = null; // Cache des dimensions du conteneur
         this.animationFrameId = null; // Pour optimiser les transformations
-        this.lastConstrainTime = 0; // Pour throttler constrainPan
         this.dragStartTime = 0; // Pour mesurer la performance
         this.maxPanX = 0; // Limites pré-calculées
         this.maxPanY = 0; // Limites pré-calculées
-        this.needsConstrain = false; // Flag pour différer les contraintes
+        this.needsConstrain = false; // Flag pour les contraintes
     }
 
     /**
@@ -456,26 +455,21 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Met à jour la transformation de l'image
+     * Met à jour la transformation de l'image - VERSION ULTRA-OPTIMISEE
      */
     updateImageTransform(img) {
-        // Variables locales ultra-optimisées
+        // Variables locales ultra-rapides
         const panX = this.currentPanX;
         const panY = this.currentPanY;
         const scale = this.currentZoom / 100;
         const rotation = this.currentRotation;
 
-        // Transformation CSS optimisée avec template literal
-        const transform = `translate(${panX}px, ${panY}px) scale(${scale}) rotate(${rotation}deg)`;
+        // Transformation CSS optimisée avec concaténation (plus rapide que template literals)
+        const transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ') rotate(' + rotation + 'deg)';
 
-        // Appliquer la transformation de manière optimisée
+        // Appliquer directement (pas de vérifications inutiles)
         img.style.transform = transform;
         img.style.transformOrigin = 'center center';
-
-        // Optimisation GPU (will-change) - appliqué une seule fois
-        if (!img.style.willChange) {
-            img.style.willChange = 'transform';
-        }
     }
 
     /**
@@ -693,60 +687,48 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Gestionnaire mousemove
+     * Gestionnaire mousemove - VERSION ULTRA-OPTIMISEE
      */
     handleMouseMove(e, img) {
         if (!this.isDragging || !this.canDrag) return;
 
-        // Variables locales ultra-optimisées
+        // Variables locales ultra-optimisées pour éviter les accès répétés
         const clientX = e.clientX;
         const clientY = e.clientY;
-
-        // Calcul des deltas avec variables locales
         const lastX = this.lastMouseX;
         const lastY = this.lastMouseY;
+        const maxPanX = this.maxPanX;
+        const maxPanY = this.maxPanY;
+
+        // Calcul des deltas
         const deltaX = clientX - lastX;
         const deltaY = clientY - lastY;
 
-        // Accumuler le pan immédiatement (fluidité maximale)
-        this.currentPanX += deltaX;
-        this.currentPanY += deltaY;
+        // Accumuler le pan immédiatement
+        let newPanX = this.currentPanX + deltaX;
+        let newPanY = this.currentPanY + deltaY;
 
-        // Throttling très léger des contraintes (30fps / ~32ms pour la fluidité)
-        const now = performance.now();
-        if ((now - this.lastConstrainTime) > 32) {
-            // Appliquer les contraintes avec les limites pré-calculées
-            let panX = this.currentPanX;
-            let panY = this.currentPanY;
-
-            // Contraintes ultra-rapides avec limites pré-calculées
-            if (this.maxPanX > 0) {
-                panX = panX < -this.maxPanX ? -this.maxPanX : (panX > this.maxPanX ? this.maxPanX : panX);
-            }
-            if (this.maxPanY > 0) {
-                panY = panY < -this.maxPanY ? -this.maxPanY : (panY > this.maxPanY ? this.maxPanY : panY);
-            }
-
-            // Mettre à jour seulement si nécessaire
-            if (panX !== this.currentPanX || panY !== this.currentPanY) {
-                this.currentPanX = panX;
-                this.currentPanY = panY;
-            }
-
-            this.lastConstrainTime = now;
+        // Appliquer les contraintes INSTANTANEMENT (pas de throttling)
+        if (maxPanX > 0) {
+            newPanX = newPanX < -maxPanX ? -maxPanX : (newPanX > maxPanX ? maxPanX : newPanX);
+        }
+        if (maxPanY > 0) {
+            newPanY = newPanY < -maxPanY ? -maxPanY : (newPanY > maxPanY ? maxPanY : newPanY);
         }
 
-        // RequestAnimationFrame pour les transformations (fluidité 60fps)
-        if (this.animationFrameId) {
-            cancelAnimationFrame(this.animationFrameId);
+        // Mettre à jour les valeurs
+        this.currentPanX = newPanX;
+        this.currentPanY = newPanY;
+
+        // RequestAnimationFrame optimisé - une seule frame active
+        if (!this.animationFrameId) {
+            this.animationFrameId = requestAnimationFrame(() => {
+                this.updateImageTransform(img);
+                this.animationFrameId = null;
+            });
         }
 
-        this.animationFrameId = requestAnimationFrame(() => {
-            this.updateImageTransform(img);
-            this.animationFrameId = null;
-        });
-
-        // Mettre à jour les dernières positions
+        // Mettre à jour les positions souris
         this.lastMouseX = clientX;
         this.lastMouseY = clientY;
     }
@@ -809,28 +791,6 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Contraint le pan pour éviter que l'image sorte complètement du conteneur
-     * NOTE: Maintenant inline dans handleMouseMove pour la performance maximale
-     */
-    constrainPan() {
-        // Cette méthode est maintenant obsolète - les contraintes sont inline dans handleMouseMove
-        // Gardée pour compatibilité si utilisée ailleurs
-        if (!this.containerRect || !this.canDrag) return;
-
-        const maxPanX = this.maxPanX || 0;
-        const maxPanY = this.maxPanY || 0;
-
-        let panX = this.currentPanX;
-        let panY = this.currentPanY;
-
-        panX = Math.max(-maxPanX, Math.min(maxPanX, panX));
-        panY = Math.max(-maxPanY, Math.min(maxPanY, panY));
-
-        if (panX !== this.currentPanX || panY !== this.currentPanY) {
-            this.currentPanX = panX;
-            this.currentPanY = panY;
-        }
-    }    /**
      * Ajoute les boutons d'action à l'aperçu
      */
     addPreviewActions(modal, imageUrl, context) {
