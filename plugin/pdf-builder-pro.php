@@ -19,9 +19,12 @@ if (!defined('ABSPATH')) {
 
 // DEBUG: Log si le plugin se charge pendant AJAX
 if (defined('DOING_AJAX') && DOING_AJAX) {
-    // Log all AJAX requests for debugging
+    // Log ALL AJAX requests for debugging
     if (isset($_REQUEST['action'])) {
-        error_log('PDF Builder AJAX Request: ' . $_REQUEST['action'] . ' - From: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'unknown'));
+        error_log('PDF Builder AJAX Request: ' . $_REQUEST['action'] . ' - From: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'unknown') . ' - Method: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('PDF Builder AJAX POST data: ' . json_encode($_POST));
+    } else {
+        error_log('PDF Builder AJAX Request: NO ACTION - From: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'unknown') . ' - Method: ' . $_SERVER['REQUEST_METHOD']);
     }
 }
 
