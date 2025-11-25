@@ -260,6 +260,9 @@ class PDFPreviewAPI {
             title.textContent = `📄 Aperçu Commande #${orderId}`;
         }
 
+        // Mettre à jour les boutons d'action avec l'URL de l'image
+        this.updateActionButtons(imageUrl);
+
         // Ajouter les contrôles de zoom et rotation
         this.addZoomControls(previewModal, canvas);
 
@@ -434,6 +437,29 @@ class PDFPreviewAPI {
         title.textContent = 'Aperçu PDF';
         title.style.cssText = 'margin: 0; color: #1d2327; font-size: 16px; font-weight: 600;';
 
+        // Boutons d'action dans le header
+        const actionButtons = document.createElement('div');
+        actionButtons.style.cssText = 'display: flex; gap: 10px; align-items: center;';
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.textContent = '📥 Télécharger';
+        downloadBtn.className = 'pdf-preview-action-btn download-btn';
+        downloadBtn.addEventListener('click', () => {
+            const imageUrl = document.querySelector('#pdf-preview-canvas') ? null : 'placeholder'; // Will be set later
+            this.downloadPreview(imageUrl);
+        });
+
+        const printBtn = document.createElement('button');
+        printBtn.textContent = '🖨️ Imprimer';
+        printBtn.className = 'pdf-preview-action-btn print-btn';
+        printBtn.addEventListener('click', () => {
+            const imageUrl = document.querySelector('#pdf-preview-canvas') ? null : 'placeholder'; // Will be set later
+            this.printPreview(imageUrl);
+        });
+
+        actionButtons.appendChild(downloadBtn);
+        actionButtons.appendChild(printBtn);
+
         const closeBtn = document.createElement('button');
         closeBtn.id = 'pdf-preview-close';
         closeBtn.textContent = '×';
@@ -448,6 +474,7 @@ class PDFPreviewAPI {
         `;
 
         header.appendChild(title);
+        header.appendChild(actionButtons);
         header.appendChild(closeBtn);
 
         // Actions container
@@ -823,44 +850,18 @@ class PDFPreviewAPI {
     }
 
     /**
-     * Ajoute les boutons d'action à l'aperçu
+     * Met à jour les boutons d'action avec l'URL de l'image
      */
-    addPreviewActions(modal, imageUrl, context) {
-        const actionsContainer = modal.querySelector('#pdf-preview-actions');
-        actionsContainer.innerHTML = '';
-
-        // Bouton de téléchargement
-        const downloadBtn = document.createElement('button');
-        downloadBtn.textContent = '📥 Télécharger';
-        downloadBtn.className = 'pdf-preview-action-btn download-btn';
-        downloadBtn.addEventListener('click', () => {
-            this.downloadPreview(imageUrl);
-        });
-
-        // Bouton d'impression
-        const printBtn = document.createElement('button');
-        printBtn.textContent = '🖨️ Imprimer';
-        printBtn.className = 'pdf-preview-action-btn print-btn';
-        printBtn.addEventListener('click', () => {
-            this.printPreview(imageUrl);
-        });
-
-        // Bouton de régénération (pour metabox seulement)
-        if (context === 'metabox') {
-            const regenerateBtn = document.createElement('button');
-            regenerateBtn.textContent = '🔄 Régénérer';
-            regenerateBtn.className = 'pdf-preview-action-btn regenerate-btn';
-            regenerateBtn.addEventListener('click', () => {
-                // Cette fonction devra être appelée depuis le contexte parent
-                if (typeof window.regenerateOrderPreview === 'function') {
-                    window.regenerateOrderPreview();
-                }
-            });
-            actionsContainer.appendChild(regenerateBtn);
+    updateActionButtons(imageUrl) {
+        const downloadBtn = document.querySelector('.pdf-preview-action-btn.download-btn');
+        const printBtn = document.querySelector('.pdf-preview-action-btn.print-btn');
+        
+        if (downloadBtn) {
+            downloadBtn.onclick = () => this.downloadPreview(imageUrl);
         }
-
-        actionsContainer.appendChild(downloadBtn);
-        actionsContainer.appendChild(printBtn);
+        if (printBtn) {
+            printBtn.onclick = () => this.printPreview(imageUrl);
+        }
     }
 
     /**
