@@ -36,33 +36,42 @@ try {
 }
 
 # Calculer le chemin relatif pour le serveur
-$RelativePath = $FilePath.Replace("D:\wp-pdf-builder-pro\plugin\", "").Replace("\", "/")
+$RelativePath = $FilePath.Replace("I:\wp-pdf-builder-pro\", "").Replace("D:\wp-pdf-builder-pro\", "").Replace("\", "/")
 $RemoteFilePath = "ftp://$FtpServer$RemotePath/$RelativePath"
 
-# Créer les répertoires nécessaires
-$RemoteDir = [System.IO.Path]::GetDirectoryName("$RemotePath/$RelativePath")
+# Créer les répertoires nécessaires récursivement
+$RemoteDir = [System.IO.Path]::GetDirectoryName("$RemotePath/$RelativePath").Replace("\", "/")
 Write-Host "📁 Création des répertoires : $RemoteDir" -ForegroundColor Gray
 
 try {
-    # Créer le répertoire templates
-    $templatesDir = "ftp://$FtpServer$RemotePath/templates"
-    $mkdirRequest = [System.Net.FtpWebRequest]::Create($templatesDir)
-    $mkdirRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUsername, $FtpPassword)
-    $mkdirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-    $mkdirRequest.Timeout = 10000
-    try { $response = $mkdirRequest.GetResponse(); $response.Close() } catch { }
+    # Fonction pour créer les répertoires récursivement
+    function New-FtpDirectory {
+        param([string]$ftpPath)
+        try {
+            $mkdirRequest = [System.Net.FtpWebRequest]::Create($ftpPath)
+            $mkdirRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUsername, $FtpPassword)
+            $mkdirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+            $mkdirRequest.Timeout = 10000
+            $response = $mkdirRequest.GetResponse()
+            $response.Close()
+            Write-Host "  ✅ Créé: $ftpPath" -ForegroundColor Gray
+        } catch {
+            # Le répertoire existe probablement déjà, c'est normal
+        }
+    }
 
-    # Créer le répertoire admin
-    $adminDir = "ftp://$FtpServer$RemotePath/templates/admin"
-    $mkdirRequest = [System.Net.FtpWebRequest]::Create($adminDir)
-    $mkdirRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUsername, $FtpPassword)
-    $mkdirRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-    $mkdirRequest.Timeout = 10000
-    try { $response = $mkdirRequest.GetResponse(); $response.Close() } catch { }
+    # Diviser le chemin et créer chaque niveau
+    $pathParts = $RemoteDir -split "/" | Where-Object { $_ -ne "" }
+    $currentPath = "ftp://$FtpServer"
+
+    foreach ($part in $pathParts) {
+        $currentPath += "/$part"
+        New-FtpDirectory $currentPath
+    }
 
     Write-Host "✅ Répertoires créés" -ForegroundColor Green
 } catch {
-    Write-Host "⚠️ Impossible de créer les répertoires (peut-être existent déjà)" -ForegroundColor Yellow
+    Write-Host "⚠️ Erreur lors de la création des répertoires: $($_.Exception.Message)" -ForegroundColor Yellow
 }
 
 Write-Host "📤 Upload vers : $RemoteFilePath" -ForegroundColor Gray

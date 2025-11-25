@@ -35,6 +35,7 @@
             "src/Managers/PDF_Builder_Settings_Manager.php",
             "src/Managers/PDF_Builder_Status_Manager.php",
             "src/Managers/PDF_Builder_Template_Manager.php",
+            "src/Managers/PDF_Builder_Thumbnail_Manager.php",
             "src/Managers/PDF_Builder_Translation_Utils.php",
             "src/Managers/PDF_Builder_WooCommerce_Integration.php",
             "src/Core/PDF_Builder_Path_Validator.php",
