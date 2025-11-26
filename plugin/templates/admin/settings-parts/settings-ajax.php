@@ -1494,5 +1494,30 @@ function pdf_builder_get_all_canvas_settings_handler() {
     }
 }
 
+// AJAX handler for developer settings
+function pdf_builder_save_developpeur_settings_handler() {
+    if (PDF_Builder_Security_Manager::verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        try {
+            // Update developer settings
+            $developer_enabled = isset($_POST['developer_enabled']) ? 1 : 0;
+            $developer_password = sanitize_text_field($_POST['developer_password'] ?? '');
+            
+            error_log("PDF_BUILDER_DEBUG AJAX: Processing developer form - enabled: $developer_enabled, password: " . (!empty($developer_password) ? 'set' : 'empty'));
+            
+            update_option('pdf_builder_developer_enabled', $developer_enabled);
+            update_option('pdf_builder_developer_password', $developer_password);
+            
+            send_ajax_response(true, 'Paramètres développeur sauvegardés avec succès.', [
+                'developer_enabled' => $developer_enabled,
+                'developer_password_set' => !empty($developer_password)
+            ]);
+        } catch (Exception $e) {
+            send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+        }
+    } else {
+        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
+    }
+}
+
 // Hook AJAX actions - MOVED to pdf-builder-pro.php for global registration
 // REMOVED: Canvas settings actions moved to PDF_Builder_Admin to avoid duplication
