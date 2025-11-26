@@ -61,7 +61,9 @@ class PDFPreviewAPI {
      * Génère un aperçu depuis l'éditeur (données fictives)
      */
     async generateEditorPreview(templateData, options = {}) {
-        debugLog('🎨 [JS] generateEditorPreview appelée avec:', { templateData, options });
+        console.log('🎨 [JS] generateEditorPreview appelée avec:', { templateData, options });
+        console.log('🎨 [JS] isDebugEnabled():', isDebugEnabled());
+        console.log('🎨 [JS] window.location.search:', window.location.search);
 
         if (this.isGenerating) {
             debugWarn('⚠️ [JS] Génération déjà en cours...');
@@ -72,7 +74,7 @@ class PDFPreviewAPI {
         this.showLoadingIndicator();
 
         try {
-            debugLog('🎨 [JS] Préparation FormData...');
+            console.log('🎨 [JS] Préparation FormData...');
             const formData = new FormData();
             formData.append('action', 'wp_pdf_preview_image');
             formData.append('nonce', this.nonce);
@@ -81,7 +83,7 @@ class PDFPreviewAPI {
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
-            debugLog('🎨 [JS] FormData préparé:', {
+            console.log('🎨 [JS] FormData préparé:', {
                 action: 'wp_pdf_preview_image',
                 nonce: this.nonce ? 'présent' : 'manquant',
                 context: 'editor',
@@ -90,13 +92,13 @@ class PDFPreviewAPI {
                 format: options.format || 'png'
             });
 
-            debugLog('🎨 [JS] Envoi requête fetch vers:', this.endpoint);
+            console.log('🎨 [JS] Envoi requête fetch vers:', this.endpoint);
             const response = await fetch(this.endpoint, {
                 method: 'POST',
                 body: formData
             });
 
-            debugLog('🎨 [JS] Réponse reçue:', {
+            console.log('🎨 [JS] Réponse reçue:', {
                 ok: response.ok,
                 status: response.status,
                 statusText: response.statusText,
@@ -105,26 +107,26 @@ class PDFPreviewAPI {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                debugError('❌ [JS] Erreur HTTP:', { status: response.status, statusText: response.statusText, errorText });
+                console.error('❌ [JS] Erreur HTTP:', { status: response.status, statusText: response.statusText, errorText });
                 throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
             }
 
-            debugLog('🎨 [JS] Parsing réponse JSON...');
+            console.log('🎨 [JS] Parsing réponse JSON...');
             const result = await response.json();
-            debugLog('🎨 [JS] Résultat JSON parsé:', result);
+            console.log('🎨 [JS] Résultat JSON parsé:', result);
 
             if (result.success) {
-                debugLog('✅ [JS] Génération réussie, données:', result.data);
+                console.log('✅ [JS] Génération réussie, données:', result.data);
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'editor');
                 return result.data;
             } else {
-                debugError('❌ [JS] Erreur génération éditeur:', result);
+                console.error('❌ [JS] Erreur génération éditeur:', result);
                 this.showError('Erreur lors de la génération de l\'aperçu');
                 return null;
             }
         } catch (error) {
-            debugError('❌ [JS] Erreur réseau/catch:', error);
+            console.error('❌ [JS] Erreur réseau/catch:', error);
             this.showError('Erreur de connexion');
             return null;
         } finally {
