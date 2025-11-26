@@ -1634,6 +1634,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.log('PDF_BUILDER_DEBUG: Form data -', key, '=', value);
                         }
 
+                        // Test: Vérifier les options actuelles avant sauvegarde
+                        console.log('PDF_BUILDER_DEBUG: Current canvas_autosave_enabled before save:', window.pdfBuilderCanvasSettings?.canvas_autosave_enabled);
+
                         // Additional debug for dimensions category
                         if (category === 'dimensions') {
                             console.log('PDF_BUILDER_DEBUG: Dimensions form elements:');
@@ -1872,6 +1875,32 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_versions_limit !== undefined) {
                                     window.pdfBuilderCanvasSettings.versions_limit = parseInt(data.data.saved.canvas_versions_limit);
                                 }
+                                
+                                console.log('PDF_BUILDER_DEBUG: Saved data received:', data.data.saved);
+                                console.log('PDF_BUILDER_DEBUG: window.pdfBuilderCanvasSettings.canvas_autosave_enabled updated to:', window.pdfBuilderCanvasSettings.canvas_autosave_enabled);
+                                
+                                // Test: Vérifier que les options sont sauvegardées en faisant un appel AJAX pour les relire
+                                setTimeout(function() {
+                                    fetch(ajaxConfig.ajax_url, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded',
+                                        },
+                                        body: 'action=pdf_builder_get_canvas_settings&nonce=' + ajaxConfig.nonce
+                                    })
+                                    .then(response => response.json())
+                                    .then(testData => {
+                                        console.log('PDF_BUILDER_DEBUG: Options relues après sauvegarde:', testData);
+                                        if (testData.success && testData.data) {
+                                            console.log('PDF_BUILDER_DEBUG: canvas_autosave_enabled in DB:', testData.data.canvas_autosave_enabled);
+                                            console.log('PDF_BUILDER_DEBUG: canvas_autosave_interval in DB:', testData.data.canvas_autosave_interval);
+                                            console.log('PDF_BUILDER_DEBUG: canvas_versions_limit in DB:', testData.data.canvas_versions_limit);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('PDF_BUILDER_DEBUG: Error testing saved options:', error);
+                                    });
+                                }, 500);
                                 
                                 // Mettre à jour les éléments du DOM
                                 updateFormElementsFromSavedData(category, data.data.saved);
