@@ -3,7 +3,7 @@
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
-         <form method="post" id="developpeur-form" onsubmit="saveDeveloperSettings(event);">
+         <form method="post" id="developpeur-form">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
                 <input type="hidden" name="submit_developpeur" value="1">
 
@@ -830,69 +830,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
-// Function to save developer settings via AJAX
-function saveDeveloperSettings(event) {
-    event.preventDefault();
-    
-    const form = document.getElementById('developpeur-form');
-    const formData = new FormData(form);
-    
-    // Add nonce for AJAX
-    formData.append('nonce', '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>');
-    formData.append('action', 'pdf_builder_save_developpeur_settings');
-    
-    console.log('PDF_BUILDER_DEBUG: Sending developer settings via AJAX', Object.fromEntries(formData));
-    
-    // Show loading state
-    const submitBtn = document.getElementById('submit_developpeur');
-    const originalText = submitBtn.value;
-    submitBtn.value = 'Sauvegarde en cours...';
-    submitBtn.disabled = true;
-    
-    fetch(ajaxurl, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('PDF_BUILDER_DEBUG: AJAX response', data);
-        
-        if (data.success) {
-            // Show success message
-            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                PDF_Builder_Notification_Manager.show_toast(data.data.message, 'success');
-            } else {
-                alert(data.data.message);
-            }
-            
-            // Update the indicator if it exists
-            const indicator = document.getElementById('developer-enabled-indicator');
-            if (indicator) {
-                indicator.textContent = data.data.developer_enabled ? 'Activé' : 'Désactivé';
-                indicator.style.color = data.data.developer_enabled ? '#28a745' : '#dc3545';
-            }
-        } else {
-            // Show error message
-            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                PDF_Builder_Notification_Manager.show_toast(data.data.message, 'error');
-            } else {
-                alert('Erreur: ' + data.data.message);
-            }
-        }
-    })
-    .catch(error => {
-        console.error('PDF_BUILDER_DEBUG: AJAX error', error);
-        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-            PDF_Builder_Notification_Manager.show_toast('Erreur de connexion', 'error');
-        } else {
-            alert('Erreur de connexion');
-        }
-    })
-    .finally(() => {
-        // Reset button state
-        submitBtn.value = originalText;
-        submitBtn.disabled = false;
-    });
-}
 </script>

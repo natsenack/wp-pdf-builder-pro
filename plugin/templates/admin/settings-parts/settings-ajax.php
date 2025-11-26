@@ -192,6 +192,24 @@ class PDF_Builder_Options_Manager {
         'pdf_builder_default_template' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
         'pdf_builder_template_library_enabled' => ['type' => 'boolean', 'sanitize' => 'intval'],
 
+        // Developer Settings
+        'pdf_builder_developer_enabled' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_developer_password' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
+        'pdf_builder_license_test_mode' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_debug_php_errors' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_debug_javascript' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_debug_javascript_verbose' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_debug_ajax' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_debug_performance' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_debug_database' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_log_level' => ['type' => 'int', 'sanitize' => 'intval'],
+        'pdf_builder_log_file_size' => ['type' => 'int', 'sanitize' => 'intval'],
+        'pdf_builder_log_retention' => ['type' => 'int', 'sanitize' => 'intval'],
+        'pdf_builder_force_https' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_performance_monitoring' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_license_enable_notifications' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_license_notification_email' => ['type' => 'string', 'sanitize' => 'sanitize_email'],
+
         // Canvas Settings
         'pdf_builder_canvas_width' => ['type' => 'int', 'sanitize' => 'intval'],
         'pdf_builder_canvas_height' => ['type' => 'int', 'sanitize' => 'intval'],
@@ -1491,31 +1509,6 @@ function pdf_builder_get_all_canvas_settings_handler() {
 
     } catch (Exception $e) {
         send_ajax_response(false, 'Erreur: ' . $e->getMessage());
-    }
-}
-
-// AJAX handler for developer settings
-function pdf_builder_save_developpeur_settings_handler() {
-    if (PDF_Builder_Security_Manager::verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        try {
-            // Update developer settings
-            $developer_enabled = isset($_POST['developer_enabled']) ? 1 : 0;
-            $developer_password = sanitize_text_field($_POST['developer_password'] ?? '');
-            
-            error_log("PDF_BUILDER_DEBUG AJAX: Processing developer form - enabled: $developer_enabled, password: " . (!empty($developer_password) ? 'set' : 'empty'));
-            
-            update_option('pdf_builder_developer_enabled', $developer_enabled);
-            update_option('pdf_builder_developer_password', $developer_password);
-            
-            send_ajax_response(true, 'Paramètres développeur sauvegardés avec succès.', [
-                'developer_enabled' => $developer_enabled,
-                'developer_password_set' => !empty($developer_password)
-            ]);
-        } catch (Exception $e) {
-            send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
-        }
-    } else {
-        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
     }
 }
 
