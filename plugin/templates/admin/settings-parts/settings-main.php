@@ -542,6 +542,8 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur
             $developer_enabled = isset($_POST['developer_enabled']) ? 1 : 0;
             $developer_password = sanitize_text_field($_POST['developer_password'] ?? '');
             
+            error_log("PDF_BUILDER_DEBUG: Processing developer form - enabled: $developer_enabled, password: " . (!empty($developer_password) ? 'set' : 'empty'));
+            
             update_option('pdf_builder_developer_enabled', $developer_enabled);
             update_option('pdf_builder_developer_password', $developer_password);
             

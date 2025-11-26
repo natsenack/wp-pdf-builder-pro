@@ -3,7 +3,7 @@
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
-         <form method="post" id="developpeur-form">
+         <form method="post" id="developpeur-form" onsubmit="console.log('PDF_BUILDER_DEBUG: Developer form submitting', new FormData(this));">
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
                 <input type="hidden" name="submit_developpeur" value="1">
 
