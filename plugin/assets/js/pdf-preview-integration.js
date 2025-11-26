@@ -882,10 +882,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Initialiser l'intégration éditeur si on est dans l'éditeur
-    if (document.querySelector('#pdf-editor-canvas') ||
+    if ((document.querySelector('#pdf-editor-canvas') ||
         document.querySelector('.pdf-canvas-editor') ||
         window.location.href.includes('pdf-builder-editor') ||
-        window.location.href.includes('pdf-builder-react-editor')) {
+        window.location.href.includes('pdf-builder-react-editor')) &&
+        !window.location.href.includes('pdf-builder-settings')) {
 
         PDFBuilderLogger.info('Condition éditeur remplie - création de PDFEditorPreviewIntegration');
         window.pdfEditorPreview = new PDFEditorPreviewIntegration(window.pdfCanvasEditor);
