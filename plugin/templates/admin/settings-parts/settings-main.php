@@ -62,6 +62,10 @@ class PDF_Builder_Settings_Loader {
         'pdf_builder_developer_password' => '',
         'pdf_builder_debug_php_errors' => false,
         'pdf_builder_debug_javascript' => false,
+        'pdf_builder_debug_js_settings' => true, // Page des paramètres par défaut
+        'pdf_builder_debug_js_editor' => false,
+        'pdf_builder_debug_js_admin' => false,
+        'pdf_builder_debug_js_frontend' => false,
         'pdf_builder_debug_javascript_verbose' => false,
         'pdf_builder_debug_ajax' => false,
         'pdf_builder_debug_performance' => false,

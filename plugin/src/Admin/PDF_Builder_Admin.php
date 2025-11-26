@@ -1309,6 +1309,10 @@ class PdfBuilderAdmin
                 'debug' => [
                     'php_errors' => get_option('pdf_builder_debug_php_errors', false),
                     'javascript' => get_option('pdf_builder_debug_javascript', false),
+                    'js_settings' => get_option('pdf_builder_debug_js_settings', true),
+                    'js_editor' => get_option('pdf_builder_debug_js_editor', false),
+                    'js_admin' => get_option('pdf_builder_debug_js_admin', false),
+                    'js_frontend' => get_option('pdf_builder_debug_js_frontend', false),
                     'javascript_verbose' => get_option('pdf_builder_debug_javascript_verbose', false),
                     'ajax' => get_option('pdf_builder_debug_ajax', false),
                     'performance' => get_option('pdf_builder_debug_performance', false),
