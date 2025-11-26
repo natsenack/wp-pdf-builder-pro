@@ -1736,6 +1736,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (category === 'autosave' && data.data && data.data.saved) {
                                 if (data.data.saved.canvas_autosave_enabled !== undefined) {
                                     window.pdfBuilderCanvasSettings.autosave_enabled = data.data.saved.canvas_autosave_enabled === '1' || data.data.saved.canvas_autosave_enabled === true;
+                                    
+                                    // Mettre à jour l'état du toggle dans le DOM
+                                    const autosaveToggle = document.getElementById('canvas_autosave_enabled');
+                                    if (autosaveToggle) {
+                                        autosaveToggle.checked = window.pdfBuilderCanvasSettings.autosave_enabled;
+                                        pdfBuilderDebug('Toggle autosave mis à jour:', window.pdfBuilderCanvasSettings.autosave_enabled);
+                                    }
                                 }
                                 if (data.data.saved.canvas_autosave_interval !== undefined) {
                                     window.pdfBuilderCanvasSettings.autosave_interval = parseInt(data.data.saved.canvas_autosave_interval);
