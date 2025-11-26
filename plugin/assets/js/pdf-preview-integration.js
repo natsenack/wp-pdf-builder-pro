@@ -501,25 +501,6 @@ class PDFEditorPreviewIntegration {
             }
         };
     }
-                        fontFamily: 'Arial',
-                        color: '#000000',
-                        fontWeight: 'bold'
-                    },
-                    {
-                        type: 'text',
-                        content: 'Sauvegardé automatiquement le ' + new Date().toLocaleString(),
-                        x: 50,
-                        y: 100,
-                        width: 400,
-                        height: 30,
-                        fontSize: 14,
-                        fontFamily: 'Arial',
-                        color: '#666666'
-                    }
-                ]
-            }
-        };
-    }
 }
 
 // ==========================================
