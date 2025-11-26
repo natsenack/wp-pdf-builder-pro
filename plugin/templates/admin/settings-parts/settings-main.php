@@ -1627,11 +1627,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // S'assurer que toutes les checkboxes sont incluses dans FormData
                         const allCheckboxes = form.querySelectorAll('input[type="checkbox"]');
+                        console.log('PDF_BUILDER_DEBUG: Found checkboxes in form:', allCheckboxes.length);
                         allCheckboxes.forEach(checkbox => {
                             if (checkbox.name) {
+                                console.log('PDF_BUILDER_DEBUG: Processing checkbox:', checkbox.name, 'checked:', checkbox.checked);
                                 // Si la checkbox n'est pas déjà dans FormData, l'ajouter
                                 if (!formData.has(checkbox.name)) {
                                     formData.append(checkbox.name, '0');
+                                    console.log('PDF_BUILDER_DEBUG: Added unchecked checkbox to FormData:', checkbox.name, '= 0');
+                                } else {
+                                    console.log('PDF_BUILDER_DEBUG: Checkbox already in FormData:', checkbox.name);
                                 }
                             }
                         });
