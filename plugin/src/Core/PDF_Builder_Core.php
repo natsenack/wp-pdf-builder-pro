@@ -905,7 +905,7 @@ class PdfBuilderCore
             // Passer les données à React
             window.pdfBuilderData = {
                 templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
-                templateData: <?php echo $template_data ? wp_json_encode($template_data) : 'null'; ?>,
+                templateData: null, // <?php echo $template_data ? wp_json_encode($template_data) : 'null'; ?> // TEMPORAIREMENT DÉSACTIVÉ
                 isEditing: <?php echo ($template_id || $template_data) ? 'true' : 'false'; ?>,
                 ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
                 nonce: '<?php echo wp_create_nonce('pdf_builder_nonce'); ?>'
