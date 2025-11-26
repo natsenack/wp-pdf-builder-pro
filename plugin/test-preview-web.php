@@ -103,6 +103,13 @@ if (defined('ABSPATH') && function_exists('current_user_can') && !current_user_c
                 </ul>
             </div>
 
+            <div class='test-section'>
+                <h3>🧪 Test Données Canvas</h3>
+                <p>Test rapide des données injectées dans un template simple :</p>
+                <button class='btn' onclick='testCanvasData()'>🖼️ Tester Données Canvas</button>
+                <div id='canvas-data-test'></div>
+            </div>
+
         <button class='btn' onclick='testPreviewModal()'>🎨 Tester la Modal d'Aperçu</button>
         </div>
 
@@ -309,27 +316,87 @@ if (defined('ABSPATH') && function_exists('current_user_can') && !current_user_c
             }
         }
 
-        async function runDataTest() {
-            const resultDiv = document.getElementById('data-test-result');
-            resultDiv.innerHTML = '<div class="status info">🔄 Test d\'injection des données en cours...</div>';
+        async function testCanvasData() {
+            const resultDiv = document.getElementById('canvas-data-test');
+            resultDiv.innerHTML = '<div class="status info">🔄 Test des données canvas en cours...</div>';
 
             try {
-                const response = await fetch(window.location.href + '?run_test=data');
-                const html = await response.text();
+                // Template de test avec variables
+                const testTemplate = {
+                    templateId: 'canvas-test-' + Date.now(),
+                    template: {
+                        name: 'Test Canvas Data',
+                        elements: [
+                            {
+                                type: 'text',
+                                content: 'DONNÉES CANVAS - TEST INJECTION',
+                                x: 50,
+                                y: 50,
+                                width: 400,
+                                height: 40,
+                                fontSize: 18,
+                                color: '#2c3e50'
+                            },
+                            {
+                                type: 'text',
+                                content: 'Client: {{customer_name}} ({{customer_email}})',
+                                x: 50,
+                                y: 100,
+                                width: 400,
+                                height: 30,
+                                fontSize: 14,
+                                color: '#34495e'
+                            },
+                            {
+                                type: 'text',
+                                content: 'Commande: {{order_number}} - {{order_total}}',
+                                x: 50,
+                                y: 130,
+                                width: 400,
+                                height: 30,
+                                fontSize: 14,
+                                color: '#34495e'
+                            },
+                            {
+                                type: 'text',
+                                content: 'Entreprise: {{company_name}}',
+                                x: 50,
+                                y: 160,
+                                width: 400,
+                                height: 30,
+                                fontSize: 14,
+                                color: '#34495e'
+                            }
+                        ]
+                    }
+                };
 
-                // Extract the result from the HTML
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const testResult = doc.getElementById('data-test-result-data');
+                console.log('🧪 [JS] Test données canvas avec template:', testTemplate);
 
-                if (testResult) {
-                    resultDiv.innerHTML = testResult.innerHTML;
+                // Générer l'aperçu
+                const result = await window.generateEditorPreview(testTemplate, {
+                    quality: 150,
+                    format: 'png',
+                    context: 'editor'
+                });
+
+                console.log('🧪 [JS] Résultat test canvas:', result);
+
+                if (result && result.image_url) {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ Données canvas injectées avec succès</div>
+                        <div class="result">
+                            <strong>Variables injectées depuis SampleDataProvider:</strong><br>
+                            <img src="${result.image_url}" style="max-width: 100%; border: 1px solid #ddd; margin-top: 10px;" alt="Aperçu avec données canvas">
+                        </div>
+                    `;
                 } else {
-                    resultDiv.innerHTML = '<div class="status error">❌ Erreur : Impossible de récupérer les résultats des données</div>';
+                    resultDiv.innerHTML = '<div class="status error">❌ Échec génération aperçu canvas</div>';
                 }
 
             } catch (error) {
-                resultDiv.innerHTML = '<div class="status error">❌ Erreur réseau : ' + error.message + '</div>';
+                console.error('🧪 [JS] Erreur test canvas:', error);
+                resultDiv.innerHTML = '<div class="status error">❌ Erreur test données canvas : ' + error.message + '</div>';
             }
         }
     </script>

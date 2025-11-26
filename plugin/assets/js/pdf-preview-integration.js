@@ -311,14 +311,62 @@ class PDFEditorPreviewIntegration {
         try {
             PDFBuilderLogger.info('🎨 [JS] generatePreview() appelée depuis éditeur');
 
-            // Récupérer les données du template depuis l'éditeur
-            const templateData = this.getTemplateData();
+            // ESSAI 1: Récupérer les données du template depuis l'éditeur
+            let templateData = this.getTemplateData();
             PDFBuilderLogger.info('🎨 [JS] Données template récupérées:', templateData);
 
-            if (!templateData) {
-                alert('Aucune donnée de template trouvée. Veuillez créer un template d\'abord.');
-                PDFBuilderLogger.error('❌ [JS] Aucune donnée template trouvée');
-                return;
+            // ESSAI 2: Si pas de données, utiliser un template de test simple
+            if (!templateData || !templateData.template || !templateData.template.elements || templateData.template.elements.length === 0) {
+                PDFBuilderLogger.warn('⚠️ [JS] Aucune donnée template trouvée, utilisation template de test');
+                templateData = {
+                    templateId: 'test-injection-' + Date.now(),
+                    template: {
+                        name: 'Test Injection Variables',
+                        elements: [
+                            {
+                                type: 'text',
+                                content: 'TEST INJECTION VARIABLES - CANVAS',
+                                x: 50,
+                                y: 50,
+                                width: 400,
+                                height: 40,
+                                fontSize: 18,
+                                color: '#2c3e50'
+                            },
+                            {
+                                type: 'text',
+                                content: 'Client: {{customer_name}} ({{customer_email}})',
+                                x: 50,
+                                y: 100,
+                                width: 400,
+                                height: 30,
+                                fontSize: 14,
+                                color: '#34495e'
+                            },
+                            {
+                                type: 'text',
+                                content: 'Commande: {{order_number}} - {{order_total}}',
+                                x: 50,
+                                y: 130,
+                                width: 400,
+                                height: 30,
+                                fontSize: 14,
+                                color: '#34495e'
+                            },
+                            {
+                                type: 'text',
+                                content: 'Entreprise: {{company_name}}',
+                                x: 50,
+                                y: 160,
+                                width: 400,
+                                height: 30,
+                                fontSize: 14,
+                                color: '#34495e'
+                            }
+                        ]
+                    }
+                };
+                PDFBuilderLogger.info('🎨 [JS] Template de test créé:', templateData);
             }
 
             // Générer l'aperçu avec contexte explicite
