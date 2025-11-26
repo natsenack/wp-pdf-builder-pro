@@ -323,28 +323,36 @@ class AjaxHandler
      */
     public function ajaxGetTemplate()
     {
+        $this->debug_log('ajaxGetTemplate called with GET: ' . print_r($_GET, true));
+
         try {
             // Vérifier les permissions
             if (!is_user_logged_in() || !current_user_can('manage_options')) {
+                $this->debug_log('ajaxGetTemplate: Insufficient permissions');
                 wp_send_json_error('Permissions insuffisantes');
                 return;
             }
 
             // Vérifier le nonce depuis les paramètres GET
             if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_nonce')) {
+                $this->debug_log('ajaxGetTemplate: Invalid nonce');
                 wp_send_json_error('Nonce invalide');
                 return;
             }
 
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : null;
+            $this->debug_log('ajaxGetTemplate: Template ID = ' . $template_id);
 
             if (!$template_id) {
+                $this->debug_log('ajaxGetTemplate: Missing template ID');
                 wp_send_json_error('ID de template manquant');
                 return;
             }
 
             // Charger le template en utilisant le template processor
+            $this->debug_log('ajaxGetTemplate: Calling loadTemplateRobust for template ID ' . $template_id);
             $template = $this->admin->template_processor->loadTemplateRobust($template_id);
+            $this->debug_log('ajaxGetTemplate: loadTemplateRobust returned: ' . (is_array($template) ? 'array with ' . count($template) . ' keys' : gettype($template)));
 
             if ($template) {
                 // Récupérer le nom du template depuis les données JSON en priorité, sinon depuis la DB
@@ -365,16 +373,19 @@ class AjaxHandler
                     }
                 }
 
+                $this->debug_log('ajaxGetTemplate: Template loaded successfully, name: ' . $template_name);
                 wp_send_json_success([
                     'template' => $template,
                     'template_name' => $template_name,
                     'message' => 'Template chargé avec succès'
                 ]);
             } else {
+                $this->debug_log('ajaxGetTemplate: Template not found');
                 wp_send_json_error('Template introuvable');
             }
 
         } catch (Exception $e) {
+            $this->debug_log('ajaxGetTemplate: Exception caught: ' . $e->getMessage());
             wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
         }
     }
@@ -1148,7 +1159,7 @@ class AjaxHandler
             $updated++;
         }
 
-        debug_log('saveApparenceSettings updated ' . $updated . ' settings');
+        $this->debug_log('saveApparenceSettings updated ' . $updated . ' settings');
         return $updated > 0;
     }
 
@@ -1201,7 +1212,7 @@ class AjaxHandler
         $updated = 0;
 
         // Debug log
-        debug_log('saveInteractionsSettings called with POST data: ' . print_r($_POST, true));
+        $this->debug_log('saveInteractionsSettings called with POST data: ' . print_r($_POST, true));
 
         // Glisser-déposer activé
         if (isset($_POST['canvas_drag_enabled'])) {
