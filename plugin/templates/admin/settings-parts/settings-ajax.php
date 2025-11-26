@@ -350,6 +350,9 @@ function pdf_builder_save_settings_handler() {
     if (PDF_Builder_Security_Manager::verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
 
+        // Debug: Log after nonce verification
+        error_log('PDF_BUILDER_DEBUG AJAX: Handler started, current_tab = ' . $current_tab);
+
     // Traiter directement selon l'onglet
     switch ($current_tab) {
         case 'all':
@@ -539,6 +542,8 @@ function pdf_builder_save_settings_handler() {
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_developer_enabled', $value);
                     error_log("PDF_BUILDER_DEBUG AJAX: Saved developer_enabled = $value");
+                    $saved_value = get_option('pdf_builder_developer_enabled', 'NOT_SET');
+                    error_log("PDF_BUILDER_DEBUG AJAX: Verified saved developer_enabled = $saved_value");
                 }
                 $value = $get_post_value('developer_password');
                 if ($value !== null) {
@@ -809,6 +814,8 @@ function pdf_builder_save_settings_handler() {
                     'gdpr_enabled' => get_option('pdf_builder_gdpr_enabled', 0) ? '1' : '0',
                     'developer_enabled' => get_option('pdf_builder_developer_enabled', 0) ? '1' : '0'
                 ];
+
+                error_log('PDF_BUILDER_DEBUG AJAX: About to send success response for all settings');
 
                 send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.', ['saved_options' => $saved]);
             } catch (Exception $e) {
