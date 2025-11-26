@@ -196,7 +196,14 @@ jQuery(document).ready(function($) {
 
     // Fonction pour initialiser les métriques du cache de manière sécurisée
     function initializeCacheMetrics() {
+        console.log('PDF Builder: initializeCacheMetrics called');
+        console.log('PDF Builder: pdfBuilderAjax available?', typeof pdfBuilderAjax !== 'undefined');
+        if (typeof pdfBuilderAjax !== 'undefined') {
+            console.log('PDF Builder: pdfBuilderAjax object:', pdfBuilderAjax);
+        }
+
         if (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax.ajaxurl && pdfBuilderAjax.nonce) {
+            console.log('PDF Builder: pdfBuilderAjax ready, calling updateCacheMetrics');
             updateCacheMetrics();
         } else {
             console.log('PDF Builder: pdfBuilderAjax not ready, retrying in 500ms...');
@@ -225,6 +232,9 @@ jQuery(document).ready(function($) {
             console.error('PDF Builder: pdfBuilderAjax not available');
             return;
         }
+
+        console.log('PDF Builder: Making AJAX call to:', pdfBuilderAjax.ajaxurl);
+        console.log('PDF Builder: Using nonce:', pdfBuilderAjax.nonce);
 
         // Faire l'appel AJAX pour récupérer les métriques
         $.ajax({
