@@ -1,5 +1,9 @@
 <?php // Developer tab content - Updated: 2025-11-18 20:20:00 ?>
 
+// Variables nécessaires pour l'onglet développeur
+$license_test_mode = $all_settings['pdf_builder_license_test_mode_enabled'] ?? false;
+$license_test_key = $all_settings['pdf_builder_license_test_key'] ?? '';
+
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 

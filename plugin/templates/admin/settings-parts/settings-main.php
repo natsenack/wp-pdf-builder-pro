@@ -645,9 +645,6 @@ if (
             <a href="#developpeur" class="nav-tab" data-tab="developpeur">
                 <span class="tab-icon">👨‍💻</span>
                 <span class="tab-text">Développeur</span>
-                <span class="developer-enabled-indicator" style="margin-left: 8px; font-size: 10px; font-weight: bold; color: <?php echo get_option('pdf_builder_developer_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
-                    <?php echo get_option('pdf_builder_developer_enabled', false) ? 'Activé' : 'Désactivé'; ?>
-                </span>
             </a>
         </div>
     </div>
@@ -3379,6 +3376,235 @@ function syncFormElementsWithLoadedSettings() {
     });
 }
 
+// ============================================
+// ONGLET DÉVELOPPEUR - FONCTIONNALITÉS JAVASCRIPT
+// ============================================
+
+// Fonction pour afficher/masquer les sections développeur
+function toggleDeveloperSections(show) {
+    const sections = [
+        'dev-license-section',
+        'dev-debug-section',
+        'dev-logs-section',
+        'dev-optimizations-section',
+        'dev-logs-viewer-section',
+        'dev-tools-section',
+        'dev-shortcuts-section',
+        'dev-todo-section',
+        'dev-console-section',
+        'dev-hooks-section'
+    ];
+
+    sections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            section.style.display = show ? '' : 'none';
+        }
+    });
+}
+
+// Gestionnaire pour le toggle du mot de passe
+const togglePasswordBtn = document.getElementById('toggle_password');
+if (togglePasswordBtn) {
+    togglePasswordBtn.addEventListener('click', function() {
+        const passwordInput = document.getElementById('developer_password');
+        if (passwordInput) {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🙈 Masquer';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁️ Afficher';
+            }
+        }
+    });
+}
+
+// Gestionnaire pour le mode test licence
+const toggleLicenseTestModeBtn = document.getElementById('toggle_license_test_mode_btn');
+if (toggleLicenseTestModeBtn) {
+    toggleLicenseTestModeBtn.addEventListener('click', function() {
+        const nonce = document.getElementById('toggle_license_test_mode_nonce');
+        const statusSpan = document.getElementById('license_test_mode_status');
+        const checkbox = document.getElementById('license_test_mode');
+
+        if (!nonce || !statusSpan || !checkbox) return;
+
+        this.disabled = true;
+        this.textContent = '⏳ Chargement...';
+
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action: 'pdf_builder_toggle_license_test_mode',
+                nonce: nonce.value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const isEnabled = data.data.enabled;
+                checkbox.checked = isEnabled;
+                statusSpan.textContent = isEnabled ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif';
+                statusSpan.style.background = isEnabled ? '#d4edda' : '#f8d7da';
+                statusSpan.style.color = isEnabled ? '#155724' : '#721c24';
+            } else {
+                alert('Erreur: ' + (data.data?.message || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur AJAX:', error);
+            alert('Erreur de communication avec le serveur');
+        })
+        .finally(() => {
+            this.disabled = false;
+            this.textContent = '🎚️ Basculer Mode Test';
+        });
+    });
+}
+
+// Gestionnaire pour générer une clé de licence
+const generateLicenseKeyBtn = document.getElementById('generate_license_key_btn');
+if (generateLicenseKeyBtn) {
+    generateLicenseKeyBtn.addEventListener('click', function() {
+        const nonce = document.getElementById('generate_license_key_nonce');
+        const keyInput = document.getElementById('license_test_key');
+        const statusSpan = document.getElementById('license_key_status');
+        const copyBtn = document.getElementById('copy_license_key_btn');
+        const deleteBtn = document.getElementById('delete_license_key_btn');
+
+        if (!nonce || !keyInput || !statusSpan) return;
+
+        this.disabled = true;
+        this.textContent = '⏳ Génération...';
+
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action: 'pdf_builder_generate_test_license_key',
+                nonce: nonce.value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                keyInput.value = data.data.key;
+                statusSpan.textContent = '✅ Clé générée avec succès';
+                statusSpan.style.color = '#28a745';
+                if (copyBtn) copyBtn.style.display = '';
+                if (deleteBtn) deleteBtn.style.display = '';
+            } else {
+                statusSpan.textContent = '❌ Erreur: ' + (data.data?.message || 'Erreur inconnue');
+                statusSpan.style.color = '#dc3545';
+            }
+        })
+        .catch(error => {
+            console.error('Erreur AJAX:', error);
+            statusSpan.textContent = '❌ Erreur de communication';
+            statusSpan.style.color = '#dc3545';
+        })
+        .finally(() => {
+            this.disabled = false;
+            this.textContent = '🔑 Générer';
+        });
+    });
+}
+
+// Gestionnaire pour copier la clé de licence
+const copyLicenseKeyBtn = document.getElementById('copy_license_key_btn');
+if (copyLicenseKeyBtn) {
+    copyLicenseKeyBtn.addEventListener('click', function() {
+        const keyInput = document.getElementById('license_test_key');
+        const statusSpan = document.getElementById('license_key_status');
+
+        if (!keyInput || !keyInput.value) {
+            if (statusSpan) {
+                statusSpan.textContent = '❌ Aucune clé à copier';
+                statusSpan.style.color = '#dc3545';
+            }
+            return;
+        }
+
+        navigator.clipboard.writeText(keyInput.value).then(() => {
+            if (statusSpan) {
+                statusSpan.textContent = '✅ Clé copiée dans le presse-papiers';
+                statusSpan.style.color = '#28a745';
+            }
+        }).catch(() => {
+            // Fallback pour les navigateurs qui ne supportent pas clipboard API
+            keyInput.select();
+            document.execCommand('copy');
+            if (statusSpan) {
+                statusSpan.textContent = '✅ Clé copiée dans le presse-papiers';
+                statusSpan.style.color = '#28a745';
+            }
+        });
+    });
+}
+
+// Gestionnaire pour supprimer la clé de licence
+const deleteLicenseKeyBtn = document.getElementById('delete_license_key_btn');
+if (deleteLicenseKeyBtn) {
+    deleteLicenseKeyBtn.addEventListener('click', function() {
+        const nonce = document.getElementById('delete_license_key_nonce');
+        const keyInput = document.getElementById('license_test_key');
+        const statusSpan = document.getElementById('license_key_status');
+        const copyBtn = document.getElementById('copy_license_key_btn');
+
+        if (!nonce || !confirm('Êtes-vous sûr de vouloir supprimer cette clé de test ?')) return;
+
+        this.disabled = true;
+        this.textContent = '⏳ Suppression...';
+
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action: 'pdf_builder_delete_test_license_key',
+                nonce: nonce.value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                keyInput.value = '';
+                statusSpan.textContent = '✅ Clé supprimée';
+                statusSpan.style.color = '#28a745';
+                if (copyBtn) copyBtn.style.display = 'none';
+                this.style.display = 'none';
+            } else {
+                statusSpan.textContent = '❌ Erreur: ' + (data.data?.message || 'Erreur inconnue');
+                statusSpan.style.color = '#dc3545';
+            }
+        })
+        .catch(error => {
+            console.error('Erreur AJAX:', error);
+            statusSpan.textContent = '❌ Erreur de communication';
+            statusSpan.style.color = '#dc3545';
+        })
+        .finally(() => {
+            this.disabled = false;
+            this.textContent = '🗑️ Supprimer';
+        });
+    });
+}
+
+// Gestionnaire pour le changement du mode développeur
+const developerEnabledCheckbox = document.getElementById('developer_enabled');
+if (developerEnabledCheckbox) {
+    developerEnabledCheckbox.addEventListener('change', function() {
+        toggleDeveloperSections(this.checked);
+    });
+}
+
 // Exécuter la synchronisation au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
     // Petit délai pour s'assurer que tous les éléments sont chargés
@@ -3386,6 +3612,11 @@ document.addEventListener('DOMContentLoaded', function() {
         syncFormElementsWithLoadedSettings();
         // Initialiser l'indicateur développeur
         updateDeveloperStatusIndicator();
+        // Initialiser les sections développeur
+        const developerEnabledCheckbox = document.getElementById('developer_enabled');
+        if (developerEnabledCheckbox) {
+            toggleDeveloperSections(developerEnabledCheckbox.checked);
+        }
     }, 100);
 });
 </script>
