@@ -1770,12 +1770,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                             const value = savedData[dataKey];
                                             if (element.type === 'checkbox') {
                                                 element.checked = value === '1' || value === true || value === 1;
-                                                pdfBuilderDebug('Toggle mis à jour:', elementId, '=', element.checked);
+                                                pdfBuilderDebug('Toggle mis à jour:', elementId, '=', element.checked, 'from savedData:', value);
                                             } else if (element.type === 'select-one' || element.type === 'text' || element.type === 'number') {
                                                 element.value = value;
                                                 pdfBuilderDebug('Champ mis à jour:', elementId, '=', value);
                                             }
+                                        } else {
+                                            console.warn('PDF_BUILDER_DEBUG: Element not found for update:', elementId);
                                         }
+                                    } else {
+                                        console.warn('PDF_BUILDER_DEBUG: No data for element:', elementId, 'dataKey:', dataKey, 'available keys:', Object.keys(savedData));
                                     }
                                 });
                             }
@@ -1871,16 +1875,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             // Update window.pdfBuilderCanvasSettings with saved values for autosave
                             if (category === 'autosave' && data.data && data.data.saved) {
+                                console.log('PDF_BUILDER_DEBUG: Updating window.pdfBuilderCanvasSettings for autosave:', data.data.saved);
                                 if (data.data.saved.canvas_autosave_enabled !== undefined) {
                                     window.pdfBuilderCanvasSettings.canvas_autosave_enabled = data.data.saved.canvas_autosave_enabled === '1' || data.data.saved.canvas_autosave_enabled === true;
+                                    console.log('PDF_BUILDER_DEBUG: Set canvas_autosave_enabled to:', window.pdfBuilderCanvasSettings.canvas_autosave_enabled);
                                 }
                                 if (data.data.saved.canvas_autosave_interval !== undefined) {
                                     window.pdfBuilderCanvasSettings.autosave_interval = parseInt(data.data.saved.canvas_autosave_interval);
+                                    console.log('PDF_BUILDER_DEBUG: Set autosave_interval to:', window.pdfBuilderCanvasSettings.autosave_interval);
                                 }
                                 if (data.data.saved.canvas_versions_limit !== undefined) {
                                     window.pdfBuilderCanvasSettings.versions_limit = parseInt(data.data.saved.canvas_versions_limit);
+                                    console.log('PDF_BUILDER_DEBUG: Set versions_limit to:', window.pdfBuilderCanvasSettings.versions_limit);
                                 }
-                                
+
                                 // Mettre à jour les éléments du DOM
                                 updateFormElementsFromSavedData(category, data.data.saved);
                             }
