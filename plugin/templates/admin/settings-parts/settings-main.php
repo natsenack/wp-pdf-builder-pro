@@ -3654,13 +3654,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Petit délai pour s'assurer que tous les éléments sont chargés
     setTimeout(function() {
         syncFormElementsWithLoadedSettings();
-        // Initialiser l'indicateur développeur
-        updateDeveloperStatusIndicator();
-        // Initialiser les sections développeur
-        const developerEnabledCheckbox = document.getElementById('developer_enabled');
-        if (developerEnabledCheckbox) {
-            toggleDeveloperSections(developerEnabledCheckbox.checked);
-        }
+        // Attendre que la synchronisation soit terminée avant d'initialiser l'indicateur
+        setTimeout(function() {
+            // Initialiser l'indicateur développeur
+            updateDeveloperStatusIndicator();
+            // Initialiser les sections développeur
+            const developerEnabledCheckbox = document.getElementById('developer_enabled');
+            if (developerEnabledCheckbox) {
+                toggleDeveloperSections(developerEnabledCheckbox.checked);
+            }
+        }, 50);
     }, 100);
 });
 </script>
