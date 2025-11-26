@@ -247,7 +247,7 @@ class Canvas_Manager
             return;
         }
 
-        wp_add_inline_script('pdf-builder-react', $this->getCanvasSettingsScript(), 'before');
+        // Les paramètres canvas sont maintenant centralisés dans settings-canvas-params.php
     }
 
     /**
