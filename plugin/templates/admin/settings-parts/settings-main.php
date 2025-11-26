@@ -212,7 +212,7 @@ $license_test_key = $all_settings['pdf_builder_license_test_key'];
 <script>
 // Données centralisées chargées depuis la base de données
 window.pdfBuilderSavedSettings = <?php echo json_encode($preview_data); ?>;
-window.pdfBuilderCanvasSettings = <?php echo json_encode($canvas_settings); ?>;
+// window.pdfBuilderCanvasSettings = <?php echo json_encode($canvas_settings); ?>; // COMMENTÉ: déjà défini dans settings-canvas-params.php
 
 // Système centralisé d'initialisation des previews avec données BDD
 window.PDF_Builder_Preview_Manager = {
