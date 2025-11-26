@@ -1828,19 +1828,19 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Update window.pdfBuilderCanvasSettings with saved values for apparence
                             if (category === 'apparence' && data.data && data.data.saved) {
                                 if (data.data.saved.canvas_bg_color !== undefined) {
-                                    window.pdfBuilderCanvasSettings.canvas_background_color = data.data.saved.canvas_bg_color;
+                                    window.pdfBuilderCanvasSettings.canvas_bg_color = data.data.saved.canvas_bg_color;
                                 }
                                 if (data.data.saved.canvas_border_color !== undefined) {
-                                    window.pdfBuilderCanvasSettings.border_color = data.data.saved.canvas_border_color;
+                                    window.pdfBuilderCanvasSettings.canvas_border_color = data.data.saved.canvas_border_color;
                                 }
                                 if (data.data.saved.canvas_border_width !== undefined) {
-                                    window.pdfBuilderCanvasSettings.border_width = parseInt(data.data.saved.canvas_border_width);
+                                    window.pdfBuilderCanvasSettings.canvas_border_width = parseInt(data.data.saved.canvas_border_width);
                                 }
                                 if (data.data.saved.canvas_shadow_enabled !== undefined) {
-                                    window.pdfBuilderCanvasSettings.shadow_enabled = data.data.saved.canvas_shadow_enabled === '1' || data.data.saved.canvas_shadow_enabled === true;
+                                    window.pdfBuilderCanvasSettings.canvas_shadow_enabled = data.data.saved.canvas_shadow_enabled === '1' || data.data.saved.canvas_shadow_enabled === true;
                                 }
                                 if (data.data.saved.canvas_container_bg_color !== undefined) {
-                                    window.pdfBuilderCanvasSettings.container_background_color = data.data.saved.canvas_container_bg_color;
+                                    window.pdfBuilderCanvasSettings.canvas_container_bg_color = data.data.saved.canvas_container_bg_color;
                                 }
                                 
                                 // Mettre à jour les éléments du DOM
