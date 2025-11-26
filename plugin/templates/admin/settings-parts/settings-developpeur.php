@@ -807,7 +807,8 @@ document.addEventListener('DOMContentLoaded', function() {
             cleanupStatus.style.color = '#007cba';
 
             // Faire l'appel AJAX
-            fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+            const ajaxUrl = window.ajaxurl || window.wp?.ajaxurl || (window.location.origin + '/wp-admin/admin-ajax.php');
+            fetch(ajaxUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
