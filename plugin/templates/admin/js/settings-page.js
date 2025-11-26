@@ -194,14 +194,26 @@ jQuery(document).ready(function($) {
     toggleCacheOptions(initialCacheEnabled);
     updateCacheStatus(initialCacheEnabled);
 
-    // Mettre à jour les métriques du cache au chargement (avec délai pour s'assurer que pdfBuilderAjax est disponible)
-    setTimeout(function() {
-        updateCacheMetrics();
-    }, 100);
+    // Fonction pour initialiser les métriques du cache de manière sécurisée
+    function initializeCacheMetrics() {
+        if (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax.ajaxurl && pdfBuilderAjax.nonce) {
+            updateCacheMetrics();
+        } else {
+            console.log('PDF Builder: pdfBuilderAjax not ready, retrying in 500ms...');
+            setTimeout(initializeCacheMetrics, 500);
+        }
+    }
 
-    // Mettre à jour les métriques toutes les 30 secondes
+    // Mettre à jour les métriques du cache au chargement (avec vérification de disponibilité)
+    initializeCacheMetrics();
+
+    // Mettre à jour les métriques toutes les 30 secondes (avec vérification)
     setInterval(function() {
-        updateCacheMetrics();
+        if (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax.ajaxurl && pdfBuilderAjax.nonce) {
+            updateCacheMetrics();
+        } else {
+            console.warn('PDF Builder: Skipping cache metrics update - pdfBuilderAjax not available');
+        }
     }, 30000);
 
     // Fonction pour mettre à jour les métriques du cache en temps réel
