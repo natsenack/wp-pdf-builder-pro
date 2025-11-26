@@ -897,7 +897,7 @@ window.updateZoomCardPreview = function() {
 
 // Fonction globale pour mettre à jour l'indicateur développeur
 function updateDeveloperStatusIndicator(isActive = null) {
-    // Debug logs always for troubleshooting
+    // Debug logs always for troubleshooting - FORCE DEPLOY TEST
     console.log('PDF_BUILDER_DEBUG: updateDeveloperStatusIndicator called with isActive:', isActive);
     console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings exists:', !!window.pdfBuilderSavedSettings);
     if (window.pdfBuilderSavedSettings) {
