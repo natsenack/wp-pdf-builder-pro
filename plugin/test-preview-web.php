@@ -312,9 +312,16 @@ function run_pdf_test() {
 
         // Create test template data
         $template_data = [
-            'text' => 'Test Jours 3-4 - Génération PDF avec DomPDF',
-            'config' => 'Configuration optimisée (DPI, compression, mémoire)',
-            'data' => 'Données statiques - Pas de variables dynamiques'
+            'template' => [
+                'elements' => [
+                    [
+                        'type' => 'text',
+                        'content' => 'Test Jours 3-4 - Génération PDF avec DomPDF',
+                        'config' => 'Configuration optimisée (DPI, compression, mémoire)',
+                        'data' => 'Données statiques - Pas de variables dynamiques'
+                    ]
+                ]
+            ]
         ];
 
         echo '<div class="status info">📊 Génération du PDF avec données de test...</div>';
