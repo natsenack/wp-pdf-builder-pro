@@ -12,9 +12,9 @@ class WooCommerceDataProvider implements DataProviderInterface
 {
     /** @var \WC_Order Commande WooCommerce */
     private $order;
-/** @var string Contexte d'utilisation */
+    /** @var string Contexte d'utilisation */
     private $context;
-/** @var array Cache des valeurs récupérées */
+    /** @var array Cache des valeurs récupérées */
     private $cachedValues = [];
 
     /**
@@ -58,7 +58,7 @@ class WooCommerceDataProvider implements DataProviderInterface
 
         // Récupérer la valeur selon la variable demandée
         $value = $this->retrieveVariableValue($variable);
-// Mettre en cache
+        // Mettre en cache
         $this->cachedValues[$variable] = $value;
         return $value;
     }
@@ -73,7 +73,7 @@ class WooCommerceDataProvider implements DataProviderInterface
     {
         try {
             switch ($variable) {
-            // Informations commande
+                // Informations commande
                 case 'order_number':
                     return $this->order->getOrderNumber();
                 case 'order_date':
@@ -92,7 +92,7 @@ class WooCommerceDataProvider implements DataProviderInterface
                     return $this->formatPrice($this->order->getShippingTotal());
                 case 'order_discount':
                     return $this->formatPrice($this->order->getDiscountTotal());
-// Informations client
+                // Informations client
                 case 'customer_name':
                     return $this->order->getFormattedBillingFullName();
                 case 'customer_firstname':
@@ -107,7 +107,7 @@ class WooCommerceDataProvider implements DataProviderInterface
                 case 'customer_phone':
                 case 'billing_phone':
                     return $this->order->getBillingPhone();
-// Adresse de facturation
+                // Adresse de facturation
                 case 'customer_address':
                 case 'billing_address_1':
                     return $this->order->getBillingAddress1();
@@ -127,7 +127,7 @@ class WooCommerceDataProvider implements DataProviderInterface
                     return $this->order->getBillingState();
                 case 'billing_company':
                     return $this->order->getBillingCompany();
-// Adresse de livraison
+                // Adresse de livraison
                 case 'shipping_first_name':
                     return $this->order->getShippingFirstName();
                 case 'shipping_last_name':
@@ -147,7 +147,7 @@ class WooCommerceDataProvider implements DataProviderInterface
                     return $this->order->getShippingState();
                 case 'shipping_company':
                     return $this->order->getShippingCompany();
-// Informations entreprise (depuis paramètres WooCommerce)
+                // Informations entreprise (depuis paramètres WooCommerce)
                 case 'company_name':
                     return get_option('woocommerce_store_name', get_bloginfo('name'));
                 case 'company_address':
@@ -157,14 +157,13 @@ class WooCommerceDataProvider implements DataProviderInterface
                 case 'company_postcode':
                     return get_option('woocommerce_store_postcode', '');
                 case 'company_country':
-                                    $country = get_option('woocommerce_default_country', '');
-
+                    $country = get_option('woocommerce_default_country', '');
                     return WC()->countries->countries[$country] ?? $country;
                 case 'company_phone':
                     return get_option('woocommerce_store_phone', '');
                 case 'company_email':
                     return get_option('woocommerce_email_from_address', get_bloginfo('admin_email'));
-// Produits
+                // Produits
                 default:
                     return $this->handleProductVariables($variable);
             }
@@ -192,8 +191,7 @@ class WooCommerceDataProvider implements DataProviderInterface
 
         // Variables spécifiques à un produit (product_1_name, product_2_price, etc.)
         if (preg_match('/^product_(\d+)_(name|quantity|price|total)$/', $variable, $matches)) {
-            $productIndex = (int) $matches[1] - 1;
-// Les indices commencent à 1 dans les templates
+            $productIndex = (int) $matches[1] - 1; // Les indices commencent à 1 dans les templates
             $field = $matches[2];
             $items = $this->order->getItems();
             $itemKeys = array_keys($items);
@@ -248,12 +246,11 @@ class WooCommerceDataProvider implements DataProviderInterface
             case 'customer_full_name':
                 return trim($this->order->getBillingFirstName() . ' ' . $this->order->getBillingLastName());
             case 'company_full_address':
-                  $address = get_option('woocommerce_store_address', '');
+                $address = get_option('woocommerce_store_address', '');
                 $city = get_option('woocommerce_store_city', '');
                 $postcode = get_option('woocommerce_store_postcode', '');
                 $country = get_option('woocommerce_default_country', '');
                 $parts = array_filter([$address, $city, $postcode, $country]);
-
                 return implode(', ', $parts);
             case 'payment_method':
                 return $this->order->getPaymentMethodTitle();
@@ -269,21 +266,19 @@ class WooCommerceDataProvider implements DataProviderInterface
                 return get_woocommerce_currency();
             case 'tax_rate':
                 // Calcul du taux de TVA moyen (simplifié)
-
-                  $taxes = $this->order->getTaxTotals();
+                $taxes = $this->order->getTaxTotals();
                 if (!empty($taxes)) {
                     $totalTax = 0;
                     $totalBase = 0;
                     foreach ($taxes as $tax) {
-                            $totalTax += $tax->amount;
-                            // Note: Cette approximation peut être améliorée
+                        $totalTax += $tax->amount;
+                        // Note: Cette approximation peut être améliorée
                     }
                     if ($this->order->getSubtotal() > 0) {
                         $rate = ($totalTax / $this->order->getSubtotal()) * 100;
                         return number_format($rate, 2) . '%';
                     }
                 }
-
                 return '0%';
             default:
                 return $this->getMissingDataPlaceholder($variable);
@@ -309,7 +304,95 @@ class WooCommerceDataProvider implements DataProviderInterface
      */
     private function getMissingDataPlaceholder(string $variable): string
     {
-        return '<span style="color: red; font-weight: bold;">[Donnée manquante: ' . $variable . ']</span>';
+        $placeholders = [
+            // Informations commande
+            'order_number' => '[Numéro de commande]',
+            'order_date' => '[Date de commande]',
+            'order_time' => '[Heure de commande]',
+            'order_status' => '[Statut de commande]',
+            'order_total' => '[Montant total]',
+            'order_subtotal' => '[Sous-total]',
+            'order_tax' => '[Montant TVA]',
+            'order_shipping' => '[Frais de port]',
+            'order_discount' => '[Remise]',
+
+            // Informations client
+            'customer_name' => '[Nom du client]',
+            'customer_firstname' => '[Prénom]',
+            'customer_lastname' => '[Nom]',
+            'customer_email' => '[Email client]',
+            'customer_phone' => '[Téléphone client]',
+            'customer_address' => '[Adresse client]',
+            'customer_city' => '[Ville client]',
+            'customer_postcode' => '[Code postal client]',
+            'customer_country' => '[Pays client]',
+
+            // Informations entreprise
+            'company_name' => '[Nom entreprise]',
+            'company_address' => '[Adresse entreprise]',
+            'company_city' => '[Ville entreprise]',
+            'company_postcode' => '[CP entreprise]',
+            'company_country' => '[Pays entreprise]',
+            'company_phone' => '[Tél entreprise]',
+            'company_email' => '[Email entreprise]',
+            'company_website' => '[Site web]',
+            'company_siret' => '[SIRET]',
+            'company_tva' => '[N° TVA]',
+
+            // Produits
+            'products_total' => '[Total produits]',
+            'tax_rate' => '[Taux TVA]',
+            'tax_amount' => '[Montant TVA]',
+            'shipping_cost' => '[Frais de port]',
+            'grand_total' => '[Total général]',
+
+            // Paiement
+            'payment_method' => '[Mode de paiement]',
+            'payment_date' => '[Date de paiement]',
+
+            // Notes
+            'order_notes' => '[Notes commande]',
+            'customer_notes' => '[Notes client]'
+        ];
+
+        return $placeholders[$variable] ?? "[{$variable}]";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasVariable(string $variable): bool
+    {
+        return in_array($variable, $this->getAllVariables());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAllVariables(): array
+    {
+        return [
+            'order_number', 'order_date', 'order_time', 'order_status', 'order_total',
+            'order_subtotal', 'order_tax', 'order_shipping', 'order_discount',
+            // Informations client
+            'customer_name', 'customer_firstname', 'customer_lastname', 'customer_email',
+            'customer_phone', 'customer_address', 'customer_city', 'customer_postcode',
+            'customer_country', 'billing_first_name', 'billing_last_name', 'billing_email',
+            'billing_phone', 'billing_address_1', 'billing_address_2', 'billing_city',
+            'billing_postcode', 'billing_country', 'shipping_first_name', 'shipping_last_name',
+            'shipping_address_1', 'shipping_address_2', 'shipping_city', 'shipping_postcode',
+            'shipping_country',
+            // Informations entreprise
+            'company_name', 'company_address', 'company_city', 'company_postcode',
+            'company_country', 'company_phone', 'company_email', 'company_website',
+            'company_siret', 'company_tva',
+            // Produits
+            'products_total', 'tax_rate', 'tax_amount', 'shipping_cost', 'grand_total',
+            // Informations de paiement
+            'payment_method', 'payment_date',
+            // Notes et commentaires
+            'order_notes', 'customer_notes'
+        ];
     }
 
     /**
@@ -326,186 +409,5 @@ class WooCommerceDataProvider implements DataProviderInterface
     public function getContext(): string
     {
         return $this->context;
-    }
-
-    /**
-     * Vérifie si une variable est disponible
-     *
-     * @param string $variable Nom de la variable
-     * @return bool True si la variable existe
-     */
-    public function hasVariable(string $variable): bool
-    {
-        return array_key_exists($variable, $this->getAllVariables());
-    }
-
-    /**
-     * Retourne la liste de toutes les variables disponibles
-     *
-     * @return array Liste des noms de variables
-     */
-    public function getAllVariables(): array
-    {
-        return [
-            'order_number', 'order_date', 'order_status', 'order_total', 'order_subtotal',
-            'order_tax', 'order_shipping', 'order_discount', 'customer_name', 'customer_email',
-            'customer_phone', 'billing_first_name', 'billing_last_name', 'billing_company',
-            'billing_address', 'billing_address_1', 'billing_address_2', 'billing_city',
-            'billing_state', 'billing_postcode', 'billing_country', 'billing_email',
-            'billing_phone', 'shipping_first_name', 'shipping_last_name', 'shipping_company',
-            'shipping_address', 'shipping_address_1', 'shipping_address_2', 'shipping_city',
-            'shipping_state', 'shipping_postcode', 'shipping_country', 'currency',
-            'payment_method', 'transaction_id', 'order_notes', 'order_items'
-        ];
-    }
-
-    /**
-     * Valide et sanitise une valeur individuelle selon le type
-     *
-     * @param mixed $value La valeur à valider
-     * @param string $type Le type de données attendu
-     * @return mixed La valeur validée et sanitizée
-     */
-    public function validateAndSanitizeValue($value, string $type = 'string')
-    {
-        switch ($type) {
-            case 'email':
-                return $this->sanitizeEmail($value);
-            case 'url':
-                return $this->sanitizeUrl($value);
-            case 'html':
-                return $this->sanitizeHtml($value);
-            case 'float':
-                return floatval($value);
-            case 'int':
-                return intval($value);
-            case 'string':
-            default:
-                return $this->sanitizeText($value);
-        }
-    }
-
-    /**
-     * Sanitise une adresse email
-     *
-     * @param mixed $value Valeur à sanitiser
-     * @return string Email sanitizé ou chaîne vide
-     */
-    private function sanitizeEmail($value): string
-    {
-        if (function_exists('is_email') && function_exists('sanitize_email')) {
-            return is_email($value) ? sanitize_email($value) : '';
-        }
-        // Fallback PHP
-        $value = filter_var($value, FILTER_SANITIZE_EMAIL);
-        return filter_var($value, FILTER_VALIDATE_EMAIL) ? $value : '';
-    }
-
-    /**
-     * Sanitise une URL
-     *
-     * @param mixed $value Valeur à sanitiser
-     * @return string URL sanitizée
-     */
-    private function sanitizeUrl($value): string
-    {
-        if (function_exists('esc_url_raw')) {
-            return esc_url_raw($value);
-        }
-        // Fallback PHP
-        return filter_var($value, FILTER_SANITIZE_URL);
-    }
-
-    /**
-     * Sanitise du HTML
-     *
-     * @param mixed $value Valeur à sanitiser
-     * @return string HTML sanitizé
-     */
-    private function sanitizeHtml($value): string
-    {
-        if (function_exists('wp_kses_post')) {
-            return wp_kses_post($value);
-        }
-        // Fallback PHP basique
-        return strip_tags($value, '<p><br><strong><em><a><ul><ol><li>');
-    }
-
-    /**
-     * Sanitise un texte
-     *
-     * @param mixed $value Valeur à sanitiser
-     * @return string Texte sanitizé
-     */
-    private function sanitizeText($value): string
-    {
-        if (function_exists('sanitize_text_field')) {
-            return sanitize_text_field($value);
-        }
-        // Fallback PHP
-        return htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function validateAndSanitizeData(array $data): array
-    {
-        $sanitized = [];
-        foreach ($data as $key => $value) {
-            $type = $this->guessDataType($key);
-            $sanitized[$key] = $this->validateAndSanitizeValue($value, $type);
-        }
-        return $sanitized;
-    }
-
-    /**
-     * Détermine le type de données d'après la clé
-     *
-     * @param string $key Clé de la donnée
-     * @return string Type de données
-     */
-    private function guessDataType(string $key): string
-    {
-        if (strpos($key, 'email') !== false) {
-            return 'email';
-        }
-        if (strpos($key, 'url') !== false || strpos($key, 'website') !== false) {
-            return 'url';
-        }
-        if (
-            strpos($key, 'price') !== false || strpos($key, 'total') !== false ||
-            strpos($key, 'tax') !== false || strpos($key, 'shipping') !== false ||
-            strpos($key, 'discount') !== false
-        ) {
-            return 'float';
-        }
-        if (strpos($key, 'quantity') !== false || strpos($key, 'count') !== false) {
-            return 'int';
-        }
-        if (strpos($key, 'notes') !== false || strpos($key, 'description') !== false) {
-            return 'html';
-        }
-        return 'string';
-    }
-
-    /**
-     * Vérifie si une commande est disponible
-     *
-     * @return bool True si la commande existe
-     */
-    public function hasOrder(): bool
-    {
-        return $this->order instanceof \WC_Order;
-    }
-
-    /**
-     * Retourne l'ID de la commande actuelle
-     *
-     * @return int|null ID de la commande ou null
-     */
-    public function getOrderId(): ?int
-    {
-        return $this->order ? $this->order->getId() : null;
     }
 }

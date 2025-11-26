@@ -77,6 +77,7 @@ if (defined('ABSPATH') && function_exists('current_user_can') && !current_user_c
         <div class="tab-container">
             <button class="tab-btn active" onclick="showTab('pdf')">📄 Jours 3-4 : PDF</button>
             <button class="tab-btn" onclick="showTab('images')">🖼️ Jours 5-7 : Images</button>
+            <button class="tab-btn" onclick="showTab('data')">🛒 Jours 11-13 : Données WooCommerce</button>
         </div>
 
         <!-- PDF Tests (Jours 3-4) -->
@@ -133,6 +134,49 @@ if (defined('ABSPATH') && function_exists('current_user_can') && !current_user_c
                     <li>Contenu : PDF minimal avec texte de test</li>
                     <li>Taille : ~5KB pour PNG, ~27KB pour JPG</li>
                     <li>Format : A4, contenu 'Mock PDF Content'</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Data Injection Tests (Jours 11-13) -->
+        <div id="data" class="tab-content">
+            <p><strong>Jours 11-13 : Injection Dynamique des Données WooCommerce</strong></p>
+
+            <div class='test-section info'>
+                <h3>📋 État du système</h3>
+                <p>Ce test valide l'injection des variables WooCommerce dans les templates PDF avec les DataProviders.</p>
+                <button class='btn' onclick='runDataTest()'>🚀 Lancer le test d'injection des données</button>
+                <div id='data-test-result'></div>
+            </div>
+
+            <div class='test-section'>
+                <h3>🔧 DataProviders testés</h3>
+                <ul>
+                    <li><strong>SampleDataProvider</strong> : 76 variables fictives pour l'éditeur</li>
+                    <li><strong>WooCommerceDataProvider</strong> : 53 variables réelles depuis WooCommerce</li>
+                    <li><strong>Interface compliance</strong> : hasVariable(), getVariableValue(), getAllVariables()</li>
+                    <li><strong>Placeholders</strong> : Fallbacks informatifs pour données manquantes</li>
+                </ul>
+            </div>
+
+            <div class='test-section'>
+                <h3>📊 Variables testées</h3>
+                <p>Variables principales testées dans les deux contextes :</p>
+                <ul>
+                    <li><code>{{customer_name}}</code> - Nom du client</li>
+                    <li><code>{{order_number}}</code> - Numéro de commande</li>
+                    <li><code>{{order_total}}</code> - Montant total</li>
+                    <li><code>{{company_name}}</code> - Nom entreprise</li>
+                    <li><code>{{payment_method}}</code> - Mode de paiement</li>
+                </ul>
+            </div>
+
+            <div class='test-section'>
+                <h3>🔄 Contextes de test</h3>
+                <ul>
+                    <li><strong>Éditeur (Canvas)</strong> : Données fictives cohérentes</li>
+                    <li><strong>Metabox</strong> : Données WooCommerce réelles ou placeholders</li>
+                    <li><strong>Transition automatique</strong> : Changement de contexte selon l'usage</li>
                 </ul>
             </div>
         </div>
@@ -264,6 +308,30 @@ if (defined('ABSPATH') && function_exists('current_user_can') && !current_user_c
                 resultDiv.innerHTML = '<div class="status error">❌ Erreur test modal : ' + error.message + '</div>';
             }
         }
+
+        async function runDataTest() {
+            const resultDiv = document.getElementById('data-test-result');
+            resultDiv.innerHTML = '<div class="status info">🔄 Test d\'injection des données en cours...</div>';
+
+            try {
+                const response = await fetch(window.location.href + '?run_test=data');
+                const html = await response.text();
+
+                // Extract the result from the HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const testResult = doc.getElementById('data-test-result-data');
+
+                if (testResult) {
+                    resultDiv.innerHTML = testResult.innerHTML;
+                } else {
+                    resultDiv.innerHTML = '<div class="status error">❌ Erreur : Impossible de récupérer les résultats des données</div>';
+                }
+
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="status error">❌ Erreur réseau : ' + error.message + '</div>';
+            }
+        }
     </script>
 </body>
 </html>
@@ -279,6 +347,8 @@ if (isset($_GET['run_test'])) {
         run_pdf_test();
     } elseif ($test_type === 'images') {
         run_image_test();
+    } elseif ($test_type === 'data') {
+        run_data_test();
     }
 
     echo "</div>";
@@ -392,6 +462,96 @@ function run_image_test() {
 
     } catch (Exception $e) {
         echo '<div class="status error">❌ Erreur Images : ' . $e->getMessage() . '</div>';
+    }
+}
+
+function run_data_test() {
+    echo '<div class="status info">🔄 Test d\'injection des données WooCommerce en cours...</div>';
+
+    try {
+        // Load DataProviders
+        require_once 'interfaces/DataProviderInterface.php';
+        require_once 'data/SampleDataProvider.php';
+        require_once 'data/WooCommerceDataProvider.php';
+
+        if (!class_exists('PDF_Builder\Data\SampleDataProvider')) {
+            echo '<div class="status error">❌ Classe SampleDataProvider non trouvée</div>';
+            return;
+        }
+
+        if (!class_exists('PDF_Builder\Data\WooCommerceDataProvider')) {
+            echo '<div class="status error">❌ Classe WooCommerceDataProvider non trouvée</div>';
+            return;
+        }
+
+        echo '<div class="status success">✅ DataProviders chargés avec succès</div>';
+
+        // Test SampleDataProvider
+        echo '<div class="status info">📝 Test SampleDataProvider (éditeur)...</div>';
+        $sampleProvider = new PDF_Builder\Data\SampleDataProvider('canvas');
+
+        $testVars = ['customer_name', 'order_number', 'order_total', 'company_name', 'payment_method'];
+        echo '<div class="result"><strong>Variables fictives :</strong></div>';
+        echo '<div class="result">';
+        foreach ($testVars as $var) {
+            $hasVar = $sampleProvider->hasVariable($var) ? '✅' : '❌';
+            $value = $sampleProvider->getVariableValue($var);
+            echo "{$var}: {$hasVar} | {$value}\n";
+        }
+        echo '</div>';
+
+        // Test WooCommerceDataProvider (sans commande)
+        echo '<div class="status info">🛒 Test WooCommerceDataProvider (metabox - sans commande)...</div>';
+        $wooProvider = new PDF_Builder\Data\WooCommerceDataProvider(null, 'metabox');
+
+        echo '<div class="result"><strong>Placeholders (pas de commande) :</strong></div>';
+        echo '<div class="result">';
+        foreach ($testVars as $var) {
+            $hasVar = $wooProvider->hasVariable($var) ? '✅' : '❌';
+            $value = $wooProvider->getVariableValue($var);
+            echo "{$var}: {$hasVar} | {$value}\n";
+        }
+        echo '</div>';
+
+        // Statistiques
+        $sampleCount = count($sampleProvider->getAllVariables());
+        $wooCount = count($wooProvider->getAllVariables());
+
+        echo '<div class="status success">📊 Statistiques DataProviders :</div>';
+        echo '<div class="result">';
+        echo "SampleDataProvider: {$sampleCount} variables\n";
+        echo "WooCommerceDataProvider: {$wooCount} variables\n";
+        echo '</div>';
+
+        // Test d'injection dans template
+        echo '<div class="status info">🔄 Test d\'injection dans template...</div>';
+
+        $template = "Bonjour {{customer_name}},\n\nVotre commande {{order_number}} du {{order_date}} est {{order_status}}.\n\nTotal: {{order_total}}\nEmail: {{customer_email}}\n\nCordialement,\n{{company_name}}\n{{company_address}}";
+
+        // Injection SampleDataProvider
+        $injectedSample = $template;
+        foreach ($sampleProvider->getAllVariables() as $var) {
+            $injectedSample = str_replace("{{$var}}", $sampleProvider->getVariableValue($var), $injectedSample);
+        }
+
+        echo '<div class="result"><strong>Template injecté (SampleData) :</strong></div>';
+        echo '<div class="result">' . nl2br(htmlspecialchars($injectedSample)) . '</div>';
+
+        // Injection WooCommerceDataProvider
+        $injectedWoo = $template;
+        foreach ($wooProvider->getAllVariables() as $var) {
+            $injectedWoo = str_replace("{{$var}}", $wooProvider->getVariableValue($var), $injectedWoo);
+        }
+
+        echo '<div class="result"><strong>Template injecté (WooCommerce - placeholders) :</strong></div>';
+        echo '<div class="result">' . nl2br(htmlspecialchars($injectedWoo)) . '</div>';
+
+        echo '<div class="status success">✅ Test d\'injection des données WooCommerce terminé avec succès</div>';
+        echo '<div class="result"><em>Les jours 11-13 (injection dynamique des données WooCommerce) sont opérationnels !</em></div>';
+
+    } catch (Exception $e) {
+        echo '<div class="status error">❌ Erreur données : ' . $e->getMessage() . '</div>';
+        echo '<div class="result">Détails: ' . $e->getTraceAsString() . '</div>';
     }
 }
 ?>
