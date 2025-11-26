@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Inclure le script de diagnostic avancé pour les erreurs JavaScript
-require_once plugin_dir_path(dirname(dirname(dirname(dirname(__FILE__))))) . 'diagnostic-advanced-js.php';
+require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/diagnostic-advanced-js.php';
 
 if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) {
     wp_die(__('Vous n\'avez pas les permissions suffisantes pour accéder à cette page.', 'pdf-builder-pro'));
