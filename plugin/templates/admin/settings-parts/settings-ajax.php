@@ -17,8 +17,6 @@ function send_ajax_response($success, $message = '', $data = [])
 
     if ($success) {
         $merged = array_merge(['message' => $message], $data);
-        error_log('send_ajax_response merged: ' . json_encode($merged));
-        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Sending success response: " . json_encode($merged) . "\n", FILE_APPEND);
         wp_send_json_success($merged);
     } else {
         file_put_contents($log_file, date('Y-m-d H:i:s') . " - Sending error response: $message\n", FILE_APPEND);
@@ -548,15 +546,12 @@ function pdf_builder_save_settings_handler() {
 
                 // Paramètres développeur
                 file_put_contents($log_file, date('Y-m-d H:i:s') . " - Processing developer settings\n", FILE_APPEND);
-                error_log("PDF_BUILDER_DEBUG AJAX: Processing developer_enabled = " . ($get_post_value('developer_enabled') ?? 'NULL'));
                 $value = $get_post_value('developer_enabled');
                 if ($value !== null) {
                     file_put_contents($log_file, date('Y-m-d H:i:s') . " - Saving developer_enabled = $value\n", FILE_APPEND);
                     PDF_Builder_Options_Manager::save_option('pdf_builder_developer_enabled', $value);
-                    error_log("PDF_BUILDER_DEBUG AJAX: Saved developer_enabled = $value");
                     $saved_value = get_option('pdf_builder_developer_enabled', 'NOT_SET');
                     file_put_contents($log_file, date('Y-m-d H:i:s') . " - Verified saved developer_enabled = $saved_value\n", FILE_APPEND);
-                    error_log("PDF_BUILDER_DEBUG AJAX: Verified saved developer_enabled = $saved_value");
                 }
                 $value = $get_post_value('developer_password');
                 if ($value !== null) {
@@ -829,7 +824,6 @@ function pdf_builder_save_settings_handler() {
                 ];
 
                 file_put_contents($log_file, date('Y-m-d H:i:s') . " - About to send success response\n", FILE_APPEND);
-                error_log('PDF_BUILDER_DEBUG AJAX: About to send success response for all settings');
 
                 send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.', ['saved_options' => $saved]);
             } catch (Exception $e) {

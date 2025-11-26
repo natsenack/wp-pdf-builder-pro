@@ -897,24 +897,17 @@ window.updateZoomCardPreview = function() {
 
 // Fonction globale pour mettre à jour l'indicateur développeur
 function updateDeveloperStatusIndicator(isActive = null) {
-    console.log('PDF_BUILDER_DEBUG: updateDeveloperStatusIndicator called with isActive:', isActive);
     const developerIndicator = document.querySelector('.developer-status-indicator');
-    console.log('PDF_BUILDER_DEBUG: developerIndicator element found:', developerIndicator);
     if (developerIndicator) {
         // Si isActive n'est pas fourni, utiliser l'état actuel du checkbox
         if (isActive === null) {
             const developerEnabledCheckbox = document.getElementById('developer_enabled');
             isActive = developerEnabledCheckbox ? developerEnabledCheckbox.checked : false;
-            console.log('PDF_BUILDER_DEBUG: isActive was null, using checkbox state:', isActive);
         }
 
-        console.log('PDF_BUILDER_DEBUG: Setting indicator to:', isActive ? 'ACTIF' : 'INACTIF');
         developerIndicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
         developerIndicator.style.background = isActive ? '#28a745' : '#dc3545';
         developerIndicator.style.color = 'white';
-        console.log('PDF_BUILDER_DEBUG: Indicator updated successfully');
-    } else {
-        console.log('PDF_BUILDER_DEBUG: ERROR - developerIndicator element not found!');
     }
 }
 
@@ -1318,7 +1311,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Mettre à jour l'indicateur développeur
                     if (data.data && data.data.saved_options && typeof data.data.saved_options.developer_enabled !== 'undefined') {
-                        console.log('PDF_BUILDER_DEBUG: Updating developer indicator with value:', data.data.saved_options.developer_enabled);
                         updateDeveloperStatusIndicator(data.data.saved_options.developer_enabled === '1');
                         
                         // Mettre à jour aussi l'indicateur dans le menu des onglets
@@ -1327,15 +1319,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             const isEnabled = data.data.saved_options.developer_enabled === '1';
                             developerEnabledIndicator.style.color = isEnabled ? '#28a745' : '#dc3545';
                             developerEnabledIndicator.textContent = isEnabled ? 'Activé' : 'Désactivé';
-                            console.log('PDF_BUILDER_DEBUG: Updated tab menu developer indicator to:', isEnabled ? 'Activé' : 'Désactivé');
                         }
                         
                         // Mettre à jour la variable globale pour cohérence
                         if (window.pdfBuilderSavedSettings) {
                             window.pdfBuilderSavedSettings.developer_enabled = data.data.saved_options.developer_enabled === '1';
                         }
-                    } else {
-                        console.log('PDF_BUILDER_DEBUG: Developer indicator update skipped - data structure:', data.data);
                     }
 
                     // Mettre à jour les indicateurs des templates assignés
