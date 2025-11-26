@@ -649,6 +649,10 @@
                 </ul>
             </div>
 
+            <p class="submit">
+                <input type="submit" name="submit_developpeur" id="submit_developpeur" class="button button-primary" value="Sauvegarder les paramètres développeur">
+            </p>
+
          </form>
 
 <script>
