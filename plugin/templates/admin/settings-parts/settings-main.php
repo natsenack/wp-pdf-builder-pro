@@ -895,6 +895,22 @@ window.updateZoomCardPreview = function() {
     }
 };
 
+// Fonction globale pour mettre à jour l'indicateur développeur
+function updateDeveloperStatusIndicator(isActive = null) {
+    const developerIndicator = document.querySelector('.developer-status-indicator');
+    if (developerIndicator) {
+        // Si isActive n'est pas fourni, utiliser l'état actuel du checkbox
+        if (isActive === null) {
+            const developerEnabledCheckbox = document.getElementById('developer_enabled');
+            isActive = developerEnabledCheckbox ? developerEnabledCheckbox.checked : false;
+        }
+
+        developerIndicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
+        developerIndicator.style.background = isActive ? '#28a745' : '#dc3545';
+        developerIndicator.style.color = 'white';
+    }
+}
+
 // Tab switching functionality
 document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.nav-tab');
@@ -1000,22 +1016,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Mettre à jour les indicateurs système
         updateSystemStatusIndicators();
-    }
-
-    // Fonction pour mettre à jour l'indicateur développeur
-    function updateDeveloperStatusIndicator(isActive = null) {
-        const developerIndicator = document.querySelector('.developer-status-indicator');
-        if (developerIndicator) {
-            // Si isActive n'est pas fourni, utiliser l'état actuel du checkbox
-            if (isActive === null) {
-                const developerEnabledCheckbox = document.getElementById('developer_enabled');
-                isActive = developerEnabledCheckbox ? developerEnabledCheckbox.checked : false;
-            }
-
-            developerIndicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
-            developerIndicator.style.background = isActive ? '#28a745' : '#dc3545';
-            developerIndicator.style.color = 'white';
-        }
     }
 
     // Fonction pour mettre à jour les indicateurs des templates assignés
