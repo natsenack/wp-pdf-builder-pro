@@ -1302,6 +1302,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearTimeout(safetyTimeout); // Annuler le timeout de sécurité
 
                 if (data.success) {
+                    console.log('PDF_BUILDER_DEBUG: Success handler entered');
+                    
                     // Succès
                     floatingSaveBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">Sauvegardé !</span>';
                     floatingSaveBtn.classList.remove('saving');
@@ -1315,6 +1317,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Mettre à jour l'indicateur développeur
                     if (data.data && data.data.saved_options && typeof data.data.saved_options.developer_enabled !== 'undefined') {
+                        console.log('PDF_BUILDER_DEBUG: Developer enabled value:', data.data.saved_options.developer_enabled);
                         updateDeveloperStatusIndicator(data.data.saved_options.developer_enabled === '1');
                         
                         // Mettre à jour aussi l'indicateur dans le menu des onglets
@@ -1329,6 +1332,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (window.pdfBuilderSavedSettings) {
                             window.pdfBuilderSavedSettings.developer_enabled = data.data.saved_options.developer_enabled === '1';
                         }
+                    } else {
+                        console.log('PDF_BUILDER_DEBUG: Developer data not found in response:', data.data);
                     }
 
                     // Mettre à jour les indicateurs des templates assignés
