@@ -1002,6 +1002,17 @@ document.addEventListener('DOMContentLoaded', function() {
         updateSystemStatusIndicators();
     }
 
+    // Fonction pour mettre à jour l'indicateur développeur
+    function updateDeveloperStatusIndicator() {
+        const developerEnabledCheckbox = document.getElementById('developer_enabled');
+        const developerIndicator = document.querySelector('.developer-enabled-indicator');
+        if (developerEnabledCheckbox && developerIndicator) {
+            const isActive = developerEnabledCheckbox.checked;
+            developerIndicator.textContent = isActive ? 'Activé' : 'Désactivé';
+            developerIndicator.style.color = isActive ? '#28a745' : '#dc3545';
+        }
+    }
+
     // Fonction pour mettre à jour les indicateurs des templates assignés
     function updateTemplateStatusIndicators() {
         // Parcourir tous les selects de templates
@@ -1277,6 +1288,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Mettre à jour l'état des contrôles RGPD
                     toggleRGPDControls();
+
+                    // Mettre à jour l'indicateur développeur
+                    updateDeveloperStatusIndicator();
 
                     // Mettre à jour les indicateurs des templates assignés
                     updateTemplateStatusIndicators();

@@ -804,7 +804,8 @@ function pdf_builder_save_settings_handler() {
                     'cache_enabled' => get_option('pdf_builder_cache_enabled', 1) ? '1' : '0',
                     'systeme_auto_maintenance' => get_option('pdf_builder_auto_maintenance', 1) ? '1' : '0',
                     'systeme_auto_backup' => get_option('pdf_builder_auto_backup', 1) ? '1' : '0',
-                    'gdpr_enabled' => get_option('pdf_builder_gdpr_enabled', 0) ? '1' : '0'
+                    'gdpr_enabled' => get_option('pdf_builder_gdpr_enabled', 0) ? '1' : '0',
+                    'developer_enabled' => get_option('pdf_builder_developer_enabled', 0) ? '1' : '0'
                 ];
 
                 send_ajax_response(true, 'Tous les paramètres ont été sauvegardés avec succès.', ['saved_options' => $saved]);
