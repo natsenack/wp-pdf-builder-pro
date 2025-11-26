@@ -43,7 +43,7 @@ class CanvasGenerator extends BaseGenerator
                 return [
                     'success' => true,
                     'format' => $output_type,
-                    'content' => $image_data,
+                    'data' => $image_data,
                     'generator' => 'canvas',
                     'performance' => $this->performance_metrics,
                     'is_fallback' => true
