@@ -194,8 +194,10 @@ jQuery(document).ready(function($) {
     toggleCacheOptions(initialCacheEnabled);
     updateCacheStatus(initialCacheEnabled);
 
-    // Mettre à jour les métriques du cache au chargement
-    updateCacheMetrics();
+    // Mettre à jour les métriques du cache au chargement (avec délai pour s'assurer que pdfBuilderAjax est disponible)
+    setTimeout(function() {
+        updateCacheMetrics();
+    }, 100);
 
     // Mettre à jour les métriques toutes les 30 secondes
     setInterval(function() {
