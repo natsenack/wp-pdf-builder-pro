@@ -557,57 +557,6 @@
         </div>
     </div>
 </div>
-<!-- Canvas Configuration Modals Sauvegarde Auto -->
-<div id="canvas-autosave-modal" class="canvas-modal" data-category="autosave">
-    <div class="canvas-modal-overlay">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header">
-                <h3 >💾 Sauvegarde Auto</h3>
-                <button type="button" class="canvas-modal-close">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
-                <form id="canvas-autosave-form">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_autosave_enabled">Sauvegarde automatique activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_autosave_enabled" name="canvas_autosave_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_autosave_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_autosave_interval">Intervalle (minutes)</label></th>
-                            <td>
-                                <input type="number" id="canvas_autosave_interval" name="canvas_autosave_interval" value="<?php echo intval(get_option('pdf_builder_canvas_auto_save_interval', 5)); ?>" min="1" max="60" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_history_enabled">Historique activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_history_enabled" name="canvas_history_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_history_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_history_max">Historique max (versions)</label></th>
-                            <td>
-                                <input type="number" id="canvas_history_max" name="canvas_history_max" value="<?php echo intval(get_option('pdf_builder_canvas_history_max', 50)); ?>" min="5" max="200" />
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-            <div class="canvas-modal-footer">
-                <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary canvas-modal-save" data-category="autosave">Sauvegarder</button>
-            </div>
-        </div>
-    </div>
-</div>
 <!-- Canvas Configuration Modals Debug -->
 <div id="canvas-debug-modal" class="canvas-modal" data-category="debug">
     <div class="canvas-modal-overlay">

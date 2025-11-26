@@ -4,9 +4,7 @@ import { Toolbar } from './toolbar/Toolbar.tsx';
 import { PropertiesPanel } from './properties/PropertiesPanel.tsx';
 import { Header } from './header/Header.tsx';
 import { ElementLibrary } from './element-library/ElementLibrary.tsx';
-import { SaveIndicator } from './ui/SaveIndicatorSimple.tsx';
 import { useTemplate } from '../hooks/useTemplate.ts';
-import { useAutoSave } from '../hooks/useAutoSave.ts';
 import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas.ts';
 import { injectResponsiveUtils } from '../utils/responsive.ts';
@@ -66,17 +64,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     updateTemplateSettings
   } = useTemplate();
 
-  // Hook pour la sauvegarde automatique
-  const {
-    state: autoSaveState,
-    lastSavedAt,
-    error: autoSaveError,
-    saveNow: retryAutoSave,
-    triggerSave,
-    progress,
-    isEnabled: autoSaveEnabled
-  } = useAutoSave();
-
   // Hook pour les paramètres du canvas
   const canvasSettings = useCanvasSettings();
 
@@ -96,16 +83,8 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Wrapper pour sauvegarder avec auto-save
+  // Wrapper pour sauvegarder
   const saveTemplateWithAutoSave = useCallback(async () => {
-    // Temporairement désactiver le trigger auto-save pour éviter les conflits
-    // try {
-    //   // Déclencher l'auto-save en arrière-plan (ne pas attendre)
-    //   triggerSave();
-    // } catch (autoSaveError) {
-    //   console.warn('[PDF_BUILDER] Auto-save trigger failed, but manual save will proceed:', autoSaveError);
-    // }
-
     try {
       // Effectuer la sauvegarde manuelle
       await saveTemplate();
@@ -123,18 +102,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
 
   return (
     <>
-      {/* SaveIndicator - affiché seulement si auto-save activé */}
-      {autoSaveEnabled && (
-        <SaveIndicator
-          state={autoSaveState}
-          lastSavedAt={lastSavedAt}
-          error={autoSaveError}
-          onRetry={retryAutoSave}
-          progress={progress}
-          showProgressBar={autoSaveState === 'saving'}
-        />
-      )}
-
       {/* Indicateur de succès manuel temporaire */}
       {manualSaveSuccess && (
         <div

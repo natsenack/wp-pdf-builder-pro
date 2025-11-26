@@ -60,12 +60,6 @@ class PDF_Builder_Canvas_Mappings {
         'canvas_export_quality' => 'pdf_builder_canvas_export_quality',
         'canvas_export_transparent' => 'pdf_builder_canvas_export_transparent',
 
-        // Auto-save
-        'canvas_autosave_enabled' => 'pdf_builder_canvas_autosave_enabled',
-        'canvas_autosave_interval' => 'pdf_builder_canvas_auto_save_interval',
-        'canvas_history_enabled' => 'pdf_builder_canvas_history_enabled',
-        'canvas_history_max' => 'pdf_builder_canvas_history_max',
-
         // Debug
         'canvas_debug_enabled' => 'pdf_builder_canvas_debug_enabled',
         'canvas_performance_monitoring' => 'pdf_builder_canvas_performance_monitoring',
@@ -140,14 +134,6 @@ class PDF_Builder_Canvas_Mappings {
             'canvas_auto_crop' => 'pdf_builder_canvas_auto_crop',
             'canvas_embed_fonts' => 'pdf_builder_canvas_embed_fonts',
             'canvas_optimize_for_web' => 'pdf_builder_canvas_optimize_for_web'
-        ],
-
-        'autosave' => [
-            'canvas_autosave_enabled' => 'pdf_builder_canvas_autosave_enabled',
-            'canvas_autosave_interval' => 'pdf_builder_canvas_auto_save_interval',
-            'canvas_history_enabled' => 'pdf_builder_canvas_history_enabled',
-            'canvas_history_max' => 'pdf_builder_canvas_history_max',
-            'canvas_auto_save_enabled' => 'pdf_builder_canvas_auto_save_enabled'
         ]
     ];
 
@@ -163,7 +149,6 @@ class PDF_Builder_Canvas_Mappings {
         'interactions' => ['canvas_rotation_step'],
         'performance' => ['canvas_fps_target', 'canvas_memory_limit_js', 'canvas_memory_limit_php', 'canvas_response_timeout'],
         'export' => ['canvas_export_quality', 'canvas_image_quality', 'canvas_max_image_size', 'canvas_auto_save_interval', 'canvas_auto_save_versions', 'canvas_max_fps'],
-        'autosave' => ['canvas_autosave_interval', 'canvas_history_max']
     ];
 
     // ==========================================
@@ -176,7 +161,6 @@ class PDF_Builder_Canvas_Mappings {
         'interactions' => ['canvas_multi_select', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_keyboard_shortcuts', 'canvas_show_resize_handles', 'canvas_enable_rotation'],
         'performance' => ['canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin'],
         'export' => ['canvas_export_transparent', 'canvas_compress_images', 'canvas_include_metadata', 'canvas_auto_crop', 'canvas_embed_fonts', 'canvas_optimize_for_web'],
-        'autosave' => ['canvas_autosave_enabled', 'canvas_history_enabled', 'canvas_auto_save_enabled']
     ];
 
     // ==========================================

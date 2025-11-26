@@ -61,7 +61,6 @@ class PDF_Builder_Defaults {
         'fps_target' => 30,
         'memory_limit_js' => 128,
         'memory_limit_php' => 256,
-        'autosave_interval' => 5,
         'export_quality' => 90,
         'image_quality' => 85,
         'max_image_size' => 2048,

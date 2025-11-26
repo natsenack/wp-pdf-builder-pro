@@ -67,12 +67,6 @@ $canvas_settings_js = [
     'canvas_preload_critical' => get_option('pdf_builder_canvas_preload_critical', '1') === '1',
     'canvas_lazy_loading_plugin' => get_option('pdf_builder_canvas_lazy_loading_plugin', '1') === '1',
     
-    // Autosave
-    'canvas_autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') === '1',
-    'canvas_autosave_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 5)),
-    'canvas_versions_limit' => intval(get_option('pdf_builder_canvas_history_max', 50)),
-    'canvas_history_enabled' => get_option('pdf_builder_canvas_history_enabled', '1') === '1',
-    
     // Debug
     'canvas_debug_enabled' => get_option('pdf_builder_canvas_debug_enabled', '0') === '1',
     'canvas_performance_monitoring' => get_option('pdf_builder_canvas_performance_monitoring', '0') === '1',

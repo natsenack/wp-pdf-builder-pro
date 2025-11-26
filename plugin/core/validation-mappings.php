@@ -173,14 +173,6 @@ class PDF_Builder_Validation_Mappings {
             'message' => 'Le timeout de réponse doit être compris entre 1000 et 120000 millisecondes.'
         ],
 
-        // Auto-save
-        'autosave_interval' => [
-            'type' => 'number',
-            'min' => 5000,
-            'max' => 300000,
-            'required' => false,
-            'message' => 'L\'intervalle d\'auto-sauvegarde doit être compris entre 5 et 300 secondes.'
-        ],
         'history_max' => [
             'type' => 'number',
             'min' => 1,

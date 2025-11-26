@@ -234,8 +234,6 @@ class PDF_Builder_JS_Mappings {
             'exportFormat' => 'pdf',
             'exportQuality' => 90,
             'exportTransparent' => false,
-            'autosaveEnabled' => true,
-            'autosaveInterval' => 30000,
             'historyEnabled' => true,
             'historyMax' => 50,
             'debugEnabled' => false,

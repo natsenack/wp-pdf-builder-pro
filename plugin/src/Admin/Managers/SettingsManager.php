@@ -123,8 +123,6 @@ class SettingsManager
             'pdf_builder_canvas_zoom_default',
             'pdf_builder_canvas_export_format',
             'pdf_builder_canvas_export_quality',
-            'pdf_builder_canvas_autosave_enabled',
-            'pdf_builder_canvas_auto_save_interval',
         ];
 
         foreach ($canvas_settings as $setting) {
@@ -411,8 +409,6 @@ class SettingsManager
             'zoom_default' => intval(get_option('pdf_builder_canvas_zoom_default', 100)),
             'export_format' => get_option('pdf_builder_canvas_export_format', 'png'),
             'export_quality' => intval(get_option('pdf_builder_canvas_export_quality', 90)),
-            'autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1') === '1',
-            'auto_save_interval' => intval(get_option('pdf_builder_canvas_auto_save_interval', 5)),
         ];
     }
 }

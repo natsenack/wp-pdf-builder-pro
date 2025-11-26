@@ -63,9 +63,6 @@ if (typeof PDF_BUILDER_DEBUG_ENABLED !== 'undefined') {
     window.PDFBuilderLogger.setLevel('NONE');
 }
 
-// Logger spécialisé pour l'auto-save
-const autosaveLogger = window.PDFBuilderLogger.context('AutoSave');
-
 // ==========================================
 // INTÉGRATION DANS L'ÉDITEUR (Canvas)
 // ==========================================
@@ -74,17 +71,12 @@ class PDFEditorPreviewIntegration {
     constructor(canvasEditor) {
         this.canvasEditor = canvasEditor;
         this.previewBtn = null;
-        this.autosaveTimer = null;
-        this.autosaveStatus = null;
-        this.autosaveTimerDisplay = null;
         this.init();
     }
 
     init() {
         this.createPreviewButton();
-        this.createAutosaveUI();
         this.bindEvents();
-        this.setupAutosave();
     }
 
     createPreviewButton() {
@@ -121,36 +113,6 @@ class PDFEditorPreviewIntegration {
         }
     }
 
-    createAutosaveUI() {
-        // Créer les éléments d'auto-sauvegarde
-        const autosaveContainer = document.createElement('div');
-        autosaveContainer.id = 'pdf-editor-autosave-container';
-        autosaveContainer.style.cssText = `
-            display: inline-block;
-            margin-left: 10px;
-            font-size: 12px;
-            color: #666;
-            vertical-align: middle;
-        `;
-
-        autosaveContainer.innerHTML = `
-            <span class="autosave-timer">💾 Sauvegarde auto dans 5 min</span>
-            <span class="autosave-status" style="margin-left: 10px;">Prêt</span>
-        `;
-
-        // L'ajouter à la barre d'outils
-        const toolbar = document.querySelector('.pdf-editor-toolbar') ||
-                       document.querySelector('#pdf-editor-toolbar') ||
-                       document.querySelector('.toolbar');
-
-        if (toolbar) {
-            toolbar.appendChild(autosaveContainer);
-        }
-
-        this.autosaveTimerDisplay = autosaveContainer.querySelector('.autosave-timer');
-        this.autosaveStatus = autosaveContainer.querySelector('.autosave-status');
-    }
-
     bindEvents() {
         if (this.previewBtn) {
             this.previewBtn.addEventListener('click', () => {
@@ -165,150 +127,6 @@ class PDFEditorPreviewIntegration {
                 this.generatePreview();
             }
         });
-    }
-
-    setupAutosave() {
-        autosaveLogger.info('Configuration de l\'auto-save');
-
-        // Vérifier si le système React est actif (éditeur React)
-        const isReactEditor = window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact;
-        if (isReactEditor) {
-            autosaveLogger.info('Système React détecté - désactivation auto-save JavaScript (géré par React)');
-            if (this.autosaveTimerDisplay) {
-                this.autosaveTimerDisplay.textContent = '💾 Auto-save React actif';
-                this.autosaveTimerDisplay.style.color = '#28a745';
-            }
-            return;
-        }
-
-        const autosaveEnabled = window.pdfBuilderCanvasSettings?.autosave_enabled !== false;
-        const autosaveInterval = window.pdfBuilderCanvasSettings?.autosave_interval || 5; // minutes
-
-        autosaveLogger.debug('Paramètres auto-save:', {
-            autosaveEnabled,
-            autosaveInterval,
-            pdfBuilderCanvasSettings: window.pdfBuilderCanvasSettings
-        });
-
-        if (!autosaveEnabled) {
-            autosaveLogger.info('Auto-save désactivée');
-            if (this.autosaveTimerDisplay) {
-                this.autosaveTimerDisplay.textContent = '💾 Sauvegarde auto désactivée';
-            }
-            return;
-        }
-
-        PDFBuilderLogger.info('Démarrage de l\'auto-save avec intervalle:', autosaveInterval, 'minutes');
-        // Démarrer le timer d'auto-sauvegarde
-        this.startAutosaveTimer(autosaveInterval);
-
-        // Sauvegarde avant de quitter la page
-        window.addEventListener('beforeunload', () => {
-            PDFBuilderLogger.info('Sauvegarde avant de quitter la page');
-            this.performAutosave();
-        });
-    }
-
-    startAutosaveTimer(intervalMinutes) {
-        PDFBuilderLogger.info('Démarrage du timer auto-save:', intervalMinutes, 'minutes');
-
-        this.updateAutosaveTimer(intervalMinutes);
-
-        this.autosaveTimer = setInterval(() => {
-            PDFBuilderLogger.info('Timer auto-save déclenché - exécution de la sauvegarde');
-            this.performAutosave();
-            this.updateAutosaveTimer(intervalMinutes);
-        }, intervalMinutes * 60 * 1000);
-
-        PDFBuilderLogger.info('Timer auto-save configuré avec ID:', this.autosaveTimer);
-
-        // TEST RAPIDE : Déclencher une sauvegarde dans 10 secondes pour tester
-        PDFBuilderLogger.info('⏰ Test rapide : sauvegarde dans 10 secondes...');
-        setTimeout(() => {
-            PDFBuilderLogger.info('🚀 Déclenchement test manuel de l\'auto-save');
-            this.performAutosave();
-        }, 10000);
-    }
-
-    updateAutosaveTimer(intervalMinutes) {
-        if (this.autosaveTimerDisplay) {
-            this.autosaveTimerDisplay.textContent = `💾 Sauvegarde auto dans ${intervalMinutes} min`;
-        }
-    }
-
-    async performAutosave() {
-        PDFBuilderLogger.info('Début auto-sauvegarde');
-
-        try {
-            PDFBuilderLogger.debug('Vérification des variables AJAX:', {
-                ajaxurl: pdfBuilderAjax?.ajaxurl,
-                nonce: pdfBuilderAjax?.nonce,
-                ajaxurlExists: typeof pdfBuilderAjax !== 'undefined'
-            });
-
-            if (this.autosaveStatus) {
-                this.autosaveStatus.textContent = 'Sauvegarde en cours...';
-                this.autosaveStatus.style.color = '#ffa500';
-            }
-
-            const templateData = this.getTemplateData();
-            PDFBuilderLogger.debug('Données du template récupérées:', templateData);
-
-            if (!templateData) {
-                throw new Error('Aucune donnée de template à sauvegarder');
-            }
-
-            PDFBuilderLogger.debug('Préparation de la requête AJAX');
-            // Envoyer via AJAX
-            const response = await fetch(pdfBuilderAjax.ajaxurl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    action: 'pdf_builder_autosave_template',
-                    template_data: JSON.stringify(templateData),
-                    nonce: pdfBuilderAjax.nonce
-                })
-            });
-
-            PDFBuilderLogger.debug('Réponse HTTP reçue:', {
-                status: response.status,
-                statusText: response.statusText,
-                ok: response.ok
-            });
-
-            const result = await response.json();
-            PDFBuilderLogger.debug('Résultat JSON:', result);
-
-            if (result.success) {
-                PDFBuilderLogger.info('Auto-sauvegarde réussie');
-                if (this.autosaveStatus) {
-                    this.autosaveStatus.textContent = 'Sauvegardé automatiquement';
-                    this.autosaveStatus.style.color = '#28a745';
-                    setTimeout(() => {
-                        this.autosaveStatus.textContent = 'Prêt';
-                        this.autosaveStatus.style.color = '#666';
-                    }, 3000);
-                }
-            } else {
-                window.PDFBuilderLogger.error('Auto-sauvegarde échouée côté serveur:', result.data);
-                throw new Error(result.data || 'Erreur inconnue');
-            }
-
-        } catch (error) {
-            window.PDFBuilderLogger.error('Erreur auto-sauvegarde:', error);
-            window.PDFBuilderLogger.error('Stack trace:', error.stack);
-
-            if (this.autosaveStatus) {
-                this.autosaveStatus.textContent = 'Erreur de sauvegarde';
-                this.autosaveStatus.style.color = '#dc3545';
-                setTimeout(() => {
-                    this.autosaveStatus.textContent = 'Prêt';
-                    this.autosaveStatus.style.color = '#666';
-                }, 5000);
-            }
-        }
     }
 
     async generatePreview() {

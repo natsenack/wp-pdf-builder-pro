@@ -49,7 +49,6 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajaxDownloadPdf']);
         add_action('wp_ajax_pdf_builder_save_template_v3', [$this, 'ajaxSaveTemplateV3']);
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
-        add_action('wp_ajax_pdf_builder_auto_save_template', [$this, 'ajaxAutoSaveTemplateWrapper']);
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
         add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajaxFlushRestCache']);
@@ -240,44 +239,6 @@ class AjaxHandler
     /**
      * Wrapper pour la sauvegarde automatique
      */
-    public function ajaxAutoSaveTemplateWrapper()
-    {
-        try {
-            // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
-                wp_send_json_error('Nonce invalide');
-                return;
-            }
-
-            $template_data = isset($_POST['template_data']) ? json_decode(stripslashes($_POST['template_data']), true) : null;
-
-            if (!$template_data) {
-                wp_send_json_error('Données de template manquantes');
-                return;
-            }
-
-            // Sauvegarde automatique (sans nom, juste les données)
-            $auto_save_key = 'pdf_builder_auto_save_' . get_current_user_id();
-            $this->debug_log('Auto-saving template for user ' . get_current_user_id() . ', key: ' . $auto_save_key . ', data size: ' . strlen(json_encode($template_data)));
-            
-            update_option($auto_save_key, $template_data);
-
-            $this->debug_log('Auto-save completed successfully');
-            wp_send_json_success([
-                'message' => 'Sauvegarde automatique effectuée'
-            ]);
-
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la sauvegarde automatique: ' . $e->getMessage());
-        }
-    }
-
     /**
      * Charger un template
      */
@@ -914,16 +875,6 @@ class AjaxHandler
                         ];
                     }
                     break;
-                case 'autosave':
-                    $saved = $this->saveAutosaveSettings();
-                    if ($saved) {
-                    $savedData = [
-                            'canvas_autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1'),
-                            'canvas_autosave_interval' => get_option('pdf_builder_canvas_auto_save_interval', '5'),
-                            'canvas_versions_limit' => get_option('pdf_builder_canvas_history_max', '50')
-                        ];
-                    }
-                    break;
                 case 'debug':
                     $saved = $this->saveDebugSettings();
                     if ($saved) {
@@ -1397,63 +1348,6 @@ class AjaxHandler
             update_option('pdf_builder_canvas_lazy_loading_plugin', '0');
             $updated++;
         }
-
-        return $updated > 0;
-    }
-
-    private function saveAutosaveSettings()
-    {
-        $updated = 0;
-
-        // Debug: Log received POST data
-        $this->debug_log('saveAutosaveSettings called with POST data: ' . print_r($_POST, true));
-
-        // Migration: si l'ancienne option existe, la migrer vers la nouvelle
-        if (get_option('pdf_builder_canvas_autosave_interval') !== false && get_option('pdf_builder_canvas_auto_save_interval') === false) {
-            $old_value = get_option('pdf_builder_canvas_autosave_interval');
-            update_option('pdf_builder_canvas_auto_save_interval', $old_value);
-            delete_option('pdf_builder_canvas_autosave_interval');
-        }
-
-        // Sauvegarde automatique activée
-        if (isset($_POST['canvas_autosave_enabled'])) {
-            update_option('pdf_builder_canvas_autosave_enabled', '1');
-            $updated++;
-        } else {
-            update_option('pdf_builder_canvas_autosave_enabled', '0');
-            $updated++;
-        }
-
-        // Intervalle de sauvegarde
-        if (isset($_POST['canvas_autosave_interval'])) {
-            $interval = intval($_POST['canvas_autosave_interval']);
-            if ($interval >= 1 && $interval <= 60) {
-                update_option('pdf_builder_canvas_auto_save_interval', $interval);
-                $updated++;
-            }
-        }
-
-        // Nombre maximum d'historique
-        if (isset($_POST['canvas_history_max'])) {
-            $max = intval($_POST['canvas_history_max']);
-            if ($max >= 5 && $max <= 200) {
-                update_option('pdf_builder_canvas_history_max', $max);
-                $updated++;
-            }
-        }
-
-        // Historique activé
-        if (isset($_POST['canvas_history_enabled'])) {
-            update_option('pdf_builder_canvas_history_enabled', '1');
-            $updated++;
-        } else {
-            update_option('pdf_builder_canvas_history_enabled', '0');
-            $updated++;
-        }
-
-        // Debug: Log updated options
-        $this->debug_log('Autosave settings updated: ' . $updated . ' options');
-        $this->debug_log('Current options - enabled: ' . get_option('pdf_builder_canvas_autosave_enabled', '1') . ', interval: ' . get_option('pdf_builder_canvas_auto_save_interval', '5') . ', history_max: ' . get_option('pdf_builder_canvas_history_max', '50'));
 
         return $updated > 0;
     }

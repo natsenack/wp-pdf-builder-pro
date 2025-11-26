@@ -72,7 +72,6 @@ if (!class_exists('PDF_Builder_Onboarding_Manager_Standalone')) {
         public function ajax_update_onboarding_step() { return false; }
         public function ajax_save_template_assignment() { return false; }
         public function ajax_mark_onboarding_complete() { return false; }
-        public function ajax_autosave_template() { return false; }
     }
 }
 

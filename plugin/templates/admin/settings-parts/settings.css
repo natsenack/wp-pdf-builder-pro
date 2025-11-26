@@ -848,58 +848,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     font-weight: bold;
 }
 
-/* Autosave Preview */
-.autosave-preview-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-}
-
-.autosave-indicator {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 10px;
-    color: #646970;
-}
-
-.autosave-status {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #28a745;
-    animation: pulse 2s infinite;
-}
-
-.autosave-status.active {
-    background: #28a745;
-}
-
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
-.autosave-versions {
-    display: flex;
-    gap: 3px;
-}
-
-.version-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #e1e1e1;
-    border: 1px solid #ccc;
-}
-
-.version-dot.active {
-    background: #007cba;
-    border-color: #005a87;
-}
-
 /* Debug Preview */
 .debug-preview-container {
     display: flex;
@@ -1122,22 +1070,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     font-weight: 600;
     color: #00a32a;
     margin-left: 8px;
-}
-
-.autosave-preview {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.autosave-icon {
-    font-size: 16px;
-}
-
-.autosave-timer {
-    font-size: 12px;
-    font-weight: 600;
-    color: #007cba;
 }
 
 .debug-preview {

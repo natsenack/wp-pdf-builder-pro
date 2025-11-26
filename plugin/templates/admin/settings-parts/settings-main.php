@@ -423,9 +423,6 @@ window.PDF_Builder_Preview_Manager = {
                 if (typeof updateGridCardPreview === 'function') {
                     updateGridCardPreview();
                 }
-                if (typeof updateAutosaveCardPreview === 'function') {
-                    updateAutosaveCardPreview();
-                }
 
                 pdfBuilderDebug('Canvas previews initialized successfully');
             } catch (error) {
@@ -1555,20 +1552,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 delete modal._originalInteractionsSettings;
             }
-            if (modal.getAttribute('data-category') === 'autosave' && modal._originalAutosaveSettings) {
-                if (window.pdfBuilderCanvasSettings) {
-                    window.pdfBuilderCanvasSettings.canvas_autosave_enabled = modal._originalAutosaveSettings.autosaveEnabled;
-                    window.pdfBuilderCanvasSettings.autosave_interval = modal._originalAutosaveSettings.autosaveInterval;
-                    window.pdfBuilderCanvasSettings.versions_limit = modal._originalAutosaveSettings.versionsLimit;
-                    
-                    // Update preview with restored values
-                    if (typeof updateAutosaveCardPreview === 'function') {
-                        updateAutosaveCardPreview();
-                    }
-                }
-                delete modal._originalAutosaveSettings;
-            }
-
             modal.style.setProperty('display', 'none', 'important');
         } catch (e) {
             
@@ -1593,11 +1576,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Synchronize modal values with current settings for interactions modal
                 if (modal.getAttribute('data-category') === 'interactions') {
                     synchronizeInteractionsModalValues(modal);
-                }
-
-                // Synchronize modal values with current settings for autosave modal
-                if (modal.getAttribute('data-category') === 'autosave') {
-                    synchronizeAutosaveModalValues(modal);
                 }
 
                 // Synchronize modal values with current settings for dimensions modal
@@ -1786,7 +1764,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
 
                         // Test: Vérifier les options actuelles avant sauvegarde
-                        pdfBuilderDebug('Current canvas_autosave_enabled before save:', window.pdfBuilderCanvasSettings?.canvas_autosave_enabled);
 
                         // Additional debug for dimensions category
                         if (category === 'dimensions') {
@@ -1889,12 +1866,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     'canvas_preload_critical': 'canvas_preload_critical',
                                     'canvas_lazy_loading_plugin': 'canvas_lazy_loading_plugin',
                                     
-                                    // Autosave
-                                    'canvas_autosave_enabled': 'canvas_autosave_enabled',
-                                    'canvas_autosave_interval': 'canvas_autosave_interval',
-                                    'canvas_history_max': 'canvas_versions_limit',
-                                    'canvas_history_enabled': 'canvas_history_enabled',
-                                    
                                     // Debug
                                     'canvas_debug_enabled': 'canvas_debug_enabled',
                                     'canvas_performance_monitoring': 'canvas_performance_monitoring',
@@ -1930,7 +1901,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             delete modal._originalDimensionsSettings;
                             delete modal._originalApparenceSettings;
                             delete modal._originalInteractionsSettings;
-                            delete modal._originalAutosaveSettings;
 
                             // Update window.pdfBuilderCanvasSettings with saved values for dimensions
                             if (category === 'dimensions' && data.data && data.data.saved) {
@@ -2015,47 +1985,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 updateFormElementsFromSavedData(category, data.data.saved);
                             }
 
-                            // Update window.pdfBuilderCanvasSettings with saved values for autosave
-                            if (category === 'autosave' && data.data && data.data.saved) {
-                                if (data.data.saved.canvas_autosave_enabled !== undefined) {
-                                    window.pdfBuilderCanvasSettings.canvas_autosave_enabled = data.data.saved.canvas_autosave_enabled === '1' || data.data.saved.canvas_autosave_enabled === true;
-                                }
-                                if (data.data.saved.canvas_autosave_interval !== undefined) {
-                                    window.pdfBuilderCanvasSettings.autosave_interval = parseInt(data.data.saved.canvas_autosave_interval);
-                                }
-                                if (data.data.saved.canvas_versions_limit !== undefined) {
-                                    window.pdfBuilderCanvasSettings.versions_limit = parseInt(data.data.saved.canvas_versions_limit);
-                                }
-                                
-                                pdfBuilderDebug('Saved data received:', data.data.saved);
-                                pdfBuilderDebug('window.pdfBuilderCanvasSettings.canvas_autosave_enabled updated to:', window.pdfBuilderCanvasSettings.canvas_autosave_enabled);
-                                
-                                // Test: Vérifier que les options sont sauvegardées en faisant un appel AJAX pour les relire
-                                setTimeout(function() {
-                                    fetch(ajaxConfig.ajax_url, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/x-www-form-urlencoded',
-                                        },
-                                        body: 'action=pdf_builder_get_canvas_settings&nonce=' + ajaxConfig.nonce
-                                    })
-                                    .then(response => response.json())
-                                    .then(testData => {
-                                        pdfBuilderDebug('Options relues après sauvegarde:', testData);
-                                        if (testData.success && testData.data) {
-                                            pdfBuilderDebug('canvas_autosave_enabled in DB:', testData.data.canvas_autosave_enabled);
-                                            pdfBuilderDebug('canvas_autosave_interval in DB:', testData.data.canvas_autosave_interval);
-                                            pdfBuilderDebug('canvas_versions_limit in DB:', testData.data.canvas_versions_limit);
-                                        }
-                                    })
-                                    .catch(error => {
-                                        pdfBuilderError('Error testing saved options:', error);
-                                    });
-                                }, 500);
-                                
-                                // Mettre à jour les éléments du DOM
-                                updateFormElementsFromSavedData(category, data.data.saved);
-                            }                            // Update window.pdfBuilderCanvasSettings with saved values for debug
+                            // Update window.pdfBuilderCanvasSettings with saved values
+                            pdfBuilderDebug('Saved data received:', data.data.saved);
+                            
+                            // Mettre à jour les éléments du DOM
+                            updateFormElementsFromSavedData(category, data.data.saved);
                             if (category === 'debug' && data.data && data.data.saved) {
                                 // Note: Debug settings are typically not stored in window.pdfBuilderCanvasSettings
                                 // as they are for development purposes only
@@ -2160,12 +2094,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 pdfBuilderDebug('Calling updatePerformanceCardPreview');
                                 setTimeout(function() {
                                     window.updatePerformanceCardPreview();
-                                }, 100);
-                            }
-                            if (category === 'autosave' && typeof window.updateAutosaveCardPreview === 'function') {
-                                pdfBuilderDebug('Calling updateAutosaveCardPreview');
-                                setTimeout(function() {
-                                    window.updateAutosaveCardPreview();
                                 }, 100);
                             }
                             if (category === 'export' && typeof window.updateExportCardPreview === 'function') {
@@ -2276,9 +2204,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'performance':
                 updatePerformanceModal(modal, values);
-                break;
-            case 'autosave':
-                updateAutosaveModal(modal, values);
                 break;
             case 'debug':
                 updateDebugModal(modal, values);
@@ -2537,25 +2462,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function updateAutosaveModal(modal, values) {
-        // Update autosave enabled
-        const autosaveCheckbox = modal.querySelector('#canvas_autosave_enabled');
-        if (autosaveCheckbox) {
-            autosaveCheckbox.checked = values.canvas_autosave_enabled === '1' || values.canvas_autosave_enabled === true;
-        }
-
-        // Update autosave interval
-        const intervalInput = modal.querySelector('#canvas_autosave_interval');
-        if (intervalInput && values.canvas_autosave_interval !== undefined) {
-            intervalInput.value = values.canvas_autosave_interval;
-        }
-
-        // Update history enabled
-        const historyCheckbox = modal.querySelector('#canvas_history_enabled');
-        if (historyCheckbox) {
-            historyCheckbox.checked = values.canvas_history_enabled === '1' || values.canvas_history_enabled === true;
-        }
-    }
     function updateDebugModal(modal, values) {
         // Update debug enabled
         const debugCheckbox = modal.querySelector('#canvas_debug_enabled');
@@ -2689,14 +2595,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.updatePerformanceCardPreview();
             }
         }
-
-        // Update autosave card preview
-        if (category === 'autosave' || category === 'all') {
-            if (typeof window.updateAutosaveCardPreview === 'function') {
-                window.updateAutosaveCardPreview();
-            }
-        }
-    };
 
     // Update dimensions card preview
     window.updateDimensionsCardPreview = function() {
@@ -2877,108 +2775,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Update autosave card preview
-    window.updateAutosaveCardPreview = function() {
-        pdfBuilderDebug('updateAutosaveCardPreview called');
-        try {
-            // Try to get values from modal inputs first (real-time), then from settings
-            const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
-            const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
-            const versionsLimitInput = document.getElementById("canvas_history_max");
-
-            const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : (window.pdfBuilderCanvasSettings?.autosave_interval || 5);
-            const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.canvas_autosave_enabled === true || window.pdfBuilderCanvasSettings?.canvas_autosave_enabled === '1');
-            const versionsLimit = versionsLimitInput ? parseInt(versionsLimitInput.value) : (window.pdfBuilderCanvasSettings?.versions_limit || 10);
-
-            pdfBuilderDebug('autosave values - enabled:', autosaveEnabled, 'interval:', autosaveInterval, 'versionsLimit:', versionsLimit);
-
-            const autosaveCard = document.querySelector('.canvas-card[data-category="autosave"]');
-            pdfBuilderDebug('autosaveCard found:', autosaveCard);
-            if (!autosaveCard) return;
-
-            // Update timer display
-            const timerDisplay = autosaveCard.querySelector('.autosave-timer');
-            if (timerDisplay) {
-                const minutes = autosaveInterval;
-                timerDisplay.textContent = minutes + 'min';
-                pdfBuilderDebug('Updated timer display to:', minutes + 'min');
-            } else {
-                pdfBuilderDebug('timerDisplay element not found');
-            }
-
-            // Update status
-            const statusIndicator = autosaveCard.querySelector('.autosave-status');
-            if (statusIndicator) {
-                if (autosaveEnabled) {
-                    statusIndicator.classList.add('active');
-                } else {
-                    statusIndicator.classList.remove('active');
-                }
-                pdfBuilderDebug('Updated status indicator');
-            } else {
-                pdfBuilderDebug('statusIndicator element not found');
-            }
-
-            // Update versions dots
-            const versionDots = autosaveCard.querySelectorAll('.version-dot');
-            if (versionDots.length > 0) {
-                const limit = parseInt(versionsLimit);
-                versionDots.forEach((dot, index) => {
-                    if (index < limit) {
-                        dot.style.display = 'block';
-                    } else {
-                        dot.style.display = 'none';
-                    }
-                });
-                pdfBuilderDebug('Updated version dots, showing:', limit);
-            } else {
-                pdfBuilderDebug('versionDots elements not found');
-            }
-
-            pdfBuilderDebug('updateAutosaveCardPreview completed successfully');
-        } catch (error) {
-            pdfBuilderError('Error in updateAutosaveCardPreview:', error);
-        }
-    };
-
-    // Real-time preview updates for autosave modal
-    function initializeAutosaveRealTimePreview() {
-        // Listen for changes in autosave modal fields
-        ['change', 'input'].forEach(function(eventType) {
-            document.addEventListener(eventType, function(event) {
-                const target = event.target;
-                const modal = target.closest('.canvas-modal[data-category="autosave"]');
-
-                if (modal && (target.id === 'canvas_autosave_enabled' || target.id === 'canvas_autosave_interval' || target.id === 'canvas_history_max')) {
-                    // Update window.pdfBuilderCanvasSettings temporarily for preview
-                    if (window.pdfBuilderCanvasSettings) {
-                        if (target.id === 'canvas_autosave_enabled') {
-                            window.pdfBuilderCanvasSettings.canvas_autosave_enabled = target.checked;
-                        } else if (target.id === 'canvas_autosave_interval') {
-                            window.pdfBuilderCanvasSettings.autosave_interval = parseInt(target.value);
-                        } else if (target.id === 'canvas_history_max') {
-                            window.pdfBuilderCanvasSettings.versions_limit = parseInt(target.value);
-                        }
-
-                        // Update preview immediately
-                        if (typeof updateAutosaveCardPreview === 'function') {
-                            updateAutosaveCardPreview();
-                        } else {
-                            console.warn('updateAutosaveCardPreview function not found');
-                        }
-                    } else {
-                        console.warn('window.pdfBuilderCanvasSettings not available');
-                    }
-                }
-            });
-        });
-    }
-
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             initializeModals();
-            initializeAutosaveRealTimePreview();
             initializeTemplatesRealTimePreview();
 
             // Initialize all previews with saved data from database
@@ -2991,7 +2791,6 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         // DOM already loaded
         initializeModals();
-        initializeAutosaveRealTimePreview();
         initializeTemplatesRealTimePreview();
 
         // Initialize all previews with saved data from database
@@ -3061,20 +2860,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 'canvas_keyboard_shortcuts': (value) => value === 'on' || value === true
             },
             updateFunction: 'updateInteractionsCardPreview'
-        },
-        autosave: {
-            fields: ['canvas_autosave_enabled', 'canvas_autosave_interval', 'canvas_history_max'],
-            settingMappings: {
-                'canvas_autosave_enabled': 'canvas_autosave_enabled',
-                'canvas_autosave_interval': 'canvas_autosave_interval',
-                'canvas_history_max': 'canvas_versions_limit'
-            },
-            valueTransformers: {
-                'canvas_autosave_enabled': (value) => value === 'on' || value === true,
-                'canvas_autosave_interval': (value) => parseInt(value),
-                'canvas_history_max': (value) => parseInt(value)
-            },
-            updateFunction: 'updateAutosaveCardPreview'
         },
         templates: {
             fields: ['template_library_enabled'],
@@ -3184,9 +2969,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize real-time preview for interactions
     initializeInteractionsRealTimePreview();
 
-    // Initialize real-time preview for autosave
-    initializeAutosaveRealTimePreview();
-
     // Initialize real-time preview for templates
     initializeTemplatesRealTimePreview();
 
@@ -3222,13 +3004,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 { id: 'canvas_keyboard_shortcuts', setting: 'keyboard_shortcuts', default: true, type: 'checkbox' }
             ],
             onSync: function(modal) { updateSelectionModeDependency(modal); }
-        },
-        autosave: {
-            fields: [
-                { id: 'canvas_autosave_enabled', setting: 'canvas_autosave_enabled', default: true, type: 'checkbox' },
-                { id: 'canvas_autosave_interval', setting: 'canvas_autosave_interval', default: 5 },
-                { id: 'canvas_history_max', setting: 'canvas_versions_limit', default: 10 }
-            ]
         }
     };
 
@@ -3276,10 +3051,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function synchronizeInteractionsModalValues(modal) {
         synchronizeModalValues(modal, 'interactions');
-    }
-
-    function synchronizeAutosaveModalValues(modal) {
-        synchronizeModalValues(modal, 'autosave');
     }
 
     // Real-time preview updates for interactions modal
@@ -3367,12 +3138,6 @@ function syncFormElementsWithLoadedSettings() {
         'canvas_lazy_loading_editor': 'canvas_lazy_loading_editor',
         'canvas_preload_critical': 'canvas_preload_critical',
         'canvas_lazy_loading_plugin': 'canvas_lazy_loading_plugin',
-        
-        // Autosave - géré par l'HTML directement depuis WordPress options
-        // 'canvas_autosave_enabled': 'canvas_autosave_enabled',
-        // 'canvas_autosave_interval': 'canvas_autosave_interval', 
-        // 'canvas_history_max': 'canvas_versions_limit',
-        // 'canvas_history_enabled': 'canvas_history_enabled',
         
         // Debug
         'canvas_debug_enabled': 'canvas_debug_enabled',

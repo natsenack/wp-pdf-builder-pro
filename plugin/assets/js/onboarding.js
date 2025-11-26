@@ -23,7 +23,6 @@
             this.bindEvents();
             this.initializeWizard();
             this.setupKeyboardNavigation();
-            this.setupAutoSave();
             this.trackAnalytics('onboarding_started');
         }
 
@@ -158,32 +157,6 @@
             });
         }
 
-        setupAutoSave() {
-            // Sauvegarde automatique de la progression toutes les 30 secondes
-            setInterval(() => {
-                this.autoSaveProgress();
-            }, 30000);
-
-            // Sauvegarde avant de quitter la page
-            $(window).on('beforeunload', () => {
-                this.autoSaveProgress();
-            });
-
-            // Gestionnaires pour l'étape d'assignation de template
-            $(document).on('input', '#template_custom_name, #template_custom_description', () => {
-                // Sauvegarde automatique lors de la saisie
-                clearTimeout(this.saveTimeout);
-                this.saveTimeout = setTimeout(() => {
-                    this.saveTemplateAssignment();
-                }, 1000);
-            });
-
-            $(document).on('change', 'input[name="assigned_statuses"], input[name="template_actions"]', () => {
-                // Sauvegarde automatique lors des changements de checkboxes
-                this.saveTemplateAssignment();
-            });
-        }
-
         navigateStep(direction) {
             const totalSteps = 5;
             let newStep = this.currentStep;
@@ -216,33 +189,6 @@
                 event: event,
                 data: data,
                 timestamp: Date.now()
-            });
-        }
-
-        autoSaveProgress() {
-            // Sauvegarde automatique de la progression
-            const progressData = {
-                currentStep: this.currentStep,
-                selectedTemplate: this.selectedTemplate,
-                interactions: this.interactions,
-                timeSpent: Date.now() - this.startTime
-            };
-            
-            // Sauvegarder via AJAX
-            $.ajax({
-                url: pdfBuilderOnboarding.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'pdf_builder_auto_save_progress',
-                    progress_data: JSON.stringify(progressData),
-                    nonce: pdfBuilderOnboarding.nonce
-                },
-                success: (response) => {
-                    if (response.success) {
-                    }
-                },
-                error: (xhr, status, error) => {
-                }
             });
         }
 
@@ -923,24 +869,6 @@
 
             // Animation
             $feedback.fadeIn(200);
-        }
-
-        autoSaveProgress() {
-            const progress = {
-                currentStep: this.currentStep,
-                selectedTemplate: this.selectedTemplate,
-                timestamp: Date.now(),
-                interactions: this.interactions.length
-            };
-
-            // Sauvegarde en localStorage comme fallback
-            try {
-                localStorage.setItem('pdf_builder_onboarding_progress', JSON.stringify(progress));
-            } catch (e) {
-                // localStorage non disponible
-            }
-
-            this.trackAnalytics('progress_auto_saved', progress);
         }
 
         trackAnalytics(event, data = {}) {

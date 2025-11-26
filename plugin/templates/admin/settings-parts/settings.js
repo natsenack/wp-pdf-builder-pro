@@ -249,33 +249,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Add real-time updates for autosave card
-    const autosaveEnabledCheckbox = document.getElementById("canvas_autosave_enabled");
-    const autosaveIntervalInput = document.getElementById("canvas_autosave_interval");
-    const versionsLimitInput = document.getElementById("canvas_versions_limit");
-
-    if (autosaveEnabledCheckbox) {
-        autosaveEnabledCheckbox.addEventListener("change", function() {
-            if (typeof window.updateAutosaveCardPreview === 'function') {
-                window.updateAutosaveCardPreview();
-            }
-        });
-    }
-    if (autosaveIntervalInput) {
-        autosaveIntervalInput.addEventListener("input", function() {
-            if (typeof window.updateAutosaveCardPreview === 'function') {
-                window.updateAutosaveCardPreview();
-            }
-        });
-    }
-    if (versionsLimitInput) {
-        versionsLimitInput.addEventListener("input", function() {
-            if (typeof window.updateAutosaveCardPreview === 'function') {
-                window.updateAutosaveCardPreview();
-            }
-        });
-    }
-
     // Add real-time updates for apparence card
     const bgColorInput = document.getElementById("canvas_bg_color");
     const borderColorInput = document.getElementById("canvas_border_color");

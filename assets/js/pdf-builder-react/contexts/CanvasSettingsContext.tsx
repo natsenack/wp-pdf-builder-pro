@@ -61,8 +61,6 @@ export interface CanvasSettingsContextType {
   // Historique
   historyUndoLevels: number;
   historyRedoLevels: number;
-  historyAutoSaveEnabled: boolean;
-  historyAutoSaveInterval: number;
   
   // Performance & Lazy Loading
   lazyLoadingEditor: boolean;
@@ -131,8 +129,6 @@ const DEFAULT_SETTINGS: CanvasSettingsContextType = {
   
   historyUndoLevels: 50,
   historyRedoLevels: 50,
-  historyAutoSaveEnabled: true,
-  historyAutoSaveInterval: 30000,
   
   // Performance & Lazy Loading
   lazyLoadingEditor: true,
@@ -241,9 +237,6 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       // Historique
       historyUndoLevels: (windowSettings.history_undo_levels as number) ?? DEFAULT_SETTINGS.historyUndoLevels,
       historyRedoLevels: (windowSettings.history_redo_levels as number) ?? DEFAULT_SETTINGS.historyRedoLevels,
-      historyAutoSaveEnabled: windowSettings.history_auto_save_enabled === true || windowSettings.history_auto_save_enabled === '1',
-      historyAutoSaveInterval: (windowSettings.history_auto_save_interval as number) ?? DEFAULT_SETTINGS.historyAutoSaveInterval,
-      
       // Performance & Lazy Loading
       lazyLoadingEditor: windowSettings.lazy_loading_editor === true || windowSettings.lazy_loading_editor === '1',
       lazyLoadingPlugin: windowSettings.lazy_loading_plugin === true || windowSettings.lazy_loading_plugin === '1',

@@ -344,38 +344,6 @@ input:checked + .toggle-slider:before {
                             </div>
                         </div>
 
-                        <!-- Carte Sauvegarde Auto -->
-                        <div class="canvas-card" data-category="autosave">
-                            <div class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">💾</span>
-                                </div>
-                                <h4>Sauvegarde Auto</h4>
-                            </div>
-                            <div class="canvas-card-content">
-                                <p>Gérez la sauvegarde automatique et l'historique des versions.</p>
-                            </div>
-                            <div class="canvas-card-preview">
-                                <div class="autosave-preview-container">
-                                    <div class="autosave-indicator">
-                                        <div class="autosave-icon">⏰</div>
-                                        <div class="autosave-timer">5min</div>
-                                        <div class="autosave-status active"></div>
-                                    </div>
-                                    <div class="autosave-versions">
-                                        <div class="version-dot" title="Version 1"></div>
-                                        <div class="version-dot" title="Version 2"></div>
-                                        <div class="version-dot active" title="Version actuelle"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
-                                    <span>💾</span> Configurer
-                                </button>
-                            </div>
-                        </div>
-
                         <!-- Carte Debug -->
                         <div class="canvas-card" data-category="debug">
                             <div class="canvas-card-header">

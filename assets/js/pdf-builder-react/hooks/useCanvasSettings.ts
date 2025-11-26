@@ -213,9 +213,6 @@ export const useHistorySettings = () => {
     return useMemo(() => ({
         undoLevels: settings.undo_levels || 50,
         redoLevels: settings.redo_levels || 50,
-        autoSave: settings.auto_save_enabled || true,
-        autoSaveInterval: settings.auto_save_interval || 30,
-        autoSaveVersions: settings.auto_save_versions || 10,
     }), [settings]);
 };
 
