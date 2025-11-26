@@ -203,6 +203,10 @@ $pdf_quality = $preview_data['pdf_quality'];
 $default_format = $preview_data['default_format'];
 $default_orientation = $preview_data['default_orientation'];
 
+// Variables de licence pour les templates
+$license_test_mode = $all_settings['pdf_builder_license_test_mode_enabled'];
+$license_test_key = $all_settings['pdf_builder_license_test_key'];
+
 // Passer les données sauvegardées au JavaScript pour les previews
 ?>
 <script>
