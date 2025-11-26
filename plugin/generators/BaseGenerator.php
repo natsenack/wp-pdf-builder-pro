@@ -193,8 +193,21 @@ abstract class BaseGenerator
      */
     protected function renderTextElement(array $element): string
     {
-        $text = $element['text'] ?? '';
+        // Supporter 'content' et 'text' comme clés possibles
+        $text = $element['content'] ?? $element['text'] ?? '';
+        
+        // Logging pour debugging
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[PDF Builder] renderTextElement - élément: ' . print_r($element, true));
+            error_log('[PDF Builder] renderTextElement - texte avant injection: ' . $text);
+        }
+        
         $text = $this->injectVariables($text);
+        
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[PDF Builder] renderTextElement - texte après injection: ' . $text);
+        }
+        
         $style = $this->buildElementStyle($element);
         return "<div class=\"pdf-element text-element\" style=\"{$style}\">{$text}</div>";
     }
@@ -275,13 +288,31 @@ abstract class BaseGenerator
      */
     protected function injectVariables(string $text): string
     {
+        // Logging du texte original
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[PDF Builder] injectVariables - texte original: ' . $text);
+        }
+        
         // Recherche des variables {{variable}}
         preg_match_all('/\{\{([^}]+)\}\}/', $text, $matches);
+        
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[PDF Builder] injectVariables - variables trouvées: ' . print_r($matches[1], true));
+        }
+        
         foreach ($matches[1] as $variable) {
             $value = $this->data_provider->getVariableValue(trim($variable));
-            $text = str_replace("{{{$variable}}}", $value, $text);
+            $text = str_replace("{{" . $variable . "}}", $value, $text);
+            
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('[PDF Builder] injectVariables - remplacement: {{' . $variable . '}} -> ' . $value);
+            }
         }
 
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[PDF Builder] injectVariables - texte final: ' . $text);
+        }
+        
         return $text;
     }
 
