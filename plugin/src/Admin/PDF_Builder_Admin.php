@@ -2699,10 +2699,10 @@ class PdfBuilderAdmin
         if ($this->template_manager === null) {
             // Vérifier si la classe TemplateManager existe dans le bon namespace
             if (class_exists('PDF_Builder\\Admin\\Managers\\TemplateManager')) {
-                $this->debug_log('Creating TemplateManager instance\');
+                $this->debug_log('Creating TemplateManager instance');
                 $this->template_manager = new \PDF_Builder\Admin\Managers\TemplateManager($this);
             } else {
-                $this->debug_log('TemplateManager class not found\');
+                $this->debug_log('TemplateManager class not found');
                 // Classe non chargée, essayer de la charger manuellement
                 $template_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Managers/TemplateManager.php';
 
@@ -2711,10 +2711,10 @@ class PdfBuilderAdmin
                     require_once $template_manager_file;
 
                     if (class_exists('PDF_Builder\\Admin\\Managers\\TemplateManager')) {
-                        debug_log('TemplateManager class loaded successfully\\');
+                        debug_log('TemplateManager class loaded successfully');
                         $this->template_manager = new \PDF_Builder\Admin\Managers\TemplateManager($this);
                     } else {
-                        $this->debug_log('TemplateManager class still not found after loading file\');
+                        $this->debug_log('TemplateManager class still not found after loading file');
                     }
                 } else {
                     $this->debug_log('TemplateManager file not found: ' . $template_manager_file);
@@ -2763,7 +2763,7 @@ class PdfBuilderAdmin
 
         // Vérifier que WooCommerce est actif
         if (!class_exists('WooCommerce')) {
-            return new WP_Error('woocommerce_missing', 'WooCommerce n\'est pas installé ou activé\');
+            return new WP_Error('woocommerce_missing', 'WooCommerce n\'est pas installé ou activé');
         }
 
         // Vérifier que les fonctions WooCommerce nécessaires existent
