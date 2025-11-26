@@ -534,6 +534,26 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
     }
 }
 
+// Process développeur form
+if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur_nonce'])) {
+    if (wp_verify_nonce($_POST['pdf_builder_developpeur_nonce'], 'pdf_builder_settings')) {
+        try {
+            // Update developer settings
+            $developer_enabled = isset($_POST['developer_enabled']) ? 1 : 0;
+            $developer_password = sanitize_text_field($_POST['developer_password'] ?? '');
+            
+            update_option('pdf_builder_developer_enabled', $developer_enabled);
+            update_option('pdf_builder_developer_password', $developer_password);
+            
+            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
+        } catch (Exception $e) {
+            $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde: ' . esc_html($e->getMessage()) . '</p></div>';
+        }
+    } else {
+        $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
+    }
+}
+
 // Handle cache clear
 if (
     isset($_POST['clear_cache']) &&
