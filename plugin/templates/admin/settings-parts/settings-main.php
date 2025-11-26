@@ -1602,16 +1602,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     let ajaxConfig = null;
                     if (typeof pdf_builder_ajax !== 'undefined') {
                         ajaxConfig = pdf_builder_ajax;
-                        console.log('PDF_BUILDER_DEBUG: Using pdf_builder_ajax config:', ajaxConfig);
+                        pdfBuilderDebug('Using pdf_builder_ajax config:', ajaxConfig);
                     } else if (typeof pdfBuilderAjax !== 'undefined') {
                         ajaxConfig = pdfBuilderAjax;
-                        console.log('PDF_BUILDER_DEBUG: Using pdfBuilderAjax config:', ajaxConfig);
+                        pdfBuilderDebug('Using pdfBuilderAjax config:', ajaxConfig);
                     } else if (typeof ajaxurl !== 'undefined') {
                         ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
-                        console.log('PDF_BUILDER_DEBUG: Using fallback ajaxurl config:', ajaxConfig);
+                        pdfBuilderDebug('Using fallback ajaxurl config:', ajaxConfig);
                     } else {
-                        console.log('PDF_BUILDER_DEBUG: No AJAX config found!');
-                        console.log('PDF_BUILDER_DEBUG: Available global variables:', Object.keys(window));
+                        pdfBuilderDebug('No AJAX config found!');
+                        pdfBuilderDebug('Available global variables:', Object.keys(window));
                     }
 
                     if (!ajaxConfig || !ajaxConfig.ajax_url) {
@@ -1627,16 +1627,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // S'assurer que toutes les checkboxes sont incluses dans FormData
                         const allCheckboxes = form.querySelectorAll('input[type="checkbox"]');
-                        console.log('PDF_BUILDER_DEBUG: Found checkboxes in form:', allCheckboxes.length);
+                        pdfBuilderDebug('Found checkboxes in form:', allCheckboxes.length);
                         allCheckboxes.forEach(checkbox => {
                             if (checkbox.name) {
-                                console.log('PDF_BUILDER_DEBUG: Processing checkbox:', checkbox.name, 'checked:', checkbox.checked);
+                                pdfBuilderDebug('Processing checkbox:', checkbox.name, 'checked:', checkbox.checked);
                                 // Si la checkbox n'est pas déjà dans FormData, l'ajouter
                                 if (!formData.has(checkbox.name)) {
                                     formData.append(checkbox.name, '0');
-                                    console.log('PDF_BUILDER_DEBUG: Added unchecked checkbox to FormData:', checkbox.name, '= 0');
+                                    pdfBuilderDebug('Added unchecked checkbox to FormData:', checkbox.name, '= 0');
                                 } else {
-                                    console.log('PDF_BUILDER_DEBUG: Checkbox already in FormData:', checkbox.name);
+                                    pdfBuilderDebug('Checkbox already in FormData:', checkbox.name);
                                 }
                             }
                         });
@@ -1646,20 +1646,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         formData.append('nonce', ajaxConfig.nonce || '');
 
                         // Debug: Log form data
-                        console.log('PDF_BUILDER_DEBUG: Sending form data for category:', category);
+                        pdfBuilderDebug('Sending form data for category:', category);
                         for (let [key, value] of formData.entries()) {
-                            console.log('PDF_BUILDER_DEBUG: Form data -', key, '=', value);
+                            pdfBuilderDebug('Form data -', key, '=', value);
                         }
 
                         // Test: Vérifier les options actuelles avant sauvegarde
-                        console.log('PDF_BUILDER_DEBUG: Current canvas_autosave_enabled before save:', window.pdfBuilderCanvasSettings?.canvas_autosave_enabled);
+                        pdfBuilderDebug('Current canvas_autosave_enabled before save:', window.pdfBuilderCanvasSettings?.canvas_autosave_enabled);
 
                         // Additional debug for dimensions category
                         if (category === 'dimensions') {
-                            console.log('PDF_BUILDER_DEBUG: Dimensions form elements:');
+                            pdfBuilderDebug('Dimensions form elements:');
                             const formElements = form.querySelectorAll('select, input');
                             formElements.forEach(el => {
-                                console.log('PDF_BUILDER_DEBUG: Element', el.name || el.id, '=', el.value);
+                                pdfBuilderDebug('Element', el.name || el.id, '=', el.value);
                             });
                         }
 
@@ -1695,7 +1695,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         return response.json();
                     })
                     .then(data => {
-                        console.log('PDF_BUILDER_DEBUG: AJAX response received:', data);
+                        pdfBuilderDebug('AJAX response received:', data);
                         pdfBuilderDebug('AJAX response data:', data);
                         
                         if (data.success) {
@@ -1706,7 +1706,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Fonction centralisée pour mettre à jour les éléments du DOM
                             function updateFormElementsFromSavedData(category, savedData) {
                                 if (!savedData) {
-                                    console.log('PDF_BUILDER_DEBUG: No savedData provided for category:', category);
+                                    pdfBuilderDebug('No savedData provided for category:', category);
                                     return;
                                 }
                                 
@@ -1893,8 +1893,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                     window.pdfBuilderCanvasSettings.versions_limit = parseInt(data.data.saved.canvas_versions_limit);
                                 }
                                 
-                                console.log('PDF_BUILDER_DEBUG: Saved data received:', data.data.saved);
-                                console.log('PDF_BUILDER_DEBUG: window.pdfBuilderCanvasSettings.canvas_autosave_enabled updated to:', window.pdfBuilderCanvasSettings.canvas_autosave_enabled);
+                                pdfBuilderDebug('Saved data received:', data.data.saved);
+                                pdfBuilderDebug('window.pdfBuilderCanvasSettings.canvas_autosave_enabled updated to:', window.pdfBuilderCanvasSettings.canvas_autosave_enabled);
                                 
                                 // Test: Vérifier que les options sont sauvegardées en faisant un appel AJAX pour les relire
                                 setTimeout(function() {
@@ -1907,15 +1907,15 @@ document.addEventListener('DOMContentLoaded', function() {
                                     })
                                     .then(response => response.json())
                                     .then(testData => {
-                                        console.log('PDF_BUILDER_DEBUG: Options relues après sauvegarde:', testData);
+                                        pdfBuilderDebug('Options relues après sauvegarde:', testData);
                                         if (testData.success && testData.data) {
-                                            console.log('PDF_BUILDER_DEBUG: canvas_autosave_enabled in DB:', testData.data.canvas_autosave_enabled);
+                                            pdfBuilderDebug('canvas_autosave_enabled in DB:', testData.data.canvas_autosave_enabled);
                                             console.log('PDF_BUILDER_DEBUG: canvas_autosave_interval in DB:', testData.data.canvas_autosave_interval);
                                             console.log('PDF_BUILDER_DEBUG: canvas_versions_limit in DB:', testData.data.canvas_versions_limit);
                                         }
                                     })
                                     .catch(error => {
-                                        console.error('PDF_BUILDER_DEBUG: Error testing saved options:', error);
+                                        pdfBuilderError('Error testing saved options:', error);
                                     });
                                 }, 500);
                                 
@@ -2010,7 +2010,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 try {
                                     window.updateDimensionsCardPreview();
                                 } catch (error) {
-                                    console.error('PDF_BUILDER_DEBUG: Error calling updateDimensionsCardPreview:', error);
+                                    pdfBuilderError('Error calling updateDimensionsCardPreview:', error);
                                 }
                             }
                             if (category === 'apparence' && typeof window.updateApparenceCardPreview === 'function') {
@@ -2018,7 +2018,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     try {
                                         window.updateApparenceCardPreview();
                                     } catch (error) {
-                                        console.error('PDF_BUILDER_DEBUG: Error calling updateApparenceCardPreview:', error);
+                                        pdfBuilderError('Error calling updateApparenceCardPreview:', error);
                                     }
                                 }, 100);
                             }
@@ -2150,7 +2150,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateDebugModal(modal, values);
                 break;
             default:
-                console.warn('⚠️ Unknown category:', category);
+                pdfBuilderDebug('⚠️ Unknown category:', category);
         }
     }
 
@@ -2503,7 +2503,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.CanvasPreviewManager.updatePreviews(category);
                 console.log('CanvasPreviewManager.updatePreviews completed successfully');
             } catch (error) {
-                console.error('Error in CanvasPreviewManager.updatePreviews:', error);
+                pdfBuilderError('Error in CanvasPreviewManager.updatePreviews:', error);
             }
             return;
         }
@@ -2803,7 +2803,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             console.log('PDF_BUILDER_DEBUG: updateAutosaveCardPreview completed successfully');
         } catch (error) {
-            console.error('PDF_BUILDER_DEBUG: Error in updateAutosaveCardPreview:', error);
+            pdfBuilderError('Error in updateAutosaveCardPreview:', error);
         }
     };
 
@@ -3006,10 +3006,6 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeRealTimePreview('interactions');
     }
 
-    function initializeAutosaveRealTimePreview() {
-        initializeRealTimePreview('autosave');
-    }
-
     function initializeTemplatesRealTimePreview() {
         initializeRealTimePreview('templates');
     }
@@ -3187,48 +3183,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Real-time preview updates for autosave modal
-    function initializeAutosaveRealTimePreview() {
-        // Listen for changes in autosave modal fields
-        ['change', 'input'].forEach(function(eventType) {
-            document.addEventListener(eventType, function(event) {
-                const target = event.target;
-                const modal = target.closest('.canvas-modal[data-category="autosave"]');
-
-                if (modal && (target.id === 'canvas_autosave_enabled' || target.id === 'canvas_autosave_interval' || target.id === 'canvas_history_max')) {
-                    // Update window.pdfBuilderCanvasSettings temporarily for preview
-                    if (window.pdfBuilderCanvasSettings) {
-                        if (target.id === 'canvas_autosave_enabled') {
-                            window.pdfBuilderCanvasSettings.canvas_autosave_enabled = target.checked;
-                        } else if (target.id === 'canvas_autosave_interval') {
-                            window.pdfBuilderCanvasSettings.autosave_interval = parseInt(target.value);
-                        } else if (target.id === 'canvas_history_max') {
-                            window.pdfBuilderCanvasSettings.versions_limit = parseInt(target.value);
-                        }
-
-                        // Update preview immediately
-                        if (typeof updateAutosaveCardPreview === 'function') {
-                            updateAutosaveCardPreview();
-                        } else {
-                            console.warn('updateAutosaveCardPreview function not found');
-                        }
-                    } else {
-                        console.warn('window.pdfBuilderCanvasSettings not available');
-                    }
-                }
-            });
-        });
-    }
 }
 
 // Fonction pour synchroniser les éléments du formulaire avec les paramètres chargés
 function syncFormElementsWithLoadedSettings() {
     if (!window.pdfBuilderCanvasSettings) {
-        console.warn('PDF_BUILDER_DEBUG: window.pdfBuilderCanvasSettings not available for sync');
+        pdfBuilderDebug('PDF_BUILDER_DEBUG: window.pdfBuilderCanvasSettings not available for sync');
         return;
     }
 
-    console.log('PDF_BUILDER_DEBUG: Synchronisation des éléments du formulaire avec les paramètres chargés:', window.pdfBuilderCanvasSettings);
+    pdfBuilderDebug('Synchronisation des éléments du formulaire avec les paramètres chargés:', window.pdfBuilderCanvasSettings);
 
     // Mapping des IDs d'éléments vers les clés dans pdfBuilderCanvasSettings
     const elementMappings = {
@@ -3311,10 +3275,10 @@ function syncFormElementsWithLoadedSettings() {
                     console.log('PDF_BUILDER_DEBUG: Valeur changée pour', elementId, 'de', oldValue, 'à', newValue);
                 }
             } else {
-                console.warn('PDF_BUILDER_DEBUG: Élément non trouvé:', elementId);
+                pdfBuilderDebug('Élément non trouvé:', elementId);
             }
         } else {
-            console.warn('PDF_BUILDER_DEBUG: Clé non trouvée dans settings:', settingsKey, 'pour élément:', elementId);
+            pdfBuilderDebug('Clé non trouvée dans settings:', settingsKey, 'pour élément:', elementId);
         }
     });
 }
