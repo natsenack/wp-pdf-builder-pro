@@ -1625,19 +1625,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     try {
                         formData = new FormData(form);
                         
-                        // S'assurer que toutes les checkboxes sont incluses dans FormData
+                        // S'assurer que toutes les checkboxes sont incluses dans FormData avec la bonne valeur
                         const allCheckboxes = form.querySelectorAll('input[type="checkbox"]');
                         pdfBuilderDebug('Found checkboxes in form:', allCheckboxes.length);
                         allCheckboxes.forEach(checkbox => {
                             if (checkbox.name) {
-                                pdfBuilderDebug('Processing checkbox:', checkbox.name, 'checked:', checkbox.checked);
-                                // Si la checkbox n'est pas déjà dans FormData, l'ajouter
-                                if (!formData.has(checkbox.name)) {
-                                    formData.append(checkbox.name, '0');
-                                    pdfBuilderDebug('Added unchecked checkbox to FormData:', checkbox.name, '= 0');
-                                } else {
-                                    pdfBuilderDebug('Checkbox already in FormData:', checkbox.name);
+                                const checkboxValue = checkbox.checked ? '1' : '0';
+                                pdfBuilderDebug('Processing checkbox:', checkbox.name, 'checked:', checkbox.checked, 'value:', checkboxValue);
+                                
+                                // Supprimer d'abord toute valeur existante pour cette checkbox
+                                if (formData.has(checkbox.name)) {
+                                    formData.delete(checkbox.name);
+                                    pdfBuilderDebug('Removed existing FormData entry for:', checkbox.name);
                                 }
+                                
+                                // Ajouter la valeur correcte
+                                formData.append(checkbox.name, checkboxValue);
+                                pdfBuilderDebug('Added checkbox to FormData:', checkbox.name, '=', checkboxValue);
                             }
                         });
                         
