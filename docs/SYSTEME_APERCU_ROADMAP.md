@@ -108,6 +108,7 @@ POST /wp-json/wp-pdf-builder-pro/v1/preview
 - [x] Validation données manquantes (placeholders)
 - [x] Transitions contextes (canvas ↔ metabox)
 - [x] Tests données tous contextes
+- **Note** : Système d'injection dynamique des données WooCommerce entièrement opérationnel. DataProviders (SampleDataProvider: 76 variables fictives, WooCommerceDataProvider: 53 variables réelles) avec gestion automatique des contextes (canvas/metabox), placeholders informatifs et tests complets via interface centralisée.
 
 #### **Jour 14-16 : Intégration Complète**
 - [ ] Boutons aperçu dans éditeur et metabox
