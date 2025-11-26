@@ -897,9 +897,14 @@ window.updateZoomCardPreview = function() {
 
 // Fonction globale pour mettre à jour l'indicateur développeur
 function updateDeveloperStatusIndicator(isActive = null) {
-    console.log('PDF_BUILDER_DEBUG: updateDeveloperStatusIndicator called with isActive:', isActive);
+    // Debug logs only when developer mode is enabled
+    if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+        console.log('PDF_BUILDER_DEBUG: updateDeveloperStatusIndicator called with isActive:', isActive);
+    }
     const developerIndicator = document.querySelector('.developer-status-indicator');
-    console.log('PDF_BUILDER_DEBUG: developerIndicator element found:', developerIndicator);
+    if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+        console.log('PDF_BUILDER_DEBUG: developerIndicator element found:', developerIndicator);
+    }
     if (developerIndicator) {
         // Si isActive n'est pas fourni, utiliser l'état actuel du checkbox
         if (isActive === null) {
@@ -910,9 +915,13 @@ function updateDeveloperStatusIndicator(isActive = null) {
         developerIndicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
         developerIndicator.style.background = isActive ? '#28a745' : '#dc3545';
         developerIndicator.style.color = 'white';
-        console.log('PDF_BUILDER_DEBUG: developerIndicator updated to:', isActive ? 'ACTIF' : 'INACTIF');
+        if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+            console.log('PDF_BUILDER_DEBUG: developerIndicator updated to:', isActive ? 'ACTIF' : 'INACTIF');
+        }
     } else {
-        console.log('PDF_BUILDER_DEBUG: developer-status-indicator element not found');
+        if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+            console.log('PDF_BUILDER_DEBUG: developer-status-indicator element not found');
+        }
     }
 }
 
@@ -1299,15 +1308,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 credentials: 'same-origin'
             })
             .then(response => {
-                console.log('PDF_BUILDER_DEBUG: AJAX response status:', response.status);
+                // Debug logs only when developer mode is enabled
+                if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+                    console.log('PDF_BUILDER_DEBUG: AJAX response status:', response.status);
+                }
                 return response.json();
             })
             .then(data => {
-                console.log('PDF_BUILDER_DEBUG: AJAX response data:', data);
+                // Debug logs only when developer mode is enabled
+                if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+                    console.log('PDF_BUILDER_DEBUG: AJAX response data:', data);
+                }
                 clearTimeout(safetyTimeout); // Annuler le timeout de sécurité
 
                 if (data.success) {
-                    console.log('PDF_BUILDER_DEBUG: Success handler entered');
+                    // Debug logs only when developer mode is enabled
+                    if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+                        console.log('PDF_BUILDER_DEBUG: Success handler entered');
+                    }
                     
                     // Succès
                     floatingSaveBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">Sauvegardé !</span>';
@@ -1322,19 +1340,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Mettre à jour l'indicateur développeur
                     if (data.data && data.data.saved_options && typeof data.data.saved_options.developer_enabled !== 'undefined') {
-                        console.log('PDF_BUILDER_DEBUG: Developer enabled value:', data.data.saved_options.developer_enabled);
+                        // Debug logs only when developer mode is enabled
+                        if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+                            console.log('PDF_BUILDER_DEBUG: Developer enabled value:', data.data.saved_options.developer_enabled);
+                        }
                         updateDeveloperStatusIndicator(data.data.saved_options.developer_enabled === '1');
                         
                         // Mettre à jour aussi l'indicateur dans le menu des onglets
                         const developerEnabledIndicator = document.querySelector('.developer-enabled-indicator');
-                        console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator element found:', developerEnabledIndicator);
+                        if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+                            console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator element found:', developerEnabledIndicator);
+                        }
                         if (developerEnabledIndicator) {
                             const isEnabled = data.data.saved_options.developer_enabled === '1';
                             developerEnabledIndicator.style.color = isEnabled ? '#28a745' : '#dc3545';
                             developerEnabledIndicator.textContent = isEnabled ? 'Activé' : 'Désactivé';
-                            console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator updated to:', isEnabled ? 'Activé' : 'Désactivé');
+                            if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+                                console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator updated to:', isEnabled ? 'Activé' : 'Désactivé');
+                            }
                         } else {
-                            console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator element not found');
+                            if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+                                console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator element not found');
+                            }
                         }
                         
                         // Mettre à jour la variable globale pour cohérence
@@ -1345,7 +1372,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Mettre à jour la visibilité des sections développeur
                         toggleDeveloperSections(data.data.saved_options.developer_enabled === '1');
                     } else {
-                        console.log('PDF_BUILDER_DEBUG: Developer data not found in response:', data.data);
+                        // Debug logs only when developer mode is enabled
+                        if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+                            console.log('PDF_BUILDER_DEBUG: Developer data not found in response:', data.data);
+                        }
                     }
 
                     // Mettre à jour les indicateurs des templates assignés
@@ -3392,7 +3422,10 @@ function syncFormElementsWithLoadedSettings() {
 
 // Fonction pour afficher/masquer les sections développeur
 function toggleDeveloperSections(show) {
-    console.log('PDF_BUILDER_DEBUG: toggleDeveloperSections called with show:', show);
+    // Debug logs only when developer mode is enabled
+    if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+        console.log('PDF_BUILDER_DEBUG: toggleDeveloperSections called with show:', show);
+    }
     const sections = [
         'dev-license-section',
         'dev-debug-section',
@@ -3408,10 +3441,14 @@ function toggleDeveloperSections(show) {
 
     sections.forEach(sectionId => {
         const section = document.getElementById(sectionId);
-        console.log('PDF_BUILDER_DEBUG: Section', sectionId, 'found:', !!section);
+        if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+            console.log('PDF_BUILDER_DEBUG: Section', sectionId, 'found:', !!section);
+        }
         if (section) {
             section.style.display = show ? '' : 'none';
-            console.log('PDF_BUILDER_DEBUG: Section', sectionId, 'display set to:', show ? 'visible' : 'none');
+            if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+                console.log('PDF_BUILDER_DEBUG: Section', sectionId, 'display set to:', show ? 'visible' : 'none');
+            }
         }
     });
 }
