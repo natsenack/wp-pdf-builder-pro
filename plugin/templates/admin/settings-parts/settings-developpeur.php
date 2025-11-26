@@ -149,55 +149,9 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
                                 <input type="checkbox" id="debug_javascript" name="pdf_builder_debug_javascript" value="1" <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Debug JS Global</span>
+                            <span class="toggle-label">Debug JS</span>
                         </div>
                         <div class="toggle-description">Active les logs détaillés en console (emojis: 🚀 start, ✅ success, ❌ error, ⚠️ warn)</div>
-
-                        <!-- Sous-catégories pour Debug JavaScript -->
-                        <div id="js_debug_subcategories" style="margin-top: 15px; margin-left: 30px; padding: 15px; background: #f8f9fa; border-radius: 6px; border-left: 3px solid #007cba; <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? '' : 'display: none;'; ?>">
-                            <h4 style="margin: 0 0 10px 0; color: #007cba; font-size: 14px;">📍 Contextes d'affichage des logs JS</h4>
-                            <p style="margin: 0 0 15px 0; font-size: 12px; color: #666;">Cochez les pages/contextes où les logs JavaScript doivent apparaître</p>
-
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                                <div class="js-context-toggle">
-                                    <label class="toggle-switch" style="transform: scale(0.8);">
-                                        <input type="checkbox" id="debug_js_settings" name="pdf_builder_debug_js_settings" value="1" <?php echo isset($settings['pdf_builder_debug_js_settings']) && $settings['pdf_builder_debug_js_settings'] ? 'checked' : ''; ?> />
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <span style="font-size: 12px; margin-left: 5px;">📋 Page des paramètres</span>
-                                </div>
-
-                                <div class="js-context-toggle">
-                                    <label class="toggle-switch" style="transform: scale(0.8);">
-                                        <input type="checkbox" id="debug_js_editor" name="pdf_builder_debug_js_editor" value="1" <?php echo isset($settings['pdf_builder_debug_js_editor']) && $settings['pdf_builder_debug_js_editor'] ? 'checked' : ''; ?> />
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <span style="font-size: 12px; margin-left: 5px;">🎨 Éditeur PDF</span>
-                                </div>
-
-                                <div class="js-context-toggle">
-                                    <label class="toggle-switch" style="transform: scale(0.8);">
-                                        <input type="checkbox" id="debug_js_admin" name="pdf_builder_debug_js_admin" value="1" <?php echo isset($settings['pdf_builder_debug_js_admin']) && $settings['pdf_builder_debug_js_admin'] ? 'checked' : ''; ?> />
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <span style="font-size: 12px; margin-left: 5px;">⚙️ Pages admin</span>
-                                </div>
-
-                                <div class="js-context-toggle">
-                                    <label class="toggle-switch" style="transform: scale(0.8);">
-                                        <input type="checkbox" id="debug_js_frontend" name="pdf_builder_debug_js_frontend" value="1" <?php echo isset($settings['pdf_builder_debug_js_frontend']) && $settings['pdf_builder_debug_js_frontend'] ? 'checked' : ''; ?> />
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <span style="font-size: 12px; margin-left: 5px;">🌐 Frontend</span>
-                                </div>
-                            </div>
-
-                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #dee2e6;">
-                                <button type="button" id="select_all_js_contexts" class="button button-small" style="font-size: 11px; padding: 4px 8px;">✓ Tout sélectionner</button>
-                                <button type="button" id="deselect_all_js_contexts" class="button button-small" style="font-size: 11px; padding: 4px 8px;">✗ Tout désélectionner</button>
-                                <span style="font-size: 11px; color: #666; margin-left: 10px;">Utilisez ces boutons pour gérer rapidement tous les contextes</span>
-                            </div>
-                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -711,48 +665,6 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
 <script>
 // Monitoring des performances
 document.addEventListener('DOMContentLoaded', function() {
-    // Gestion des sous-catégories Debug JavaScript
-    const debugJsToggle = document.getElementById('debug_javascript');
-    const jsSubcategories = document.getElementById('js_debug_subcategories');
-    const selectAllBtn = document.getElementById('select_all_js_contexts');
-    const deselectAllBtn = document.getElementById('deselect_all_js_contexts');
-    const jsContextToggles = document.querySelectorAll('.js-context-toggle input[type="checkbox"]');
-
-    // Fonction pour afficher/masquer les sous-catégories
-    function toggleJsSubcategories() {
-        if (debugJsToggle.checked) {
-            jsSubcategories.style.display = 'block';
-        } else {
-            jsSubcategories.style.display = 'none';
-        }
-    }
-
-    // Fonction pour sélectionner/désélectionner tous les contextes
-    function toggleAllJsContexts(select) {
-        jsContextToggles.forEach(function(checkbox) {
-            checkbox.checked = select;
-        });
-    }
-
-    // Événements
-    if (debugJsToggle) {
-        debugJsToggle.addEventListener('change', toggleJsSubcategories);
-    }
-
-    if (selectAllBtn) {
-        selectAllBtn.addEventListener('click', function() {
-            toggleAllJsContexts(true);
-        });
-    }
-
-    if (deselectAllBtn) {
-        deselectAllBtn.addEventListener('click', function() {
-            toggleAllJsContexts(false);
-        });
-    }
-
-    // Initialisation
-    toggleJsSubcategories();
     // Bouton Test FPS
     const testFpsBtn = document.getElementById('test_fps_btn');
     const fpsResult = document.getElementById('fps_test_result');

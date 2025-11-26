@@ -11,33 +11,7 @@ jQuery(document).ready(function($) {
     // ==========================================
 
     /**
-     * Détermine le contexte actuel de la page
-     * @returns {string} - 'settings', 'editor', 'admin', 'frontend'
-     */
-    function getCurrentContext() {
-        const currentUrl = window.location.href;
-
-        // Page des paramètres
-        if (currentUrl.includes('page=pdf-builder-settings')) {
-            return 'settings';
-        }
-
-        // Éditeur PDF (pages avec canvas)
-        if (currentUrl.includes('pdf-builder-editor') || document.querySelector('#pdf-canvas')) {
-            return 'editor';
-        }
-
-        // Pages admin WordPress
-        if (currentUrl.includes('/wp-admin/')) {
-            return 'admin';
-        }
-
-        // Frontend
-        return 'frontend';
-    }
-
-    /**
-     * Vérifie si un type de debug spécifique est activé pour le contexte actuel
+     * Vérifie si un type de debug spécifique est activé
      * @param {string} type - Type de debug ('javascript', 'ajax', 'performance', etc.)
      * @returns {boolean}
      */
@@ -50,18 +24,6 @@ jQuery(document).ready(function($) {
         if (!window.pdfBuilderAjax || !window.pdfBuilderAjax.debug) {
             return false;
         }
-
-        // Pour le debug JavaScript, vérifier aussi le contexte
-        if (type === 'javascript') {
-            const currentContext = getCurrentContext();
-            const contextKey = 'js_' + currentContext;
-
-            // Si le contexte spécifique n'est pas activé, désactiver les logs JS
-            if (window.pdfBuilderAjax.debug[contextKey] === false) {
-                return false;
-            }
-        }
-
         return !!window.pdfBuilderAjax.debug[type];
     }
 
