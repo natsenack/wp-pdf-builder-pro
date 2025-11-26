@@ -211,14 +211,18 @@ class TemplateManager
     public function ajaxSaveTemplateV3()
     {
         try {
+            error_log('PDF_BUILDER_DEBUG: TemplateManager ajaxSaveTemplateV3 called');
+            
             // Vérifier les permissions
             if (!is_user_logged_in() || !current_user_can('manage_options')) {
+                error_log('PDF_BUILDER_DEBUG: Permissions insuffisantes');
                 wp_send_json_error('Permissions insuffisantes');
                 return;
             }
 
             // Vérifier le nonce
             if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+                error_log('PDF_BUILDER_DEBUG: Nonce invalide');
                 wp_send_json_error('Nonce invalide');
                 return;
             }
@@ -227,7 +231,10 @@ class TemplateManager
             $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
             $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
 
+            error_log('PDF_BUILDER_DEBUG: Template data received - name: ' . $template_name . ', id: ' . $template_id . ', data size: ' . strlen($_POST['template_data'] ?? ''));
+
             if (!$template_data || empty($template_name)) {
+                error_log('PDF_BUILDER_DEBUG: Données de template ou nom manquant');
                 wp_send_json_error('Données de template ou nom manquant');
                 return;
             }
@@ -243,18 +250,24 @@ class TemplateManager
                 ]
             ];
 
+            error_log('PDF_BUILDER_DEBUG: Post data prepared: ' . print_r($post_data, true));
+
             if ($template_id) {
                 $post_data['ID'] = $template_id;
+                error_log('PDF_BUILDER_DEBUG: Updating existing template ID: ' . $template_id);
                 $result = wp_update_post($post_data);
             } else {
+                error_log('PDF_BUILDER_DEBUG: Creating new template');
                 $result = wp_insert_post($post_data);
             }
 
             if (is_wp_error($result)) {
+                error_log('PDF_BUILDER_DEBUG: Error saving template: ' . $result->get_error_message());
                 wp_send_json_error('Erreur lors de la sauvegarde: ' . $result->get_error_message());
                 return;
             }
 
+            error_log('PDF_BUILDER_DEBUG: Template saved successfully with ID: ' . $result);
             wp_send_json_success([
                 'template_id' => $result,
                 'message' => 'Template sauvegardé avec succès'
@@ -292,11 +305,15 @@ class TemplateManager
 
             $template_data = get_post_meta($template_id, '_pdf_template_data', true);
 
+            error_log('PDF_BUILDER_DEBUG: Loading template ID: ' . $template_id . ', data found: ' . ($template_data ? 'yes' : 'no'));
+
             if (!$template_data) {
+                error_log('PDF_BUILDER_DEBUG: Template data not found for ID: ' . $template_id);
                 wp_send_json_error('Template introuvable');
                 return;
             }
 
+            error_log('PDF_BUILDER_DEBUG: Template loaded successfully, data size: ' . strlen(json_encode($template_data)));
             wp_send_json_success([
                 'template' => $template_data,
                 'message' => 'Template chargé avec succès'

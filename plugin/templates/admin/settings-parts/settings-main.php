@@ -1620,6 +1620,12 @@ document.addEventListener('DOMContentLoaded', function() {
                                 pdfBuilderDebug(key, '=', value);
                             }
                         }
+                        
+                        // Log to console for debugging
+                        console.log('PDF_BUILDER_DEBUG: Sending form data for category:', category);
+                        for (let [key, value] of formData.entries()) {
+                            console.log('PDF_BUILDER_DEBUG:', key, '=', value);
+                        }
 
                         
 
@@ -1653,6 +1659,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         return response.json();
                     })
                     .then(data => {
+                        console.log('PDF_BUILDER_DEBUG: AJAX response received:', data);
                         pdfBuilderDebug('AJAX response data:', data);
                         
                         if (data.success) {
@@ -1662,14 +1669,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             // Fonction centralisée pour mettre à jour les éléments du DOM
                             function updateFormElementsFromSavedData(category, savedData) {
-                                if (!savedData) return;
+                                if (!savedData) {
+                                    console.log('PDF_BUILDER_DEBUG: No savedData provided for category:', category);
+                                    return;
+                                }
                                 
-                                pdfBuilderDebug('Mise à jour des éléments DOM pour catégorie:', category);
+                                pdfBuilderDebug('Mise à jour des éléments DOM pour catégorie:', category, 'avec données:', savedData);
                                 
                                 // Mapping des IDs d'éléments vers les clés de données sauvegardées
                                 const elementMappings = {
+                                    // Dimensions
+                                    'canvas_format': 'canvas_format',
+                                    'canvas_orientation': 'canvas_orientation', 
+                                    'canvas_dpi': 'canvas_dpi',
+                                    
                                     // Apparence
+                                    'canvas_bg_color': 'canvas_bg_color',
+                                    'canvas_border_color': 'canvas_border_color',
+                                    'canvas_border_width': 'canvas_border_width',
                                     'canvas_shadow_enabled': 'canvas_shadow_enabled',
+                                    'canvas_container_bg_color': 'canvas_container_bg_color',
                                     
                                     // Grille
                                     'canvas_guides_enabled': 'canvas_guides_enabled',
@@ -3134,5 +3153,109 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 }
+
+// Fonction pour synchroniser les éléments du formulaire avec les paramètres chargés
+function syncFormElementsWithLoadedSettings() {
+    if (!window.pdfBuilderCanvasSettings) {
+        console.warn('PDF_BUILDER_DEBUG: window.pdfBuilderCanvasSettings not available for sync');
+        return;
+    }
+
+    console.log('PDF_BUILDER_DEBUG: Synchronisation des éléments du formulaire avec les paramètres chargés:', window.pdfBuilderCanvasSettings);
+
+    // Mapping des IDs d'éléments vers les clés dans pdfBuilderCanvasSettings
+    const elementMappings = {
+        // Dimensions
+        'canvas_format': 'default_canvas_format',
+        'canvas_dpi': 'default_canvas_dpi',
+        
+        // Apparence
+        'canvas_bg_color': 'canvas_bg_color',
+        'canvas_border_color': 'canvas_border_color',
+        'canvas_border_width': 'canvas_border_width',
+        'canvas_shadow_enabled': 'canvas_shadow_enabled',
+        'canvas_container_bg_color': 'canvas_container_bg_color',
+        
+        // Grille
+        'canvas_guides_enabled': 'canvas_guides_enabled',
+        'canvas_grid_enabled': 'canvas_grid_enabled',
+        'canvas_snap_to_grid': 'canvas_snap_to_grid',
+        'canvas_grid_size': 'canvas_grid_size',
+        
+        // Interactions
+        'canvas_drag_enabled': 'canvas_drag_enabled',
+        'canvas_resize_enabled': 'canvas_resize_enabled',
+        'canvas_rotate_enabled': 'canvas_rotate_enabled',
+        'canvas_multi_select': 'canvas_multi_select',
+        'canvas_selection_mode': 'canvas_selection_mode',
+        'canvas_keyboard_shortcuts': 'canvas_keyboard_shortcuts',
+        
+        // Export
+        'canvas_export_format': 'canvas_export_format',
+        'canvas_export_quality': 'canvas_export_quality',
+        'canvas_export_transparent': 'canvas_export_transparent',
+        
+        // Performance
+        'canvas_fps_target': 'canvas_fps_target',
+        'canvas_memory_limit_js': 'canvas_memory_limit_js',
+        'canvas_memory_limit_php': 'canvas_memory_limit_php',
+        'canvas_lazy_loading_editor': 'canvas_lazy_loading_editor',
+        'canvas_preload_critical': 'canvas_preload_critical',
+        'canvas_lazy_loading_plugin': 'canvas_lazy_loading_plugin',
+        
+        // Autosave
+        'canvas_autosave_enabled': 'canvas_autosave_enabled',
+        'canvas_autosave_interval': 'canvas_autosave_interval',
+        'canvas_versions_limit': 'canvas_versions_limit',
+        'canvas_history_enabled': 'canvas_history_enabled',
+        
+        // Debug
+        'canvas_debug_enabled': 'canvas_debug_enabled',
+        'canvas_performance_monitoring': 'canvas_performance_monitoring',
+        'canvas_error_reporting': 'canvas_error_reporting',
+        
+        // Zoom
+        'zoom_min': 'zoom_min',
+        'zoom_max': 'zoom_max',
+        'zoom_default': 'zoom_default',
+        'zoom_step': 'zoom_step'
+    };
+
+    // Synchroniser chaque élément
+    Object.keys(elementMappings).forEach(elementId => {
+        const settingsKey = elementMappings[elementId];
+        if (window.pdfBuilderCanvasSettings[settingsKey] !== undefined) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const value = window.pdfBuilderCanvasSettings[settingsKey];
+                const oldValue = element.type === 'checkbox' ? element.checked : element.value;
+                
+                if (element.type === 'checkbox') {
+                    element.checked = value === true || value === '1' || value === 1;
+                    console.log('PDF_BUILDER_DEBUG: Checkbox synchronisé:', elementId, 'old:', oldValue, 'new:', element.checked, 'settings value:', value);
+                } else if (element.type === 'select-one' || element.type === 'text' || element.type === 'number' || element.type === 'color') {
+                    element.value = value;
+                    console.log('PDF_BUILDER_DEBUG: Champ synchronisé:', elementId, 'old:', oldValue, 'new:', value);
+                }
+                
+                // Vérifier si la valeur a changé
+                const newValue = element.type === 'checkbox' ? element.checked : element.value;
+                if (oldValue != newValue) {
+                    console.log('PDF_BUILDER_DEBUG: Valeur changée pour', elementId, 'de', oldValue, 'à', newValue);
+                }
+            } else {
+                console.warn('PDF_BUILDER_DEBUG: Élément non trouvé:', elementId);
+            }
+        } else {
+            console.warn('PDF_BUILDER_DEBUG: Clé non trouvée dans settings:', settingsKey, 'pour élément:', elementId);
+        }
+    });
+}
+
+// Exécuter la synchronisation au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    // Petit délai pour s'assurer que tous les éléments sont chargés
+    setTimeout(syncFormElementsWithLoadedSettings, 100);
+});
 </script>
 

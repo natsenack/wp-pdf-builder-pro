@@ -2689,30 +2689,30 @@ class PdfBuilderAdmin
 
 
         if ($this->template_manager === null) {
-            // Vérifier si la classe existe dans le bon namespace
-            if (class_exists('PDF_Builder\\Managers\\PdfBuilderTemplateManager')) {
-                $this->template_manager = new \PDF_Builder\Managers\PdfBuilderTemplateManager($this->core ?? $this);
+            // Vérifier si la classe TemplateManager existe dans le bon namespace
+            if (class_exists('PDF_Builder\\Admin\\Managers\\TemplateManager')) {
+                error_log('PDF_BUILDER_DEBUG: Creating TemplateManager instance');
+                $this->template_manager = new \PDF_Builder\Admin\Managers\TemplateManager($this);
             } else {
+                error_log('PDF_BUILDER_DEBUG: TemplateManager class not found');
                 // Classe non chargée, essayer de la charger manuellement
-                $template_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
-
-
+                $template_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Managers/TemplateManager.php';
 
                 if (file_exists($template_manager_file)) {
+                    error_log('PDF_BUILDER_DEBUG: Loading TemplateManager file: ' . $template_manager_file);
                     require_once $template_manager_file;
 
-                    if (class_exists('PDF_Builder\\Managers\\PdfBuilderTemplateManager')) {
-                        $this->template_manager = new \PDF_Builder\Managers\PdfBuilderTemplateManager($this->core ?? $this);
+                    if (class_exists('PDF_Builder\\Admin\\Managers\\TemplateManager')) {
+                        error_log('PDF_BUILDER_DEBUG: TemplateManager class loaded successfully');
+                        $this->template_manager = new \PDF_Builder\Admin\Managers\TemplateManager($this);
                     } else {
-
+                        error_log('PDF_BUILDER_DEBUG: TemplateManager class still not found after loading file');
                     }
                 } else {
+                    error_log('PDF_BUILDER_DEBUG: TemplateManager file not found: ' . $template_manager_file);
                 }
             }
         }
-
-        return $this->template_manager;
-
 
         return $this->template_manager;
     }

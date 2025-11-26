@@ -174,6 +174,8 @@ class AjaxHandler
 
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
+        $debugLog('Template manager instance: ' . ($template_manager ? get_class($template_manager) : 'null'));
+        
         if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
             $debugLog('Delegating to template_manager');
             $template_manager->ajaxSaveTemplateV3();
@@ -252,8 +254,11 @@ class AjaxHandler
 
             // Sauvegarde automatique (sans nom, juste les données)
             $auto_save_key = 'pdf_builder_auto_save_' . get_current_user_id();
+            error_log('PDF_BUILDER_DEBUG: Auto-saving template for user ' . get_current_user_id() . ', key: ' . $auto_save_key . ', data size: ' . strlen(json_encode($template_data)));
+            
             update_option($auto_save_key, $template_data);
 
+            error_log('PDF_BUILDER_DEBUG: Auto-save completed successfully');
             wp_send_json_success([
                 'message' => 'Sauvegarde automatique effectuée'
             ]);
@@ -764,9 +769,12 @@ class AjaxHandler
      */
     public function ajaxSaveCanvasSettings()
     {
+        error_log('PDF_BUILDER_DEBUG: ajaxSaveCanvasSettings called');
+        
         try {
             // Vérifier les permissions
             if (!is_user_logged_in()) {
+                error_log('PDF_BUILDER_DEBUG: User not logged in');
                 wp_send_json_error('Utilisateur non connecté');
                 return;
             }
@@ -777,14 +785,17 @@ class AjaxHandler
                 !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_templates') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
+                error_log('PDF_BUILDER_DEBUG: Invalid nonce: ' . $nonce);
                 wp_send_json_error('Nonce invalide');
                 return;
             }
 
             // Récupérer la catégorie
             $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+            error_log('PDF_BUILDER_DEBUG: Saving category: ' . $category);
 
             if (empty($category)) {
+                error_log('PDF_BUILDER_DEBUG: Empty category');
                 wp_send_json_error('Catégorie manquante');
                 return;
             }
@@ -794,15 +805,49 @@ class AjaxHandler
             switch ($category) {
                 case 'dimensions':
                     $saved = $this->saveDimensionsSettings();
+                    if ($saved) {
+                        $savedData = [
+                            'canvas_width' => get_option('pdf_builder_canvas_width', '794'),
+                            'canvas_height' => get_option('pdf_builder_canvas_height', '1123'),
+                            'canvas_format' => get_option('pdf_builder_canvas_format', 'A4'),
+                            'canvas_orientation' => get_option('pdf_builder_canvas_orientation', 'portrait'),
+                            'canvas_dpi' => get_option('pdf_builder_canvas_dpi', '96')
+                        ];
+                    }
                     break;
                 case 'zoom':
                     $saved = $this->saveZoomSettings();
+                    if ($saved) {
+                        $savedData = [
+                            'zoom_min' => get_option('pdf_builder_canvas_zoom_min', '10'),
+                            'zoom_max' => get_option('pdf_builder_canvas_zoom_max', '500'),
+                            'zoom_default' => get_option('pdf_builder_canvas_zoom_default', '100'),
+                            'zoom_step' => get_option('pdf_builder_canvas_zoom_step', '25')
+                        ];
+                    }
                     break;
                 case 'apparence':
                     $saved = $this->saveApparenceSettings();
+                    if ($saved) {
+                        $savedData = [
+                            'canvas_bg_color' => get_option('pdf_builder_canvas_bg_color', '#ffffff'),
+                            'canvas_border_color' => get_option('pdf_builder_canvas_border_color', '#cccccc'),
+                            'canvas_border_width' => get_option('pdf_builder_canvas_border_width', '1'),
+                            'canvas_shadow_enabled' => get_option('pdf_builder_canvas_shadow_enabled', '0'),
+                            'canvas_container_bg_color' => get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa')
+                        ];
+                    }
                     break;
                 case 'grille':
                     $saved = $this->saveGrilleSettings();
+                    if ($saved) {
+                        $savedData = [
+                            'canvas_guides_enabled' => get_option('pdf_builder_canvas_guides_enabled', '1'),
+                            'canvas_grid_enabled' => get_option('pdf_builder_canvas_grid_enabled', '1'),
+                            'canvas_grid_size' => get_option('pdf_builder_canvas_grid_size', '20'),
+                            'canvas_snap_to_grid' => get_option('pdf_builder_canvas_snap_to_grid', '1')
+                        ];
+                    }
                     break;
                 case 'interactions':
                     $saved = $this->saveInteractionsSettings();
@@ -819,9 +864,26 @@ class AjaxHandler
                     break;
                 case 'export':
                     $saved = $this->saveExportSettings();
+                    if ($saved) {
+                        $savedData = [
+                            'canvas_export_format' => get_option('pdf_builder_canvas_export_format', 'png'),
+                            'canvas_export_quality' => get_option('pdf_builder_canvas_export_quality', '90'),
+                            'canvas_export_transparent' => get_option('pdf_builder_canvas_export_transparent', '0')
+                        ];
+                    }
                     break;
                 case 'performance':
                     $saved = $this->savePerformanceSettings();
+                    if ($saved) {
+                        $savedData = [
+                            'canvas_fps_target' => get_option('pdf_builder_canvas_fps_target', '60'),
+                            'canvas_memory_limit_js' => get_option('pdf_builder_canvas_memory_limit_js', '128'),
+                            'canvas_memory_limit_php' => get_option('pdf_builder_canvas_memory_limit_php', '256'),
+                            'canvas_lazy_loading_editor' => get_option('pdf_builder_canvas_lazy_loading_editor', '1'),
+                            'canvas_preload_critical' => get_option('pdf_builder_canvas_preload_critical', '1'),
+                            'canvas_lazy_loading_plugin' => get_option('pdf_builder_canvas_lazy_loading_plugin', '1')
+                        ];
+                    }
                     break;
                 case 'autosave':
                     $saved = $this->saveAutosaveSettings();
@@ -835,6 +897,13 @@ class AjaxHandler
                     break;
                 case 'debug':
                     $saved = $this->saveDebugSettings();
+                    if ($saved) {
+                        $savedData = [
+                            'canvas_debug_enabled' => get_option('pdf_builder_canvas_debug_enabled', '0'),
+                            'canvas_performance_monitoring' => get_option('pdf_builder_canvas_performance_monitoring', '0'),
+                            'canvas_error_reporting' => get_option('pdf_builder_canvas_error_reporting', '0')
+                        ];
+                    }
                     break;
                 default:
                     wp_send_json_error('Catégorie inconnue: ' . $category);
@@ -843,7 +912,13 @@ class AjaxHandler
 
             if ($saved) {
                 $response = [
-                    'message' => 'Paramètres ' . $category . ' sauvegardés avec succès'
+                    'message' => 'Paramètres ' . $category . ' sauvegardés avec succès',
+                    'debug' => [
+                        'category' => $category,
+                        'saved' => $saved,
+                        'post_data' => $_POST,
+                        'timestamp' => time()
+                    ]
                 ];
                 if (isset($savedData)) {
                     $response['saved'] = $savedData;
@@ -900,6 +975,7 @@ class AjaxHandler
 
     private function saveDimensionsSettings()
     {
+        error_log('PDF_BUILDER_DEBUG: saveDimensionsSettings called with POST: ' . print_r($_POST, true));
         $updated = 0;
 
         // Format du document
@@ -909,6 +985,7 @@ class AjaxHandler
             $valid_formats = ['A4', 'A3', 'A5', 'Letter', 'Legal', 'Tabloid'];
             if (in_array($format, $valid_formats)) {
                 update_option('pdf_builder_canvas_format', $format);
+                error_log('PDF_BUILDER_DEBUG: Updated canvas_format to: ' . $format);
                 $updated++;
             }
         }
@@ -929,10 +1006,12 @@ class AjaxHandler
                 // Recalculer les dimensions en pixels basées sur le nouveau DPI
                 $this->updateCanvasDimensionsFromFormat($dpi);
 
+                error_log('PDF_BUILDER_DEBUG: Updated canvas_dpi to: ' . $dpi);
                 $updated++;
             }
         }
 
+        error_log('PDF_BUILDER_DEBUG: saveDimensionsSettings updated ' . $updated . ' settings');
         return $updated > 0;
     }
 
@@ -1011,17 +1090,20 @@ class AjaxHandler
 
     private function saveApparenceSettings()
     {
+        error_log('PDF_BUILDER_DEBUG: saveApparenceSettings called with POST: ' . print_r($_POST, true));
         $updated = 0;
 
         // Couleur de fond du canvas
         if (isset($_POST['canvas_bg_color'])) {
             update_option('pdf_builder_canvas_bg_color', sanitize_hex_color($_POST['canvas_bg_color']));
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_bg_color to: ' . $_POST['canvas_bg_color']);
             $updated++;
         }
 
         // Couleur des bordures
         if (isset($_POST['canvas_border_color'])) {
             update_option('pdf_builder_canvas_border_color', sanitize_hex_color($_POST['canvas_border_color']));
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_border_color to: ' . $_POST['canvas_border_color']);
             $updated++;
         }
 
@@ -1030,6 +1112,7 @@ class AjaxHandler
             $width = intval($_POST['canvas_border_width']);
             if ($width >= 0 && $width <= 10) {
                 update_option('pdf_builder_canvas_border_width', $width);
+                error_log('PDF_BUILDER_DEBUG: Updated canvas_border_width to: ' . $width);
                 $updated++;
             }
         }
@@ -1037,18 +1120,22 @@ class AjaxHandler
         // Ombre activée
         if (isset($_POST['canvas_shadow_enabled'])) {
             update_option('pdf_builder_canvas_shadow_enabled', '1');
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_shadow_enabled to: 1');
             $updated++;
         } else {
             update_option('pdf_builder_canvas_shadow_enabled', '0');
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_shadow_enabled to: 0');
             $updated++;
         }
 
         // Arrière-plan de l'éditeur
         if (isset($_POST['canvas_container_bg_color'])) {
             update_option('pdf_builder_canvas_container_bg_color', sanitize_hex_color($_POST['canvas_container_bg_color']));
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_container_bg_color to: ' . $_POST['canvas_container_bg_color']);
             $updated++;
         }
 
+        error_log('PDF_BUILDER_DEBUG: saveApparenceSettings updated ' . $updated . ' settings');
         return $updated > 0;
     }
 
@@ -1097,6 +1184,7 @@ class AjaxHandler
 
     private function saveInteractionsSettings()
     {
+        error_log('PDF_BUILDER_DEBUG: saveInteractionsSettings called with POST: ' . print_r($_POST, true));
         $updated = 0;
 
         // Debug log
@@ -1165,7 +1253,6 @@ class AjaxHandler
         }
 
         error_log('PDF_BUILDER_DEBUG: saveInteractionsSettings updated ' . $updated . ' settings');
-
         return $updated > 0;
     }
 
