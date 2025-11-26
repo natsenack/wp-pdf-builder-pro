@@ -30,6 +30,16 @@ class AjaxHandler
     }
 
     /**
+     * Log de debug conditionnel
+     */
+    private function debug_log($message)
+    {
+        if (get_option('pdf_builder_debug_javascript', '0') === '1') {
+            error_log('[PDF Builder AJAX] ' . $message);
+        }
+    }
+
+    /**
      * Enregistrer les hooks AJAX
      */
     private function registerHooks()

@@ -111,6 +111,16 @@ class PdfBuilderAdmin
     }
 
     /**
+     * Log de debug conditionnel
+     */
+    public function debug_log($message)
+    {
+        if (get_option('pdf_builder_debug_javascript', '0') === '1') {
+            error_log('[PDF Builder Admin] ' . $message);
+        }
+    }
+
+    /**
      * Vérifie les permissions d'administration sans mise en cache
      */
     private function checkAdminPermissions()
