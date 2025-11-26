@@ -1215,6 +1215,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 5000);
 
             // Collecter les données de TOUS les formulaires (même masqués)
+            const formData = new FormData();
+
+            // Ajouter l'action AJAX
+            formData.append('action', 'pdf_builder_save_settings');
+            formData.append('nonce', pdf_builder_ajax?.nonce || '');
+            formData.append('current_tab', 'all'); // Sauvegarder tous les onglets
+
             const forms = document.querySelectorAll('form');
             console.log('PDF_BUILDER_DEBUG: Found', forms.length, 'forms total');
             forms.forEach((form, index) => {
