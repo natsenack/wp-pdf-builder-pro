@@ -897,30 +897,29 @@ window.updateZoomCardPreview = function() {
 
 // Fonction globale pour mettre à jour l'indicateur développeur
 function updateDeveloperStatusIndicator(isActive = null) {
-    // Debug logs only when developer mode is enabled
-    if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-        console.log('PDF_BUILDER_DEBUG: updateDeveloperStatusIndicator called with isActive:', isActive);
+    // Debug logs always for troubleshooting
+    console.log('PDF_BUILDER_DEBUG: updateDeveloperStatusIndicator called with isActive:', isActive);
+    console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings exists:', !!window.pdfBuilderSavedSettings);
+    if (window.pdfBuilderSavedSettings) {
+        console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings.developer_enabled:', window.pdfBuilderSavedSettings.developer_enabled);
     }
+
     const developerIndicator = document.querySelector('.developer-status-indicator');
-    if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-        console.log('PDF_BUILDER_DEBUG: developerIndicator element found:', developerIndicator);
-    }
+    console.log('PDF_BUILDER_DEBUG: developerIndicator element found:', developerIndicator);
+
     if (developerIndicator) {
         // Si isActive n'est pas fourni, utiliser les paramètres sauvegardés plutôt que l'état du checkbox
         if (isActive === null) {
             isActive = window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled;
+            console.log('PDF_BUILDER_DEBUG: isActive set to saved settings value:', isActive);
         }
 
         developerIndicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
         developerIndicator.style.background = isActive ? '#28a745' : '#dc3545';
         developerIndicator.style.color = 'white';
-        if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-            console.log('PDF_BUILDER_DEBUG: developerIndicator updated to:', isActive ? 'ACTIF' : 'INACTIF');
-        }
+        console.log('PDF_BUILDER_DEBUG: developerIndicator updated to:', isActive ? 'ACTIF' : 'INACTIF');
     } else {
-        if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-            console.log('PDF_BUILDER_DEBUG: developer-status-indicator element not found');
-        }
+        console.log('PDF_BUILDER_DEBUG: developer-status-indicator element not found');
     }
 }
 
@@ -3658,9 +3657,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled !== undefined) {
             const developerEnabledCheckbox = document.getElementById('developer_enabled');
             if (developerEnabledCheckbox) {
+                console.log('PDF_BUILDER_DEBUG: Synchronizing developer checkbox - current checked:', developerEnabledCheckbox.checked, 'saved value:', window.pdfBuilderSavedSettings.developer_enabled);
                 developerEnabledCheckbox.checked = window.pdfBuilderSavedSettings.developer_enabled;
                 console.log('PDF_BUILDER_DEBUG: developer_enabled checkbox synchronized to:', developerEnabledCheckbox.checked);
+            } else {
+                console.log('PDF_BUILDER_DEBUG: developer_enabled checkbox element not found');
             }
+        } else {
+            console.log('PDF_BUILDER_DEBUG: Skipping developer checkbox sync - window.pdfBuilderSavedSettings.developer_enabled:', window.pdfBuilderSavedSettings ? window.pdfBuilderSavedSettings.developer_enabled : 'undefined');
         }
         
         // Attendre que la synchronisation soit terminée avant d'initialiser l'indicateur
