@@ -906,10 +906,9 @@ function updateDeveloperStatusIndicator(isActive = null) {
         console.log('PDF_BUILDER_DEBUG: developerIndicator element found:', developerIndicator);
     }
     if (developerIndicator) {
-        // Si isActive n'est pas fourni, utiliser l'état actuel du checkbox
+        // Si isActive n'est pas fourni, utiliser les paramètres sauvegardés plutôt que l'état du checkbox
         if (isActive === null) {
-            const developerEnabledCheckbox = document.getElementById('developer_enabled');
-            isActive = developerEnabledCheckbox ? developerEnabledCheckbox.checked : false;
+            isActive = window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled;
         }
 
         developerIndicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
@@ -3654,6 +3653,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Petit délai pour s'assurer que tous les éléments sont chargés
     setTimeout(function() {
         syncFormElementsWithLoadedSettings();
+        
+        // Synchroniser le checkbox développeur avec les paramètres sauvegardés
+        if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled !== undefined) {
+            const developerEnabledCheckbox = document.getElementById('developer_enabled');
+            if (developerEnabledCheckbox) {
+                developerEnabledCheckbox.checked = window.pdfBuilderSavedSettings.developer_enabled;
+                console.log('PDF_BUILDER_DEBUG: developer_enabled checkbox synchronized to:', developerEnabledCheckbox.checked);
+            }
+        }
+        
         // Attendre que la synchronisation soit terminée avant d'initialiser l'indicateur
         setTimeout(function() {
             // Initialiser l'indicateur développeur
