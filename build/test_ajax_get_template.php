@@ -9,7 +9,7 @@ echo "🔍 Test direct de ajaxGetTemplate\n";
 echo "=================================\n\n";
 
 // Inclure WordPress
-require_once '../../../wp-load.php';
+require_once '../../../../wp-load.php';
 
 // Simuler les paramètres GET
 $_GET['nonce'] = wp_create_nonce('pdf_builder_nonce');
