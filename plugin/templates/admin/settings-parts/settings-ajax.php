@@ -534,9 +534,11 @@ function pdf_builder_save_settings_handler() {
                 }
 
                 // Paramètres développeur
+                error_log("PDF_BUILDER_DEBUG AJAX: Processing developer_enabled = " . ($get_post_value('developer_enabled') ?? 'NULL'));
                 $value = $get_post_value('developer_enabled');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_developer_enabled', $value);
+                    error_log("PDF_BUILDER_DEBUG AJAX: Saved developer_enabled = $value");
                 }
                 $value = $get_post_value('developer_password');
                 if ($value !== null) {

@@ -1272,6 +1272,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
+            // Debug: Log collected data
+            console.log('PDF_BUILDER_DEBUG: Collected form data:');
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('developer')) {
+                    console.log('PDF_BUILDER_DEBUG: Developer field -', key + ':', value);
+                }
+            }
+
             // Envoyer la requête AJAX
             fetch(pdf_builder_ajax.ajax_url, {
                 method: 'POST',
