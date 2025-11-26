@@ -68,12 +68,12 @@ class PdfBuilderTemplateManager
         // Fonction utilitaire pour les logs conditionnels
         $debugLog = function($message) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('PDF_BUILDER_DEBUG: ' . $message);
+                $this->debug_log('' . $message);
             }
         };
 
         // Log avant le try pour capturer les erreurs fatales
-        $debugLog('ajaxSaveTemplateV3 method called');
+        $debugLog('ajaxSaveTemplateV3 method called\');
 
         try {
             // Log pour debug

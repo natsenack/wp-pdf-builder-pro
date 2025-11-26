@@ -166,11 +166,11 @@ class AjaxHandler
         // Fonction utilitaire pour les logs conditionnels
         $debugLog = function($message) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('PDF_BUILDER_DEBUG: ' . $message);
+                $this->debug_log('' . $message);
             }
         };
 
-        $debugLog('AjaxHandler ajaxSaveTemplateV3 called');
+        $debugLog('AjaxHandler ajaxSaveTemplateV3 called\');
 
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
@@ -254,11 +254,11 @@ class AjaxHandler
 
             // Sauvegarde automatique (sans nom, juste les données)
             $auto_save_key = 'pdf_builder_auto_save_' . get_current_user_id();
-            error_log('PDF_BUILDER_DEBUG: Auto-saving template for user ' . get_current_user_id() . ', key: ' . $auto_save_key . ', data size: ' . strlen(json_encode($template_data)));
+            $this->debug_log('Auto-saving template for user ' . get_current_user_id() . ', key: ' . $auto_save_key . ', data size: ' . strlen(json_encode($template_data)));
             
             update_option($auto_save_key, $template_data);
 
-            error_log('PDF_BUILDER_DEBUG: Auto-save completed successfully');
+            debug_log('Auto-save completed successfully\\');
             wp_send_json_success([
                 'message' => 'Sauvegarde automatique effectuée'
             ]);
@@ -769,12 +769,12 @@ class AjaxHandler
      */
     public function ajaxSaveCanvasSettings()
     {
-        error_log('PDF_BUILDER_DEBUG: ajaxSaveCanvasSettings called');
+        $this->debug_log('ajaxSaveCanvasSettings called\');
         
         try {
             // Vérifier les permissions
             if (!is_user_logged_in()) {
-                error_log('PDF_BUILDER_DEBUG: User not logged in');
+                $this->debug_log('User not logged in\');
                 wp_send_json_error('Utilisateur non connecté');
                 return;
             }
@@ -785,18 +785,18 @@ class AjaxHandler
                 !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_templates') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
-                error_log('PDF_BUILDER_DEBUG: Invalid nonce: ' . $nonce);
-                wp_send_json_error('Nonce invalide');
+                $this->debug_log('Invalid nonce: ' . $nonce);
+                wp_send_json_error('Nonce invalide\');
                 return;
             }
 
             // Récupérer la catégorie
             $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
-            error_log('PDF_BUILDER_DEBUG: Saving category: ' . $category);
-            error_log('PDF_BUILDER_DEBUG: Full POST data: ' . print_r($_POST, true));
+            $this->debug_log('Saving category: ' . $category);
+            debug_log('Full POST data: ' . print_r($_POST, true));
 
             if (empty($category)) {
-                error_log('PDF_BUILDER_DEBUG: Empty category');
+                $this->debug_log('Empty category');
                 wp_send_json_error('Catégorie manquante');
                 return;
             }
@@ -923,7 +923,7 @@ class AjaxHandler
                 ];
                 if (isset($savedData)) {
                     $response['saved'] = $savedData;
-                    error_log('PDF_BUILDER_DEBUG: Returning saved data for ' . $category . ': ' . print_r($savedData, true));
+                    $this->debug_log('Returning saved data for ' . $category . ': ' . print_r($savedData, true));
                 }
                 wp_send_json_success($response);
             } else {
@@ -943,7 +943,7 @@ class AjaxHandler
         try {
             // Vérifier les permissions
             if (!is_user_logged_in()) {
-                wp_send_json_error('Utilisateur non connecté');
+                wp_send_json_error('Utilisateur non connecté\');
                 return;
             }
 
@@ -976,7 +976,7 @@ class AjaxHandler
 
     private function saveDimensionsSettings()
     {
-        error_log('PDF_BUILDER_DEBUG: saveDimensionsSettings called with POST: ' . print_r($_POST, true));
+        $this->debug_log('saveDimensionsSettings called with POST: ' . print_r($_POST, true));
         $updated = 0;
 
         // Format du document
@@ -986,14 +986,14 @@ class AjaxHandler
             $valid_formats = ['A4', 'A3', 'A5', 'Letter', 'Legal', 'Tabloid'];
             if (in_array($format, $valid_formats)) {
                 update_option('pdf_builder_canvas_format', $format);
-                error_log('PDF_BUILDER_DEBUG: Updated canvas_format to: ' . $format);
+                debug_log('Updated canvas_format to: ' . $format);
                 $updated++;
             }
         }
 
         // Orientation (actuellement forcée en portrait)
         // TODO: Implémenter l'orientation paysage dans v2.0
-        update_option('pdf_builder_canvas_orientation', 'portrait');
+        update_option('pdf_builder_canvas_orientation', 'portrait\\');
         $updated++;
 
         // Résolution DPI
@@ -1007,12 +1007,12 @@ class AjaxHandler
                 // Recalculer les dimensions en pixels basées sur le nouveau DPI
                 $this->updateCanvasDimensionsFromFormat($dpi);
 
-                error_log('PDF_BUILDER_DEBUG: Updated canvas_dpi to: ' . $dpi);
+                $this->debug_log('Updated canvas_dpi to: ' . $dpi);
                 $updated++;
             }
         }
 
-        error_log('PDF_BUILDER_DEBUG: saveDimensionsSettings updated ' . $updated . ' settings');
+        debug_log('saveDimensionsSettings updated ' . $updated . ' settings\\');
         return $updated > 0;
     }
 
@@ -1091,64 +1091,64 @@ class AjaxHandler
 
     private function saveApparenceSettings()
     {
-        error_log('PDF_BUILDER_DEBUG: saveApparenceSettings called with POST: ' . print_r($_POST, true));
+        $this->debug_log('saveApparenceSettings called with POST: ' . print_r($_POST, true));
         $updated = 0;
 
         // Couleur de fond du canvas
         if (isset($_POST['canvas_bg_color'])) {
-            $old_value = get_option('pdf_builder_canvas_bg_color', '#ffffff');
+            $old_value = get_option('pdf_builder_canvas_bg_color', '#ffffff\');
             update_option('pdf_builder_canvas_bg_color', sanitize_hex_color($_POST['canvas_bg_color']));
             $new_value = get_option('pdf_builder_canvas_bg_color', '#ffffff');
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_bg_color from ' . $old_value . ' to ' . $new_value);
+            $this->debug_log('Updated canvas_bg_color from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
         // Couleur des bordures
         if (isset($_POST['canvas_border_color'])) {
-            $old_value = get_option('pdf_builder_canvas_border_color', '#cccccc');
+            $old_value = get_option('pdf_builder_canvas_border_color', '#cccccc\');
             update_option('pdf_builder_canvas_border_color', sanitize_hex_color($_POST['canvas_border_color']));
             $new_value = get_option('pdf_builder_canvas_border_color', '#cccccc');
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_border_color from ' . $old_value . ' to ' . $new_value);
+            $this->debug_log('Updated canvas_border_color from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
         // Épaisseur des bordures
         if (isset($_POST['canvas_border_width'])) {
-            $old_value = get_option('pdf_builder_canvas_border_width', '1');
+            $old_value = get_option('pdf_builder_canvas_border_width', '1\');
             $width = intval($_POST['canvas_border_width']);
             if ($width >= 0 && $width <= 10) {
                 update_option('pdf_builder_canvas_border_width', $width);
                 $new_value = get_option('pdf_builder_canvas_border_width', '1');
-                error_log('PDF_BUILDER_DEBUG: Updated canvas_border_width from ' . $old_value . ' to ' . $new_value);
+                $this->debug_log('Updated canvas_border_width from ' . $old_value . ' to ' . $new_value);
                 $updated++;
             }
         }
 
         // Ombre activée
         if (isset($_POST['canvas_shadow_enabled'])) {
-            $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
+            $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0\');
             update_option('pdf_builder_canvas_shadow_enabled', '1');
             $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_shadow_enabled from ' . $old_value . ' to ' . $new_value);
+            $this->debug_log('Updated canvas_shadow_enabled from ' . $old_value . ' to ' . $new_value);
             $updated++;
         } else {
-            $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
+            $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0\');
             update_option('pdf_builder_canvas_shadow_enabled', '0');
             $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_shadow_enabled from ' . $old_value . ' to ' . $new_value);
+            $this->debug_log('Updated canvas_shadow_enabled from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
         // Arrière-plan de l'éditeur
         if (isset($_POST['canvas_container_bg_color'])) {
-            $old_value = get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa');
+            $old_value = get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa\');
             update_option('pdf_builder_canvas_container_bg_color', sanitize_hex_color($_POST['canvas_container_bg_color']));
             $new_value = get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa');
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_container_bg_color from ' . $old_value . ' to ' . $new_value);
+            $this->debug_log('Updated canvas_container_bg_color from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
-        error_log('PDF_BUILDER_DEBUG: saveApparenceSettings updated ' . $updated . ' settings');
+        debug_log('saveApparenceSettings updated ' . $updated . ' settings\\');
         return $updated > 0;
     }
 
@@ -1197,75 +1197,75 @@ class AjaxHandler
 
     private function saveInteractionsSettings()
     {
-        error_log('PDF_BUILDER_DEBUG: saveInteractionsSettings called with POST: ' . print_r($_POST, true));
+        $this->debug_log('saveInteractionsSettings called with POST: ' . print_r($_POST, true));
         $updated = 0;
 
         // Debug log
-        error_log('PDF_BUILDER_DEBUG: saveInteractionsSettings called with POST data: ' . print_r($_POST, true));
+        debug_log('saveInteractionsSettings called with POST data: ' . print_r($_POST, true));
 
         // Glisser-déposer activé
         if (isset($_POST['canvas_drag_enabled'])) {
-            update_option('pdf_builder_canvas_drag_enabled', '1');
+            update_option('pdf_builder_canvas_drag_enabled', '1\\');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_drag_enabled to: 1');
+            $this->debug_log('Updated canvas_drag_enabled to: 1\');
         } else {
             update_option('pdf_builder_canvas_drag_enabled', '0');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_drag_enabled to: 0');
+            $this->debug_log('Updated canvas_drag_enabled to: 0\');
         }
 
         // Redimensionnement activé
         if (isset($_POST['canvas_resize_enabled'])) {
             update_option('pdf_builder_canvas_resize_enabled', '1');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_resize_enabled to: 1');
+            $this->debug_log('Updated canvas_resize_enabled to: 1\');
         } else {
             update_option('pdf_builder_canvas_resize_enabled', '0');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_resize_enabled to: 0');
+            $this->debug_log('Updated canvas_resize_enabled to: 0\');
         }
 
         // Rotation activée
         if (isset($_POST['canvas_rotate_enabled'])) {
             update_option('pdf_builder_canvas_rotate_enabled', '1');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_rotate_enabled to: 1');
+            $this->debug_log('Updated canvas_rotate_enabled to: 1\');
         } else {
             update_option('pdf_builder_canvas_rotate_enabled', '0');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_rotate_enabled to: 0');
+            $this->debug_log('Updated canvas_rotate_enabled to: 0\');
         }
 
         // Sélection multiple
         if (isset($_POST['canvas_multi_select'])) {
             update_option('pdf_builder_canvas_multi_select', '1');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_multi_select to: 1');
+            $this->debug_log('Updated canvas_multi_select to: 1\');
         } else {
             update_option('pdf_builder_canvas_multi_select', '0');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_multi_select to: 0');
+            $this->debug_log('Updated canvas_multi_select to: 0\');
         }
 
         // Mode de sélection
         if (isset($_POST['canvas_selection_mode'])) {
             update_option('pdf_builder_canvas_selection_mode', sanitize_text_field($_POST['canvas_selection_mode']));
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_selection_mode to: ' . $_POST['canvas_selection_mode']);
+            $this->debug_log('Updated canvas_selection_mode to: ' . $_POST['canvas_selection_mode']);
         }
 
         // Raccourcis clavier
         if (isset($_POST['canvas_keyboard_shortcuts'])) {
-            update_option('pdf_builder_canvas_keyboard_shortcuts', '1');
+            update_option('pdf_builder_canvas_keyboard_shortcuts', '1\');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_keyboard_shortcuts to: 1');
+            $this->debug_log('Updated canvas_keyboard_shortcuts to: 1\');
         } else {
             update_option('pdf_builder_canvas_keyboard_shortcuts', '0');
             $updated++;
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_keyboard_shortcuts to: 0');
+            $this->debug_log('Updated canvas_keyboard_shortcuts to: 0\');
         }
 
-        error_log('PDF_BUILDER_DEBUG: saveInteractionsSettings updated ' . $updated . ' settings');
+        $this->debug_log('saveInteractionsSettings updated ' . $updated . ' settings\');
         return $updated > 0;
     }
 
@@ -1378,11 +1378,11 @@ class AjaxHandler
         $updated = 0;
 
         // Debug: Log received POST data
-        error_log('PDF_BUILDER_DEBUG: saveAutosaveSettings called with POST data: ' . print_r($_POST, true));
+        $this->debug_log('saveAutosaveSettings called with POST data: ' . print_r($_POST, true));
 
         // Migration: si l'ancienne option existe, la migrer vers la nouvelle
         if (get_option('pdf_builder_canvas_autosave_interval') !== false && get_option('pdf_builder_canvas_auto_save_interval') === false) {
-            $old_value = get_option('pdf_builder_canvas_autosave_interval');
+            $old_value = get_option('pdf_builder_canvas_autosave_interval\');
             update_option('pdf_builder_canvas_auto_save_interval', $old_value);
             delete_option('pdf_builder_canvas_autosave_interval');
         }
@@ -1424,8 +1424,8 @@ class AjaxHandler
         }
 
         // Debug: Log updated options
-        error_log('PDF_BUILDER_DEBUG: Autosave settings updated: ' . $updated . ' options');
-        error_log('PDF_BUILDER_DEBUG: Current options - enabled: ' . get_option('pdf_builder_canvas_autosave_enabled', '1') . ', interval: ' . get_option('pdf_builder_canvas_auto_save_interval', '5') . ', history_max: ' . get_option('pdf_builder_canvas_history_max', '50'));
+        $this->debug_log('Autosave settings updated: ' . $updated . ' options\');
+        $this->debug_log('Current options - enabled: ' . get_option('pdf_builder_canvas_autosave_enabled', '1') . ', interval: ' . get_option('pdf_builder_canvas_auto_save_interval', '5') . ', history_max: ' . get_option('pdf_builder_canvas_history_max', '50'));
 
         return $updated > 0;
     }
@@ -1436,7 +1436,7 @@ class AjaxHandler
 
         // Debug activé
         if (isset($_POST['canvas_debug_enabled'])) {
-            update_option('pdf_builder_canvas_debug_enabled', '1');
+            update_option('pdf_builder_canvas_debug_enabled', '1\');
             $updated++;
         } else {
             update_option('pdf_builder_canvas_debug_enabled', '0');

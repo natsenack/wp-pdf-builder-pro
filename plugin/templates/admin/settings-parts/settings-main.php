@@ -1296,10 +1296,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Debug: Log collected data
-            console.log('PDF_BUILDER_DEBUG: Collected form data:');
+            pdfBuilderDebug('Collected form data:');
             for (let [key, value] of formData.entries()) {
                 if (key.includes('developer')) {
-                    console.log('PDF_BUILDER_DEBUG: Developer field -', key + ':', value);
+                    pdfBuilderDebug('Developer field -', key + ':', value);
                 }
             }
 
@@ -2039,8 +2039,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                         pdfBuilderDebug('Options relues après sauvegarde:', testData);
                                         if (testData.success && testData.data) {
                                             pdfBuilderDebug('canvas_autosave_enabled in DB:', testData.data.canvas_autosave_enabled);
-                                            console.log('PDF_BUILDER_DEBUG: canvas_autosave_interval in DB:', testData.data.canvas_autosave_interval);
-                                            console.log('PDF_BUILDER_DEBUG: canvas_versions_limit in DB:', testData.data.canvas_versions_limit);
+                                            pdfBuilderDebug('canvas_autosave_interval in DB:', testData.data.canvas_autosave_interval);
+                                            pdfBuilderDebug('canvas_versions_limit in DB:', testData.data.canvas_versions_limit);
                                         }
                                     })
                                     .catch(error => {
@@ -2152,37 +2152,37 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }, 100);
                             }
                             if (category === 'performance' && typeof window.updatePerformanceCardPreview === 'function') {
-                                console.log('PDF_BUILDER_DEBUG: Calling updatePerformanceCardPreview');
+                                pdfBuilderDebug('Calling updatePerformanceCardPreview');
                                 setTimeout(function() {
                                     window.updatePerformanceCardPreview();
                                 }, 100);
                             }
                             if (category === 'autosave' && typeof window.updateAutosaveCardPreview === 'function') {
-                                console.log('PDF_BUILDER_DEBUG: Calling updateAutosaveCardPreview');
+                                pdfBuilderDebug('Calling updateAutosaveCardPreview');
                                 setTimeout(function() {
                                     window.updateAutosaveCardPreview();
                                 }, 100);
                             }
                             if (category === 'export' && typeof window.updateExportCardPreview === 'function') {
-                                console.log('PDF_BUILDER_DEBUG: Calling updateExportCardPreview');
+                                pdfBuilderDebug('Calling updateExportCardPreview');
                                 setTimeout(function() {
                                     window.updateExportCardPreview();
                                 }, 100);
                             }
                             if (category === 'zoom' && typeof window.updateZoomCardPreview === 'function') {
-                                console.log('PDF_BUILDER_DEBUG: Calling updateZoomCardPreview');
+                                pdfBuilderDebug('Calling updateZoomCardPreview');
                                 setTimeout(function() {
                                     window.updateZoomCardPreview();
                                 }, 100);
                             }
                             if (category === 'grille' && typeof window.updateGrilleCardPreview === 'function') {
-                                console.log('PDF_BUILDER_DEBUG: Calling updateGrilleCardPreview');
+                                pdfBuilderDebug('Calling updateGrilleCardPreview');
                                 setTimeout(function() {
                                     window.updateGrilleCardPreview();
                                 }, 100);
                             }
                             if (category === 'interactions' && typeof window.updateInteractionsCardPreview === 'function') {
-                                console.log('PDF_BUILDER_DEBUG: Calling updateInteractionsCardPreview');
+                                pdfBuilderDebug('Calling updateInteractionsCardPreview');
                                 setTimeout(function() {
                                     updateInteractionsCardPreview();
                                 }, 100);
@@ -2204,7 +2204,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                     .catch(error => {
                         clearTimeout(timeoutId);
-                        console.log('PDF_BUILDER_DEBUG: AJAX error:', error);
+                        pdfBuilderDebug('AJAX error:', error);
                         
                         this.textContent = originalText;
                         this.disabled = false;
@@ -2874,7 +2874,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update autosave card preview
     window.updateAutosaveCardPreview = function() {
-        console.log('PDF_BUILDER_DEBUG: updateAutosaveCardPreview called');
+        pdfBuilderDebug('updateAutosaveCardPreview called');
         try {
             // Try to get values from modal inputs first (real-time), then from settings
             const autosaveEnabledInput = document.getElementById("canvas_autosave_enabled");
@@ -2885,10 +2885,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.canvas_autosave_enabled === true || window.pdfBuilderCanvasSettings?.canvas_autosave_enabled === '1');
             const versionsLimit = versionsLimitInput ? parseInt(versionsLimitInput.value) : (window.pdfBuilderCanvasSettings?.versions_limit || 10);
 
-            console.log('PDF_BUILDER_DEBUG: autosave values - enabled:', autosaveEnabled, 'interval:', autosaveInterval, 'versionsLimit:', versionsLimit);
+            pdfBuilderDebug('autosave values - enabled:', autosaveEnabled, 'interval:', autosaveInterval, 'versionsLimit:', versionsLimit);
 
             const autosaveCard = document.querySelector('.canvas-card[data-category="autosave"]');
-            console.log('PDF_BUILDER_DEBUG: autosaveCard found:', autosaveCard);
+            pdfBuilderDebug('autosaveCard found:', autosaveCard);
             if (!autosaveCard) return;
 
             // Update timer display
@@ -2896,9 +2896,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (timerDisplay) {
                 const minutes = autosaveInterval;
                 timerDisplay.textContent = minutes + 'min';
-                console.log('PDF_BUILDER_DEBUG: Updated timer display to:', minutes + 'min');
+                pdfBuilderDebug('Updated timer display to:', minutes + 'min');
             } else {
-                console.log('PDF_BUILDER_DEBUG: timerDisplay element not found');
+                pdfBuilderDebug('timerDisplay element not found');
             }
 
             // Update status
@@ -2909,9 +2909,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     statusIndicator.classList.remove('active');
                 }
-                console.log('PDF_BUILDER_DEBUG: Updated status indicator');
+                pdfBuilderDebug('Updated status indicator');
             } else {
-                console.log('PDF_BUILDER_DEBUG: statusIndicator element not found');
+                pdfBuilderDebug('statusIndicator element not found');
             }
 
             // Update versions dots
@@ -2925,12 +2925,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         dot.style.display = 'none';
                     }
                 });
-                console.log('PDF_BUILDER_DEBUG: Updated version dots, showing:', limit);
+                pdfBuilderDebug('Updated version dots, showing:', limit);
             } else {
-                console.log('PDF_BUILDER_DEBUG: versionDots elements not found');
+                pdfBuilderDebug('versionDots elements not found');
             }
 
-            console.log('PDF_BUILDER_DEBUG: updateAutosaveCardPreview completed successfully');
+            pdfBuilderDebug('updateAutosaveCardPreview completed successfully');
         } catch (error) {
             pdfBuilderError('Error in updateAutosaveCardPreview:', error);
         }
@@ -3392,16 +3392,16 @@ function syncFormElementsWithLoadedSettings() {
                 
                 if (element.type === 'checkbox') {
                     element.checked = value === true || value === '1' || value === 1;
-                    console.log('PDF_BUILDER_DEBUG: Checkbox synchronisé:', elementId, 'old:', oldValue, 'new:', element.checked, 'settings value:', value);
+                    pdfBuilderDebug('Checkbox synchronisé:', elementId, 'old:', oldValue, 'new:', element.checked, 'settings value:', value);
                 } else if (element.type === 'select-one' || element.type === 'text' || element.type === 'number' || element.type === 'color') {
                     element.value = value;
-                    console.log('PDF_BUILDER_DEBUG: Champ synchronisé:', elementId, 'old:', oldValue, 'new:', value);
+                    pdfBuilderDebug('Champ synchronisé:', elementId, 'old:', oldValue, 'new:', value);
                 }
                 
                 // Vérifier si la valeur a changé
                 const newValue = element.type === 'checkbox' ? element.checked : element.value;
                 if (oldValue != newValue) {
-                    console.log('PDF_BUILDER_DEBUG: Valeur changée pour', elementId, 'de', oldValue, 'à', newValue);
+                    pdfBuilderDebug('Valeur changée pour', elementId, 'de', oldValue, 'à', newValue);
                 }
             } else {
                 pdfBuilderDebug('Élément non trouvé:', elementId);
@@ -3420,7 +3420,7 @@ function syncFormElementsWithLoadedSettings() {
 function toggleDeveloperSections(show) {
     // Debug logs only when developer mode is enabled
     if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-        console.log('PDF_BUILDER_DEBUG: toggleDeveloperSections called with show:', show);
+        pdfBuilderDebug('toggleDeveloperSections called with show:', show);
     }
     const sections = [
         'dev-license-section',
@@ -3438,12 +3438,12 @@ function toggleDeveloperSections(show) {
     sections.forEach(sectionId => {
         const section = document.getElementById(sectionId);
         if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-            console.log('PDF_BUILDER_DEBUG: Section', sectionId, 'found:', !!section);
+            pdfBuilderDebug('Section', sectionId, 'found:', !!section);
         }
         if (section) {
             section.style.display = show ? '' : 'none';
             if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-                console.log('PDF_BUILDER_DEBUG: Section', sectionId, 'display set to:', show ? 'visible' : 'none');
+                pdfBuilderDebug('Section', sectionId, 'display set to:', show ? 'visible' : 'none');
             }
         }
     });
@@ -3658,26 +3658,26 @@ document.addEventListener('DOMContentLoaded', function() {
         syncFormElementsWithLoadedSettings();
         
         // Synchroniser le checkbox développeur avec les paramètres sauvegardés
-        console.log('PDF_BUILDER_DEBUG: Starting developer checkbox sync...');
-        console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings exists for sync:', !!window.pdfBuilderSavedSettings);
+        pdfBuilderDebug('Starting developer checkbox sync...');
+        pdfBuilderDebug('window.pdfBuilderSavedSettings exists for sync:', !!window.pdfBuilderSavedSettings);
         if (window.pdfBuilderSavedSettings) {
-            console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings.developer_enabled for sync:', window.pdfBuilderSavedSettings.developer_enabled);
+            pdfBuilderDebug('window.pdfBuilderSavedSettings.developer_enabled for sync:', window.pdfBuilderSavedSettings.developer_enabled);
         }
         if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled !== undefined) {
             const developerEnabledCheckbox = document.getElementById('developer_enabled');
-            console.log('PDF_BUILDER_DEBUG: developerEnabledCheckbox element:', developerEnabledCheckbox);
+            pdfBuilderDebug('developerEnabledCheckbox element:', developerEnabledCheckbox);
             if (developerEnabledCheckbox) {
                 // Convertir correctement la valeur string en boolean
                 const savedValue = window.pdfBuilderSavedSettings.developer_enabled;
                 const isEnabled = savedValue === '1' || savedValue === 1 || savedValue === true;
-                console.log('PDF_BUILDER_DEBUG: Synchronizing developer checkbox - current checked:', developerEnabledCheckbox.checked, 'saved value:', savedValue, 'converted to boolean:', isEnabled);
+                pdfBuilderDebug('Synchronizing developer checkbox - current checked:', developerEnabledCheckbox.checked, 'saved value:', savedValue, 'converted to boolean:', isEnabled);
                 developerEnabledCheckbox.checked = isEnabled;
-                console.log('PDF_BUILDER_DEBUG: developer_enabled checkbox synchronized to:', developerEnabledCheckbox.checked);
+                pdfBuilderDebug('developer_enabled checkbox synchronized to:', developerEnabledCheckbox.checked);
             } else {
-                console.log('PDF_BUILDER_DEBUG: developer_enabled checkbox element not found');
+                pdfBuilderDebug('developer_enabled checkbox element not found');
             }
         } else {
-            console.log('PDF_BUILDER_DEBUG: Skipping developer checkbox sync - window.pdfBuilderSavedSettings.developer_enabled:', window.pdfBuilderSavedSettings ? window.pdfBuilderSavedSettings.developer_enabled : 'undefined');
+            pdfBuilderDebug('Skipping developer checkbox sync - window.pdfBuilderSavedSettings.developer_enabled:', window.pdfBuilderSavedSettings ? window.pdfBuilderSavedSettings.developer_enabled : 'undefined');
         }
         
         // Attendre que la synchronisation soit terminée avant d'initialiser l'indicateur

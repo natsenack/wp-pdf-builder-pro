@@ -533,17 +533,15 @@ function pdf_builder_save_settings_handler() {
     file_put_contents($log_file, date('Y-m-d H:i:s') . " - Handler called\n", FILE_APPEND);
 
     // Debug: Log that function is called
-    if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log('PDF Builder: pdf_builder_save_settings_handler called with current_tab: ' . ($_POST['current_tab'] ?? 'not set'));
-        error_log('PDF Builder: POST data: ' . print_r($_POST, true));
-    }
+    PDF_Builder_Security_Manager::debug_log('php_errors', 'pdf_builder_save_settings_handler called with current_tab: ' . ($_POST['current_tab'] ?? 'not set'));
+    PDF_Builder_Security_Manager::debug_log('php_errors', 'POST data: ' . print_r($_POST, true));
 
     if (PDF_Builder_Security_Manager::verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
 
         // Debug: Log after nonce verification
         file_put_contents($log_file, date('Y-m-d H:i:s') . " - Nonce verified, current_tab = $current_tab\n", FILE_APPEND);
-        error_log('PDF_BUILDER_DEBUG AJAX: Handler started, current_tab = ' . $current_tab);
+        PDF_Builder_Security_Manager::debug_log('php_errors', 'AJAX: Handler started, current_tab = ' . $current_tab);
 
     // Traiter directement selon l'onglet
     switch ($current_tab) {

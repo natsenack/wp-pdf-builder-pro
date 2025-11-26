@@ -80,13 +80,13 @@ $canvas_settings_js = [
 ];
 
 // Debug: Afficher les valeurs PHP chargées
-error_log('PDF_BUILDER_DEBUG PHP: Canvas settings loaded: ' . print_r($canvas_settings_js, true));
+PDF_Builder_Security_Manager::debug_log('php_errors', 'Canvas settings loaded:', $canvas_settings_js);
 
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 ?>
 <script>
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings_js); ?>;
-console.log('PDF_BUILDER_DEBUG: Canvas settings loaded from WordPress options:', window.pdfBuilderCanvasSettings);
+pdfBuilderDebug('Canvas settings loaded from WordPress options:', window.pdfBuilderCanvasSettings);
 window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>';
 
 // Dimensions standard des formats de papier en mm (centralisées)

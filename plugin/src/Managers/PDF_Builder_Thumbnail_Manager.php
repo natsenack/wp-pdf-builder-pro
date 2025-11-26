@@ -339,9 +339,7 @@ class PdfBuilderThumbnailManager
      */
     private function logError($message)
     {
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('PDF_BUILDER_THUMBNAIL_ERROR: ' . $message);
-        }
+        PDF_Builder_Security_Manager::debug_log('php_errors', 'THUMBNAIL_ERROR: ' . $message);
     }
 
     /**
@@ -349,8 +347,6 @@ class PdfBuilderThumbnailManager
      */
     private function logInfo($message)
     {
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('PDF_BUILDER_THUMBNAIL_INFO: ' . $message);
-        }
+        PDF_Builder_Security_Manager::debug_log('php_errors', 'THUMBNAIL_INFO: ' . $message);
     }
 }

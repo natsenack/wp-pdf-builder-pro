@@ -288,13 +288,13 @@ class PDFEditorPreviewIntegration {
                     }, 3000);
                 }
             } else {
-                console.error('[PDF Builder] Auto-sauvegarde échouée côté serveur:', result.data);
+                window.PDFBuilderLogger.error('Auto-sauvegarde échouée côté serveur:'result.data);
                 throw new Error(result.data || 'Erreur inconnue');
             }
 
         } catch (error) {
-            console.error('[PDF Builder] Erreur auto-sauvegarde:', error);
-            console.error('[PDF Builder] Stack trace:', error.stack);
+            window.PDFBuilderLogger.error('Erreur auto-sauvegarde:'error);
+            window.PDFBuilderLogger.error('Stack trace:'error.stack);
 
             if (this.autosaveStatus) {
                 this.autosaveStatus.textContent = 'Erreur de sauvegarde';
@@ -713,10 +713,10 @@ class PDFMetaboxPreviewIntegration {
  * Met à jour la prévisualisation de la carte performance
  */
 window.updatePerformanceCardPreview = function() {
-    console.log('updatePerformanceCardPreview called');
+    window.PDFBuilderLogger.info('updatePerformanceCardPreview called');
     try {
         const values = window.CanvasPreviewManager.getCardValues('performance');
-        console.log('updatePerformanceCardPreview - values:', values);
+        window.PDFBuilderLogger.info('updatePerformanceCardPreview - values:'values);
         const { fps_target: fps, memory_limit_js: memoryJs, lazy_loading_editor: lazyLoading } = values;
 
         // Fonction helper pour déterminer le statut
@@ -752,9 +752,9 @@ window.updatePerformanceCardPreview = function() {
             window.CanvasPreviewManager.updateElement(statusTextEl, 'textContent', statusText);
         }
         
-        console.log('updatePerformanceCardPreview completed successfully');
+        window.PDFBuilderLogger.info('updatePerformanceCardPreview completed successfully');
     } catch (error) {
-        console.error('Error in updatePerformanceCardPreview:', error);
+        window.PDFBuilderLogger.error('Error in updatePerformanceCardPreview:'error);
         throw error; // Re-throw to be caught by updatePreviews
     }
 };
@@ -763,10 +763,10 @@ window.updatePerformanceCardPreview = function() {
  * Met à jour la prévisualisation de la carte apparence
  */
 window.updateApparenceCardPreview = function() {
-    console.log('updateApparenceCardPreview called');
+    window.PDFBuilderLogger.info('updateApparenceCardPreview called');
     try {
         const values = window.CanvasPreviewManager.getCardValues('apparence');
-        console.log('updateApparenceCardPreview - values:', values);
+        window.PDFBuilderLogger.info('updateApparenceCardPreview - values:'values);
         const { canvas_background_color: bgColor, border_color: borderColor, border_width: borderWidth } = values;
 
         // Mettre à jour les previews de couleur
@@ -776,9 +776,9 @@ window.updateApparenceCardPreview = function() {
         window.CanvasPreviewManager.updateElement(bgPreview, 'style.backgroundColor', bgColor);
         window.CanvasPreviewManager.updateElement(borderPreview, 'style.border', `${borderWidth}px solid ${borderColor}`);
         
-        console.log('updateApparenceCardPreview completed successfully');
+        window.PDFBuilderLogger.info('updateApparenceCardPreview completed successfully');
     } catch (error) {
-        console.error('Error in updateApparenceCardPreview:', error);
+        window.PDFBuilderLogger.error('Error in updateApparenceCardPreview:'error);
         throw error; // Re-throw to be caught by updatePreviews
     }
 };
@@ -1152,7 +1152,7 @@ window.CanvasPreviewManager = {
      * Met à jour toutes les previews ou une catégorie spécifique
      */
     updatePreviews: function(category = 'all') {
-        console.log('CanvasPreviewManager.updatePreviews called with category:', category);
+        window.PDFBuilderLogger.info('CanvasPreviewManager.updatePreviews called with category:'category);
         PDFBuilderLogger.debug('CanvasPreviewManager.updatePreviews called with category:', category);
 
         Object.keys(this.cardConfigs).forEach(cardCategory => {
@@ -1160,18 +1160,18 @@ window.CanvasPreviewManager = {
                 const config = this.cardConfigs[cardCategory];
                 if (typeof window[config.updateFunction] === 'function') {
                     try {
-                        console.log('Calling update function:', config.updateFunction, 'for category:', cardCategory);
+                        window.PDFBuilderLogger.info('Calling update function:'config.updateFunction, 'for category:', cardCategory);
                         PDFBuilderLogger.debug('Calling update function:', config.updateFunction);
                         window[config.updateFunction]();
-                        console.log('Update function completed successfully:', config.updateFunction);
+                        window.PDFBuilderLogger.info('Update function completed successfully:'config.updateFunction);
                         PDFBuilderLogger.debug('Update function completed:', config.updateFunction);
                     } catch (error) {
-                        console.error('Error in update function:', config.updateFunction, 'Error:', error);
+                        window.PDFBuilderLogger.error('Error in update function:'config.updateFunction, 'Error:', error);
                         PDFBuilderLogger.error('Error in update function:', config.updateFunction, error);
                         // Continue with other functions instead of stopping
                     }
                 } else {
-                    console.warn('Update function not found:', config.updateFunction);
+                    window.PDFBuilderLogger.warn('Update function not found:'config.updateFunction);
                     PDFBuilderLogger.warn('Update function not found:', config.updateFunction);
                 }
             }
@@ -1224,10 +1224,10 @@ window.CanvasPreviewManager = {
  * Met à jour la prévisualisation de la carte dimensions
  */
 window.updateDimensionsCardPreview = function() {
-    console.log('updateDimensionsCardPreview called');
+    window.PDFBuilderLogger.info('updateDimensionsCardPreview called');
     try {
         const values = window.CanvasPreviewManager.getCardValues('dimensions');
-        console.log('updateDimensionsCardPreview - values:', values);
+        window.PDFBuilderLogger.info('updateDimensionsCardPreview - values:'values);
         const { default_canvas_format: format, default_canvas_dpi: dpi, default_canvas_orientation: orientation } = values;
 
         // Get paper dimensions in mm
@@ -1263,9 +1263,9 @@ window.updateDimensionsCardPreview = function() {
         window.CanvasPreviewManager.updateElement(heightElement, 'textContent', heightPx);
         window.CanvasPreviewManager.updateElement(dpiElement, 'textContent', `${dpi} DPI - ${format} (${widthMm}×${heightMm}mm)`);
         
-        console.log('updateDimensionsCardPreview completed successfully');
+        window.PDFBuilderLogger.info('updateDimensionsCardPreview completed successfully');
     } catch (error) {
-        console.error('Error in updateDimensionsCardPreview:', error);
+        window.PDFBuilderLogger.error('Error in updateDimensionsCardPreview:'error);
         throw error; // Re-throw to be caught by updatePreviews
     }
 };

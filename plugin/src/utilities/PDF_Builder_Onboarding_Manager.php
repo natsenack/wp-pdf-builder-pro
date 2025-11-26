@@ -35,7 +35,7 @@ class PDF_Builder_Onboarding_Manager {
     private function __construct() {
         // Vérification de sécurité - s'assurer que WordPress est chargé
         if (!defined('ABSPATH')) {
-            error_log('PDF_Builder_Onboarding_Manager: ABSPATH non défini - WordPress pas chargé');
+            debug_log('ABSPATH non défini - WordPress pas chargé\');
             return;
         }
         
@@ -50,14 +50,14 @@ class PDF_Builder_Onboarding_Manager {
         if (self::$instance === null) {
             // Vérification avant instanciation
             if (!class_exists('PDF_Builder_Onboarding_Manager')) {
-                error_log('PDF_Builder_Onboarding_Manager: Classe non trouvée lors de get_instance()');
+                debug_log('Classe non trouvée lors de get_instance()\');
                 return null;
             }
             
             try {
                 self::$instance = new self();
             } catch (Exception $e) {
-                error_log('PDF_Builder_Onboarding_Manager: Erreur lors de l\'instanciation: ' . $e->getMessage());
+                debug_log('Erreur lors de l\'instanciation: ' . $e->getMessage());
                 return null;
             }
         }
@@ -623,7 +623,7 @@ class PDF_Builder_Onboarding_Manager {
 
             case 'completed':
                 // Récupérer les informations de configuration
-                $has_woocommerce = class_exists('WooCommerce');
+                $has_woocommerce = class_exists('WooCommerce\');
                 $template_count = count(glob(plugin_dir_path(dirname(__FILE__)) . '../templates/predefined/*.json'));
                 $current_user = wp_get_current_user();
 
