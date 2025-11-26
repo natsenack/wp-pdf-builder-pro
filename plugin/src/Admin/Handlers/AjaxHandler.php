@@ -334,6 +334,7 @@ class AjaxHandler
     public function ajaxGetTemplate()
     {
         $this->debug_log('ajaxGetTemplate called with GET: ' . print_r($_GET, true));
+        $this->debug_log('ajaxGetTemplate called with POST: ' . print_r($_POST, true));
 
         try {
             // Vérifier les permissions
@@ -343,14 +344,15 @@ class AjaxHandler
                 return;
             }
 
-            // Vérifier le nonce depuis les paramètres GET
-            if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_nonce')) {
-                $this->debug_log('ajaxGetTemplate: Invalid nonce');
+            // Vérifier le nonce depuis les paramètres GET ou POST
+            $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
+            if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
+                $this->debug_log('ajaxGetTemplate: Invalid nonce: ' . $nonce);
                 wp_send_json_error('Nonce invalide');
                 return;
             }
 
-            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : null;
+            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
             $this->debug_log('ajaxGetTemplate: Template ID = ' . $template_id);
 
             if (!$template_id) {
