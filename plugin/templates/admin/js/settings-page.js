@@ -16,6 +16,11 @@ jQuery(document).ready(function($) {
      * @returns {boolean}
      */
     function isDebugEnabled(type) {
+        // Vérifier d'abord le debug global JavaScript
+        if (typeof PDF_BUILDER_DEBUG_ENABLED !== 'undefined' && !PDF_BUILDER_DEBUG_ENABLED) {
+            return false;
+        }
+
         if (!window.pdfBuilderAjax || !window.pdfBuilderAjax.debug) {
             return false;
         }
