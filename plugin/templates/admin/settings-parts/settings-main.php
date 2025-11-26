@@ -912,8 +912,10 @@ function updateDeveloperStatusIndicator(isActive = null) {
     if (developerIndicator) {
         // Si isActive n'est pas fourni, utiliser les paramètres sauvegardés plutôt que l'état du checkbox
         if (isActive === null) {
-            isActive = window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled;
-            console.log('PDF_BUILDER_DEBUG: isActive set to saved settings value:', isActive, 'type:', typeof isActive);
+            const savedValue = window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled;
+            // Convertir correctement la valeur string en boolean
+            isActive = savedValue === '1' || savedValue === 1 || savedValue === true;
+            console.log('PDF_BUILDER_DEBUG: isActive set to saved settings value:', savedValue, 'converted to boolean:', isActive, 'type:', typeof isActive);
         }
 
         developerIndicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
@@ -3665,8 +3667,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const developerEnabledCheckbox = document.getElementById('developer_enabled');
             console.log('PDF_BUILDER_DEBUG: developerEnabledCheckbox element:', developerEnabledCheckbox);
             if (developerEnabledCheckbox) {
-                console.log('PDF_BUILDER_DEBUG: Synchronizing developer checkbox - current checked:', developerEnabledCheckbox.checked, 'saved value:', window.pdfBuilderSavedSettings.developer_enabled);
-                developerEnabledCheckbox.checked = window.pdfBuilderSavedSettings.developer_enabled;
+                // Convertir correctement la valeur string en boolean
+                const savedValue = window.pdfBuilderSavedSettings.developer_enabled;
+                const isEnabled = savedValue === '1' || savedValue === 1 || savedValue === true;
+                console.log('PDF_BUILDER_DEBUG: Synchronizing developer checkbox - current checked:', developerEnabledCheckbox.checked, 'saved value:', savedValue, 'converted to boolean:', isEnabled);
+                developerEnabledCheckbox.checked = isEnabled;
                 console.log('PDF_BUILDER_DEBUG: developer_enabled checkbox synchronized to:', developerEnabledCheckbox.checked);
             } else {
                 console.log('PDF_BUILDER_DEBUG: developer_enabled checkbox element not found');
