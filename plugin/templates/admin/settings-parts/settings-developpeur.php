@@ -846,6 +846,144 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Boutons d'outils de développement
+    const testLicenseBtn = document.getElementById('test_license_btn');
+    const clearCacheBtn = document.getElementById('clear_cache_btn');
+    const testRoutesBtn = document.getElementById('test_routes_btn');
+    const exportDiagnosticBtn = document.getElementById('export_diagnostic_btn');
+    const viewLogsBtn = document.getElementById('view_logs_btn');
+
+    // Helper function for AJAX calls
+    function makeAjaxCall(action, button, successCallback, errorCallback) {
+        const ajaxUrl = window.ajaxurl || window.wp?.ajaxurl || (window.location.origin + '/wp-admin/admin-ajax.php');
+        const originalText = button.textContent;
+
+        // Disable button and show loading state
+        button.disabled = true;
+        button.textContent = '⏳ Chargement...';
+
+        fetch(ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action: action,
+                security: window.pdfBuilderAjax?.nonce || ''
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            button.disabled = false;
+            button.textContent = originalText;
+
+            if (data.success) {
+                if (successCallback) successCallback(data);
+            } else {
+                if (errorCallback) errorCallback(data);
+                alert('❌ Erreur: ' + (data.data?.message || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            console.error('Erreur AJAX:', error);
+            button.disabled = false;
+            button.textContent = originalText;
+            alert('❌ Erreur de connexion');
+        });
+    }
+
+    // Test License Button
+    if (testLicenseBtn) {
+        testLicenseBtn.addEventListener('click', function() {
+            makeAjaxCall('pdf_builder_test_license', testLicenseBtn,
+                function(data) {
+                    let message = '✅ ' + data.data.message;
+                    if (data.data.license_key) {
+                        message += '\nClé: ' + data.data.license_key;
+                    }
+                    if (data.data.expires) {
+                        message += '\nExpire: ' + data.data.expires;
+                    }
+                    alert(message);
+                },
+                function(data) {
+                    alert('❌ ' + data.data.message);
+                }
+            );
+        });
+    }
+
+    // Clear Cache Button
+    if (clearCacheBtn) {
+        clearCacheBtn.addEventListener('click', function() {
+            if (!confirm('Voulez-vous vider tout le cache du plugin ?')) {
+                return;
+            }
+
+            makeAjaxCall('pdf_builder_clear_cache', clearCacheBtn,
+                function(data) {
+                    alert('✅ ' + data.data.message + '\nNouvelle taille du cache: ' + (data.data.new_cache_size || '0 Ko'));
+                    // Refresh cache metrics if available
+                    if (typeof updateCacheMetrics === 'function') {
+                        updateCacheMetrics();
+                    }
+                }
+            );
+        });
+    }
+
+    // Test Routes Button
+    if (testRoutesBtn) {
+        testRoutesBtn.addEventListener('click', function() {
+            makeAjaxCall('pdf_builder_test_routes', testRoutesBtn,
+                function(data) {
+                    let message = '✅ ' + data.data.message + '\n\nRoutes testées:\n';
+                    data.data.routes_tested.forEach(route => {
+                        message += '• ' + route + '\n';
+                    });
+                    if (data.data.failed_routes && data.data.failed_routes.length > 0) {
+                        message += '\nRoutes échouées:\n';
+                        data.data.failed_routes.forEach(route => {
+                            message += '• ' + route + '\n';
+                        });
+                    }
+                    alert(message);
+                }
+            );
+        });
+    }
+
+    // Export Diagnostic Button
+    if (exportDiagnosticBtn) {
+        exportDiagnosticBtn.addEventListener('click', function() {
+            makeAjaxCall('pdf_builder_export_diagnostic', exportDiagnosticBtn,
+                function(data) {
+                    alert('✅ ' + data.data.message + '\n\nFichier créé: ' + data.data.file_url);
+                    // Open download link in new tab
+                    window.open(data.data.file_url, '_blank');
+                }
+            );
+        });
+    }
+
+    // View Logs Button
+    if (viewLogsBtn) {
+        viewLogsBtn.addEventListener('click', function() {
+            makeAjaxCall('pdf_builder_view_logs', viewLogsBtn,
+                function(data) {
+                    let message = '📋 ' + data.data.message + '\n\n';
+                    data.data.log_files.forEach(log => {
+                        message += `• ${log.name} (${log.size} octets) - Modifié: ${log.modified}\n`;
+                    });
+                    alert(message);
+                },
+                function(data) {
+                    alert('❌ ' + data.data.message);
+                }
+            );
+        });
+    }
+
     // Tests de Notifications
     const testSuccessBtn = document.getElementById('test-notifications-success');
     const testErrorBtn = document.getElementById('test-notifications-error');

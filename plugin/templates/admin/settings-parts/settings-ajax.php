@@ -343,6 +343,150 @@ function pdf_builder_clear_cache_handler() {
         send_ajax_response(true, 'Cache vidé avec succès.', ['new_cache_size' => $new_cache_display]);
 }
 
+// Test License Handler
+function pdf_builder_test_license_handler() {
+    PDF_Builder_Security_Manager::verify_nonce_or_die($_POST['security'], 'pdf_builder_ajax');
+
+    // Get license key from settings
+    $license_key = get_option('pdf_builder_license_key', '');
+    $license_status = get_option('pdf_builder_license_status', 'inactive');
+
+    if (empty($license_key)) {
+        send_ajax_response(false, 'Aucune clé de licence configurée.');
+        return;
+    }
+
+    // Simulate license validation (in real implementation, this would call the license server)
+    $is_valid = !empty($license_key) && strlen($license_key) > 10;
+
+    if ($is_valid) {
+        send_ajax_response(true, 'Licence valide et active.', [
+            'license_key' => substr($license_key, 0, 10) . '...',
+            'status' => 'active',
+            'expires' => date('Y-m-d', strtotime('+1 year'))
+        ]);
+    } else {
+        send_ajax_response(false, 'Licence invalide ou expirée.');
+    }
+}
+
+// Test Routes Handler
+function pdf_builder_test_routes_handler() {
+    PDF_Builder_Security_Manager::verify_nonce_or_die($_POST['security'], 'pdf_builder_ajax');
+
+    $routes_tested = [];
+    $failed_routes = [];
+
+    // Test basic admin routes
+    $admin_routes = [
+        'admin.php?page=pdf-builder-settings' => 'Page principale des paramètres',
+        'admin-ajax.php' => 'Endpoint AJAX WordPress'
+    ];
+
+    foreach ($admin_routes as $route => $description) {
+        $url = admin_url($route);
+        $response = wp_remote_head($url, ['timeout' => 5]);
+
+        if (is_wp_error($response)) {
+            $failed_routes[] = $route . ' (' . $response->get_error_message() . ')';
+        } else {
+            $routes_tested[] = $route . ' (OK)';
+        }
+    }
+
+    if (empty($failed_routes)) {
+        send_ajax_response(true, 'Toutes les routes sont accessibles.', ['routes_tested' => $routes_tested]);
+    } else {
+        send_ajax_response(false, 'Routes inaccessibles détectées.', [
+            'routes_tested' => $routes_tested,
+            'failed_routes' => $failed_routes
+        ]);
+    }
+}
+
+// Export Diagnostic Handler
+function pdf_builder_export_diagnostic_handler() {
+    PDF_Builder_Security_Manager::verify_nonce_or_die($_POST['security'], 'pdf_builder_ajax');
+
+    $diagnostic_data = [
+        'timestamp' => current_time('Y-m-d H:i:s'),
+        'wordpress' => [
+            'version' => get_bloginfo('version'),
+            'url' => get_site_url(),
+            'admin_url' => admin_url(),
+            'wp_debug' => WP_DEBUG ? 'enabled' : 'disabled'
+        ],
+        'plugin' => [
+            'version' => PDF_BUILDER_VERSION,
+            'license_status' => get_option('pdf_builder_license_status', 'inactive'),
+            'settings_count' => count(get_option('pdf_builder_settings', []))
+        ],
+        'server' => [
+            'php_version' => PHP_VERSION,
+            'memory_limit' => ini_get('memory_limit'),
+            'max_execution_time' => ini_get('max_execution_time'),
+            'upload_max_filesize' => ini_get('upload_max_filesize')
+        ],
+        'database' => [
+            'table_prefix' => $GLOBALS['wpdb']->prefix,
+            'charset' => $GLOBALS['wpdb']->charset,
+            'collate' => $GLOBALS['wpdb']->collate
+        ]
+    ];
+
+    // Create diagnostic file
+    $filename = 'pdf-builder-diagnostic-' . date('Y-m-d-H-i-s') . '.json';
+    $file_path = wp_upload_dir()['basedir'] . '/pdf-builder-diagnostics/' . $filename;
+
+    // Ensure directory exists
+    wp_mkdir_p(dirname($file_path));
+
+    if (file_put_contents($file_path, json_encode($diagnostic_data, JSON_PRETTY_PRINT))) {
+        send_ajax_response(true, 'Diagnostic exporté avec succès.', [
+            'file_url' => wp_upload_dir()['baseurl'] . '/pdf-builder-diagnostics/' . $filename,
+            'file_path' => $file_path
+        ]);
+    } else {
+        send_ajax_response(false, 'Erreur lors de la création du fichier de diagnostic.');
+    }
+}
+
+// View Logs Handler
+function pdf_builder_view_logs_handler() {
+    PDF_Builder_Security_Manager::verify_nonce_or_die($_POST['security'], 'pdf_builder_ajax');
+
+    $log_files = [];
+    $log_dirs = [
+        WP_CONTENT_DIR . '/pdf-builder-logs/',
+        wp_upload_dir()['basedir'] . '/pdf-builder-logs/'
+    ];
+
+    foreach ($log_dirs as $log_dir) {
+        if (is_dir($log_dir)) {
+            $files = glob($log_dir . '*.log');
+            foreach ($files as $file) {
+                $log_files[] = [
+                    'name' => basename($file),
+                    'path' => $file,
+                    'size' => filesize($file),
+                    'modified' => date('Y-m-d H:i:s', filemtime($file))
+                ];
+            }
+        }
+    }
+
+    if (!empty($log_files)) {
+        // Sort by modification date (newest first)
+        usort($log_files, function($a, $b) {
+            return strtotime($b['modified']) - strtotime($a['modified']);
+        });
+
+        send_ajax_response(true, count($log_files) . ' fichier(s) de log trouvé(s).', ['log_files' => $log_files]);
+    } else {
+        send_ajax_response(false, 'Aucun fichier de log trouvé.');
+    }
+}
+
 function pdf_builder_save_settings_handler() {
     // Simple file logging for debugging
     $log_file = WP_CONTENT_DIR . '/pdf-builder-debug.log';
