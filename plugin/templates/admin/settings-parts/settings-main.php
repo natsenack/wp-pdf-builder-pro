@@ -645,9 +645,6 @@ if (
             <a href="#developpeur" class="nav-tab" data-tab="developpeur">
                 <span class="tab-icon">👨‍💻</span>
                 <span class="tab-text">Développeur</span>
-                <span class="developer-enabled-indicator" style="margin-left: 8px; padding: 1px 6px; border-radius: 8px; font-size: 10px; font-weight: bold; text-transform: uppercase; color: <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? '#28a745' : '#dc3545'; ?>; background: rgba(255,255,255,0.1);">
-                    <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'Activé' : 'Désactivé'; ?>
-                </span>
             </a>
         </div>
     </div>
@@ -1348,24 +1345,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.log('PDF_BUILDER_DEBUG: Developer enabled value:', data.data.saved_options.developer_enabled);
                         }
                         updateDeveloperStatusIndicator(data.data.saved_options.developer_enabled === '1');
-                        
-                        // Mettre à jour aussi l'indicateur dans le menu des onglets
-                        const developerEnabledIndicator = document.querySelector('.developer-enabled-indicator');
-                        if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-                            console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator element found:', developerEnabledIndicator);
-                        }
-                        if (developerEnabledIndicator) {
-                            const isEnabled = data.data.saved_options.developer_enabled === '1';
-                            developerEnabledIndicator.style.color = isEnabled ? '#28a745' : '#dc3545';
-                            developerEnabledIndicator.textContent = isEnabled ? 'Activé' : 'Désactivé';
-                            if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-                                console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator updated to:', isEnabled ? 'Activé' : 'Désactivé');
-                            }
-                        } else {
-                            if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-                                console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator element not found');
-                            }
-                        }
                         
                         // Mettre à jour la variable globale pour cohérence
                         if (window.pdfBuilderSavedSettings) {
