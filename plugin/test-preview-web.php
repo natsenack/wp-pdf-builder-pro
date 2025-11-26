@@ -312,6 +312,11 @@ function run_pdf_test() {
         // Generate PDF using correct method
         $pdf_content = $generator_manager->generatePreview($template_data, $sample_data_provider, 'pdf');
 
+        echo '<div class="result">Longueur du contenu PDF: ' . strlen($pdf_content) . ' octets</div>';
+        if (strlen($pdf_content) > 0) {
+            echo '<div class="result">Début du contenu PDF: ' . htmlspecialchars(substr($pdf_content, 0, 100)) . '...</div>';
+        }
+
         if ($pdf_content && strlen($pdf_content) > 1000) {
             $size_kb = round(strlen($pdf_content) / 1024, 2);
             echo '<div class="status success">✅ PDF généré avec succès (' . $size_kb . ' KB)</div>';
