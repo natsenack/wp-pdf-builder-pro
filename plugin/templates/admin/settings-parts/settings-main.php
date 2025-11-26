@@ -645,6 +645,9 @@ if (
             <a href="#developpeur" class="nav-tab" data-tab="developpeur">
                 <span class="tab-icon">👨‍💻</span>
                 <span class="tab-text">Développeur</span>
+                <span class="developer-enabled-indicator" style="margin-left: 8px; font-size: 10px; font-weight: bold; color: <?php echo get_option('pdf_builder_developer_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
+                    <?php echo get_option('pdf_builder_developer_enabled', false) ? 'Activé' : 'Désactivé'; ?>
+                </span>
             </a>
         </div>
     </div>
