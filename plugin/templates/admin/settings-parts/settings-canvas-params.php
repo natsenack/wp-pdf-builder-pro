@@ -79,12 +79,12 @@ PDF_Builder_Security_Manager::debug_log('php_errors', 'Canvas settings loaded:',
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 ?>
 <script>
-// window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings_js); ?>; // TEMPORAIREMENT DÉSACTIVÉ
-// pdfBuilderDebug('Canvas settings loaded from WordPress options:', window.pdfBuilderCanvasSettings); // TEMPORAIREMENT DÉSACTIVÉ
-// window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>'; // TEMPORAIREMENT DÉSACTIVÉ
+window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings_js); ?>;
+pdfBuilderDebug('Canvas settings loaded from WordPress options:', window.pdfBuilderCanvasSettings);
+window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>';
 
 // Dimensions standard des formats de papier en mm (centralisées)
-// window.pdfBuilderPaperFormats = <?php echo wp_json_encode(PDF_BUILDER_PAPER_FORMATS); ?>; // TEMPORAIREMENT DÉSACTIVÉ
+window.pdfBuilderPaperFormats = <?php echo wp_json_encode(PDF_BUILDER_PAPER_FORMATS); ?>;
 
 // Fonction pour convertir le format et l'orientation en dimensions pixels
 window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {

@@ -470,7 +470,13 @@ class PdfBuilderCore
         // Définir les paramètres canvas minimaux pour l'API
         $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
         $canvas_settings_script = "
-        // Canvas settings temporairement désactivés pour diagnostic
+        window.pdfBuilderCanvasSettings = " . wp_json_encode([
+            'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
+            'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
+            'default_canvas_dpi' => $canvas_settings_js['default_canvas_dpi'] ?? 96,
+            'canvas_width' => $canvas_settings_js['canvas_width'] ?? 794,
+            'canvas_height' => $canvas_settings_js['canvas_height'] ?? 1123,
+        ]) . ";
         ";
         wp_add_inline_script('pdf-builder-react-api-only', $canvas_settings_script, 'before');
     }
@@ -899,7 +905,7 @@ class PdfBuilderCore
             // Passer les données à React
             window.pdfBuilderData = {
                 templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
-                templateData: null, // <?php echo $template_data ? wp_json_encode($template_data) : 'null'; ?> // TEMPORAIREMENT DÉSACTIVÉ
+                templateData: <?php echo $template_data ? wp_json_encode($template_data) : 'null'; ?>,
                 isEditing: <?php echo ($template_id || $template_data) ? 'true' : 'false'; ?>,
                 ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
                 nonce: '<?php echo wp_create_nonce('pdf_builder_nonce'); ?>'
