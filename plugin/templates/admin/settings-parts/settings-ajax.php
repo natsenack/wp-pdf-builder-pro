@@ -345,7 +345,17 @@ function pdf_builder_clear_cache_handler() {
 
 // Test License Handler
 function pdf_builder_test_license_handler() {
-    PDF_Builder_Security_Manager::verify_nonce_or_die($_POST['security'], 'pdf_builder_ajax');
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
 
     // Get license key from settings
     $license_key = get_option('pdf_builder_license_key', '');
@@ -372,7 +382,17 @@ function pdf_builder_test_license_handler() {
 
 // Test Routes Handler
 function pdf_builder_test_routes_handler() {
-    PDF_Builder_Security_Manager::verify_nonce_or_die($_POST['security'], 'pdf_builder_ajax');
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
 
     $routes_tested = [];
     $failed_routes = [];
@@ -406,7 +426,17 @@ function pdf_builder_test_routes_handler() {
 
 // Export Diagnostic Handler
 function pdf_builder_export_diagnostic_handler() {
-    PDF_Builder_Security_Manager::verify_nonce_or_die($_POST['security'], 'pdf_builder_ajax');
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
 
     $diagnostic_data = [
         'timestamp' => current_time('Y-m-d H:i:s'),
@@ -453,7 +483,17 @@ function pdf_builder_export_diagnostic_handler() {
 
 // View Logs Handler
 function pdf_builder_view_logs_handler() {
-    PDF_Builder_Security_Manager::verify_nonce_or_die($_POST['security'], 'pdf_builder_ajax');
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
 
     $log_files = [];
     $log_dirs = [

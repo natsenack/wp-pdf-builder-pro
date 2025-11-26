@@ -869,7 +869,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: new URLSearchParams({
                 action: action,
-                security: window.pdfBuilderAjax?.nonce || ''
+                nonce: window.pdfBuilderAjax?.nonce || ''
             })
         })
         .then(response => response.json())
