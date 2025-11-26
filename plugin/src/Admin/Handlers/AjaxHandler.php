@@ -333,6 +333,7 @@ class AjaxHandler
      */
     public function ajaxGetTemplate()
     {
+        error_log('[PDF Builder] ajaxGetTemplate called - START');
         $this->debug_log('ajaxGetTemplate called with GET: ' . print_r($_GET, true));
         $this->debug_log('ajaxGetTemplate called with POST: ' . print_r($_POST, true));
 
