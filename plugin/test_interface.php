@@ -15,10 +15,10 @@ try {
 
     // Test de chargement des DataProviders
     echo "2. Chargement des DataProviders...\n";
-    require_once __DIR__ . '/data/providers/SampleDataProvider.php';
+    require_once __DIR__ . '/data/SampleDataProvider.php';
     echo "   ✅ SampleDataProvider chargé\n";
 
-    require_once __DIR__ . '/data/providers/WooCommerceDataProvider.php';
+    require_once __DIR__ . '/data/WooCommerceDataProvider.php';
     echo "   ✅ WooCommerceDataProvider chargé\n\n";
 
     // Test d'instanciation
