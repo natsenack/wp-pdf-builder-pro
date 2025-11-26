@@ -12,7 +12,7 @@ function isDebugEnabled() {
 
 function debugLog(...args) {
     if (isDebugEnabled()) {
-        console.log(...args);
+        window.PDFBuilderLogger.debug(...args);
     }
 }
 

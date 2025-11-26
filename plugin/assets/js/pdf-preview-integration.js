@@ -56,12 +56,8 @@ window.PDFBuilderLogger = {
 };
 
 // Configuration du niveau de log basé sur les settings WordPress
-if (typeof PDF_BUILDER_DEBUG_ENABLED !== 'undefined') {
-    window.PDFBuilderLogger.setLevel(PDF_BUILDER_DEBUG_ENABLED ? 'DEBUG' : 'NONE');
-} else {
-    // Par défaut, pas de logs si la constante n'est pas définie
-    window.PDFBuilderLogger.setLevel('NONE');
-}
+// Désactivé pour éviter les plantages du navigateur dus aux logs excessifs
+window.PDFBuilderLogger.setLevel('NONE');
 
 // ==========================================
 // INTÉGRATION DANS L'ÉDITEUR (Canvas)
