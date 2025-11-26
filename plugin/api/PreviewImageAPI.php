@@ -526,6 +526,14 @@ class PreviewImageAPI
             $data_provider = $this->createDataProvider($params);
 // Préparer les données du template
             $template_data = $params['template_data'];
+            
+            // Logging pour debug
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('[PDF Builder API] generateRealImage - template_data: ' . print_r($template_data, true));
+                error_log('[PDF Builder API] generateRealImage - context: ' . ($params['context'] ?? 'unknown'));
+                error_log('[PDF Builder API] generateRealImage - data_provider: ' . get_class($data_provider));
+            }
+            
 // Utiliser GeneratorManager pour générer l'image
             $result = $this->generator_manager->generatePreview($template_data, $data_provider, $params['format'], [
                     'quality' => $params['quality'],

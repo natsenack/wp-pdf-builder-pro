@@ -194,6 +194,11 @@ class PDFGenerator extends BaseGenerator
      */
     public function generate(string $output_type = 'pdf')
     {
+        // Pour les aperçus image, utiliser generatePreviewImage directement
+        if (in_array($output_type, ['png', 'jpg', 'jpeg'])) {
+            return $this->generatePreviewImage(150, $output_type);
+        }
+        
         // Validation du template
         if (!$this->validateTemplate()) {
             throw new \Exception('Template validation failed');
