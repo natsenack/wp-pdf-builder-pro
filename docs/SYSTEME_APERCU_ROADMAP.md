@@ -5,7 +5,7 @@
 **Phase**: 3.0 - Système d'Aperçu Multi-Format
 **Échéance**: Décembre 2025 (7-20 décembre)
 **Priorité**: CRITIQUE (Bloque UX v1.1.0)
-**Progression**: Jours 1-10 ✅ TERMINÉS | Jours 11-13 EN COURS
+**Progression**: Jours 1-13 ✅ TERMINÉS | Jours 14-16 SUIVANTS
 
 ---
 
@@ -102,12 +102,12 @@ POST /wp-json/wp-pdf-builder-pro/v1/preview
 - [x] Tests responsive (mobile/tablette/desktop)
 - **Note** : Interface complète implémentée avec modal responsive, contrôles zoom/rotation/drag, états de chargement (spinner), gestion d'erreurs (toastr/alert), et styles CSS adaptatifs. API preview 100% fonctionnelle !
 
-#### **Jour 11-13 : Données Dynamiques** EN COURS
-- [ ] Injection variables WooCommerce (metabox)
-- [ ] Données fictives cohérentes (canvas)
-- [ ] Validation données manquantes (placeholders)
-- [ ] Transitions contextes (canvas ↔ metabox)
-- [ ] Tests données tous contextes
+#### **Jour 11-13 : Données Dynamiques** ✅ TERMINÉS
+- [x] Injection variables WooCommerce (metabox)
+- [x] Données fictives cohérentes (canvas)
+- [x] Validation données manquantes (placeholders)
+- [x] Transitions contextes (canvas ↔ metabox)
+- [x] Tests données tous contextes
 
 #### **Jour 14-16 : Intégration Complète**
 - [ ] Boutons aperçu dans éditeur et metabox
