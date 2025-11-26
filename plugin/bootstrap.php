@@ -607,11 +607,10 @@ function pdf_builder_load_bootstrap()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Cache/cache-integration-test.php';
     }
 
-    // CHARGER LE HANDLER DE TEST DE LICENCE (seulement si le mode test est activé)
-    $test_mode_enabled = get_option('pdf_builder_license_test_mode_enabled', false);
-    if ($test_mode_enabled && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php')) {
+    // CHARGER LE HANDLER DE TEST DE LICENCE (toujours chargé pour permettre l'activation/désactivation)
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/License/license-test-handler.php';
-        // Initialiser le handler seulement si le mode test de licence est activé
+        // Initialiser le handler toujours (pas seulement si le mode test est activé)
         if (class_exists('PDF_Builder\\License\\LicenseTestHandler')) {
             $license_test_handler = \PDF_Builder\License\LicenseTestHandler::getInstance();
             $license_test_handler->init();
