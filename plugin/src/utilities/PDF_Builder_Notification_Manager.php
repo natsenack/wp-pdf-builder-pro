@@ -202,7 +202,7 @@ class PDF_Builder_Notification_Manager {
         // Injecter les données des toasts dans la page
         add_action('admin_footer', function() {
             $toast_data = $this->get_notifications_json();
-            echo "<script>window.pdfBuilderToasts = {$toast_data};</script>";
+            echo "<script>window.pdfBuilderToasts = " . wp_json_encode($toast_data) . ";</script>";
         });
     }
 
