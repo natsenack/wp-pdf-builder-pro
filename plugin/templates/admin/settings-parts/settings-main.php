@@ -571,6 +571,29 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur
             update_option('pdf_builder_developer_enabled', $developer_enabled);
             update_option('pdf_builder_developer_password', $developer_password);
             
+            // Update debug settings
+            $debug_php_errors = isset($_POST['pdf_builder_debug_php_errors']) ? 1 : 0;
+            $debug_javascript = isset($_POST['pdf_builder_debug_javascript']) ? 1 : 0;
+            $debug_js_settings = isset($_POST['pdf_builder_debug_js_settings']) ? 1 : 0;
+            $debug_js_editor = isset($_POST['pdf_builder_debug_js_editor']) ? 1 : 0;
+            $debug_js_admin = isset($_POST['pdf_builder_debug_js_admin']) ? 1 : 0;
+            $debug_js_frontend = isset($_POST['pdf_builder_debug_js_frontend']) ? 1 : 0;
+            $debug_javascript_verbose = isset($_POST['pdf_builder_debug_javascript_verbose']) ? 1 : 0;
+            $debug_ajax = isset($_POST['pdf_builder_debug_ajax']) ? 1 : 0;
+            $debug_performance = isset($_POST['pdf_builder_debug_performance']) ? 1 : 0;
+            $debug_database = isset($_POST['pdf_builder_debug_database']) ? 1 : 0;
+            
+            update_option('pdf_builder_debug_php_errors', $debug_php_errors);
+            update_option('pdf_builder_debug_javascript', $debug_javascript);
+            update_option('pdf_builder_debug_js_settings', $debug_js_settings);
+            update_option('pdf_builder_debug_js_editor', $debug_js_editor);
+            update_option('pdf_builder_debug_js_admin', $debug_js_admin);
+            update_option('pdf_builder_debug_js_frontend', $debug_js_frontend);
+            update_option('pdf_builder_debug_javascript_verbose', $debug_javascript_verbose);
+            update_option('pdf_builder_debug_ajax', $debug_ajax);
+            update_option('pdf_builder_debug_performance', $debug_performance);
+            update_option('pdf_builder_debug_database', $debug_database);
+            
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
         } catch (Exception $e) {
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde: ' . esc_html($e->getMessage()) . '</p></div>';
