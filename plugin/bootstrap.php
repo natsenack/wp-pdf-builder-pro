@@ -828,44 +828,44 @@ function pdf_builder_register_essential_ajax_hooks()
     // Enregistrer les hooks AJAX essentiels - DISABLED: Conflit avec AjaxHandler.php
     // Garder seulement le système principal AjaxHandler.php
     /*
-    add_action('wp_ajax_pdf_builder_save_template', function() use ($template_manager) {
-        $this->debug_log('Bootstrap save handler called\');
-        if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
-            $template_manager->ajaxSaveTemplateV3();
-        } else {
-            $this->debug_log('Template manager not available\');
-            // Fallback handler
-            pdf_builder_fallback_ajax_save_template();
-        }
-    });
+    // add_action('wp_ajax_pdf_builder_save_template', function() use ($template_manager) {
+    //     $this->debug_log('Bootstrap save handler called\');
+    //     if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
+    //         $template_manager->ajaxSaveTemplateV3();
+    //     } else {
+    //         $this->debug_log('Template manager not available\');
+    //         // Fallback handler
+    //         pdf_builder_fallback_ajax_save_template();
+    //     }
+    // });
 
-    add_action('wp_ajax_pdf_builder_load_template', function() use ($template_manager) {
-        if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
-            $template_manager->ajaxLoadTemplate();
-        } else {
-            // Fallback handler
-            pdf_builder_fallback_ajax_load_template();
-        }
-    });
+    // add_action('wp_ajax_pdf_builder_load_template', function() use ($template_manager) {
+    //     if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
+    //         $template_manager->ajaxLoadTemplate();
+    //     } else {
+    //         // Fallback handler
+    //         pdf_builder_fallback_ajax_load_template();
+    //     }
+    // });
 
-    // Action AJAX appelée par React pour charger un template
-    add_action('wp_ajax_pdf_builder_get_template', function() use ($template_manager) {
-        if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
-            $template_manager->ajaxLoadTemplate();
-        } else {
-            // Fallback handler
-            pdf_builder_fallback_ajax_load_template();
-        }
-    });
+    // Action AJAX appelée par React pour charger un template - DISABLED: Conflit avec AjaxHandler.php
+    // add_action('wp_ajax_pdf_builder_get_template', function() use ($template_manager) {
+    //     if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
+    //         $template_manager->ajaxLoadTemplate();
+    //     } else {
+    //         // Fallback handler
+    //         pdf_builder_fallback_ajax_load_template();
+    //     }
+    // });
 
-    add_action('wp_ajax_pdf_builder_auto_save_template', function() use ($template_manager) {
-        if ($template_manager && method_exists($template_manager, 'ajax_auto_save_template')) {
-            $template_manager->ajax_auto_save_template();
-        } else {
-            // Fallback handler
-            pdf_builder_fallback_ajax_auto_save_template();
-        }
-    });
+    // add_action('wp_ajax_pdf_builder_auto_save_template', function() use ($template_manager) {
+    //     if ($template_manager && method_exists($template_manager, 'ajax_auto_save_template')) {
+    //         $template_manager->ajax_auto_save_template();
+    //     } else {
+    //         // Fallback handler
+    //         pdf_builder_fallback_ajax_auto_save_template();
+    //     }
+    // });
     */
 }
 
