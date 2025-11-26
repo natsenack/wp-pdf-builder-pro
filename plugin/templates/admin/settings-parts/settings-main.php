@@ -1746,7 +1746,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     // Autosave
                                     'canvas_autosave_enabled': 'canvas_autosave_enabled',
                                     'canvas_autosave_interval': 'canvas_autosave_interval',
-                                    'canvas_versions_limit': 'canvas_versions_limit',
+                                    'canvas_history_max': 'canvas_versions_limit',
                                     'canvas_history_enabled': 'canvas_history_enabled',
                                     
                                     // Debug
@@ -3237,7 +3237,7 @@ function syncFormElementsWithLoadedSettings() {
         // Autosave
         'canvas_autosave_enabled': 'canvas_autosave_enabled',
         'canvas_autosave_interval': 'canvas_autosave_interval',
-        'canvas_versions_limit': 'canvas_versions_limit',
+        'canvas_history_max': 'canvas_versions_limit',
         'canvas_history_enabled': 'canvas_history_enabled',
         
         // Debug
