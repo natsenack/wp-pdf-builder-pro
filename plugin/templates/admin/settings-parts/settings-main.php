@@ -818,11 +818,6 @@ if (
 const PDF_BUILDER_DEBUG_ENABLED = <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'true' : 'false'; ?>;
 const PDF_BUILDER_DEBUG_VERBOSE = <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'true' : 'false'; ?>;
 
-// TEMP DEBUG: Log settings values
-console.log('DEBUG: settings debug_javascript =', <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'true' : 'false'; ?>);
-console.log('DEBUG: settings pdf_builder_debug_javascript =', <?php echo isset($settings['pdf_builder_debug_javascript']) ? ($settings['pdf_builder_debug_javascript'] ? 'true' : 'false') : '"NOT_SET"'; ?>);
-console.log('DEBUG: PDF_BUILDER_DEBUG_ENABLED =', PDF_BUILDER_DEBUG_ENABLED);
-
 // Conditional debug logging function
 function pdfBuilderDebug(message, ...args) {
     if (PDF_BUILDER_DEBUG_ENABLED) {
