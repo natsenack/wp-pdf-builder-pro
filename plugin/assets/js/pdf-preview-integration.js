@@ -288,13 +288,13 @@ class PDFEditorPreviewIntegration {
                     }, 3000);
                 }
             } else {
-                window.PDFBuilderLogger.error('Auto-sauvegarde échouée côté serveur:'result.data);
+                window.PDFBuilderLogger.error('Auto-sauvegarde échouée côté serveur:', result.data);
                 throw new Error(result.data || 'Erreur inconnue');
             }
 
         } catch (error) {
-            window.PDFBuilderLogger.error('Erreur auto-sauvegarde:'error);
-            window.PDFBuilderLogger.error('Stack trace:'error.stack);
+            window.PDFBuilderLogger.error('Erreur auto-sauvegarde:', error);
+            window.PDFBuilderLogger.error('Stack trace:', error.stack);
 
             if (this.autosaveStatus) {
                 this.autosaveStatus.textContent = 'Erreur de sauvegarde';
@@ -716,7 +716,7 @@ window.updatePerformanceCardPreview = function() {
     window.PDFBuilderLogger.info('updatePerformanceCardPreview called');
     try {
         const values = window.CanvasPreviewManager.getCardValues('performance');
-        window.PDFBuilderLogger.info('updatePerformanceCardPreview - values:'values);
+        window.PDFBuilderLogger.info('updatePerformanceCardPreview - values:', values);
         const { fps_target: fps, memory_limit_js: memoryJs, lazy_loading_editor: lazyLoading } = values;
 
         // Fonction helper pour déterminer le statut
@@ -754,7 +754,7 @@ window.updatePerformanceCardPreview = function() {
         
         window.PDFBuilderLogger.info('updatePerformanceCardPreview completed successfully');
     } catch (error) {
-        window.PDFBuilderLogger.error('Error in updatePerformanceCardPreview:'error);
+        window.PDFBuilderLogger.error('Error in updatePerformanceCardPreview:', error);
         throw error; // Re-throw to be caught by updatePreviews
     }
 };
@@ -766,7 +766,7 @@ window.updateApparenceCardPreview = function() {
     window.PDFBuilderLogger.info('updateApparenceCardPreview called');
     try {
         const values = window.CanvasPreviewManager.getCardValues('apparence');
-        window.PDFBuilderLogger.info('updateApparenceCardPreview - values:'values);
+        window.PDFBuilderLogger.info('updateApparenceCardPreview - values:', values);
         const { canvas_background_color: bgColor, border_color: borderColor, border_width: borderWidth } = values;
 
         // Mettre à jour les previews de couleur
@@ -778,7 +778,7 @@ window.updateApparenceCardPreview = function() {
         
         window.PDFBuilderLogger.info('updateApparenceCardPreview completed successfully');
     } catch (error) {
-        window.PDFBuilderLogger.error('Error in updateApparenceCardPreview:'error);
+        window.PDFBuilderLogger.error('Error in updateApparenceCardPreview:', error);
         throw error; // Re-throw to be caught by updatePreviews
     }
 };
@@ -1152,7 +1152,7 @@ window.CanvasPreviewManager = {
      * Met à jour toutes les previews ou une catégorie spécifique
      */
     updatePreviews: function(category = 'all') {
-        window.PDFBuilderLogger.info('CanvasPreviewManager.updatePreviews called with category:'category);
+        window.PDFBuilderLogger.info('CanvasPreviewManager.updatePreviews called with category:', category);
         PDFBuilderLogger.debug('CanvasPreviewManager.updatePreviews called with category:', category);
 
         Object.keys(this.cardConfigs).forEach(cardCategory => {
@@ -1160,18 +1160,18 @@ window.CanvasPreviewManager = {
                 const config = this.cardConfigs[cardCategory];
                 if (typeof window[config.updateFunction] === 'function') {
                     try {
-                        window.PDFBuilderLogger.info('Calling update function:'config.updateFunction, 'for category:', cardCategory);
+                        window.PDFBuilderLogger.info('Calling update function:', config.updateFunction, 'for category:', cardCategory);
                         PDFBuilderLogger.debug('Calling update function:', config.updateFunction);
                         window[config.updateFunction]();
-                        window.PDFBuilderLogger.info('Update function completed successfully:'config.updateFunction);
+                        window.PDFBuilderLogger.info('Update function completed successfully:', config.updateFunction);
                         PDFBuilderLogger.debug('Update function completed:', config.updateFunction);
                     } catch (error) {
-                        window.PDFBuilderLogger.error('Error in update function:'config.updateFunction, 'Error:', error);
+                        window.PDFBuilderLogger.error('Error in update function:', config.updateFunction, 'Error:', error);
                         PDFBuilderLogger.error('Error in update function:', config.updateFunction, error);
                         // Continue with other functions instead of stopping
                     }
                 } else {
-                    window.PDFBuilderLogger.warn('Update function not found:'config.updateFunction);
+                    window.PDFBuilderLogger.warn('Update function not found:', config.updateFunction);
                     PDFBuilderLogger.warn('Update function not found:', config.updateFunction);
                 }
             }
@@ -1227,7 +1227,7 @@ window.updateDimensionsCardPreview = function() {
     window.PDFBuilderLogger.info('updateDimensionsCardPreview called');
     try {
         const values = window.CanvasPreviewManager.getCardValues('dimensions');
-        window.PDFBuilderLogger.info('updateDimensionsCardPreview - values:'values);
+        window.PDFBuilderLogger.info('updateDimensionsCardPreview - values:', values);
         const { default_canvas_format: format, default_canvas_dpi: dpi, default_canvas_orientation: orientation } = values;
 
         // Get paper dimensions in mm
@@ -1265,7 +1265,7 @@ window.updateDimensionsCardPreview = function() {
         
         window.PDFBuilderLogger.info('updateDimensionsCardPreview completed successfully');
     } catch (error) {
-        window.PDFBuilderLogger.error('Error in updateDimensionsCardPreview:'error);
+        window.PDFBuilderLogger.error('Error in updateDimensionsCardPreview:', error);
         throw error; // Re-throw to be caught by updatePreviews
     }
 };

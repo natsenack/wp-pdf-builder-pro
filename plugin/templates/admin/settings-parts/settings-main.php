@@ -214,6 +214,21 @@ $license_test_key = $all_settings['pdf_builder_license_test_key'];
 window.pdfBuilderSavedSettings = <?php echo json_encode($preview_data); ?>;
 // window.pdfBuilderCanvasSettings = <?php echo json_encode($canvas_settings); ?>; // COMMENTÉ: déjà défini dans settings-canvas-params.php
 
+// Constantes de debug
+const PDF_BUILDER_DEBUG_ENABLED = <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'true' : 'false'; ?>;
+const PDF_BUILDER_DEBUG_VERBOSE = <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'true' : 'false'; ?>;
+
+// Conditional debug logging function
+function pdfBuilderDebug(message, ...args) {
+    if (PDF_BUILDER_DEBUG_ENABLED) {
+        console.log('PDF_BUILDER_DEBUG:', message, ...args);
+    }
+}
+
+function pdfBuilderError(message, ...args) {
+    console.error('PDF_BUILDER_DEBUG:', message, ...args);
+}
+
 // Système centralisé d'initialisation des previews avec données BDD
 window.PDF_Builder_Preview_Manager = {
     /**
@@ -839,17 +854,6 @@ if (
 // Debug configuration
 const PDF_BUILDER_DEBUG_ENABLED = <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'true' : 'false'; ?>;
 const PDF_BUILDER_DEBUG_VERBOSE = <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'true' : 'false'; ?>;
-
-// Conditional debug logging function
-function pdfBuilderDebug(message, ...args) {
-    if (PDF_BUILDER_DEBUG_ENABLED) {
-        console.log('PDF_BUILDER_DEBUG:', message, ...args);
-    }
-}
-
-function pdfBuilderError(message, ...args) {
-    console.error('PDF_BUILDER_DEBUG:', message, ...args);
-}
 
 // Update zoom card preview
 window.updateZoomCardPreview = function() {
