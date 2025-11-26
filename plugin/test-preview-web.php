@@ -294,6 +294,16 @@ function run_pdf_test() {
         require_once 'generators/GeneratorManager.php';
         require_once 'data/SampleDataProvider.php';
 
+        if (!class_exists('PDF_Builder\Generators\GeneratorManager')) {
+            echo '<div class="status error">❌ Classe GeneratorManager non trouvée</div>';
+            return;
+        }
+
+        if (!class_exists('PDF_Builder\Data\SampleDataProvider')) {
+            echo '<div class="status error">❌ Classe SampleDataProvider non trouvée</div>';
+            return;
+        }
+
         echo '<div class="status success">✅ Classes chargées avec succès</div>';
 
         // Test PDF generation
@@ -315,6 +325,8 @@ function run_pdf_test() {
         echo '<div class="result">Longueur du contenu PDF: ' . strlen($pdf_content) . ' octets</div>';
         if (strlen($pdf_content) > 0) {
             echo '<div class="result">Début du contenu PDF: ' . htmlspecialchars(substr($pdf_content, 0, 100)) . '...</div>';
+        } else {
+            echo '<div class="result">Contenu PDF vide - vérification des logs d\'erreur</div>';
         }
 
         if ($pdf_content && strlen($pdf_content) > 1000) {
