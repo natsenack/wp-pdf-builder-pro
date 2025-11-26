@@ -1293,8 +1293,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: formData,
                 credentials: 'same-origin'
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('PDF_BUILDER_DEBUG: AJAX response status:', response.status);
+                return response.json();
+            })
             .then(data => {
+                console.log('PDF_BUILDER_DEBUG: AJAX response data:', data);
                 clearTimeout(safetyTimeout); // Annuler le timeout de sécurité
 
                 if (data.success) {
