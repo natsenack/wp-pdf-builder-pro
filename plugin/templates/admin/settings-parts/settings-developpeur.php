@@ -789,6 +789,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Écouter les changements
         developerEnabledToggle.addEventListener('change', toggleDeveloperSections);
+    }
+
     // Gestion du nettoyage complet de la licence
     const cleanupLicenseBtn = document.getElementById('cleanup_license_btn');
     const cleanupStatus = document.getElementById('cleanup_status');
