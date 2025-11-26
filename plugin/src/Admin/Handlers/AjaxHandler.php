@@ -1095,43 +1095,55 @@ class AjaxHandler
 
         // Couleur de fond du canvas
         if (isset($_POST['canvas_bg_color'])) {
+            $old_value = get_option('pdf_builder_canvas_bg_color', '#ffffff');
             update_option('pdf_builder_canvas_bg_color', sanitize_hex_color($_POST['canvas_bg_color']));
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_bg_color to: ' . $_POST['canvas_bg_color']);
+            $new_value = get_option('pdf_builder_canvas_bg_color', '#ffffff');
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_bg_color from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
         // Couleur des bordures
         if (isset($_POST['canvas_border_color'])) {
+            $old_value = get_option('pdf_builder_canvas_border_color', '#cccccc');
             update_option('pdf_builder_canvas_border_color', sanitize_hex_color($_POST['canvas_border_color']));
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_border_color to: ' . $_POST['canvas_border_color']);
+            $new_value = get_option('pdf_builder_canvas_border_color', '#cccccc');
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_border_color from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
         // Épaisseur des bordures
         if (isset($_POST['canvas_border_width'])) {
+            $old_value = get_option('pdf_builder_canvas_border_width', '1');
             $width = intval($_POST['canvas_border_width']);
             if ($width >= 0 && $width <= 10) {
                 update_option('pdf_builder_canvas_border_width', $width);
-                error_log('PDF_BUILDER_DEBUG: Updated canvas_border_width to: ' . $width);
+                $new_value = get_option('pdf_builder_canvas_border_width', '1');
+                error_log('PDF_BUILDER_DEBUG: Updated canvas_border_width from ' . $old_value . ' to ' . $new_value);
                 $updated++;
             }
         }
 
         // Ombre activée
         if (isset($_POST['canvas_shadow_enabled'])) {
+            $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
             update_option('pdf_builder_canvas_shadow_enabled', '1');
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_shadow_enabled to: 1');
+            $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_shadow_enabled from ' . $old_value . ' to ' . $new_value);
             $updated++;
         } else {
+            $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
             update_option('pdf_builder_canvas_shadow_enabled', '0');
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_shadow_enabled to: 0');
+            $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_shadow_enabled from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
         // Arrière-plan de l'éditeur
         if (isset($_POST['canvas_container_bg_color'])) {
+            $old_value = get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa');
             update_option('pdf_builder_canvas_container_bg_color', sanitize_hex_color($_POST['canvas_container_bg_color']));
-            error_log('PDF_BUILDER_DEBUG: Updated canvas_container_bg_color to: ' . $_POST['canvas_container_bg_color']);
+            $new_value = get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa');
+            error_log('PDF_BUILDER_DEBUG: Updated canvas_container_bg_color from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
