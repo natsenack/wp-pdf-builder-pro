@@ -178,6 +178,7 @@ if (defined('ABSPATH') && function_exists('current_user_can') && !current_user_c
         }
 
         async function runImageTest() {
+            const resultDiv = document.getElementById('pdf-test-result');
             resultDiv.innerHTML = '<div class="status info">🔄 Test Images en cours...</div>';
 
             try {
