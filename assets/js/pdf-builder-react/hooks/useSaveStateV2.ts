@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { Element } from '../types/elements';
-import { debugError, debugSave } from '../utils/debug';
+import { debugError, debugSave, debugLog } from '../utils/debug';
 
 /**
  * Hook simplifié pour auto-save
@@ -48,7 +48,7 @@ export function useSaveStateV2({
 }: UseSaveStateV2Options): UseSaveStateV2Return {
 
   // DEBUG: Logs détaillés
-  console.log('[PDF Builder] useSaveStateV2 appelée avec:', {
+  debugLog('[PDF Builder] useSaveStateV2 appelée avec:', {
     templateId,
     elementsCount: elements?.length || 0,
     nonce: nonce ? 'DEFINED' : 'UNDEFINED',
@@ -116,10 +116,10 @@ export function useSaveStateV2({
    * Effectue l'auto-save
    */
   const performSave = useCallback(async () => {
-    console.log('[PDF Builder] useSaveStateV2 - performSave() appelée !');
+    debugLog('[PDF Builder] useSaveStateV2 - performSave() appelée !');
 
     if (!templateId || inProgressRef.current) {
-      console.log('[PDF Builder] useSaveStateV2 - performSave annulée:', {
+      debugLog('[PDF Builder] useSaveStateV2 - performSave annulée:', {
         templateId: !!templateId,
         inProgress: inProgressRef.current
       });
@@ -130,7 +130,7 @@ export function useSaveStateV2({
     const now = Date.now();
     lastSaveTimeRef.current = now;
 
-    console.log('[PDF Builder] useSaveStateV2 - Début sauvegarde:', {
+    debugLog('[PDF Builder] useSaveStateV2 - Début sauvegarde:', {
       templateId,
       elementsCount: elements.length,
       timestamp: now
@@ -202,7 +202,7 @@ export function useSaveStateV2({
         })
       });
 
-      console.log('[PDF Builder] useSaveStateV2 - Réponse HTTP:', {
+      debugLog('[PDF Builder] useSaveStateV2 - Réponse HTTP:', {
         status: response.status,
         statusText: response.statusText,
         ok: response.ok
@@ -213,7 +213,7 @@ export function useSaveStateV2({
       }
 
       const data = await response.json();
-      console.log('[PDF Builder] useSaveStateV2 - Données JSON reçues:', data);
+      debugLog('[PDF Builder] useSaveStateV2 - Données JSON reçues:', data);
 
       if (data.data?.elements_saved) {
         debugSave('[SAVE V2] Réponse serveur - éléments sauvegardés:', data.data.elements_saved.length);
@@ -320,7 +320,7 @@ export function useSaveStateV2({
    */
   useEffect(() => {
     const currentHash = getElementsHash(elements);
-    console.log('[PDF Builder] useSaveStateV2 - Détection changements:', {
+    debugLog('[PDF Builder] useSaveStateV2 - Détection changements:', {
       currentHash: currentHash.substring(0, 20) + '...',
       previousHash: elementsHashRef.current ? elementsHashRef.current.substring(0, 20) + '...' : 'null',
       hashChanged: currentHash !== elementsHashRef.current,
@@ -330,11 +330,11 @@ export function useSaveStateV2({
 
     // Si les éléments n'ont pas changé, ne rien faire
     if (currentHash === elementsHashRef.current) {
-      console.log('[PDF Builder] useSaveStateV2 - Pas de changement détecté, pas d\'auto-save');
+      debugLog('[PDF Builder] useSaveStateV2 - Pas de changement détecté, pas d\'auto-save');
       return;
     }
 
-    console.log('[PDF Builder] useSaveStateV2 - Changement détecté, préparation auto-save');
+    debugLog('[PDF Builder] useSaveStateV2 - Changement détecté, préparation auto-save');
 
     // Mettre à jour le hash
     elementsHashRef.current = currentHash;
@@ -353,26 +353,26 @@ export function useSaveStateV2({
 
     // Attendre 3 secondes d'inactivité avant de sauvegarder
     autoSaveTimeoutRef.current = setTimeout(() => {
-      console.log('[PDF Builder] useSaveStateV2 - 3 secondes écoulées, vérification auto-save');
+      debugLog('[PDF Builder] useSaveStateV2 - 3 secondes écoulées, vérification auto-save');
 
       // Ne rien faire si l'auto-save est désactivé (autoSaveInterval === 0)
       if (autoSaveInterval === 0) {
-        console.log('[PDF Builder] useSaveStateV2 - Auto-save désactivé (interval = 0)');
+        debugLog('[PDF Builder] useSaveStateV2 - Auto-save désactivé (interval = 0)');
         return;
       }
 
       const timeSinceLastSave = Date.now() - lastSaveTimeRef.current;
-      console.log('[PDF Builder] useSaveStateV2 - Vérification timing:', {
+      debugLog('[PDF Builder] useSaveStateV2 - Vérification timing:', {
         timeSinceLastSave,
         autoSaveInterval,
         shouldSave: timeSinceLastSave >= autoSaveInterval
       });
 
       if (timeSinceLastSave >= autoSaveInterval) {
-        console.log('[PDF Builder] useSaveStateV2 - Déclenchement auto-save !');
+        debugLog('[PDF Builder] useSaveStateV2 - Déclenchement auto-save !');
         performSave();
       } else {
-        console.log('[PDF Builder] useSaveStateV2 - Pas encore temps de sauvegarder');
+        debugLog('[PDF Builder] useSaveStateV2 - Pas encore temps de sauvegarder');
       }
     }, 3000);
 

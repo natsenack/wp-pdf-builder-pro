@@ -1,6 +1,6 @@
 import { useBuilder } from '../contexts/builder/BuilderContext';
 import { useSaveStateV2, SaveState } from './useSaveStateV2';
-import { debugError } from '../utils/debug';
+import { debugError, debugLog } from '../utils/debug';
 
 /**
  * Hook useAutoSave
@@ -47,7 +47,7 @@ export function useAutoSave(): UseAutoSaveReturn {
     (window.pdfBuilderCanvasSettings as { autosave_enabled?: boolean })?.autosave_enabled === true;
 
   // DEBUG: Logs détaillés
-  console.log('[PDF Builder] useAutoSave - Configuration:', {
+  debugLog('[PDF Builder] useAutoSave - Configuration:', {
     nonce: nonce ? 'DEFINED' : 'UNDEFINED',
     autoSaveIntervalSetting,
     autoSaveInterval,

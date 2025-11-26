@@ -1383,7 +1383,7 @@ class PdfBuilderAdmin
                 'nonce' => wp_create_nonce('pdf_builder_nonce'),
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 1,
-                'debug' => defined('WP_DEBUG') && WP_DEBUG, // Conditionner les logs JS sur WP_DEBUG
+                'debug' => get_option('pdf_builder_debug_javascript', false), // Utiliser l'option du plugin au lieu de WP_DEBUG
                 'strings' => [
                     'loading' => __('Chargement de l\'éditeur React...', 'pdf-builder-pro'),
                     'error' => __('Erreur lors du chargement', 'pdf-builder-pro'),
@@ -1485,6 +1485,10 @@ class PdfBuilderAdmin
         function initReactEditor() {
             // Fonction utilitaire pour les logs conditionnels
             function debugLog() {
+                // Vérifier d'abord le debug global JavaScript
+                if (typeof PDF_BUILDER_DEBUG_ENABLED !== 'undefined' && !PDF_BUILDER_DEBUG_ENABLED) {
+                    return;
+                }
                 if (typeof pdfBuilderData !== 'undefined' && pdfBuilderData.debug) {
                     console.log.apply(console, arguments);
                 }
