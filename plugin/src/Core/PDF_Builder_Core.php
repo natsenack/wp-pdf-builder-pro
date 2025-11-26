@@ -467,18 +467,7 @@ class PdfBuilderCore
         $version_param = $this->version . '-' . $cache_bust;
         wp_enqueue_script('pdf-builder-react-api-only', $react_script_url, ['react', 'react-dom'], $version_param, true);
 
-        // Définir les paramètres canvas minimaux pour l'API
-        $canvas_settings_js = get_option('pdf_builder_canvas_settings', []);
-        $canvas_settings_script = "
-        window.pdfBuilderCanvasSettings = " . wp_json_encode([
-            'default_canvas_format' => $canvas_settings_js['default_canvas_format'] ?? 'A4',
-            'default_canvas_orientation' => $canvas_settings_js['default_canvas_orientation'] ?? 'portrait',
-            'default_canvas_dpi' => $canvas_settings_js['default_canvas_dpi'] ?? 96,
-            'canvas_width' => $canvas_settings_js['canvas_width'] ?? 794,
-            'canvas_height' => $canvas_settings_js['canvas_height'] ?? 1123,
-        ]) . ";
-        ";
-        wp_add_inline_script('pdf-builder-react-api-only', $canvas_settings_script, 'before');
+        // Les paramètres canvas sont maintenant définis dans settings-canvas-params.php
     }
 
     /**
