@@ -1477,6 +1477,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     synchronizeAutosaveModalValues(modal);
                 }
 
+                // Synchronize modal values with current settings for dimensions modal
+                if (modal.getAttribute('data-category') === 'dimensions') {
+                    updateCalculatedDimensions(modal, window.pdfBuilderCanvasSettings.default_canvas_format, window.pdfBuilderCanvasSettings.default_canvas_dpi);
+                }
+
                 // Verify modal is visible after a short delay
                 setTimeout(() => {
                     const rect = modal.getBoundingClientRect();
@@ -1597,10 +1602,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     let ajaxConfig = null;
                     if (typeof pdf_builder_ajax !== 'undefined') {
                         ajaxConfig = pdf_builder_ajax;
+                        console.log('PDF_BUILDER_DEBUG: Using pdf_builder_ajax config:', ajaxConfig);
                     } else if (typeof pdfBuilderAjax !== 'undefined') {
                         ajaxConfig = pdfBuilderAjax;
+                        console.log('PDF_BUILDER_DEBUG: Using pdfBuilderAjax config:', ajaxConfig);
                     } else if (typeof ajaxurl !== 'undefined') {
                         ajaxConfig = { ajax_url: ajaxurl, nonce: '' };
+                        console.log('PDF_BUILDER_DEBUG: Using fallback ajaxurl config:', ajaxConfig);
+                    } else {
+                        console.log('PDF_BUILDER_DEBUG: No AJAX config found!');
+                        console.log('PDF_BUILDER_DEBUG: Available global variables:', Object.keys(window));
                     }
 
                     if (!ajaxConfig || !ajaxConfig.ajax_url) {
@@ -1629,6 +1640,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         console.log('PDF_BUILDER_DEBUG: Sending form data for category:', category);
                         for (let [key, value] of formData.entries()) {
                             console.log('PDF_BUILDER_DEBUG:', key, '=', value);
+                        }
+
+                        // Additional debug for dimensions category
+                        if (category === 'dimensions') {
+                            console.log('PDF_BUILDER_DEBUG: Dimensions form elements:');
+                            const formElements = form.querySelectorAll('select, input');
+                            formElements.forEach(el => {
+                                console.log('PDF_BUILDER_DEBUG: Element', el.name || el.id, '=', el.value);
+                            });
                         }
 
                         
@@ -1686,6 +1706,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                     'canvas_format': 'canvas_format',
                                     'canvas_orientation': 'canvas_orientation', 
                                     'canvas_dpi': 'canvas_dpi',
+                                    'canvas_width': 'canvas_width',
+                                    'canvas_height': 'canvas_height',
                                     
                                     // Apparence
                                     'canvas_bg_color': 'canvas_bg_color',
@@ -1793,6 +1815,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 
                                 // Mettre à jour les éléments du DOM
                                 updateFormElementsFromSavedData(category, data.data.saved);
+                                
+                                // Mettre à jour les affichages calculés pour les dimensions
+                                if (category === 'dimensions') {
+                                    const modal = document.getElementById('canvas-dimensions-modal');
+                                    if (modal) {
+                                        updateCalculatedDimensions(modal, data.data.saved.canvas_format, data.data.saved.canvas_dpi);
+                                    }
+                                }
                             }
 
                             // Update window.pdfBuilderCanvasSettings with saved values for apparence

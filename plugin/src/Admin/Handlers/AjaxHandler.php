@@ -793,6 +793,7 @@ class AjaxHandler
             // Récupérer la catégorie
             $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
             error_log('PDF_BUILDER_DEBUG: Saving category: ' . $category);
+            error_log('PDF_BUILDER_DEBUG: Full POST data: ' . print_r($_POST, true));
 
             if (empty($category)) {
                 error_log('PDF_BUILDER_DEBUG: Empty category');

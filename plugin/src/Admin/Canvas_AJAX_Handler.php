@@ -19,7 +19,8 @@ class CanvasAjaxHandler
     public static function registerHooks()
     {
         // REMOVED: pdf_builder_get_canvas_settings is now handled by PDF_Builder_Admin
-        add_action('wp_ajax_pdf_builder_save_canvas_settings', [self::class, 'save_canvas_settings']);
+        // REMOVED: pdf_builder_save_canvas_settings is now handled by AjaxHandler to avoid conflicts
+        // add_action('wp_ajax_pdf_builder_save_canvas_settings', [self::class, 'save_canvas_settings']);
         add_action('wp_ajax_pdf_builder_reset_canvas_settings', [self::class, 'reset_canvas_settings']);
     }
 
