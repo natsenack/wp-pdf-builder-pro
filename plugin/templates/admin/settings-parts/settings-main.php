@@ -2628,21 +2628,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update canvas card previews in real-time
     window.updateCanvasPreviews = function(category) {
-        console.log('updateCanvasPreviews called with category:', category);
+        pdfBuilderDebug('updateCanvasPreviews called with category:', category);
 
         // Utiliser le système centralisé CanvasPreviewManager si disponible
         if (window.CanvasPreviewManager && typeof window.CanvasPreviewManager.updatePreviews === 'function') {
-            console.log('Using CanvasPreviewManager.updatePreviews for category:', category);
+            pdfBuilderDebug('Using CanvasPreviewManager.updatePreviews for category:', category);
             try {
                 window.CanvasPreviewManager.updatePreviews(category);
-                console.log('CanvasPreviewManager.updatePreviews completed successfully');
+                pdfBuilderDebug('CanvasPreviewManager.updatePreviews completed successfully');
             } catch (error) {
                 pdfBuilderError('Error in CanvasPreviewManager.updatePreviews:', error);
             }
             return;
         }
 
-        console.log('CanvasPreviewManager not available, using fallback logic');
+        pdfBuilderDebug('CanvasPreviewManager not available, using fallback logic');
         // Fallback vers l'ancienne logique si CanvasPreviewManager n'est pas disponible
         if (typeof window.updateDimensionsCardPreview === 'function') {
             window.updateDimensionsCardPreview();
@@ -2839,7 +2839,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update performance card preview
     window.updatePerformanceCardPreview = function() {
-        console.log('updatePerformanceCardPreview called');
+        pdfBuilderDebug('updatePerformanceCardPreview called');
         // Try to get values from modal inputs first (real-time), then from settings
         const fpsTargetInput = document.getElementById("canvas_fps_target");
         const memoryJsInput = document.getElementById("canvas_memory_limit_js");
