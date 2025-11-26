@@ -902,6 +902,8 @@ function updateDeveloperStatusIndicator(isActive = null) {
     console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings exists:', !!window.pdfBuilderSavedSettings);
     if (window.pdfBuilderSavedSettings) {
         console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings.developer_enabled:', window.pdfBuilderSavedSettings.developer_enabled);
+        console.log('PDF_BUILDER_DEBUG: typeof window.pdfBuilderSavedSettings.developer_enabled:', typeof window.pdfBuilderSavedSettings.developer_enabled);
+        console.log('PDF_BUILDER_DEBUG: full window.pdfBuilderSavedSettings:', window.pdfBuilderSavedSettings);
     }
 
     const developerIndicator = document.querySelector('.developer-status-indicator');
@@ -911,7 +913,7 @@ function updateDeveloperStatusIndicator(isActive = null) {
         // Si isActive n'est pas fourni, utiliser les paramètres sauvegardés plutôt que l'état du checkbox
         if (isActive === null) {
             isActive = window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled;
-            console.log('PDF_BUILDER_DEBUG: isActive set to saved settings value:', isActive);
+            console.log('PDF_BUILDER_DEBUG: isActive set to saved settings value:', isActive, 'type:', typeof isActive);
         }
 
         developerIndicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
@@ -3654,8 +3656,14 @@ document.addEventListener('DOMContentLoaded', function() {
         syncFormElementsWithLoadedSettings();
         
         // Synchroniser le checkbox développeur avec les paramètres sauvegardés
+        console.log('PDF_BUILDER_DEBUG: Starting developer checkbox sync...');
+        console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings exists for sync:', !!window.pdfBuilderSavedSettings);
+        if (window.pdfBuilderSavedSettings) {
+            console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings.developer_enabled for sync:', window.pdfBuilderSavedSettings.developer_enabled);
+        }
         if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled !== undefined) {
             const developerEnabledCheckbox = document.getElementById('developer_enabled');
+            console.log('PDF_BUILDER_DEBUG: developerEnabledCheckbox element:', developerEnabledCheckbox);
             if (developerEnabledCheckbox) {
                 console.log('PDF_BUILDER_DEBUG: Synchronizing developer checkbox - current checked:', developerEnabledCheckbox.checked, 'saved value:', window.pdfBuilderSavedSettings.developer_enabled);
                 developerEnabledCheckbox.checked = window.pdfBuilderSavedSettings.developer_enabled;
