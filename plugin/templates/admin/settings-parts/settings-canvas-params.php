@@ -5,18 +5,16 @@
  */
 
 // Assurer que les constantes sont chargées
-if (!defined('\PDF_Builder\PAPER_FORMATS')) {
+if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
     // Définir les constantes manuellement si non chargées
-    if (!defined('PDF_BUILDER\PAPER_FORMATS')) {
-        define('PDF_BUILDER\PAPER_FORMATS', [
-            'A4' => ['width' => 210, 'height' => 297],
-            'A3' => ['width' => 297, 'height' => 420],
-            'A5' => ['width' => 148, 'height' => 210],
-            'Letter' => ['width' => 215.9, 'height' => 279.4],
-            'Legal' => ['width' => 215.9, 'height' => 355.6],
-            'Tabloid' => ['width' => 279.4, 'height' => 431.8]
-        ]);
-    }
+    define('PDF_BUILDER_PAPER_FORMATS', [
+        'A4' => ['width' => 210, 'height' => 297],
+        'A3' => ['width' => 297, 'height' => 420],
+        'A5' => ['width' => 148, 'height' => 210],
+        'Letter' => ['width' => 215.9, 'height' => 279.4],
+        'Legal' => ['width' => 215.9, 'height' => 355.6],
+        'Tabloid' => ['width' => 279.4, 'height' => 431.8]
+    ]);
 }
 
 // Récupérer les paramètres canvas depuis les options séparées (synchronisées)
@@ -92,7 +90,7 @@ console.log('PDF_BUILDER_DEBUG: Canvas settings loaded from WordPress options:',
 window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>';
 
 // Dimensions standard des formats de papier en mm (centralisées)
-window.pdfBuilderPaperFormats = <?php echo wp_json_encode(\PDF_Builder\PAPER_FORMATS); ?>;
+window.pdfBuilderPaperFormats = <?php echo wp_json_encode(PDF_BUILDER_PAPER_FORMATS); ?>;
 
 // Fonction pour convertir le format et l'orientation en dimensions pixels
 window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {
