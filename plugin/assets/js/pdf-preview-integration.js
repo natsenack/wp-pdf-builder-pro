@@ -6,7 +6,8 @@ window.PDFBuilderLogger = {
         DEBUG: 0,
         INFO: 1,
         WARN: 2,
-        ERROR: 3
+        ERROR: 3,
+        NONE: 4
     },
 
     currentLevel: 1, // INFO par défaut
@@ -56,7 +57,10 @@ window.PDFBuilderLogger = {
 
 // Configuration du niveau de log basé sur les settings WordPress
 if (typeof PDF_BUILDER_DEBUG_ENABLED !== 'undefined') {
-    window.PDFBuilderLogger.setLevel(PDF_BUILDER_DEBUG_ENABLED ? 'DEBUG' : 'INFO');
+    window.PDFBuilderLogger.setLevel(PDF_BUILDER_DEBUG_ENABLED ? 'DEBUG' : 'NONE');
+} else {
+    // Par défaut, pas de logs si la constante n'est pas définie
+    window.PDFBuilderLogger.setLevel('NONE');
 }
 
 // Logger spécialisé pour l'auto-save

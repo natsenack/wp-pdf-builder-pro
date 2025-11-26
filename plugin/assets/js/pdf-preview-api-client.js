@@ -61,9 +61,9 @@ class PDFPreviewAPI {
      * Génère un aperçu depuis l'éditeur (données fictives)
      */
     async generateEditorPreview(templateData, options = {}) {
-        console.log('🎨 [JS] generateEditorPreview appelée avec:', { templateData, options });
-        console.log('🎨 [JS] isDebugEnabled():', isDebugEnabled());
-        console.log('🎨 [JS] window.location.search:', window.location.search);
+        debugLog('🎨 [JS] generateEditorPreview appelée avec:', { templateData, options });
+        debugLog('🎨 [JS] isDebugEnabled():', isDebugEnabled());
+        debugLog('🎨 [JS] window.location.search:', window.location.search);
 
         if (this.isGenerating) {
             debugWarn('⚠️ [JS] Génération déjà en cours...');
@@ -74,7 +74,7 @@ class PDFPreviewAPI {
         this.showLoadingIndicator();
 
         try {
-            console.log('🎨 [JS] Préparation FormData...');
+            debugLog('🎨 [JS] Préparation FormData...');
             const formData = new FormData();
             formData.append('action', 'wp_pdf_preview_image');
             formData.append('nonce', this.nonce);
@@ -83,7 +83,7 @@ class PDFPreviewAPI {
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');
 
-            console.log('🎨 [JS] FormData préparé:', {
+            debugLog('🎨 [JS] FormData préparé:', {
                 action: 'wp_pdf_preview_image',
                 nonce: this.nonce ? 'présent' : 'manquant',
                 context: 'editor',
@@ -92,13 +92,13 @@ class PDFPreviewAPI {
                 format: options.format || 'png'
             });
 
-            console.log('🎨 [JS] Envoi requête fetch vers:', this.endpoint);
+            debugLog('🎨 [JS] Envoi requête fetch vers:', this.endpoint);
             const response = await fetch(this.endpoint, {
                 method: 'POST',
                 body: formData
             });
 
-            console.log('🎨 [JS] Réponse reçue:', {
+            debugLog('🎨 [JS] Réponse reçue:', {
                 ok: response.ok,
                 status: response.status,
                 statusText: response.statusText,
@@ -107,16 +107,16 @@ class PDFPreviewAPI {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('❌ [JS] Erreur HTTP:', { status: response.status, statusText: response.statusText, errorText });
+                debugError('❌ [JS] Erreur HTTP:', { status: response.status, statusText: response.statusText, errorText });
                 throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
             }
 
-            console.log('🎨 [JS] Parsing réponse JSON...');
+            debugLog('🎨 [JS] Parsing réponse JSON...');
             const result = await response.json();
-            console.log('🎨 [JS] Résultat JSON parsé:', result);
+            debugLog('🎨 [JS] Résultat JSON parsé:', result);
 
             if (result.success) {
-                console.log('✅ [JS] Génération réussie, données:', result.data);
+                debugLog('✅ [JS] Génération réussie, données:', result.data);
                 this.cachePreview(result.data);
                 this.displayPreview(result.data.image_url, 'editor');
                 return result.data;
@@ -852,7 +852,7 @@ class PDFPreviewAPI {
             const dragDuration = performance.now() - this.dragStartTime;
             if (dragDuration > 10) { // Seulement pour les drags significatifs (>10ms)
                 const fps = 1000 / dragDuration;
-                console.log(`[PDF Preview] Drag performance: ${dragDuration.toFixed(2)}ms (${fps.toFixed(1)}fps)`);
+                debugLog(`[PDF Preview] Drag performance: ${dragDuration.toFixed(2)}ms (${fps.toFixed(1)}fps)`);
             }
         }
     }

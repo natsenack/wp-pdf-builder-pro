@@ -218,6 +218,11 @@ window.pdfBuilderSavedSettings = <?php echo json_encode($preview_data); ?>;
 const PDF_BUILDER_DEBUG_ENABLED = <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'true' : 'false'; ?>;
 const PDF_BUILDER_DEBUG_VERBOSE = <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'true' : 'false'; ?>;
 
+// Mettre à jour le niveau de log du PDFBuilderLogger si disponible
+if (typeof window.PDFBuilderLogger !== 'undefined') {
+    window.PDFBuilderLogger.setLevel(PDF_BUILDER_DEBUG_ENABLED ? 'DEBUG' : 'NONE');
+}
+
 // Conditional debug logging function
 function pdfBuilderDebug(message, ...args) {
     if (PDF_BUILDER_DEBUG_ENABLED) {
