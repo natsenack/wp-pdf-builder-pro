@@ -1589,14 +1589,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.addEventListener('click', function(event) {
                     event.preventDefault();
 
+                    pdfBuilderDebug('Save button clicked, category:', this.getAttribute('data-category'));
+
                     const modal = this.closest('.canvas-modal');
                     const category = this.getAttribute('data-category');
                     const form = modal ? modal.querySelector('form') : null;
 
+                    pdfBuilderDebug('Modal found:', !!modal, 'Form found:', !!form, 'Category:', category);
+
                     if (!form) {
                         alert('Erreur: Formulaire non trouvé');
+                        pdfBuilderError('Form not found for category:', category);
                         return;
                     }
+
+                    pdfBuilderDebug('Processing save for category:', category);
 
                     // Get AJAX config with fallbacks
                     let ajaxConfig = null;
