@@ -39,7 +39,7 @@ export function useTemplate() {
       // ✅ PRIORITÉ: Utiliser les données localisées si disponibles (plus rapide et fiable)
       if (window.pdfBuilderData?.existingTemplate && window.pdfBuilderData?.hasExistingData) {
         const templateData = window.pdfBuilderData.existingTemplate;
-        console.log('📋 [LOAD TEMPLATE] Utilisation des données localisées pour template:', templateId, 'Nom:', templateData.name);
+        // console.log('📋 [LOAD TEMPLATE] Utilisation des données localisées pour template:', templateId, 'Nom:', templateData.name);
 
         // Parse JSON strings if needed
         let elements = [];
@@ -132,7 +132,7 @@ export function useTemplate() {
       }
 
       // ✅ FALLBACK: Utiliser AJAX si les données localisées ne sont pas disponibles
-      console.log('📋 [LOAD TEMPLATE] Données localisées non disponibles, utilisation AJAX pour template:', templateId);
+      // console.log('📋 [LOAD TEMPLATE] Données localisées non disponibles, utilisation AJAX pour template:', templateId);
 
       // Détecter le navigateur pour des en-têtes spécifiques
       const isChrome = typeof navigator !== 'undefined' &&
@@ -411,12 +411,12 @@ export function useTemplate() {
 
   // Sauvegarder un template manuellement
   const saveTemplate = useCallback(async () => {
-    console.log('[PDF_BUILDER_FRONTEND] Starting template save...');
+    // console.log('[PDF_BUILDER_FRONTEND] Starting template save...');
     dispatch({ type: 'SET_TEMPLATE_SAVING', payload: true });
 
     try {
       const templateId = getTemplateIdFromUrl();
-      console.log('[PDF_BUILDER_FRONTEND] Template ID:', templateId);
+      // console.log('[PDF_BUILDER_FRONTEND] Template ID:', templateId);
 
       if (!templateId) {
         throw new Error('Aucun template chargé pour la sauvegarde');
@@ -424,11 +424,11 @@ export function useTemplate() {
 
       // Vérifier que le template est complètement chargé
       if (!state.template.name || state.template.name.trim() === '') {
-        console.log('[PDF_BUILDER_FRONTEND] Template name not loaded yet, skipping save');
+        // console.log('[PDF_BUILDER_FRONTEND] Template name not loaded yet, skipping save');
         return; // Ne pas lancer d'erreur, juste ignorer
       }
 
-      console.log('[PDF_BUILDER_FRONTEND] Template name:', state.template.name);
+      // console.log('[PDF_BUILDER_FRONTEND] Template name:', state.template.name);
 
       if (!window.pdfBuilderData?.ajaxUrl) {
         throw new Error('URL AJAX non disponible');
@@ -438,8 +438,8 @@ export function useTemplate() {
         throw new Error('Nonce non disponible');
       }
 
-      console.log('[PDF_BUILDER_FRONTEND] AJAX URL available:', !!window.pdfBuilderData?.ajaxUrl);
-      console.log('[PDF_BUILDER_FRONTEND] Nonce available:', !!window.pdfBuilderData?.nonce);
+      // console.log('[PDF_BUILDER_FRONTEND] AJAX URL available:', !!window.pdfBuilderData?.ajaxUrl);
+      // console.log('[PDF_BUILDER_FRONTEND] Nonce available:', !!window.pdfBuilderData?.nonce);
 
       // ✅ NORMALISER LES ÉLÉMENTS AVANT SAUVEGARDE
       // Cela garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
@@ -447,16 +447,16 @@ export function useTemplate() {
       debugElementState(normalizedElements as any, 'AVANT SAUVEGARDE');
 
       // 🔍 DEBUG: Log complet des propriétés des éléments avant sauvegarde
-      console.log('[PDF_BUILDER_FRONTEND] Éléments avant normalisation:', state.elements);
-      console.log('[PDF_BUILDER_FRONTEND] Éléments après normalisation:', normalizedElements);
+      // console.log('[PDF_BUILDER_FRONTEND] Éléments avant normalisation:', state.elements);
+      // console.log('[PDF_BUILDER_FRONTEND] Éléments après normalisation:', normalizedElements);
       
       // Vérifier les propriétés spéciales
       normalizedElements.forEach((el, idx) => {
-        console.log(`[PDF_BUILDER_FRONTEND] Élément ${idx} (${el.type}) propriétés:`, Object.keys(el));
+        // console.log(`[PDF_BUILDER_FRONTEND] Élément ${idx} (${el.type}) propriétés:`, Object.keys(el));
         // Chercher des propriétés avec emoji ou "interactions"
         Object.keys(el).forEach(key => {
           if (key.includes('🎯') || key.includes('interactions') || key.includes('comportement') || key.includes('behavior')) {
-            console.log(`[PDF_BUILDER_FRONTEND] Propriété spéciale trouvée: ${key} =`, el[key]);
+            // console.log(`[PDF_BUILDER_FRONTEND] Propriété spéciale trouvée: ${key} =`, el[key]);
           }
         });
       });
@@ -492,27 +492,27 @@ export function useTemplate() {
       formData.append('canvas_width', (state.template.canvasWidth || canvasWidth).toString());
       formData.append('canvas_height', (state.template.canvasHeight || canvasHeight).toString());
 
-      console.log('[PDF_BUILDER_FRONTEND] Data to send:');
-      console.log('- Template ID:', templateId);
-      console.log('- Template Name:', state.template.name || 'Nouveau template');
-      console.log('- Elements count:', normalizedElements.length);
-      console.log('- Canvas size:', canvasWidth, 'x', canvasHeight);
-      console.log('- Template data size:', JSON.stringify(templateData).length, 'characters');
-      console.log('- Nonce:', window.pdfBuilderData?.nonce ? 'Present' : 'Missing');
+      // console.log('[PDF_BUILDER_FRONTEND] Data to send:');
+      // console.log('- Template ID:', templateId);
+      // console.log('- Template Name:', state.template.name || 'Nouveau template');
+      // console.log('- Elements count:', normalizedElements.length);
+      // console.log('- Canvas size:', canvasWidth, 'x', canvasHeight);
+      // console.log('- Template data size:', JSON.stringify(templateData).length, 'characters');
+      // console.log('- Nonce:', window.pdfBuilderData?.nonce ? 'Present' : 'Missing');
 
       const response = await fetch(window.pdfBuilderData?.ajaxUrl || '', {
         method: 'POST',
         body: formData
       });
 
-      console.log('[PDF_BUILDER_FRONTEND] HTTP Response status:', response.status);
+      // console.log('[PDF_BUILDER_FRONTEND] HTTP Response status:', response.status);
 
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
-      console.log('[PDF_BUILDER_FRONTEND] Server response:', result);
+      // console.log('[PDF_BUILDER_FRONTEND] Server response:', result);
 
       if (!result.success) {
         console.error('[PDF_BUILDER_FRONTEND] Server returned error:', result.data);
@@ -520,7 +520,7 @@ export function useTemplate() {
         throw new Error(errorMessage);
       }
 
-      console.log('[PDF_BUILDER_FRONTEND] Save successful! Template ID:', result.data?.template_id);
+      // console.log('[PDF_BUILDER_FRONTEND] Save successful! Template ID:', result.data?.template_id);
 
       dispatch({
         type: 'SAVE_TEMPLATE',
