@@ -258,7 +258,7 @@ class AjaxHandler
             
             update_option($auto_save_key, $template_data);
 
-            debug_log('Auto-save completed successfully');
+            $this->debug_log('Auto-save completed successfully');
             wp_send_json_success([
                 'message' => 'Sauvegarde automatique effectuée'
             ]);
@@ -793,7 +793,7 @@ class AjaxHandler
             // Récupérer la catégorie
             $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
             $this->debug_log('Saving category: ' . $category);
-            debug_log('Full POST data: ' . print_r($_POST, true));
+            $this->debug_log('Full POST data: ' . print_r($_POST, true));
 
             if (empty($category)) {
                 $this->debug_log('Empty category');
@@ -986,7 +986,7 @@ class AjaxHandler
             $valid_formats = ['A4', 'A3', 'A5', 'Letter', 'Legal', 'Tabloid'];
             if (in_array($format, $valid_formats)) {
                 update_option('pdf_builder_canvas_format', $format);
-                debug_log('Updated canvas_format to: ' . $format);
+                $this->debug_log('Updated canvas_format to: ' . $format);
                 $updated++;
             }
         }
@@ -1012,7 +1012,7 @@ class AjaxHandler
             }
         }
 
-        debug_log('saveDimensionsSettings updated ' . $updated . ' settings');
+        $this->debug_log('saveDimensionsSettings updated ' . $updated . ' settings');
         return $updated > 0;
     }
 
