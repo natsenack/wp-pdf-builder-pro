@@ -208,10 +208,25 @@ $license_test_mode = $all_settings['pdf_builder_license_test_mode_enabled'];
 $license_test_key = $all_settings['pdf_builder_license_test_key'];
 
 // Passer les données sauvegardées au JavaScript pour les previews
+// Nettoyer les données pour éviter les erreurs JSON
+$sanitized_preview_data = [];
+foreach ($preview_data as $key => $value) {
+    // S'assurer que toutes les valeurs sont des types JSON-safe
+    if (is_string($value)) {
+        // Échapper les caractères spéciaux et supprimer les retours chariot
+        $sanitized_preview_data[$key] = str_replace(["\r", "\n", "\t"], ['', '', ' '], $value);
+    } elseif (is_array($value)) {
+        // Pour les arrays, les nettoyer récursivement si nécessaire
+        $sanitized_preview_data[$key] = $value;
+    } else {
+        // Pour les autres types (bool, int, float, null), les garder tels quels
+        $sanitized_preview_data[$key] = $value;
+    }
+}
 ?>
 <script>
 // Données centralisées chargées depuis la base de données
-window.pdfBuilderSavedSettings = <?php echo wp_json_encode($preview_data); ?>;
+window.pdfBuilderSavedSettings = <?php echo wp_json_encode($sanitized_preview_data); ?>;
 // window.pdfBuilderCanvasSettings = <?php echo json_encode($canvas_settings); ?>; // COMMENTÉ: déjà défini dans settings-canvas-params.php
 
 // Constantes de debug
