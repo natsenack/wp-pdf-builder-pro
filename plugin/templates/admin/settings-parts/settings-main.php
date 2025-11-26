@@ -1327,16 +1327,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // Mettre à jour aussi l'indicateur dans le menu des onglets
                         const developerEnabledIndicator = document.querySelector('.developer-enabled-indicator');
+                        console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator element found:', developerEnabledIndicator);
                         if (developerEnabledIndicator) {
                             const isEnabled = data.data.saved_options.developer_enabled === '1';
                             developerEnabledIndicator.style.color = isEnabled ? '#28a745' : '#dc3545';
                             developerEnabledIndicator.textContent = isEnabled ? 'Activé' : 'Désactivé';
+                            console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator updated to:', isEnabled ? 'Activé' : 'Désactivé');
+                        } else {
+                            console.log('PDF_BUILDER_DEBUG: developer-enabled-indicator element not found');
                         }
                         
                         // Mettre à jour la variable globale pour cohérence
                         if (window.pdfBuilderSavedSettings) {
                             window.pdfBuilderSavedSettings.developer_enabled = data.data.saved_options.developer_enabled === '1';
                         }
+                        
+                        // Mettre à jour la visibilité des sections développeur
+                        toggleDeveloperSections(data.data.saved_options.developer_enabled === '1');
                     } else {
                         console.log('PDF_BUILDER_DEBUG: Developer data not found in response:', data.data);
                     }
@@ -3385,6 +3392,7 @@ function syncFormElementsWithLoadedSettings() {
 
 // Fonction pour afficher/masquer les sections développeur
 function toggleDeveloperSections(show) {
+    console.log('PDF_BUILDER_DEBUG: toggleDeveloperSections called with show:', show);
     const sections = [
         'dev-license-section',
         'dev-debug-section',
@@ -3400,8 +3408,10 @@ function toggleDeveloperSections(show) {
 
     sections.forEach(sectionId => {
         const section = document.getElementById(sectionId);
+        console.log('PDF_BUILDER_DEBUG: Section', sectionId, 'found:', !!section);
         if (section) {
             section.style.display = show ? '' : 'none';
+            console.log('PDF_BUILDER_DEBUG: Section', sectionId, 'display set to:', show ? 'visible' : 'none');
         }
     });
 }
