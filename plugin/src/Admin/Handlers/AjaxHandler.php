@@ -283,6 +283,8 @@ class AjaxHandler
      */
     public function ajaxLoadTemplate()
     {
+        error_log('[PDF Builder] ajaxLoadTemplate called - START');
+
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
         if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
