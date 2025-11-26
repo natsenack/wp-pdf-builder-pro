@@ -1320,6 +1320,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data.data && data.data.saved_options && typeof data.data.saved_options.developer_enabled !== 'undefined') {
                         console.log('PDF_BUILDER_DEBUG: Updating developer indicator with value:', data.data.saved_options.developer_enabled);
                         updateDeveloperStatusIndicator(data.data.saved_options.developer_enabled === '1');
+                        
+                        // Mettre à jour aussi l'indicateur dans le menu des onglets
+                        const developerEnabledIndicator = document.querySelector('.developer-enabled-indicator');
+                        if (developerEnabledIndicator) {
+                            const isEnabled = data.data.saved_options.developer_enabled === '1';
+                            developerEnabledIndicator.style.color = isEnabled ? '#28a745' : '#dc3545';
+                            developerEnabledIndicator.textContent = isEnabled ? 'Activé' : 'Désactivé';
+                            console.log('PDF_BUILDER_DEBUG: Updated tab menu developer indicator to:', isEnabled ? 'Activé' : 'Désactivé');
+                        }
+                        
+                        // Mettre à jour la variable globale pour cohérence
+                        if (window.pdfBuilderSavedSettings) {
+                            window.pdfBuilderSavedSettings.developer_enabled = data.data.saved_options.developer_enabled === '1';
+                        }
                     } else {
                         console.log('PDF_BUILDER_DEBUG: Developer indicator update skipped - data structure:', data.data);
                     }
