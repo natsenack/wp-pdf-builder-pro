@@ -1051,41 +1051,4 @@ class PreviewImageAPI
             'last_cleanup' => $instance->performance_metrics['last_cleanup']
         ];
     }
-                    'content' => 'APERÇU PDF BUILDER PRO',
-                    'style' => [
-                        'fontSize' => '24px',
-                        'fontWeight' => 'bold',
-                        'color' => '#333',
-                        'textAlign' => 'center'
-                    ],
-                    'position' => ['x' => 50, 'y' => 100]
-                ],
-                [
-                    'type' => 'text',
-                    'content' => 'Génération avec DomPDF - Jour 3-4',
-                    'style' => [
-                        'fontSize' => '16px',
-                        'color' => '#666',
-                        'textAlign' => 'center'
-                    ],
-                    'position' => ['x' => 50, 'y' => 150]
-                ],
-                [
-                    'type' => 'text',
-                    'content' => 'Données statiques - Pas de variables dynamiques',
-                    'style' => [
-                        'fontSize' => '14px',
-                        'color' => '#999',
-                        'textAlign' => 'center'
-                    ],
-                    'position' => ['x' => 50, 'y' => 200]
-                ]
-            ],
-            'page' => [
-                'size' => 'A4',
-                'orientation' => 'portrait',
-                'margins' => ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20]
-            ]
-        ];
-    }
 }
