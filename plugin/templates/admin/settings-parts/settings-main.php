@@ -1403,11 +1403,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (modal.getAttribute('data-category') === 'apparence' && modal._originalApparenceSettings) {
                 if (window.pdfBuilderCanvasSettings) {
-                    window.pdfBuilderCanvasSettings.canvas_background_color = modal._originalApparenceSettings.bgColor;
-                    window.pdfBuilderCanvasSettings.border_color = modal._originalApparenceSettings.borderColor;
-                    window.pdfBuilderCanvasSettings.border_width = modal._originalApparenceSettings.borderWidth;
-                    window.pdfBuilderCanvasSettings.shadow_enabled = modal._originalApparenceSettings.shadowEnabled;
-                    window.pdfBuilderCanvasSettings.container_background_color = modal._originalApparenceSettings.containerBgColor;
+                    window.pdfBuilderCanvasSettings.canvas_bg_color = modal._originalApparenceSettings.bgColor;
+                    window.pdfBuilderCanvasSettings.canvas_border_color = modal._originalApparenceSettings.borderColor;
+                    window.pdfBuilderCanvasSettings.canvas_border_width = modal._originalApparenceSettings.borderWidth;
+                    window.pdfBuilderCanvasSettings.canvas_shadow_enabled = modal._originalApparenceSettings.shadowEnabled;
+                    window.pdfBuilderCanvasSettings.canvas_container_bg_color = modal._originalApparenceSettings.containerBgColor;
                     
                     // Update preview with restored values
                     if (typeof updateApparenceCardPreview === 'function') {
@@ -2543,8 +2543,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const bgColorInput = document.getElementById("canvas_bg_color");
         const borderColorInput = document.getElementById("canvas_border_color");
 
-        const bgColor = bgColorInput ? bgColorInput.value : (window.pdfBuilderCanvasSettings?.canvas_background_color || '#ffffff');
-        const borderColor = borderColorInput ? borderColorInput.value : (window.pdfBuilderCanvasSettings?.border_color || '#cccccc');
+        const bgColor = bgColorInput ? bgColorInput.value : (window.pdfBuilderCanvasSettings?.canvas_bg_color || '#ffffff');
+        const borderColor = borderColorInput ? borderColorInput.value : (window.pdfBuilderCanvasSettings?.canvas_border_color || '#cccccc');
 
         // Update color previews in the card
         const bgPreview = document.querySelector('.canvas-card[data-category="apparence"] .color-preview.bg');
@@ -2864,11 +2864,11 @@ document.addEventListener('DOMContentLoaded', function() {
         apparence: {
             fields: ['canvas_bg_color', 'canvas_border_color', 'canvas_border_width', 'canvas_shadow_enabled', 'canvas_container_bg_color'],
             settingMappings: {
-                'canvas_bg_color': 'canvas_background_color',
-                'canvas_border_color': 'border_color',
-                'canvas_border_width': 'border_width',
-                'canvas_shadow_enabled': 'shadow_enabled',
-                'canvas_container_bg_color': 'container_background_color'
+                'canvas_bg_color': 'canvas_bg_color',
+                'canvas_border_color': 'canvas_border_color',
+                'canvas_border_width': 'canvas_border_width',
+                'canvas_shadow_enabled': 'canvas_shadow_enabled',
+                'canvas_container_bg_color': 'canvas_container_bg_color'
             },
             valueTransformers: {
                 'canvas_border_width': (value) => parseInt(value),
@@ -2992,15 +2992,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update window.pdfBuilderCanvasSettings temporarily for preview
                 if (window.pdfBuilderCanvasSettings) {
                     if (target.id === 'canvas_bg_color') {
-                        window.pdfBuilderCanvasSettings.canvas_background_color = target.value;
+                        window.pdfBuilderCanvasSettings.canvas_bg_color = target.value;
                     } else if (target.id === 'canvas_border_color') {
-                        window.pdfBuilderCanvasSettings.border_color = target.value;
+                        window.pdfBuilderCanvasSettings.canvas_border_color = target.value;
                     } else if (target.id === 'canvas_border_width') {
-                        window.pdfBuilderCanvasSettings.border_width = parseInt(target.value);
+                        window.pdfBuilderCanvasSettings.canvas_border_width = parseInt(target.value);
                     } else if (target.id === 'canvas_shadow_enabled') {
-                        window.pdfBuilderCanvasSettings.shadow_enabled = target.checked;
+                        window.pdfBuilderCanvasSettings.canvas_shadow_enabled = target.checked;
                     } else if (target.id === 'canvas_container_bg_color') {
-                        window.pdfBuilderCanvasSettings.container_background_color = target.value;
+                        window.pdfBuilderCanvasSettings.canvas_container_bg_color = target.value;
                     }
                     
                     // Update preview immediately
@@ -3042,11 +3042,11 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         apparence: {
             fields: [
-                { id: 'canvas_bg_color', setting: 'canvas_background_color', default: '#ffffff' },
-                { id: 'canvas_border_color', setting: 'border_color', default: '#cccccc' },
-                { id: 'canvas_border_width', setting: 'border_width', default: 1 },
-                { id: 'canvas_shadow_enabled', setting: 'shadow_enabled', default: false, type: 'checkbox' },
-                { id: 'canvas_container_bg_color', setting: 'container_background_color', default: '#f8f9fa' }
+                { id: 'canvas_bg_color', setting: 'canvas_bg_color', default: '#ffffff' },
+                { id: 'canvas_border_color', setting: 'canvas_border_color', default: '#cccccc' },
+                { id: 'canvas_border_width', setting: 'canvas_border_width', default: 1 },
+                { id: 'canvas_shadow_enabled', setting: 'canvas_shadow_enabled', default: false, type: 'checkbox' },
+                { id: 'canvas_container_bg_color', setting: 'canvas_container_bg_color', default: '#f8f9fa' }
             ]
         },
         interactions: {
