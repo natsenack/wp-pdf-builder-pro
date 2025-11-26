@@ -1629,17 +1629,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         formData.append('nonce', ajaxConfig.nonce || '');
 
                         // Debug: Log form data
-                        pdfBuilderDebug('Form data for category', category + ':');
-                        if (PDF_BUILDER_DEBUG_VERBOSE) {
-                            for (let [key, value] of formData.entries()) {
-                                pdfBuilderDebug(key, '=', value);
-                            }
-                        }
-                        
-                        // Log to console for debugging
                         console.log('PDF_BUILDER_DEBUG: Sending form data for category:', category);
                         for (let [key, value] of formData.entries()) {
-                            console.log('PDF_BUILDER_DEBUG:', key, '=', value);
+                            console.log('PDF_BUILDER_DEBUG: Form data -', key, '=', value);
                         }
 
                         // Additional debug for dimensions category

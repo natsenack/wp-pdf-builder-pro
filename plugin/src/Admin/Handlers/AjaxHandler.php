@@ -1377,6 +1377,9 @@ class AjaxHandler
     {
         $updated = 0;
 
+        // Debug: Log received POST data
+        error_log('PDF_BUILDER_DEBUG: saveAutosaveSettings called with POST data: ' . print_r($_POST, true));
+
         // Migration: si l'ancienne option existe, la migrer vers la nouvelle
         if (get_option('pdf_builder_canvas_autosave_interval') !== false && get_option('pdf_builder_canvas_auto_save_interval') === false) {
             $old_value = get_option('pdf_builder_canvas_autosave_interval');
@@ -1419,6 +1422,10 @@ class AjaxHandler
             update_option('pdf_builder_canvas_history_enabled', '0');
             $updated++;
         }
+
+        // Debug: Log updated options
+        error_log('PDF_BUILDER_DEBUG: Autosave settings updated: ' . $updated . ' options');
+        error_log('PDF_BUILDER_DEBUG: Current options - enabled: ' . get_option('pdf_builder_canvas_autosave_enabled', '1') . ', interval: ' . get_option('pdf_builder_canvas_auto_save_interval', '5') . ', history_max: ' . get_option('pdf_builder_canvas_history_max', '50'));
 
         return $updated > 0;
     }
