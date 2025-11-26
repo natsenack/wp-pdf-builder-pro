@@ -1306,6 +1306,14 @@ class PdfBuilderAdmin
             wp_localize_script('pdf-builder-settings-page', 'pdfBuilderAjax', [
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_cache_actions'),
+                'debug' => [
+                    'php_errors' => get_option('pdf_builder_debug_php_errors', false),
+                    'javascript' => get_option('pdf_builder_debug_javascript', false),
+                    'javascript_verbose' => get_option('pdf_builder_debug_javascript_verbose', false),
+                    'ajax' => get_option('pdf_builder_debug_ajax', false),
+                    'performance' => get_option('pdf_builder_debug_performance', false),
+                    'database' => get_option('pdf_builder_debug_database', false),
+                ],
                 'strings' => [
                     'testing' => __('Test en cours...', 'pdf-builder-pro'),
                     'clearing' => __('Nettoyage en cours...', 'pdf-builder-pro'),

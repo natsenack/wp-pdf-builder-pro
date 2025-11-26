@@ -119,7 +119,7 @@ class PDF_Builder_Settings_Loader {
 
         // Log le chargement si debug activé
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('PDF Builder: Paramètres chargés depuis BDD: ' . count($settings) . ' options');
+            PDF_Builder_Security_Manager::debug_log('php_errors', 'Paramètres chargés depuis BDD:', count($settings), 'options');
         }
 
         return $settings;
@@ -130,7 +130,7 @@ class PDF_Builder_Settings_Loader {
      */
     public static function load_setting($key, $default = null) {
         if (!isset(self::$settings_config[$key])) {
-            error_log("PDF Builder: Paramètre inconnu '$key'");
+            PDF_Builder_Security_Manager::debug_log('php_errors', "Paramètre inconnu '$key'");
             return $default;
         }
 
@@ -542,7 +542,7 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur
             $developer_enabled = isset($_POST['developer_enabled']) ? 1 : 0;
             $developer_password = sanitize_text_field($_POST['developer_password'] ?? '');
             
-            error_log("PDF_BUILDER_DEBUG: Processing developer form - enabled: $developer_enabled, password: " . (!empty($developer_password) ? 'set' : 'empty'));
+            PDF_Builder_Security_Manager::debug_log('php_errors', "Processing developer form - enabled: $developer_enabled, password: " . (!empty($developer_password) ? 'set' : 'empty'));
             
             update_option('pdf_builder_developer_enabled', $developer_enabled);
             update_option('pdf_builder_developer_password', $developer_password);
@@ -897,17 +897,17 @@ window.updateZoomCardPreview = function() {
 
 // Fonction globale pour mettre à jour l'indicateur développeur
 function updateDeveloperStatusIndicator(isActive = null) {
-    // Debug logs always for troubleshooting - FORCE DEPLOY TEST
-    console.log('PDF_BUILDER_DEBUG: updateDeveloperStatusIndicator called with isActive:', isActive);
-    console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings exists:', !!window.pdfBuilderSavedSettings);
+    // Conditional debug logging
+    pdfBuilderDebug('updateDeveloperStatusIndicator called with isActive:', isActive);
+    pdfBuilderDebug('window.pdfBuilderSavedSettings exists:', !!window.pdfBuilderSavedSettings);
     if (window.pdfBuilderSavedSettings) {
-        console.log('PDF_BUILDER_DEBUG: window.pdfBuilderSavedSettings.developer_enabled:', window.pdfBuilderSavedSettings.developer_enabled);
-        console.log('PDF_BUILDER_DEBUG: typeof window.pdfBuilderSavedSettings.developer_enabled:', typeof window.pdfBuilderSavedSettings.developer_enabled);
-        console.log('PDF_BUILDER_DEBUG: full window.pdfBuilderSavedSettings:', window.pdfBuilderSavedSettings);
+        pdfBuilderDebug('window.pdfBuilderSavedSettings.developer_enabled:', window.pdfBuilderSavedSettings.developer_enabled);
+        pdfBuilderDebug('typeof window.pdfBuilderSavedSettings.developer_enabled:', typeof window.pdfBuilderSavedSettings.developer_enabled);
+        pdfBuilderDebug('full window.pdfBuilderSavedSettings:', window.pdfBuilderSavedSettings);
     }
 
     const developerIndicator = document.querySelector('.developer-status-indicator');
-    console.log('PDF_BUILDER_DEBUG: developerIndicator element found:', developerIndicator);
+    pdfBuilderDebug('developerIndicator element found:', developerIndicator);
 
     if (developerIndicator) {
         // Si isActive n'est pas fourni, utiliser les paramètres sauvegardés plutôt que l'état du checkbox
@@ -915,15 +915,15 @@ function updateDeveloperStatusIndicator(isActive = null) {
             const savedValue = window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled;
             // Convertir correctement la valeur string en boolean
             isActive = savedValue === '1' || savedValue === 1 || savedValue === true;
-            console.log('PDF_BUILDER_DEBUG: isActive set to saved settings value:', savedValue, 'converted to boolean:', isActive, 'type:', typeof isActive);
+            pdfBuilderDebug('isActive set to saved settings value:', savedValue, 'converted to boolean:', isActive, 'type:', typeof isActive);
         }
 
         developerIndicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
         developerIndicator.style.background = isActive ? '#28a745' : '#dc3545';
         developerIndicator.style.color = 'white';
-        console.log('PDF_BUILDER_DEBUG: developerIndicator updated to:', isActive ? 'ACTIF' : 'INACTIF');
+        pdfBuilderDebug('developerIndicator updated to:', isActive ? 'ACTIF' : 'INACTIF');
     } else {
-        console.log('PDF_BUILDER_DEBUG: developer-status-indicator element not found');
+        pdfBuilderDebug('developer-status-indicator element not found');
     }
 }
 
@@ -1239,13 +1239,13 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('current_tab', 'all'); // Sauvegarder tous les onglets
 
             const forms = document.querySelectorAll('form');
-            console.log('PDF_BUILDER_DEBUG: Found', forms.length, 'forms total');
+            pdfBuilderDebug('Found', forms.length, 'forms total');
             forms.forEach((form, index) => {
-                console.log('PDF_BUILDER_DEBUG: Form', index, 'id:', form.id, 'style:', form.style.display);
+                pdfBuilderDebug('Form', index, 'id:', form.id, 'style:', form.style.display);
             });
             forms.forEach(form => {
                 const formInputs = form.querySelectorAll('input, select, textarea');
-                console.log('PDF_BUILDER_DEBUG: Form', form.id, 'has', formInputs.length, 'inputs');
+                pdfBuilderDebug('Form', form.id, 'has', formInputs.length, 'inputs');
 
                 // Collecter d'abord les checkboxes multiples (arrays)
                 const checkboxArrays = {};
@@ -1282,7 +1282,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (input.type === 'checkbox') {
                             formData.append(input.name, input.checked ? '1' : '0');
                             if (input.name === 'developer_enabled') {
-                                console.log('PDF_BUILDER_DEBUG: developer_enabled checkbox found, checked:', input.checked, 'value sent:', input.checked ? '1' : '0');
+                                pdfBuilderDebug('developer_enabled checkbox found, checked:', input.checked, 'value sent:', input.checked ? '1' : '0');
                             }
                         } else if (input.type === 'radio') {
                             if (input.checked) {
@@ -1312,21 +1312,21 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => {
                 // Debug logs only when developer mode is enabled
                 if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-                    console.log('PDF_BUILDER_DEBUG: AJAX response status:', response.status);
+                    pdfBuilderDebug('AJAX response status:', response.status);
                 }
                 return response.json();
             })
             .then(data => {
                 // Debug logs only when developer mode is enabled
                 if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-                    console.log('PDF_BUILDER_DEBUG: AJAX response data:', data);
+                    pdfBuilderDebug('AJAX response data:', data);
                 }
                 clearTimeout(safetyTimeout); // Annuler le timeout de sécurité
 
                 if (data.success) {
                     // Debug logs only when developer mode is enabled
                     if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-                        console.log('PDF_BUILDER_DEBUG: Success handler entered');
+                        pdfBuilderDebug('Success handler entered');
                     }
                     
                     // Succès
@@ -1344,7 +1344,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data.data && data.data.saved_options && typeof data.data.saved_options.developer_enabled !== 'undefined') {
                         // Debug logs only when developer mode is enabled
                         if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-                            console.log('PDF_BUILDER_DEBUG: Developer enabled value:', data.data.saved_options.developer_enabled);
+                            pdfBuilderDebug('Developer enabled value:', data.data.saved_options.developer_enabled);
                         }
                         updateDeveloperStatusIndicator(data.data.saved_options.developer_enabled === '1');
                         
@@ -1353,7 +1353,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (developerCheckbox) {
                             developerCheckbox.checked = data.data.saved_options.developer_enabled === '1';
                             if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-                                console.log('PDF_BUILDER_DEBUG: Checkbox updated to:', developerCheckbox.checked);
+                                pdfBuilderDebug('Checkbox updated to:', developerCheckbox.checked);
                             }
                         }
                         
@@ -1361,7 +1361,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (window.pdfBuilderSavedSettings) {
                             window.pdfBuilderSavedSettings.developer_enabled = data.data.saved_options.developer_enabled === '1';
                             if (window.pdfBuilderSavedSettings.developer_enabled) {
-                                console.log('PDF_BUILDER_DEBUG: Global developer_enabled updated to:', window.pdfBuilderSavedSettings.developer_enabled);
+                                pdfBuilderDebug('Global developer_enabled updated to:', window.pdfBuilderSavedSettings.developer_enabled);
                             }
                         }
                         
@@ -1370,7 +1370,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                         // Debug logs only when developer mode is enabled
                         if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
-                            console.log('PDF_BUILDER_DEBUG: Developer data not found in response:', data.data);
+                            pdfBuilderDebug('Developer data not found in response:', data.data);
                         }
                     }
 

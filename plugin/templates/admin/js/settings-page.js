@@ -6,6 +6,66 @@
 jQuery(document).ready(function($) {
     'use strict';
 
+    // ==========================================
+    // FONCTIONS DE DEBUG CONDITIONNEL
+    // ==========================================
+
+    /**
+     * Vérifie si un type de debug spécifique est activé
+     * @param {string} type - Type de debug ('javascript', 'ajax', 'performance', etc.)
+     * @returns {boolean}
+     */
+    function isDebugEnabled(type) {
+        if (!window.pdfBuilderAjax || !window.pdfBuilderAjax.debug) {
+            return false;
+        }
+        return !!window.pdfBuilderAjax.debug[type];
+    }
+
+    /**
+     * Log conditionnel JavaScript - seulement si le debug JS est activé
+     * @param {...any} args - Arguments à logger
+     */
+    function debugLog(...args) {
+        if (isDebugEnabled('javascript')) {
+            console.log('🚀 [PDF Builder Debug]', ...args);
+        }
+    }
+
+    /**
+     * Log verbeux JavaScript - seulement si le debug JS verbeux est activé
+     * @param {...any} args - Arguments à logger
+     */
+    function debugLogVerbose(...args) {
+        if (isDebugEnabled('javascript_verbose')) {
+            console.log('📝 [PDF Builder Debug Verbose]', ...args);
+        }
+    }
+
+    /**
+     * Log AJAX - seulement si le debug AJAX est activé
+     * @param {...any} args - Arguments à logger
+     */
+    function debugLogAjax(...args) {
+        if (isDebugEnabled('ajax')) {
+            console.log('🔄 [PDF Builder AJAX]', ...args);
+        }
+    }
+
+    /**
+     * Log performance - seulement si le debug performance est activé
+     * @param {...any} args - Arguments à logger
+     */
+    function debugLogPerformance(...args) {
+        if (isDebugEnabled('performance')) {
+            console.log('⚡ [PDF Builder Performance]', ...args);
+        }
+    }
+
+    // ==========================================
+    // FIN FONCTIONS DE DEBUG
+    // ==========================================
+
     // Fonction de notification utilisant le système existant
     function showMaintenanceNotification(type, title, message, duration = 5000) {
         // Utiliser le système de notifications existant
@@ -196,17 +256,17 @@ jQuery(document).ready(function($) {
 
     // Fonction pour initialiser les métriques du cache de manière sécurisée
     function initializeCacheMetrics() {
-        console.log('PDF Builder: initializeCacheMetrics called');
-        console.log('PDF Builder: pdfBuilderAjax available?', typeof pdfBuilderAjax !== 'undefined');
+        debugLog('initializeCacheMetrics called');
+        debugLog('pdfBuilderAjax available?', typeof pdfBuilderAjax !== 'undefined');
         if (typeof pdfBuilderAjax !== 'undefined') {
-            console.log('PDF Builder: pdfBuilderAjax object:', pdfBuilderAjax);
+            debugLog('pdfBuilderAjax object:', pdfBuilderAjax);
         }
 
         if (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax.ajaxurl && pdfBuilderAjax.nonce) {
-            console.log('PDF Builder: pdfBuilderAjax ready, calling updateCacheMetrics');
+            debugLog('pdfBuilderAjax ready, calling updateCacheMetrics');
             updateCacheMetrics();
         } else {
-            console.log('PDF Builder: pdfBuilderAjax not ready, retrying in 500ms...');
+            debugLog('pdfBuilderAjax not ready, retrying in 500ms...');
             setTimeout(initializeCacheMetrics, 500);
         }
     }
@@ -219,22 +279,22 @@ jQuery(document).ready(function($) {
         if (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax.ajaxurl && pdfBuilderAjax.nonce) {
             updateCacheMetrics();
         } else {
-            console.warn('PDF Builder: Skipping cache metrics update - pdfBuilderAjax not available');
+            debugLog('Skipping cache metrics update - pdfBuilderAjax not available');
         }
     }, 30000);
 
     // Fonction pour mettre à jour les métriques du cache en temps réel
     function updateCacheMetrics() {
-        console.log('PDF Builder: updateCacheMetrics called');
+        debugLogAjax('updateCacheMetrics called');
 
         // Vérifier que pdfBuilderAjax est disponible
         if (typeof pdfBuilderAjax === 'undefined') {
-            console.error('PDF Builder: pdfBuilderAjax not available');
+            debugLog('pdfBuilderAjax not available');
             return;
         }
 
-        console.log('PDF Builder: Making AJAX call to:', pdfBuilderAjax.ajaxurl);
-        console.log('PDF Builder: Using nonce:', pdfBuilderAjax.nonce);
+        debugLogAjax('Making AJAX call to:', pdfBuilderAjax.ajaxurl);
+        debugLogAjax('Using nonce:', pdfBuilderAjax.nonce);
 
         // Faire l'appel AJAX pour récupérer les métriques
         $.ajax({
@@ -245,7 +305,7 @@ jQuery(document).ready(function($) {
                 nonce: pdfBuilderAjax.nonce
             },
             success: function(response) {
-                console.log('PDF Builder: updateCacheMetrics success', response);
+                debugLogAjax('updateCacheMetrics success', response);
                 if (response.success && response.data.metrics) {
                     const metrics = response.data.metrics;
 
@@ -261,12 +321,12 @@ jQuery(document).ready(function($) {
                     // Mettre à jour le dernier nettoyage
                     updateMetricValue('Dernier nettoyage', metrics.last_cleanup);
                 } else {
-                    console.warn('PDF Builder: updateCacheMetrics response not successful', response);
+                    debugLogAjax('updateCacheMetrics response not successful', response);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Erreur AJAX updateCacheMetrics:', status, error, xhr.responseText);
-                console.error('Request details:', {
+                debugLogAjax('Erreur AJAX updateCacheMetrics:', status, error, xhr.responseText);
+                debugLogAjax('Request details:', {
                     url: pdfBuilderAjax.ajaxurl,
                     nonce: pdfBuilderAjax.nonce,
                     status: xhr.status,

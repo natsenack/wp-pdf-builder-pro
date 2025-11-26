@@ -59,4 +59,62 @@ class PDF_Builder_Security_Manager {
     public static function create_nonce($action) {
         return wp_create_nonce($action);
     }
+
+    /**
+     * Check if PHP error debugging is enabled
+     *
+     * @return bool True if PHP error debugging is enabled
+     */
+    public static function is_php_debug_enabled() {
+        return get_option('pdf_builder_debug_php_errors', false);
+    }
+
+    /**
+     * Check if database debugging is enabled
+     *
+     * @return bool True if database debugging is enabled
+     */
+    public static function is_database_debug_enabled() {
+        return get_option('pdf_builder_debug_database', false);
+    }
+
+    /**
+     * Check if performance debugging is enabled
+     *
+     * @return bool True if performance debugging is enabled
+     */
+    public static function is_performance_debug_enabled() {
+        return get_option('pdf_builder_debug_performance', false);
+    }
+
+    /**
+     * Conditional PHP debug logging
+     *
+     * @param string $type Debug type ('php_errors', 'database', 'performance')
+     * @param mixed ...$args Arguments to log
+     */
+    public static function debug_log($type, ...$args) {
+        $enabled = false;
+
+        switch ($type) {
+            case 'php_errors':
+                $enabled = self::is_php_debug_enabled();
+                break;
+            case 'database':
+                $enabled = self::is_database_debug_enabled();
+                break;
+            case 'performance':
+                $enabled = self::is_performance_debug_enabled();
+                break;
+        }
+
+        if ($enabled) {
+            $prefix = '[PDF Builder Debug ' . ucfirst($type) . ']';
+            $message = $prefix . ' ' . implode(' ', array_map(function($arg) {
+                return is_string($arg) ? $arg : print_r($arg, true);
+            }, $args));
+
+            error_log($message);
+        }
+    }
 }
