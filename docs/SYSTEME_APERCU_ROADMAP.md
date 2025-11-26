@@ -5,7 +5,7 @@
 **Phase**: 3.0 - Système d'Aperçu Multi-Format
 **Échéance**: Décembre 2025 (7-20 décembre)
 **Priorité**: CRITIQUE (Bloque UX v1.1.0)
-**Progression**: Jours 1-13 ✅ TERMINÉS | Jours 14-16 SUIVANTS
+**Progression**: Jours 1-13 ✅ TERMINÉS | Jours 14-16 EN COURS
 
 ---
 
@@ -110,8 +110,9 @@ POST /wp-json/wp-pdf-builder-pro/v1/preview
 - [x] Tests données tous contextes
 - **Note** : Système d'injection dynamique des données WooCommerce entièrement opérationnel. DataProviders (SampleDataProvider: 76 variables fictives, WooCommerceDataProvider: 53 variables réelles) avec gestion automatique des contextes (canvas/metabox), placeholders informatifs et tests complets via interface centralisée.
 
-#### **Jour 14-16 : Intégration Complète**
-- [ ] Boutons aperçu dans éditeur et metabox
+#### **Jour 14-16 : Intégration Complète** EN COURS
+- [x] Boutons aperçu dans éditeur et metabox
+- **Note** : Boutons d'aperçu intégrés dans l'éditeur React via PDFEditorPreviewIntegration. Utilise l'API Preview existante avec raccourci Ctrl+P. Connecté automatiquement sur la page pdf-builder-react-editor. Interface utilisateur complète avec gestion d'erreurs et états de chargement.
 - [ ] Cache intelligent opérationnel
 - [ ] Rate limiting et sécurité avancée
 - [ ] Monitoring performance et métriques
