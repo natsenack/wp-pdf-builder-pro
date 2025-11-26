@@ -3224,11 +3224,11 @@ function syncFormElementsWithLoadedSettings() {
         'canvas_preload_critical': 'canvas_preload_critical',
         'canvas_lazy_loading_plugin': 'canvas_lazy_loading_plugin',
         
-        // Autosave
-        'canvas_autosave_enabled': 'canvas_autosave_enabled',
-        'canvas_autosave_interval': 'canvas_autosave_interval',
-        'canvas_history_max': 'canvas_versions_limit',
-        'canvas_history_enabled': 'canvas_history_enabled',
+        // Autosave - géré par l'HTML directement depuis WordPress options
+        // 'canvas_autosave_enabled': 'canvas_autosave_enabled',
+        // 'canvas_autosave_interval': 'canvas_autosave_interval', 
+        // 'canvas_history_max': 'canvas_versions_limit',
+        // 'canvas_history_enabled': 'canvas_history_enabled',
         
         // Debug
         'canvas_debug_enabled': 'canvas_debug_enabled',
