@@ -170,7 +170,7 @@ class PDF_Builder_Settings_Loader {
             // Canvas
             'canvas_width' => $settings['pdf_builder_canvas_width'] ?? 794,
             'canvas_height' => $settings['pdf_builder_canvas_height'] ?? 1123,
-            'canvas_settings' => $settings['pdf_builder_canvas_settings'] ?? [],
+            'canvas_settings' => [],
         ];
     }
 }
@@ -188,7 +188,7 @@ $all_settings = PDF_Builder_Settings_Loader::load_all_settings();
 
 // Extraire les paramètres principaux
 $settings = $all_settings; // $all_settings contient déjà toutes les options avec clés pdf_builder_*
-$canvas_settings = $all_settings['pdf_builder_canvas_settings'] ?? [];
+$canvas_settings = []; // Les paramètres canvas sont gérés séparément
 
 // Préparer les données pour les previews
 $preview_data = PDF_Builder_Settings_Loader::prepare_preview_data($all_settings);
