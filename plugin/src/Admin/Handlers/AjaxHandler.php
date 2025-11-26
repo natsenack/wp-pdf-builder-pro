@@ -364,6 +364,8 @@ class AjaxHandler
                 return;
             }
 
+            error_log('[PDF Builder] About to call loadTemplateRobust for template ID: ' . $template_id);
+
             // Charger le template en utilisant le template processor
             $this->debug_log('ajaxGetTemplate: Calling loadTemplateRobust for template ID ' . $template_id);
             $template = $this->admin->template_processor->loadTemplateRobust($template_id);
