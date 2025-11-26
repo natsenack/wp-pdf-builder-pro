@@ -1346,9 +1346,21 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         updateDeveloperStatusIndicator(data.data.saved_options.developer_enabled === '1');
                         
+                        // Mettre à jour l'état du checkbox lui-même
+                        const developerCheckbox = document.getElementById('developer_enabled');
+                        if (developerCheckbox) {
+                            developerCheckbox.checked = data.data.saved_options.developer_enabled === '1';
+                            if (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.developer_enabled) {
+                                console.log('PDF_BUILDER_DEBUG: Checkbox updated to:', developerCheckbox.checked);
+                            }
+                        }
+                        
                         // Mettre à jour la variable globale pour cohérence
                         if (window.pdfBuilderSavedSettings) {
                             window.pdfBuilderSavedSettings.developer_enabled = data.data.saved_options.developer_enabled === '1';
+                            if (window.pdfBuilderSavedSettings.developer_enabled) {
+                                console.log('PDF_BUILDER_DEBUG: Global developer_enabled updated to:', window.pdfBuilderSavedSettings.developer_enabled);
+                            }
                         }
                         
                         // Mettre à jour la visibilité des sections développeur
