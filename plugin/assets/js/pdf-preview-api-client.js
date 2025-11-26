@@ -78,7 +78,7 @@ class PDFPreviewAPI {
             const formData = new FormData();
             formData.append('action', 'wp_pdf_preview_image');
             formData.append('nonce', this.nonce);
-            formData.append('context', 'editor');
+            formData.append('context', options.context || 'editor');  // Utiliser le contexte passé ou 'editor' par défaut
             formData.append('template_data', JSON.stringify(templateData));
             formData.append('quality', options.quality || 150);
             formData.append('format', options.format || 'png');

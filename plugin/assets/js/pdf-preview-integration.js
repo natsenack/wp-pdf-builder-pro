@@ -309,27 +309,37 @@ class PDFEditorPreviewIntegration {
 
     async generatePreview() {
         try {
+            PDFBuilderLogger.info('🎨 [JS] generatePreview() appelée depuis éditeur');
+
             // Récupérer les données du template depuis l'éditeur
             const templateData = this.getTemplateData();
+            PDFBuilderLogger.info('🎨 [JS] Données template récupérées:', templateData);
 
             if (!templateData) {
                 alert('Aucune donnée de template trouvée. Veuillez créer un template d\'abord.');
+                PDFBuilderLogger.error('❌ [JS] Aucune donnée template trouvée');
                 return;
             }
 
-            // Générer l'aperçu
+            // Générer l'aperçu avec contexte explicite
+            PDFBuilderLogger.info('🎨 [JS] Génération aperçu avec templateData et options');
             const result = await window.generateEditorPreview(templateData, {
                 quality: 150,
-                format: 'png'
+                format: 'png',
+                context: 'editor'  // Forcer le contexte editor
             });
 
+            PDFBuilderLogger.info('🎨 [JS] Résultat génération:', result);
+
             if (result) {
-                // Preview generated successfully
+                PDFBuilderLogger.info('✅ [JS] Aperçu généré avec succès');
+            } else {
+                PDFBuilderLogger.warn('⚠️ [JS] Génération retournée null/vide');
             }
 
-        } catch {
-
-            alert('Erreur lors de la génération de l\'aperçu. Vérifiez la console pour plus de détails.');
+        } catch (error) {
+            PDFBuilderLogger.error('❌ [JS] Erreur génération aperçu:', error);
+            alert('Erreur lors de la génération de l\'aperçu: ' + error.message + '\nVérifiez la console pour plus de détails.');
         }
     }
 
@@ -337,42 +347,61 @@ class PDFEditorPreviewIntegration {
         PDFBuilderLogger.debug('getTemplateData() appelée');
         PDFBuilderLogger.debug('this.canvasEditor:', this.canvasEditor);
         PDFBuilderLogger.debug('window.pdfCanvasEditor:', window.pdfCanvasEditor);
+        PDFBuilderLogger.debug('window.pdfBuilderReact:', window.pdfBuilderReact);
 
-        // Adapter selon votre structure de données d'éditeur
+        // Priorité 1: Éditeur React - essayer plusieurs méthodes
+        if (window.pdfBuilderReact) {
+            PDFBuilderLogger.debug('Éditeur React détecté, test des méthodes...');
+
+            // Méthode 1: getCurrentTemplate
+            if (typeof window.pdfBuilderReact.getCurrentTemplate === 'function') {
+                try {
+                    const data = window.pdfBuilderReact.getCurrentTemplate();
+                    PDFBuilderLogger.debug('getCurrentTemplate() résultat:', data);
+                    if (data && (data.elements || data.template)) {
+                        PDFBuilderLogger.info('✅ Données récupérées via getCurrentTemplate');
+                        return data;
+                    }
+                } catch (error) {
+                    PDFBuilderLogger.error('Erreur getCurrentTemplate:', error);
+                }
+            }
+
+            // Méthode 2: getEditorState
+            if (typeof window.pdfBuilderReact.getEditorState === 'function') {
+                try {
+                    const data = window.pdfBuilderReact.getEditorState();
+                    PDFBuilderLogger.debug('getEditorState() résultat:', data);
+                    if (data && (data.elements || data.template)) {
+                        PDFBuilderLogger.info('✅ Données récupérées via getEditorState');
+                        return data;
+                    }
+                } catch (error) {
+                    PDFBuilderLogger.error('Erreur getEditorState:', error);
+                }
+            }
+
+            // Méthode 3: Chercher dans les variables globales React
+            if (window.pdfBuilderReact.currentTemplate) {
+                PDFBuilderLogger.debug('currentTemplate trouvé:', window.pdfBuilderReact.currentTemplate);
+                return window.pdfBuilderReact.currentTemplate;
+            }
+
+            if (window.pdfBuilderReact.editorState) {
+                PDFBuilderLogger.debug('editorState trouvé:', window.pdfBuilderReact.editorState);
+                return window.pdfBuilderReact.editorState;
+            }
+        }
+
+        // Priorité 2: Éditeur canvas traditionnel
         if (this.canvasEditor && typeof this.canvasEditor.getTemplateData === 'function') {
             PDFBuilderLogger.debug('Utilisation de this.canvasEditor.getTemplateData()');
             const data = this.canvasEditor.getTemplateData();
             PDFBuilderLogger.debug('Données récupérées depuis canvasEditor:', data);
-            return data;
+            if (data) return data;
         }
 
-        PDFBuilderLogger.debug('canvasEditor non disponible, test des fallbacks');
-
-        // Fallback: Éditeur React
-        if (window.pdfBuilderReact && typeof window.pdfBuilderReact.getCurrentTemplate === 'function') {
-            PDFBuilderLogger.debug('Utilisation de window.pdfBuilderReact.getCurrentTemplate()');
-            try {
-                const data = window.pdfBuilderReact.getCurrentTemplate();
-                PDFBuilderLogger.debug('Données récupérées depuis React editor (getCurrentTemplate):', data);
-                if (data) return data;
-            } catch (error) {
-                console.error('[PDF Builder] Erreur getCurrentTemplate:', error);
-            }
-        }
-
-        // Fallback: Éditeur React - getEditorState
-        if (window.pdfBuilderReact && typeof window.pdfBuilderReact.getEditorState === 'function') {
-            PDFBuilderLogger.debug('Test de window.pdfBuilderReact.getEditorState()');
-            try {
-                const data = window.pdfBuilderReact.getEditorState();
-                PDFBuilderLogger.debug('Données récupérées depuis React editor (getEditorState):', data);
-                if (data) return data;
-            } catch (error) {
-                console.error('[PDF Builder] Erreur getEditorState:', error);
-            }
-        }
-
-        // Fallback: chercher dans le localStorage ou les variables globales
+        // Fallback: Variables globales
         if (window.pdfEditorTemplate) {
             PDFBuilderLogger.debug('Utilisation de window.pdfEditorTemplate');
             return window.pdfEditorTemplate;
@@ -386,18 +415,44 @@ class PDFEditorPreviewIntegration {
         // Template par défaut pour les tests
         PDFBuilderLogger.debug('Utilisation du template par défaut (test)');
         return {
-            templateId: 'autosave-test-' + Date.now(),
+            templateId: 'preview-test-' + Date.now(),
             template: {
-                name: 'Auto-save Test Template',
+                name: 'Template Aperçu Test',
                 elements: [
                     {
                         type: 'text',
-                        content: 'TEMPLATE DE TEST AUTO-SAVE',
+                        content: 'APERÇU PDF BUILDER PRO - TEST DONNÉES',
                         x: 50,
                         y: 50,
                         width: 400,
                         height: 40,
-                        fontSize: 20,
+                        fontSize: 18,
+                        color: '#2c3e50'
+                    },
+                    {
+                        type: 'text',
+                        content: 'Client: {{customer_name}}',
+                        x: 50,
+                        y: 100,
+                        width: 300,
+                        height: 30,
+                        fontSize: 14,
+                        color: '#34495e'
+                    },
+                    {
+                        type: 'text',
+                        content: 'Commande: {{order_number}}',
+                        x: 50,
+                        y: 130,
+                        width: 300,
+                        height: 30,
+                        fontSize: 14,
+                        color: '#34495e'
+                    }
+                ]
+            }
+        };
+    }
                         fontFamily: 'Arial',
                         color: '#000000',
                         fontWeight: 'bold'
