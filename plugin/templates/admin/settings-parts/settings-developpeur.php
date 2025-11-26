@@ -1,8 +1,8 @@
 <?php // Developer tab content - Updated: 2025-11-18 20:20:00 ?>
 
 // Variables nécessaires pour l'onglet développeur
-$license_test_mode = $all_settings['pdf_builder_license_test_mode_enabled'] ?? false;
-$license_test_key = $all_settings['pdf_builder_license_test_key'] ?? '';
+$license_test_mode = $settings['pdf_builder_license_test_mode_enabled'] ?? false;
+$license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
 
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
@@ -133,7 +133,7 @@ $license_test_key = $all_settings['pdf_builder_license_test_key'] ?? '';
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="debug_php_errors" name="debug_php_errors" value="1" <?php echo isset($settings['debug_php_errors']) && $settings['debug_php_errors'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="debug_php_errors" name="pdf_builder_debug_php_errors" value="1" <?php echo isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Debug PHP</span>
@@ -146,7 +146,7 @@ $license_test_key = $all_settings['pdf_builder_license_test_key'] ?? '';
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="debug_javascript" name="debug_javascript" value="1" <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="debug_javascript" name="pdf_builder_debug_javascript" value="1" <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Debug JS</span>
@@ -159,7 +159,7 @@ $license_test_key = $all_settings['pdf_builder_license_test_key'] ?? '';
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="debug_javascript_verbose" name="debug_javascript_verbose" value="1" <?php echo isset($settings['debug_javascript_verbose']) && $settings['debug_javascript_verbose'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Logs détaillés</span>
@@ -172,7 +172,7 @@ $license_test_key = $all_settings['pdf_builder_license_test_key'] ?? '';
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="debug_ajax" name="debug_ajax" value="1" <?php echo isset($settings['debug_ajax']) && $settings['debug_ajax'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="debug_ajax" name="pdf_builder_debug_ajax" value="1" <?php echo isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Debug AJAX</span>
@@ -185,7 +185,7 @@ $license_test_key = $all_settings['pdf_builder_license_test_key'] ?? '';
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="debug_performance" name="debug_performance" value="1" <?php echo isset($settings['debug_performance']) && $settings['debug_performance'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="debug_performance" name="pdf_builder_debug_performance" value="1" <?php echo isset($settings['pdf_builder_debug_performance']) && $settings['pdf_builder_debug_performance'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Debug perf.</span>
@@ -198,7 +198,7 @@ $license_test_key = $all_settings['pdf_builder_license_test_key'] ?? '';
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="debug_database" name="debug_database" value="1" <?php echo isset($settings['debug_database']) && $settings['debug_database'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="debug_database" name="pdf_builder_debug_database" value="1" <?php echo isset($settings['pdf_builder_debug_database']) && $settings['pdf_builder_debug_database'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Debug DB</span>

@@ -561,23 +561,23 @@ function pdf_builder_save_settings_handler() {
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_license_test_mode', $value);
                 }
-                $value = $get_post_value('debug_php_errors');
+                $value = $get_post_value('pdf_builder_debug_php_errors');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_php_errors', $value);
                 }
-                $value = $get_post_value('debug_javascript');
+                $value = $get_post_value('pdf_builder_debug_javascript');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_javascript', $value);
                 }
-                $value = $get_post_value('debug_javascript_verbose');
+                $value = $get_post_value('pdf_builder_debug_javascript_verbose');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_javascript_verbose', $value);
                 }
-                $value = $get_post_value('debug_ajax');
+                $value = $get_post_value('pdf_builder_debug_ajax');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_ajax', $value);
                 }
-                $value = $get_post_value('debug_performance');
+                $value = $get_post_value('pdf_builder_debug_performance');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_performance', $value);
                 }
@@ -737,27 +737,27 @@ function pdf_builder_save_settings_handler() {
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_developer_password', $value);
                 }
-                $value = $get_post_value('debug_php_errors');
+                $value = $get_post_value('pdf_builder_debug_php_errors');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_php_errors', $value);
                 }
-                $value = $get_post_value('debug_javascript');
+                $value = $get_post_value('pdf_builder_debug_javascript');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_javascript', $value);
                 }
-                $value = $get_post_value('debug_javascript_verbose');
+                $value = $get_post_value('pdf_builder_debug_javascript_verbose');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_javascript_verbose', $value);
                 }
-                $value = $get_post_value('debug_ajax');
+                $value = $get_post_value('pdf_builder_debug_ajax');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_ajax', $value);
                 }
-                $value = $get_post_value('debug_performance');
+                $value = $get_post_value('pdf_builder_debug_performance');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_performance', $value);
                 }
-                $value = $get_post_value('debug_database');
+                $value = $get_post_value('pdf_builder_debug_database');
                 if ($value !== null) {
                     PDF_Builder_Options_Manager::save_option('pdf_builder_debug_database', $value);
                 }
