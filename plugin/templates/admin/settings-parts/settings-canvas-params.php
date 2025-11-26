@@ -73,18 +73,50 @@ $canvas_settings_js = [
     'canvas_error_reporting' => get_option('pdf_builder_canvas_error_reporting', '0') === '1'
 ];
 
+// Sanitiser les paramètres canvas pour éviter les erreurs JSON
+$sanitized_canvas_settings = [];
+foreach ($canvas_settings_js as $key => $value) {
+    if (is_string($value)) {
+        // Supprimer tous les caractères de contrôle et caractères problématiques
+        $sanitized_canvas_settings[$key] = preg_replace('/[\x00-\x1F\x7F]/', '', $value);
+    } else {
+        $sanitized_canvas_settings[$key] = $value;
+    }
+}
+
 // Debug: Afficher les valeurs PHP chargées
-PDF_Builder_Security_Manager::debug_log('php_errors', 'Canvas settings loaded:', $canvas_settings_js);
+PDF_Builder_Security_Manager::debug_log('php_errors', 'Canvas settings loaded:', $sanitized_canvas_settings);
+
+// Dimensions standard des formats de papier en mm (centralisées et sanitizées)
+$sanitized_paper_formats = [];
+if (defined('PDF_BUILDER_PAPER_FORMATS')) {
+    foreach (PDF_BUILDER_PAPER_FORMATS as $key => $value) {
+        if (is_string($value)) {
+            $sanitized_paper_formats[$key] = preg_replace('/[\x00-\x1F\x7F]/', '', $value);
+        } elseif (is_array($value)) {
+            $sanitized_paper_formats[$key] = [];
+            foreach ($value as $sub_key => $sub_value) {
+                if (is_string($sub_value)) {
+                    $sanitized_paper_formats[$key][$sub_key] = preg_replace('/[\x00-\x1F\x7F]/', '', $sub_value);
+                } else {
+                    $sanitized_paper_formats[$key][$sub_key] = $sub_value;
+                }
+            }
+        } else {
+            $sanitized_paper_formats[$key] = $value;
+        }
+    }
+}
 
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 ?>
 <script>
-window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings_js); ?>;
+window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($sanitized_canvas_settings); ?>;
 pdfBuilderDebug('Canvas settings loaded from WordPress options:', window.pdfBuilderCanvasSettings);
 window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>';
 
 // Dimensions standard des formats de papier en mm (centralisées)
-window.pdfBuilderPaperFormats = <?php echo wp_json_encode(PDF_BUILDER_PAPER_FORMATS); ?>;
+window.pdfBuilderPaperFormats = <?php echo wp_json_encode($sanitized_paper_formats); ?>;
 
 // Fonction pour convertir le format et l'orientation en dimensions pixels
 window.pdfBuilderCanvasSettings.getDimensionsFromFormat = function(format, orientation) {
