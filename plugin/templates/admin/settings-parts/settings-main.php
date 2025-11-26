@@ -1434,7 +1434,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (modal.getAttribute('data-category') === 'autosave' && modal._originalAutosaveSettings) {
                 if (window.pdfBuilderCanvasSettings) {
-                    window.pdfBuilderCanvasSettings.autosave_enabled = modal._originalAutosaveSettings.autosaveEnabled;
+                    window.pdfBuilderCanvasSettings.canvas_autosave_enabled = modal._originalAutosaveSettings.autosaveEnabled;
                     window.pdfBuilderCanvasSettings.autosave_interval = modal._originalAutosaveSettings.autosaveInterval;
                     window.pdfBuilderCanvasSettings.versions_limit = modal._originalAutosaveSettings.versionsLimit;
                     
@@ -1872,16 +1872,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Update window.pdfBuilderCanvasSettings with saved values for autosave
                             if (category === 'autosave' && data.data && data.data.saved) {
                                 if (data.data.saved.canvas_autosave_enabled !== undefined) {
-                                    window.pdfBuilderCanvasSettings.autosave_enabled = data.data.saved.canvas_autosave_enabled === '1' || data.data.saved.canvas_autosave_enabled === true;
+                                    window.pdfBuilderCanvasSettings.canvas_autosave_enabled = data.data.saved.canvas_autosave_enabled === '1' || data.data.saved.canvas_autosave_enabled === true;
                                 }
                                 if (data.data.saved.canvas_autosave_interval !== undefined) {
                                     window.pdfBuilderCanvasSettings.autosave_interval = parseInt(data.data.saved.canvas_autosave_interval);
                                 }
                                 if (data.data.saved.canvas_versions_limit !== undefined) {
                                     window.pdfBuilderCanvasSettings.versions_limit = parseInt(data.data.saved.canvas_versions_limit);
-                                }
-                                if (data.data.saved.canvas_history_max !== undefined) {
-                                    window.pdfBuilderCanvasSettings.versions_limit = parseInt(data.data.saved.canvas_history_max);
                                 }
                                 
                                 // Mettre à jour les éléments du DOM
@@ -2720,7 +2717,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const versionsLimitInput = document.getElementById("canvas_history_max");
 
             const autosaveInterval = autosaveIntervalInput ? parseInt(autosaveIntervalInput.value) : (window.pdfBuilderCanvasSettings?.autosave_interval || 5);
-            const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.autosave_enabled === true || window.pdfBuilderCanvasSettings?.autosave_enabled === '1');
+            const autosaveEnabled = autosaveEnabledInput ? autosaveEnabledInput.checked : (window.pdfBuilderCanvasSettings?.canvas_autosave_enabled === true || window.pdfBuilderCanvasSettings?.canvas_autosave_enabled === '1');
             const versionsLimit = versionsLimitInput ? parseInt(versionsLimitInput.value) : (window.pdfBuilderCanvasSettings?.versions_limit || 10);
 
             console.log('PDF_BUILDER_DEBUG: autosave values - enabled:', autosaveEnabled, 'interval:', autosaveInterval, 'versionsLimit:', versionsLimit);
@@ -2786,7 +2783,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Update window.pdfBuilderCanvasSettings temporarily for preview
                     if (window.pdfBuilderCanvasSettings) {
                         if (target.id === 'canvas_autosave_enabled') {
-                            window.pdfBuilderCanvasSettings.autosave_enabled = target.checked;
+                            window.pdfBuilderCanvasSettings.canvas_autosave_enabled = target.checked;
                         } else if (target.id === 'canvas_autosave_interval') {
                             window.pdfBuilderCanvasSettings.autosave_interval = parseInt(target.value);
                         } else if (target.id === 'canvas_history_max') {
@@ -2898,9 +2895,9 @@ document.addEventListener('DOMContentLoaded', function() {
         autosave: {
             fields: ['canvas_autosave_enabled', 'canvas_autosave_interval', 'canvas_history_max'],
             settingMappings: {
-                'canvas_autosave_enabled': 'autosave_enabled',
-                'canvas_autosave_interval': 'autosave_interval',
-                'canvas_history_max': 'versions_limit'
+                'canvas_autosave_enabled': 'canvas_autosave_enabled',
+                'canvas_autosave_interval': 'canvas_autosave_interval',
+                'canvas_history_max': 'canvas_versions_limit'
             },
             valueTransformers: {
                 'canvas_autosave_enabled': (value) => value === 'on' || value === true,
@@ -3062,9 +3059,9 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         autosave: {
             fields: [
-                { id: 'canvas_autosave_enabled', setting: 'autosave_enabled', default: true, type: 'checkbox' },
-                { id: 'canvas_autosave_interval', setting: 'autosave_interval', default: 5 },
-                { id: 'canvas_history_max', setting: 'versions_limit', default: 10 }
+                { id: 'canvas_autosave_enabled', setting: 'canvas_autosave_enabled', default: true, type: 'checkbox' },
+                { id: 'canvas_autosave_interval', setting: 'canvas_autosave_interval', default: 5 },
+                { id: 'canvas_history_max', setting: 'canvas_versions_limit', default: 10 }
             ]
         }
     };
@@ -3166,7 +3163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Update window.pdfBuilderCanvasSettings temporarily for preview
                     if (window.pdfBuilderCanvasSettings) {
                         if (target.id === 'canvas_autosave_enabled') {
-                            window.pdfBuilderCanvasSettings.autosave_enabled = target.checked;
+                            window.pdfBuilderCanvasSettings.canvas_autosave_enabled = target.checked;
                         } else if (target.id === 'canvas_autosave_interval') {
                             window.pdfBuilderCanvasSettings.autosave_interval = parseInt(target.value);
                         } else if (target.id === 'canvas_history_max') {

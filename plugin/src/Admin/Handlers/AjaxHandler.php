@@ -892,7 +892,7 @@ class AjaxHandler
                     $savedData = [
                             'canvas_autosave_enabled' => get_option('pdf_builder_canvas_autosave_enabled', '1'),
                             'canvas_autosave_interval' => get_option('pdf_builder_canvas_auto_save_interval', '5'),
-                            'canvas_history_max' => get_option('pdf_builder_canvas_history_max', '50')
+                            'canvas_versions_limit' => get_option('pdf_builder_canvas_history_max', '50')
                         ];
                     }
                     break;
