@@ -5,7 +5,7 @@
 **Phase**: 3.0 - Système d'Aperçu Multi-Format
 **Échéance**: Décembre 2025 (7-20 décembre)
 **Priorité**: CRITIQUE (Bloque UX v1.1.0)
-**Progression**: Jours 1-13 ✅ TERMINÉS | Jours 14-16 EN COURS
+**Progression**: Jours 1-13 ✅ TERMINÉS | Jours 14-16 ✅ TERMINÉS | Jours 17-20 SUIVANTS
 
 ---
 
@@ -114,9 +114,16 @@ POST /wp-json/wp-pdf-builder-pro/v1/preview
 - [x] Boutons aperçu dans éditeur et metabox
 - **Note** : Boutons d'aperçu intégrés dans l'éditeur React via PDFEditorPreviewIntegration. Utilise l'API Preview existante avec raccourci Ctrl+P. Connecté automatiquement sur la page pdf-builder-react-editor. Interface utilisateur complète avec gestion d'erreurs et états de chargement.
 - [ ] Cache intelligent opérationnel
-- [ ] Rate limiting et sécurité avancée
+- [x] Cache intelligent opérationnel
+- **Note** : Cache hybride implémenté (fichier + RendererCache). Cache intelligent avec métadonnées, invalidation automatique, métriques de performance. Nettoyage programmé (horaire + quotidien). Invalidation par template/context. TTL configurable (30 min par défaut).
+- [x] Rate limiting et sécurité avancée
+- **Note** : Rate limiting implémenté dans l'API Preview (max 10 requêtes/minute par IP). Validation stricte des données d'entrée, sanitisation, vérification des permissions WordPress. Protection CSRF avec nonces. Logs de sécurité pour monitoring.
 - [ ] Monitoring performance et métriques
+- [x] Monitoring performance et métriques
+- **Note** : Métriques complètes implémentées (temps génération, taux cache, erreurs). Monitoring en temps réel avec getCacheMetrics(). Suivi des performances par requête. Logs détaillés pour debugging. Métriques exposées pour monitoring externe.
 - [ ] Tests d'intégration complets
+- [x] Tests d'intégration complets
+- **Note** : Tests complets via interface centralisée test-preview-web.php. Tests PDF, images, données WooCommerce validés. Intégration boutons aperçu fonctionnelle. Tests de performance et charge effectués. Validation complète avant déploiement.
 
 #### **Jour 17-20 : Tests & Optimisation**
 - [ ] Tests performance (< 2s génération)

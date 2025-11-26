@@ -6,6 +6,7 @@ use PDF_Builder\Generators\GeneratorManager;
 use PDF_Builder\Data\SampleDataProvider;
 use PDF_Builder\Data\WooCommerceDataProvider;
 use PDF_Builder\Utilities\ImageConverter;
+use PDF_Builder\Cache\RendererCache;
 
 // Declare WooCommerce functions for linter
 if (!function_exists('wc_get_order')) {
@@ -30,8 +31,15 @@ class PreviewImageAPI
 // 1 minute
     private $rate_limit_max = 10;
 // 10 requêtes par minute
-    private $request_log = [];
-    private $generator_manager;
+    private $performance_metrics = [
+        'requests_total' => 0,
+        'requests_cached' => 0,
+        'requests_generated' => 0,
+        'generation_times' => [],
+        'errors_total' => 0,
+        'cache_hit_rate' => 0,
+        'last_cleanup' => null
+    ];
 
     public function __construct()
     {
@@ -56,6 +64,12 @@ class PreviewImageAPI
         wp_clear_scheduled_hook('wp_pdf_cleanup_preview_cache');
         if (!wp_next_scheduled('wp_pdf_cleanup_preview_cache')) {
             wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
+        }
+
+        // Nettoyage du cache intelligent
+        add_action('wp_pdf_cleanup_intelligent_cache', array(__CLASS__, 'cleanup_intelligent_cache'));
+        if (!wp_next_scheduled('wp_pdf_cleanup_intelligent_cache')) {
+            wp_schedule_event(time(), 'daily', 'wp_pdf_cleanup_intelligent_cache');
         }
     }
 
@@ -425,30 +439,80 @@ class PreviewImageAPI
      */
     public function generateWithCache($params)
     {
+        $start_time = microtime(true);
+        $this->performance_metrics['requests_total']++;
+
         $cache_key = $this->generateCacheKey($params);
+
+        // Utiliser le cache intelligent RendererCache pour les métadonnées
+        $cache_metadata_key = 'preview_metadata_' . $cache_key;
+        $cached_metadata = RendererCache::get($cache_metadata_key);
+
+        if ($cached_metadata && isset($cached_metadata['image_url'])) {
+            // Vérifier si le fichier cache existe toujours
+            $cache_file = self::$cache_dir . $cache_key . '.' . $params['format'];
+            if (file_exists($cache_file)) {
+                $this->performance_metrics['requests_cached']++;
+                $generation_time = microtime(true) - $start_time;
+                $this->performance_metrics['generation_times'][] = $generation_time;
+
+                return array_merge($cached_metadata, [
+                    'cached' => true,
+                    'cache_source' => 'intelligent',
+                    'generation_time' => round($generation_time, 3)
+                ]);
+            } else {
+                // Fichier supprimé, invalider le cache
+                RendererCache::delete($cache_metadata_key);
+            }
+        }
+
         $cache_file = self::$cache_dir . $cache_key . '.' . $params['format'];
-// Vérifier si cache valide
+
+        // Vérifier si cache fichier valide (fallback)
         if ($this->isCacheValid($cache_file, $params)) {
-            return array(
+            $this->performance_metrics['requests_cached']++;
+            $generation_time = microtime(true) - $start_time;
+            $this->performance_metrics['generation_times'][] = $generation_time;
+
+            $result = array(
                 'image_url' => $this->getCacheUrl($cache_key, $params['format']),
                 'cached' => true,
                 'cache_key' => $cache_key,
                 'status' => 'preview_ready',
                 'format' => $params['format'],
-                'quality' => $params['quality']
+                'quality' => $params['quality'],
+                'cache_source' => 'file',
+                'generation_time' => round($generation_time, 3)
             );
+
+            // Stocker dans le cache intelligent
+            RendererCache::set($cache_metadata_key, $result, 1800); // 30 minutes
+
+            return $result;
         }
 
         // Générer l'image réelle
+        $this->performance_metrics['requests_generated']++;
         $image_url = $this->generateRealImage($params, $cache_file);
-        return array(
+        $generation_time = microtime(true) - $start_time;
+        $this->performance_metrics['generation_times'][] = $generation_time;
+
+        $result = array(
             'image_url' => $image_url,
             'cached' => false,
             'cache_key' => $cache_key,
             'status' => 'preview_ready',
             'format' => $params['format'],
-            'quality' => $params['quality']
+            'quality' => $params['quality'],
+            'cache_source' => 'generated',
+            'generation_time' => round($generation_time, 3)
         );
+
+        // Stocker dans le cache intelligent
+        RendererCache::set($cache_metadata_key, $result, 1800); // 30 minutes
+
+        return $result;
     }
 
     /**
@@ -889,18 +953,96 @@ class PreviewImageAPI
     }
 
     /**
-     * Retourne des données de template par défaut pour les tests
-     *
-     * @return array Données de template par défaut
+     * Nettoie le cache intelligent RendererCache
+     * Supprime les entrées expirées et optimise les performances
      */
-    private function getDefaultTemplateData()
+    public static function cleanup_intelligent_cache()
     {
+        try {
+            // RendererCache gère automatiquement le nettoyage des entrées expirées
+            // Nous pouvons forcer un nettoyage manuel si nécessaire
+            RendererCache::clearExpired();
+
+            // Log du nettoyage
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('[PDF Builder] Cache intelligent nettoyé automatiquement');
+            }
+
+        } catch (\Exception $e) {
+            error_log('[PDF Builder] Erreur nettoyage cache intelligent: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Invalide le cache pour un template spécifique
+     *
+     * @param int $template_id ID du template
+     * @param string $context Contexte (editor/metabox)
+     */
+    public static function invalidateTemplateCache($template_id, $context = null)
+    {
+        try {
+            $pattern = 'preview_metadata_*' . $template_id . '*';
+
+            if ($context) {
+                $pattern .= '*' . $context . '*';
+            }
+
+            // Supprimer toutes les entrées de cache correspondant au pattern
+            RendererCache::deleteByPattern($pattern);
+
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('[PDF Builder] Cache invalidé pour template ' . $template_id . ' (' . $context . ')');
+            }
+
+        } catch (\Exception $e) {
+            error_log('[PDF Builder] Erreur invalidation cache template: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Obtient les métriques de performance du cache
+     *
+     * @return array Métriques de cache
+     */
+    public static function getCacheMetrics()
+    {
+        $instance = self::getInstance();
+        $intelligent_metrics = RendererCache::getMetrics();
+
+        // Calculer le taux de succès du cache
+        $total_requests = $instance->performance_metrics['requests_total'];
+        $cached_requests = $instance->performance_metrics['requests_cached'];
+        $hit_rate = $total_requests > 0 ? round(($cached_requests / $total_requests) * 100, 2) : 0;
+
+        // Calculer les temps moyens de génération
+        $generation_times = $instance->performance_metrics['generation_times'];
+        $avg_generation_time = !empty($generation_times) ? round(array_sum($generation_times) / count($generation_times), 3) : 0;
+        $max_generation_time = !empty($generation_times) ? round(max($generation_times), 3) : 0;
+
         return [
-            'id' => 'default_preview_template',
-            'name' => 'Template Aperçu par Défaut',
-            'elements' => [
-                [
-                    'type' => 'text',
+            'file_cache' => [
+                'directory' => self::$cache_dir,
+                'max_age' => self::$max_cache_age,
+                'exists' => file_exists(self::$cache_dir)
+            ],
+            'intelligent_cache' => $intelligent_metrics,
+            'performance' => [
+                'total_requests' => $total_requests,
+                'cached_requests' => $cached_requests,
+                'generated_requests' => $instance->performance_metrics['requests_generated'],
+                'cache_hit_rate' => $hit_rate . '%',
+                'avg_generation_time' => $avg_generation_time . 's',
+                'max_generation_time' => $max_generation_time . 's',
+                'error_count' => $instance->performance_metrics['errors_total']
+            ],
+            'rate_limiting' => [
+                'window' => 60, // secondes
+                'max_requests' => 10
+            ],
+            'last_cleanup' => $instance->performance_metrics['last_cleanup']
+        ];
+    }
                     'content' => 'APERÇU PDF BUILDER PRO',
                     'style' => [
                         'fontSize' => '24px',
