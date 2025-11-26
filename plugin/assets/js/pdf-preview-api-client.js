@@ -299,9 +299,6 @@ class PDFPreviewAPI {
         // Ajouter les contrôles de zoom et rotation
         this.addZoomControls(previewModal, canvas);
 
-        // Ajouter des boutons d'action
-        this.addPreviewActions(previewModal, imageUrl, context);
-
         // Afficher la modal en togglant la classe
         previewModal.classList.add('visible');
 
