@@ -1660,6 +1660,81 @@ document.addEventListener('DOMContentLoaded', function() {
                             this.textContent = originalText;
                             this.disabled = false;
 
+                            // Fonction centralisée pour mettre à jour les éléments du DOM
+                            function updateFormElementsFromSavedData(category, savedData) {
+                                if (!savedData) return;
+                                
+                                pdfBuilderDebug('Mise à jour des éléments DOM pour catégorie:', category);
+                                
+                                // Mapping des IDs d'éléments vers les clés de données sauvegardées
+                                const elementMappings = {
+                                    // Apparence
+                                    'canvas_shadow_enabled': 'canvas_shadow_enabled',
+                                    
+                                    // Grille
+                                    'canvas_guides_enabled': 'canvas_guides_enabled',
+                                    'canvas_grid_enabled': 'canvas_grid_enabled', 
+                                    'canvas_snap_to_grid': 'canvas_snap_to_grid',
+                                    'canvas_grid_size': 'canvas_grid_size',
+                                    
+                                    // Interactions
+                                    'canvas_drag_enabled': 'canvas_drag_enabled',
+                                    'canvas_resize_enabled': 'canvas_resize_enabled',
+                                    'canvas_rotate_enabled': 'canvas_rotate_enabled',
+                                    'canvas_multi_select': 'canvas_multi_select',
+                                    'canvas_selection_mode': 'canvas_selection_mode',
+                                    'canvas_keyboard_shortcuts': 'canvas_keyboard_shortcuts',
+                                    
+                                    // Export
+                                    'canvas_export_format': 'canvas_export_format',
+                                    'canvas_export_quality': 'canvas_export_quality',
+                                    'canvas_export_transparent': 'canvas_export_transparent',
+                                    
+                                    // Performance
+                                    'canvas_fps_target': 'canvas_fps_target',
+                                    'canvas_memory_limit_js': 'canvas_memory_limit_js',
+                                    'canvas_memory_limit_php': 'canvas_memory_limit_php',
+                                    'canvas_lazy_loading_editor': 'canvas_lazy_loading_editor',
+                                    'canvas_preload_critical': 'canvas_preload_critical',
+                                    'canvas_lazy_loading_plugin': 'canvas_lazy_loading_plugin',
+                                    
+                                    // Autosave
+                                    'canvas_autosave_enabled': 'canvas_autosave_enabled',
+                                    'canvas_autosave_interval': 'canvas_autosave_interval',
+                                    'canvas_versions_limit': 'canvas_versions_limit',
+                                    'canvas_history_enabled': 'canvas_history_enabled',
+                                    
+                                    // Debug
+                                    'canvas_debug_enabled': 'canvas_debug_enabled',
+                                    'canvas_performance_monitoring': 'canvas_performance_monitoring',
+                                    'canvas_error_reporting': 'canvas_error_reporting',
+                                    
+                                    // Zoom
+                                    'zoom_min': 'zoom_min',
+                                    'zoom_max': 'zoom_max',
+                                    'zoom_default': 'zoom_default',
+                                    'zoom_step': 'zoom_step'
+                                };
+                                
+                                // Mettre à jour chaque élément
+                                Object.keys(elementMappings).forEach(elementId => {
+                                    const dataKey = elementMappings[elementId];
+                                    if (savedData[dataKey] !== undefined) {
+                                        const element = document.getElementById(elementId);
+                                        if (element) {
+                                            const value = savedData[dataKey];
+                                            if (element.type === 'checkbox') {
+                                                element.checked = value === '1' || value === true || value === 1;
+                                                pdfBuilderDebug('Toggle mis à jour:', elementId, '=', element.checked);
+                                            } else if (element.type === 'select-one' || element.type === 'text' || element.type === 'number') {
+                                                element.value = value;
+                                                pdfBuilderDebug('Champ mis à jour:', elementId, '=', value);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+
                             // Clear original settings since save was successful
                             delete modal._originalDimensionsSettings;
                             delete modal._originalApparenceSettings;
@@ -1692,6 +1767,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     }
                                 });
                                 document.dispatchEvent(event);
+                                
+                                // Mettre à jour les éléments du DOM
+                                updateFormElementsFromSavedData(category, data.data.saved);
                             }
 
                             // Update window.pdfBuilderCanvasSettings with saved values for apparence
@@ -1711,6 +1789,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_container_bg_color !== undefined) {
                                     window.pdfBuilderCanvasSettings.container_background_color = data.data.saved.canvas_container_bg_color;
                                 }
+                                
+                                // Mettre à jour les éléments du DOM
+                                updateFormElementsFromSavedData(category, data.data.saved);
                             }
 
                             // Update window.pdfBuilderCanvasSettings with saved values for performance
@@ -1730,19 +1811,15 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_lazy_loading_plugin !== undefined) {
                                     window.pdfBuilderCanvasSettings.lazy_loading_plugin = data.data.saved.canvas_lazy_loading_plugin === '1' || data.data.saved.canvas_lazy_loading_plugin === true;
                                 }
+                                
+                                // Mettre à jour les éléments du DOM
+                                updateFormElementsFromSavedData(category, data.data.saved);
                             }
 
                             // Update window.pdfBuilderCanvasSettings with saved values for autosave
                             if (category === 'autosave' && data.data && data.data.saved) {
                                 if (data.data.saved.canvas_autosave_enabled !== undefined) {
                                     window.pdfBuilderCanvasSettings.autosave_enabled = data.data.saved.canvas_autosave_enabled === '1' || data.data.saved.canvas_autosave_enabled === true;
-                                    
-                                    // Mettre à jour l'état du toggle dans le DOM
-                                    const autosaveToggle = document.getElementById('canvas_autosave_enabled');
-                                    if (autosaveToggle) {
-                                        autosaveToggle.checked = window.pdfBuilderCanvasSettings.autosave_enabled;
-                                        pdfBuilderDebug('Toggle autosave mis à jour:', window.pdfBuilderCanvasSettings.autosave_enabled);
-                                    }
                                 }
                                 if (data.data.saved.canvas_autosave_interval !== undefined) {
                                     window.pdfBuilderCanvasSettings.autosave_interval = parseInt(data.data.saved.canvas_autosave_interval);
@@ -1753,6 +1830,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_history_max !== undefined) {
                                     window.pdfBuilderCanvasSettings.versions_limit = parseInt(data.data.saved.canvas_history_max);
                                 }
+                                
+                                // Mettre à jour les éléments du DOM
+                                updateFormElementsFromSavedData(category, data.data.saved);
+                            }
+
+                            // Update window.pdfBuilderCanvasSettings with saved values for debug
+                            if (category === 'debug' && data.data && data.data.saved) {
+                                // Note: Debug settings are typically not stored in window.pdfBuilderCanvasSettings
+                                // as they are for development purposes only
+                                
+                                // Mettre à jour les éléments du DOM
+                                updateFormElementsFromSavedData(category, data.data.saved);
                             }
 
                             // Update window.pdfBuilderCanvasSettings with saved values for export
@@ -1763,6 +1852,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_export_quality !== undefined) {
                                     window.pdfBuilderCanvasSettings.export_quality = parseInt(data.data.saved.canvas_export_quality);
                                 }
+                                
+                                // Mettre à jour les éléments du DOM
+                                updateFormElementsFromSavedData(category, data.data.saved);
                             }
 
                             // Update window.pdfBuilderCanvasSettings with saved values for zoom
@@ -1779,6 +1871,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.zoom_step !== undefined) {
                                     window.pdfBuilderCanvasSettings.zoom_step = parseInt(data.data.saved.zoom_step);
                                 }
+                                
+                                // Mettre à jour les éléments du DOM
+                                updateFormElementsFromSavedData(category, data.data.saved);
                             }
 
                             // Update window.pdfBuilderCanvasSettings with saved values for grille
@@ -1792,6 +1887,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (data.data.saved.canvas_snap_to_grid !== undefined) {
                                     window.pdfBuilderCanvasSettings.snap_to_grid = data.data.saved.canvas_snap_to_grid === '1' || data.data.saved.canvas_snap_to_grid === true;
                                 }
+                                
+                                // Mettre à jour les éléments du DOM
+                                updateFormElementsFromSavedData(category, data.data.saved);
                             }
 
                             // Update window.pdfBuilderCanvasSettings with saved values for interactions
@@ -1816,6 +1914,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     window.pdfBuilderCanvasSettings.keyboard_shortcuts = data.data.saved.canvas_keyboard_shortcuts === '1' || data.data.saved.canvas_keyboard_shortcuts === true;
                                 }
                                 pdfBuilderDebug('Updated window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+                                
+                                // Mettre à jour les éléments du DOM
+                                updateFormElementsFromSavedData(category, data.data.saved);
                             }
 
                             // Update canvas previews after successful save
