@@ -789,6 +789,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Écouter les changements
         developerEnabledToggle.addEventListener('change', toggleDeveloperSections);
+    // Gestion du nettoyage complet de la licence
+    const cleanupLicenseBtn = document.getElementById('cleanup_license_btn');
+    const cleanupStatus = document.getElementById('cleanup_status');
+    const cleanupNonce = document.getElementById('cleanup_license_nonce');
+
+    if (cleanupLicenseBtn && cleanupStatus && cleanupNonce) {
+        cleanupLicenseBtn.addEventListener('click', function() {
+            if (!confirm('⚠️ ATTENTION: Cette action va supprimer TOUTES les données de licence et réinitialiser le plugin à l\'état libre.\n\nCette action est IRRÉVERSIBLE.\n\nÊtes-vous sûr de vouloir continuer ?')) {
+                return;
+            }
+
+            // Désactiver le bouton pendant l'opération
+            cleanupLicenseBtn.disabled = true;
+            cleanupLicenseBtn.textContent = '🧹 Nettoyage en cours...';
+            cleanupStatus.textContent = '';
+            cleanupStatus.style.color = '#007cba';
+
+            // Faire l'appel AJAX
+            fetch(ajaxurl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_cleanup_license',
+                    nonce: cleanupNonce.value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cleanupStatus.textContent = '✅ ' + data.data.message;
+                    cleanupStatus.style.color = '#28a745';
+                    // Recharger la page après 2 secondes pour refléter les changements
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    cleanupStatus.textContent = '❌ Erreur: ' + (data.data?.message || 'Erreur inconnue');
+                    cleanupStatus.style.color = '#dc3545';
+                    cleanupLicenseBtn.disabled = false;
+                    cleanupLicenseBtn.textContent = '🧹 Nettoyer complètement la licence';
+                }
+            })
+            .catch(error => {
+                console.error('Erreur AJAX cleanup license:', error);
+                cleanupStatus.textContent = '❌ Erreur de connexion';
+                cleanupStatus.style.color = '#dc3545';
+                cleanupLicenseBtn.disabled = false;
+                cleanupLicenseBtn.textContent = '🧹 Nettoyer complètement la licence';
+            });
+        });
     }
 
     // Tests de Notifications
