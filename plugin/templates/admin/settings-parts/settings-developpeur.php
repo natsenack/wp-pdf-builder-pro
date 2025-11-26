@@ -19,6 +19,9 @@
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer le mode développeur</span>
+                            <span class="developer-status-indicator" style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'background: #28a745; color: white;' : 'background: #dc3545; color: white;'; ?>">
+                                <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'ACTIF' : 'INACTIF'; ?>
+                            </span>
                         </div>
                         <div class="toggle-description">Active le mode développeur avec logs détaillés</div>
                     </td>

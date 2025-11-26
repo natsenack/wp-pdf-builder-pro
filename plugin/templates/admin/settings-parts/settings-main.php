@@ -1003,13 +1003,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Fonction pour mettre à jour l'indicateur développeur
-    function updateDeveloperStatusIndicator() {
-        const developerEnabledCheckbox = document.getElementById('developer_enabled');
-        const developerIndicator = document.querySelector('.developer-enabled-indicator');
-        if (developerEnabledCheckbox && developerIndicator) {
-            const isActive = developerEnabledCheckbox.checked;
-            developerIndicator.textContent = isActive ? 'Activé' : 'Désactivé';
-            developerIndicator.style.color = isActive ? '#28a745' : '#dc3545';
+    function updateDeveloperStatusIndicator(isActive = null) {
+        const developerIndicator = document.querySelector('.developer-status-indicator');
+        if (developerIndicator) {
+            // Si isActive n'est pas fourni, utiliser l'état actuel du checkbox
+            if (isActive === null) {
+                const developerEnabledCheckbox = document.getElementById('developer_enabled');
+                isActive = developerEnabledCheckbox ? developerEnabledCheckbox.checked : false;
+            }
+
+            developerIndicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
+            developerIndicator.style.background = isActive ? '#28a745' : '#dc3545';
+            developerIndicator.style.color = 'white';
         }
     }
 
@@ -1290,7 +1295,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     toggleRGPDControls();
 
                     // Mettre à jour l'indicateur développeur
-                    updateDeveloperStatusIndicator();
+                    if (data.data && data.data.saved_options && typeof data.data.saved_options.developer_enabled !== 'undefined') {
+                        updateDeveloperStatusIndicator(data.data.saved_options.developer_enabled === '1');
+                    }
 
                     // Mettre à jour les indicateurs des templates assignés
                     updateTemplateStatusIndicators();
@@ -3333,7 +3340,11 @@ function syncFormElementsWithLoadedSettings() {
 // Exécuter la synchronisation au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
     // Petit délai pour s'assurer que tous les éléments sont chargés
-    setTimeout(syncFormElementsWithLoadedSettings, 100);
+    setTimeout(function() {
+        syncFormElementsWithLoadedSettings();
+        // Initialiser l'indicateur développeur
+        updateDeveloperStatusIndicator();
+    }, 100);
 });
 </script>
 
