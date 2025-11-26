@@ -1265,6 +1265,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         !input.name.endsWith('[]')) { // Ne pas traiter les arrays ici
                         if (input.type === 'checkbox') {
                             formData.append(input.name, input.checked ? '1' : '0');
+                            if (input.name === 'developer_enabled') {
+                                console.log('PDF_BUILDER_DEBUG: developer_enabled checkbox found, checked:', input.checked, 'value sent:', input.checked ? '1' : '0');
+                            }
                         } else if (input.type === 'radio') {
                             if (input.checked) {
                                 formData.append(input.name, input.value);
