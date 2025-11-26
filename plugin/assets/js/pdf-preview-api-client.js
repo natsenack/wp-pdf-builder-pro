@@ -85,23 +85,12 @@ class PDFPreviewAPI {
                 body: formData
             });
 
-            console.log('Response status:', response.status);
-            console.log('Response headers:', Object.fromEntries(response.headers));
-
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
             }
 
-            const responseText = await response.text();
-            console.log('Response text:', responseText);
-
-            let result;
-            try {
-                result = JSON.parse(responseText);
-            } catch (parseError) {
-                throw new Error('Invalid JSON response (' + parseError.message + '): ' + responseText);
-            }
+            const result = await response.json();
 
             if (result.success) {
                 
@@ -152,23 +141,12 @@ class PDFPreviewAPI {
                 body: formData
             });
 
-            console.log('Response status:', response.status);
-            console.log('Response headers:', Object.fromEntries(response.headers));
-
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
             }
 
-            const responseText = await response.text();
-            console.log('Response text:', responseText);
-
-            let result;
-            try {
-                result = JSON.parse(responseText);
-            } catch (parseError) {
-                throw new Error('Invalid JSON response (' + parseError.message + '): ' + responseText);
-            }
+            const result = await response.json();
 
             if (result.success) {
                 
