@@ -1480,7 +1480,7 @@ class PdfBuilderAdmin
                 'debug_mode' => get_option('pdf_builder_canvas_debug_mode', '0') == '1',
                 'show_fps' => get_option('pdf_builder_canvas_show_fps', '0') == '1'
             ]) . ";
-            ";
+";
             wp_add_inline_script('react-dom', $canvas_settings_script);
 
             // Add initialization script
