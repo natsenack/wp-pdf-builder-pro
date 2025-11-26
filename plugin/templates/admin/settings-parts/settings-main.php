@@ -211,7 +211,7 @@ $license_test_key = $all_settings['pdf_builder_license_test_key'];
 ?>
 <script>
 // Données centralisées chargées depuis la base de données
-// window.pdfBuilderSavedSettings = <?php echo wp_json_encode($preview_data); ?>; // TEMPORAIREMENT DÉSACTIVÉ
+window.pdfBuilderSavedSettings = <?php echo wp_json_encode($preview_data); ?>;
 // window.pdfBuilderCanvasSettings = <?php echo json_encode($canvas_settings); ?>; // COMMENTÉ: déjà défini dans settings-canvas-params.php
 
 // Constantes de debug
