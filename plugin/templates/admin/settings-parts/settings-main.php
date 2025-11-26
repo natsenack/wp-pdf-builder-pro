@@ -61,9 +61,9 @@ class PDF_Builder_Settings_Loader {
         'pdf_builder_developer_enabled' => false,
         'pdf_builder_developer_password' => '',
         'pdf_builder_debug_php_errors' => false,
-        'pdf_builder_debug_javascript' => false,
+        'pdf_builder_debug_javascript' => true, // TEMPORAIREMENT ACTIVÉ pour déboguer la sauvegarde debug
         'pdf_builder_debug_javascript_verbose' => false,
-        'pdf_builder_debug_ajax' => false,
+        'pdf_builder_debug_ajax' => true, // TEMPORAIREMENT ACTIVÉ pour voir les requêtes AJAX
         'pdf_builder_debug_performance' => false,
         'pdf_builder_debug_database' => false,
         'pdf_builder_log_level' => 3,
