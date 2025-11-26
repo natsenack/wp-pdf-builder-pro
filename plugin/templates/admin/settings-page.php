@@ -14,11 +14,11 @@ $settings_parts_dir = plugin_dir_path(__FILE__) . 'settings-parts/';
 // Include AJAX handlers first (they need to run before any HTML output)
 require_once $settings_parts_dir . 'settings-ajax.php';
 
-// Include canvas parameters first (defines window.pdfBuilderCanvasSettings)
-require_once $settings_parts_dir . 'settings-canvas-params.php';
-
-// Include main settings logic
+// Include main settings logic first (defines debug functions)
 require_once $settings_parts_dir . 'settings-main.php';
+
+// Include canvas parameters (defines window.pdfBuilderCanvasSettings)
+require_once $settings_parts_dir . 'settings-canvas-params.php';
 
 // Include styles and scripts
 require_once $settings_parts_dir . 'settings-styles.php';
