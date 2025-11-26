@@ -1214,18 +1214,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 floatingSaveBtn.classList.remove('saving', 'saved', 'error');
             }, 5000);
 
-            // Collecter les données de tous les formulaires
-            const formData = new FormData();
-
-            // Ajouter l'action AJAX
-            formData.append('action', 'pdf_builder_save_settings');
-            formData.append('nonce', pdf_builder_ajax?.nonce || '');
-            formData.append('current_tab', 'all'); // Sauvegarder tous les onglets
-
-            // Collecter les données de TOUS les formulaires (pas seulement visibles)
+            // Collecter les données de TOUS les formulaires (même masqués)
             const forms = document.querySelectorAll('form');
+            console.log('PDF_BUILDER_DEBUG: Found', forms.length, 'forms total');
+            forms.forEach((form, index) => {
+                console.log('PDF_BUILDER_DEBUG: Form', index, 'id:', form.id, 'style:', form.style.display);
+            });
             forms.forEach(form => {
                 const formInputs = form.querySelectorAll('input, select, textarea');
+                console.log('PDF_BUILDER_DEBUG: Form', form.id, 'has', formInputs.length, 'inputs');
 
                 // Collecter d'abord les checkboxes multiples (arrays)
                 const checkboxArrays = {};
