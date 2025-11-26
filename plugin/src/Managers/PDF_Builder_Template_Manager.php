@@ -73,7 +73,7 @@ class PdfBuilderTemplateManager
         };
 
         // Log avant le try pour capturer les erreurs fatales
-        $debugLog('ajaxSaveTemplateV3 method called\');
+        $debugLog('ajaxSaveTemplateV3 method called');
 
         try {
             // Log pour debug
