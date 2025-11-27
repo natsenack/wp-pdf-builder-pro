@@ -506,9 +506,6 @@ if (
         <?php require_once 'settings-general.php'; ?>
     </div>
 
-    <!-- Bouton de test temporaire -->
-    <button id="test-tabs-btn" style="position: fixed; top: 10px; right: 10px; z-index: 9999; background: red; color: white; padding: 10px; border: none; border-radius: 5px;">TEST ONGLETS</button>
-
     <div id="licence" class="tab-content">
         <?php require_once 'settings-licence.php'; ?>
     </div>
@@ -837,27 +834,6 @@ window.updateZoomCardPreview = function() {
             }
         }
     });
-
-    // Bouton de test temporaire
-    const testBtn = document.getElementById('test-tabs-btn');
-    if (testBtn) {
-        testBtn.addEventListener('click', function() {
-            console.log('TEST: Bouton cliqué');
-
-            // Forcer l'affichage de l'onglet système
-            const systemeTab = document.getElementById('systeme');
-            const generalTab = document.getElementById('general');
-
-            if (systemeTab && generalTab) {
-                console.log('TEST: Onglets trouvés');
-                generalTab.classList.remove('active');
-                systemeTab.classList.add('active');
-                console.log('TEST: Classe active changée');
-            } else {
-                console.error('TEST: Onglets non trouvés');
-            }
-        });
-    }
 
     // Initialiser dès que possible
     if (document.readyState === 'loading') {
