@@ -458,42 +458,42 @@ if (
             <span class="current-tab-text">Général</span>
         </div>
         <div class="nav-tabs-container">
-            <a href="#general" class="nav-tab" data-tab="general">
+            <button type="button" class="nav-tab" data-tab="general">
                 <span class="tab-icon">⚙️</span>
                 <span class="tab-text">Général</span>
-            </a>
-            <a href="#licence" class="nav-tab" data-tab="licence">
+            </button>
+            <button type="button" class="nav-tab" data-tab="licence">
                 <span class="tab-icon">🔑</span>
                 <span class="tab-text">Licence</span>
-            </a>
-            <a href="#systeme" class="nav-tab" data-tab="systeme">
+            </button>
+            <button type="button" class="nav-tab" data-tab="systeme">
                 <span class="tab-icon">🔧</span>
                 <span class="tab-text">Système</span>
-            </a>
-            <a href="#acces" class="nav-tab" data-tab="acces">
+            </button>
+            <button type="button" class="nav-tab" data-tab="acces">
                 <span class="tab-icon">👥</span>
                 <span class="tab-text">Accès</span>
-            </a>
-            <a href="#securite" class="nav-tab" data-tab="securite">
+            </button>
+            <button type="button" class="nav-tab" data-tab="securite">
                 <span class="tab-icon">🔒</span>
                 <span class="tab-text">Sécurité & Conformité</span>
-            </a>
-            <a href="#pdf" class="nav-tab" data-tab="pdf">
+            </button>
+            <button type="button" class="nav-tab" data-tab="pdf">
                 <span class="tab-icon">📄</span>
                 <span class="tab-text">Configuration PDF</span>
-            </a>
-            <a href="#contenu" class="nav-tab" data-tab="contenu">
+            </button>
+            <button type="button" class="nav-tab" data-tab="contenu">
                 <span class="tab-icon">🎨</span>
                 <span class="tab-text">Contenu & Design</span>
-            </a>
-            <a href="#templates" class="nav-tab" data-tab="templates">
+            </button>
+            <button type="button" class="nav-tab" data-tab="templates">
                 <span class="tab-icon">📋</span>
                 <span class="tab-text">Templates par statut</span>
-            </a>
-            <a href="#developpeur" class="nav-tab" data-tab="developpeur">
+            </button>
+            <button type="button" class="nav-tab" data-tab="developpeur">
                 <span class="tab-icon">👨‍💻</span>
                 <span class="tab-text">Développeur</span>
-            </a>
+            </button>
         </div>
     </div>
 <?php
