@@ -973,10 +973,33 @@ window.updateZoomCardPreview = function() {
 
                 // Afficher les informations de debug si disponibles
                 if (data.data && data.data.debug_info) {
-                    console.log('🔍 DEBUG - Analyse des champs côté serveur:');
-                    console.log('📊 POST reçus:', data.data.debug_info.total_post_fields);
+                    console.log('🔍 DEBUG - Analyse détaillée des champs:');
+                    console.log('📊 Total POST côté serveur:', data.data.debug_info.total_post_fields);
+                    console.log('🚫 Ignorés:', data.data.debug_info.ignored_fields.length, '-', data.data.debug_info.ignored_fields);
                     console.log('📋 Traités:', data.data.debug_info.processed_fields.length);
-                    console.log('💾 Sauvegardés:', data.data.saved_count);
+                    console.log('💾 Sauvegardés:', data.data.debug_info.saved_count);
+                    console.log('❌ Erreurs:', data.data.debug_info.errors_count);
+
+                    const collectedCount = collectedFields.length;
+                    const processedCount = data.data.debug_info.processed_fields.length;
+                    const savedCount = data.data.debug_info.saved_count;
+
+                    console.log('📈 Comparaison:');
+                    console.log('  - Collectés côté JS:', collectedCount);
+                    console.log('  - Reçus côté PHP:', data.data.debug_info.total_post_fields);
+                    console.log('  - Traités côté PHP:', processedCount);
+                    console.log('  - Sauvegardés:', savedCount);
+
+                    // Calcul des différences
+                    const diffCollectedProcessed = collectedCount - processedCount;
+                    const diffProcessedSaved = processedCount - savedCount;
+
+                    if (diffCollectedProcessed !== 0) {
+                        console.log('⚠️ Différence collecte/traitement:', diffCollectedProcessed);
+                    }
+                    if (diffProcessedSaved !== 0) {
+                        console.log('⚠️ Différence traitement/sauvegarde:', diffProcessedSaved);
+                    }
                 }
 
                 if (data.success) {

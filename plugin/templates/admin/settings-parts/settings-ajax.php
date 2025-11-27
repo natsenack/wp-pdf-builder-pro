@@ -1679,11 +1679,13 @@ function pdf_builder_save_all_settings_handler() {
         $saved_count = 0;
         $errors = [];
         $processed_fields = [];
+        $ignored_fields = [];
 
         // Traiter tous les champs soumis
         foreach ($_POST as $key => $value) {
             // Ignorer les champs spéciaux
             if (in_array($key, ['action', 'security', 'current_tab'])) {
+                $ignored_fields[] = $key;
                 continue;
             }
 
@@ -1747,16 +1749,19 @@ function pdf_builder_save_all_settings_handler() {
             'debug_info' => [
                 'total_post_fields' => count($_POST),
                 'processed_fields' => $processed_fields,
-                'ignored_fields' => ['action', 'security', 'current_tab']
+                'ignored_fields' => $ignored_fields,
+                'saved_count' => $saved_count,
+                'errors_count' => count($errors)
             ]
         ]);
 
-        // Debug log
-        error_log('PDF Builder DEBUG - debug_info envoyé: ' . json_encode([
-            'total_post_fields' => count($_POST),
-            'processed_fields_count' => count($processed_fields),
-            'saved_count' => $saved_count
-        ]));
+        // Debug log détaillé
+        error_log('PDF Builder DEBUG - Analyse détaillée:');
+        error_log('  Total POST: ' . count($_POST));
+        error_log('  Ignorés: ' . count($ignored_fields) . ' - ' . implode(', ', $ignored_fields));
+        error_log('  Traités: ' . count($processed_fields));
+        error_log('  Sauvegardés: ' . $saved_count);
+        error_log('  Erreurs: ' . count($errors));
 
     } catch (Exception $e) {
         send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
