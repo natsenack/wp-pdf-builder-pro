@@ -688,6 +688,135 @@ if (
 window.updateZoomCardPreview = function() {
     console.log("PDF Builder: Zoom preview updated (simplified)");
 };
+
+// Gestion des onglets - Version forcée
+(function() {
+    'use strict';
+
+    let tabsInitialized = false;
+
+    function initializeTabs() {
+        if (tabsInitialized) {
+            console.log('PDF Builder: Onglets déjà initialisés');
+            return;
+        }
+
+        console.log('PDF Builder: Initialisation forcée des onglets');
+
+        // Vérifier que les éléments existent
+        const tabContents = document.querySelectorAll('.tab-content');
+        const navTabs = document.querySelectorAll('.nav-tab');
+
+        console.log('PDF Builder: Trouvé', tabContents.length, 'contenus d\'onglets');
+        console.log('PDF Builder: Trouvé', navTabs.length, 'onglets de navigation');
+
+        if (tabContents.length === 0 || navTabs.length === 0) {
+            console.warn('PDF Builder: Éléments manquants, réessai dans 100ms');
+            setTimeout(initializeTabs, 100);
+            return;
+        }
+
+        // Forcer la suppression de toutes les classes active d'abord
+        tabContents.forEach(function(content) {
+            content.classList.remove('active');
+        });
+        navTabs.forEach(function(tab) {
+            tab.classList.remove('nav-tab-active');
+        });
+
+        // Masquer tous les contenus d'onglets sauf le premier
+        tabContents.forEach(function(content, index) {
+            if (index === 0) {
+                content.classList.add('active');
+                console.log('PDF Builder: Onglet actif défini:', content.id);
+            }
+        });
+
+        // Ajouter la classe active au premier onglet
+        const firstTab = document.querySelector('.nav-tab[data-tab="general"]');
+        if (firstTab) {
+            firstTab.classList.add('nav-tab-active');
+            console.log('PDF Builder: Premier onglet nav activé');
+        }
+
+        // Gérer les clics sur les onglets
+        navTabs.forEach(function(tab) {
+            // Supprimer les anciens event listeners en clonant l'élément
+            const newTab = tab.cloneNode(true);
+            tab.parentNode.replaceChild(newTab, tab);
+
+            newTab.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('PDF Builder: Clic sur onglet:', this.getAttribute('data-tab'));
+
+                // Retirer la classe active de tous les onglets
+                navTabs.forEach(function(t) {
+                    t.classList.remove('nav-tab-active');
+                });
+                // Retirer aussi des nouveaux éléments
+                document.querySelectorAll('.nav-tab').forEach(function(t) {
+                    t.classList.remove('nav-tab-active');
+                });
+
+                // Ajouter la classe active à l'onglet cliqué
+                this.classList.add('nav-tab-active');
+
+                // Retirer la classe active de tous les contenus
+                tabContents.forEach(function(content) {
+                    content.classList.remove('active');
+                });
+
+                // Ajouter la classe active au contenu de l'onglet sélectionné
+                const tabId = this.getAttribute('data-tab');
+                const targetContent = document.getElementById(tabId);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                    console.log('PDF Builder: Contenu affiché:', tabId);
+                } else {
+                    console.error('PDF Builder: Contenu non trouvé pour:', tabId);
+                }
+
+                // Mettre à jour le texte du menu mobile
+                const currentTabText = document.querySelector('.current-tab-text');
+                if (currentTabText) {
+                    const tabText = this.querySelector('.tab-text');
+                    if (tabText) {
+                        currentTabText.textContent = tabText.textContent;
+                    }
+                }
+            });
+        });
+
+        // Gestion du menu mobile
+        const mobileMenuButton = document.querySelector('.mobile-menu-button');
+        const navTabsContainer = document.querySelector('.nav-tabs-container');
+
+        if (mobileMenuButton && navTabsContainer) {
+            mobileMenuButton.addEventListener('click', function() {
+                navTabsContainer.classList.toggle('mobile-menu-open');
+            });
+        }
+
+        tabsInitialized = true;
+        console.log('PDF Builder: Initialisation des onglets terminée avec succès');
+    }
+
+    // Initialiser dès que possible
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTabs);
+    } else {
+        initializeTabs();
+    }
+
+    // Forcer une réinitialisation après le chargement complet de la fenêtre
+    window.addEventListener('load', function() {
+        setTimeout(initializeTabs, 50);
+    });
+
+    // Et une dernière vérification après un délai plus long
+    setTimeout(initializeTabs, 1000);
+
+})();
 </script>
 
 
