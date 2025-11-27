@@ -937,14 +937,14 @@ window.updateZoomCardPreview = function() {
                 if (data.data && data.data.debug_info) {
                     console.log('🔍 DEBUG - Contenu complet de debug_info:', data.data.debug_info);
                     console.log('🔍 DEBUG - Analyse des champs:');
-                    console.log('📊 Nombre total de champs POST reçus côté serveur:', data.debug_info.total_post_fields);
-                    console.log('📋 Champs traités côté serveur:', data.debug_info.processed_fields);
-                    console.log('🚫 Champs ignorés:', data.debug_info.ignored_fields);
-                    console.log('💾 Nombre de champs sauvegardés:', data.saved_count);
+                    console.log('📊 Nombre total de champs POST reçus côté serveur:', data.data.debug_info.total_post_fields);
+                    console.log('📋 Champs traités côté serveur:', data.data.debug_info.processed_fields);
+                    console.log('🚫 Champs ignorés:', data.data.debug_info.ignored_fields);
+                    console.log('💾 Nombre de champs sauvegardés:', data.data.saved_count);
 
                     const collectedCount = collectedFields.length;
-                    const processedCount = data.debug_info.processed_fields.length;
-                    const savedCount = data.saved_count;
+                    const processedCount = data.data.debug_info.processed_fields.length;
+                    const savedCount = data.data.saved_count;
 
                     console.log('📈 Résumé:');
                     console.log('  - Collectés côté JS:', collectedCount);
@@ -953,8 +953,8 @@ window.updateZoomCardPreview = function() {
 
                     if (collectedCount !== processedCount) {
                         console.warn('⚠️ Différence détectée entre champs collectés et reçus!');
-                        const missing = collectedFields.filter(field => !data.debug_info.processed_fields.includes(field));
-                        const extra = data.debug_info.processed_fields.filter(field => !collectedFields.includes(field));
+                        const missing = collectedFields.filter(field => !data.data.debug_info.processed_fields.includes(field));
+                        const extra = data.data.debug_info.processed_fields.filter(field => !collectedFields.includes(field));
                         if (missing.length > 0) console.log('❌ Champs manquants côté serveur:', missing);
                         if (extra.length > 0) console.log('➕ Champs supplémentaires côté serveur:', extra);
                     }
