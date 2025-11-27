@@ -1165,8 +1165,6 @@ function initializeTabs() {
     console.log('PDF Builder: ===== END FINAL STATE CHECK =====');
 }
 
-<?php require_once 'tab-diagnostic.php'; ?>
-
     function updateSecurityStatusIndicators() {
         // Mettre à jour l'indicateur de sécurité (enable_logging)
         const enableLoggingCheckbox = document.getElementById('enable_logging');
@@ -3118,5 +3116,9 @@ function initializeTabs() {
 })();
 
 console.log('PDF Builder: Main script loaded successfully');
+
+</script>
+
+<?php require_once 'tab-diagnostic.php'; ?>
 
 
