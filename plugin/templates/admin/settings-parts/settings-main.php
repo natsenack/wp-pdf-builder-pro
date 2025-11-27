@@ -851,7 +851,7 @@ console.log('PDF Builder: Document object accessible:', typeof document);
 
 console.log('PDF Builder: TEST SCRIPT COMPLETED SUCCESSFULLY');
 </script>
-
+<script>
 // Update zoom card preview
 console.log('PDF Builder: About to define updateZoomCardPreview');
 window.updateZoomCardPreview = function() {
@@ -3046,5 +3046,6 @@ console.log('PDF Builder: Main script loaded successfully');
     console.error('PDF Builder: Error in main script:', error);
     console.error('PDF Builder: Error stack:', error.stack);
 }
+</script>
 </script>
 
