@@ -831,8 +831,8 @@ if (
 console.log('PDF Builder: Script tag started executing');
 
 // Debug configuration
-const PDF_BUILDER_DEBUG_ENABLED = <?php echo $settings['debug_javascript'] ? 'true' : 'false'; ?>;
-const PDF_BUILDER_DEBUG_VERBOSE = <?php echo $settings['debug_javascript_verbose'] ? 'true' : 'false'; ?>;
+const PDF_BUILDER_DEBUG_ENABLED = <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'true' : 'false'; ?>;
+const PDF_BUILDER_DEBUG_VERBOSE = <?php echo isset($settings['debug_javascript_verbose']) && $settings['debug_javascript_verbose'] ? 'true' : 'false'; ?>;
 
 console.log('PDF Builder: Constants defined - DEBUG_ENABLED:', PDF_BUILDER_DEBUG_ENABLED, 'VERBOSE:', PDF_BUILDER_DEBUG_VERBOSE);
 
