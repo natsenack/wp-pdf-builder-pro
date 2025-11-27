@@ -233,11 +233,16 @@ if ($json_settings === false) {
     // En cas d'erreur d'encodage, utiliser un objet vide
     $json_settings = '{}';
 }
+
+// Échapper complètement le JSON pour JavaScript
+$escaped_json = str_replace('</script>', '<\/script>', $json_settings);
+$escaped_json = str_replace('<!--', '<\!--', $escaped_json);
+$escaped_json = str_replace('-->', '--\>', $escaped_json);
 ?>
 <script>
 // Données centralisées chargées depuis la base de données
 try {
-    window.pdfBuilderSavedSettings = <?php echo $json_settings; ?>;
+    window.pdfBuilderSavedSettings = <?php echo $escaped_json; ?>;
 } catch (e) {
     console.error('Erreur lors du chargement des paramètres sauvegardés:', e);
     window.pdfBuilderSavedSettings = {};

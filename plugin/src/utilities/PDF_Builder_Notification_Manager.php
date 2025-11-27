@@ -204,7 +204,11 @@ class PDF_Builder_Notification_Manager {
             $toast_data = $this->get_notifications_json();
             $json_toasts = wp_json_encode($toast_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             if ($json_toasts !== false) {
-                echo "<script>try { window.pdfBuilderToasts = " . $json_toasts . "; } catch(e) { console.error('Erreur chargement toasts:', e); window.pdfBuilderToasts = []; }</script>";
+                // Échapper complètement le JSON pour JavaScript
+                $escaped_json = str_replace('</script>', '<\/script>', $json_toasts);
+                $escaped_json = str_replace('<!--', '<\!--', $escaped_json);
+                $escaped_json = str_replace('-->', '--\>', $escaped_json);
+                echo "<script>try { window.pdfBuilderToasts = " . $escaped_json . "; } catch(e) { console.error('Erreur chargement toasts:', e); window.pdfBuilderToasts = []; }</script>";
             }
         });
     }

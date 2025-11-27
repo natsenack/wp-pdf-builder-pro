@@ -119,15 +119,24 @@ $json_paper_formats = wp_json_encode($sanitized_paper_formats, JSON_UNESCAPED_UN
 if ($json_paper_formats === false) {
     $json_paper_formats = '{}';
 }
+
+// Échapper complètement le JSON pour JavaScript
+$escaped_canvas_settings = str_replace('</script>', '<\/script>', $json_canvas_settings);
+$escaped_canvas_settings = str_replace('<!--', '<\!--', $escaped_canvas_settings);
+$escaped_canvas_settings = str_replace('-->', '--\>', $escaped_canvas_settings);
+
+$escaped_paper_formats = str_replace('</script>', '<\/script>', $json_paper_formats);
+$escaped_paper_formats = str_replace('<!--', '<\!--', $escaped_paper_formats);
+$escaped_paper_formats = str_replace('-->', '--\>', $escaped_paper_formats);
 ?>
 <script>
 try {
-    window.pdfBuilderCanvasSettings = <?php echo $json_canvas_settings; ?>;
+    window.pdfBuilderCanvasSettings = <?php echo $escaped_canvas_settings; ?>;
     pdfBuilderDebug('Canvas settings loaded from WordPress options:', window.pdfBuilderCanvasSettings);
     window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>';
 
     // Dimensions standard des formats de papier en mm (centralisées)
-    window.pdfBuilderPaperFormats = <?php echo $json_paper_formats; ?>;
+    window.pdfBuilderPaperFormats = <?php echo $escaped_paper_formats; ?>;
 } catch (e) {
     console.error('Erreur lors du chargement des paramètres canvas:', e);
     window.pdfBuilderCanvasSettings = {};
