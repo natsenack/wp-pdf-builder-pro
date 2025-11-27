@@ -228,7 +228,7 @@ foreach ($preview_data as $key => $value) {
 }
 
 // Encoder les données de manière sécurisée pour éviter les erreurs JavaScript
-$json_settings = wp_json_encode($sanitized_preview_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+$json_settings = wp_json_encode($sanitized_preview_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 if ($json_settings === false) {
     // En cas d'erreur d'encodage, utiliser un objet vide
     $json_settings = '{}';

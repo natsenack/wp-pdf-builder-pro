@@ -110,12 +110,12 @@ if (defined('PDF_BUILDER_PAPER_FORMATS')) {
 
 // Définir pdfBuilderCanvasSettings globalement avant tout autre script
 // Encoder les données de manière sécurisée
-$json_canvas_settings = wp_json_encode($sanitized_canvas_settings, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+$json_canvas_settings = wp_json_encode($sanitized_canvas_settings, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 if ($json_canvas_settings === false) {
     $json_canvas_settings = '{}';
 }
 
-$json_paper_formats = wp_json_encode($sanitized_paper_formats, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+$json_paper_formats = wp_json_encode($sanitized_paper_formats, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 if ($json_paper_formats === false) {
     $json_paper_formats = '{}';
 }
