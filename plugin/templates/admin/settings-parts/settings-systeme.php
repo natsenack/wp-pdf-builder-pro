@@ -1,4 +1,20 @@
-<?php // Systeme tab content - Updated: 2025-11-18 20:20:00 ?>
+<?php // Systeme tab content - Updated: 2025-11-18 20:20:00
+
+// Fonction pour calculer la taille d'un répertoire
+function pdf_builder_get_directory_size($directory) {
+    $size = 0;
+    if (is_dir($directory)) {
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $size += $file->getSize();
+            }
+        }
+    }
+    return $size;
+}
+
+?>
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
             <!-- Formulaire unique pour tout l'onglet système -->
@@ -109,7 +125,7 @@
                                     // Calculer la taille totale du cache
                                     foreach ($cache_dirs as $dir) {
                                         if (is_dir($dir)) {
-                                            $cache_size += \PDF_Builder\Helpers\FileHelper::getDirectorySize($dir);
+                                            $cache_size += pdf_builder_get_directory_size($dir);
                                         }
                                     }
 
