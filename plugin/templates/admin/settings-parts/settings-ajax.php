@@ -547,6 +547,10 @@ function pdf_builder_save_settings_handler() {
     switch ($current_tab) {
         case 'all':
             try {
+                // Extraire la liste des champs collectés côté JS pour comparaison
+                $js_collected = isset($_POST['js_collected_fields']) ? json_decode($_POST['js_collected_fields'], true) : [];
+                unset($_POST['js_collected_fields']);
+
                 // Helper function to get normalized value from POST
                 $get_post_value = function($key) {
                     if (!isset($_POST[$key])) {
@@ -1750,11 +1754,18 @@ function pdf_builder_save_all_settings_handler() {
             'saved_count' => $saved_count,
             'errors' => $errors,
             'debug_info' => [
-                'total_post_fields' => count($_POST),
-                'processed_fields' => $processed_fields,
-                'ignored_fields' => $ignored_fields,
-                'saved_count' => $saved_count,
-                'errors_count' => count($errors)
+                'total_post' => count($_POST),
+                'ignored' => $ignored_fields,
+                'processed' => count($processed_fields),
+                'saved' => $saved_count,
+                'errors' => count($errors),
+                'comparison' => [
+                    'js_collected' => count($js_collected),
+                    'php_received' => count($_POST),
+                    'php_processed' => count($processed_fields),
+                    'saved' => $saved_count
+                ],
+                'missing_fields' => array_diff($js_collected, array_keys($_POST))
             ]
         ]);
 

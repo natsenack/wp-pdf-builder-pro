@@ -958,6 +958,9 @@ window.updateZoomCardPreview = function() {
                 console.log('  ', key, '=', value);
             }
 
+            // Ajouter la liste des champs collectés pour comparaison côté serveur
+            formData.append('js_collected_fields', JSON.stringify(collectedFields));
+
             // Indiquer l'envoi
             floatingBtn.innerHTML = '<span class="save-icon">📤</span><span class="save-text">Envoi... (' + totalFields + ' champs)</span>';
 
@@ -1005,6 +1008,11 @@ window.updateZoomCardPreview = function() {
                     }
                     if (diffProcessedSaved !== 0) {
                         console.log('⚠️ Différence traitement/sauvegarde:', diffProcessedSaved);
+                    }
+
+                    // Afficher les champs manquants s'il y en a
+                    if (data.data.debug_info.missing_fields && data.data.debug_info.missing_fields.length > 0) {
+                        console.log('❌ Champs manquants (perdus en transmission):', data.data.debug_info.missing_fields.join(', '));
                     }
                 }
 
