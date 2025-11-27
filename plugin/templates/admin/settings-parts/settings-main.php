@@ -226,10 +226,22 @@ foreach ($preview_data as $key => $value) {
         $sanitized_preview_data[$key] = $value;
     }
 }
+
+// Encoder les données de manière sécurisée pour éviter les erreurs JavaScript
+$json_settings = wp_json_encode($sanitized_preview_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+if ($json_settings === false) {
+    // En cas d'erreur d'encodage, utiliser un objet vide
+    $json_settings = '{}';
+}
 ?>
 <script>
 // Données centralisées chargées depuis la base de données
-window.pdfBuilderSavedSettings = <?php echo wp_json_encode($sanitized_preview_data); ?>;
+try {
+    window.pdfBuilderSavedSettings = <?php echo $json_settings; ?>;
+} catch (e) {
+    console.error('Erreur lors du chargement des paramètres sauvegardés:', e);
+    window.pdfBuilderSavedSettings = {};
+}
 // window.pdfBuilderCanvasSettings = <?php echo json_encode($canvas_settings); ?>; // COMMENTÉ: déjà défini dans settings-canvas-params.php
 
 // Constantes de debug
