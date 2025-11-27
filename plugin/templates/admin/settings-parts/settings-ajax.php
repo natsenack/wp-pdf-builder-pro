@@ -343,6 +343,73 @@ function pdf_builder_clear_cache_handler() {
         send_ajax_response(true, 'Cache vidé avec succès.', ['new_cache_size' => $new_cache_display]);
 }
 
+// Update Cache Metrics Handler
+function pdf_builder_update_cache_metrics_handler() {
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        send_ajax_response(false, 'Nonce invalide');
+        return;
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        send_ajax_response(false, 'Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        // Calculate cache metrics
+        $cache_dirs = [
+            WP_CONTENT_DIR . '/cache/wp-pdf-builder-previews/',
+            wp_upload_dir()['basedir'] . '/pdf-builder-cache'
+        ];
+
+        $total_files = 0;
+        $total_size = 0;
+
+        foreach ($cache_dirs as $cache_dir) {
+            if (is_dir($cache_dir)) {
+                $files = glob($cache_dir . '*');
+                $total_files += count($files);
+                foreach ($files as $file) {
+                    if (is_file($file)) {
+                        $total_size += filesize($file);
+                    }
+                }
+            }
+        }
+
+        // Format size display
+        $size_display = '';
+        if ($total_size < 1048576) {
+            $size_display = number_format($total_size / 1024, 1) . ' Ko';
+        } else {
+            $size_display = number_format($total_size / 1048576, 1) . ' Mo';
+        }
+
+        // Get cache settings
+        $cache_enabled = get_option('pdf_builder_cache_enabled', 1) ? 'Activé' : 'Désactivé';
+        $cache_compression = get_option('pdf_builder_cache_compression', 0) ? 'Activée' : 'Désactivée';
+        $cache_auto_cleanup = get_option('pdf_builder_cache_auto_cleanup', 0) ? 'Activé' : 'Désactivé';
+        $cache_max_size = get_option('pdf_builder_cache_max_size', 100) . ' Mo';
+        $cache_ttl = get_option('pdf_builder_cache_ttl', 0) . ' heures';
+
+        send_ajax_response(true, 'Métriques du cache mises à jour.', [
+            'cache_size' => $size_display,
+            'cache_files' => $total_files,
+            'cache_status' => $cache_enabled,
+            'cache_compression' => $cache_compression,
+            'cache_auto_cleanup' => $cache_auto_cleanup,
+            'cache_max_size' => $cache_max_size,
+            'cache_ttl' => $cache_ttl,
+            'last_updated' => current_time('H:i:s')
+        ]);
+
+    } catch (Exception $e) {
+        send_ajax_response(false, 'Erreur lors de la récupération des métriques: ' . $e->getMessage());
+    }
+}
+
 // Test License Handler
 function pdf_builder_test_license_handler() {
     // Vérifier les permissions
