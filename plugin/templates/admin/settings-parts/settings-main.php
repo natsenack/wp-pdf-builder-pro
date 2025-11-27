@@ -983,6 +983,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const activeContent = document.getElementById(targetTab);
 
         if (activeTab && activeContent) {
+            console.log('PDF Builder: Found activeTab:', activeTab, 'activeContent:', activeContent);
             // Remove active classes from all tabs and contents
             document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('nav-tab-active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -1003,11 +1004,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             console.error('PDF Builder: Could not find activeTab or activeContent for targetTab:', targetTab);
+            console.log('PDF Builder: Available tabs:', document.querySelectorAll('.nav-tab'));
+            console.log('PDF Builder: Available contents:', document.querySelectorAll('.tab-content'));
         }
     }
 
     // Initialize tabs on load
     initializeTabs();
+
+    console.log('PDF Builder: Tabs initialization completed');
+    console.log('PDF Builder: Final state - active tabs:', document.querySelectorAll('.nav-tab-active'));
+    console.log('PDF Builder: Final state - active contents:', document.querySelectorAll('.tab-content.active'));
 
     // Fonction pour mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Sécurité
     function updateSecurityStatusIndicators() {
