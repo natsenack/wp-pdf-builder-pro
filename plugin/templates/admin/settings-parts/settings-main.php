@@ -828,9 +828,13 @@ if (
 
 
 <script>
+console.log('PDF Builder: Script tag started executing');
+
 // Debug configuration
 const PDF_BUILDER_DEBUG_ENABLED = <?php echo $settings['debug_javascript'] ? 'true' : 'false'; ?>;
 const PDF_BUILDER_DEBUG_VERBOSE = <?php echo $settings['debug_javascript_verbose'] ? 'true' : 'false'; ?>;
+
+console.log('PDF Builder: Constants defined - DEBUG_ENABLED:', PDF_BUILDER_DEBUG_ENABLED, 'VERBOSE:', PDF_BUILDER_DEBUG_VERBOSE);
 
 // Conditional debug logging function
 function pdfBuilderDebug(message, ...args) {
@@ -842,6 +846,8 @@ function pdfBuilderDebug(message, ...args) {
 function pdfBuilderError(message, ...args) {
     console.error('PDF_BUILDER_DEBUG:', message, ...args);
 }
+
+console.log('PDF Builder: Functions defined, about to enter try block');
 
 try {
     console.log('PDF Builder: Starting main script execution');
