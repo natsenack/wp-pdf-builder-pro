@@ -689,51 +689,33 @@ window.updateZoomCardPreview = function() {
     console.log("PDF Builder: Zoom preview updated (simplified)");
 };
 
-// Gestion des onglets - Version forcée
+// Gestion des onglets - Version finale
 (function() {
     'use strict';
-
-    console.log('PDF Builder: Fonction anonyme exécutée');
 
     let tabsInitialized = false;
 
     function initializeTabs() {
-        console.log('PDF Builder: initializeTabs() appelée');
-
         if (tabsInitialized) {
-            console.log('PDF Builder: Onglets déjà initialisés');
             return;
         }
-
-        console.log('PDF Builder: Initialisation forcée des onglets');
 
         // Vérifier que les éléments existent
         const tabContents = document.querySelectorAll('.tab-content');
         const navTabs = document.querySelectorAll('.nav-tab');
 
-        console.log('PDF Builder: Trouvé', tabContents.length, 'contenus d\'onglets');
-        console.log('PDF Builder: Trouvé', navTabs.length, 'onglets de navigation');
-
         if (tabContents.length === 0 || navTabs.length === 0) {
-            console.warn('PDF Builder: Éléments manquants, réessai dans 100ms');
             setTimeout(initializeTabs, 100);
             return;
         }
 
-        // Vérifier le hash de l'URL pour afficher le bon onglet au chargement
-        const urlHash = window.location.hash.substring(1); // Enlever le #
-        console.log('PDF Builder: Hash URL détecté:', urlHash);
-
-        let activeTabId = 'general'; // Par défaut
-
         // Suppression des ancres - toujours commencer par l'onglet général
-        console.log('PDF Builder: Ancres désactivées, onglet par défaut: general');
+        let activeTabId = 'general';
 
         // Masquer tous les contenus d'onglets sauf celui actif
-        tabContents.forEach(function(content, index) {
+        tabContents.forEach(function(content) {
             if (content.id === activeTabId) {
                 content.classList.add('active');
-                console.log('PDF Builder: Onglet actif défini:', content.id);
             } else {
                 content.classList.remove('active');
             }
@@ -743,7 +725,6 @@ window.updateZoomCardPreview = function() {
         const activeNavTab = document.querySelector('.nav-tab[data-tab="' + activeTabId + '"]');
         if (activeNavTab) {
             activeNavTab.classList.add('nav-tab-active');
-            console.log('PDF Builder: Onglet nav activé:', activeTabId);
         }
 
         // Gérer les clics sur les onglets
@@ -754,13 +735,8 @@ window.updateZoomCardPreview = function() {
 
             newTab.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('PDF Builder: Clic sur onglet:', this.getAttribute('data-tab'));
 
                 // Retirer la classe active de tous les onglets
-                navTabs.forEach(function(t) {
-                    t.classList.remove('nav-tab-active');
-                });
-                // Retirer aussi des nouveaux éléments
                 document.querySelectorAll('.nav-tab').forEach(function(t) {
                     t.classList.remove('nav-tab-active');
                 });
@@ -778,12 +754,6 @@ window.updateZoomCardPreview = function() {
                 const targetContent = document.getElementById(tabId);
                 if (targetContent) {
                     targetContent.classList.add('active');
-                    console.log('PDF Builder: Contenu affiché:', tabId);
-
-                    // Suppression des ancres - ne pas mettre à jour l'URL hash
-                    console.log('PDF Builder: Ancres désactivées, pas de mise à jour hash');
-                } else {
-                    console.error('PDF Builder: Contenu non trouvé pour:', tabId);
                 }
 
                 // Mettre à jour le texte du menu mobile
@@ -797,7 +767,7 @@ window.updateZoomCardPreview = function() {
             });
         });
 
-    // Gestion du menu mobile
+        // Gestion du menu mobile
         const mobileMenuButton = document.querySelector('.mobile-menu-button');
         const navTabsContainer = document.querySelector('.nav-tabs-container');
 
@@ -808,10 +778,7 @@ window.updateZoomCardPreview = function() {
         }
 
         tabsInitialized = true;
-        console.log('PDF Builder: Initialisation des onglets terminée avec succès');
-    }
-
-    // Initialiser dès que possible
+    }    // Initialiser dès que possible
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeTabs);
     } else {
