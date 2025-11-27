@@ -1068,6 +1068,24 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 console.log('PDF Builder: currentTabText element not found');
             }
+
+            // Log final state after initialization
+            console.log('PDF Builder: ===== INITIALIZATION COMPLETE =====');
+            console.log('PDF Builder: Active tab after init:', document.querySelector('.nav-tab-active'));
+            console.log('PDF Builder: Active content after init:', document.querySelector('.tab-content.active'));
+            console.log('PDF Builder: All tabs after init:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({
+                href: tab.getAttribute('href'),
+                classes: tab.classList.toString(),
+                isActive: tab.classList.contains('nav-tab-active')
+            })));
+            console.log('PDF Builder: All contents after init:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({
+                id: content.id,
+                classes: content.classList.toString(),
+                isActive: content.classList.contains('active'),
+                display: window.getComputedStyle(content).display,
+                visibility: window.getComputedStyle(content).visibility
+            })));
+            console.log('PDF Builder: ===== END INITIALIZATION =====');
         } else {
             console.error('PDF Builder: Could not find activeTab or activeContent for targetTab:', targetTab);
             console.log('PDF Builder: Available tabs:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({href: tab.getAttribute('href'), element: tab})));
@@ -3042,10 +3060,5 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 console.log('PDF Builder: Main script loaded successfully');
-} catch (error) {
-    console.error('PDF Builder: Error in main script:', error);
-    console.error('PDF Builder: Error stack:', error.stack);
-}
-</script>
-</script>
+
 
