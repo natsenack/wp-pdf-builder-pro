@@ -75,6 +75,15 @@
     opacity: 0.9;
 }
 
+/* Supprimer tout contenu ajouté par d'autres plugins/thèmes */
+.pdf-builder-notification-icon::before,
+.pdf-builder-notification-icon::after,
+.pdf-builder-notification::before,
+.pdf-builder-notification::after {
+    content: none !important;
+    display: none !important;
+}
+
 .pdf-builder-notification-message {
     flex: 1;
     line-height: 1.5;
