@@ -532,6 +532,9 @@ function pdf_builder_save_settings_handler() {
     $log_file = WP_CONTENT_DIR . '/pdf-builder-debug.log';
     file_put_contents($log_file, date('Y-m-d H:i:s') . " - Handler called\n", FILE_APPEND);
 
+    // Initialize variables
+    $js_collected = [];
+
     // Debug: Log that function is called
     PDF_Builder_Security_Manager::debug_log('php_errors', 'pdf_builder_save_settings_handler called with current_tab: ' . ($_POST['current_tab'] ?? 'not set'));
     PDF_Builder_Security_Manager::debug_log('php_errors', 'POST data: ' . print_r($_POST, true));
@@ -1775,7 +1778,7 @@ function pdf_builder_save_all_settings_handler() {
                     'php_processed' => count($processed_fields),
                     'saved' => $saved_count
                 ],
-                'missing_fields' => is_array($js_collected) ? array_diff($js_collected, array_keys($_POST)) : []
+                'missing_fields' => !empty($js_collected) ? implode(', ', array_diff($js_collected, array_keys($_POST))) : ''
             ]
         ]);
 

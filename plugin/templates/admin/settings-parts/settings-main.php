@@ -1011,8 +1011,8 @@ window.updateZoomCardPreview = function() {
                     }
 
                     // Afficher les champs manquants s'il y en a
-                    if (data.data.debug_info.missing_fields && data.data.debug_info.missing_fields.length > 0) {
-                        console.log('❌ Champs manquants (perdus en transmission):', data.data.debug_info.missing_fields.join(', '));
+                    if (data.data.debug_info.missing_fields) {
+                        console.log('❌ Champs manquants (perdus en transmission):', data.data.debug_info.missing_fields);
                     }
                 }
 
