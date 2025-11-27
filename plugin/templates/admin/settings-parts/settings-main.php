@@ -234,10 +234,8 @@ if ($json_settings === false) {
     $json_settings = '{}';
 }
 
-// Échapper complètement le JSON pour JavaScript
-$escaped_json = str_replace('</script>', '<\/script>', $json_settings);
-$escaped_json = str_replace('<!--', '<\!--', $escaped_json);
-$escaped_json = str_replace('-->', '--\>', $escaped_json);
+// Utiliser base64 pour éviter tout problème d'échappement
+$base64_json = base64_encode($json_settings);
 ?>
 <script>
 // Données centralisées chargées depuis la base de données
@@ -251,7 +249,8 @@ try {
         };
     }
 
-    window.pdfBuilderSavedSettings = <?php echo $escaped_json; ?>;
+    // Décoder le JSON depuis base64 pour éviter les problèmes d'échappement
+    window.pdfBuilderSavedSettings = JSON.parse(atob('<?php echo $base64_json; ?>'));
 } catch (e) {
     console.error('Erreur lors du chargement des paramètres sauvegardés:', e);
     window.pdfBuilderSavedSettings = {};
