@@ -80,50 +80,32 @@
     justify-content: center;
 }
 
-/* Icônes pour chaque type de notification */
-.pdf-builder-notification-success .pdf-builder-notification-icon::before {
-    content: '✅';
-}
-
-.pdf-builder-notification-error .pdf-builder-notification-icon::before {
-    content: '❌';
-}
-
-.pdf-builder-notification-warning .pdf-builder-notification-icon::before {
-    content: '⚠️';
-}
-
-.pdf-builder-notification-info .pdf-builder-notification-icon::before {
-    content: 'ℹ️';
-}
-
-/* Supprimer tout contenu ajouté par d'autres plugins/thèmes */
-.pdf-builder-notification-icon::before,
-.pdf-builder-notification-icon::after,
-.pdf-builder-notification::before,
-.pdf-builder-notification::after {
+/* Supprimer tout contenu ajouté par d'autres plugins/thèmes - règles spécifiques pour éviter les conflits */
+.pdf-builder-notification *::before,
+.pdf-builder-notification *::after {
     content: none !important;
     display: none !important;
 }
 
-.pdf-builder-notification-success .pdf-builder-notification-icon::before,
-.pdf-builder-notification-error .pdf-builder-notification-icon::before,
-.pdf-builder-notification-warning .pdf-builder-notification-icon::before,
-.pdf-builder-notification-info .pdf-builder-notification-icon::before {
+/* Icônes pour chaque type de notification - définies APRÈS la suppression générale */
+.pdf-builder-notification-success .pdf-builder-notification-icon::before {
     content: '✅' !important;
-    display: block !important;
+    display: inline !important;
 }
 
 .pdf-builder-notification-error .pdf-builder-notification-icon::before {
     content: '❌' !important;
+    display: inline !important;
 }
 
 .pdf-builder-notification-warning .pdf-builder-notification-icon::before {
     content: '⚠️' !important;
+    display: inline !important;
 }
 
 .pdf-builder-notification-info .pdf-builder-notification-icon::before {
     content: 'ℹ️' !important;
+    display: inline !important;
 }
 
 .pdf-builder-notification-message {
