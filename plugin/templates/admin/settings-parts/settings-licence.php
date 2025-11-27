@@ -197,7 +197,7 @@
                                             echo $visible_start . '••••••••••••••••' . $visible_end;
                                             ?>
                                         </code>
-                                        <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>'); PDF_Builder_Notification_Manager.show_toast('✅ Clé copiée !', 'success');">📋 Copier</span>
+                                        <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>'); PDF_Builder_Notification_Manager.show_toast('Clé copiée !', 'success');">📋 Copier</span>
                                     </td>
                                 </tr>
                                     <?php
