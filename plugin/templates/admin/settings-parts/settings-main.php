@@ -905,17 +905,17 @@ window.updateZoomCardPreview = function() {
         const defaultZoomInput = document.getElementById("zoom_default");
         const stepZoomInput = document.getElementById("zoom_step");
 
-        const minZoom = minZoomInput ? parseInt(minZoomInput.value) : (window.pdfBuilderCanvasSettings?.min_zoom || window.pdfBuilderCanvasSettings?.default_zoom_min || 10);
-        const maxZoom = maxZoomInput ? parseInt(maxZoomInput.value) : (window.pdfBuilderCanvasSettings?.max_zoom || window.pdfBuilderCanvasSettings?.default_zoom_max || 500);
-        const defaultZoom = defaultZoomInput ? parseInt(defaultZoomInput.value) : (window.pdfBuilderCanvasSettings?.default_zoom || 100);
-        const stepZoom = stepZoomInput ? parseInt(stepZoomInput.value) : (window.pdfBuilderCanvasSettings?.zoom_step || 25);
+        const minZoom = minZoomInput ? parseInt(minZoomInput.value) : (window.pdfBuilderCanvasSettings && window.pdfBuilderCanvasSettings.min_zoom ? window.pdfBuilderCanvasSettings.min_zoom : 10);
+        const maxZoom = maxZoomInput ? parseInt(maxZoomInput.value) : (window.pdfBuilderCanvasSettings && window.pdfBuilderCanvasSettings.max_zoom ? window.pdfBuilderCanvasSettings.max_zoom : 500);
+        const defaultZoom = defaultZoomInput ? parseInt(defaultZoomInput.value) : (window.pdfBuilderCanvasSettings && window.pdfBuilderCanvasSettings.default_zoom ? window.pdfBuilderCanvasSettings.default_zoom : 100);
+        const stepZoom = stepZoomInput ? parseInt(stepZoomInput.value) : (window.pdfBuilderCanvasSettings && window.pdfBuilderCanvasSettings.zoom_step ? window.pdfBuilderCanvasSettings.zoom_step : 25);
 
         pdfBuilderDebug('zoom values - min:', minZoom, 'max:', maxZoom, 'default:', defaultZoom, 'step:', stepZoom);
 
         // Update zoom level display
         const zoomLevel = document.querySelector('.zoom-level');
         if (zoomLevel) {
-            zoomLevel.textContent = `${defaultZoom}%`;
+            zoomLevel.textContent = defaultZoom + '%';
             pdfBuilderDebug('Updated zoom level to:', defaultZoom + '%');
         } else {
             pdfBuilderDebug('zoomLevel element not found');
@@ -924,10 +924,7 @@ window.updateZoomCardPreview = function() {
         // Update zoom info
         const zoomInfo = document.querySelector('.zoom-info');
         if (zoomInfo) {
-            zoomInfo.innerHTML = `
-                <span>${minZoom}% - ${maxZoom}%</span>
-                <span>Pas: ${stepZoom}%</span>
-            `;
+            zoomInfo.innerHTML = '<span>' + minZoom + '% - ' + maxZoom + '%</span><span>Pas: ' + stepZoom + '%</span>';
             pdfBuilderDebug('Updated zoom info');
         } else {
             pdfBuilderDebug('zoomInfo element not found');
