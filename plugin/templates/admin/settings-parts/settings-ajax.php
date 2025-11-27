@@ -1801,3 +1801,4 @@ function pdf_builder_save_all_settings_handler() {
         send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
         return;
     }
+}
