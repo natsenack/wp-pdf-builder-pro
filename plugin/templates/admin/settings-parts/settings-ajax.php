@@ -1797,6 +1797,8 @@ function pdf_builder_save_all_settings_handler() {
         error_log('  Sauvegardés: ' . $saved_count);
         error_log('  Erreurs: ' . count($errors));
 
+        */
+
     } catch (Exception $e) {
         send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
         return;
