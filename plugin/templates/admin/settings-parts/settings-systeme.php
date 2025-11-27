@@ -97,7 +97,7 @@
                     <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
                         <h4 style="margin-top: 0; color: #155724; font-size: 16px;">📊 État du système de cache</h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px;">
-                            <div style="text-align: center;">
+                            <div class="cache-metric-card" style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid #dee2e6; cursor: pointer; transition: all 0.3s ease;" data-metric="size">
                                 <div style="font-size: 24px; font-weight: bold; color: #28a745;">
                                     <?php
                                     $cache_size = 0;
@@ -105,6 +105,13 @@
                                         WP_CONTENT_DIR . '/cache/wp-pdf-builder-previews/',
                                         wp_upload_dir()['basedir'] . '/pdf-builder-cache'
                                     ];
+
+                                    // Calculer la taille totale du cache
+                                    foreach ($cache_dirs as $dir) {
+                                        if (is_dir($dir)) {
+                                            $cache_size += \PDF_Builder\Helpers\FileHelper::getDirectorySize($dir);
+                                        }
+                                    }
 
                                     // Afficher la taille avec l'unité appropriée et décimales
                                     echo '<span id="cache-size-display">';
@@ -117,8 +124,9 @@
                                     ?>
                                 </div>
                                 <div style="color: #666; font-size: 12px;">Taille du cache</div>
+                                <div style="color: #999; font-size: 10px; margin-top: 5px;">Cliquez pour détails</div>
                             </div>
-                            <div style="text-align: center;">
+                            <div class="cache-metric-card" style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid #dee2e6; cursor: pointer; transition: all 0.3s ease;" data-metric="transients">
                                 <div style="font-size: 24px; font-weight: bold; color: #28a745;">
                                     <?php
                                     $transient_count = 0;
@@ -128,14 +136,16 @@
                                     ?>
                                 </div>
                                 <div style="color: #666; font-size: 12px;">Transients actifs</div>
+                                <div style="color: #999; font-size: 10px; margin-top: 5px;">Cliquez pour détails</div>
                             </div>
-                            <div style="text-align: center;" class="systeme-cache-status">
+                            <div class="cache-metric-card systeme-cache-status" style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid #dee2e6; cursor: pointer; transition: all 0.3s ease;" data-metric="status">
                                 <div class="cache-enabled-indicator" style="font-size: 24px; font-weight: bold; color: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
                                 <?php echo get_option('pdf_builder_cache_enabled', false) ? 'Cache activé' : 'Cache désactivé'; ?>
                             </div>
                                 <div style="color: #666; font-size: 12px;">État du cache</div>
+                                <div style="color: #999; font-size: 10px; margin-top: 5px;">Cliquez pour configurer</div>
                             </div>
-                            <div style="text-align: center;">
+                            <div class="cache-metric-card" style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid #dee2e6; cursor: pointer; transition: all 0.3s ease;" data-metric="cleanup">
                                 <div style="font-size: 24px; font-weight: bold; color: #28a745;">
                                     <?php
                                     $last_cleanup = get_option('pdf_builder_cache_last_cleanup', 'Jamais');
@@ -146,6 +156,7 @@
                                     ?>
                                 </div>
                                 <div style="color: #666; font-size: 12px;">Dernier nettoyage</div>
+                                <div style="color: #999; font-size: 10px; margin-top: 5px;">Cliquez pour nettoyer</div>
                             </div>
                         </div>
                     </div>

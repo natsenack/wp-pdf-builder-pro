@@ -1,6 +1,243 @@
-<?php // Modal components - Updated: 2025-11-18 20:20:00 ?>
+<!-- Cache Metrics Modals -->
+<!-- Cache Size Details Modal -->
+<div id="cache-size-modal" class="cache-modal" data-category="size">
+    <div class="cache-modal-overlay">
+        <div class="cache-modal-content">
+            <div class="cache-modal-header">
+                <h3>📊 Détails de la taille du cache</h3>
+                <button type="button" class="cache-modal-close">&times;</button>
+            </div>
+            <div class="cache-modal-body">
+                <div class="cache-modal-info">
+                    <p>
+                        <strong>💡 Informations sur la taille du cache :</strong> Cette section affiche la taille totale des fichiers en cache du plugin PDF Builder.
+                        Le cache inclut les aperçus PDF générés et les données temporaires.
+                    </p>
+                </div>
+                <div id="cache-size-details">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                            <h4 style="margin-top: 0; color: #495057;">📁 Dossier des aperçus</h4>
+                            <div style="font-size: 18px; font-weight: bold; color: #28a745;" id="previews-cache-size">
+                                Calcul en cours...
+                            </div>
+                            <div style="color: #666; font-size: 12px;">wp-content/cache/wp-pdf-builder-previews/</div>
+                        </div>
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                            <h4 style="margin-top: 0; color: #495057;">📦 Dossier principal</h4>
+                            <div style="font-size: 18px; font-weight: bold; color: #28a745;" id="main-cache-size">
+                                Calcul en cours...
+                            </div>
+                            <div style="color: #666; font-size: 12px;">wp-content/uploads/pdf-builder-cache/</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; padding: 15px; background: #e7f5e9; border: 1px solid #28a745; border-radius: 8px;">
+                        <h4 style="margin-top: 0; color: #155724;">💡 Recommandations</h4>
+                        <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #155724;">
+                            <li>Une taille de cache normale est inférieure à 100 Mo</li>
+                            <li>Si la taille dépasse 500 Mo, considérez un nettoyage manuel</li>
+                            <li>Le cache est automatiquement nettoyé selon les paramètres configurés</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="cache-modal-footer">
+                <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
+                <button type="button" class="button button-primary" id="clear-cache-from-modal">🗑️ Vider le cache</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!-- Canvas Configuration Modals Dimensions & Format -->
+<!-- Cache Transients Details Modal -->
+<div id="cache-transients-modal" class="cache-modal" data-category="transients">
+    <div class="cache-modal-overlay">
+        <div class="cache-modal-content">
+            <div class="cache-modal-header">
+                <h3>🔄 Détails des transients actifs</h3>
+                <button type="button" class="cache-modal-close">&times;</button>
+            </div>
+            <div class="cache-modal-body">
+                <div class="cache-modal-info">
+                    <p>
+                        <strong>💡 Informations sur les transients :</strong> Les transients sont des données temporaires stockées dans la base de données WordPress.
+                        Ils expirent automatiquement et améliorent les performances en évitant les recalculs.
+                    </p>
+                </div>
+                <div id="cache-transients-details">
+                    <div style="margin-top: 20px;">
+                        <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                            <h4 style="margin-top: 0; color: #495057;">📊 Statistiques des transients</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: bold; color: #28a745;" id="total-transients-count">0</div>
+                                    <div style="color: #666; font-size: 12px;">Total actifs</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: bold; color: #17a2b8;" id="expired-transients-count">0</div>
+                                    <div style="color: #666; font-size: 12px;">Expirés</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: bold; color: #ffc107;" id="pdf-builder-transients-count">0</div>
+                                    <div style="color: #666; font-size: 12px;">PDF Builder</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 8px;">
+                            <h4 style="margin-top: 0; color: #8b4513;">⚠️ Note importante</h4>
+                            <p style="margin: 10px 0 0 0; color: #5d4e37;">
+                                Les transients expirent automatiquement. Un nombre élevé de transients n'est généralement pas préoccupant,
+                                mais si vous remarquez des problèmes de performance, vous pouvez les vider manuellement.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cache-modal-footer">
+                <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
+                <button type="button" class="button button-warning" id="clear-transients-from-modal">🗑️ Vider les transients</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cache Status Configuration Modal -->
+<div id="cache-status-modal" class="cache-modal" data-category="status">
+    <div class="cache-modal-overlay">
+        <div class="cache-modal-content">
+            <div class="cache-modal-header">
+                <h3>⚙️ Configuration du cache</h3>
+                <button type="button" class="cache-modal-close">&times;</button>
+            </div>
+            <div class="cache-modal-body">
+                <div class="cache-modal-info">
+                    <p>
+                        <strong>💡 Configuration du système de cache :</strong> Gérez les paramètres de cache pour optimiser les performances du plugin PDF Builder.
+                        Le cache améliore considérablement les temps de chargement en stockant les données temporaires.
+                    </p>
+                </div>
+                <form id="cache-status-form">
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="modal_cache_enabled">Cache activé</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="modal_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Active/désactive le système de cache du plugin</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="modal_cache_compression">Compression du cache</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="modal_cache_compression" name="cache_compression" value="1" <?php checked(get_option('pdf_builder_cache_compression', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="modal_cache_auto_cleanup">Nettoyage automatique</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="modal_cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked(get_option('pdf_builder_cache_auto_cleanup', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="modal_cache_max_size">Taille max du cache (MB)</label></th>
+                            <td>
+                                <input type="number" id="modal_cache_max_size" name="cache_max_size" value="<?php echo intval(get_option('pdf_builder_cache_max_size', 100)); ?>" min="10" max="1000" step="10" />
+                                <p class="description">Taille maximale du dossier cache en mégaoctets</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="modal_cache_ttl">TTL du cache (secondes)</label></th>
+                            <td>
+                                <input type="number" id="modal_cache_ttl" name="cache_ttl" value="<?php echo intval(get_option('pdf_builder_cache_ttl', 3600)); ?>" min="0" max="86400" />
+                                <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <div class="cache-modal-footer">
+                <button type="button" class="button button-secondary cache-modal-cancel">Annuler</button>
+                <button type="button" class="button button-primary cache-modal-save" data-category="status">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cache Cleanup Modal -->
+<div id="cache-cleanup-modal" class="cache-modal" data-category="cleanup">
+    <div class="cache-modal-overlay">
+        <div class="cache-modal-content">
+            <div class="cache-modal-header">
+                <h3>🧹 Nettoyage du cache</h3>
+                <button type="button" class="cache-modal-close">&times;</button>
+            </div>
+            <div class="cache-modal-body">
+                <div class="cache-modal-info">
+                    <p>
+                        <strong>💡 Nettoyage du cache :</strong> Supprimez les fichiers cache obsolètes et les données temporaires pour libérer de l'espace disque
+                        et améliorer les performances. Cette opération est sûre et peut être effectuée à tout moment.
+                    </p>
+                </div>
+                <div style="margin-top: 20px;">
+                    <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                        <h4 style="margin-top: 0; color: #495057;">📋 Derniers nettoyages</h4>
+                        <div style="margin-top: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #dee2e6;">
+                                <span>Dernier nettoyage automatique:</span>
+                                <span style="font-weight: bold; color: #28a745;">
+                                    <?php
+                                    $last_auto_cleanup = get_option('pdf_builder_cache_last_auto_cleanup', 'Jamais');
+                                    echo $last_auto_cleanup !== 'Jamais' ? human_time_diff(strtotime($last_auto_cleanup)) . ' ago' : $last_auto_cleanup;
+                                    ?>
+                                </span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #dee2e6;">
+                                <span>Dernier nettoyage manuel:</span>
+                                <span style="font-weight: bold; color: #28a745;">
+                                    <?php
+                                    $last_manual_cleanup = get_option('pdf_builder_cache_last_manual_cleanup', 'Jamais');
+                                    echo $last_manual_cleanup !== 'Jamais' ? human_time_diff(strtotime($last_manual_cleanup)) . ' ago' : $last_manual_cleanup;
+                                    ?>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; padding: 15px; background: #d1ecf1; border: 1px solid #17a2b8; border-radius: 8px;">
+                        <h4 style="margin-top: 0; color: #0c5460;">🧽 Actions de nettoyage disponibles</h4>
+                        <div style="margin-top: 15px; display: grid; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="cleanup_files" checked>
+                                <label for="cleanup_files">Supprimer les fichiers cache obsolètes</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="cleanup_transients" checked>
+                                <label for="cleanup_transients">Vider les transients expirés</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="cleanup_temp">
+                                <label for="cleanup_temp">Supprimer les fichiers temporaires (+24h)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cache-modal-footer">
+                <button type="button" class="button button-secondary cache-modal-cancel">Annuler</button>
+                <button type="button" class="button button-primary" id="perform-cleanup-btn">🧹 Nettoyer maintenant</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions">
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
