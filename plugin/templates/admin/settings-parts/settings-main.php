@@ -726,10 +726,8 @@ window.updateZoomCardPreview = function() {
 
         let activeTabId = 'general'; // Par défaut
 
-        if (urlHash && document.getElementById(urlHash)) {
-            activeTabId = urlHash;
-            console.log('PDF Builder: Onglet actif défini depuis URL:', activeTabId);
-        }
+        // Suppression des ancres - toujours commencer par l'onglet général
+        console.log('PDF Builder: Ancres désactivées, onglet par défaut: general');
 
         // Masquer tous les contenus d'onglets sauf celui actif
         tabContents.forEach(function(content, index) {
@@ -746,13 +744,6 @@ window.updateZoomCardPreview = function() {
         if (activeNavTab) {
             activeNavTab.classList.add('nav-tab-active');
             console.log('PDF Builder: Onglet nav activé:', activeTabId);
-        } else {
-            // Fallback sur le premier onglet
-            const firstTab = document.querySelector('.nav-tab[data-tab="general"]');
-            if (firstTab) {
-                firstTab.classList.add('nav-tab-active');
-                console.log('PDF Builder: Fallback sur premier onglet nav');
-            }
         }
 
         // Gérer les clics sur les onglets
@@ -789,9 +780,8 @@ window.updateZoomCardPreview = function() {
                     targetContent.classList.add('active');
                     console.log('PDF Builder: Contenu affiché:', tabId);
 
-                    // Mettre à jour l'URL hash
-                    window.location.hash = tabId;
-                    console.log('PDF Builder: Hash URL mis à jour:', tabId);
+                    // Suppression des ancres - ne pas mettre à jour l'URL hash
+                    console.log('PDF Builder: Ancres désactivées, pas de mise à jour hash');
                 } else {
                     console.error('PDF Builder: Contenu non trouvé pour:', tabId);
                 }
@@ -820,20 +810,6 @@ window.updateZoomCardPreview = function() {
         tabsInitialized = true;
         console.log('PDF Builder: Initialisation des onglets terminée avec succès');
     }
-
-    // Gérer les changements de hash dans l'URL (bouton retour, navigation directe)
-    window.addEventListener('hashchange', function() {
-        const newHash = window.location.hash.substring(1);
-        console.log('PDF Builder: Changement de hash détecté:', newHash);
-
-        if (newHash && document.getElementById(newHash)) {
-            // Simuler un clic sur l'onglet correspondant
-            const targetTab = document.querySelector('.nav-tab[data-tab="' + newHash + '"]');
-            if (targetTab) {
-                targetTab.click();
-            }
-        }
-    });
 
     // Initialiser dès que possible
     if (document.readyState === 'loading') {
