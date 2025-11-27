@@ -930,6 +930,9 @@ window.updateZoomCardPreview = function() {
             .then(function(data) {
                 console.log('PDF Builder: Réponse AJAX reçue:', data);
 
+                // Vérifier si debug_info existe
+                console.log('🔍 DEBUG - Vérification debug_info:', typeof data.debug_info, data.debug_info ? 'présent' : 'absent');
+
                 // Afficher les informations de debug
                 if (data.debug_info) {
                     console.log('🔍 DEBUG - Analyse des champs:');
