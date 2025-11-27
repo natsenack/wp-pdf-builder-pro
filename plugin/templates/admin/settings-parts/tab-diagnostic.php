@@ -3,6 +3,7 @@
  * Diagnostic script for tab functionality
  * This will help identify why tabs are not switching properly
  */
+echo "<!-- PDF Builder Tab Diagnostic Loaded -->";
 ?>
 
 <script>
