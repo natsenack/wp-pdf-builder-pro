@@ -888,6 +888,15 @@ if (
 <script>
 // Update zoom card preview
 window.updateZoomCardPreview = function() {
+    // Fallback definition for pdfBuilderError if not loaded yet
+    if (typeof pdfBuilderError === 'undefined') {
+        window.pdfBuilderError = function(message, ...args) {
+            if (console && console.error) {
+                console.error('[PDF Builder Error]', message, ...args);
+            }
+        };
+    }
+
     pdfBuilderDebug('updateZoomCardPreview called');
     try {
         // Try to get values from modal inputs first (real-time), then from settings
