@@ -1162,8 +1162,6 @@ window.updateZoomCardPreview = function() {
     // Et une dernière vérification après un délai plus long
     setTimeout(initializeTabs, 1000);
 
-})();
-
 // Gestion du bouton flottant de sauvegarde
 (function() {
     'use strict';
@@ -1466,7 +1464,514 @@ window.updateZoomCardPreview = function() {
     }
 
 })();
-</script>
+
+// Gestion des cartes Canvas
+(function() {
+    'use strict';
+
+    // Gestionnaire pour les cartes canvas
+    function initializeCanvasCards() {
+        const canvasCards = document.querySelectorAll('.canvas-card');
+
+        canvasCards.forEach(function(card) {
+            const configureBtn = card.querySelector('.canvas-configure-btn');
+            if (configureBtn) {
+                configureBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const category = card.getAttribute('data-category');
+                    if (category) {
+                        openCanvasModal(category);
+                    }
+                });
+            }
+        });
+    }
+
+    function openCanvasModal(category) {
+        const modalId = `canvas-${category}-modal`;
+        const modal = document.getElementById(modalId);
+
+        if (!modal) {
+            console.error(`Modal ${modalId} not found`);
+            return;
+        }
+
+        // Charger les données de la modal si nécessaire
+        loadCanvasModalData(category);
+
+        // Afficher la modal
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+
+        setTimeout(function() {
+            modal.classList.add('active');
+        }, 10);
+    }
+
+    function loadCanvasModalData(category) {
+        // Simulation du chargement des données pour la modal
+        // Ici on pourrait faire un appel AJAX pour obtenir les vraies données
+
+        if (category === 'performance') {
+            // Mise à jour des métriques de performance
+            setTimeout(function() {
+                const fpsElement = document.querySelector('#canvas-performance-modal .metric-value');
+                if (fpsElement) fpsElement.textContent = '60';
+            }, 500);
+        }
+    }
+
+    // Gestionnaire pour fermer les modales canvas
+    function initializeCanvasModalCloseHandlers() {
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('canvas-modal-overlay') ||
+                e.target.classList.contains('canvas-modal-close') ||
+                e.target.classList.contains('canvas-modal-cancel')) {
+                closeCanvasModal();
+            }
+        });
+
+        // Fermeture avec la touche Échap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeCanvasModal();
+            }
+        });
+    }
+
+    function closeCanvasModal() {
+        const activeModal = document.querySelector('.canvas-modal.active');
+        if (activeModal) {
+            activeModal.classList.remove('active');
+            setTimeout(function() {
+                activeModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        }
+    }
+
+    // Gestionnaire pour sauvegarder la configuration canvas
+    function initializeCanvasModalSaveHandlers() {
+        const saveButtons = document.querySelectorAll('.canvas-modal-save');
+
+        saveButtons.forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const category = this.getAttribute('data-category');
+
+                if (category === 'dimensions') {
+                    saveCanvasDimensionsConfiguration();
+                } else if (category === 'apparence') {
+                    saveCanvasAppearanceConfiguration();
+                } else if (category === 'grille') {
+                    saveCanvasGridConfiguration();
+                } else if (category === 'zoom') {
+                    saveCanvasZoomConfiguration();
+                } else if (category === 'interactions') {
+                    saveCanvasInteractionsConfiguration();
+                } else if (category === 'export') {
+                    saveCanvasExportConfiguration();
+                } else if (category === 'performance') {
+                    saveCanvasPerformanceConfiguration();
+                } else if (category === 'debug') {
+                    saveCanvasDebugConfiguration();
+                }
+            });
+        });
+    }
+
+    function saveCanvasDimensionsConfiguration() {
+        const form = document.getElementById('canvas-dimensions-form');
+        if (!form) return;
+
+        const formData = new FormData(form);
+        formData.append('action', 'pdf_builder_save_canvas_dimensions');
+        formData.append('security', window.pdfBuilderAjax?.nonce || '');
+
+        const saveButton = document.querySelector('.canvas-modal-save[data-category="dimensions"]');
+        if (saveButton) {
+            saveButton.textContent = 'Sauvegarde...';
+            saveButton.disabled = true;
+        }
+
+        fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                closeCanvasModal();
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('Configuration des dimensions sauvegardée avec succès.', 'success');
+                }
+            } else {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast(data.data?.message || 'Erreur lors de la sauvegarde.', 'error');
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Erreur AJAX:', error);
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('Erreur de connexion réseau.', 'error');
+            }
+        })
+        .finally(function() {
+            if (saveButton) {
+                saveButton.textContent = 'Sauvegarder';
+                saveButton.disabled = false;
+            }
+        });
+    }
+
+    function saveCanvasAppearanceConfiguration() {
+        const form = document.getElementById('canvas-apparence-form');
+        if (!form) return;
+
+        const formData = new FormData(form);
+        formData.append('action', 'pdf_builder_save_canvas_appearance');
+        formData.append('security', window.pdfBuilderAjax?.nonce || '');
+
+        const saveButton = document.querySelector('.canvas-modal-save[data-category="apparence"]');
+        if (saveButton) {
+            saveButton.textContent = 'Sauvegarde...';
+            saveButton.disabled = true;
+        }
+
+        fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                closeCanvasModal();
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('Configuration de l\'apparence sauvegardée avec succès.', 'success');
+                }
+            } else {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast(data.data?.message || 'Erreur lors de la sauvegarde.', 'error');
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Erreur AJAX:', error);
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('Erreur de connexion réseau.', 'error');
+            }
+        })
+        .finally(function() {
+            if (saveButton) {
+                saveButton.textContent = 'Sauvegarder';
+                saveButton.disabled = false;
+            }
+        });
+    }
+
+    function saveCanvasGridConfiguration() {
+        const form = document.getElementById('canvas-grille-form');
+        if (!form) return;
+
+        const formData = new FormData(form);
+        formData.append('action', 'pdf_builder_save_canvas_grid');
+        formData.append('security', window.pdfBuilderAjax?.nonce || '');
+
+        const saveButton = document.querySelector('.canvas-modal-save[data-category="grille"]');
+        if (saveButton) {
+            saveButton.textContent = 'Sauvegarde...';
+            saveButton.disabled = true;
+        }
+
+        fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                closeCanvasModal();
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('Configuration de la grille sauvegardée avec succès.', 'success');
+                }
+            } else {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast(data.data?.message || 'Erreur lors de la sauvegarde.', 'error');
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Erreur AJAX:', error);
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('Erreur de connexion réseau.', 'error');
+            }
+        })
+        .finally(function() {
+            if (saveButton) {
+                saveButton.textContent = 'Sauvegarder';
+                saveButton.disabled = false;
+            }
+        });
+    }
+
+    function saveCanvasZoomConfiguration() {
+        const form = document.getElementById('zoom-form');
+        if (!form) return;
+
+        const formData = new FormData(form);
+        formData.append('action', 'pdf_builder_save_canvas_zoom');
+        formData.append('security', window.pdfBuilderAjax?.nonce || '');
+
+        const saveButton = document.querySelector('.canvas-modal-save[data-category="zoom"]');
+        if (saveButton) {
+            saveButton.textContent = 'Sauvegarde...';
+            saveButton.disabled = true;
+        }
+
+        fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                closeCanvasModal();
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('Configuration du zoom sauvegardée avec succès.', 'success');
+                }
+            } else {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast(data.data?.message || 'Erreur lors de la sauvegarde.', 'error');
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Erreur AJAX:', error);
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('Erreur de connexion réseau.', 'error');
+            }
+        })
+        .finally(function() {
+            if (saveButton) {
+                saveButton.textContent = 'Sauvegarder';
+                saveButton.disabled = false;
+            }
+        });
+    }
+
+    function saveCanvasInteractionsConfiguration() {
+        const form = document.getElementById('canvas-interactions-form');
+        if (!form) return;
+
+        const formData = new FormData(form);
+        formData.append('action', 'pdf_builder_save_canvas_interactions');
+        formData.append('security', window.pdfBuilderAjax?.nonce || '');
+
+        const saveButton = document.querySelector('.canvas-modal-save[data-category="interactions"]');
+        if (saveButton) {
+            saveButton.textContent = 'Sauvegarde...';
+            saveButton.disabled = true;
+        }
+
+        fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                closeCanvasModal();
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('Configuration des interactions sauvegardée avec succès.', 'success');
+                }
+            } else {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast(data.data?.message || 'Erreur lors de la sauvegarde.', 'error');
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Erreur AJAX:', error);
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('Erreur de connexion réseau.', 'error');
+            }
+        })
+        .finally(function() {
+            if (saveButton) {
+                saveButton.textContent = 'Sauvegarder';
+                saveButton.disabled = false;
+            }
+        });
+    }
+
+    function saveCanvasExportConfiguration() {
+        const form = document.getElementById('canvas-export-form');
+        if (!form) return;
+
+        const formData = new FormData(form);
+        formData.append('action', 'pdf_builder_save_canvas_export');
+        formData.append('security', window.pdfBuilderAjax?.nonce || '');
+
+        const saveButton = document.querySelector('.canvas-modal-save[data-category="export"]');
+        if (saveButton) {
+            saveButton.textContent = 'Sauvegarde...';
+            saveButton.disabled = true;
+        }
+
+        fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                closeCanvasModal();
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('Configuration d\'export sauvegardée avec succès.', 'success');
+                }
+            } else {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast(data.data?.message || 'Erreur lors de la sauvegarde.', 'error');
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Erreur AJAX:', error);
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('Erreur de connexion réseau.', 'error');
+            }
+        })
+        .finally(function() {
+            if (saveButton) {
+                saveButton.textContent = 'Sauvegarder';
+                saveButton.disabled = false;
+            }
+        });
+    }
+
+    function saveCanvasPerformanceConfiguration() {
+        const form = document.getElementById('canvas-performance-form');
+        if (!form) return;
+
+        const formData = new FormData(form);
+        formData.append('action', 'pdf_builder_save_canvas_performance');
+        formData.append('security', window.pdfBuilderAjax?.nonce || '');
+
+        const saveButton = document.querySelector('.canvas-modal-save[data-category="performance"]');
+        if (saveButton) {
+            saveButton.textContent = 'Sauvegarde...';
+            saveButton.disabled = true;
+        }
+
+        fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                closeCanvasModal();
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('Configuration de performance sauvegardée avec succès.', 'success');
+                }
+            } else {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast(data.data?.message || 'Erreur lors de la sauvegarde.', 'error');
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Erreur AJAX:', error);
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('Erreur de connexion réseau.', 'error');
+            }
+        })
+        .finally(function() {
+            if (saveButton) {
+                saveButton.textContent = 'Sauvegarder';
+                saveButton.disabled = false;
+            }
+        });
+    }
+
+    function saveCanvasDebugConfiguration() {
+        const form = document.getElementById('canvas-debug-form');
+        if (!form) return;
+
+        const formData = new FormData(form);
+        formData.append('action', 'pdf_builder_save_canvas_debug');
+        formData.append('security', window.pdfBuilderAjax?.nonce || '');
+
+        const saveButton = document.querySelector('.canvas-modal-save[data-category="debug"]');
+        if (saveButton) {
+            saveButton.textContent = 'Sauvegarde...';
+            saveButton.disabled = true;
+        }
+
+        fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                closeCanvasModal();
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('Configuration de debug sauvegardée avec succès.', 'success');
+                }
+            } else {
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast(data.data?.message || 'Erreur lors de la sauvegarde.', 'error');
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Erreur AJAX:', error);
+            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                PDF_Builder_Notification_Manager.show_toast('Erreur de connexion réseau.', 'error');
+            }
+        })
+        .finally(function() {
+            if (saveButton) {
+                saveButton.textContent = 'Sauvegarder';
+                saveButton.disabled = false;
+            }
+        });
+    }
+
+    // Initialisation
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCanvasCards();
+            initializeCanvasModalCloseHandlers();
+            initializeCanvasModalSaveHandlers();
+        });
+    } else {
+        initializeCanvasCards();
+        initializeCanvasModalCloseHandlers();
+        initializeCanvasModalSaveHandlers();
+    }
+
+})();
+
+
 
 
 
