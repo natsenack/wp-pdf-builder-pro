@@ -3119,6 +3119,6 @@ console.log('PDF Builder: Main script loaded successfully');
 
 </script>
 
-<?php require_once 'tab-diagnostic.php'; ?>
+<?php require_once __DIR__ . '/tab-diagnostic.php'; ?>
 
 
