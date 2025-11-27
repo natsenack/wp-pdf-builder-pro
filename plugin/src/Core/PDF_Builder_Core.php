@@ -439,7 +439,7 @@ class PdfBuilderCore
     public function settingsPage()
     {
         // Inclure le template principal des paramètres avec onglets
-        $template_path = PDF_BUILDER_PLUGIN_DIR . 'templates/admin/settings-parts/settings-main.php';
+        $template_path = PDF_BUILDER_PLUGIN_DIR . 'templates/admin/settings-page.php';
         if (file_exists($template_path)) {
             include $template_path;
         } else {
