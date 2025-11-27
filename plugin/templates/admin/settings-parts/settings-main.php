@@ -852,7 +852,7 @@ window.updateZoomCardPreview = function() {
             // Changer l'apparence du bouton pour indiquer la sauvegarde
             floatingBtn.classList.add('saving');
             floatingBtn.classList.remove('saved', 'error');
-            floatingBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Sauvegarde...</span>';
+            floatingBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Préparation...</span>';
             floatingBtn.disabled = true;
 
             // Collecter toutes les données des formulaires
@@ -864,8 +864,13 @@ window.updateZoomCardPreview = function() {
 
             // Collecter les données de tous les formulaires de la page
             const forms = document.querySelectorAll('form');
+            let totalFields = 0;
+
             forms.forEach(function(form, index) {
                 console.log('PDF Builder: Traitement du formulaire', index + 1, 'sur', forms.length);
+
+                // Mettre à jour l'indicateur en temps réel
+                floatingBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Collecte... (' + (index + 1) + '/' + forms.length + ')</span>';
 
                 // Collecter tous les champs du formulaire
                 const formInputs = form.querySelectorAll('input, select, textarea');
@@ -880,9 +885,15 @@ window.updateZoomCardPreview = function() {
                         } else {
                             formData.append(input.name, input.value);
                         }
+                        totalFields++;
                     }
                 });
             });
+
+            console.log('PDF Builder: Collecte terminée -', totalFields, 'champs à sauvegarder');
+
+            // Indiquer l'envoi
+            floatingBtn.innerHTML = '<span class="save-icon">📤</span><span class="save-text">Envoi... (' + totalFields + ' champs)</span>';
 
             // Envoyer la requête AJAX
             fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
@@ -893,6 +904,8 @@ window.updateZoomCardPreview = function() {
                 }
             })
             .then(function(response) {
+                // Indiquer le traitement de la réponse
+                floatingBtn.innerHTML = '<span class="save-icon">⚙️</span><span class="save-text">Traitement...</span>';
                 return response.json();
             })
             .then(function(data) {
@@ -903,7 +916,10 @@ window.updateZoomCardPreview = function() {
                     floatingBtn.classList.remove('saving');
                     floatingBtn.classList.add('saved');
                     floatingBtn.classList.remove('error');
-                    floatingBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">Sauvegardé !</span>';
+
+                    // Afficher le nombre de paramètres sauvegardés
+                    const savedCount = data.data && data.data.saved_count ? data.data.saved_count : 'paramètres';
+                    floatingBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">' + savedCount + ' sauvegardés !</span>';
 
                     // Remettre à l'état normal après 3 secondes
                     setTimeout(function() {
@@ -924,7 +940,7 @@ window.updateZoomCardPreview = function() {
                     floatingBtn.classList.remove('saving');
                     floatingBtn.classList.add('error');
                     floatingBtn.classList.remove('saved');
-                    floatingBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
+                    floatingBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Échec sauvegarde</span>';
 
                     // Remettre à l'état normal après 5 secondes (plus long pour les erreurs)
                     setTimeout(function() {
