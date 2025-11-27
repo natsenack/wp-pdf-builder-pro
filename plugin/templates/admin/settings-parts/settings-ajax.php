@@ -1,4 +1,4 @@
-<?php
+﻿?php
 /**
  * PDF Builder Pro - AJAX Handlers
  * All AJAX request processing for settings page
