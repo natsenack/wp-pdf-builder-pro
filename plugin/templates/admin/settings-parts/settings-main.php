@@ -949,9 +949,13 @@ window.updateZoomCardPreview = function() {
 
                     // Afficher un message de succès si disponible
                     if (data.data && data.data.message) {
-                        showNotification(data.data.message, 'success');
+                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                            PDF_Builder_Notification_Manager.show_toast(data.data.message, 'success');
+                        }
                     } else {
-                        showNotification('Tous les paramètres ont été sauvegardés avec succès.', 'success');
+                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                            PDF_Builder_Notification_Manager.show_toast('Tous les paramètres ont été sauvegardés avec succès.', 'success');
+                        }
                     }
 
                 } else {
@@ -970,7 +974,9 @@ window.updateZoomCardPreview = function() {
 
                     // Afficher le message d'erreur
                     const errorMsg = data.data && data.data.message ? data.data.message : 'Erreur lors de la sauvegarde des paramètres.';
-                    showNotification(errorMsg, 'error');
+                    if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                        PDF_Builder_Notification_Manager.show_toast(errorMsg, 'error');
+                    }
                     console.error('PDF Builder: Erreur de sauvegarde:', errorMsg);
                 }
             })
@@ -989,7 +995,10 @@ window.updateZoomCardPreview = function() {
                     floatingBtn.disabled = false;
                 }, 5000);
 
-                showNotification('Erreur de connexion réseau. Vérifiez votre connexion internet et réessayez.', 'error');
+                // Afficher l'erreur réseau
+                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                    PDF_Builder_Notification_Manager.show_toast('Erreur de connexion réseau. Vérifiez votre connexion internet et réessayez.', 'error');
+                }
             });
         });
 
@@ -1025,111 +1034,7 @@ window.updateZoomCardPreview = function() {
             });
         }
 
-        // Fonction pour afficher les notifications
-        function showNotification(message, type = 'info') {
-            // Types de notifications supportés
-            const types = {
-                success: { icon: '✅', color: '#28a745', bgColor: '#d4edda', borderColor: '#c3e6cb' },
-                error: { icon: '❌', color: '#dc3545', bgColor: '#f8d7da', borderColor: '#f5c6cb' },
-                warning: { icon: '⚠️', color: '#ffc107', bgColor: '#fff3cd', borderColor: '#ffeaa7' },
-                info: { icon: 'ℹ️', color: '#17a2b8', bgColor: '#d1ecf1', borderColor: '#bee5eb' }
-            };
 
-            const config = types[type] || types.info;
-
-            // Créer le conteneur de notification
-            const notification = document.createElement('div');
-            notification.className = 'pdf-builder-notification';
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${config.bgColor};
-                color: ${config.color};
-                border: 1px solid ${config.borderColor};
-                padding: 15px 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 1000000;
-                font-weight: 500;
-                max-width: 350px;
-                word-wrap: break-word;
-                opacity: 0;
-                transform: translateX(100%);
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-            `;
-
-            // Icône
-            const icon = document.createElement('span');
-            icon.textContent = config.icon;
-            icon.style.fontSize = '18px';
-            icon.style.flexShrink = '0';
-
-            // Message
-            const text = document.createElement('span');
-            text.textContent = message;
-            text.style.flex = '1';
-
-            // Bouton de fermeture
-            const closeBtn = document.createElement('button');
-            closeBtn.innerHTML = '×';
-            closeBtn.style.cssText = `
-                background: none;
-                border: none;
-                color: ${config.color};
-                font-size: 20px;
-                font-weight: bold;
-                cursor: pointer;
-                padding: 0;
-                margin-left: 10px;
-                opacity: 0.7;
-                transition: opacity 0.2s;
-                flex-shrink: 0;
-            `;
-            closeBtn.onmouseover = () => closeBtn.style.opacity = '1';
-            closeBtn.onmouseout = () => closeBtn.style.opacity = '0.7';
-            closeBtn.onclick = () => removeNotification(notification);
-
-            // Assembler la notification
-            notification.appendChild(icon);
-            notification.appendChild(text);
-            notification.appendChild(closeBtn);
-            document.body.appendChild(notification);
-
-            // Animation d'entrée
-            setTimeout(() => {
-                notification.style.opacity = '1';
-                notification.style.transform = 'translateX(0)';
-            }, 10);
-
-            // Supprimer automatiquement après 5 secondes
-            const autoRemove = setTimeout(() => removeNotification(notification), 5000);
-
-            // Fonction de suppression
-            function removeNotification(notif) {
-                clearTimeout(autoRemove);
-                notif.style.opacity = '0';
-                notif.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (notif.parentNode) {
-                        notif.parentNode.removeChild(notif);
-                    }
-                }, 300);
-            }
-
-            // Stacker les notifications si plusieurs
-            const existingNotifications = document.querySelectorAll('.pdf-builder-notification');
-            if (existingNotifications.length > 1) {
-                existingNotifications.forEach((notif, index) => {
-                    if (index < existingNotifications.length - 1) {
-                        notif.style.transform = `translateX(0) translateY(-${(existingNotifications.length - 1 - index) * 70}px)`;
-                    }
-                });
-            }
-        }
     }
 
     // Initialiser le bouton flottant
