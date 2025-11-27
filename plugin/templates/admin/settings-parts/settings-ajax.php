@@ -1778,7 +1778,7 @@ function pdf_builder_save_all_settings_handler() {
                     'php_processed' => count($processed_fields),
                     'saved' => $saved_count
                 ],
-                'missing_fields' => !empty($js_collected) ? implode(', ', array_diff($js_collected, array_keys($_POST))) : ''
+                'missing_fields' => ''
             ]
         ]);
 
