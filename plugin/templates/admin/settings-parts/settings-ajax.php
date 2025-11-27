@@ -1741,14 +1741,14 @@ function pdf_builder_save_all_settings_handler() {
             $message .= " ⚠️ " . count($errors) . " erreurs ignorées.";
         }
 
-        // Log pour debug
-        error_log('PDF Builder: Champs traités côté PHP: ' . implode(', ', $processed_fields));
-        error_log('PDF Builder: Nombre total de champs POST: ' . count($_POST));
-        error_log('PDF Builder: Nombre de champs sauvegardés: ' . $saved_count);
-
         send_ajax_response(true, $message, [
             'saved_count' => $saved_count,
-            'errors' => $errors
+            'errors' => $errors,
+            'debug_info' => [
+                'total_post_fields' => count($_POST),
+                'processed_fields' => $processed_fields,
+                'ignored_fields' => ['action', 'security', 'current_tab']
+            ]
         ]);
 
     } catch (Exception $e) {
