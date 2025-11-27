@@ -815,11 +815,11 @@ if (
 
 /* Styles pour les onglets */
 .tab-content {
-    display: none;
+    display: none !important;
 }
 
 .tab-content.active {
-    display: block;
+    display: block !important;
 }
 </style>
 
@@ -889,9 +889,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
 
+    pdfBuilderDebug('Found tabs:', tabs.length, 'contents:', contents.length);
+
     tabs.forEach(function(tab) {
         tab.addEventListener('click', function(e) {
             e.preventDefault();
+
+            pdfBuilderDebug('Tab clicked:', this.getAttribute('href'));
 
             // Remove active class from all tabs
             tabs.forEach(function(t) {
@@ -903,10 +907,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide all tab contents
             contents.forEach(function(c) {
                 c.classList.remove('active');
+                pdfBuilderDebug('Removed active from content:', c.id);
             });
             // Show corresponding tab content
             const target = this.getAttribute('href').substring(1);
-            document.getElementById(target).classList.add('active');
+            const targetContent = document.getElementById(target);
+            if (targetContent) {
+                targetContent.classList.add('active');
+                pdfBuilderDebug('Added active to content:', target);
+            } else {
+                pdfBuilderError('Target content not found:', target);
+            }
 
             // Update canvas previews when switching to contenu tab
             if (target === 'contenu') {
@@ -948,6 +959,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        pdfBuilderDebug('Initializing tabs, targetTab:', targetTab);
+
         // Set active tab and content without triggering click events
         const activeTab = document.querySelector('.nav-tab[href="#' + targetTab + '"]');
         const activeContent = document.getElementById(targetTab);
@@ -961,6 +974,8 @@ document.addEventListener('DOMContentLoaded', function() {
             activeTab.classList.add('nav-tab-active');
             activeContent.classList.add('active');
 
+            pdfBuilderDebug('Tab initialized - activeTab:', activeTab, 'activeContent:', activeContent);
+
             // Update mobile menu text
             const currentTabText = document.querySelector('.current-tab-text');
             if (currentTabText) {
@@ -969,6 +984,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     currentTabText.textContent = tabText.textContent;
                 }
             }
+        } else {
+            pdfBuilderError('Could not find activeTab or activeContent for targetTab:', targetTab);
         }
     }
 
