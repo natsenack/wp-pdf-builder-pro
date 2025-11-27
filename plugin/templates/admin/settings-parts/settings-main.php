@@ -10,6 +10,22 @@ error_log('PDF Builder: settings-main.php loaded at ' . date('Y-m-d H:i:s'));
 
 echo '<script>console.log("PDF Builder: PHP file loaded and script tag executed");</script>';
 
+// Test script - very simple to isolate the issue
+echo '<script>
+console.log("PDF Builder: TEST SCRIPT STARTED - IMMEDIATE EXECUTION");
+
+// Test basic JavaScript execution
+console.log("PDF Builder: Basic JavaScript execution test passed");
+
+// Test if we can access window object
+console.log("PDF Builder: Window object accessible:", typeof window);
+
+// Test if we can access document object
+console.log("PDF Builder: Document object accessible:", typeof document);
+
+console.log("PDF Builder: TEST SCRIPT COMPLETED SUCCESSFULLY - IMMEDIATE EXECUTION");
+</script>';
+
 
 if (!defined('ABSPATH')) {
     exit('Direct access forbidden');
@@ -920,8 +936,18 @@ function initializeTabs() {
 
     console.log('PDF Builder: Found tabs count:', tabs.length);
     console.log('PDF Builder: Found contents count:', contents.length);
-    console.log('PDF Builder: Tabs elements:', Array.from(tabs).map(tab => ({href: tab.getAttribute('href'), element: tab})));
-    console.log('PDF Builder: Contents elements:', Array.from(contents).map(content => ({id: content.id, element: content})));
+    console.log('PDF Builder: Tabs elements:', Array.from(tabs).map(tab => ({
+        href: tab.getAttribute('href'),
+        dataTab: tab.getAttribute('data-tab'),
+        text: tab.textContent.trim(),
+        classList: tab.classList.toString()
+    })));
+    console.log('PDF Builder: Contents elements:', Array.from(contents).map(content => ({
+        id: content.id,
+        classList: content.classList.toString(),
+        display: window.getComputedStyle(content).display,
+        visibility: window.getComputedStyle(content).visibility
+    })));
 
     // First, hide ALL tab contents
     console.log('PDF Builder: Hiding all tab contents initially');
@@ -929,6 +955,7 @@ function initializeTabs() {
         console.log('PDF Builder: Hiding content:', content.id);
         content.classList.remove('active');
         content.style.display = 'none';
+        console.log('PDF Builder: After hiding, content display:', window.getComputedStyle(content).display);
     });
 
     // Add click listeners to tabs
@@ -1122,8 +1149,6 @@ function initializeTabs() {
     console.log('PDF Builder: Final state - all contents:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({id: content.id, classes: content.classList.toString()})));
     console.log('PDF Builder: ===== END FINAL STATE CHECK =====');
 }
-
-    // Fonction pour mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Sécurité
     function updateSecurityStatusIndicators() {
         // Mettre à jour l'indicateur de sécurité (enable_logging)
         const enableLoggingCheckbox = document.getElementById('enable_logging');
