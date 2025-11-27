@@ -480,3 +480,215 @@ debugLog('🚀 Intégrations API Preview 1.4 chargées !');
 debugLog('💡 Raccourcis:');
 debugLog('   - Ctrl+P (Cmd+P) : Aperçu rapide');
 debugLog('   - generateQuickPreview() : Détection automatique du contexte');
+
+// ==========================================
+// CANVAS PREVIEW MANAGER POUR SETTINGS
+// ==========================================
+
+/**
+ * Gestionnaire centralisé des previews canvas pour la page des paramètres
+ */
+window.CanvasPreviewManager = {
+    /**
+     * Met à jour les previews pour une catégorie donnée
+     */
+    updatePreviews: function(category) {
+        debugLog('🔄 Mise à jour previews pour catégorie:', category);
+
+        try {
+            switch (category) {
+                case 'dimensions':
+                    if (typeof updateDimensionsCardPreview === 'function') {
+                        updateDimensionsCardPreview();
+                    }
+                    break;
+                case 'apparence':
+                    if (typeof updateApparenceCardPreview === 'function') {
+                        updateApparenceCardPreview();
+                    }
+                    break;
+                case 'performance':
+                    if (typeof updatePerformanceCardPreview === 'function') {
+                        updatePerformanceCardPreview();
+                    }
+                    break;
+                case 'autosave':
+                    if (typeof updateAutosaveCardPreview === 'function') {
+                        updateAutosaveCardPreview();
+                    }
+                    break;
+                case 'zoom':
+                    if (typeof updateZoomCardPreview === 'function') {
+                        updateZoomCardPreview();
+                    }
+                    break;
+                case 'grille':
+                    if (typeof updateGrilleCardPreview === 'function') {
+                        updateGrilleCardPreview();
+                    }
+                    break;
+                case 'interactions':
+                    if (typeof updateInteractionsCardPreview === 'function') {
+                        updateInteractionsCardPreview();
+                    }
+                    break;
+                case 'export':
+                    if (typeof updateExportCardPreview === 'function') {
+                        updateExportCardPreview();
+                    }
+                    break;
+                case 'all':
+                    // Mettre à jour toutes les previews
+                    this.updatePreviews('dimensions');
+                    this.updatePreviews('apparence');
+                    this.updatePreviews('performance');
+                    this.updatePreviews('autosave');
+                    this.updatePreviews('zoom');
+                    this.updatePreviews('grille');
+                    this.updatePreviews('interactions');
+                    this.updatePreviews('export');
+                    break;
+                default:
+                    debugWarn('⚠️ Catégorie inconnue:', category);
+            }
+        } catch (error) {
+            debugError('❌ Erreur mise à jour preview:', error);
+        }
+    },
+
+    /**
+     * Récupère les valeurs actuelles d'une carte
+     */
+    getCardValues: function(category) {
+        debugLog('📊 Récupération valeurs pour carte:', category);
+
+        try {
+            const settings = window.pdfBuilderCanvasSettings || {};
+
+            switch (category) {
+                case 'performance':
+                    return {
+                        fps_target: settings.fps_target || 60,
+                        memory_limit_js: settings.memory_limit_js || 128,
+                        memory_limit_php: settings.memory_limit_php || 256,
+                        lazy_loading_editor: settings.lazy_loading_editor || false,
+                        lazy_loading_plugin: settings.lazy_loading_plugin || false
+                    };
+                case 'apparence':
+                    return {
+                        canvas_bg_color: settings.canvas_background_color || '#ffffff',
+                        canvas_border_color: settings.border_color || '#cccccc',
+                        canvas_border_width: settings.border_width || 1,
+                        canvas_shadow_enabled: settings.shadow_enabled || false,
+                        canvas_container_bg_color: settings.container_background_color || '#f8f9fa'
+                    };
+                case 'grille':
+                    return {
+                        grid_enabled: settings.show_grid || false,
+                        grid_size: settings.grid_size || 20,
+                        snap_to_grid: settings.snap_to_grid || false
+                    };
+                case 'interactions':
+                    return {
+                        drag_enabled: settings.drag_enabled !== false,
+                        resize_enabled: settings.resize_enabled !== false,
+                        rotate_enabled: settings.rotate_enabled !== false,
+                        multi_select: settings.multi_select !== false,
+                        selection_mode: settings.selection_mode || 'rectangle',
+                        keyboard_shortcuts: settings.keyboard_shortcuts !== false
+                    };
+                case 'export':
+                    return {
+                        canvas_export_format: settings.export_format || 'pdf',
+                        canvas_export_quality: settings.export_quality || 90,
+                        canvas_export_transparent: settings.export_transparent || false
+                    };
+                case 'zoom':
+                    return {
+                        canvas_zoom_min: settings.min_zoom || 10,
+                        canvas_zoom_max: settings.max_zoom || 500,
+                        canvas_zoom_default: settings.default_zoom || 100,
+                        canvas_zoom_step: settings.zoom_step || 25
+                    };
+                case 'autosave':
+                    return {
+                        canvas_autosave_enabled: settings.autosave_enabled !== false,
+                        canvas_autosave_interval: settings.autosave_interval || 5,
+                        canvas_history_max: settings.versions_limit || 10
+                    };
+                default:
+                    debugWarn('⚠️ Catégorie inconnue pour getCardValues:', category);
+                    return {};
+            }
+        } catch (error) {
+            debugError('❌ Erreur récupération valeurs carte:', error);
+            return {};
+        }
+    },
+
+    /**
+     * Récupère un élément DOM d'une carte
+     */
+    getCardElement: function(category, selector) {
+        debugLog('🔍 Recherche élément pour carte:', category, 'sélecteur:', selector);
+
+        try {
+            const card = document.querySelector(`.canvas-card[data-category="${category}"]`);
+            if (!card) {
+                debugWarn('⚠️ Carte non trouvée:', category);
+                return null;
+            }
+
+            return card.querySelector(selector);
+        } catch (error) {
+            debugError('❌ Erreur recherche élément:', error);
+            return null;
+        }
+    },
+
+    /**
+     * Met à jour une propriété d'un élément
+     */
+    updateElement: function(element, property, value) {
+        if (!element) {
+            debugWarn('⚠️ Élément null passé à updateElement');
+            return;
+        }
+
+        try {
+            debugLog('🔧 Mise à jour élément:', property, '=', value);
+
+            // Gérer les propriétés imbriquées (ex: style.backgroundColor)
+            if (property.includes('.')) {
+                const parts = property.split('.');
+                let obj = element;
+                for (let i = 0; i < parts.length - 1; i++) {
+                    obj = obj[parts[i]];
+                    if (!obj) {
+                        debugWarn('⚠️ Propriété parent non trouvée:', parts.slice(0, i+1).join('.'));
+                        return;
+                    }
+                }
+                obj[parts[parts.length - 1]] = value;
+            } else {
+                element[property] = value;
+            }
+        } catch (error) {
+            debugError('❌ Erreur mise à jour élément:', error);
+        }
+    },
+
+    /**
+     * Initialise les mises à jour en temps réel pour une catégorie
+     */
+    initializeRealTimeUpdates: function(modal) {
+        if (!modal) return;
+
+        debugLog('⚡ Initialisation mises à jour temps réel pour modal:', modal.getAttribute('data-category'));
+
+        // Les mises à jour temps réel sont gérées dans settings-main.php
+        // Cette méthode est appelée pour compatibilité
+    }
+};
+
+debugLog('✅ CanvasPreviewManager initialisé');

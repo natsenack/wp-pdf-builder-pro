@@ -4,23 +4,24 @@
  */
 
 (function($) {
-    'use strict';
+    // 'use strict';  // Removed to avoid strict mode issues
 
     // Attendre que le DOM soit complètement chargé
     $(document).ready(function() {
 
         // Vérifier que toutes les dépendances sont disponibles
-        if (typeof window.pdfBuilderSavedSettings === 'undefined') {
-            console.warn('pdfBuilderSavedSettings not available, retrying in 500ms...');
-            setTimeout(arguments.callee, 500);
-            return;
-        }
+        function checkDependencies() {
+            if (typeof window.pdfBuilderSavedSettings === 'undefined') {
+                console.warn('pdfBuilderSavedSettings not available, retrying in 500ms...');
+                setTimeout(checkDependencies, 500);
+                return;
+            }
 
-        if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
-            console.warn('pdfBuilderCanvasSettings not available, retrying in 500ms...');
-            setTimeout(arguments.callee, 500);
-            return;
-        }
+            if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
+                console.warn('pdfBuilderCanvasSettings not available, retrying in 500ms...');
+                setTimeout(checkDependencies, 500);
+                return;
+            }
 
         console.log('PDF Builder Settings: All dependencies loaded, initializing...');
 
@@ -29,19 +30,19 @@
         const PDF_BUILDER_DEBUG_VERBOSE = window.pdfBuilderCanvasSettings?.debug?.javascript_verbose || false;
 
         // Fonction de debug sécurisée
-        window.pdfBuilderDebug = function() {
+        window.pdfBuilderDebug = function(...args) {
             if (PDF_BUILDER_DEBUG_ENABLED && typeof console !== 'undefined' && console.log) {
                 if (PDF_BUILDER_DEBUG_VERBOSE) {
-                    console.log.apply(console, ['[PDF Builder Debug]'].concat(Array.prototype.slice.call(arguments)));
+                    console.log('[PDF Builder Debug]', ...args);
                 } else {
-                    console.log.apply(console, arguments);
+                    console.log(...args);
                 }
             }
         };
 
-        window.pdfBuilderError = function() {
+        window.pdfBuilderError = function(...args) {
             if (typeof console !== 'undefined' && console.error) {
-                console.error.apply(console, ['[PDF Builder Error]'].concat(Array.prototype.slice.call(arguments)));
+                console.error('[PDF Builder Error]', ...args);
             }
         };
 
