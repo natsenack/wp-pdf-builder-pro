@@ -843,6 +843,10 @@ function pdfBuilderError(message, ...args) {
     console.error('PDF_BUILDER_DEBUG:', message, ...args);
 }
 
+try {
+    console.log('PDF Builder: Starting main script execution');
+
+
 // Update zoom card preview
 window.updateZoomCardPreview = function() {
     pdfBuilderDebug('updateZoomCardPreview called');
@@ -2951,5 +2955,9 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 console.log('PDF Builder: Main script loaded successfully');
+} catch (error) {
+    console.error('PDF Builder: Error in main script:', error);
+    console.error('PDF Builder: Error stack:', error.stack);
+}
 </script>
 
