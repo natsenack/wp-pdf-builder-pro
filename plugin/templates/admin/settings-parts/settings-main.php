@@ -382,19 +382,20 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
     }
 }
 
-// Process développeur form
+// Process développeur form - REMOVED: Maintenant géré par le système de sauvegarde globale
+/*
 if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur_nonce'])) {
     if (wp_verify_nonce($_POST['pdf_builder_developpeur_nonce'], 'pdf_builder_settings')) {
         try {
             // Update developer settings
             $developer_enabled = isset($_POST['developer_enabled']) ? 1 : 0;
             $developer_password = sanitize_text_field($_POST['developer_password'] ?? '');
-            
+
             PDF_Builder_Security_Manager::debug_log('php_errors', "Processing developer form - enabled: $developer_enabled, password: " . (!empty($developer_password) ? 'set' : 'empty'));
-            
+
             update_option('pdf_builder_developer_enabled', $developer_enabled);
             update_option('pdf_builder_developer_password', $developer_password);
-            
+
             $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres développeur enregistrés avec succès.</p></div>';
         } catch (Exception $e) {
             $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde: ' . esc_html($e->getMessage()) . '</p></div>';
@@ -403,6 +404,7 @@ if (isset($_POST['submit_developpeur']) && isset($_POST['pdf_builder_developpeur
         $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
     }
 }
+*/
 
 // Handle cache clear
 if (
