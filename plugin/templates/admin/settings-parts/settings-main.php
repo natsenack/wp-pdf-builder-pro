@@ -843,10 +843,26 @@ window.updateZoomCardPreview = function() {
             return;
         }
 
+        // Vérifier si l'event listener est déjà ajouté
+        if (floatingBtn.hasAttribute('data-initialized')) {
+            console.log('PDF Builder: Bouton flottant déjà initialisé');
+            return;
+        }
+
         console.log('PDF Builder: Initialisation du bouton flottant de sauvegarde');
+
+        // Marquer comme initialisé
+        floatingBtn.setAttribute('data-initialized', 'true');
 
         floatingBtn.addEventListener('click', function(e) {
             e.preventDefault();
+
+            // Éviter les clics multiples pendant la sauvegarde
+            if (floatingBtn.disabled) {
+                console.log('PDF Builder: Sauvegarde déjà en cours, clic ignoré');
+                return;
+            }
+
             console.log('PDF Builder: Clic sur le bouton flottant de sauvegarde');
 
             // Changer l'apparence du bouton pour indiquer la sauvegarde
@@ -1087,11 +1103,6 @@ window.updateZoomCardPreview = function() {
     } else {
         initializeFloatingSaveButton();
     }
-
-    // Réessayer après le chargement complet
-    window.addEventListener('load', function() {
-        setTimeout(initializeFloatingSaveButton, 100);
-    });
 
 })();
 </script>
