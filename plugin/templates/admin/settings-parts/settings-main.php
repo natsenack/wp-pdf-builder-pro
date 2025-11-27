@@ -904,6 +904,17 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('PDF Builder: ===== DOMContentLoaded FIRED =====');
     console.log('PDF Builder: DOMContentLoaded fired - starting tab initialization');
 
+    // Add a delay to ensure all content is loaded
+    setTimeout(function() {
+        console.log('PDF Builder: Timeout fired - now initializing tabs');
+        initializeTabs();
+    }, 100);
+});
+
+// Separate initialization function
+function initializeTabs() {
+    console.log('PDF Builder: initializeTabs() function called');
+
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
 
@@ -912,6 +923,15 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('PDF Builder: Tabs elements:', Array.from(tabs).map(tab => ({href: tab.getAttribute('href'), element: tab})));
     console.log('PDF Builder: Contents elements:', Array.from(contents).map(content => ({id: content.id, element: content})));
 
+    // First, hide ALL tab contents
+    console.log('PDF Builder: Hiding all tab contents initially');
+    contents.forEach(function(content) {
+        console.log('PDF Builder: Hiding content:', content.id);
+        content.classList.remove('active');
+        content.style.display = 'none';
+    });
+
+    // Add click listeners to tabs
     tabs.forEach(function(tab) {
         console.log('PDF Builder: Adding click listener to tab:', tab, 'href:', tab.getAttribute('href'));
         tab.addEventListener('click', function(e) {
@@ -942,6 +962,7 @@ document.addEventListener('DOMContentLoaded', function() {
             contents.forEach(function(c) {
                 console.log('PDF Builder: Processing content for removal:', c.id, 'current classList:', c.classList.toString());
                 c.classList.remove('active');
+                c.style.display = 'none';
                 console.log('PDF Builder: After removal, content classList:', c.classList.toString());
             });
 
@@ -955,6 +976,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (targetContent) {
                 console.log('PDF Builder: Before adding active class, targetContent classList:', targetContent.classList.toString());
                 targetContent.classList.add('active');
+                targetContent.style.display = 'block';
                 console.log('PDF Builder: After adding active class, targetContent classList:', targetContent.classList.toString());
                 console.log('PDF Builder: Content should now be visible');
             } else {
@@ -995,108 +1017,102 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Check hash on load and initialize tabs properly
-    function initializeTabs() {
-        console.log('PDF Builder: initializeTabs() function called');
+    console.log('PDF Builder: Checking URL hash for initial tab');
+    const hash = window.location.hash.substring(1);
+    console.log('PDF Builder: Current hash:', hash);
 
-        const hash = window.location.hash.substring(1);
-        console.log('PDF Builder: Current hash:', hash);
+    let targetTab = 'general'; // Default tab
+    console.log('PDF Builder: Default targetTab set to:', targetTab);
 
-        let targetTab = 'general'; // Default tab
-        console.log('PDF Builder: Default targetTab set to:', targetTab);
-
-        if (hash) {
-            console.log('PDF Builder: Hash found, checking if tab exists for:', hash);
-            const tabExists = document.querySelector('.nav-tab[href="#' + hash + '"]');
-            console.log('PDF Builder: Tab exists for hash?', !!tabExists, 'Element:', tabExists);
-            if (tabExists) {
-                targetTab = hash;
-                console.log('PDF Builder: targetTab updated to hash value:', targetTab);
-            } else {
-                console.log('PDF Builder: Hash tab does not exist, keeping default:', targetTab);
-            }
+    if (hash) {
+        console.log('PDF Builder: Hash found, checking if tab exists for:', hash);
+        const tabExists = document.querySelector('.nav-tab[href="#' + hash + '"]');
+        console.log('PDF Builder: Tab exists for hash?', !!tabExists, 'Element:', tabExists);
+        if (tabExists) {
+            targetTab = hash;
+            console.log('PDF Builder: targetTab updated to hash value:', targetTab);
         } else {
-            console.log('PDF Builder: No hash found, using default tab');
+            console.log('PDF Builder: Hash tab does not exist, keeping default:', targetTab);
         }
-
-        console.log('PDF Builder: Final targetTab:', targetTab);
-
-        // Set active tab and content without triggering click events
-        console.log('PDF Builder: Looking for activeTab element with selector:', '.nav-tab[href="#' + targetTab + '"]');
-        const activeTab = document.querySelector('.nav-tab[href="#' + targetTab + '"]');
-        console.log('PDF Builder: activeTab found?', !!activeTab, 'Element:', activeTab);
-
-        console.log('PDF Builder: Looking for activeContent element with id:', targetTab);
-        const activeContent = document.getElementById(targetTab);
-        console.log('PDF Builder: activeContent found?', !!activeContent, 'Element:', activeContent);
-
-        if (activeTab && activeContent) {
-            console.log('PDF Builder: Both activeTab and activeContent found, proceeding with initialization');
-
-            console.log('PDF Builder: Removing active classes from all tabs and contents');
-            // Remove active classes from all tabs and contents
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                console.log('PDF Builder: Removing nav-tab-active from tab:', tab);
-                tab.classList.remove('nav-tab-active');
-            });
-            document.querySelectorAll('.tab-content').forEach(content => {
-                console.log('PDF Builder: Removing active from content:', content.id);
-                content.classList.remove('active');
-            });
-
-            console.log('PDF Builder: Adding active classes to target elements');
-            // Add active classes to target tab and content
-            console.log('PDF Builder: Adding nav-tab-active to activeTab:', activeTab);
-            activeTab.classList.add('nav-tab-active');
-            console.log('PDF Builder: Adding active to activeContent:', activeContent);
-            activeContent.classList.add('active');
-
-            console.log('PDF Builder: Tab initialization completed successfully');
-
-            // Update mobile menu text
-            console.log('PDF Builder: Updating mobile menu text');
-            const currentTabText = document.querySelector('.current-tab-text');
-            if (currentTabText) {
-                console.log('PDF Builder: currentTabText element found:', currentTabText);
-                const tabText = activeTab.querySelector('.tab-text');
-                if (tabText) {
-                    console.log('PDF Builder: tabText found:', tabText, 'textContent:', tabText.textContent);
-                    currentTabText.textContent = tabText.textContent;
-                    console.log('PDF Builder: Mobile menu text updated to:', tabText.textContent);
-                } else {
-                    console.log('PDF Builder: tabText not found in activeTab');
-                }
-            } else {
-                console.log('PDF Builder: currentTabText element not found');
-            }
-
-            // Log final state after initialization
-            console.log('PDF Builder: ===== INITIALIZATION COMPLETE =====');
-            console.log('PDF Builder: Active tab after init:', document.querySelector('.nav-tab-active'));
-            console.log('PDF Builder: Active content after init:', document.querySelector('.tab-content.active'));
-            console.log('PDF Builder: All tabs after init:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({
-                href: tab.getAttribute('href'),
-                classes: tab.classList.toString(),
-                isActive: tab.classList.contains('nav-tab-active')
-            })));
-            console.log('PDF Builder: All contents after init:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({
-                id: content.id,
-                classes: content.classList.toString(),
-                isActive: content.classList.contains('active'),
-                display: window.getComputedStyle(content).display,
-                visibility: window.getComputedStyle(content).visibility
-            })));
-            console.log('PDF Builder: ===== END INITIALIZATION =====');
-        } else {
-            console.error('PDF Builder: Could not find activeTab or activeContent for targetTab:', targetTab);
-            console.log('PDF Builder: Available tabs:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({href: tab.getAttribute('href'), element: tab})));
-            console.log('PDF Builder: Available contents:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({id: content.id, element: content})));
-        }
+    } else {
+        console.log('PDF Builder: No hash found, using default tab');
     }
 
-    // Initialize tabs on load
-    console.log('PDF Builder: About to call initializeTabs()');
-    initializeTabs();
-    console.log('PDF Builder: initializeTabs() completed');
+    console.log('PDF Builder: Final targetTab:', targetTab);
+
+    // Set active tab and content without triggering click events
+    console.log('PDF Builder: Looking for activeTab element with selector:', '.nav-tab[href="#' + targetTab + '"]');
+    const activeTab = document.querySelector('.nav-tab[href="#' + targetTab + '"]');
+    console.log('PDF Builder: activeTab found?', !!activeTab, 'Element:', activeTab);
+
+    console.log('PDF Builder: Looking for activeContent element with id:', targetTab);
+    const activeContent = document.getElementById(targetTab);
+    console.log('PDF Builder: activeContent found?', !!activeContent, 'Element:', activeContent);
+
+    if (activeTab && activeContent) {
+        console.log('PDF Builder: Both activeTab and activeContent found, proceeding with initialization');
+
+        console.log('PDF Builder: Removing active classes from all tabs and contents');
+        // Remove active classes from all tabs and contents
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            console.log('PDF Builder: Removing nav-tab-active from tab:', tab);
+            tab.classList.remove('nav-tab-active');
+        });
+        document.querySelectorAll('.tab-content').forEach(content => {
+            console.log('PDF Builder: Removing active from content:', content.id);
+            content.classList.remove('active');
+            content.style.display = 'none';
+        });
+
+        console.log('PDF Builder: Adding active classes to target elements');
+        // Add active classes to target tab and content
+        console.log('PDF Builder: Adding nav-tab-active to activeTab:', activeTab);
+        activeTab.classList.add('nav-tab-active');
+        console.log('PDF Builder: Adding active to activeContent:', activeContent);
+        activeContent.classList.add('active');
+        activeContent.style.display = 'block';
+
+        console.log('PDF Builder: Tab initialization completed successfully');
+
+        // Update mobile menu text
+        console.log('PDF Builder: Updating mobile menu text');
+        const currentTabText = document.querySelector('.current-tab-text');
+        if (currentTabText) {
+            console.log('PDF Builder: currentTabText element found:', currentTabText);
+            const tabText = activeTab.querySelector('.tab-text');
+            if (tabText) {
+                console.log('PDF Builder: tabText found:', tabText, 'textContent:', tabText.textContent);
+                currentTabText.textContent = tabText.textContent;
+                console.log('PDF Builder: Mobile menu text updated to:', tabText.textContent);
+            } else {
+                console.log('PDF Builder: tabText not found in activeTab');
+            }
+        } else {
+            console.log('PDF Builder: currentTabText element not found');
+        }
+
+        // Log final state after initialization
+        console.log('PDF Builder: ===== INITIALIZATION COMPLETE =====');
+        console.log('PDF Builder: Active tab after init:', document.querySelector('.nav-tab-active'));
+        console.log('PDF Builder: Active content after init:', document.querySelector('.tab-content.active'));
+        console.log('PDF Builder: All tabs after init:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({
+            href: tab.getAttribute('href'),
+            classes: tab.classList.toString(),
+            isActive: tab.classList.contains('nav-tab-active')
+        })));
+        console.log('PDF Builder: All contents after init:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({
+            id: content.id,
+            classes: content.classList.toString(),
+            isActive: content.classList.contains('active'),
+            display: window.getComputedStyle(content).display,
+            visibility: window.getComputedStyle(content).visibility
+        })));
+        console.log('PDF Builder: ===== END INITIALIZATION =====');
+    } else {
+        console.error('PDF Builder: Could not find activeTab or activeContent for targetTab:', targetTab);
+        console.log('PDF Builder: Available tabs:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({href: tab.getAttribute('href'), element: tab})));
+        console.log('PDF Builder: Available contents:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({id: content.id, element: content})));
+    }
 
     console.log('PDF Builder: Tabs initialization completed');
     console.log('PDF Builder: ===== FINAL STATE CHECK =====');
@@ -1105,6 +1121,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('PDF Builder: Final state - all tabs:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({href: tab.getAttribute('href'), classes: tab.classList.toString()})));
     console.log('PDF Builder: Final state - all contents:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({id: content.id, classes: content.classList.toString()})));
     console.log('PDF Builder: ===== END FINAL STATE CHECK =====');
+}
 
     // Fonction pour mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Sécurité
     function updateSecurityStatusIndicators() {
@@ -1494,7 +1511,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Canvas configuration modals functionality - Version stable
-{
+(function() {
     'use strict';
 
     // Configuration
@@ -3057,7 +3074,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function synchronizeAutosaveModalValues(modal) {
         synchronizeModalValues(modal, 'autosave');
     }
-}
+})();
 
 console.log('PDF Builder: Main script loaded successfully');
 
