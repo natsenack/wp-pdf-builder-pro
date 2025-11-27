@@ -952,6 +952,12 @@ window.updateZoomCardPreview = function() {
             console.log('PDF Builder: Collecte terminée -', totalFields, 'champs uniques à sauvegarder');
             console.log('PDF Builder: Champs collectés (dédupliqués):', collectedFields);
 
+            // Debug: Lister tous les champs qui seront envoyés
+            console.log('PDF Builder: DEBUG - Champs dans FormData:');
+            for (let [key, value] of formData.entries()) {
+                console.log('  ', key, '=', value);
+            }
+
             // Indiquer l'envoi
             floatingBtn.innerHTML = '<span class="save-icon">📤</span><span class="save-text">Envoi... (' + totalFields + ' champs)</span>';
 

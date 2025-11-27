@@ -1681,6 +1681,9 @@ function pdf_builder_save_all_settings_handler() {
         $processed_fields = [];
         $ignored_fields = [];
 
+        // Debug: Log tous les champs POST reçus
+        error_log('PDF Builder DEBUG - Tous les champs POST reçus: ' . implode(', ', array_keys($_POST)));
+
         // Traiter tous les champs soumis
         foreach ($_POST as $key => $value) {
             // Ignorer les champs spéciaux
