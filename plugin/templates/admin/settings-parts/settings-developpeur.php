@@ -19,12 +19,12 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer le mode développeur</span>
-                            <span class="developer-status-indicator" style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'background: #28a745; color: white;' : 'background: #dc3545; color: white;'; ?>">
-                                <?php echo isset($settings['developer_enabled']) && $settings['developer_enabled'] ? 'ACTIF' : 'INACTIF'; ?>
+                            <span class="developer-status-indicator" style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] ? 'background: #28a745; color: white;' : 'background: #dc3545; color: white;'; ?>">
+                                <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] ? 'ACTIF' : 'INACTIF'; ?>
                             </span>
                         </div>
                         <div class="toggle-description">Active le mode développeur avec logs détaillés</div>
@@ -39,7 +39,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
                             <input type="password" id="developer_password" name="developer_password"
                                    placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
                                    style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
-                                   value="<?php echo esc_attr($settings['developer_password'] ?? ''); ?>" />
+                                   value="<?php echo esc_attr($settings['pdf_builder_developer_password'] ?? ''); ?>" />
                             <button type="button" id="toggle_password" class="button button-secondary" style="padding: 8px 12px; height: auto;">
                                 👁️ Afficher
                             </button>
@@ -54,7 +54,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
                 </tr>
              </table>
 
-            <div id="dev-license-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-license-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">🔐 Test de Licence</h3>
 
             <table class="form-table">
@@ -124,7 +124,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
                 <button type="button" id="test-notifications-info" class="button button-small" style="background: #17a2b8; color: white; border: none;">ℹ️ Test Info</button>
             </div>
 
-            <div id="dev-debug-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">🔍 Paramètres de Debug</h3>
 
             <table class="form-table">
@@ -209,7 +209,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
             </table>
             </div>
 
-            <div id="dev-logs-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-logs-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Fichiers Logs</h3>
 
             <table class="form-table">
@@ -217,11 +217,11 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
                   <th scope="row"><label for="log_level">Niveau de Log</label></th>
                     <td>
                         <select id="log_level" name="log_level" style="width: 200px;">
-                            <option value="0" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 0) ? 'selected' : ''; ?>>Aucun log</option>
-                            <option value="1" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 1) ? 'selected' : ''; ?>>Erreurs uniquement</option>
-                            <option value="2" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 2) ? 'selected' : ''; ?>>Erreurs + Avertissements</option>
-                            <option value="3" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 3) ? 'selected' : ''; ?>>Info complète</option>
-                            <option value="4" <?php echo (isset($settings['log_level']) && $settings['log_level'] == 4) ? 'selected' : ''; ?>>Détails (Développement)</option>
+                            <option value="0" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 0) ? 'selected' : ''; ?>>Aucun log</option>
+                            <option value="1" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 1) ? 'selected' : ''; ?>>Erreurs uniquement</option>
+                            <option value="2" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 2) ? 'selected' : ''; ?>>Erreurs + Avertissements</option>
+                            <option value="3" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 3) ? 'selected' : ''; ?>>Info complète</option>
+                            <option value="4" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 4) ? 'selected' : ''; ?>>Détails (Développement)</option>
                         </select>
                         <p class="description">0=Aucun, 1=Erreurs, 2=Warn, 3=Info, 4=Détails</p>
                     </td>
@@ -229,21 +229,21 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
                 <tr>
                     <th scope="row"><label for="log_file_size">Taille Max Log</label></th>
                     <td>
-                        <input type="number" id="log_file_size" name="log_file_size" value="<?php echo isset($settings['log_file_size']) ? intval($settings['log_file_size']) : '10'; ?>" min="1" max="100" /> MB
+                        <input type="number" id="log_file_size" name="log_file_size" value="<?php echo isset($settings['pdf_builder_log_file_size']) ? intval($settings['pdf_builder_log_file_size']) : '10'; ?>" min="1" max="100" /> MB
                         <p class="description">Rotation automatique quand le log dépasse cette taille</p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="log_retention">Retention Logs</label></th>
                     <td>
-                        <input type="number" id="log_retention" name="log_retention" value="<?php echo isset($settings['log_retention']) ? intval($settings['log_retention']) : '30'; ?>" min="1" max="365" /> jours
+                        <input type="number" id="log_retention" name="log_retention" value="<?php echo isset($settings['pdf_builder_log_retention']) ? intval($settings['pdf_builder_log_retention']) : '30'; ?>" min="1" max="365" /> jours
                         <p class="description">Supprime automatiquement les logs plus vieux que ce délai</p>
                     </td>
                 </tr>
             </table>
             </div>
 
-            <div id="dev-optimizations-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-optimizations-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Optimisations Avancées</h3>
 
             <table class="form-table">
@@ -252,7 +252,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="force_https" name="force_https" value="1" <?php echo isset($settings['force_https']) && $settings['force_https'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="force_https" name="force_https" value="1" <?php echo isset($settings['pdf_builder_force_https']) && $settings['pdf_builder_force_https'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">HTTPS forcé</span>
@@ -263,7 +263,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
             </table>
             </div>
 
-            <div id="dev-logs-viewer-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-logs-viewer-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Visualiseur de Logs Temps Réel</h3>
 
             <div style="margin-bottom: 15px;">
@@ -286,7 +286,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
             </div>
             </div>
 
-            <div id="dev-tools-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-tools-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Outils de Développement</h3>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
@@ -311,7 +311,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
             </div>
             </div>
 
-            <div id="dev-shortcuts-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-shortcuts-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Raccourcis Clavier Développeur</h3>
 
             <table class="wp-list-table widefat fixed striped">
@@ -350,7 +350,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
             </table>
             </div>
 
-            <div id="dev-todo-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-todo-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <!-- Accordéon pour la section À Faire - Développement -->
             <div class="accordion-container" style="margin-bottom: 20px;">
                 <button type="button" class="accordion-toggle" id="dev-todo-toggle" style="width: 100%; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; text-align: left; cursor: pointer; font-size: 16px; font-weight: bold; color: #495057; transition: all 0.3s ease;">
@@ -507,7 +507,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
                 </div>
             </div>
 
-            <div id="dev-console-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-console-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Console Code</h3>
 
             <table class="form-table">
@@ -526,7 +526,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
             </table>
             </div>
 
-            <div id="dev-hooks-section" style="<?php echo !isset($settings['developer_enabled']) || !$settings['developer_enabled'] ? 'display: none;' : ''; ?>">
+            <div id="dev-hooks-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <!-- Tableau de références des hooks disponibles -->
             <h3 class="section-title">Hooks Disponibles</h3>
 
@@ -583,7 +583,7 @@ $license_test_key = $settings['pdf_builder_license_test_key'] ?? '';
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="performance_monitoring" name="performance_monitoring" value="1" <?php echo isset($settings['performance_monitoring']) && $settings['performance_monitoring'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="performance_monitoring" name="performance_monitoring" value="1" <?php echo isset($settings['pdf_builder_performance_monitoring']) && $settings['pdf_builder_performance_monitoring'] ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer le monitoring des performances</span>
