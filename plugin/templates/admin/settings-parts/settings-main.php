@@ -761,9 +761,10 @@ window.updateZoomCardPreview = function() {
                     targetContent.classList.add('active');
                 }
 
-                // Mettre à jour l'URL avec le hash de l'onglet
-                if (tabId) {
-                    window.location.hash = tabId;
+                // Mettre à jour l'URL avec le hash de l'onglet sans causer de scroll
+                if (tabId && history.replaceState) {
+                    const newUrl = window.location.pathname + window.location.search + '#' + tabId;
+                    history.replaceState(null, null, newUrl);
                 }
 
                 // Mettre à jour le texte du menu mobile
