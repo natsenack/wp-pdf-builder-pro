@@ -242,6 +242,15 @@ $escaped_json = str_replace('-->', '--\>', $escaped_json);
 <script>
 // Données centralisées chargées depuis la base de données
 try {
+    // Fallback definition for pdfBuilderDebug if not loaded yet
+    if (typeof pdfBuilderDebug === 'undefined') {
+        window.pdfBuilderDebug = function(message, ...args) {
+            if (console && console.log) {
+                console.log('[PDF Builder Debug]', message, ...args);
+            }
+        };
+    }
+
     window.pdfBuilderSavedSettings = <?php echo $escaped_json; ?>;
 } catch (e) {
     console.error('Erreur lors du chargement des paramètres sauvegardés:', e);

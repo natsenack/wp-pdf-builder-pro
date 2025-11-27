@@ -131,6 +131,15 @@ $escaped_paper_formats = str_replace('-->', '--\>', $escaped_paper_formats);
 ?>
 <script>
 try {
+    // Fallback definition for pdfBuilderDebug if not loaded yet
+    if (typeof pdfBuilderDebug === 'undefined') {
+        window.pdfBuilderDebug = function(message, ...args) {
+            if (console && console.log) {
+                console.log('[PDF Builder Debug]', message, ...args);
+            }
+        };
+    }
+
     window.pdfBuilderCanvasSettings = <?php echo $escaped_canvas_settings; ?>;
     pdfBuilderDebug('Canvas settings loaded from WordPress options:', window.pdfBuilderCanvasSettings);
     window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>';
