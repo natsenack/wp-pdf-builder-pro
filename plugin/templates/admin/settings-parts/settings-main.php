@@ -846,9 +846,10 @@ function pdfBuilderError(message, ...args) {
 try {
     console.log('PDF Builder: Starting main script execution');
 
-
 // Update zoom card preview
+console.log('PDF Builder: About to define updateZoomCardPreview');
 window.updateZoomCardPreview = function() {
+    console.log('PDF Builder: updateZoomCardPreview function called');
     pdfBuilderDebug('updateZoomCardPreview called');
     try {
         // Try to get values from modal inputs first (real-time), then from settings
@@ -892,6 +893,7 @@ window.updateZoomCardPreview = function() {
 };
 
 // Tab switching functionality
+console.log('PDF Builder: About to add DOMContentLoaded listener');
 document.addEventListener('DOMContentLoaded', function() {
     console.log('PDF Builder: DOMContentLoaded fired - starting tab initialization');
 
