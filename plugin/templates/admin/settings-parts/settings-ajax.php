@@ -1678,6 +1678,7 @@ function pdf_builder_save_all_settings_handler() {
 
         $saved_count = 0;
         $errors = [];
+        $processed_fields = [];
 
         // Traiter tous les champs soumis
         foreach ($_POST as $key => $value) {
@@ -1685,6 +1686,8 @@ function pdf_builder_save_all_settings_handler() {
             if (in_array($key, ['action', 'security', 'current_tab'])) {
                 continue;
             }
+
+            $processed_fields[] = $key;
 
             try {
                 // Préfixer la clé avec pdf_builder_ si elle ne l'a pas déjà
@@ -1737,6 +1740,11 @@ function pdf_builder_save_all_settings_handler() {
         if (!empty($errors)) {
             $message .= " ⚠️ " . count($errors) . " erreurs ignorées.";
         }
+
+        // Log pour debug
+        error_log('PDF Builder: Champs traités côté PHP: ' . implode(', ', $processed_fields));
+        error_log('PDF Builder: Nombre total de champs POST: ' . count($_POST));
+        error_log('PDF Builder: Nombre de champs sauvegardés: ' . $saved_count);
 
         send_ajax_response(true, $message, [
             'saved_count' => $saved_count,

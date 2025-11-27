@@ -881,6 +881,7 @@ window.updateZoomCardPreview = function() {
             // Collecter les données de tous les formulaires de la page
             const forms = document.querySelectorAll('form');
             let totalFields = 0;
+            let collectedFields = [];
 
             forms.forEach(function(form, index) {
                 console.log('PDF Builder: Traitement du formulaire', index + 1, 'sur', forms.length);
@@ -902,11 +903,13 @@ window.updateZoomCardPreview = function() {
                             formData.append(input.name, input.value);
                         }
                         totalFields++;
+                        collectedFields.push(input.name);
                     }
                 });
             });
 
             console.log('PDF Builder: Collecte terminée -', totalFields, 'champs à sauvegarder');
+            console.log('PDF Builder: Champs collectés:', collectedFields);
 
             // Indiquer l'envoi
             floatingBtn.innerHTML = '<span class="save-icon">📤</span><span class="save-text">Envoi... (' + totalFields + ' champs)</span>';
