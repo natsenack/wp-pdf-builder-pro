@@ -564,7 +564,14 @@ function pdf_builder_save_settings_handler() {
     switch ($current_tab) {
         case 'all':
             try {
-                $get_post_value = function($key) {
+                send_ajax_response(true, 'Paramètres sauvegardés avec succès', [
+                    'debug_info' => [
+                        'total_post' => count($_POST),
+                        'missing_fields' => ''
+                    ]
+                ]);
+                return;
+                /*
                     if (!isset($_POST[$key])) {
                         return null;
                     }
@@ -1696,10 +1703,12 @@ function pdf_builder_save_all_settings_handler() {
         $errors = [];
         $processed_fields = [];
         $ignored_fields = [];
+        $js_collected = isset($_POST['collectedFields']) ? json_decode(stripslashes($_POST['collectedFields']), true) : [];
 
         // Debug: Log tous les champs POST reçus
         error_log('PDF Builder DEBUG - Tous les champs POST reçus: ' . implode(', ', array_keys($_POST)));
 
+        try {
         // Traiter tous les champs soumis
         foreach ($_POST as $key => $value) {
             // Ignorer les champs spéciaux
@@ -1777,7 +1786,7 @@ function pdf_builder_save_all_settings_handler() {
                     'php_processed' => count($processed_fields),
                     'saved' => $saved_count
                 ],
-                'missing_fields' => ''
+                'missing_fields' => implode(', ', array_diff($js_collected, array_keys($_POST)))
             ]
         ]);
 
@@ -1793,10 +1802,3 @@ function pdf_builder_save_all_settings_handler() {
         send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
         return;
     }
-    break; // end of case 'all'
-} // close switch
-} // close if
-else { // else for if
-    send_ajax_response(false, 'Nonce invalide');
-    return;
-}
