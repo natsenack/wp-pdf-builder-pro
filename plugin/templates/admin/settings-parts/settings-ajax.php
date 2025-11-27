@@ -1687,6 +1687,12 @@ function pdf_builder_save_all_settings_handler() {
             }
 
             try {
+                // Préfixer la clé avec pdf_builder_ si elle ne l'a pas déjà
+                $option_key = $key;
+                if (strpos($key, 'pdf_builder_') !== 0) {
+                    $option_key = 'pdf_builder_' . $key;
+                }
+
                 // Traiter selon le type de champ
                 if (strpos($key, '_enabled') !== false || strpos($key, '_debug') !== false) {
                     // Champs booléens
@@ -1700,7 +1706,7 @@ function pdf_builder_save_all_settings_handler() {
                 }
 
                 // Sauvegarder l'option
-                update_option($key, $sanitized_value);
+                update_option($option_key, $sanitized_value);
                 $saved_count++;
 
             } catch (Exception $e) {
@@ -1715,7 +1721,8 @@ function pdf_builder_save_all_settings_handler() {
             'pdf_cache_enabled',
             'pdf_metadata_enabled',
             'pdf_print_optimized',
-            'template_library_enabled'
+            'template_library_enabled',
+            'developer_enabled'
         ];
 
         foreach ($checkbox_fields as $field) {
