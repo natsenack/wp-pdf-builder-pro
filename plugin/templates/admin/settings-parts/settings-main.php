@@ -812,6 +812,15 @@ if (
 .gdpr-disabled + span.toggle-slider:before {
     background: #999 !important;
 }
+
+/* Styles pour les onglets */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
 </style>
 
 
