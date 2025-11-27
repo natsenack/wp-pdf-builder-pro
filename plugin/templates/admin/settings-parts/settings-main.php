@@ -709,8 +709,13 @@ window.updateZoomCardPreview = function() {
             return;
         }
 
-        // Suppression des ancres - toujours commencer par l'onglet général
-        let activeTabId = 'general';
+        // Vérifier le hash de l'URL pour afficher le bon onglet au chargement
+        const urlHash = window.location.hash.substring(1); // Enlever le #
+        let activeTabId = 'general'; // Par défaut
+
+        if (urlHash && document.getElementById(urlHash)) {
+            activeTabId = urlHash;
+        }
 
         // Masquer tous les contenus d'onglets sauf celui actif
         tabContents.forEach(function(content) {
@@ -754,6 +759,11 @@ window.updateZoomCardPreview = function() {
                 const targetContent = document.getElementById(tabId);
                 if (targetContent) {
                     targetContent.classList.add('active');
+                }
+
+                // Mettre à jour l'URL avec le hash de l'onglet
+                if (tabId) {
+                    window.location.hash = tabId;
                 }
 
                 // Mettre à jour le texte du menu mobile
