@@ -506,6 +506,9 @@ if (
         <?php require_once 'settings-general.php'; ?>
     </div>
 
+    <!-- Bouton de test temporaire -->
+    <button id="test-tabs-btn" style="position: fixed; top: 10px; right: 10px; z-index: 9999; background: red; color: white; padding: 10px; border: none; border-radius: 5px;">TEST ONGLETS</button>
+
     <div id="licence" class="tab-content">
         <?php require_once 'settings-licence.php'; ?>
     </div>
@@ -693,9 +696,13 @@ window.updateZoomCardPreview = function() {
 (function() {
     'use strict';
 
+    console.log('PDF Builder: Fonction anonyme exécutée');
+
     let tabsInitialized = false;
 
     function initializeTabs() {
+        console.log('PDF Builder: initializeTabs() appelée');
+
         if (tabsInitialized) {
             console.log('PDF Builder: Onglets déjà initialisés');
             return;
@@ -719,6 +726,7 @@ window.updateZoomCardPreview = function() {
         // Forcer la suppression de toutes les classes active d'abord
         tabContents.forEach(function(content) {
             content.classList.remove('active');
+            console.log('PDF Builder: Suppression classe active de:', content.id);
         });
         navTabs.forEach(function(tab) {
             tab.classList.remove('nav-tab-active');
@@ -737,6 +745,8 @@ window.updateZoomCardPreview = function() {
         if (firstTab) {
             firstTab.classList.add('nav-tab-active');
             console.log('PDF Builder: Premier onglet nav activé');
+        } else {
+            console.error('PDF Builder: Premier onglet nav non trouvé!');
         }
 
         // Gérer les clics sur les onglets
@@ -787,7 +797,7 @@ window.updateZoomCardPreview = function() {
             });
         });
 
-        // Gestion du menu mobile
+    // Gestion du menu mobile
         const mobileMenuButton = document.querySelector('.mobile-menu-button');
         const navTabsContainer = document.querySelector('.nav-tabs-container');
 
@@ -799,6 +809,27 @@ window.updateZoomCardPreview = function() {
 
         tabsInitialized = true;
         console.log('PDF Builder: Initialisation des onglets terminée avec succès');
+    }
+
+    // Bouton de test temporaire
+    const testBtn = document.getElementById('test-tabs-btn');
+    if (testBtn) {
+        testBtn.addEventListener('click', function() {
+            console.log('TEST: Bouton cliqué');
+
+            // Forcer l'affichage de l'onglet système
+            const systemeTab = document.getElementById('systeme');
+            const generalTab = document.getElementById('general');
+
+            if (systemeTab && generalTab) {
+                console.log('TEST: Onglets trouvés');
+                generalTab.classList.remove('active');
+                systemeTab.classList.add('active');
+                console.log('TEST: Classe active changée');
+            } else {
+                console.error('TEST: Onglets non trouvés');
+            }
+        });
     }
 
     // Initialiser dès que possible
