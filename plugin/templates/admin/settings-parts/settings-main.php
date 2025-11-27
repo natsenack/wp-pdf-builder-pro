@@ -723,30 +723,39 @@ window.updateZoomCardPreview = function() {
             return;
         }
 
-        // Forcer la suppression de toutes les classes active d'abord
-        tabContents.forEach(function(content) {
-            content.classList.remove('active');
-            console.log('PDF Builder: Suppression classe active de:', content.id);
-        });
-        navTabs.forEach(function(tab) {
-            tab.classList.remove('nav-tab-active');
-        });
+        // Vérifier le hash de l'URL pour afficher le bon onglet au chargement
+        const urlHash = window.location.hash.substring(1); // Enlever le #
+        console.log('PDF Builder: Hash URL détecté:', urlHash);
 
-        // Masquer tous les contenus d'onglets sauf le premier
+        let activeTabId = 'general'; // Par défaut
+
+        if (urlHash && document.getElementById(urlHash)) {
+            activeTabId = urlHash;
+            console.log('PDF Builder: Onglet actif défini depuis URL:', activeTabId);
+        }
+
+        // Masquer tous les contenus d'onglets sauf celui actif
         tabContents.forEach(function(content, index) {
-            if (index === 0) {
+            if (content.id === activeTabId) {
                 content.classList.add('active');
                 console.log('PDF Builder: Onglet actif défini:', content.id);
+            } else {
+                content.classList.remove('active');
             }
         });
 
-        // Ajouter la classe active au premier onglet
-        const firstTab = document.querySelector('.nav-tab[data-tab="general"]');
-        if (firstTab) {
-            firstTab.classList.add('nav-tab-active');
-            console.log('PDF Builder: Premier onglet nav activé');
+        // Activer le bon onglet de navigation
+        const activeNavTab = document.querySelector('.nav-tab[data-tab="' + activeTabId + '"]');
+        if (activeNavTab) {
+            activeNavTab.classList.add('nav-tab-active');
+            console.log('PDF Builder: Onglet nav activé:', activeTabId);
         } else {
-            console.error('PDF Builder: Premier onglet nav non trouvé!');
+            // Fallback sur le premier onglet
+            const firstTab = document.querySelector('.nav-tab[data-tab="general"]');
+            if (firstTab) {
+                firstTab.classList.add('nav-tab-active');
+                console.log('PDF Builder: Fallback sur premier onglet nav');
+            }
         }
 
         // Gérer les clics sur les onglets
@@ -782,6 +791,10 @@ window.updateZoomCardPreview = function() {
                 if (targetContent) {
                     targetContent.classList.add('active');
                     console.log('PDF Builder: Contenu affiché:', tabId);
+
+                    // Mettre à jour l'URL hash
+                    window.location.hash = tabId;
+                    console.log('PDF Builder: Hash URL mis à jour:', tabId);
                 } else {
                     console.error('PDF Builder: Contenu non trouvé pour:', tabId);
                 }
@@ -810,6 +823,20 @@ window.updateZoomCardPreview = function() {
         tabsInitialized = true;
         console.log('PDF Builder: Initialisation des onglets terminée avec succès');
     }
+
+    // Gérer les changements de hash dans l'URL (bouton retour, navigation directe)
+    window.addEventListener('hashchange', function() {
+        const newHash = window.location.hash.substring(1);
+        console.log('PDF Builder: Changement de hash détecté:', newHash);
+
+        if (newHash && document.getElementById(newHash)) {
+            // Simuler un clic sur l'onglet correspondant
+            const targetTab = document.querySelector('.nav-tab[data-tab="' + newHash + '"]');
+            if (targetTab) {
+                targetTab.click();
+            }
+        }
+    });
 
     // Bouton de test temporaire
     const testBtn = document.getElementById('test-tabs-btn');
