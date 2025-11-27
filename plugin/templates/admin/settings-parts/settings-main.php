@@ -464,54 +464,38 @@ if (
                 <span class="tab-icon">⚙️</span>
                 <span class="tab-text">Général</span>
             </button>
-            <a href="?page=pdf-builder-settings&tab=licence" class="nav-tab-fallback">
-                <button type="button" class="nav-tab" data-tab="licence">
-                    <span class="tab-icon">🔑</span>
-                    <span class="tab-text">Licence</span>
-                </button>
-            </a>
-            <a href="?page=pdf-builder-settings&tab=systeme" class="nav-tab-fallback">
-                <button type="button" class="nav-tab" data-tab="systeme">
-                    <span class="tab-icon">🔧</span>
-                    <span class="tab-text">Système</span>
-                </button>
-            </a>
-            <a href="?page=pdf-builder-settings&tab=acces" class="nav-tab-fallback">
-                <button type="button" class="nav-tab" data-tab="acces">
-                    <span class="tab-icon">👥</span>
-                    <span class="tab-text">Accès</span>
-                </button>
-            </a>
-            <a href="?page=pdf-builder-settings&tab=securite" class="nav-tab-fallback">
-                <button type="button" class="nav-tab" data-tab="securite">
-                    <span class="tab-icon">🔒</span>
-                    <span class="tab-text">Sécurité & Conformité</span>
-                </button>
-            </a>
-            <a href="?page=pdf-builder-settings&tab=pdf" class="nav-tab-fallback">
-                <button type="button" class="nav-tab" data-tab="pdf">
-                    <span class="tab-icon">📄</span>
-                    <span class="tab-text">Configuration PDF</span>
-                </button>
-            </a>
-            <a href="?page=pdf-builder-settings&tab=contenu" class="nav-tab-fallback">
-                <button type="button" class="nav-tab" data-tab="contenu">
-                    <span class="tab-icon">🎨</span>
-                    <span class="tab-text">Contenu & Design</span>
-                </button>
-            </a>
-            <a href="?page=pdf-builder-settings&tab=templates" class="nav-tab-fallback">
-                <button type="button" class="nav-tab" data-tab="templates">
-                    <span class="tab-icon">📋</span>
-                    <span class="tab-text">Templates par statut</span>
-                </button>
-            </a>
-            <a href="?page=pdf-builder-settings&tab=developpeur" class="nav-tab-fallback">
-                <button type="button" class="nav-tab" data-tab="developpeur">
-                    <span class="tab-icon">👨‍💻</span>
-                    <span class="tab-text">Développeur</span>
-                </button>
-            </a>
+            <button type="button" class="nav-tab" data-tab="licence">
+                <span class="tab-icon">🔑</span>
+                <span class="tab-text">Licence</span>
+            </button>
+            <button type="button" class="nav-tab" data-tab="systeme">
+                <span class="tab-icon">🔧</span>
+                <span class="tab-text">Système</span>
+            </button>
+            <button type="button" class="nav-tab" data-tab="acces">
+                <span class="tab-icon">👥</span>
+                <span class="tab-text">Accès</span>
+            </button>
+            <button type="button" class="nav-tab" data-tab="securite">
+                <span class="tab-icon">🔒</span>
+                <span class="tab-text">Sécurité & Conformité</span>
+            </button>
+            <button type="button" class="nav-tab" data-tab="pdf">
+                <span class="tab-icon">📄</span>
+                <span class="tab-text">Configuration PDF</span>
+            </button>
+            <button type="button" class="nav-tab" data-tab="contenu">
+                <span class="tab-icon">🎨</span>
+                <span class="tab-text">Contenu & Design</span>
+            </button>
+            <button type="button" class="nav-tab" data-tab="templates">
+                <span class="tab-icon">📋</span>
+                <span class="tab-text">Templates par statut</span>
+            </button>
+            <button type="button" class="nav-tab" data-tab="developpeur">
+                <span class="tab-icon">👨‍💻</span>
+                <span class="tab-text">Développeur</span>
+            </button>
         </div>
     </div>
 <?php
