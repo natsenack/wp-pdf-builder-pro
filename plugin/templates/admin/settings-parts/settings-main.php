@@ -817,6 +817,170 @@ window.updateZoomCardPreview = function() {
     setTimeout(initializeTabs, 1000);
 
 })();
+
+// Gestion du bouton flottant de sauvegarde
+(function() {
+    'use strict';
+
+    function initializeFloatingSaveButton() {
+        const floatingBtn = document.getElementById('floating-save-btn');
+        if (!floatingBtn) {
+            console.warn('PDF Builder: Bouton flottant de sauvegarde non trouvé');
+            return;
+        }
+
+        console.log('PDF Builder: Initialisation du bouton flottant de sauvegarde');
+
+        floatingBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('PDF Builder: Clic sur le bouton flottant de sauvegarde');
+
+            // Changer l'apparence du bouton pour indiquer la sauvegarde
+            floatingBtn.classList.add('saving');
+            floatingBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Sauvegarde...</span>';
+            floatingBtn.disabled = true;
+
+            // Collecter toutes les données des formulaires
+            const formData = new FormData();
+
+            // Ajouter l'action AJAX
+            formData.append('action', 'pdf_builder_save_all_settings');
+            formData.append('security', window.pdfBuilderAjax?.nonce || '');
+
+            // Collecter les données de tous les formulaires de la page
+            const forms = document.querySelectorAll('form');
+            forms.forEach(function(form, index) {
+                console.log('PDF Builder: Traitement du formulaire', index + 1, 'sur', forms.length);
+
+                // Collecter tous les champs du formulaire
+                const formInputs = form.querySelectorAll('input, select, textarea');
+                formInputs.forEach(function(input) {
+                    if (input.name && input.type !== 'submit' && input.type !== 'button') {
+                        if (input.type === 'checkbox') {
+                            formData.append(input.name, input.checked ? '1' : '0');
+                        } else if (input.type === 'radio') {
+                            if (input.checked) {
+                                formData.append(input.name, input.value);
+                            }
+                        } else {
+                            formData.append(input.name, input.value);
+                        }
+                    }
+                });
+            });
+
+            // Envoyer la requête AJAX
+            fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log('PDF Builder: Réponse AJAX reçue:', data);
+
+                if (data.success) {
+                    // Succès
+                    floatingBtn.classList.remove('saving');
+                    floatingBtn.classList.add('saved');
+                    floatingBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">Sauvegardé !</span>';
+
+                    // Remettre à l'état normal après 3 secondes
+                    setTimeout(function() {
+                        floatingBtn.classList.remove('saved');
+                        floatingBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
+                        floatingBtn.disabled = false;
+                    }, 3000);
+
+                    // Afficher un message de succès si disponible
+                    if (data.data && data.data.message) {
+                        showNotification(data.data.message, 'success');
+                    }
+
+                } else {
+                    // Erreur
+                    floatingBtn.classList.remove('saving');
+                    floatingBtn.classList.add('error');
+                    floatingBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
+
+                    // Remettre à l'état normal après 3 secondes
+                    setTimeout(function() {
+                        floatingBtn.classList.remove('error');
+                        floatingBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
+                        floatingBtn.disabled = false;
+                    }, 3000);
+
+                    // Afficher le message d'erreur
+                    const errorMsg = data.data && data.data.message ? data.data.message : 'Erreur lors de la sauvegarde';
+                    showNotification(errorMsg, 'error');
+                    console.error('PDF Builder: Erreur de sauvegarde:', errorMsg);
+                }
+            })
+            .catch(function(error) {
+                console.error('PDF Builder: Erreur AJAX:', error);
+
+                // Erreur de réseau
+                floatingBtn.classList.remove('saving');
+                floatingBtn.classList.add('error');
+                floatingBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur réseau</span>';
+
+                setTimeout(function() {
+                    floatingBtn.classList.remove('error');
+                    floatingBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
+                    floatingBtn.disabled = false;
+                }, 3000);
+
+                showNotification('Erreur de connexion réseau', 'error');
+            });
+        });
+
+        // Fonction pour afficher les notifications
+        function showNotification(message, type) {
+            // Créer une notification temporaire
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 1000000;
+                font-weight: bold;
+                max-width: 300px;
+                word-wrap: break-word;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Supprimer après 5 secondes
+            setTimeout(function() {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+    }
+
+    // Initialiser le bouton flottant
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeFloatingSaveButton);
+    } else {
+        initializeFloatingSaveButton();
+    }
+
+    // Réessayer après le chargement complet
+    window.addEventListener('load', function() {
+        setTimeout(initializeFloatingSaveButton, 100);
+    });
+
+})();
 </script>
 
 

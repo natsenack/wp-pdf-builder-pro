@@ -300,6 +300,9 @@ function pdf_builder_register_ajax_handlers() {
     // Settings save handler - PRIORITY: settings-ajax.php over AjaxHandler.php
     add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler', 1);
 
+    // Global save all settings handler (bouton flottant)
+    add_action('wp_ajax_pdf_builder_save_all_settings', 'pdf_builder_save_all_settings_handler', 1);
+
     // Test AJAX handler
     add_action('wp_ajax_test_ajax', 'pdf_builder_test_ajax_handler');
 

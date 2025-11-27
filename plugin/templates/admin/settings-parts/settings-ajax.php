@@ -1658,3 +1658,85 @@ function pdf_builder_get_all_canvas_settings_handler() {
 
 // Hook AJAX actions - MOVED to pdf-builder-pro.php for global registration
 // REMOVED: Canvas settings actions moved to PDF_Builder_Admin to avoid duplication
+
+/**
+ * Handler AJAX pour sauvegarder tous les paramètres depuis le bouton flottant
+ */
+function pdf_builder_save_all_settings_handler() {
+    try {
+        // Vérifier le nonce de sécurité
+        if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'pdf_builder_settings')) {
+            send_ajax_response(false, 'Erreur de sécurité. Veuillez rafraîchir la page et réessayer.');
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            send_ajax_response(false, 'Permissions insuffisantes.');
+            return;
+        }
+
+        $saved_count = 0;
+        $errors = [];
+
+        // Traiter tous les champs soumis
+        foreach ($_POST as $key => $value) {
+            // Ignorer les champs spéciaux
+            if (in_array($key, ['action', 'security', 'current_tab'])) {
+                continue;
+            }
+
+            try {
+                // Traiter selon le type de champ
+                if (strpos($key, '_enabled') !== false || strpos($key, '_debug') !== false) {
+                    // Champs booléens
+                    $sanitized_value = $value === '1' || $value === 'true' ? 1 : 0;
+                } elseif (is_array($value)) {
+                    // Tableaux
+                    $sanitized_value = array_map('sanitize_text_field', $value);
+                } else {
+                    // Texte normal
+                    $sanitized_value = sanitize_text_field($value);
+                }
+
+                // Sauvegarder l'option
+                update_option($key, $sanitized_value);
+                $saved_count++;
+
+            } catch (Exception $e) {
+                $errors[] = "Erreur lors de la sauvegarde de $key: " . $e->getMessage();
+            }
+        }
+
+        // Traiter les champs checkbox non cochés (qui ne sont pas envoyés)
+        $checkbox_fields = [
+            'debug_mode',
+            'log_level',
+            'pdf_cache_enabled',
+            'pdf_metadata_enabled',
+            'pdf_print_optimized',
+            'template_library_enabled'
+        ];
+
+        foreach ($checkbox_fields as $field) {
+            if (!isset($_POST[$field])) {
+                update_option('pdf_builder_' . $field, 0);
+                $saved_count++;
+            }
+        }
+
+        // Message de succès
+        $message = "✅ $saved_count paramètres sauvegardés avec succès.";
+        if (!empty($errors)) {
+            $message .= " ⚠️ " . count($errors) . " erreurs ignorées.";
+        }
+
+        send_ajax_response(true, $message, [
+            'saved_count' => $saved_count,
+            'errors' => $errors
+        ]);
+
+    } catch (Exception $e) {
+        send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+    }
+}
