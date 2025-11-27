@@ -854,14 +854,6 @@ window.updateZoomCardPreview = function() {
         // Marquer comme initialisé
         floatingBtn.setAttribute('data-initialized', 'true');
 
-        // Ajouter un écouteur sur la checkbox du mode développeur pour mise à jour temps réel
-        const developerCheckbox = document.getElementById('developer_enabled');
-        if (developerCheckbox) {
-            developerCheckbox.addEventListener('change', function() {
-                updateDeveloperStatus(this.checked);
-            });
-        }
-
         floatingBtn.addEventListener('click', function(e) {
             e.preventDefault();
 
