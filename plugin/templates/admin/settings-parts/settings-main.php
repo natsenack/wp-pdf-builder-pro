@@ -935,6 +935,7 @@ window.updateZoomCardPreview = function() {
 
                 // Afficher les informations de debug
                 if (data.data && data.data.debug_info) {
+                    console.log('🔍 DEBUG - Contenu complet de debug_info:', data.data.debug_info);
                     console.log('🔍 DEBUG - Analyse des champs:');
                     console.log('📊 Nombre total de champs POST reçus côté serveur:', data.debug_info.total_post_fields);
                     console.log('📋 Champs traités côté serveur:', data.debug_info.processed_fields);

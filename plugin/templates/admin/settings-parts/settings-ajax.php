@@ -1751,6 +1751,13 @@ function pdf_builder_save_all_settings_handler() {
             ]
         ]);
 
+        // Debug log
+        error_log('PDF Builder DEBUG - debug_info envoyé: ' . json_encode([
+            'total_post_fields' => count($_POST),
+            'processed_fields_count' => count($processed_fields),
+            'saved_count' => $saved_count
+        ]));
+
     } catch (Exception $e) {
         send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
     }
