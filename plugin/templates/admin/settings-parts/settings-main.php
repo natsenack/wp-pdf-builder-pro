@@ -581,6 +581,14 @@ if (
 </noscript>
 
 <style>
+/* Styles pour les onglets */
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
 /* Styles pour le bouton flottant */
 #floating-save-button {
     position: fixed !important;
