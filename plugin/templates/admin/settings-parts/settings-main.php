@@ -886,6 +886,8 @@ window.updateZoomCardPreview = function() {
 
 // Tab switching functionality
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('PDF Builder: DOMContentLoaded fired - starting tab initialization');
+
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
 
@@ -2944,5 +2946,7 @@ document.addEventListener('DOMContentLoaded', function() {
         synchronizeModalValues(modal, 'autosave');
     }
 }
+
+console.log('PDF Builder: Main script loaded successfully');
 </script>
 
