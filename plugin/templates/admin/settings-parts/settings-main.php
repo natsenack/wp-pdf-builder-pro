@@ -1095,20 +1095,37 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // DEBUG: Lister tous les éléments trouvés
+        console.log('PDF Builder: DEBUG - Contenus d\'onglets:');
+        tabContents.forEach(function(content, index) {
+            console.log('  ', index, ':', content.id, content.className);
+        });
+
+        console.log('PDF Builder: DEBUG - Onglets de navigation:');
+        navTabs.forEach(function(tab, index) {
+            console.log('  ', index, ':', tab.getAttribute('data-tab'), tab.className);
+        });
+
         // Vérifier le hash de l'URL pour afficher le bon onglet au chargement
         const urlHash = window.location.hash.substring(1); // Enlever le #
         let activeTabId = 'general'; // Par défaut
 
         if (urlHash && document.getElementById(urlHash)) {
             activeTabId = urlHash;
+            console.log('PDF Builder: Onglet actif depuis URL hash:', activeTabId);
+        } else {
+            console.log('PDF Builder: Onglet actif par défaut:', activeTabId);
         }
 
         // Masquer tous les contenus d'onglets sauf celui actif
+        console.log('PDF Builder: Masquage de tous les onglets sauf:', activeTabId);
         tabContents.forEach(function(content) {
             if (content.id === activeTabId) {
                 content.classList.add('active');
+                console.log('  ✅ Activation de:', content.id);
             } else {
                 content.classList.remove('active');
+                console.log('  ❌ Désactivation de:', content.id);
             }
         });
 
@@ -1116,6 +1133,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const activeNavTab = document.querySelector('.nav-tab[data-tab="' + activeTabId + '"]');
         if (activeNavTab) {
             activeNavTab.classList.add('nav-tab-active');
+            console.log('PDF Builder: Onglet de navigation activé:', activeTabId);
+        } else {
+            console.warn('PDF Builder: Onglet de navigation non trouvé pour:', activeTabId);
         }
 
         // Gérer les clics sur les onglets
@@ -1126,6 +1146,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             newTab.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
+
+                const tabId = this.getAttribute('data-tab');
+                console.log('PDF Builder: Clic sur onglet:', tabId);
 
                 // Retirer la classe active de tous les onglets
                 document.querySelectorAll('.nav-tab').forEach(function(t) {
@@ -1141,10 +1165,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 // Ajouter la classe active au contenu de l'onglet sélectionné
-                const tabId = this.getAttribute('data-tab');
                 const targetContent = document.getElementById(tabId);
                 if (targetContent) {
                     targetContent.classList.add('active');
+                    console.log('PDF Builder: Contenu activé:', tabId);
+                } else {
+                    console.error('PDF Builder: Contenu non trouvé pour:', tabId);
                 }
 
                 // Mettre à jour l'URL avec le hash de l'onglet sans causer de scroll
