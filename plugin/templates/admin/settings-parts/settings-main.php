@@ -2153,7 +2153,7 @@ function initializeTabs() {
         } catch (e) {
             
         }
-    }    // Function to update modal values in DOM
+    }
     function updateModalValues(category, values) {
         const modalId = `canvas-${category}-modal`;
         const modal = document.getElementById(modalId);

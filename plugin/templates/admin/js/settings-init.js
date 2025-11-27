@@ -59,4 +59,6 @@
         // Vérifier que toutes les dépendances sont disponibles
         checkDependencies();
 
+    });
+
 })(jQuery);
