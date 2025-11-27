@@ -23,38 +23,40 @@
                 return;
             }
 
-        console.log('PDF Builder Settings: All dependencies loaded, initializing...');
+            console.log('PDF Builder Settings: All dependencies loaded, initializing...');
 
-        // Constantes de debug
-        const PDF_BUILDER_DEBUG_ENABLED = window.pdfBuilderCanvasSettings?.debug?.javascript || false;
-        const PDF_BUILDER_DEBUG_VERBOSE = window.pdfBuilderCanvasSettings?.debug?.javascript_verbose || false;
+            // Constantes de debug
+            const PDF_BUILDER_DEBUG_ENABLED = window.pdfBuilderCanvasSettings?.debug?.javascript || false;
+            const PDF_BUILDER_DEBUG_VERBOSE = window.pdfBuilderCanvasSettings?.debug?.javascript_verbose || false;
 
-        // Fonction de debug sécurisée
-        window.pdfBuilderDebug = function(...args) {
-            if (PDF_BUILDER_DEBUG_ENABLED && typeof console !== 'undefined' && console.log) {
-                if (PDF_BUILDER_DEBUG_VERBOSE) {
-                    console.log('[PDF Builder Debug]', ...args);
-                } else {
-                    console.log(...args);
+            // Fonction de debug sécurisée
+            window.pdfBuilderDebug = function(...args) {
+                if (PDF_BUILDER_DEBUG_ENABLED && typeof console !== 'undefined' && console.log) {
+                    if (PDF_BUILDER_DEBUG_VERBOSE) {
+                        console.log('[PDF Builder Debug]', ...args);
+                    } else {
+                        console.log(...args);
+                    }
                 }
-            }
-        };
+            };
 
-        window.pdfBuilderError = function(...args) {
-            if (typeof console !== 'undefined' && console.error) {
-                console.error('[PDF Builder Error]', ...args);
-            }
-        };
+            window.pdfBuilderError = function(...args) {
+                if (typeof console !== 'undefined' && console.error) {
+                    console.error('[PDF Builder Error]', ...args);
+                }
+            };
 
-        pdfBuilderDebug('Deferred settings initialization started');
-        pdfBuilderDebug('PDF_BUILDER_DEBUG_ENABLED:', PDF_BUILDER_DEBUG_ENABLED);
-        pdfBuilderDebug('PDF_BUILDER_DEBUG_VERBOSE:', PDF_BUILDER_DEBUG_VERBOSE);
+            pdfBuilderDebug('Deferred settings initialization started');
+            pdfBuilderDebug('PDF_BUILDER_DEBUG_ENABLED:', PDF_BUILDER_DEBUG_ENABLED);
+            pdfBuilderDebug('PDF_BUILDER_DEBUG_VERBOSE:', PDF_BUILDER_DEBUG_VERBOSE);
 
-        // Ici nous pourrons ajouter toute la logique d'initialisation
-        // qui était auparavant dans le template PHP
+            // Ici nous pourrons ajouter toute la logique d'initialisation
+            // qui était auparavant dans le template PHP
 
-        pdfBuilderDebug('Deferred settings initialization completed');
+            pdfBuilderDebug('Deferred settings initialization completed');
+        }
 
-    });
+        // Vérifier que toutes les dépendances sont disponibles
+        checkDependencies();
 
 })(jQuery);
