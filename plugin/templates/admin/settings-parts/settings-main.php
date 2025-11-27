@@ -828,7 +828,7 @@ if (
 
 
 <script>
-console.log('PDF Builder: Script tag started executing');
+console.log('PDF Builder: Script tag started executing - BEGIN');
 
 // Debug configuration
 const PDF_BUILDER_DEBUG_ENABLED = <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'true' : 'false'; ?>;
