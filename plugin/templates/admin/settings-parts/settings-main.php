@@ -878,10 +878,12 @@ window.updateZoomCardPreview = function() {
             formData.append('action', 'pdf_builder_save_all_settings');
             formData.append('security', window.pdfBuilderAjax?.nonce || '');
 
-            // Collecter les données de tous les formulaires de la page
+            // Collecter les données de tous les formulaires de la page avec déduplication
             const forms = document.querySelectorAll('form');
             let totalFields = 0;
             let collectedFields = [];
+            let processedFields = new Set(); // Pour éviter les doublons
+            let duplicateFields = {}; // Pour compter les dupliqués
 
             forms.forEach(function(form, index) {
                 console.log('PDF Builder: Traitement du formulaire', index + 1, 'sur', forms.length);
@@ -893,23 +895,62 @@ window.updateZoomCardPreview = function() {
                 const formInputs = form.querySelectorAll('input, select, textarea');
                 formInputs.forEach(function(input) {
                     if (input.name && input.type !== 'submit' && input.type !== 'button') {
-                        if (input.type === 'checkbox') {
-                            formData.append(input.name, input.checked ? '1' : '0');
-                        } else if (input.type === 'radio') {
-                            if (input.checked) {
-                                formData.append(input.name, input.value);
+                        // Gestion spéciale pour les tableaux (champs avec [])
+                        let fieldName = input.name;
+                        if (fieldName.includes('[]')) {
+                            // Pour les tableaux, on garde toujours (mais on évite les valeurs dupliquées)
+                            if (input.type === 'checkbox') {
+                                if (input.checked) {
+                                    formData.append(fieldName, input.value);
+                                    if (!processedFields.has(fieldName + '_' + input.value)) {
+                                        processedFields.add(fieldName + '_' + input.value);
+                                        totalFields++;
+                                        collectedFields.push(fieldName);
+                                    }
+                                }
+                            } else {
+                                formData.append(fieldName, input.value);
+                                if (!processedFields.has(fieldName + '_' + input.value)) {
+                                    processedFields.add(fieldName + '_' + input.value);
+                                    totalFields++;
+                                    collectedFields.push(fieldName);
+                                }
                             }
                         } else {
-                            formData.append(input.name, input.value);
+                            // Pour les champs normaux, éviter les doublons complets
+                            if (!processedFields.has(fieldName)) {
+                                processedFields.add(fieldName);
+
+                                if (input.type === 'checkbox') {
+                                    formData.append(fieldName, input.checked ? '1' : '0');
+                                } else if (input.type === 'radio') {
+                                    if (input.checked) {
+                                        formData.append(fieldName, input.value);
+                                    }
+                                } else {
+                                    formData.append(fieldName, input.value);
+                                }
+                                totalFields++;
+                                collectedFields.push(fieldName);
+                            } else {
+                                // Compter les dupliqués pour le debug
+                                if (!duplicateFields[fieldName]) {
+                                    duplicateFields[fieldName] = 1;
+                                }
+                                duplicateFields[fieldName]++;
+                            }
                         }
-                        totalFields++;
-                        collectedFields.push(input.name);
                     }
                 });
             });
 
-            console.log('PDF Builder: Collecte terminée -', totalFields, 'champs à sauvegarder');
-            console.log('PDF Builder: Champs collectés:', collectedFields);
+            // Log des dupliqués détectés
+            if (Object.keys(duplicateFields).length > 0) {
+                console.log('PDF Builder: Dupliqués détectés et ignorés:', duplicateFields);
+            }
+
+            console.log('PDF Builder: Collecte terminée -', totalFields, 'champs uniques à sauvegarder');
+            console.log('PDF Builder: Champs collectés (dédupliqués):', collectedFields);
 
             // Indiquer l'envoi
             floatingBtn.innerHTML = '<span class="save-icon">📤</span><span class="save-text">Envoi... (' + totalFields + ' champs)</span>';
@@ -930,34 +971,12 @@ window.updateZoomCardPreview = function() {
             .then(function(data) {
                 console.log('PDF Builder: Réponse AJAX reçue:', data);
 
-                // Vérifier si debug_info existe dans data.data
-                console.log('🔍 DEBUG - Vérification debug_info dans data.data:', data.data ? typeof data.data.debug_info : 'data.data n\'existe pas', data.data && data.data.debug_info ? 'présent' : 'absent');
-
-                // Afficher les informations de debug
+                // Afficher les informations de debug si disponibles
                 if (data.data && data.data.debug_info) {
-                    console.log('🔍 DEBUG - Contenu complet de debug_info:', data.data.debug_info);
-                    console.log('🔍 DEBUG - Analyse des champs:');
-                    console.log('📊 Nombre total de champs POST reçus côté serveur:', data.data.debug_info.total_post_fields);
-                    console.log('📋 Champs traités côté serveur:', data.data.debug_info.processed_fields);
-                    console.log('🚫 Champs ignorés:', data.data.debug_info.ignored_fields);
-                    console.log('💾 Nombre de champs sauvegardés:', data.data.saved_count);
-
-                    const collectedCount = collectedFields.length;
-                    const processedCount = data.data.debug_info.processed_fields.length;
-                    const savedCount = data.data.saved_count;
-
-                    console.log('📈 Résumé:');
-                    console.log('  - Collectés côté JS:', collectedCount);
-                    console.log('  - Reçus côté PHP:', processedCount);
-                    console.log('  - Sauvegardés:', savedCount);
-
-                    if (collectedCount !== processedCount) {
-                        console.warn('⚠️ Différence détectée entre champs collectés et reçus!');
-                        const missing = collectedFields.filter(field => !data.data.debug_info.processed_fields.includes(field));
-                        const extra = data.data.debug_info.processed_fields.filter(field => !collectedFields.includes(field));
-                        if (missing.length > 0) console.log('❌ Champs manquants côté serveur:', missing);
-                        if (extra.length > 0) console.log('➕ Champs supplémentaires côté serveur:', extra);
-                    }
+                    console.log('🔍 DEBUG - Analyse des champs côté serveur:');
+                    console.log('📊 POST reçus:', data.data.debug_info.total_post_fields);
+                    console.log('📋 Traités:', data.data.debug_info.processed_fields.length);
+                    console.log('💾 Sauvegardés:', data.data.saved_count);
                 }
 
                 if (data.success) {
