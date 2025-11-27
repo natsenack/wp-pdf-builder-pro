@@ -120,6 +120,26 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     display: block;
 }
 
+/* Liens de secours pour la navigation sans JavaScript */
+.nav-tab-fallback {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.nav-tab-fallback .nav-tab {
+    display: inline-block;
+}
+
+/* Masquer les liens de secours quand JavaScript fonctionne */
+.js-enabled .nav-tab-fallback {
+    display: none !important;
+}
+
+/* Afficher les boutons normaux quand JavaScript fonctionne */
+.js-enabled .nav-tab:not(.nav-tab-fallback .nav-tab) {
+    display: inline-block;
+}
+
 /* Masquer le menu hamburger sur desktop */
 .mobile-menu-toggle {
     display: none !important;

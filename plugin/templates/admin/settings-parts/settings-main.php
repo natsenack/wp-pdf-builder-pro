@@ -464,38 +464,54 @@ if (
                 <span class="tab-icon">⚙️</span>
                 <span class="tab-text">Général</span>
             </button>
-            <button type="button" class="nav-tab" data-tab="licence">
-                <span class="tab-icon">🔑</span>
-                <span class="tab-text">Licence</span>
-            </button>
-            <button type="button" class="nav-tab" data-tab="systeme">
-                <span class="tab-icon">🔧</span>
-                <span class="tab-text">Système</span>
-            </button>
-            <button type="button" class="nav-tab" data-tab="acces">
-                <span class="tab-icon">👥</span>
-                <span class="tab-text">Accès</span>
-            </button>
-            <button type="button" class="nav-tab" data-tab="securite">
-                <span class="tab-icon">🔒</span>
-                <span class="tab-text">Sécurité & Conformité</span>
-            </button>
-            <button type="button" class="nav-tab" data-tab="pdf">
-                <span class="tab-icon">📄</span>
-                <span class="tab-text">Configuration PDF</span>
-            </button>
-            <button type="button" class="nav-tab" data-tab="contenu">
-                <span class="tab-icon">🎨</span>
-                <span class="tab-text">Contenu & Design</span>
-            </button>
-            <button type="button" class="nav-tab" data-tab="templates">
-                <span class="tab-icon">📋</span>
-                <span class="tab-text">Templates par statut</span>
-            </button>
-            <button type="button" class="nav-tab" data-tab="developpeur">
-                <span class="tab-icon">👨‍💻</span>
-                <span class="tab-text">Développeur</span>
-            </button>
+            <a href="?page=pdf-builder-settings&tab=licence" class="nav-tab-fallback">
+                <button type="button" class="nav-tab" data-tab="licence">
+                    <span class="tab-icon">🔑</span>
+                    <span class="tab-text">Licence</span>
+                </button>
+            </a>
+            <a href="?page=pdf-builder-settings&tab=systeme" class="nav-tab-fallback">
+                <button type="button" class="nav-tab" data-tab="systeme">
+                    <span class="tab-icon">🔧</span>
+                    <span class="tab-text">Système</span>
+                </button>
+            </a>
+            <a href="?page=pdf-builder-settings&tab=acces" class="nav-tab-fallback">
+                <button type="button" class="nav-tab" data-tab="acces">
+                    <span class="tab-icon">👥</span>
+                    <span class="tab-text">Accès</span>
+                </button>
+            </a>
+            <a href="?page=pdf-builder-settings&tab=securite" class="nav-tab-fallback">
+                <button type="button" class="nav-tab" data-tab="securite">
+                    <span class="tab-icon">🔒</span>
+                    <span class="tab-text">Sécurité & Conformité</span>
+                </button>
+            </a>
+            <a href="?page=pdf-builder-settings&tab=pdf" class="nav-tab-fallback">
+                <button type="button" class="nav-tab" data-tab="pdf">
+                    <span class="tab-icon">📄</span>
+                    <span class="tab-text">Configuration PDF</span>
+                </button>
+            </a>
+            <a href="?page=pdf-builder-settings&tab=contenu" class="nav-tab-fallback">
+                <button type="button" class="nav-tab" data-tab="contenu">
+                    <span class="tab-icon">🎨</span>
+                    <span class="tab-text">Contenu & Design</span>
+                </button>
+            </a>
+            <a href="?page=pdf-builder-settings&tab=templates" class="nav-tab-fallback">
+                <button type="button" class="nav-tab" data-tab="templates">
+                    <span class="tab-icon">📋</span>
+                    <span class="tab-text">Templates par statut</span>
+                </button>
+            </a>
+            <a href="?page=pdf-builder-settings&tab=developpeur" class="nav-tab-fallback">
+                <button type="button" class="nav-tab" data-tab="developpeur">
+                    <span class="tab-icon">👨‍💻</span>
+                    <span class="tab-text">Développeur</span>
+                </button>
+            </a>
         </div>
     </div>
 <?php
@@ -715,9 +731,16 @@ window.updateZoomCardPreview = function() {
     console.log("PDF Builder: Zoom preview updated (simplified)");
 };
 
-// Gestion des cartes de métriques du cache
+// Ajouter la classe js-enabled au body pour indiquer que JavaScript fonctionne
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.add('js-enabled');
+    console.log("PDF Builder: JavaScript enabled, added js-enabled class");
+});
 (function() {
     'use strict';
+
+    // Variable globale pour éviter les réinitialisations multiples des onglets
+    let tabsInitialized = false;
 
     function initializeCacheMetricCards() {
         const cacheCards = document.querySelectorAll('.cache-metric-card');
@@ -1055,14 +1078,20 @@ window.updateZoomCardPreview = function() {
 
     function initializeTabs() {
         if (tabsInitialized) {
+            console.log('PDF Builder: Onglets déjà initialisés, skipping');
             return;
         }
+
+        console.log('PDF Builder: Initialisation des onglets...');
 
         // Vérifier que les éléments existent
         const tabContents = document.querySelectorAll('.tab-content');
         const navTabs = document.querySelectorAll('.nav-tab');
 
+        console.log('PDF Builder: Trouvé', tabContents.length, 'contenus d\'onglets et', navTabs.length, 'onglets de navigation');
+
         if (tabContents.length === 0 || navTabs.length === 0) {
+            console.warn('PDF Builder: Éléments d\'onglets manquants, retry dans 100ms');
             setTimeout(initializeTabs, 100);
             return;
         }
@@ -1147,20 +1176,36 @@ window.updateZoomCardPreview = function() {
         }
 
         tabsInitialized = true;
+        console.log('PDF Builder: Onglets initialisés avec succès');
     }    // Initialiser dès que possible
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeTabs);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('PDF Builder: DOMContentLoaded, initialisation des onglets');
+            initializeTabs();
+        });
     } else {
+        console.log('PDF Builder: DOM déjà chargé, initialisation des onglets');
         initializeTabs();
     }
 
     // Forcer une réinitialisation après le chargement complet de la fenêtre
     window.addEventListener('load', function() {
-        setTimeout(initializeTabs, 50);
+        console.log('PDF Builder: Window loaded, vérification des onglets');
+        setTimeout(function() {
+            if (!tabsInitialized) {
+                console.warn('PDF Builder: Onglets pas encore initialisés, retry');
+                initializeTabs();
+            }
+        }, 50);
     });
 
     // Et une dernière vérification après un délai plus long
-    setTimeout(initializeTabs, 1000);
+    setTimeout(function() {
+        if (!tabsInitialized) {
+            console.warn('PDF Builder: Onglets toujours pas initialisés après délai, retry final');
+            initializeTabs();
+        }
+    }, 1000);
 
 // Gestion du bouton flottant de sauvegarde
 (function() {
@@ -1970,6 +2015,47 @@ window.updateZoomCardPreview = function() {
     }
 
 })();
+
+// Fonction de secours pour la navigation des onglets (sans JavaScript)
+function pdf_builder_fallback_tab_navigation() {
+    // Cette fonction sera appelée si JavaScript échoue
+    if (typeof window.pdfBuilderFallbackTabs === 'undefined') {
+        window.pdfBuilderFallbackTabs = true;
+
+        // Utiliser les paramètres d'URL pour la navigation
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTab = urlParams.get('tab') || 'general';
+
+        // Masquer tous les contenus d'onglets
+        const allContents = document.querySelectorAll('.tab-content');
+        allContents.forEach(function(content) {
+            content.style.display = 'none';
+        });
+
+        // Afficher l'onglet actif
+        const activeContent = document.getElementById(activeTab);
+        if (activeContent) {
+            activeContent.style.display = 'block';
+        }
+
+        // Mettre à jour les classes des onglets de navigation
+        const allTabs = document.querySelectorAll('.nav-tab');
+        allTabs.forEach(function(tab) {
+            tab.classList.remove('nav-tab-active');
+            const tabData = tab.getAttribute('data-tab');
+            if (tabData === activeTab) {
+                tab.classList.add('nav-tab-active');
+            }
+        });
+    }
+}
+
+// Appeler la fonction de secours au chargement
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', pdf_builder_fallback_tab_navigation);
+} else {
+    pdf_builder_fallback_tab_navigation();
+}
 
 
 
