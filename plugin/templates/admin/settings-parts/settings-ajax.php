@@ -539,6 +539,20 @@ function pdf_builder_save_settings_handler() {
     if (PDF_Builder_Security_Manager::verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
 
+        // Extraire la liste des champs collectés côté JS pour comparaison (si présente)
+        $js_collected = [];
+        if (isset($_POST['js_collected_fields'])) {
+            $decoded = json_decode($_POST['js_collected_fields'], true);
+            if (is_array($decoded)) {
+                $js_collected = $decoded;
+            } else {
+                error_log('PDF Builder ERROR - js_collected_fields is not valid JSON array: ' . $_POST['js_collected_fields']);
+            }
+        }
+        if (isset($_POST['js_collected_fields'])) {
+            unset($_POST['js_collected_fields']);
+        }
+
         // Debug: Log after nonce verification
         file_put_contents($log_file, date('Y-m-d H:i:s') . " - Nonce verified, current_tab = $current_tab\n", FILE_APPEND);
         PDF_Builder_Security_Manager::debug_log('php_errors', 'AJAX: Handler started, current_tab = ' . $current_tab);
@@ -547,10 +561,6 @@ function pdf_builder_save_settings_handler() {
     switch ($current_tab) {
         case 'all':
             try {
-                // Extraire la liste des champs collectés côté JS pour comparaison
-                $js_collected = isset($_POST['js_collected_fields']) ? json_decode($_POST['js_collected_fields'], true) : [];
-                unset($_POST['js_collected_fields']);
-
                 // Helper function to get normalized value from POST
                 $get_post_value = function($key) {
                     if (!isset($_POST[$key])) {
@@ -1758,14 +1768,14 @@ function pdf_builder_save_all_settings_handler() {
                 'ignored' => $ignored_fields,
                 'processed' => count($processed_fields),
                 'saved' => $saved_count,
-                'errors' => count($errors),
+                'error_count' => count($errors),
                 'comparison' => [
                     'js_collected' => count($js_collected),
                     'php_received' => count($_POST),
                     'php_processed' => count($processed_fields),
                     'saved' => $saved_count
                 ],
-                'missing_fields' => array_diff($js_collected, array_keys($_POST))
+                'missing_fields' => is_array($js_collected) ? array_diff($js_collected, array_keys($_POST)) : []
             ]
         ]);
 
