@@ -1307,7 +1307,7 @@ class PdfBuilderAdmin
             // Localiser les variables AJAX pour les fonctionnalités de cache
             wp_localize_script('pdf-builder-settings-page', 'pdfBuilderAjax', [
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_cache_actions'),
+                'nonce' => wp_create_nonce('pdf_builder_settings'),
                 'debug' => [
                     'php_errors' => get_option('pdf_builder_debug_php_errors', false),
                     'javascript' => get_option('pdf_builder_debug_javascript', false),
