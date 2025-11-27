@@ -983,19 +983,19 @@ window.updateZoomCardPreview = function() {
                 // Afficher les informations de debug si disponibles
                 if (data.data && data.data.debug_info) {
                     console.log('🔍 DEBUG - Analyse détaillée des champs:');
-                    console.log('📊 Total POST côté serveur:', data.data.debug_info.total_post_fields);
-                    console.log('🚫 Ignorés:', data.data.debug_info.ignored_fields.length, '-', data.data.debug_info.ignored_fields);
-                    console.log('📋 Traités:', data.data.debug_info.processed_fields.length);
-                    console.log('💾 Sauvegardés:', data.data.debug_info.saved_count);
-                    console.log('❌ Erreurs:', data.data.debug_info.errors_count);
+                    console.log('📊 Total POST côté serveur:', data.data.debug_info.total_post);
+                    console.log('🚫 Ignorés:', data.data.debug_info.ignored.length, '-', data.data.debug_info.ignored);
+                    console.log('📋 Traités:', data.data.debug_info.processed);
+                    console.log('💾 Sauvegardés:', data.data.debug_info.saved);
+                    console.log('❌ Erreurs:', data.data.debug_info.error_count);
 
                     const collectedCount = collectedFields.length;
-                    const processedCount = data.data.debug_info.processed_fields.length;
-                    const savedCount = data.data.debug_info.saved_count;
+                    const processedCount = data.data.debug_info.processed;
+                    const savedCount = data.data.debug_info.saved;
 
                     console.log('📈 Comparaison:');
                     console.log('  - Collectés côté JS:', collectedCount);
-                    console.log('  - Reçus côté PHP:', data.data.debug_info.total_post_fields);
+                    console.log('  - Reçus côté PHP:', data.data.debug_info.total_post);
                     console.log('  - Traités côté PHP:', processedCount);
                     console.log('  - Sauvegardés:', savedCount);
 

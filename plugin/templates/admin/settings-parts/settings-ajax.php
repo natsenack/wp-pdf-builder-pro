@@ -346,7 +346,7 @@ function pdf_builder_clear_cache_handler() {
 // Update Cache Metrics Handler
 function pdf_builder_update_cache_metrics_handler() {
     // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'pdf_builder_ajax')) {
         send_ajax_response(false, 'Nonce invalide');
         return;
     }
