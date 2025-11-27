@@ -26,6 +26,7 @@ class PdfBuilderAutoloader
         'PDF_Builder\Api\\' => 'api/',
         'PDF_Builder\Data\\' => 'data/',
         'PDF_Builder\Generators\\' => 'generators/',
+        'PDF_Builder\Helpers\\' => 'src/Helpers/',
         'PDF_Builder\Interfaces\\' => 'interfaces/',
         'PDF_Builder\Templates\\' => 'templates/',
         'PDF_Builder\Core\\' => 'core/',
