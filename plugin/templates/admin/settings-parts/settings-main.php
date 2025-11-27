@@ -854,6 +854,14 @@ window.updateZoomCardPreview = function() {
         // Marquer comme initialisé
         floatingBtn.setAttribute('data-initialized', 'true');
 
+        // Ajouter un écouteur sur la checkbox du mode développeur pour mise à jour temps réel
+        const developerCheckbox = document.getElementById('developer_enabled');
+        if (developerCheckbox) {
+            developerCheckbox.addEventListener('change', function() {
+                updateDeveloperStatus(this.checked);
+            });
+        }
+
         floatingBtn.addEventListener('click', function(e) {
             e.preventDefault();
 
@@ -937,6 +945,9 @@ window.updateZoomCardPreview = function() {
                     const savedCount = data.data && data.data.saved_count ? data.data.saved_count : 'paramètres';
                     floatingBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">' + savedCount + ' sauvegardés !</span>';
 
+                    // Mettre à jour l'interface utilisateur en temps réel
+                    updateUIAfterSave();
+
                     // Remettre à l'état normal après 3 secondes
                     setTimeout(function() {
                         floatingBtn.classList.remove('saved');
@@ -989,6 +1000,38 @@ window.updateZoomCardPreview = function() {
                 showNotification('Erreur de connexion réseau. Vérifiez votre connexion internet et réessayez.', 'error');
             });
         });
+
+        // Fonction pour mettre à jour l'interface utilisateur après la sauvegarde
+        function updateUIAfterSave() {
+            console.log('PDF Builder: Mise à jour de l\'interface utilisateur après sauvegarde');
+
+            // Mettre à jour le statut du mode développeur
+            const developerCheckbox = document.getElementById('developer_enabled');
+            if (developerCheckbox) {
+                updateDeveloperStatus(developerCheckbox.checked);
+            }
+
+            // Ici on peut ajouter d'autres mises à jour d'interface pour d'autres paramètres
+            // Par exemple : mise à jour des indicateurs de cache, etc.
+        }
+
+        // Fonction pour mettre à jour le statut visuel du mode développeur
+        function updateDeveloperStatus(isEnabled) {
+            const developerStatusIndicator = document.querySelector('.developer-status-indicator');
+
+            if (developerStatusIndicator) {
+                developerStatusIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
+                developerStatusIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
+                console.log('PDF Builder: Statut développeur mis à jour:', isEnabled ? 'ACTIF' : 'INACTIF');
+            }
+
+            // Mettre à jour la visibilité des sections dépendantes du mode développeur
+            const devSections = document.querySelectorAll('[id^="dev-"][id$="-section"]');
+            devSections.forEach(function(section) {
+                section.style.display = isEnabled ? '' : 'none';
+                console.log('PDF Builder: Section', section.id, isEnabled ? 'affichée' : 'masquée');
+            });
+        }
 
         // Fonction pour afficher les notifications
         function showNotification(message, type = 'info') {
