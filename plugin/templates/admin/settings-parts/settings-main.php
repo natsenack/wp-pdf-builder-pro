@@ -247,27 +247,16 @@ try {
     console.error('Erreur lors du chargement des paramètres sauvegardés:', e);
     window.pdfBuilderSavedSettings = {};
 }
-// window.pdfBuilderCanvasSettings = <?php echo json_encode($canvas_settings); ?>; // COMMENTÉ: déjà défini dans settings-canvas-params.php
+</script>
 
-// Constantes de debug
-const PDF_BUILDER_DEBUG_ENABLED = <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'true' : 'false'; ?>;
-const PDF_BUILDER_DEBUG_VERBOSE = <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'true' : 'false'; ?>;
-
-// Mettre à jour le niveau de log du PDFBuilderLogger si disponible
-if (typeof window.PDFBuilderLogger !== 'undefined') {
-    window.PDFBuilderLogger.setLevel(PDF_BUILDER_DEBUG_ENABLED ? 'DEBUG' : 'NONE');
-}
-
-// Conditional debug logging function
-function pdfBuilderDebug(message, ...args) {
-    if (PDF_BUILDER_DEBUG_ENABLED) {
-        console.log('PDF_BUILDER_DEBUG:', message, ...args);
-    }
-}
-
-function pdfBuilderError(message, ...args) {
-    console.error('PDF_BUILDER_DEBUG:', message, ...args);
-}
+// Attendre que tout soit chargé avant d'exécuter le code d'initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        // Vérifier que jQuery est disponible
+        if (typeof jQuery === 'undefined') {
+            console.error('jQuery not available for PDF Builder settings');
+            return;
+        }
 
 // Système centralisé d'initialisation des previews avec données BDD
 window.PDF_Builder_Preview_Manager = {

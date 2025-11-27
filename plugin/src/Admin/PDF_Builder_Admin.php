@@ -1295,6 +1295,15 @@ class PdfBuilderAdmin
                 true
             );
 
+            // Charger le script d'initialisation différée
+            wp_enqueue_script(
+                'pdf-builder-settings-init',
+                plugins_url('templates/admin/js/settings-init.js', PDF_BUILDER_PLUGIN_FILE),
+                ['jquery', 'pdf-builder-settings-page'],
+                PDF_BUILDER_PRO_VERSION . '-' . time(),
+                true
+            );
+
             // Localiser les variables AJAX pour les fonctionnalités de cache
             wp_localize_script('pdf-builder-settings-page', 'pdfBuilderAjax', [
                 'ajaxurl' => admin_url('admin-ajax.php'),
