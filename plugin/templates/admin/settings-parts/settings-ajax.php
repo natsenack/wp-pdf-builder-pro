@@ -564,7 +564,14 @@ function pdf_builder_save_settings_handler() {
     switch ($current_tab) {
         case 'all':
             try {
-                // Helper function to get normalized value from POST
+                // Test simple response
+                send_ajax_response(true, 'Test response', [
+                    'debug_info' => [
+                        'total_post' => count($_POST),
+                        'missing_fields' => ''
+                    ]
+                ]);
+                return;
                 $get_post_value = function($key) {
                     if (!isset($_POST[$key])) {
                         return null;
