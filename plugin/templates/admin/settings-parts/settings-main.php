@@ -828,29 +828,29 @@ if (
 
 
 <script>
-console.log('PDF Builder: Script tag started executing - BEGIN');
+// Test script - very simple to isolate the issue
+console.log('PDF Builder: TEST SCRIPT STARTED');
 
-// Debug configuration
-const PDF_BUILDER_DEBUG_ENABLED = <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'true' : 'false'; ?>;
-const PDF_BUILDER_DEBUG_VERBOSE = <?php echo isset($settings['debug_javascript_verbose']) && $settings['debug_javascript_verbose'] ? 'true' : 'false'; ?>;
-
-console.log('PDF Builder: Constants defined - DEBUG_ENABLED:', PDF_BUILDER_DEBUG_ENABLED, 'VERBOSE:', PDF_BUILDER_DEBUG_VERBOSE);
-
-// Conditional debug logging function
-function pdfBuilderDebug(message, ...args) {
-    if (PDF_BUILDER_DEBUG_ENABLED) {
-        console.log('PDF_BUILDER_DEBUG:', message, ...args);
-    }
-}
-
-function pdfBuilderError(message, ...args) {
-    console.error('PDF_BUILDER_DEBUG:', message, ...args);
-}
-
-console.log('PDF Builder: Functions defined, about to enter try block');
-
+// Test PHP constants
 try {
-    console.log('PDF Builder: Starting main script execution');
+    const PDF_BUILDER_DEBUG_ENABLED = <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'true' : 'false'; ?>;
+    const PDF_BUILDER_DEBUG_VERBOSE = <?php echo isset($settings['debug_javascript_verbose']) && $settings['debug_javascript_verbose'] ? 'true' : 'false'; ?>;
+    console.log('PDF Builder: PHP constants loaded successfully - DEBUG_ENABLED:', PDF_BUILDER_DEBUG_ENABLED, 'VERBOSE:', PDF_BUILDER_DEBUG_VERBOSE);
+} catch (error) {
+    console.error('PDF Builder: Error loading PHP constants:', error);
+}
+
+// Test basic JavaScript execution
+console.log('PDF Builder: Basic JavaScript execution test passed');
+
+// Test if we can access window object
+console.log('PDF Builder: Window object accessible:', typeof window);
+
+// Test if we can access document object
+console.log('PDF Builder: Document object accessible:', typeof document);
+
+console.log('PDF Builder: TEST SCRIPT COMPLETED SUCCESSFULLY');
+</script>
 
 // Update zoom card preview
 console.log('PDF Builder: About to define updateZoomCardPreview');
