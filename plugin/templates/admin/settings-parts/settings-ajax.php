@@ -1799,9 +1799,12 @@ function pdf_builder_save_all_settings_handler() {
 
     } catch (Exception $e) {
         send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+        return;
     }
     break; // end of case 'all'
 } // close switch
-} else { // close if
+} // close if
+else { // else for if
     send_ajax_response(false, 'Nonce invalide');
+    return;
 }
