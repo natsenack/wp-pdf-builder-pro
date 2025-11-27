@@ -1076,6 +1076,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 })();
 
+// Gestion des onglets
+(function() {
+    'use strict';
+
+    // Variable globale pour éviter les réinitialisations multiples des onglets
+    let tabsInitialized = false;
+
     function initializeTabs() {
         if (tabsInitialized) {
             console.log('PDF Builder: Onglets déjà initialisés, skipping');
@@ -1177,7 +1184,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         tabsInitialized = true;
         console.log('PDF Builder: Onglets initialisés avec succès');
-    }    // Initialiser dès que possible
+    }
+
+    // Initialiser dès que possible
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('PDF Builder: DOMContentLoaded, initialisation des onglets');
@@ -1206,6 +1215,8 @@ document.addEventListener('DOMContentLoaded', function() {
             initializeTabs();
         }
     }, 1000);
+
+})();
 
 // Gestion du bouton flottant de sauvegarde
 (function() {
