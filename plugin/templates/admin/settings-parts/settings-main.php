@@ -889,13 +889,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
 
-    pdfBuilderDebug('Found tabs:', tabs.length, 'contents:', contents.length);
+    console.log('PDF Builder: Found tabs:', tabs.length, 'contents:', contents.length);
 
     tabs.forEach(function(tab) {
         tab.addEventListener('click', function(e) {
             e.preventDefault();
 
-            pdfBuilderDebug('Tab clicked:', this.getAttribute('href'));
+            console.log('PDF Builder: Tab clicked:', this.getAttribute('href'));
 
             // Remove active class from all tabs
             tabs.forEach(function(t) {
@@ -907,16 +907,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide all tab contents
             contents.forEach(function(c) {
                 c.classList.remove('active');
-                pdfBuilderDebug('Removed active from content:', c.id);
+                console.log('PDF Builder: Removed active from content:', c.id);
             });
             // Show corresponding tab content
             const target = this.getAttribute('href').substring(1);
             const targetContent = document.getElementById(target);
             if (targetContent) {
                 targetContent.classList.add('active');
-                pdfBuilderDebug('Added active to content:', target);
+                console.log('PDF Builder: Added active to content:', target);
             } else {
-                pdfBuilderError('Target content not found:', target);
+                console.error('PDF Builder: Target content not found:', target);
             }
 
             // Update canvas previews when switching to contenu tab
@@ -938,7 +938,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }, 200);
                     }
                 } catch (error) {
-                    pdfBuilderError('Error updating canvas previews on tab switch:', error);
+                    console.error('PDF Builder: Error updating canvas previews on tab switch:', error);
                 }
             }
 
@@ -959,7 +959,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        pdfBuilderDebug('Initializing tabs, targetTab:', targetTab);
+        console.log('PDF Builder: Initializing tabs, targetTab:', targetTab);
 
         // Set active tab and content without triggering click events
         const activeTab = document.querySelector('.nav-tab[href="#' + targetTab + '"]');
@@ -974,7 +974,7 @@ document.addEventListener('DOMContentLoaded', function() {
             activeTab.classList.add('nav-tab-active');
             activeContent.classList.add('active');
 
-            pdfBuilderDebug('Tab initialized - activeTab:', activeTab, 'activeContent:', activeContent);
+            console.log('PDF Builder: Tab initialized - activeTab:', activeTab, 'activeContent:', activeContent);
 
             // Update mobile menu text
             const currentTabText = document.querySelector('.current-tab-text');
@@ -985,7 +985,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         } else {
-            pdfBuilderError('Could not find activeTab or activeContent for targetTab:', targetTab);
+            console.error('PDF Builder: Could not find activeTab or activeContent for targetTab:', targetTab);
         }
     }
 
