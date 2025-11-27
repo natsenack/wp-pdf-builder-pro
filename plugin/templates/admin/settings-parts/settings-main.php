@@ -249,6 +249,7 @@ try {
 }
 </script>
 
+<script>
 // Attendre que tout soit chargé avant d'exécuter le code d'initialisation
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
