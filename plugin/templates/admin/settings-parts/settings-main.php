@@ -8,6 +8,9 @@
 // DEBUG: Log que le fichier est chargé
 error_log('PDF Builder: settings-main.php loaded at ' . date('Y-m-d H:i:s'));
 
+echo '<script>console.log("PDF Builder: PHP file loaded and script tag executed");</script>';
+
+
 if (!defined('ABSPATH')) {
     exit('Direct access forbidden');
 }
