@@ -916,6 +916,9 @@ window.updateZoomCardPreview = function() {
 
 // Tab switching functionality
 console.log('PDF Builder: About to add DOMContentLoaded listener');
+console.log('PDF Builder: Document readyState:', document.readyState);
+console.log('PDF Builder: Window loaded:', window.loaded);
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('PDF Builder: ===== DOMContentLoaded FIRED =====');
     console.log('PDF Builder: DOMContentLoaded fired - starting tab initialization');
@@ -926,6 +929,18 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeTabs();
     }, 100);
 });
+
+// Also try to initialize immediately if DOM is already ready
+console.log('PDF Builder: Checking if DOM is already ready');
+if (document.readyState === 'loading') {
+    console.log('PDF Builder: DOM still loading, waiting for DOMContentLoaded');
+} else {
+    console.log('PDF Builder: DOM already ready, initializing immediately');
+    setTimeout(function() {
+        console.log('PDF Builder: Immediate timeout fired - initializing tabs');
+        initializeTabs();
+    }, 100);
+}
 
 // Separate initialization function
 function initializeTabs() {
@@ -1149,6 +1164,9 @@ function initializeTabs() {
     console.log('PDF Builder: Final state - all contents:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({id: content.id, classes: content.classList.toString()})));
     console.log('PDF Builder: ===== END FINAL STATE CHECK =====');
 }
+
+<?php require_once 'tab-diagnostic.php'; ?>
+
     function updateSecurityStatusIndicators() {
         // Mettre à jour l'indicateur de sécurité (enable_logging)
         const enableLoggingCheckbox = document.getElementById('enable_logging');
@@ -2122,8 +2140,8 @@ function initializeTabs() {
                         }
             });
 
+                });
             });
-});
             // Initialize zoom preview if function exists
             // Removed automatic updateZoomPreview call to prevent conflicts with manual modal updates
             // if (typeof updateZoomPreview === 'function') {
@@ -2137,9 +2155,7 @@ function initializeTabs() {
         } catch (e) {
             
         }
-    }
-
-    // Function to update modal values in DOM
+    }    // Function to update modal values in DOM
     function updateModalValues(category, values) {
         const modalId = `canvas-${category}-modal`;
         const modal = document.getElementById(modalId);
