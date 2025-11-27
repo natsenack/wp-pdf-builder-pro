@@ -80,32 +80,12 @@
     justify-content: center;
 }
 
-/* Supprimer tout contenu ajouté par d'autres plugins/thèmes - règles spécifiques pour éviter les conflits */
-.pdf-builder-notification *::before,
-.pdf-builder-notification *::after {
+/* Supprimer TOUTES les icônes pour debug */
+.pdf-builder-notification-icon::before,
+.pdf-builder-notification-icon::after,
+.pdf-builder-notification-icon {
     content: none !important;
     display: none !important;
-}
-
-/* Icônes pour chaque type de notification - définies APRÈS la suppression générale */
-.pdf-builder-notification-success .pdf-builder-notification-icon::before {
-    content: '✅' !important;
-    display: inline !important;
-}
-
-.pdf-builder-notification-error .pdf-builder-notification-icon::before {
-    content: '❌' !important;
-    display: inline !important;
-}
-
-.pdf-builder-notification-warning .pdf-builder-notification-icon::before {
-    content: '⚠️' !important;
-    display: inline !important;
-}
-
-.pdf-builder-notification-info .pdf-builder-notification-icon::before {
-    content: 'ℹ️' !important;
-    display: inline !important;
 }
 
 .pdf-builder-notification-message {
