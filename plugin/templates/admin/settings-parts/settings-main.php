@@ -602,14 +602,38 @@ if (
 .floating-save-btn.saving {
     background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
     animation: pulse 1.5s infinite;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
 }
 
 .floating-save-btn.saved {
     background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    animation: bounce 0.6s ease;
+    transition: all 0.3s ease;
 }
 
 .floating-save-btn.error {
     background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
+    animation: shake 0.5s ease;
+    transition: all 0.3s ease;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
 .floating-tooltip {
@@ -825,6 +849,7 @@ window.updateZoomCardPreview = function() {
 
             // Changer l'apparence du bouton pour indiquer la sauvegarde
             floatingBtn.classList.add('saving');
+            floatingBtn.classList.remove('saved', 'error');
             floatingBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Sauvegarde...</span>';
             floatingBtn.disabled = true;
 
@@ -875,6 +900,7 @@ window.updateZoomCardPreview = function() {
                     // Succès
                     floatingBtn.classList.remove('saving');
                     floatingBtn.classList.add('saved');
+                    floatingBtn.classList.remove('error');
                     floatingBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">Sauvegardé !</span>';
 
                     // Remettre à l'état normal après 3 secondes
@@ -887,23 +913,26 @@ window.updateZoomCardPreview = function() {
                     // Afficher un message de succès si disponible
                     if (data.data && data.data.message) {
                         showNotification(data.data.message, 'success');
+                    } else {
+                        showNotification('Tous les paramètres ont été sauvegardés avec succès.', 'success');
                     }
 
                 } else {
                     // Erreur
                     floatingBtn.classList.remove('saving');
                     floatingBtn.classList.add('error');
+                    floatingBtn.classList.remove('saved');
                     floatingBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
 
-                    // Remettre à l'état normal après 3 secondes
+                    // Remettre à l'état normal après 5 secondes (plus long pour les erreurs)
                     setTimeout(function() {
                         floatingBtn.classList.remove('error');
                         floatingBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
                         floatingBtn.disabled = false;
-                    }, 3000);
+                    }, 5000);
 
                     // Afficher le message d'erreur
-                    const errorMsg = data.data && data.data.message ? data.data.message : 'Erreur lors de la sauvegarde';
+                    const errorMsg = data.data && data.data.message ? data.data.message : 'Erreur lors de la sauvegarde des paramètres.';
                     showNotification(errorMsg, 'error');
                     console.error('PDF Builder: Erreur de sauvegarde:', errorMsg);
                 }
@@ -914,45 +943,123 @@ window.updateZoomCardPreview = function() {
                 // Erreur de réseau
                 floatingBtn.classList.remove('saving');
                 floatingBtn.classList.add('error');
+                floatingBtn.classList.remove('saved');
                 floatingBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur réseau</span>';
 
                 setTimeout(function() {
                     floatingBtn.classList.remove('error');
                     floatingBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
                     floatingBtn.disabled = false;
-                }, 3000);
+                }, 5000);
 
-                showNotification('Erreur de connexion réseau', 'error');
+                showNotification('Erreur de connexion réseau. Vérifiez votre connexion internet et réessayez.', 'error');
             });
         });
 
         // Fonction pour afficher les notifications
-        function showNotification(message, type) {
-            // Créer une notification temporaire
+        function showNotification(message, type = 'info') {
+            // Types de notifications supportés
+            const types = {
+                success: { icon: '✅', color: '#28a745', bgColor: '#d4edda', borderColor: '#c3e6cb' },
+                error: { icon: '❌', color: '#dc3545', bgColor: '#f8d7da', borderColor: '#f5c6cb' },
+                warning: { icon: '⚠️', color: '#ffc107', bgColor: '#fff3cd', borderColor: '#ffeaa7' },
+                info: { icon: 'ℹ️', color: '#17a2b8', bgColor: '#d1ecf1', borderColor: '#bee5eb' }
+            };
+
+            const config = types[type] || types.info;
+
+            // Créer le conteneur de notification
             const notification = document.createElement('div');
+            notification.className = 'pdf-builder-notification';
             notification.style.cssText = `
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                background: ${type === 'success' ? '#28a745' : '#dc3545'};
-                color: white;
+                background: ${config.bgColor};
+                color: ${config.color};
+                border: 1px solid ${config.borderColor};
                 padding: 15px 20px;
                 border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                 z-index: 1000000;
-                font-weight: bold;
-                max-width: 300px;
+                font-weight: 500;
+                max-width: 350px;
                 word-wrap: break-word;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
             `;
-            notification.textContent = message;
+
+            // Icône
+            const icon = document.createElement('span');
+            icon.textContent = config.icon;
+            icon.style.fontSize = '18px';
+            icon.style.flexShrink = '0';
+
+            // Message
+            const text = document.createElement('span');
+            text.textContent = message;
+            text.style.flex = '1';
+
+            // Bouton de fermeture
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '×';
+            closeBtn.style.cssText = `
+                background: none;
+                border: none;
+                color: ${config.color};
+                font-size: 20px;
+                font-weight: bold;
+                cursor: pointer;
+                padding: 0;
+                margin-left: 10px;
+                opacity: 0.7;
+                transition: opacity 0.2s;
+                flex-shrink: 0;
+            `;
+            closeBtn.onmouseover = () => closeBtn.style.opacity = '1';
+            closeBtn.onmouseout = () => closeBtn.style.opacity = '0.7';
+            closeBtn.onclick = () => removeNotification(notification);
+
+            // Assembler la notification
+            notification.appendChild(icon);
+            notification.appendChild(text);
+            notification.appendChild(closeBtn);
             document.body.appendChild(notification);
 
-            // Supprimer après 5 secondes
-            setTimeout(function() {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 5000);
+            // Animation d'entrée
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+
+            // Supprimer automatiquement après 5 secondes
+            const autoRemove = setTimeout(() => removeNotification(notification), 5000);
+
+            // Fonction de suppression
+            function removeNotification(notif) {
+                clearTimeout(autoRemove);
+                notif.style.opacity = '0';
+                notif.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notif.parentNode) {
+                        notif.parentNode.removeChild(notif);
+                    }
+                }, 300);
+            }
+
+            // Stacker les notifications si plusieurs
+            const existingNotifications = document.querySelectorAll('.pdf-builder-notification');
+            if (existingNotifications.length > 1) {
+                existingNotifications.forEach((notif, index) => {
+                    if (index < existingNotifications.length - 1) {
+                        notif.style.transform = `translateX(0) translateY(-${(existingNotifications.length - 1 - index) * 70}px)`;
+                    }
+                });
+            }
         }
     }
 
