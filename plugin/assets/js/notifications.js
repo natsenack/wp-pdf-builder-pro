@@ -51,7 +51,7 @@
 
             const toast = $(`
                 <div class="pdf-builder-notification pdf-builder-notification-${type}" id="${toastId}" style="pointer-events: auto;">
-                    <span class="pdf-builder-notification-icon">${this.getIcon(type)}</span>
+                    <span class="pdf-builder-notification-icon"></span>
                     <span class="pdf-builder-notification-message">${this.escapeHtml(message)}</span>
                     <span class="pdf-builder-notification-close" style="cursor: pointer; font-size: 16px; font-weight: bold; opacity: 0.7; transition: opacity 0.2s; flex-shrink: 0; margin-left: 4px;">×</span>
                 </div>
@@ -134,16 +134,6 @@
             setTimeout(() => {
                 $notification.remove();
             }, 300);
-        }
-
-        getIcon(type) {
-            const icons = {
-                'success': '✅',
-                'error': '❌',
-                'warning': '⚠️',
-                'info': 'ℹ️'
-            };
-            return icons[type] || icons.info;
         }
 
         escapeHtml(text) {
