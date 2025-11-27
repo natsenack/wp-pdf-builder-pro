@@ -1686,8 +1686,7 @@ function pdf_builder_get_all_canvas_settings_handler() {
  * Handler AJAX pour sauvegarder tous les paramètres depuis le bouton flottant
  */
 function pdf_builder_save_all_settings_handler() {
-    try {
-        // Vérifier le nonce de sécurité
+    // Vérifier le nonce de sécurité
         if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'pdf_builder_settings')) {
             send_ajax_response(false, 'Erreur de sécurité. Veuillez rafraîchir la page et réessayer.');
             return;
