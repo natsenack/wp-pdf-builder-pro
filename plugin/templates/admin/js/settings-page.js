@@ -151,7 +151,7 @@ jQuery(document).ready(function($) {
             url: pdfBuilderAjax.ajaxurl,
             type: 'POST',
             data: {
-                action: 'pdf_builder_clear_all_cache',
+                action: 'pdf_builder_clear_cache',
                 nonce: pdfBuilderAjax.nonce
             },
             timeout: 60000, // 60 secondes timeout pour le nettoyage
