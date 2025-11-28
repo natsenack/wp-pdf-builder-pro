@@ -560,5 +560,3 @@ try {
 } catch {
     Write-Host "   ⚠️ Erreur lors du final push: $($_.Exception.Message)" -ForegroundColor Yellow
 }
- 
- 
