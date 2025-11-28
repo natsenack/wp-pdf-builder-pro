@@ -56,6 +56,16 @@ class PdfBuilderAdmin
     private $predefined_templates_manager = null;
 
     /**
+     * Renderers et processors
+     */
+    private $html_renderer = null;
+    private $template_processor = null;
+    private $data_utils = null;
+    private $pdf_generator = null;
+    private $utils = null;
+    private $thumbnail_manager = null;
+
+    /**
      * Obtenir l'instance unique de la classe (Singleton)
      */
     public static function getInstance($core = null)
