@@ -17,23 +17,10 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-// DEBUG: Log si le plugin se charge pendant AJAX
-if (defined('DOING_AJAX') && DOING_AJAX) {
-    // Log ALL AJAX requests for debugging
-    if (isset($_REQUEST['action'])) {
-        error_log('PDF Builder AJAX Request: ' . $_REQUEST['action'] . ' - From: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'unknown') . ' - Method: ' . $_SERVER['REQUEST_METHOD']);
-        error_log('PDF Builder AJAX POST data: ' . json_encode($_POST));
-    } else {
-        error_log('PDF Builder AJAX Request: NO ACTION - From: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'unknown') . ' - Method: ' . $_SERVER['REQUEST_METHOD']);
-    }
-}
-
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 // PDF_BUILDER_PLUGIN_URL sera défini dans constants.php avec plugins_url()
-// Désactiver les avertissements de dépréciation pour la compatibilité PHP 8.1+
-error_reporting(error_reporting() & ~E_DEPRECATED);
 
 // Protéger les hooks WordPress - ne les enregistrer que si WordPress est chargé
 if (function_exists('register_activation_hook')) {
@@ -43,213 +30,243 @@ if (function_exists('register_activation_hook')) {
     register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
 }
 
-// Charger le bootstrap du plugin (initialisation des utilitaires)
+// Charger le bootstrap du plugin (version minimale pour éviter les erreurs fatales)
 require_once PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
 
-// CHARGEMENT DE SÉCURITÉ ABSOLU DE L'ONBOARDING MANAGER
-// Cette classe doit être disponible dans TOUS les contextes
-if (!class_exists('PDF_Builder_Onboarding_Manager_Standalone')) {
-    // Créer une version standalone de la classe pour les cas d'urgence
-    class PDF_Builder_Onboarding_Manager_Standalone {
-        private static $instance = null;
-        
-        public static function get_instance() {
-            if (self::$instance === null) {
-                self::$instance = new self();
-            }
-            return self::$instance;
-        }
-        
-        public function __construct() {
-            // Constructeur minimal pour compatibilité
-        }
-        
-        // Méthodes minimales pour éviter les erreurs
-        public function check_onboarding_status() { return false; }
-        public function ajax_complete_onboarding_step() { return false; }
-        public function ajax_skip_onboarding() { return false; }
-        public function ajax_reset_onboarding() { return false; }
-        public function ajax_load_onboarding_step() { return false; }
-        public function ajax_save_template_selection() { return false; }
-        public function ajax_save_freemium_mode() { return false; }
-        public function ajax_update_onboarding_step() { return false; }
-        public function ajax_save_template_assignment() { return false; }
-        public function ajax_mark_onboarding_complete() { return false; }
-    }
-}
-
-// Maintenant charger la vraie classe si possible
-if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-    // Chargement d'urgence si la classe n'est pas trouvée
-    $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
-    if (file_exists($onboarding_path)) {
-        require_once $onboarding_path;
-    } else {
-        // Log d'erreur si le fichier n'existe pas
-        error_log('PDF Builder: Fichier Onboarding Manager introuvable: ' . $onboarding_path);
-    }
-}
-
-// Alias pour compatibilité - utiliser la vraie classe si disponible, sinon la standalone
-if (!class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
-    if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-        class PDF_Builder_Onboarding_Manager_Alias extends PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager {}
-    } else {
-        class PDF_Builder_Onboarding_Manager_Alias extends PDF_Builder_Onboarding_Manager_Standalone {}
-    }
-}
-
-// Vérification finale et création de l'instance
-if (!class_exists('PDF_Builder_Onboarding_Manager')) {
-    // Créer un alias global pour la compatibilité
-    class_alias('PDF_Builder_Onboarding_Manager_Alias', 'PDF_Builder_Onboarding_Manager');
-    
-    // Créer l'instance immédiatement pour s'assurer que les hooks sont enregistrés
-    try {
-        PDF_Builder_Onboarding_Manager_Alias::get_instance();
-    } catch (Exception $e) {
-        error_log('PDF Builder: Erreur lors de la création de l\'instance Onboarding Manager: ' . $e->getMessage());
-    }
-}
-
-// Hook très tôt pour garantir le chargement des utilitaires
+// Hook principal pour charger le plugin une fois que WordPress est prêt
 if (function_exists('add_action')) {
-    add_action('plugins_loaded', function() {
-        if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-            pdf_builder_ensure_onboarding_manager();
-        }
-    }, 0);
-
-    // Initialiser l'API Preview après que WordPress soit chargé
-    add_action('init', function() {
-        new \PDF_Builder\Api\PreviewImageAPI();
-    });
+    add_action('plugins_loaded', 'pdf_builder_init_plugin', 1);
 }
 
-// ==========================================
-// INITIALISATION DES NOUVEAUX SYSTÈMES AVANCÉS
-// ==========================================
-
-// Inclure tous les nouveaux systèmes de gestion avancés
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_User_Manager.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_License_Manager.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Integration_Manager.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Auto_Update_Manager.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Advanced_Reporting.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Ajax_Handler.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Intelligent_Loader.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Smart_Cache.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Advanced_Logger.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Security_Validator.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Error_Handler.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Config_Manager.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Task_Scheduler.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Diagnostic_Tool.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Analytics_Manager.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Backup_Recovery_System.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Security_Monitor.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Update_Manager.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Reporting_System.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Test_Suite.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Continuous_Deployment.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Health_Monitor.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_API_Manager.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Metrics_Analytics.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Database_Updater.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Localization.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Theme_Customizer.php';
-
-// Initialiser les nouveaux systèmes avancés
-add_action('plugins_loaded', function() {
-    try {
-        // Initialiser le chargeur intelligent
-        PDF_Builder_Intelligent_Loader::get_instance();
-
-        // Initialiser le gestionnaire de configuration (maintenant automatique dans la classe)
-
-        // Initialiser le système de cache intelligent
-        PDF_Builder_Smart_Cache::get_instance();
-
-        // Initialiser le logger avancé
-        PDF_Builder_Advanced_Logger::get_instance();
-
-        // Initialiser le validateur de sécurité
-        PDF_Builder_Security_Validator::get_instance();
-
-        // Initialiser le gestionnaire d'erreurs
-        PDF_Builder_Error_Handler::get_instance();
-
-        // Initialiser le planificateur de tâches
-        PDF_Builder_Task_Scheduler::get_instance();
-
-        // Initialiser le gestionnaire de notifications
-        PDF_Builder_Notification_Manager::get_instance();
-
-        // Initialiser l'outil de diagnostic
-        PDF_Builder_Diagnostic_Tool::get_instance();
-
-        // Initialiser le gestionnaire d'analyses
-        PDF_Builder_Analytics_Manager::get_instance();
-
-        // Initialiser le système de sauvegarde/récupération
-        PDF_Builder_Backup_Recovery_System::get_instance();
-
-        // Initialiser le moniteur de sécurité
-        PDF_Builder_Security_Monitor::get_instance();
-
-        // Initialiser le gestionnaire de mises à jour
-        PDF_Builder_Update_Manager::get_instance();
-
-        // Initialiser le système de reporting
-        PDF_Builder_Reporting_System::get_instance();
-
-        // Initialiser la suite de tests
-        PDF_Builder_Test_Suite::get_instance();
-
-        // Initialiser le déploiement continu
-        PDF_Builder_Continuous_Deployment::get_instance();
-
-        // Initialiser le moniteur de santé
-        PDF_Builder_Health_Monitor::get_instance();
-
-        // Initialiser le gestionnaire d'API
-        PDF_Builder_API_Manager::get_instance();
-
-        // Initialiser les métriques analytiques
-        PDF_Builder_Metrics_Analytics::get_instance();
-
-        // Initialiser le programmeur de base de données
-        PDF_Builder_Database_Updater::get_instance();
-
-        // Initialiser la localisation
-        PDF_Builder_Localization::get_instance();
-
-        // Initialiser le personnalisateur de thème
-        PDF_Builder_Theme_Customizer::get_instance();
-
-        // Initialiser le gestionnaire d'utilisateurs (dépend des autres systèmes)
-        PDF_Builder_User_Manager::get_instance();
-
-        // Initialiser le gestionnaire de licences (dépend du gestionnaire d'utilisateurs)
-        PDF_Builder_License_Manager::get_instance();
-
-        // Initialiser le gestionnaire d'intégrations (dépend des licences)
-        PDF_Builder_Integration_Manager::get_instance();
-
-        // Initialiser le gestionnaire de mises à jour automatiques
-        PDF_Builder_Auto_Update_Manager::get_instance();
-
-        // Initialiser le système de reporting avancé
-        PDF_Builder_Advanced_Reporting::get_instance();
-
-        // Initialiser le nouveau gestionnaire AJAX (remplace les anciens handlers)
-        PDF_Builder_Ajax_Handler::get_instance();
-
-    } catch (Exception $e) {
-        error_log('PDF Builder: Erreur lors de l\'initialisation des systèmes avancés: ' . $e->getMessage());
+/**
+ * Fonction principale d'initialisation du plugin
+ * Appelé une fois que WordPress est complètement chargé
+ */
+function pdf_builder_init_plugin() {
+    // Vérifier que WordPress est prêt
+    if (!function_exists('get_option') || !defined('ABSPATH')) {
+        return;
     }
-}, 10); // Priorité 10 pour s'assurer que cela se passe après le chargement de l'autoloader
+
+    // Charger l'autoloader Composer
+    $autoload_path = plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+    if (file_exists($autoload_path)) {
+        require_once $autoload_path;
+    }
+
+    // Initialiser notre autoloader personnalisé
+    require_once plugin_dir_path(__FILE__) . 'core/autoloader.php';
+    if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
+        \PDF_Builder\Core\PdfBuilderAutoloader::init(plugin_dir_path(__FILE__));
+    }
+
+    // Charger les constantes
+    if (file_exists(plugin_dir_path(__FILE__) . 'core/constants.php')) {
+        require_once plugin_dir_path(__FILE__) . 'core/constants.php';
+    }
+
+    // Maintenant charger TOUS les systèmes avancés en toute sécurité
+    pdf_builder_load_advanced_systems();
+
+    // Initialiser les sauvegardes automatiques
+    add_action('init', 'pdf_builder_init_auto_backup');
+
+    // Vérifier les mises à jour de schéma de base de données
+    add_action('admin_init', 'pdf_builder_check_database_updates');
+
+    // Enregistrer les handlers AJAX
+    add_action('init', 'pdf_builder_register_ajax_handlers');
+
+    // Gérer les téléchargements PDF en frontend
+    add_action('init', 'pdf_builder_handle_pdf_downloads');
+}
+
+/**
+ * Charger tous les systèmes avancés du plugin
+ */
+function pdf_builder_load_advanced_systems() {
+    // Inclure tous les nouveaux systèmes de gestion avancés
+    $advanced_systems = [
+        'src/Core/PDF_Builder_User_Manager.php',
+        'src/Core/PDF_Builder_License_Manager.php',
+        'src/Core/PDF_Builder_Integration_Manager.php',
+        'src/Core/PDF_Builder_Auto_Update_Manager.php',
+        'src/Core/PDF_Builder_Advanced_Reporting.php',
+        'src/Core/PDF_Builder_Ajax_Handler.php',
+        'src/Core/PDF_Builder_Intelligent_Loader.php',
+        'src/Core/PDF_Builder_Smart_Cache.php',
+        'src/Core/PDF_Builder_Advanced_Logger.php',
+        'src/Core/PDF_Builder_Security_Validator.php',
+        'src/Core/PDF_Builder_Error_Handler.php',
+        'src/Core/PDF_Builder_Config_Manager.php',
+        'src/Core/PDF_Builder_Task_Scheduler.php',
+        'src/Core/PDF_Builder_Notification_Manager.php',
+        'src/Core/PDF_Builder_Diagnostic_Tool.php',
+        'src/Core/PDF_Builder_Analytics_Manager.php',
+        'src/Core/PDF_Builder_Backup_Recovery_System.php',
+        'src/Core/PDF_Builder_Security_Monitor.php',
+        'src/Core/PDF_Builder_Update_Manager.php',
+        'src/Core/PDF_Builder_Reporting_System.php',
+        'src/Core/PDF_Builder_Test_Suite.php',
+        'src/Core/PDF_Builder_Continuous_Deployment.php',
+        'src/Core/PDF_Builder_Health_Monitor.php',
+        'src/Core/PDF_Builder_API_Manager.php',
+        'src/Core/PDF_Builder_Metrics_Analytics.php',
+        'src/Core/PDF_Builder_Database_Updater.php',
+        'src/Core/PDF_Builder_Localization.php',
+        'src/Core/PDF_Builder_Theme_Customizer.php'
+    ];
+
+    foreach ($advanced_systems as $system_file) {
+        $system_path = PDF_BUILDER_PLUGIN_DIR . $system_file;
+        if (file_exists($system_path)) {
+            require_once $system_path;
+        }
+    }
+
+    // Initialiser les nouveaux systèmes avancés
+    add_action('plugins_loaded', function() {
+        try {
+            // Initialiser le chargeur intelligent
+            if (class_exists('PDF_Builder_Intelligent_Loader')) {
+                PDF_Builder_Intelligent_Loader::get_instance();
+            }
+
+            // Initialiser le système de cache intelligent
+            if (class_exists('PDF_Builder_Smart_Cache')) {
+                PDF_Builder_Smart_Cache::get_instance();
+            }
+
+            // Initialiser le logger avancé
+            if (class_exists('PDF_Builder_Advanced_Logger')) {
+                PDF_Builder_Advanced_Logger::get_instance();
+            }
+
+            // Initialiser le validateur de sécurité
+            if (class_exists('PDF_Builder_Security_Validator')) {
+                PDF_Builder_Security_Validator::get_instance();
+            }
+
+            // Initialiser le gestionnaire d'erreurs
+            if (class_exists('PDF_Builder_Error_Handler')) {
+                PDF_Builder_Error_Handler::get_instance();
+            }
+
+            // Initialiser le planificateur de tâches
+            if (class_exists('PDF_Builder_Task_Scheduler')) {
+                PDF_Builder_Task_Scheduler::get_instance();
+            }
+
+            // Initialiser le gestionnaire de notifications
+            if (class_exists('PDF_Builder_Notification_Manager')) {
+                PDF_Builder_Notification_Manager::get_instance();
+            }
+
+            // Initialiser l'outil de diagnostic
+            if (class_exists('PDF_Builder_Diagnostic_Tool')) {
+                PDF_Builder_Diagnostic_Tool::get_instance();
+            }
+
+            // Initialiser le gestionnaire d'analyses
+            if (class_exists('PDF_Builder_Analytics_Manager')) {
+                PDF_Builder_Analytics_Manager::get_instance();
+            }
+
+            // Initialiser le système de sauvegarde/récupération
+            if (class_exists('PDF_Builder_Backup_Recovery_System')) {
+                PDF_Builder_Backup_Recovery_System::get_instance();
+            }
+
+            // Initialiser le moniteur de sécurité
+            if (class_exists('PDF_Builder_Security_Monitor')) {
+                PDF_Builder_Security_Monitor::get_instance();
+            }
+
+            // Initialiser le gestionnaire de mises à jour
+            if (class_exists('PDF_Builder_Update_Manager')) {
+                PDF_Builder_Update_Manager::get_instance();
+            }
+
+            // Initialiser le système de reporting
+            if (class_exists('PDF_Builder_Reporting_System')) {
+                PDF_Builder_Reporting_System::get_instance();
+            }
+
+            // Initialiser la suite de tests
+            if (class_exists('PDF_Builder_Test_Suite')) {
+                PDF_Builder_Test_Suite::get_instance();
+            }
+
+            // Initialiser le déploiement continu
+            if (class_exists('PDF_Builder_Continuous_Deployment')) {
+                PDF_Builder_Continuous_Deployment::get_instance();
+            }
+
+            // Initialiser le moniteur de santé
+            if (class_exists('PDF_Builder_Health_Monitor')) {
+                PDF_Builder_Health_Monitor::get_instance();
+            }
+
+            // Initialiser le gestionnaire d'API
+            if (class_exists('PDF_Builder_API_Manager')) {
+                PDF_Builder_API_Manager::get_instance();
+            }
+
+            // Initialiser les métriques analytiques
+            if (class_exists('PDF_Builder_Metrics_Analytics')) {
+                PDF_Builder_Metrics_Analytics::get_instance();
+            }
+
+            // Initialiser le programmeur de base de données
+            if (class_exists('PDF_Builder_Database_Updater')) {
+                PDF_Builder_Database_Updater::get_instance();
+            }
+
+            // Initialiser la localisation
+            if (class_exists('PDF_Builder_Localization')) {
+                PDF_Builder_Localization::get_instance();
+            }
+
+            // Initialiser le personnalisateur de thème
+            if (class_exists('PDF_Builder_Theme_Customizer')) {
+                PDF_Builder_Theme_Customizer::get_instance();
+            }
+
+            // Initialiser le gestionnaire d'utilisateurs (dépend des autres systèmes)
+            if (class_exists('PDF_Builder_User_Manager')) {
+                PDF_Builder_User_Manager::get_instance();
+            }
+
+            // Initialiser le gestionnaire de licences (dépend du gestionnaire d'utilisateurs)
+            if (class_exists('PDF_Builder_License_Manager')) {
+                PDF_Builder_License_Manager::get_instance();
+            }
+
+            // Initialiser le gestionnaire d'intégrations (dépend des licences)
+            if (class_exists('PDF_Builder_Integration_Manager')) {
+                PDF_Builder_Integration_Manager::get_instance();
+            }
+
+            // Initialiser le gestionnaire de mises à jour automatiques
+            if (class_exists('PDF_Builder_Auto_Update_Manager')) {
+                PDF_Builder_Auto_Update_Manager::get_instance();
+            }
+
+            // Initialiser le système de reporting avancé
+            if (class_exists('PDF_Builder_Advanced_Reporting')) {
+                PDF_Builder_Advanced_Reporting::get_instance();
+            }
+
+            // Initialiser le nouveau gestionnaire AJAX (remplace les anciens handlers)
+            if (class_exists('PDF_Builder_Ajax_Handler')) {
+                PDF_Builder_Ajax_Handler::get_instance();
+            }
+
+        } catch (Exception $e) {
+            error_log('PDF Builder: Erreur lors de l\'initialisation des systèmes avancés: ' . $e->getMessage());
+        }
+    }, 10);
+}
 
 /**
  * Fonction d'activation

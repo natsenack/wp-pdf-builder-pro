@@ -17,9 +17,12 @@ class PDF_Builder_Global_Config_Manager {
     }
 
     private function __construct() {
-        $this->init_defaults();
-        $this->load_config();
-        $this->init_hooks();
+        // Différer l'initialisation jusqu'à ce que WordPress soit prêt
+        add_action('init', function() {
+            $this->init_defaults();
+            $this->load_config();
+            $this->init_hooks();
+        }, 1);
     }
 
     private function init_hooks() {
@@ -42,8 +45,8 @@ class PDF_Builder_Global_Config_Manager {
             'company_name' => '',
             'company_address' => '',
             'company_phone' => '',
-            'company_email' => get_option('admin_email'),
-            'company_website' => get_site_url(),
+            'company_email' => '', // Sera défini plus tard si WordPress est disponible
+            'company_website' => '', // Sera défini plus tard si WordPress est disponible
 
             // Paramètres de performance
             'cache_enabled' => true,
@@ -85,7 +88,7 @@ class PDF_Builder_Global_Config_Manager {
             'enable_keyboard_shortcuts' => true,
 
             // Paramètres avancés
-            'debug_mode' => defined('WP_DEBUG') && WP_DEBUG,
+            'debug_mode' => false, // Sera défini plus tard si WP_DEBUG est disponible
             'performance_monitoring' => true,
             'error_reporting' => true,
             'maintenance_mode' => false,
@@ -100,11 +103,11 @@ class PDF_Builder_Global_Config_Manager {
             'default_language' => 'fr_FR',
             'date_format' => 'd/m/Y',
             'time_format' => 'H:i:s',
-            'timezone' => wp_timezone_string(),
+            'timezone' => 'Europe/Paris', // Valeur par défaut sûre
 
             // Paramètres de notification
             'email_notifications_enabled' => true,
-            'notification_email' => get_option('admin_email'),
+            'notification_email' => '', // Sera défini plus tard
             'notify_on_errors' => true,
             'notify_on_backups' => false,
             'notify_on_updates' => true,
@@ -115,6 +118,24 @@ class PDF_Builder_Global_Config_Manager {
             'license_expiry' => null,
             'auto_update_enabled' => true
         ];
+
+        // Définir les valeurs qui dépendent de WordPress si disponibles
+        if (function_exists('get_option')) {
+            $this->defaults['company_email'] = get_option('admin_email', '');
+            $this->defaults['notification_email'] = get_option('admin_email', '');
+        }
+
+        if (function_exists('get_site_url')) {
+            $this->defaults['company_website'] = get_site_url();
+        }
+
+        if (function_exists('wp_timezone_string')) {
+            $this->defaults['timezone'] = wp_timezone_string();
+        }
+
+        if (defined('WP_DEBUG')) {
+            $this->defaults['debug_mode'] = WP_DEBUG;
+        }
     }
 
     /**
@@ -532,7 +553,5 @@ function pdf_builder_health_check() {
     return PDF_Builder_Global_Config_Manager::get_instance()->health_check();
 }
 
-// Initialiser le gestionnaire de configuration (plus tard pour éviter les erreurs)
-add_action('init', function() {
-    PDF_Builder_Global_Config_Manager::get_instance();
-}, 5);
+// Initialisation différée - l'instance sera créée quand nécessaire
+// PDF_Builder_Global_Config_Manager::get_instance();

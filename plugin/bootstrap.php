@@ -20,29 +20,26 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
  */
 function pdf_builder_load_utilities_emergency() {
     static $utilities_loaded = false;
-    
+
     if ($utilities_loaded) {
         return;
     }
-    
+
     $utilities = array(
         'PDF_Builder_Notification_Manager.php',
         'PDF_Builder_Onboarding_Manager.php',
         'PDF_Builder_GDPR_Manager.php'
     );
-    
+
     foreach ($utilities as $utility) {
         $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
         if (file_exists($utility_path) && !class_exists('PDF_Builder\\Utilities\\' . str_replace('.php', '', $utility))) {
             require_once $utility_path;
         }
     }
-    
+
     $utilities_loaded = true;
 }
-
-// Charger d'urgence au démarrage de bootstrap
-pdf_builder_load_utilities_emergency();
 
 // ============================================================================
 // ✅ FONCTION GLOBALE DE VÉRIFICATION DE CLASSE
@@ -55,14 +52,14 @@ pdf_builder_load_utilities_emergency();
 function pdf_builder_ensure_onboarding_manager() {
     if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
         pdf_builder_load_utilities_emergency();
-        
+
         // Double vérification avec chargement manuel
         $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
         if (file_exists($onboarding_path)) {
             require_once $onboarding_path;
         }
     }
-    
+
     return class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager');
 }
 
@@ -75,12 +72,12 @@ function pdf_builder_get_onboarding_manager() {
     if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
         return \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
     }
-    
+
     // Fallback vers la classe alias (toujours disponible)
     if (class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
         return PDF_Builder_Onboarding_Manager_Alias::get_instance();
     }
-    
+
     // Dernier recours - créer une instance standalone
     return PDF_Builder_Onboarding_Manager_Standalone::get_instance();
 }
@@ -94,7 +91,7 @@ function pdf_builder_diagnose_onboarding_manager() {
     $alias_exists = class_exists('PDF_Builder_Onboarding_Manager_Alias');
     $standalone_exists = class_exists('PDF_Builder_Onboarding_Manager_Standalone');
     $file_exists = file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php');
-    
+
     $message = "=== DIAGNOSTIC PDF_Builder_Onboarding_Manager ===\n";
     $message .= "Classe réelle existe: " . ($class_exists ? 'OUI' : 'NON') . "\n";
     $message .= "Classe alias existe: " . ($alias_exists ? 'OUI' : 'NON') . "\n";
@@ -102,172 +99,96 @@ function pdf_builder_diagnose_onboarding_manager() {
     $message .= "Fichier existe: " . ($file_exists ? 'OUI' : 'NON') . "\n";
     $message .= "Plugin activé: " . (defined('PDF_BUILDER_PLUGIN_DIR') ? 'OUI' : 'NON') . "\n";
     $message .= "Bootstrap chargé: " . (function_exists('pdf_builder_load_utilities_emergency') ? 'OUI' : 'NON') . "\n";
-    
+
     if (!$class_exists) {
         $message .= "Tentative de chargement d'urgence...\n";
         pdf_builder_ensure_onboarding_manager();
         $message .= "Après chargement: " . (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager') ? 'SUCCÈS' : 'ÉCHEC') . "\n";
     }
-    
+
     $message .= "===========================================\n";
-    
+
     return $message;
 }
 
 // ============================================================================
-// ✅ BLOQUER LES NOTIFICATIONS WORDPRESS AVANT TOUT
+// INITIALISATION DIFFÉRÉE - UNIQUEMENT APRÈS QUE WORDPRESS SOIT CHARGÉ
 // ============================================================================
-// Cette approche très tôt supprime les notifications AVANT qu'elles ne s'affichent
-if (function_exists('is_admin') && is_admin()) {
-    // Vérifier que nous sommes sur une page PDF Builder
-    $pdf_builder_pages = [
-        'pdf-builder-pro',
-        'pdf-builder-templates',
-        'pdf-builder-react-editor',
-        'pdf-builder-settings',
-        'pdf-builder-developer',
-        'pdf-builder-predefined-templates'
-    ];
-    
-    $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-    
-    if (in_array($current_page, $pdf_builder_pages)) {
-        // Utiliser un hook TRÈS TARDIF pour supprimer les notifications
-        // Cela permet au PDF Builder de s'initialiser d'abord
-        add_action('admin_init', function() {
-            // Supprimer les actions admin_notices sauf celles du PDF Builder
-            global $wp_filter;
-            
-            if (isset($wp_filter['admin_notices'])) {
-                foreach ($wp_filter['admin_notices']->callbacks as $priority => $callbacks) {
-                    foreach ($callbacks as $hook_name => $data) {
-                        $callback = $data['function'];
-                        
-                        // Vérifier si c'est du PDF Builder
-                        $is_pdf_builder = false;
-                        if (is_array($callback) && is_object($callback[0])) {
-                            $class = get_class($callback[0]);
-                            if (strpos($class, 'PDF_Builder') !== false) {
-                                $is_pdf_builder = true;
-                            }
-                        }
-                        
-                        // Supprimer si ce n'est pas du PDF Builder
-                        if (!$is_pdf_builder) {
-                            remove_action('admin_notices', $callback, $priority);
-                        }
-                    }
-                }
-            }
-            
-            // Même chose pour all_admin_notices
-            if (isset($wp_filter['all_admin_notices'])) {
-                foreach ($wp_filter['all_admin_notices']->callbacks as $priority => $callbacks) {
-                    foreach ($callbacks as $hook_name => $data) {
-                        $callback = $data['function'];
-                        
-                        $is_pdf_builder = false;
-                        if (is_array($callback) && is_object($callback[0])) {
-                            $class = get_class($callback[0]);
-                            if (strpos($class, 'PDF_Builder') !== false) {
-                                $is_pdf_builder = true;
-                            }
-                        }
-                        
-                        if (!$is_pdf_builder) {
-                            remove_action('all_admin_notices', $callback, $priority);
-                        }
-                    }
-                }
-            }
-        }, 999);
-        
-        // Output buffering comme filet de secours pour les notifications qui passent quand même
-        add_action('admin_head', function() {
-            ob_start(function($buffer) {
-                // Supprimer les notifications qui ne viennent pas du PDF Builder
-                // Mais GARDER les notifications du PDF Builder
-                $buffer = preg_replace_callback('/<div[^>]*id="setting-error-[^"]*"[^>]*>.*?<\/div>/is', function($matches) {
-                    // Vérifier si c'est du PDF Builder
-                    if (strpos($matches[0], 'pdf-builder') !== false || strpos($matches[0], 'pdf_builder') !== false) {
-                        return $matches[0]; // Garder
-                    }
-                    return ''; // Supprimer
-                }, $buffer);
-                
-                // Supprimer les notifications non-PDF-Builder
-                $buffer = preg_replace_callback('/<div[^>]*class="[^"]*(notice|error|updated|update-nag|wp-notice)[^"]*"[^>]*>.*?<\/div>/is', function($matches) {
-                    // Vérifier si c'est du PDF Builder
-                    if (strpos($matches[0], 'pdf-builder') !== false || strpos($matches[0], 'pdf_builder') !== false) {
-                        return $matches[0]; // Garder
-                    }
-                    return ''; // Supprimer
-                }, $buffer);
-                
-                return $buffer;
-            });
-        }, 999);
-    }
-}
 
-// ============================================================================
-// ✅ CACHE DÉSACTIVÉ - Force désactiver le cache pour la cohérence des données
-// ============================================================================
+// Tous les hooks et initialisations sont maintenant différés jusqu'à ce que WordPress soit prêt
 if (function_exists('add_action')) {
+    // Initialiser l'Onboarding Manager une fois WordPress chargé
     add_action('plugins_loaded', function() {
-        $settings = get_option('pdf_builder_settings', []);
-        $settings['cache_enabled'] = false;  // Force désactivé
-        $settings['cache_ttl'] = 0;           // Pas de TTL
-        update_option('pdf_builder_settings', $settings);
-    }, 1);
+        // Charger les utilitaires d'urgence si nécessaire
+        pdf_builder_load_utilities_emergency();
 
-    // Instancier PDF_Builder_Admin pour enregistrer les hooks AJAX
-    add_action('plugins_loaded', function() {
-        if (class_exists('PDF_Builder_Admin')) {
-            new PDF_Builder_Admin();
-        }
-    }, 5);
-}
+        // Créer les classes d'alias pour la compatibilité
+        if (!class_exists('PDF_Builder_Onboarding_Manager_Standalone')) {
+            // Créer une version standalone de la classe pour les cas d'urgence
+            class PDF_Builder_Onboarding_Manager_Standalone {
+                private static $instance = null;
 
-// ============================================================================
-// HOOKS AJAX ESSENTIELS
-// ============================================================================
+                public static function get_instance() {
+                    if (self::$instance === null) {
+                        self::$instance = new self();
+                    }
+                    return self::$instance;
+                }
 
-// REMOVED: Ces hooks causaient des erreurs fatales car pdf_builder_register_essential_ajax_hooks() n'existe pas
-// Les vrais handlers sont enregistrés plus loin dans ce fichier avec le template manager
+                public function __construct() {
+                    // Constructeur minimal pour compatibilité
+                }
 
-// Test AJAX simple pour l'intégration du cache
-if (function_exists('add_action')) {
-    add_action('wp_ajax_pdf_builder_simple_test', function() {
-        
-        try {
-            // Vérifier que WordPress est chargé
-            if (!function_exists('wp_send_json_success')) {
-                
-                throw new Exception('wp_send_json_success function not available');
+                // Méthodes minimales pour éviter les erreurs
+                public function check_onboarding_status() { return false; }
+                public function ajax_complete_onboarding_step() { return false; }
+                public function ajax_skip_onboarding() { return false; }
+                public function ajax_reset_onboarding() { return false; }
+                public function ajax_load_onboarding_step() { return false; }
+                public function ajax_save_template_selection() { return false; }
+                public function ajax_save_freemium_mode() { return false; }
+                public function ajax_update_onboarding_step() { return false; }
+                public function ajax_save_template_assignment() { return false; }
+                public function ajax_mark_onboarding_complete() { return false; }
             }
-
-            
-            wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
-        } catch (Exception $e) {
-            
-            wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
         }
-    });
-    add_action('wp_ajax_nopriv_pdf_builder_simple_test', function() {
-        
-        try {
-            // Vérifier que WordPress est chargé
-            if (!function_exists('wp_send_json_success')) {
-                
-                throw new Exception('wp_send_json_success function not available');
-            }
 
-            
-            wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
-        } catch (Exception $e) {
-            
-            wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
+        // Maintenant charger la vraie classe si possible
+        if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+            $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
+            if (file_exists($onboarding_path)) {
+                require_once $onboarding_path;
+            } else {
+                error_log('PDF Builder: Fichier Onboarding Manager introuvable: ' . $onboarding_path);
+            }
+        }
+
+        // Alias pour compatibilité - utiliser la vraie classe si disponible, sinon la standalone
+        if (!class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
+            if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+                class PDF_Builder_Onboarding_Manager_Alias extends PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager {}
+            } else {
+                class PDF_Builder_Onboarding_Manager_Alias extends PDF_Builder_Onboarding_Manager_Standalone {}
+            }
+        }
+
+        // Vérification finale et création de l'instance
+        if (!class_exists('PDF_Builder_Onboarding_Manager')) {
+            class_alias('PDF_Builder_Onboarding_Manager_Alias', 'PDF_Builder_Onboarding_Manager');
+
+            // Créer l'instance maintenant que WordPress est chargé
+            try {
+                PDF_Builder_Onboarding_Manager_Alias::get_instance();
+            } catch (Exception $e) {
+                error_log('PDF Builder: Erreur lors de la création de l\'instance Onboarding Manager: ' . $e->getMessage());
+            }
+        }
+    }, 0);
+
+    // Initialiser l'API Preview après que WordPress soit chargé
+    add_action('init', function() {
+        if (class_exists('\\PDF_Builder\\Api\\PreviewImageAPI')) {
+            new \PDF_Builder\Api\PreviewImageAPI();
         }
     });
 }
