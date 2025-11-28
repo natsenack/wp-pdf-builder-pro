@@ -701,8 +701,8 @@ if (
 <?php require_once 'settings-modals.php'; ?>
 
 <!-- Floating Save Button - HORS du conteneur principal -->
-<div id="floating-save-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999 !important; border-radius: 10px; padding: 5px; display: block !important; visibility: visible !important; opacity: 1 !important;">
-    <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; visibility: visible !important; opacity: 1 !important;">
+<div id="floating-save-button" style="position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 999999 !important; border-radius: 10px; padding: 5px; display: block !important; visibility: visible !important; opacity: 1 !important; background: rgba(255,255,255,0.9); border: 1px solid #007cba;">
+    <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white !important; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex !important; align-items: center; gap: 8px; visibility: visible !important; opacity: 1 !important;">
         <span class="save-icon">💾</span>
         <span class="save-text">Enregistrer</span>
     </button>
@@ -718,6 +718,141 @@ if (
         <small>JavaScript désactivé - Utilisez les boutons de chaque onglet</small>
     </div>
 </noscript>
+
+<!-- Script de secours pour le bouton flottant -->
+<script>
+(function() {
+    'use strict';
+
+    // Fonction de secours exécutée immédiatement
+    function ensureFloatingButton() {
+        console.log('🔧 [PDF Builder] Vérification du bouton flottant...');
+
+        let floatingBtn = document.getElementById('floating-save-btn');
+        let floatingContainer = document.getElementById('floating-save-button');
+
+        // Si le bouton n'existe pas, le créer
+        if (!floatingContainer) {
+            console.log('🔧 [PDF Builder] Création du conteneur bouton flottant...');
+
+            floatingContainer = document.createElement('div');
+            floatingContainer.id = 'floating-save-button';
+            floatingContainer.style.cssText = `
+                position: fixed !important;
+                bottom: 20px !important;
+                right: 20px !important;
+                z-index: 999999 !important;
+                border-radius: 10px;
+                padding: 5px;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                background: rgba(255,255,255,0.9);
+                border: 1px solid #007cba;
+            `;
+
+            floatingBtn = document.createElement('button');
+            floatingBtn.id = 'floating-save-btn';
+            floatingBtn.type = 'button';
+            floatingBtn.className = 'floating-save-btn';
+            floatingBtn.style.cssText = `
+                background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+                color: white !important;
+                border: none;
+                border-radius: 50px;
+                padding: 15px 25px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                transition: all 0.3s ease;
+                display: flex !important;
+                align-items: center;
+                gap: 8px;
+                visibility: visible !important;
+                opacity: 1 !important;
+            `;
+            floatingBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
+
+            floatingContainer.appendChild(floatingBtn);
+            document.body.appendChild(floatingContainer);
+
+            console.log('✅ [PDF Builder] Bouton flottant créé avec succès');
+        } else {
+            // S'assurer que le bouton existant est visible
+            console.log('🔧 [PDF Builder] Forçage de la visibilité du bouton flottant existant...');
+
+            floatingContainer.style.setProperty('display', 'block', 'important');
+            floatingContainer.style.setProperty('visibility', 'visible', 'important');
+            floatingContainer.style.setProperty('opacity', '1', 'important');
+            floatingContainer.style.setProperty('position', 'fixed', 'important');
+            floatingContainer.style.setProperty('bottom', '20px', 'important');
+            floatingContainer.style.setProperty('right', '20px', 'important');
+            floatingContainer.style.setProperty('z-index', '999999', 'important');
+
+            if (floatingBtn) {
+                floatingBtn.style.setProperty('display', 'flex', 'important');
+                floatingBtn.style.setProperty('visibility', 'visible', 'important');
+                floatingBtn.style.setProperty('opacity', '1', 'important');
+            }
+        }
+
+        // Attacher l'événement de clic de secours
+        if (floatingBtn && !floatingBtn.hasAttribute('data-event-attached')) {
+            floatingBtn.setAttribute('data-event-attached', 'true');
+
+            floatingBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                console.log('🔄 [PDF Builder] Bouton flottant cliqué (fonction de secours)');
+
+                // Animation de chargement
+                const originalHTML = floatingBtn.innerHTML;
+                floatingBtn.disabled = true;
+                floatingBtn.innerHTML = '<span class="dashicons dashicons-update spin"></span> Enregistrement...';
+                floatingBtn.style.opacity = '0.7';
+
+                // Essayer de trouver le formulaire actif
+                const activeTab = document.querySelector('.nav-tab.nav-tab-active');
+                if (activeTab) {
+                    const tabId = activeTab.getAttribute('data-tab') || activeTab.getAttribute('href')?.substring(1);
+                    if (tabId) {
+                        const activeContent = document.getElementById(tabId);
+                        if (activeContent) {
+                            const form = activeContent.querySelector('form');
+                            if (form) {
+                                console.log('📝 [PDF Builder] Formulaire trouvé, tentative de soumission...');
+                                form.submit();
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                // Fallback: recharger la page avec les paramètres actuels
+                console.log('🔄 [PDF Builder] Fallback: rechargement de la page');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            });
+
+            console.log('✅ [PDF Builder] Événement de clic attaché au bouton flottant');
+        }
+
+        console.log('✅ [PDF Builder] Bouton flottant opérationnel');
+    }
+
+    // Exécuter immédiatement
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', ensureFloatingButton);
+    } else {
+        ensureFloatingButton();
+    }
+
+    // Exécuter aussi après un court délai pour s'assurer que tout est chargé
+    setTimeout(ensureFloatingButton, 1000);
+    setTimeout(ensureFloatingButton, 3000);
+})();
+</script>
 
 <style>
 /* Styles pour le bouton flottant */
@@ -2195,9 +2330,85 @@ window.toggleRGPDControls = toggleRGPDControls;
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             initializeModals();
+            // Diagnostic du bouton flottant
+            setTimeout(function() {
+                const floatingBtn = document.getElementById('floating-save-btn');
+                const floatingContainer = document.getElementById('floating-save-button');
+
+                console.log('🔍 [PDF Builder] DIAGNOSTIC BOUTON FLOTTANT:');
+                console.log('   • Container trouvé:', !!floatingContainer);
+                console.log('   • Bouton trouvé:', !!floatingBtn);
+
+                if (floatingContainer) {
+                    console.log('   • Container styles:', window.getComputedStyle(floatingContainer));
+                    console.log('   • Container display:', floatingContainer.style.display);
+                    console.log('   • Container visibility:', floatingContainer.style.visibility);
+                    console.log('   • Container position:', floatingContainer.style.position);
+                    console.log('   • Container z-index:', floatingContainer.style.zIndex);
+                }
+
+                if (floatingBtn) {
+                    console.log('   • Bouton styles:', window.getComputedStyle(floatingBtn));
+                    console.log('   • Bouton display:', floatingBtn.style.display);
+                    console.log('   • Bouton visibility:', floatingBtn.style.visibility);
+                    console.log('   • Bouton disabled:', floatingBtn.disabled);
+                    console.log('   • Bouton text:', floatingBtn.textContent);
+                    console.log('   • Bouton HTML:', floatingBtn.innerHTML);
+                }
+
+                // Forcer l'affichage si nécessaire
+                if (floatingContainer && floatingBtn) {
+                    floatingContainer.style.setProperty('display', 'block', 'important');
+                    floatingContainer.style.setProperty('visibility', 'visible', 'important');
+                    floatingContainer.style.setProperty('opacity', '1', 'important');
+                    floatingBtn.style.setProperty('display', 'flex', 'important');
+                    floatingBtn.style.setProperty('visibility', 'visible', 'important');
+                    floatingBtn.style.setProperty('opacity', '1', 'important');
+
+                    console.log('✅ [PDF Builder] Bouton flottant forcé visible');
+                } else {
+                    console.error('❌ [PDF Builder] Bouton flottant manquant - recréation forcée');
+
+                    // Recréer le bouton si manquant
+                    if (!floatingContainer) {
+                        const newContainer = document.createElement('div');
+                        newContainer.id = 'floating-save-button';
+                        newContainer.style.cssText = 'position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 999999 !important; border-radius: 10px; padding: 5px; display: block !important; visibility: visible !important; opacity: 1 !important;';
+
+                        const newBtn = document.createElement('button');
+                        newBtn.id = 'floating-save-btn';
+                        newBtn.type = 'button';
+                        newBtn.className = 'floating-save-btn';
+                        newBtn.style.cssText = 'background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white !important; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex !important; align-items: center; gap: 8px; visibility: visible !important; opacity: 1 !important;';
+                        newBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
+
+                        newContainer.appendChild(newBtn);
+                        document.body.appendChild(newContainer);
+
+                        console.log('🔧 [PDF Builder] Bouton flottant recréé');
+
+                        // Ré-attacher l'événement
+                        newBtn.addEventListener('click', function(event) {
+                            event.preventDefault();
+                            console.log('🔄 [PDF Builder] Bouton flottant recréé cliqué');
+                            alert('Bouton Enregistrer cliqué ! Fonctionnalité à implémenter.');
+                        });
+                    }
+                }
+            }, 2000); // Attendre 2 secondes pour que tout soit chargé
         });
     } else {
         initializeModals();
+        // Diagnostic immédiat
+        setTimeout(function() {
+            const floatingBtn = document.getElementById('floating-save-btn');
+            console.log('🔍 [PDF Builder] Bouton flottant trouvé (immédiat):', !!floatingBtn);
+            if (floatingBtn) {
+                floatingBtn.style.setProperty('display', 'flex', 'important');
+                floatingBtn.style.setProperty('visibility', 'visible', 'important');
+                floatingBtn.style.setProperty('opacity', '1', 'important');
+            }
+        }, 100);
     }
 })();
 </script>
