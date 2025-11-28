@@ -298,52 +298,6 @@ class PDF_Builder_Options_Manager {
 }
 
 // AJAX Handlers
-function pdf_builder_clear_cache_handler() {
-    PDF_Builder_Security_Manager::verify_nonce_or_die($_POST['security'], 'pdf_builder_ajax');
-    // Clear transients and cache
-        delete_transient('pdf_builder_cache');
-        delete_transient('pdf_builder_templates');
-        delete_transient('pdf_builder_elements');
-
-        // Clear WP object cache if available
-        if (function_exists('wp_cache_flush')) {
-            wp_cache_flush();
-        }
-
-        // Clear file cache
-        $cache_dirs = [
-            WP_CONTENT_DIR . '/cache/wp-pdf-builder-previews/',
-            wp_upload_dir()['basedir'] . '/pdf-builder-cache'
-        ];
-        foreach ($cache_dirs as $cache_dir) {
-            if (is_dir($cache_dir)) {
-                $files = glob($cache_dir . '*');
-                foreach ($files as $file) {
-                    if (is_file($file)) {
-                        unlink($file);
-                    }
-                }
-            }
-        }
-
-        // Calculate new cache size
-        $new_cache_size = 0;
-        foreach ($cache_dirs as $cache_dir) {
-            if (is_dir($cache_dir)) {
-                $new_cache_size += pdf_builder_get_folder_size($cache_dir);
-            }
-        }
-        $new_cache_display = '';
-        if ($new_cache_size < 1048576) {
-            $new_cache_display = number_format($new_cache_size / 1024, 1) . ' Ko';
-        } else {
-            $new_cache_display = number_format($new_cache_size / 1048576, 1) . ' Mo';
-        }
-
-        send_ajax_response(true, 'Cache vidé avec succès.', ['new_cache_size' => $new_cache_display]);
-}
-
-// Update Cache Metrics Handler
 function pdf_builder_update_cache_metrics_handler() {
     // Vérifier le nonce
     if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'pdf_builder_ajax')) {
@@ -1496,3 +1450,115 @@ function pdf_builder_save_all_settings_handler() {
         send_ajax_response(false, 'Error during saving: ' . $e->getMessage());
     }
 }
+
+/**
+ * AJAX handler for saving cache settings
+ */
+function pdf_builder_save_cache_settings_handler() {
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        // Get form data
+        $cache_enabled = !empty($_POST['cache_enabled']) ? '1' : '0';
+        $cache_ttl = intval($_POST['cache_ttl'] ?? 3600);
+        $cache_compression = !empty($_POST['cache_compression']) ? '1' : '0';
+        $cache_auto_cleanup = !empty($_POST['cache_auto_cleanup']) ? '1' : '0';
+        $cache_max_size = intval($_POST['cache_max_size'] ?? 100);
+
+        // Validate values
+        $cache_ttl = max(300, min(86400, $cache_ttl)); // 5 min to 24 hours
+        $cache_max_size = max(10, min(1000, $cache_max_size)); // 10MB to 1GB
+
+        // Save settings
+        update_option('pdf_builder_cache_enabled', $cache_enabled);
+        update_option('pdf_builder_cache_ttl', $cache_ttl);
+        update_option('pdf_builder_cache_compression', $cache_compression);
+        update_option('pdf_builder_cache_auto_cleanup', $cache_auto_cleanup);
+        update_option('pdf_builder_cache_max_size', $cache_max_size);
+
+        wp_send_json_success(array(
+            'message' => 'Paramètres cache sauvegardés avec succès',
+            'data' => array(
+                'cache_enabled' => $cache_enabled,
+                'cache_ttl' => $cache_ttl,
+                'cache_compression' => $cache_compression,
+                'cache_auto_cleanup' => $cache_auto_cleanup,
+                'cache_max_size' => $cache_max_size
+            )
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler for clearing cache
+ */
+function pdf_builder_clear_cache_handler() {
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        // Clear WordPress cache
+        wp_cache_flush();
+
+        // Clear plugin transients
+        global $wpdb;
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
+
+        // Clear file cache if exists
+        $cache_dirs = array(
+            WP_CONTENT_DIR . '/cache/pdf-builder',
+            WP_CONTENT_DIR . '/cache/pdf-builder-preview'
+        );
+
+        $cleared_files = 0;
+        foreach ($cache_dirs as $cache_dir) {
+            if (file_exists($cache_dir) && is_dir($cache_dir)) {
+                $files = glob($cache_dir . '/*');
+                foreach ($files as $file) {
+                    if (is_file($file) && unlink($file)) {
+                        $cleared_files++;
+                    }
+                }
+            }
+        }
+
+        wp_send_json_success(array(
+            'message' => 'Cache vidé avec succès',
+            'cleared_files' => $cleared_files
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors du nettoyage du cache: ' . $e->getMessage());
+    }
+}
+
+// Register AJAX actions for canvas settings
+add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
+add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
+add_action('wp_ajax_pdf_builder_get_all_canvas_settings', 'pdf_builder_get_all_canvas_settings_handler');
+add_action('wp_ajax_pdf_builder_save_all_settings', 'pdf_builder_save_all_settings_handler');
+add_action('wp_ajax_pdf_builder_save_cache_settings', 'pdf_builder_save_cache_settings_handler');
+add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
