@@ -30,6 +30,16 @@ class TemplateManager
     }
 
     /**
+     * Méthode de debug simple
+     */
+    private function debug_log($message)
+    {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('PDF Builder TemplateManager: ' . $message);
+        }
+    }
+
+    /**
      * Enregistrer les hooks
      */
     private function registerHooks()
@@ -234,7 +244,7 @@ class TemplateManager
             $this->debug_log('Template data received - name: ' . $template_name . ', id: ' . $template_id . ', data size: ' . strlen($_POST['template_data'] ?? ''));
 
             if (!$template_data || empty($template_name)) {
-                debug_log('Données de template ou nom manquant');
+                $this->debug_log('Données de template ou nom manquant');
                 wp_send_json_error('Données de template ou nom manquant');
                 return;
             }
@@ -254,7 +264,7 @@ class TemplateManager
 
             if ($template_id) {
                 $post_data['ID'] = $template_id;
-                debug_log('Updating existing template ID: ' . $template_id);
+                $this->debug_log('Updating existing template ID: ' . $template_id);
                 $result = wp_update_post($post_data);
             } else {
                 $this->debug_log('Creating new template');
@@ -267,7 +277,7 @@ class TemplateManager
                 return;
             }
 
-            debug_log('Template saved successfully with ID: ' . $result);
+            $this->debug_log('Template saved successfully with ID: ' . $result);
             wp_send_json_success([
                 'template_id' => $result,
                 'message' => 'Template sauvegardé avec succès'
@@ -286,7 +296,7 @@ class TemplateManager
         try {
             // Vérifier les permissions
             if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes\\');
+                wp_send_json_error('Permissions insuffisantes');
                 return;
             }
 
@@ -308,7 +318,7 @@ class TemplateManager
             $this->debug_log('Loading template ID: ' . $template_id . ', data found: ' . ($template_data ? 'yes' : 'no'));
 
             if (!$template_data) {
-                debug_log('Template data not found for ID: ' . $template_id);
+                $this->debug_log('Template data not found for ID: ' . $template_id);
                 wp_send_json_error('Template introuvable');
                 return;
             }
@@ -408,7 +418,7 @@ class TemplateManager
     public function deleteTemplate($template_id)
     {
         if (!current_user_can('delete_post', $template_id)) {
-            return new WP_Error('insufficient_permissions', 'Permissions insuffisantes\');
+            return new WP_Error('insufficient_permissions', 'Permissions insuffisantes');
         }
 
         $result = wp_delete_post($template_id, true);
