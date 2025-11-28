@@ -44,7 +44,7 @@ class PDF_Builder_Auto_Update_Manager {
 
     public static function get_instance() {
         if (self::$instance === null) {
-            self::$instance] = new self();
+            self::$instance = new self();
         }
         return self::$instance;
     }
