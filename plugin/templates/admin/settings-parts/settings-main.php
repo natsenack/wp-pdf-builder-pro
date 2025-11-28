@@ -1221,17 +1221,10 @@ function updateTemplateStatusIndicators() {
             const selectedOption = select.querySelector(`option[value="${selectValue.replace(/"/g, '\\"')}"]`);
             const templateName = selectedOption ? selectedOption.textContent.trim() : 'Template inconnu';
             
-            previewDiv.innerHTML = `
-                <p class="current-template">
-                    <strong>Assigné :</strong> ${templateName.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
-                    <span class="assigned-badge">✓</span>
-                </p>
-            `;
+            previewDiv.innerHTML = '<p class="current-template"><strong>Assigné :</strong> ' + templateName.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '<span class="assigned-badge">✓</span></p>';
         } else {
             // Aucun template assigné
-            previewDiv.innerHTML = `
-                <p class="no-template">Aucun template assigné</p>
-            `;
+            previewDiv.innerHTML = '<p class="no-template">Aucun template assigné</p>';
         }
     });
 }
