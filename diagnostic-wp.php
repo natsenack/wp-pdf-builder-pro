@@ -14,13 +14,30 @@ class PDF_Builder_Diagnostic {
     private $results = [];
 
     public function __construct() {
-        $this->results['timestamp'] = current_time('mysql');
-        $this->results['wordpress_version'] = get_bloginfo('version');
+        // Initialisation différée pour éviter les erreurs de chargement WordPress
+        $this->results['timestamp'] = date('Y-m-d H:i:s');
+        $this->results['wordpress_version'] = 'Unknown';
         $this->results['php_version'] = phpversion();
-        $this->results['plugin_active'] = is_plugin_active('wp-pdf-builder-pro/pdf-builder-pro.php');
+        $this->results['plugin_active'] = false;
+    }
+
+    private function init_wordpress_data() {
+        // Initialiser les données WordPress seulement quand nécessaire
+        if (function_exists('current_time')) {
+            $this->results['timestamp'] = current_time('mysql');
+        }
+        if (function_exists('get_bloginfo')) {
+            $this->results['wordpress_version'] = get_bloginfo('version');
+        }
+        if (function_exists('is_plugin_active')) {
+            $this->results['plugin_active'] = is_plugin_active('wp-pdf-builder-pro/pdf-builder-pro.php');
+        }
     }
 
     public function run_full_diagnostic() {
+        // Initialiser les données WordPress en toute sécurité
+        $this->init_wordpress_data();
+
         $this->results['sections'] = [];
 
         // Test 1: Vérification des fichiers
@@ -161,7 +178,7 @@ class PDF_Builder_Diagnostic {
     }
 
     private function check_wordpress_hooks() {
-        global $wp_filter;
+        $results = [];
 
         $hooks_to_check = [
             'plugins_loaded',
@@ -171,9 +188,18 @@ class PDF_Builder_Diagnostic {
             'admin_enqueue_scripts'
         ];
 
-        $results = [];
-        foreach ($hooks_to_check as $hook) {
-            $results[$hook] = isset($wp_filter[$hook]);
+        // Vérifier si $wp_filter est disponible
+        if (isset($GLOBALS['wp_filter'])) {
+            global $wp_filter;
+
+            foreach ($hooks_to_check as $hook) {
+                $results[$hook] = isset($wp_filter[$hook]);
+            }
+        } else {
+            // Si $wp_filter n'est pas disponible, marquer comme non disponible
+            foreach ($hooks_to_check as $hook) {
+                $results[$hook] = 'wp_filter_not_available';
+            }
         }
 
         return $results;
