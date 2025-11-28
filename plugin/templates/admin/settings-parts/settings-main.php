@@ -1551,6 +1551,203 @@ window.toggleRGPDControls = toggleRGPDControls;
         configure: function(newConfig) {
             Object.assign(this.config, newConfig);
             console.log('⚙️ [PDF Builder] Configuration du système de nonce mise à jour:', this.config);
+        },
+
+        /**
+         * Effectue une requête AJAX avec gestion automatique des nonces
+         */
+        makeRequest: function(formData, options = {}) {
+            const self = this;
+            return new Promise((resolve, reject) => {
+                // Options par défaut
+                const defaultOptions = {
+                    button: null,
+                    context: 'Unknown',
+                    successCallback: null,
+                    errorCallback: null,
+                    retryCount: 0
+                };
+
+                const opts = Object.assign({}, defaultOptions, options);
+
+                // Mettre à jour le bouton si fourni
+                if (opts.button) {
+                    this.setButtonState(opts.button, 'loading');
+                }
+
+                // S'assurer que nous avons un nonce valide
+                this.ensureValidNonce().then(() => {
+                    // Ajouter le nonce aux données
+                    if (formData instanceof FormData) {
+                        formData.set('nonce', this.nonceState.current);
+                    } else if (typeof formData === 'object') {
+                        formData.nonce = this.nonceState.current;
+                    }
+
+                    console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Making request`);
+
+                    // Faire la requête
+                    fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(response => {
+                        console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Response status: ${response.status}`);
+                        return response.json().catch(() => {
+                            // Si la réponse n'est pas du JSON valide, créer une erreur
+                            throw new Error('Invalid JSON response from server');
+                        });
+                    })
+                    .then(data => {
+                        console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Response:`, data);
+
+                        if (data.success) {
+                            // Succès
+                            if (opts.button) {
+                                this.setButtonState(opts.button, 'success');
+                            }
+                            if (opts.successCallback) {
+                                opts.successCallback(data, data);
+                            }
+                            resolve(data);
+                        } else {
+                            // Erreur côté serveur
+                            const errorMessage = data.data || 'Unknown error';
+
+                            // Vérifier si c'est une erreur de nonce
+                            if (errorMessage.includes('Nonce invalide') || errorMessage.includes('invalid nonce')) {
+                                this.nonceState.stats.nonceErrors++;
+
+                                // Essayer de rafraîchir le nonce et réessayer
+                                if (opts.retryCount < this.config.maxRetries) {
+                                    console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Nonce error, retrying (${opts.retryCount + 1}/${this.config.maxRetries})`);
+                                    opts.retryCount++;
+                                    this.forceRefresh().then(() => {
+                                        // Réessayer avec le nouveau nonce
+                                        setTimeout(() => {
+                                            this.makeRequest(formData, opts).then(resolve).catch(reject);
+                                        }, this.config.retryDelay);
+                                    }).catch(() => {
+                                        // Échec du rafraîchissement, échouer
+                                        if (opts.button) {
+                                            this.setButtonState(opts.button, 'error');
+                                        }
+                                        if (opts.errorCallback) {
+                                            opts.errorCallback(data, data);
+                                        }
+                                        reject(new Error(errorMessage));
+                                    });
+                                    return;
+                                }
+                            }
+
+                            // Erreur normale
+                            if (opts.button) {
+                                this.setButtonState(opts.button, 'error');
+                            }
+                            if (opts.errorCallback) {
+                                opts.errorCallback(data, data);
+                            }
+                            reject(new Error(errorMessage));
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`🔄 [PDF Builder AJAX] ${opts.context} - Network error:`, error);
+                        this.nonceState.stats.requests++;
+
+                        // Erreur réseau
+                        if (opts.button) {
+                            this.setButtonState(opts.button, 'error');
+                        }
+                        if (opts.errorCallback) {
+                            opts.errorCallback({error: error.message}, {error: error.message});
+                        }
+                        reject(error);
+                    });
+                }).catch(error => {
+                    console.error(`🔄 [PDF Builder AJAX] ${opts.context} - Nonce validation failed:`, error);
+                    if (opts.button) {
+                        this.setButtonState(opts.button, 'error');
+                    }
+                    reject(error);
+                });
+            });
+        },
+
+        /**
+         * S'assure qu'un nonce valide est disponible
+         */
+        ensureValidNonce: function() {
+            return new Promise((resolve) => {
+                if (this.nonceState.current && !this.isNonceExpiringSoon()) {
+                    resolve();
+                } else {
+                    this.refreshNonce().then(resolve).catch(() => {
+                        // En cas d'échec du rafraîchissement, utiliser le nonce actuel s'il existe
+                        if (this.nonceState.current) {
+                            resolve();
+                        } else {
+                            throw new Error('Unable to obtain valid nonce');
+                        }
+                    });
+                }
+            });
+        },
+
+        /**
+         * Définit l'état d'un bouton
+         */
+        setButtonState: function(button, state) {
+            if (!button) return;
+
+            const originalText = button.getAttribute('data-original-text') || button.textContent;
+
+            switch (state) {
+                case 'loading':
+                    button.setAttribute('data-original-text', originalText);
+                    button.disabled = true;
+                    button.innerHTML = '<span class="dashicons dashicons-update spin"></span> Chargement...';
+                    button.style.opacity = '0.7';
+                    break;
+                case 'success':
+                    button.disabled = false;
+                    button.innerHTML = '<span class="dashicons dashicons-yes"></span> Succès';
+                    button.style.opacity = '1';
+                    setTimeout(() => this.setButtonState(button, 'reset'), 2000);
+                    break;
+                case 'error':
+                    button.disabled = false;
+                    button.innerHTML = '<span class="dashicons dashicons-no"></span> Erreur';
+                    button.style.opacity = '1';
+                    setTimeout(() => this.setButtonState(button, 'reset'), 3000);
+                    break;
+                case 'reset':
+                default:
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                    button.style.opacity = '1';
+                    button.removeAttribute('data-original-text');
+                    break;
+            }
+        },
+
+        /**
+         * Obtient les statistiques du système de nonce
+         */
+        getStats: function() {
+            return {
+                nonce: {
+                    current: this.nonceState.current ? '***' : null,
+                    created: this.nonceState.created,
+                    expires: this.nonceState.expires,
+                    timeUntilExpiry: Math.max(0, this.nonceState.expires - Date.now()),
+                    isExpiringSoon: this.isNonceExpiringSoon()
+                },
+                stats: this.nonceState.stats,
+                config: this.config,
+                preloadQueue: this.nonceState.preloadQueue.length
+            };
         }
     };
 

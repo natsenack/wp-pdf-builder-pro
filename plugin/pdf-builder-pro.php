@@ -261,7 +261,6 @@ function pdf_builder_register_ajax_handlers() {
  */
 function pdf_builder_ajax_handler_dispatch() {
     try {
-        $ajax_handler = PDF_Builder_Ajax_Handler::get_instance();
         $action = isset($_REQUEST['action']) ? sanitize_text_field($_REQUEST['action']) : '';
 
         if (empty($action)) {
@@ -269,8 +268,85 @@ function pdf_builder_ajax_handler_dispatch() {
             return;
         }
 
-        // Dispatcher vers le système approprié selon l'action
-        $ajax_handler->dispatch($action);
+        // Dispatcher vers le handler approprié selon l'action
+        switch ($action) {
+            case 'pdf_builder_save_settings':
+                pdf_builder_save_settings_ajax();
+                break;
+            case 'pdf_builder_save_all_settings':
+                pdf_builder_save_settings_ajax();
+                break;
+            case 'pdf_builder_get_fresh_nonce':
+                pdf_builder_get_fresh_nonce_ajax();
+                break;
+            case 'pdf_builder_get_cache_status':
+                pdf_builder_get_cache_status_ajax();
+                break;
+            case 'pdf_builder_test_cache':
+                pdf_builder_test_cache_ajax();
+                break;
+            case 'pdf_builder_test_cache_integration':
+                pdf_builder_test_cache_ajax();
+                break;
+            case 'pdf_builder_clear_all_cache':
+                pdf_builder_clear_cache_ajax();
+                break;
+            case 'pdf_builder_get_cache_metrics':
+                // This function doesn't exist, let's create a simple fallback
+                wp_send_json_error('Handler not implemented');
+                break;
+            case 'pdf_builder_update_cache_metrics':
+                // This function doesn't exist, let's create a simple fallback
+                wp_send_json_error('Handler not implemented');
+                break;
+            case 'pdf_builder_optimize_database':
+                // This function doesn't exist, let's create a simple fallback
+                wp_send_json_error('Handler not implemented');
+                break;
+            case 'pdf_builder_repair_templates':
+                // This function doesn't exist, let's create a simple fallback
+                wp_send_json_error('Handler not implemented');
+                break;
+            case 'pdf_builder_remove_temp_files':
+                // This function doesn't exist, let's create a simple fallback
+                wp_send_json_error('Handler not implemented');
+                break;
+            case 'pdf_builder_create_backup':
+                pdf_builder_create_backup_ajax();
+                break;
+            case 'pdf_builder_list_backups':
+                pdf_builder_list_backups_ajax();
+                break;
+            case 'pdf_builder_restore_backup':
+                pdf_builder_restore_backup_ajax();
+                break;
+            case 'pdf_builder_delete_backup':
+                // This function doesn't exist, let's create a simple fallback
+                wp_send_json_error('Handler not implemented');
+                break;
+            case 'pdf_builder_test_license':
+                // This function doesn't exist, let's create a simple fallback
+                wp_send_json_error('Handler not implemented');
+                break;
+            case 'pdf_builder_test_routes':
+                // This function doesn't exist, let's create a simple fallback
+                wp_send_json_error('Handler not implemented');
+                break;
+            case 'pdf_builder_export_diagnostic':
+                // This function doesn't exist, let's create a simple fallback
+                wp_send_json_error('Handler not implemented');
+                break;
+            case 'pdf_builder_view_logs':
+                // This function doesn't exist, let's create a simple fallback
+                wp_send_json_error('Handler not implemented');
+                break;
+            case 'pdf_builder_save_template':
+                pdf_builder_save_template_handler();
+                break;
+            default:
+                wp_send_json_error('Action non reconnue: ' . $action);
+                break;
+        }
 
     } catch (Exception $e) {
         error_log('PDF Builder AJAX Error: ' . $e->getMessage());
