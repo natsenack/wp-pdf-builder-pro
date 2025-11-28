@@ -821,8 +821,35 @@ if (
                         if (activeContent) {
                             const form = activeContent.querySelector('form');
                             if (form) {
-                                console.log('📝 [PDF Builder] Formulaire trouvé, tentative de soumission...');
-                                form.submit();
+                                console.log('📝 [PDF Builder] Formulaire trouvé, tentative de soumission AJAX...');
+
+                                // Utiliser AJAX au lieu de soumission normale
+                                const formData = new FormData(form);
+                                formData.append('action', 'pdf_builder_save_settings');
+                                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+                                formData.append('tab', tabId);
+
+                                PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                                    button: floatingBtn,
+                                    context: 'Fallback Save',
+                                    successCallback: (result, originalData) => {
+                                        console.log('✅ [PDF Builder] Sauvegarde de secours réussie');
+                                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                            PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
+                                        }
+                                    },
+                                    errorCallback: (result, originalData) => {
+                                        console.error('❌ [PDF Builder] Erreur de sauvegarde de secours:', result);
+                                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                            PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'), 'error');
+                                        }
+                                    }
+                                }).catch(error => {
+                                    console.error('❌ [PDF Builder] Erreur réseau de secours:', error);
+                                    if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                        PDF_Builder_Notification_Manager.show_toast('Erreur réseau lors de la sauvegarde', 'error');
+                                    }
+                                });
                                 return;
                             }
                         }

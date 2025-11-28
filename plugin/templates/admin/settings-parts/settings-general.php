@@ -191,12 +191,69 @@
                         }
                     });
 
-                    // Validation avant soumission du formulaire
+                    // Gestionnaire AJAX pour la soumission du formulaire
                     $('form[action*="admin.php?page=pdf-builder-settings"]').on('submit', function(e) {
+                        e.preventDefault();
+
                         if (!validateCompanyFields()) {
-                            e.preventDefault();
                             return false;
                         }
+
+                        // Trouver le bouton d'enregistrement dans ce formulaire
+                        const form = $(this);
+                        const submitBtn = form.find('input[type="submit"], button[type="submit"]');
+
+                        // Désactiver le bouton et montrer l'état de chargement
+                        if (submitBtn.length > 0) {
+                            const originalText = submitBtn.val() || submitBtn.text();
+                            submitBtn.prop('disabled', true);
+                            submitBtn.val('Enregistrement...');
+                            submitBtn.text('Enregistrement...');
+                            submitBtn.css('opacity', '0.7');
+                        }
+
+                        // Collecter les données du formulaire
+                        const formData = new FormData(this);
+                        formData.append('action', 'pdf_builder_save_settings');
+                        formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+                        formData.append('tab', 'general');
+
+                        // Faire la requête AJAX
+                        if (window.PDF_Builder_Ajax_Handler) {
+                            window.PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                                button: submitBtn[0],
+                                context: 'General Settings',
+                                successCallback: (result, originalData) => {
+                                    // Afficher une notification de succès
+                                    if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                        PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
+                                    } else {
+                                        alert('Paramètres sauvegardés avec succès !');
+                                    }
+                                },
+                                errorCallback: (result, originalData) => {
+                                    // Afficher une notification d'erreur
+                                    if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                        PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'), 'error');
+                                    } else {
+                                        alert('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'));
+                                    }
+                                }
+                            }).catch(error => {
+                                console.error('Erreur AJAX:', error);
+                                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                    PDF_Builder_Notification_Manager.show_toast('Erreur réseau lors de la sauvegarde', 'error');
+                                } else {
+                                    alert('Erreur réseau lors de la sauvegarde');
+                                }
+                            });
+                        } else {
+                            // Fallback si le gestionnaire AJAX n'est pas disponible
+                            console.warn('PDF_Builder_Ajax_Handler not available, using fallback');
+                            this.submit();
+                        }
+
+                        return false;
                     });
                 });
                 </script>
