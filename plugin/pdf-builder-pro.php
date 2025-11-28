@@ -125,6 +125,132 @@ add_action('init', function() {
     new \PDF_Builder\Api\PreviewImageAPI();
 });
 
+// ==========================================
+// INITIALISATION DES NOUVEAUX SYSTÈMES AVANCÉS
+// ==========================================
+
+// Inclure tous les nouveaux systèmes de gestion avancés
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_User_Manager.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_License_Manager.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Integration_Manager.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Auto_Update_Manager.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Advanced_Reporting.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Ajax_Handler.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Intelligent_Loader.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Smart_Cache.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Advanced_Logger.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Security_Validator.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Error_Handler.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Config_Manager.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Task_Scheduler.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Diagnostic_Tool.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Analytics_Manager.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Backup_Recovery.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Security_Monitor.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Update_Manager.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Reporting_System.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Test_Suite.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Continuous_Deployment.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Health_Monitor.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_API_Manager.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Metrics_Analytics.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Database_Updater.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Localization.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Theme_Customizer.php';
+
+// Initialiser les nouveaux systèmes avancés
+add_action('plugins_loaded', function() {
+    try {
+        // Initialiser le chargeur intelligent
+        PDF_Builder_Intelligent_Loader::get_instance();
+
+        // Initialiser le gestionnaire de configuration
+        PDF_Builder_Config_Manager::get_instance();
+
+        // Initialiser le système de cache intelligent
+        PDF_Builder_Smart_Cache::get_instance();
+
+        // Initialiser le logger avancé
+        PDF_Builder_Advanced_Logger::get_instance();
+
+        // Initialiser le validateur de sécurité
+        PDF_Builder_Security_Validator::get_instance();
+
+        // Initialiser le gestionnaire d'erreurs
+        PDF_Builder_Error_Handler::get_instance();
+
+        // Initialiser le planificateur de tâches
+        PDF_Builder_Task_Scheduler::get_instance();
+
+        // Initialiser le gestionnaire de notifications
+        PDF_Builder_Notification_Manager::get_instance();
+
+        // Initialiser l'outil de diagnostic
+        PDF_Builder_Diagnostic_Tool::get_instance();
+
+        // Initialiser le gestionnaire d'analyses
+        PDF_Builder_Analytics_Manager::get_instance();
+
+        // Initialiser le système de sauvegarde/récupération
+        PDF_Builder_Backup_Recovery::get_instance();
+
+        // Initialiser le moniteur de sécurité
+        PDF_Builder_Security_Monitor::get_instance();
+
+        // Initialiser le gestionnaire de mises à jour
+        PDF_Builder_Update_Manager::get_instance();
+
+        // Initialiser le système de reporting
+        PDF_Builder_Reporting_System::get_instance();
+
+        // Initialiser la suite de tests
+        PDF_Builder_Test_Suite::get_instance();
+
+        // Initialiser le déploiement continu
+        PDF_Builder_Continuous_Deployment::get_instance();
+
+        // Initialiser le moniteur de santé
+        PDF_Builder_Health_Monitor::get_instance();
+
+        // Initialiser le gestionnaire d'API
+        PDF_Builder_API_Manager::get_instance();
+
+        // Initialiser les métriques analytiques
+        PDF_Builder_Metrics_Analytics::get_instance();
+
+        // Initialiser le programmeur de base de données
+        PDF_Builder_Database_Updater::get_instance();
+
+        // Initialiser la localisation
+        PDF_Builder_Localization::get_instance();
+
+        // Initialiser le personnalisateur de thème
+        PDF_Builder_Theme_Customizer::get_instance();
+
+        // Initialiser le gestionnaire d'utilisateurs (dépend des autres systèmes)
+        PDF_Builder_User_Manager::get_instance();
+
+        // Initialiser le gestionnaire de licences (dépend du gestionnaire d'utilisateurs)
+        PDF_Builder_License_Manager::get_instance();
+
+        // Initialiser le gestionnaire d'intégrations (dépend des licences)
+        PDF_Builder_Integration_Manager::get_instance();
+
+        // Initialiser le gestionnaire de mises à jour automatiques
+        PDF_Builder_Auto_Update_Manager::get_instance();
+
+        // Initialiser le système de reporting avancé
+        PDF_Builder_Advanced_Reporting::get_instance();
+
+        // Initialiser le nouveau gestionnaire AJAX (remplace les anciens handlers)
+        PDF_Builder_Ajax_Handler::get_instance();
+
+    } catch (Exception $e) {
+        error_log('PDF Builder: Erreur lors de l\'initialisation des systèmes avancés: ' . $e->getMessage());
+    }
+}, 5); // Priorité 5 pour s'assurer que cela se passe après les autres initialisations
+
 /**
  * Fonction d'activation
  */
@@ -284,66 +410,89 @@ add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
  * Enregistrer les handlers AJAX
  */
 function pdf_builder_register_ajax_handlers() {
-    // Include settings AJAX handlers
-    $settings_ajax_path = plugin_dir_path(__FILE__) . 'templates/admin/settings-parts/settings-ajax.php';
-    if (file_exists($settings_ajax_path)) {
-        require_once $settings_ajax_path;
-    }
+    // Le nouveau système AJAX gère maintenant tous les handlers
+    // Les anciens handlers sont conservés pour la compatibilité mais redirigés vers le nouveau système
 
-    // Preview images
+    // Handlers principaux gérés par PDF_Builder_Ajax_Handler
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
-    // Settings handlers from settings-ajax.php - DISABLED: Conflit avec AjaxHandler.php
-    // REMOVED: pdf_builder_save_canvas_settings and pdf_builder_get_canvas_settings are now handled by PDF_Builder_Admin
+    // Handlers de paramètres - maintenant gérés par le nouveau système AJAX
+    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_save_all_settings', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_handler_dispatch');
 
-    // Settings save handler - PRIORITY: settings-ajax.php over AjaxHandler.php
-    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax', 1);
+    // Handlers de cache - maintenant gérés par le système de cache intelligent
+    add_action('wp_ajax_pdf_builder_get_cache_status', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_update_cache_metrics', 'pdf_builder_ajax_handler_dispatch');
 
-    // Global save all settings handler (bouton flottant)
-    add_action('wp_ajax_pdf_builder_save_all_settings', 'pdf_builder_save_all_settings_handler', 1);
+    // Handlers de maintenance - maintenant gérés par les systèmes appropriés
+    add_action('wp_ajax_pdf_builder_optimize_database', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_repair_templates', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_remove_temp_files', 'pdf_builder_ajax_handler_dispatch');
+
+    // Handlers de sauvegarde - maintenant gérés par le système de sauvegarde
+    add_action('wp_ajax_pdf_builder_create_backup', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_list_backups', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_ajax_handler_dispatch');
+
+    // Handlers de licence - maintenant gérés par le gestionnaire de licences
+    add_action('wp_ajax_pdf_builder_test_license', 'pdf_builder_ajax_handler_dispatch');
+
+    // Handlers de routes - maintenant gérés par le système de diagnostic
+    add_action('wp_ajax_pdf_builder_test_routes', 'pdf_builder_ajax_handler_dispatch');
+
+    // Handlers de diagnostic - maintenant gérés par l'outil de diagnostic
+    add_action('wp_ajax_pdf_builder_export_diagnostic', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_view_logs', 'pdf_builder_ajax_handler_dispatch');
+
+    // Handlers de templates - maintenant gérés par le système de gestion de templates
+    add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_load_template', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_auto_save_template', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_load_template_settings', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_save_template_settings', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_delete_template', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_set_default_template', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_duplicate_template', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_load_predefined_into_editor', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_check_template_limit', 'pdf_builder_ajax_handler_dispatch');
 
     // Test AJAX handler
     add_action('wp_ajax_test_ajax', 'pdf_builder_test_ajax_handler');
 
-    // Cache handlers - keep these as they don't conflict
-    add_action('wp_ajax_pdf_builder_get_cache_status', 'pdf_builder_get_cache_status_ajax');
-    add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_test_cache_ajax');
-    // add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_ajax'); // REMOVED: now handled in settings-ajax.php
-    // Nouveaux handlers pour les fonctionnalités de cache avancées
-    add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_test_cache_integration_ajax');
-    add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_clear_all_cache_ajax');
-    add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_get_cache_metrics_ajax');
-    add_action('wp_ajax_pdf_builder_update_cache_metrics', 'pdf_builder_update_cache_metrics_handler');
-    add_action('wp_ajax_pdf_builder_optimize_database', 'pdf_builder_optimize_database_ajax');
-    add_action('wp_ajax_pdf_builder_repair_templates', 'pdf_builder_repair_templates_ajax');
-    add_action('wp_ajax_pdf_builder_remove_temp_files', 'pdf_builder_remove_temp_files_ajax');
-    add_action('wp_ajax_pdf_builder_create_backup', 'pdf_builder_create_backup_ajax');
-    add_action('wp_ajax_pdf_builder_list_backups', 'pdf_builder_list_backups_ajax');
-    add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_restore_backup_ajax');
-    add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_delete_backup_ajax');
-    add_action('wp_ajax_pdf_builder_test_license', 'pdf_builder_test_license_handler');
-    add_action('wp_ajax_pdf_builder_test_routes', 'pdf_builder_test_routes_handler');
-    add_action('wp_ajax_pdf_builder_export_diagnostic', 'pdf_builder_export_diagnostic_handler');
-    add_action('wp_ajax_pdf_builder_view_logs', 'pdf_builder_view_logs_handler');
+    // Actions programmées
     add_action('pdf_builder_daily_backup', 'pdf_builder_execute_daily_backup');
     add_action('pdf_builder_cleanup_old_backups', 'pdf_builder_cleanup_old_backups');
     add_action('pdf_builder_weekly_maintenance', 'pdf_builder_execute_weekly_maintenance');
     add_action('admin_action_pdf_builder_download_backup', 'pdf_builder_download_backup');
+}
 
-    // Template handlers for React frontend
-    add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_save_template_handler');
-    add_action('wp_ajax_pdf_builder_load_template', 'pdf_builder_load_template_handler');
-    add_action('wp_ajax_pdf_builder_auto_save_template', 'pdf_builder_auto_save_template_handler');
+/**
+ * Dispatcher pour les nouveaux handlers AJAX
+ */
+function pdf_builder_ajax_handler_dispatch() {
+    try {
+        $ajax_handler = PDF_Builder_Ajax_Handler::get_instance();
+        $action = isset($_REQUEST['action']) ? sanitize_text_field($_REQUEST['action']) : '';
 
-    // Template management handlers for templates page
-    add_action('wp_ajax_pdf_builder_load_template_settings', 'pdf_builder_load_template_settings_handler');
-    add_action('wp_ajax_pdf_builder_save_template_settings', 'pdf_builder_save_template_settings_handler');
-    add_action('wp_ajax_pdf_builder_delete_template', 'pdf_builder_delete_template_handler');
-    add_action('wp_ajax_pdf_builder_set_default_template', 'pdf_builder_set_default_template_handler');
-    add_action('wp_ajax_pdf_builder_duplicate_template', 'pdf_builder_duplicate_template_handler');
-    add_action('wp_ajax_pdf_builder_load_predefined_into_editor', 'pdf_builder_load_predefined_into_editor_handler');
-    add_action('wp_ajax_pdf_builder_check_template_limit', 'pdf_builder_check_template_limit_handler');
+        if (empty($action)) {
+            wp_send_json_error('Action manquante');
+            return;
+        }
+
+        // Dispatcher vers le système approprié selon l'action
+        $ajax_handler->dispatch($action);
+
+    } catch (Exception $e) {
+        error_log('PDF Builder AJAX Error: ' . $e->getMessage());
+        wp_send_json_error('Erreur interne du serveur');
+    }
 }
 
 /**
@@ -418,6 +567,7 @@ function pdf_builder_init()
     // Ajouter les headers de cache pour les assets
     add_action('wp_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
     add_action('admin_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
+
     // Charger le bootstrap (version complète pour la production)
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {
@@ -432,19 +582,23 @@ function pdf_builder_init()
 
     // Enregistrer les handlers AJAX au hook init
     add_action('init', 'pdf_builder_register_ajax_handlers');
-    
+
     // Initialiser les sauvegardes automatiques
     add_action('init', 'pdf_builder_init_auto_backup');
-    
+
     // Vérifier les mises à jour de schéma de base de données
     add_action('admin_init', 'pdf_builder_check_database_updates');
 
+    // Les nouveaux systèmes avancés sont maintenant initialisés dans le hook plugins_loaded
+    // ci-dessus, donc nous n'avons plus besoin de charger individuellement le moniteur de performance
+
     // Tools for development/tests removed from production bootstrap
 
-    // Charger le moniteur de performance
+    // Charger le moniteur de performance (maintenant géré par le système avancé)
     $performance_monitor_path = plugin_dir_path(__FILE__) . 'src/Managers/PDF_Builder_Performance_Monitor.php';
     if (file_exists($performance_monitor_path)) {
         require_once $performance_monitor_path;
+        // Le moniteur de performance est maintenant initialisé via PDF_Builder_Health_Monitor
     }
 }
 
@@ -960,6 +1114,25 @@ function pdf_builder_test_cache_ajax() {
         'cache_status' => $results['cache_status'],
         'transient_working' => $results['transient_test'],
         'cache_available' => $results['cache_available']
+    ));
+}
+
+/**
+ * AJAX handler pour obtenir un nouveau nonce frais
+ */
+function pdf_builder_get_fresh_nonce_ajax() {
+    // Vérifier les permissions (pas besoin de nonce ici car on en génère un nouveau)
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Générer un nouveau nonce
+    $fresh_nonce = wp_create_nonce('pdf_builder_ajax');
+
+    wp_send_json_success(array(
+        'nonce' => $fresh_nonce,
+        'generated_at' => current_time('timestamp')
     ));
 }
 
@@ -2199,47 +2372,81 @@ function pdf_builder_restore_backup_ajax() {
 }
 
 /**
- * AJAX handler for deleting backups
+ * Vérifier l'état des systèmes avancés
  */
-function pdf_builder_delete_backup_ajax() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
+function pdf_builder_check_advanced_systems_status() {
+    $systems_status = array(
+        'intelligent_loader' => class_exists('PDF_Builder_Intelligent_Loader') && PDF_Builder_Intelligent_Loader::get_instance() !== null,
+        'config_manager' => class_exists('PDF_Builder_Config_Manager') && PDF_Builder_Config_Manager::get_instance() !== null,
+        'smart_cache' => class_exists('PDF_Builder_Smart_Cache') && PDF_Builder_Smart_Cache::get_instance() !== null,
+        'advanced_logger' => class_exists('PDF_Builder_Advanced_Logger') && PDF_Builder_Advanced_Logger::get_instance() !== null,
+        'security_validator' => class_exists('PDF_Builder_Security_Validator') && PDF_Builder_Security_Validator::get_instance() !== null,
+        'error_handler' => class_exists('PDF_Builder_Error_Handler') && PDF_Builder_Error_Handler::get_instance() !== null,
+        'task_scheduler' => class_exists('PDF_Builder_Task_Scheduler') && PDF_Builder_Task_Scheduler::get_instance() !== null,
+        'notification_manager' => class_exists('PDF_Builder_Notification_Manager') && PDF_Builder_Notification_Manager::get_instance() !== null,
+        'diagnostic_tool' => class_exists('PDF_Builder_Diagnostic_Tool') && PDF_Builder_Diagnostic_Tool::get_instance() !== null,
+        'analytics_manager' => class_exists('PDF_Builder_Analytics_Manager') && PDF_Builder_Analytics_Manager::get_instance() !== null,
+        'backup_recovery' => class_exists('PDF_Builder_Backup_Recovery') && PDF_Builder_Backup_Recovery::get_instance() !== null,
+        'security_monitor' => class_exists('PDF_Builder_Security_Monitor') && PDF_Builder_Security_Monitor::get_instance() !== null,
+        'update_manager' => class_exists('PDF_Builder_Update_Manager') && PDF_Builder_Update_Manager::get_instance() !== null,
+        'reporting_system' => class_exists('PDF_Builder_Reporting_System') && PDF_Builder_Reporting_System::get_instance() !== null,
+        'test_suite' => class_exists('PDF_Builder_Test_Suite') && PDF_Builder_Test_Suite::get_instance() !== null,
+        'continuous_deployment' => class_exists('PDF_Builder_Continuous_Deployment') && PDF_Builder_Continuous_Deployment::get_instance() !== null,
+        'health_monitor' => class_exists('PDF_Builder_Health_Monitor') && PDF_Builder_Health_Monitor::get_instance() !== null,
+        'api_manager' => class_exists('PDF_Builder_API_Manager') && PDF_Builder_API_Manager::get_instance() !== null,
+        'metrics_analytics' => class_exists('PDF_Builder_Metrics_Analytics') && PDF_Builder_Metrics_Analytics::get_instance() !== null,
+        'database_updater' => class_exists('PDF_Builder_Database_Updater') && PDF_Builder_Database_Updater::get_instance() !== null,
+        'localization' => class_exists('PDF_Builder_Localization') && PDF_Builder_Localization::get_instance() !== null,
+        'theme_customizer' => class_exists('PDF_Builder_Theme_Customizer') && PDF_Builder_Theme_Customizer::get_instance() !== null,
+        'user_manager' => class_exists('PDF_Builder_User_Manager') && PDF_Builder_User_Manager::get_instance() !== null,
+        'license_manager' => class_exists('PDF_Builder_License_Manager') && PDF_Builder_License_Manager::get_instance() !== null,
+        'integration_manager' => class_exists('PDF_Builder_Integration_Manager') && PDF_Builder_Integration_Manager::get_instance() !== null,
+        'auto_update_manager' => class_exists('PDF_Builder_Auto_Update_Manager') && PDF_Builder_Auto_Update_Manager::get_instance() !== null,
+        'advanced_reporting' => class_exists('PDF_Builder_Advanced_Reporting') && PDF_Builder_Advanced_Reporting::get_instance() !== null,
+        'ajax_handler' => class_exists('PDF_Builder_Ajax_Handler') && PDF_Builder_Ajax_Handler::get_instance() !== null,
+    );
+
+    $all_systems_loaded = !in_array(false, $systems_status, true);
+    $loaded_count = count(array_filter($systems_status));
+    $total_count = count($systems_status);
+
+    if (!$all_systems_loaded) {
+        $failed_systems = array_keys(array_filter($systems_status, function($status) { return !$status; }));
+        error_log('PDF Builder: Certains systèmes avancés n\'ont pas été chargés: ' . implode(', ', $failed_systems));
     }
 
-    // Check permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    try {
-        $filename = sanitize_file_name($_POST['filename'] ?? '');
-
-        if (empty($filename)) {
-            wp_send_json_error('Nom de fichier manquant');
-            return;
-        }
-
-        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
-        $filepath = $backup_dir . '/' . $filename;
-
-        if (!file_exists($filepath)) {
-            wp_send_json_error('Fichier de sauvegarde introuvable');
-            return;
-        }
-
-        if (unlink($filepath)) {
-            wp_send_json_success(array('message' => 'Sauvegarde supprimée avec succès'));
-        } else {
-            wp_send_json_error('Erreur lors de la suppression du fichier');
-        }
-
-    } catch (Exception $e) {
-        wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
-    }
+    return array(
+        'all_loaded' => $all_systems_loaded,
+        'loaded_count' => $loaded_count,
+        'total_count' => $total_count,
+        'systems_status' => $systems_status
+    );
 }
+
+/**
+ * Hook d'administration pour vérifier l'état des systèmes
+ */
+add_action('admin_init', function() {
+    // Vérifier l'état des systèmes une fois par jour
+    $last_check = get_option('pdf_builder_systems_check_timestamp', 0);
+    $current_time = current_time('timestamp');
+
+    if (($current_time - $last_check) > 86400) { // 24 heures
+        $status = pdf_builder_check_advanced_systems_status();
+        update_option('pdf_builder_systems_check_timestamp', $current_time);
+
+        if (!$status['all_loaded']) {
+            // Notifier l'administrateur si des systèmes ne sont pas chargés
+            if (current_user_can('manage_options')) {
+                add_action('admin_notices', function() use ($status) {
+                    echo '<div class="notice notice-warning is-dismissible">';
+                    echo '<p><strong>PDF Builder Pro:</strong> ' . ($status['total_count'] - $status['loaded_count']) . ' système(s) avancé(s) n\'ont pas été chargés correctement. Vérifiez les logs pour plus de détails.</p>';
+                    echo '</div>';
+                });
+            }
+        }
+    }
+});
 
 
 

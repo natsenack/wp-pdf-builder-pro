@@ -1341,199 +1341,264 @@ window.toggleRGPDControls = toggleRGPDControls;
      * Système centralisé de gestion des réponses AJAX avec gestion des nonces
      */
     window.PDF_Builder_Ajax_Handler = {
-        /**
-         * Traite une réponse AJAX et gère automatiquement les erreurs de nonce
-         * @param {Object} data - La réponse AJAX
-         * @param {Object} options - Options de traitement
-         * @returns {Object} {success: boolean, shouldReload: boolean, errorMessage: string, newNonce: string}
-         */
-        processResponse: function(data, options = {}) {
-            const result = {
-                success: data.success || false,
-                shouldReload: false,
-                errorMessage: null,
-                newNonce: null
-            };
+        // Configuration du système de nonce
+        config: {
+            nonceTTL: 20 * 60 * 1000, // 20 minutes (WordPress default est 24h, mais on est prudent)
+            refreshThreshold: 5 * 60 * 1000, // Rafraîchir 5 minutes avant expiration
+            maxRetries: 2, // Nombre maximum de tentatives
+            retryDelay: 1000, // Délai entre tentatives (ms)
+            preloadCount: 3, // Nombre de nonces à précharger
+            enableProactiveRefresh: true, // Rafraîchissement proactif
+            enableRetry: true // Retry automatique activé
+        },
 
-            // Mettre à jour le nonce si fourni
-            if (data.data && data.data.new_nonce) {
-                window.pdfBuilderAjax.nonce = data.data.new_nonce;
-                result.newNonce = data.data.new_nonce;
-                console.log('🔄 [PDF Builder] Nonce mis à jour');
+        // État du système de nonce
+        nonceState: {
+            current: null,
+            created: null,
+            expires: null,
+            refreshTimer: null,
+            preloadQueue: [],
+            retryCount: 0,
+            stats: {
+                requests: 0,
+                nonceErrors: 0,
+                retries: 0,
+                refreshes: 0,
+                lastError: null
             }
-
-            // Détecter les erreurs de nonce
-            if (!data.success && data.data && data.data.message && data.data.message.includes('Nonce invalide')) {
-                console.warn('🔐 [PDF Builder] Erreur de nonce détectée, actualisation automatique...');
-                result.shouldReload = true;
-                result.errorMessage = 'Nonce invalide - actualisation en cours...';
-                return result;
-            }
-
-            // Retourner le message d'erreur normal si pas de succès
-            if (!data.success && data.data && data.data.message) {
-                result.errorMessage = data.data.message;
-            }
-
-            return result;
         },
 
         /**
-         * Gère l'état d'un bouton pendant et après une requête AJAX
-         * @param {HTMLElement} button - Le bouton à gérer
-         * @param {string} state - 'loading', 'success', 'error', 'reset'
-         * @param {Object} options - Options d'affichage
+         * Initialise le système de nonce avancé
          */
-        setButtonState: function(button, state, options = {}) {
-            if (!button) return;
+        initialize: function() {
+            console.log('🔐 [PDF Builder] Initialisation du système de nonce avancé');
 
-            const states = {
-                loading: {
-                    text: options.loadingText || 'Chargement...',
-                    style: { opacity: '0.7' },
-                    disabled: true
-                },
-                success: {
-                    text: options.successText || '✓ Succès',
-                    style: { backgroundColor: '#28a745', color: 'white' },
-                    disabled: false
-                },
-                error: {
-                    text: options.errorText || '❌ Erreur',
-                    style: { backgroundColor: '#dc3545', color: 'white' },
-                    disabled: false
-                },
-                reload: {
-                    text: options.reloadText || '🔄 Actualisation...',
-                    style: { backgroundColor: '#ffc107', color: 'black' },
-                    disabled: true
-                },
-                reset: {
-                    text: options.resetText || button.getAttribute('data-original-text') || 'Enregistrer',
-                    style: { backgroundColor: '', color: '', opacity: '1' },
-                    disabled: false
-                }
-            };
+            // Initialiser avec le nonce actuel
+            this.nonceState.current = window.pdfBuilderAjax?.nonce;
+            this.nonceState.created = Date.now();
+            this.nonceState.expires = Date.now() + this.config.nonceTTL;
 
-            const stateConfig = states[state];
-            if (!stateConfig) return;
-
-            // Sauvegarder le texte original si pas déjà fait
-            if (!button.getAttribute('data-original-text')) {
-                button.setAttribute('data-original-text', button.textContent);
+            // Démarrer le rafraîchissement proactif
+            if (this.config.enableProactiveRefresh) {
+                this.startProactiveRefresh();
             }
 
-            // Appliquer l'état
-            button.textContent = stateConfig.text;
-            button.disabled = stateConfig.disabled;
+            // Précharger des nonces
+            this.preloadNonces();
 
-            // Appliquer les styles
-            Object.keys(stateConfig.style).forEach(prop => {
-                if (stateConfig.style[prop]) {
-                    button.style[prop] = stateConfig.style[prop];
-                } else {
-                    button.style.removeProperty(prop);
-                }
+            console.log('🔐 [PDF Builder] Système de nonce initialisé:', {
+                current: this.nonceState.current ? '***' : null,
+                expires: new Date(this.nonceState.expires).toLocaleTimeString(),
+                proactiveRefresh: this.config.enableProactiveRefresh
             });
         },
 
         /**
-         * Effectue une requête AJAX avec gestion automatique des erreurs
-         * @param {FormData} formData - Les données du formulaire
-         * @param {Object} options - Options de la requête
-         * @returns {Promise} Promise résolue avec la réponse traitée
+         * Démarre le rafraîchissement proactif des nonces
          */
-        makeRequest: function(formData, options = {}) {
-            const defaultOptions = {
-                url: window.ajaxurl || '/wp-admin/admin-ajax.php',
+        startProactiveRefresh: function() {
+            if (this.nonceState.refreshTimer) {
+                clearTimeout(this.nonceState.refreshTimer);
+            }
+
+            const timeUntilRefresh = Math.max(0, this.nonceState.expires - Date.now() - this.config.refreshThreshold);
+
+            this.nonceState.refreshTimer = setTimeout(() => {
+                console.log('🔄 [PDF Builder] Rafraîchissement proactif du nonce');
+                this.refreshNonce().then(() => {
+                    // Redémarrer le timer pour le prochain rafraîchissement
+                    this.startProactiveRefresh();
+                }).catch(error => {
+                    console.error('Erreur lors du rafraîchissement proactif:', error);
+                    // Redémarrer quand même
+                    this.startProactiveRefresh();
+                });
+            }, timeUntilRefresh);
+
+            console.log(`⏰ [PDF Builder] Prochain rafraîchissement dans ${Math.round(timeUntilRefresh / 1000 / 60)} minutes`);
+        },
+
+        /**
+         * Précharge plusieurs nonces pour éviter les appels répétés
+         */
+        preloadNonces: function() {
+            if (this.nonceState.preloadQueue.length >= this.config.preloadCount) {
+                return; // Déjà assez de nonces
+            }
+
+            console.log(`📦 [PDF Builder] Préchargement de ${this.config.preloadCount - this.nonceState.preloadQueue.length} nonces`);
+
+            // Faire une requête simple pour obtenir un nouveau nonce
+            const formData = new FormData();
+            formData.append('action', 'pdf_builder_get_fresh_nonce');
+
+            fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
                 method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                button: null,
-                successCallback: null,
-                errorCallback: null,
-                context: 'unknown'
-            };
-
-            const config = { ...defaultOptions, ...options };
-
-            // Ajouter le nonce automatiquement
-            if (!formData.has('nonce')) {
-                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
-            }
-
-            // Mettre le bouton en état de chargement
-            if (config.button) {
-                this.setButtonState(config.button, 'loading');
-            }
-
-            return fetch(config.url, {
-                method: config.method,
                 body: formData,
-                headers: config.headers
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
             .then(response => response.json())
             .then(data => {
-                console.log(`📥 [${config.context}] Réponse AJAX reçue:`, data);
+                if (data.success && data.data && data.data.nonce) {
+                    this.nonceState.preloadQueue.push({
+                        nonce: data.data.nonce,
+                        created: Date.now(),
+                        expires: Date.now() + this.config.nonceTTL
+                    });
 
-                const result = this.processResponse(data);
+                    // Nettoyer les nonces expirés
+                    this.nonceState.preloadQueue = this.nonceState.preloadQueue.filter(n =>
+                        n.expires > Date.now()
+                    );
 
-                if (result.success) {
-                    // Succès
-                    if (config.button) {
-                        this.setButtonState(config.button, 'success');
-                        setTimeout(() => {
-                            this.setButtonState(config.button, 'reset');
-                        }, 3000);
-                    }
+                    console.log(`📦 [PDF Builder] Nonce préchargé (${this.nonceState.preloadQueue.length}/${this.config.preloadCount})`);
 
-                    if (config.successCallback) {
-                        config.successCallback(result, data);
-                    }
-
-                } else if (result.shouldReload) {
-                    // Erreur de nonce - recharger la page
-                    if (config.button) {
-                        this.setButtonState(config.button, 'reload');
-                    }
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
-
-                } else {
-                    // Erreur normale
-                    if (config.button) {
-                        this.setButtonState(config.button, 'error');
-                        setTimeout(() => {
-                            this.setButtonState(config.button, 'reset');
-                        }, 5000);
-                    }
-
-                    console.error(`[${config.context}] Erreur:`, result.errorMessage);
-
-                    if (config.errorCallback) {
-                        config.errorCallback(result, data);
+                    // Continuer le préchargement si nécessaire
+                    if (this.nonceState.preloadQueue.length < this.config.preloadCount) {
+                        setTimeout(() => this.preloadNonces(), 100);
                     }
                 }
-
-                return result;
             })
             .catch(error => {
-                console.error(`[${config.context}] Erreur réseau:`, error);
-
-                if (config.button) {
-                    this.setButtonState(config.button, 'error', { errorText: '❌ Erreur réseau' });
-                    setTimeout(() => {
-                        this.setButtonState(config.button, 'reset');
-                    }, 5000);
-                }
-
-                if (config.errorCallback) {
-                    config.errorCallback({ success: false, errorMessage: 'Erreur réseau' }, null);
-                }
-
-                throw error;
+                console.warn('Erreur lors du préchargement de nonce:', error);
             });
+        },
+
+        /**
+         * Rafraîchit le nonce actuel
+         */
+        refreshNonce: function() {
+            return new Promise((resolve, reject) => {
+                // Utiliser un nonce préchargé si disponible
+                if (this.nonceState.preloadQueue.length > 0) {
+                    const freshNonce = this.nonceState.preloadQueue.shift();
+                    this.setCurrentNonce(freshNonce.nonce, freshNonce.created);
+                    this.nonceState.stats.refreshes++;
+                    console.log('🔄 [PDF Builder] Nonce rafraîchi depuis le cache');
+                    resolve();
+                    return;
+                }
+
+                // Sinon, faire une requête pour obtenir un nouveau nonce
+                const formData = new FormData();
+                formData.append('action', 'pdf_builder_get_fresh_nonce');
+
+                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data && data.data.nonce) {
+                        this.setCurrentNonce(data.data.nonce, Date.now());
+                        this.nonceState.stats.refreshes++;
+                        console.log('🔄 [PDF Builder] Nonce rafraîchi depuis le serveur');
+                        resolve();
+                    } else {
+                        reject(new Error('Impossible d\'obtenir un nouveau nonce'));
+                    }
+                })
+                .catch(reject);
+            });
+        },
+
+        /**
+         * Définit le nonce actuel
+         */
+        setCurrentNonce: function(nonce, created = Date.now()) {
+            this.nonceState.current = nonce;
+            this.nonceState.created = created;
+            this.nonceState.expires = created + this.config.nonceTTL;
+
+            // Mettre à jour la variable globale
+            if (window.pdfBuilderAjax) {
+                window.pdfBuilderAjax.nonce = nonce;
+            }
+        },
+
+        /**
+         * Vérifie si le nonce actuel est proche de l'expiration
+         */
+        isNonceExpiringSoon: function() {
+            return (this.nonceState.expires - Date.now()) < this.config.refreshThreshold;
+        },
+
+        /**
+         * Nettoie les ressources du système de nonce
+         */
+        cleanup: function() {
+            if (this.nonceState.refreshTimer) {
+                clearTimeout(this.nonceState.refreshTimer);
+                this.nonceState.refreshTimer = null;
+            }
+            this.nonceState.preloadQueue = [];
+        },
+
+        /**
+         * Force un rafraîchissement immédiat du nonce
+         */
+        forceRefresh: function() {
+            console.log('🔄 [PDF Builder] Rafraîchissement forcé du nonce');
+            return this.refreshNonce();
+        },
+
+        /**
+         * Configure le système de nonce
+         */
+        configure: function(newConfig) {
+            Object.assign(this.config, newConfig);
+            console.log('⚙️ [PDF Builder] Configuration du système de nonce mise à jour:', this.config);
         }
+    };
+
+    // Initialiser le système de nonce avancé au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        PDF_Builder_Ajax_Handler.initialize();
+    });
+
+    // Nettoyer à la fermeture de la page
+    window.addEventListener('beforeunload', function() {
+        PDF_Builder_Ajax_Handler.cleanup();
+    });
+
+    // Exposer les statistiques globalement pour le debug
+    window.pdfBuilderNonceStats = function() {
+        return PDF_Builder_Ajax_Handler.getStats();
+    };
+
+    // Basic modal functionality
+    function safeQuerySelector(selector) {
+        try {
+            return document.querySelector(selector);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function safeQuerySelectorAll(selector) {
+        try {
+            return document.querySelectorAll(selector);
+        } catch (e) {
+            return [];
+        }
+    }
+
+    // Initialiser le système de nonce avancé au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        PDF_Builder_Ajax_Handler.initialize();
+    });
+
+    // Nettoyer à la fermeture de la page
+    window.addEventListener('beforeunload', function() {
+        PDF_Builder_Ajax_Handler.cleanup();
+    });
+
+    // Exposer les statistiques globalement pour le debug
+    window.pdfBuilderNonceStats = function() {
+        return PDF_Builder_Ajax_Handler.getStats();
     };
 
     // Basic modal functionality
