@@ -296,7 +296,7 @@ function pdf_builder_ajax_handler_dispatch() {
                 pdf_builder_get_cache_metrics_handler();
                 break;
             case 'pdf_builder_update_cache_metrics':
-                pdf_builder_update_cache_metrics_handler();
+                wp_send_json_error('Handler not implemented - use settings-ajax.php');
                 break;
             case 'pdf_builder_optimize_database':
                 // This function doesn't exist, let's create a simple fallback
@@ -2318,28 +2318,6 @@ function pdf_builder_get_cache_metrics_handler() {
         'cache_enabled' => $cache_enabled,
         'cache_ttl' => $cache_ttl,
         'cache_status' => $cache_enabled ? 'Activé' : 'Désactivé'
-    ));
-}
-
-/**
- * Handler pour mettre à jour les métriques du cache (dispatcher)
- */
-function pdf_builder_update_cache_metrics_handler() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    // Simplement retourner un succès pour l'instant
-    wp_send_json_success(array(
-        'message' => 'Métriques du cache mises à jour'
     ));
 }
 
