@@ -201,15 +201,15 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
     // Handlers de paramètres - maintenant gérés par le nouveau système AJAX
-    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax');
     add_action('wp_ajax_pdf_builder_save_all_settings', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce_ajax');
 
     // Handlers de cache - maintenant gérés par le système de cache intelligent
-    add_action('wp_ajax_pdf_builder_get_cache_status', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_get_cache_status', 'pdf_builder_get_cache_status_ajax');
+    add_action('wp_ajax_pdf_builder_test_cache', 'pdf_builder_test_cache_ajax');
+    add_action('wp_ajax_pdf_builder_test_cache_integration', 'pdf_builder_test_cache_ajax');
+    add_action('wp_ajax_pdf_builder_clear_all_cache', 'pdf_builder_clear_cache_ajax');
     add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_ajax_handler_dispatch');
     add_action('wp_ajax_pdf_builder_update_cache_metrics', 'pdf_builder_ajax_handler_dispatch');
 
@@ -219,9 +219,9 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_remove_temp_files', 'pdf_builder_ajax_handler_dispatch');
 
     // Handlers de sauvegarde - maintenant gérés par le système de sauvegarde
-    add_action('wp_ajax_pdf_builder_create_backup', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_list_backups', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_create_backup', 'pdf_builder_create_backup_ajax');
+    add_action('wp_ajax_pdf_builder_list_backups', 'pdf_builder_list_backups_ajax');
+    add_action('wp_ajax_pdf_builder_restore_backup', 'pdf_builder_restore_backup_ajax');
     add_action('wp_ajax_pdf_builder_delete_backup', 'pdf_builder_ajax_handler_dispatch');
 
     // Handlers de licence - maintenant gérés par le gestionnaire de licences
@@ -235,19 +235,20 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_pdf_builder_view_logs', 'pdf_builder_ajax_handler_dispatch');
 
     // Handlers de templates - maintenant gérés par le système de gestion de templates
-    add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_load_template', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_auto_save_template', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_load_template_settings', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_save_template_settings', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_delete_template', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_set_default_template', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_duplicate_template', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_load_predefined_into_editor', 'pdf_builder_ajax_handler_dispatch');
-    add_action('wp_ajax_pdf_builder_check_template_limit', 'pdf_builder_ajax_handler_dispatch');
+    add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_save_template_handler');
+    add_action('wp_ajax_pdf_builder_load_template', 'pdf_builder_load_template_handler');
+    add_action('wp_ajax_pdf_builder_auto_save_template', 'pdf_builder_auto_save_template_handler');
+    add_action('wp_ajax_pdf_builder_load_template_settings', 'pdf_builder_load_template_settings_handler');
+    add_action('wp_ajax_pdf_builder_save_template_settings', 'pdf_builder_save_template_settings_handler');
+    add_action('wp_ajax_pdf_builder_delete_template', 'pdf_builder_delete_template_handler');
+    add_action('wp_ajax_pdf_builder_set_default_template', 'pdf_builder_set_default_template_handler');
+    add_action('wp_ajax_pdf_builder_duplicate_template', 'pdf_builder_duplicate_template_handler');
+    add_action('wp_ajax_pdf_builder_load_predefined_into_editor', 'pdf_builder_load_predefined_into_editor_handler');
+    add_action('wp_ajax_pdf_builder_check_template_limit', 'pdf_builder_check_template_limit_handler');
 
     // Test AJAX handler
     add_action('wp_ajax_test_ajax', 'pdf_builder_test_ajax_handler');
+    add_action('wp_ajax_pdf_builder_test_ajax', 'pdf_builder_test_ajax_handler');
 
     // Actions programmées
     add_action('pdf_builder_daily_backup', 'pdf_builder_execute_daily_backup');
@@ -417,6 +418,8 @@ function pdf_builder_test_ajax_handler() {
         'user_id' => get_current_user_id()
     ));
 }
+
+
 
 /**
  * Initialiser le plugin
