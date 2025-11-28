@@ -1337,6 +1337,205 @@ window.toggleRGPDControls = toggleRGPDControls;
 (function() {
     'use strict';
 
+    /**
+     * Système centralisé de gestion des réponses AJAX avec gestion des nonces
+     */
+    window.PDF_Builder_Ajax_Handler = {
+        /**
+         * Traite une réponse AJAX et gère automatiquement les erreurs de nonce
+         * @param {Object} data - La réponse AJAX
+         * @param {Object} options - Options de traitement
+         * @returns {Object} {success: boolean, shouldReload: boolean, errorMessage: string, newNonce: string}
+         */
+        processResponse: function(data, options = {}) {
+            const result = {
+                success: data.success || false,
+                shouldReload: false,
+                errorMessage: null,
+                newNonce: null
+            };
+
+            // Mettre à jour le nonce si fourni
+            if (data.data && data.data.new_nonce) {
+                window.pdfBuilderAjax.nonce = data.data.new_nonce;
+                result.newNonce = data.data.new_nonce;
+                console.log('🔄 [PDF Builder] Nonce mis à jour');
+            }
+
+            // Détecter les erreurs de nonce
+            if (!data.success && data.data && data.data.message && data.data.message.includes('Nonce invalide')) {
+                console.warn('🔐 [PDF Builder] Erreur de nonce détectée, actualisation automatique...');
+                result.shouldReload = true;
+                result.errorMessage = 'Nonce invalide - actualisation en cours...';
+                return result;
+            }
+
+            // Retourner le message d'erreur normal si pas de succès
+            if (!data.success && data.data && data.data.message) {
+                result.errorMessage = data.data.message;
+            }
+
+            return result;
+        },
+
+        /**
+         * Gère l'état d'un bouton pendant et après une requête AJAX
+         * @param {HTMLElement} button - Le bouton à gérer
+         * @param {string} state - 'loading', 'success', 'error', 'reset'
+         * @param {Object} options - Options d'affichage
+         */
+        setButtonState: function(button, state, options = {}) {
+            if (!button) return;
+
+            const states = {
+                loading: {
+                    text: options.loadingText || 'Chargement...',
+                    style: { opacity: '0.7' },
+                    disabled: true
+                },
+                success: {
+                    text: options.successText || '✓ Succès',
+                    style: { backgroundColor: '#28a745', color: 'white' },
+                    disabled: false
+                },
+                error: {
+                    text: options.errorText || '❌ Erreur',
+                    style: { backgroundColor: '#dc3545', color: 'white' },
+                    disabled: false
+                },
+                reload: {
+                    text: options.reloadText || '🔄 Actualisation...',
+                    style: { backgroundColor: '#ffc107', color: 'black' },
+                    disabled: true
+                },
+                reset: {
+                    text: options.resetText || button.getAttribute('data-original-text') || 'Enregistrer',
+                    style: { backgroundColor: '', color: '', opacity: '1' },
+                    disabled: false
+                }
+            };
+
+            const stateConfig = states[state];
+            if (!stateConfig) return;
+
+            // Sauvegarder le texte original si pas déjà fait
+            if (!button.getAttribute('data-original-text')) {
+                button.setAttribute('data-original-text', button.textContent);
+            }
+
+            // Appliquer l'état
+            button.textContent = stateConfig.text;
+            button.disabled = stateConfig.disabled;
+
+            // Appliquer les styles
+            Object.keys(stateConfig.style).forEach(prop => {
+                if (stateConfig.style[prop]) {
+                    button.style[prop] = stateConfig.style[prop];
+                } else {
+                    button.style.removeProperty(prop);
+                }
+            });
+        },
+
+        /**
+         * Effectue une requête AJAX avec gestion automatique des erreurs
+         * @param {FormData} formData - Les données du formulaire
+         * @param {Object} options - Options de la requête
+         * @returns {Promise} Promise résolue avec la réponse traitée
+         */
+        makeRequest: function(formData, options = {}) {
+            const defaultOptions = {
+                url: window.ajaxurl || '/wp-admin/admin-ajax.php',
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                button: null,
+                successCallback: null,
+                errorCallback: null,
+                context: 'unknown'
+            };
+
+            const config = { ...defaultOptions, ...options };
+
+            // Ajouter le nonce automatiquement
+            if (!formData.has('nonce')) {
+                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+            }
+
+            // Mettre le bouton en état de chargement
+            if (config.button) {
+                this.setButtonState(config.button, 'loading');
+            }
+
+            return fetch(config.url, {
+                method: config.method,
+                body: formData,
+                headers: config.headers
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(`📥 [${config.context}] Réponse AJAX reçue:`, data);
+
+                const result = this.processResponse(data);
+
+                if (result.success) {
+                    // Succès
+                    if (config.button) {
+                        this.setButtonState(config.button, 'success');
+                        setTimeout(() => {
+                            this.setButtonState(config.button, 'reset');
+                        }, 3000);
+                    }
+
+                    if (config.successCallback) {
+                        config.successCallback(result, data);
+                    }
+
+                } else if (result.shouldReload) {
+                    // Erreur de nonce - recharger la page
+                    if (config.button) {
+                        this.setButtonState(config.button, 'reload');
+                    }
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+
+                } else {
+                    // Erreur normale
+                    if (config.button) {
+                        this.setButtonState(config.button, 'error');
+                        setTimeout(() => {
+                            this.setButtonState(config.button, 'reset');
+                        }, 5000);
+                    }
+
+                    console.error(`[${config.context}] Erreur:`, result.errorMessage);
+
+                    if (config.errorCallback) {
+                        config.errorCallback(result, data);
+                    }
+                }
+
+                return result;
+            })
+            .catch(error => {
+                console.error(`[${config.context}] Erreur réseau:`, error);
+
+                if (config.button) {
+                    this.setButtonState(config.button, 'error', { errorText: '❌ Erreur réseau' });
+                    setTimeout(() => {
+                        this.setButtonState(config.button, 'reset');
+                    }, 5000);
+                }
+
+                if (config.errorCallback) {
+                    config.errorCallback({ success: false, errorMessage: 'Erreur réseau' }, null);
+                }
+
+                throw error;
+            });
+        }
+    };
+
     // Basic modal functionality
     function safeQuerySelector(selector) {
         try {
@@ -1449,26 +1648,18 @@ window.toggleRGPDControls = toggleRGPDControls;
                 formData.append('nonce', window.pdfBuilderCanvasSettings?.nonce || '');
                 formData.append('category', category);
 
-                // Make AJAX request
-                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Show success message
-                        saveButton.textContent = '✓ Sauvegardé';
-                        saveButton.style.backgroundColor = '#28a745';
-                        saveButton.style.color = 'white';
+                // Make AJAX request using centralized handler
+                formData.append('action', 'pdf_builder_save_canvas_settings');
+                formData.append('category', category);
 
+                PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                    button: saveButton,
+                    context: 'Canvas Modal',
+                    successCallback: (result, originalData) => {
                         // Update canvas settings in window object
-                        if (data.data && data.data.saved) {
+                        if (originalData.data && originalData.data.saved) {
                             // Update window.pdfBuilderCanvasSettings with new values
-                            Object.assign(window.pdfBuilderCanvasSettings, data.data.saved);
+                            Object.assign(window.pdfBuilderCanvasSettings, originalData.data.saved);
 
                             // Update previews
                             if (typeof window.updateCanvasPreviews === 'function') {
@@ -1484,46 +1675,12 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Close modal after short delay
                         setTimeout(() => {
                             hideModal(modal);
-                            // Reset button
-                            saveButton.disabled = false;
-                            saveButton.textContent = originalText;
-                            saveButton.style.backgroundColor = '';
-                            saveButton.style.color = '';
-                            saveButton.style.opacity = '1';
+                            PDF_Builder_Ajax_Handler.setButtonState(saveButton, 'reset');
                         }, 1500);
-
-                    } else {
-                        // Show error
-                        saveButton.textContent = '❌ Erreur';
-                        saveButton.style.backgroundColor = '#dc3545';
-                        saveButton.style.color = 'white';
-
-                        console.error('Save failed:', data.data?.message || 'Unknown error');
-
-                        // Reset button after delay
-                        setTimeout(() => {
-                            saveButton.disabled = false;
-                            saveButton.textContent = originalText;
-                            saveButton.style.backgroundColor = '';
-                            saveButton.style.color = '';
-                            saveButton.style.opacity = '1';
-                        }, 3000);
                     }
-                })
-                .catch(error => {
-                    console.error('AJAX error:', error);
-                    saveButton.textContent = '❌ Erreur réseau';
-                    saveButton.style.backgroundColor = '#dc3545';
-                    saveButton.style.color = 'white';
-
-                    // Reset button after delay
-                    setTimeout(() => {
-                        saveButton.disabled = false;
-                        saveButton.textContent = originalText;
-                        saveButton.style.backgroundColor = '';
-                        saveButton.style.color = '';
-                        saveButton.style.opacity = '1';
-                    }, 3000);
+                }).catch(error => {
+                    // Error already handled by the centralized handler
+                    console.error('Canvas modal save error:', error);
                 });
             }
 
@@ -1557,65 +1714,23 @@ window.toggleRGPDControls = toggleRGPDControls;
                 formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
                 formData.append('category', category);
 
-                // Make AJAX request
-                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Show success message
-                        saveButton.textContent = '✓ Sauvegardé';
-                        saveButton.style.backgroundColor = '#28a745';
-                        saveButton.style.color = 'white';
+                // Make AJAX request using centralized handler
+                formData.append('action', 'pdf_builder_save_cache_settings');
+                formData.append('category', category);
 
+                PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                    button: saveButton,
+                    context: 'Cache Modal',
+                    successCallback: (result, originalData) => {
                         // Close modal after short delay
                         setTimeout(() => {
                             hideModal(modal);
-                            // Reset button
-                            saveButton.disabled = false;
-                            saveButton.textContent = originalText;
-                            saveButton.style.backgroundColor = '';
-                            saveButton.style.color = '';
-                            saveButton.style.opacity = '1';
+                            PDF_Builder_Ajax_Handler.setButtonState(saveButton, 'reset');
                         }, 1500);
-
-                    } else {
-                        // Show error
-                        saveButton.textContent = '❌ Erreur';
-                        saveButton.style.backgroundColor = '#dc3545';
-                        saveButton.style.color = 'white';
-
-                        console.error('Cache save failed:', data.data?.message || 'Unknown error');
-
-                        // Reset button after delay
-                        setTimeout(() => {
-                            saveButton.disabled = false;
-                            saveButton.textContent = originalText;
-                            saveButton.style.backgroundColor = '';
-                            saveButton.style.color = '';
-                            saveButton.style.opacity = '1';
-                        }, 3000);
                     }
-                })
-                .catch(error => {
-                    console.error('AJAX error:', error);
-                    saveButton.textContent = '❌ Erreur réseau';
-                    saveButton.style.backgroundColor = '#dc3545';
-                    saveButton.style.color = 'white';
-
-                    // Reset button after delay
-                    setTimeout(() => {
-                        saveButton.disabled = false;
-                        saveButton.textContent = originalText;
-                        saveButton.style.backgroundColor = '';
-                        saveButton.style.color = '';
-                        saveButton.style.opacity = '1';
-                    }, 3000);
+                }).catch(error => {
+                    // Error already handled by the centralized handler
+                    console.error('Cache modal save error:', error);
                 });
             }
 
@@ -1631,67 +1746,22 @@ window.toggleRGPDControls = toggleRGPDControls;
                 clearButton.textContent = 'Nettoyage...';
                 clearButton.style.opacity = '0.7';
 
-                // Make AJAX request
+                // Make AJAX request using centralized handler
                 const formData = new FormData();
                 formData.append('action', 'pdf_builder_clear_cache');
-                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
 
-                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Show success message
-                        clearButton.textContent = '✓ Cache vidé';
-                        clearButton.style.backgroundColor = '#28a745';
-                        clearButton.style.color = 'white';
-
+                PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                    button: clearButton,
+                    context: 'Clear Cache',
+                    successCallback: (result, originalData) => {
                         // Reset button after delay
                         setTimeout(() => {
-                            clearButton.disabled = false;
-                            clearButton.textContent = originalText;
-                            clearButton.style.backgroundColor = '';
-                            clearButton.style.color = '';
-                            clearButton.style.opacity = '1';
-                        }, 3000);
-
-                    } else {
-                        // Show error
-                        clearButton.textContent = '❌ Erreur';
-                        clearButton.style.backgroundColor = '#dc3545';
-                        clearButton.style.color = 'white';
-
-                        console.error('Cache clear failed:', data.data?.message || 'Unknown error');
-
-                        // Reset button after delay
-                        setTimeout(() => {
-                            clearButton.disabled = false;
-                            clearButton.textContent = originalText;
-                            clearButton.style.backgroundColor = '';
-                            clearButton.style.color = '';
-                            clearButton.style.opacity = '1';
+                            PDF_Builder_Ajax_Handler.setButtonState(clearButton, 'reset');
                         }, 3000);
                     }
-                })
-                .catch(error => {
-                    console.error('AJAX error:', error);
-                    clearButton.textContent = '❌ Erreur réseau';
-                    clearButton.style.backgroundColor = '#dc3545';
-                    clearButton.style.color = 'white';
-
-                    // Reset button after delay
-                    setTimeout(() => {
-                        clearButton.disabled = false;
-                        clearButton.textContent = originalText;
-                        clearButton.style.backgroundColor = '';
-                        clearButton.style.color = '';
-                        clearButton.style.opacity = '1';
-                    }, 3000);
+                }).catch(error => {
+                    // Error already handled by the centralized handler
+                    console.error('Clear cache error:', error);
                 });
             }
 
@@ -1707,67 +1777,22 @@ window.toggleRGPDControls = toggleRGPDControls;
                 cleanupButton.textContent = 'Nettoyage...';
                 cleanupButton.style.opacity = '0.7';
 
-                // Make AJAX request
+                // Make AJAX request using centralized handler
                 const formData = new FormData();
                 formData.append('action', 'pdf_builder_remove_temp_files');
-                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
 
-                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Show success message
-                        cleanupButton.textContent = '✓ Nettoyé';
-                        cleanupButton.style.backgroundColor = '#28a745';
-                        cleanupButton.style.color = 'white';
-
+                PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                    button: cleanupButton,
+                    context: 'Cleanup',
+                    successCallback: (result, originalData) => {
                         // Reset button after delay
                         setTimeout(() => {
-                            cleanupButton.disabled = false;
-                            cleanupButton.textContent = originalText;
-                            cleanupButton.style.backgroundColor = '';
-                            cleanupButton.style.color = '';
-                            cleanupButton.style.opacity = '1';
-                        }, 3000);
-
-                    } else {
-                        // Show error
-                        cleanupButton.textContent = '❌ Erreur';
-                        cleanupButton.style.backgroundColor = '#dc3545';
-                        cleanupButton.style.color = 'white';
-
-                        console.error('Cleanup failed:', data.data?.message || 'Unknown error');
-
-                        // Reset button after delay
-                        setTimeout(() => {
-                            cleanupButton.disabled = false;
-                            cleanupButton.textContent = originalText;
-                            cleanupButton.style.backgroundColor = '';
-                            cleanupButton.style.color = '';
-                            cleanupButton.style.opacity = '1';
+                            PDF_Builder_Ajax_Handler.setButtonState(cleanupButton, 'reset');
                         }, 3000);
                     }
-                })
-                .catch(error => {
-                    console.error('AJAX error:', error);
-                    cleanupButton.textContent = '❌ Erreur réseau';
-                    cleanupButton.style.backgroundColor = '#dc3545';
-                    cleanupButton.style.color = 'white';
-
-                    // Reset button after delay
-                    setTimeout(() => {
-                        cleanupButton.disabled = false;
-                        cleanupButton.textContent = originalText;
-                        cleanupButton.style.backgroundColor = '';
-                        cleanupButton.style.color = '';
-                        cleanupButton.style.opacity = '1';
-                    }, 3000);
+                }).catch(error => {
+                    // Error already handled by the centralized handler
+                    console.error('Cleanup error:', error);
                 });
             }
         });
@@ -1848,93 +1873,31 @@ window.toggleRGPDControls = toggleRGPDControls;
                     dataCount: Array.from(formData.entries()).length
                 });
 
-                // Make AJAX request
-                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('📥 [PDF Builder] Réponse AJAX reçue:', data);
+                // Make AJAX request using centralized handler
+                formData.append('action', 'pdf_builder_save_settings');
+                formData.append('tab', tabId);
 
-                    if (data.success) {
-                        // Update nonce if provided
-                        if (data.data && data.data.new_nonce) {
-                            window.pdfBuilderAjax.nonce = data.data.new_nonce;
-                            console.log('🔄 [PDF Builder] Nonce mis à jour');
-                        }
-
-                        // Show success
-                        floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-yes"></span> Enregistré !';
-                        floatingSaveBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #1e7e34 100%)';
-
-                        // Reset button after delay
-                        setTimeout(() => {
-                            floatingSaveBtn.disabled = false;
-                            floatingSaveBtn.innerHTML = originalHTML;
-                            floatingSaveBtn.style.background = '';
-                            floatingSaveBtn.style.opacity = '1';
-                        }, 3000);
-
+                PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                    button: floatingSaveBtn,
+                    context: 'PDF Builder',
+                    successCallback: (result, originalData) => {
                         // Show success notification if available
                         if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                             PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
                         }
-
-                    } else {
-                        // Handle nonce error specifically
-                        if (data.data && data.data.message && data.data.message.includes('Nonce invalide')) {
-                            console.warn('🔐 [PDF Builder] Erreur de nonce détectée, tentative de régénération');
-
-                            // Try to refresh the page to get a new nonce
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 1000);
-
-                            floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-update spin"></span> Actualisation...';
-                            floatingSaveBtn.style.background = 'linear-gradient(135deg, #ffc107 0%, #e0a800 100%)';
-                            return;
-                        }
-
-                        // Show error
-                        console.error('Save failed:', data.data?.message || 'Unknown error');
-                        floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-no"></span> Erreur';
-                        floatingSaveBtn.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
-
-                        // Reset button after delay
-                        setTimeout(() => {
-                            floatingSaveBtn.disabled = false;
-                            floatingSaveBtn.innerHTML = originalHTML;
-                            floatingSaveBtn.style.background = '';
-                            floatingSaveBtn.style.opacity = '1';
-                        }, 5000);
-
+                    },
+                    errorCallback: (result, originalData) => {
                         // Show error notification if available
                         if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                            PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'), 'error');
+                            PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'), 'error');
                         }
                     }
-                })
-                .catch(error => {
-                    console.error('AJAX error:', error);
-                    floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-no"></span> Erreur réseau';
-                    floatingSaveBtn.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
-
-                    // Reset button after delay
-                    setTimeout(() => {
-                        floatingSaveBtn.disabled = false;
-                        floatingSaveBtn.innerHTML = originalHTML;
-                        floatingSaveBtn.style.background = '';
-                        floatingSaveBtn.style.opacity = '1';
-                    }, 5000);
-
+                }).catch(error => {
                     // Show error notification if available
                     if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                         PDF_Builder_Notification_Manager.show_toast('Erreur réseau lors de la sauvegarde', 'error');
                     }
+                    console.error('Floating save error:', error);
                 });
             });
         }
