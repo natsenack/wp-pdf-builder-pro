@@ -36,9 +36,9 @@ Gère les configurations d'options WordPress et les réponses AJAX :
 
 **Utilisation:**
 ```php
-$option_config = PDF_Builder_Config_Manager::get_option_config('canvas_width');
-$sanitized_value = PDF_Builder_Config_Manager::sanitize_value($input, 'number');
-$response = PDF_Builder_Config_Manager::get_response_config('success');
+$option_config = PDF_Builder_Option_Config_Manager::get_option_config('canvas_width');
+$sanitized_value = PDF_Builder_Option_Config_Manager::sanitize_value($input, 'number');
+$response = PDF_Builder_Option_Config_Manager::get_response_config('success');
 ```
 
 ### 3. PDF_Builder_Canvas_Mappings
@@ -274,7 +274,7 @@ $option_configs = [
 **Après:**
 ```php
 // Dans settings-ajax.php
-$option_configs = PDF_Builder_Config_Manager::get_option_configs();
+$option_configs = PDF_Builder_Option_Config_Manager::get_option_configs();
 ```
 
 ## Tests et Validation
