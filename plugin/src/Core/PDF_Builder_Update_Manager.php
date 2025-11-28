@@ -574,7 +574,7 @@ class PDF_Builder_Update_Manager {
 }
 
 // Fonctions globales
-function pdf_builder_get_update_status() {
+function pdf_builder_get_db_update_status() {
     return PDF_Builder_Update_Manager::get_instance()->get_update_status();
 }
 
