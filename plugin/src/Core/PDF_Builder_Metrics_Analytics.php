@@ -161,7 +161,7 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Vide le buffer de métriques
      */
-    private function flush_metric_buffer() {
+    public function flush_metric_buffer() {
         if (empty($this->metric_buffers)) {
             return;
         }

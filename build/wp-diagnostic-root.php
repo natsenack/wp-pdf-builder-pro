@@ -37,12 +37,18 @@ echo "</script>\n";
 echo "<h2>🔄 Chargement de WordPress...</h2>\n";
 
 // Essayer de charger WordPress
+$current_dir = __DIR__;
 $wp_load_attempts = [
-    __DIR__ . '/wp-load.php',
-    dirname(__DIR__) . '/wp-load.php',
-    dirname(__DIR__) . '/wordpress/wp-load.php',
-    dirname(__DIR__) . '/public/wp-load.php',
-    dirname(__DIR__) . '/public_html/wp-load.php'
+    // Remonter depuis le dossier plugin vers la racine WordPress
+    dirname(dirname(dirname($current_dir))) . '/wp-load.php', // /wp-content/plugins/ -> /
+    dirname(dirname(dirname(dirname($current_dir)))) . '/wp-load.php', // au cas où
+    dirname($current_dir) . '/../../wp-load.php', // depuis wp-pdf-builder-pro/
+    dirname($current_dir) . '/../wp-load.php', // depuis plugins/
+    $current_dir . '/../../../../wp-load.php', // chemin absolu depuis plugin
+    // Chemins standards
+    '/var/www/nats/data/www/threeaxe.fr/wp-load.php',
+    '/var/www/html/wp-load.php',
+    '/home/user/public_html/wp-load.php'
 ];
 
 $wp_loaded = false;
