@@ -298,7 +298,7 @@ function pdf_builder_register_ajax_handlers() {
     // REMOVED: pdf_builder_save_canvas_settings and pdf_builder_get_canvas_settings are now handled by PDF_Builder_Admin
 
     // Settings save handler - PRIORITY: settings-ajax.php over AjaxHandler.php
-    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_handler', 1);
+    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax', 1);
 
     // Global save all settings handler (bouton flottant)
     add_action('wp_ajax_pdf_builder_save_all_settings', 'pdf_builder_save_all_settings_handler', 1);
