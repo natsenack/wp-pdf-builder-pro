@@ -118,7 +118,7 @@ function pdf_builder_diagnose_onboarding_manager() {
 // ✅ BLOQUER LES NOTIFICATIONS WORDPRESS AVANT TOUT
 // ============================================================================
 // Cette approche très tôt supprime les notifications AVANT qu'elles ne s'affichent
-if (is_admin()) {
+if (function_exists('is_admin') && is_admin()) {
     // Vérifier que nous sommes sur une page PDF Builder
     $pdf_builder_pages = [
         'pdf-builder-pro',
