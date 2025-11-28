@@ -701,13 +701,14 @@ if (
 <?php require_once 'settings-modals.php'; ?>
 
 <!-- Floating Save Button - HORS du conteneur principal -->
-<div id="floating-save-button" style="position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 999999 !important; border-radius: 10px; padding: 5px; display: block !important; visibility: visible !important; opacity: 1 !important; background: rgba(255,255,255,0.9); border: 1px solid #007cba;">
-    <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white !important; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex !important; align-items: center; gap: 8px; visibility: visible !important; opacity: 1 !important;">
-        <span class="save-icon">💾</span>
-        <span class="save-text">Enregistrer</span>
+<div id="floating-save-button" style="position: fixed !important; bottom: 24px !important; right: 24px !important; z-index: 999999 !important; border-radius: 16px; padding: 0; display: block !important; visibility: visible !important; opacity: 1 !important; background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.2);">
+    <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white !important; border: none; border-radius: 12px; padding: 12px 20px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex !important; align-items: center; gap: 6px; visibility: visible !important; opacity: 1 !important; letter-spacing: 0.025em; text-transform: none;">
+        <span class="save-icon" style="font-size: 16px; line-height: 1;">💾</span>
+        <span class="save-text" style="font-weight: 600;">Enregistrer</span>
     </button>
-    <div class="floating-tooltip" style="position: absolute; bottom: 70px; right: 0; background: #333; color: white; padding: 8px 12px; border-radius: 6px; font-size: 14px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-        Cliquez pour sauvegarder tous les paramètres
+    <div class="floating-tooltip" style="position: absolute; bottom: 60px; right: 0; background: rgba(0,0,0,0.9); color: white; padding: 10px 14px; border-radius: 8px; font-size: 13px; white-space: nowrap; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 8px 24px rgba(0,0,0,0.15); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1);">
+        💡 Cliquez pour sauvegarder
+        <div style="position: absolute; top: 100%; right: 16px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid rgba(0,0,0,0.9);"></div>
     </div>
 </div>
 
@@ -855,92 +856,151 @@ if (
 </script>
 
 <style>
-/* Styles pour le bouton flottant */
+/* Styles pour le bouton flottant moderne */
 #floating-save-button {
     position: fixed !important;
-    bottom: 20px !important;
-    right: 20px !important;
+    bottom: 24px !important;
+    right: 24px !important;
     z-index: 999999 !important;
-    border-radius: 10px;
-    padding: 5px;
+    border-radius: 16px;
+    padding: 0;
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .floating-save-btn {
-    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white !important;
     border: none;
-    border-radius: 50px;
-    padding: 15px 25px;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex !important;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     visibility: visible !important;
     opacity: 1 !important;
+    letter-spacing: 0.025em;
+    text-transform: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.floating-save-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.floating-save-btn:hover::before {
+    left: 100%;
 }
 
 .floating-save-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.floating-save-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .floating-save-btn.saving {
-    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
     animation: pulse 1.5s infinite;
+    transform: scale(0.98);
 }
 
 .floating-save-btn.saved {
-    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    animation: bounce 0.6s ease;
 }
 
 .floating-save-btn.error {
-    background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    animation: shake 0.5s ease;
 }
 
 .floating-tooltip {
     position: absolute;
-    bottom: 70px;
+    bottom: 60px;
     right: 0;
-    background: #333;
+    background: rgba(0,0,0,0.9);
     color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.floating-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 16px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(0,0,0,0.9);
 }
 
 .floating-save-btn:hover + .floating-tooltip,
 .floating-tooltip:hover {
     opacity: 1;
+    transform: translateY(-2px);
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0%, 100% { transform: scale(0.98); }
+    50% { transform: scale(1.02); }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-4px); }
+    60% { transform: translateY(-2px); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+    20%, 40%, 60%, 80% { transform: translateX(2px); }
 }
 
 /* Responsive design pour mobile */
 @media (max-width: 768px) {
     #floating-save-button {
-        bottom: 15px;
-        right: 15px;
+        bottom: 20px;
+        right: 20px;
     }
 
     .floating-save-btn {
-        padding: 12px 20px;
-        font-size: 14px;
+        padding: 10px 16px;
+        font-size: 13px;
     }
 
     .floating-tooltip {
@@ -2373,19 +2433,54 @@ window.toggleRGPDControls = toggleRGPDControls;
                     if (!floatingContainer) {
                         const newContainer = document.createElement('div');
                         newContainer.id = 'floating-save-button';
-                        newContainer.style.cssText = 'position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 999999 !important; border-radius: 10px; padding: 5px; display: block !important; visibility: visible !important; opacity: 1 !important;';
+                        newContainer.style.cssText = `
+                            position: fixed !important;
+                            bottom: 24px !important;
+                            right: 24px !important;
+                            z-index: 999999 !important;
+                            border-radius: 16px;
+                            padding: 0;
+                            display: block !important;
+                            visibility: visible !important;
+                            opacity: 1 !important;
+                            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+                            backdrop-filter: blur(10px);
+                            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+                            border: 1px solid rgba(255,255,255,0.2);
+                            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        `;
 
                         const newBtn = document.createElement('button');
                         newBtn.id = 'floating-save-btn';
                         newBtn.type = 'button';
                         newBtn.className = 'floating-save-btn';
-                        newBtn.style.cssText = 'background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white !important; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex !important; align-items: center; gap: 8px; visibility: visible !important; opacity: 1 !important;';
-                        newBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
+                        newBtn.style.cssText = `
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white !important;
+                            border: none;
+                            border-radius: 12px;
+                            padding: 12px 20px;
+                            font-size: 14px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+                            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                            display: flex !important;
+                            align-items: center;
+                            gap: 6px;
+                            visibility: visible !important;
+                            opacity: 1 !important;
+                            letter-spacing: 0.025em;
+                            text-transform: none;
+                            position: relative;
+                            overflow: hidden;
+                        `;
+                        newBtn.innerHTML = '<span class="save-icon" style="font-size: 16px; line-height: 1;">💾</span><span class="save-text" style="font-weight: 600;">Enregistrer</span>';
 
                         newContainer.appendChild(newBtn);
                         document.body.appendChild(newContainer);
 
-                        console.log('🔧 [PDF Builder] Bouton flottant recréé');
+                        console.log('🔧 [PDF Builder] Bouton flottant recréé avec style moderne');
 
                         // Ré-attacher l'événement
                         newBtn.addEventListener('click', function(event) {
