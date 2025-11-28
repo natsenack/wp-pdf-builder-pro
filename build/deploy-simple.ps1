@@ -559,4 +559,5 @@ try {
     Pop-Location
 } catch {
     Write-Host "   ⚠️ Erreur lors du final push: $($_.Exception.Message)" -ForegroundColor Yellow
-}
+}/ /   F o r c e   d e p l o y  
+ 
