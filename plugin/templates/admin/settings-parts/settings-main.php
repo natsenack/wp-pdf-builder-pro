@@ -1552,6 +1552,7 @@ function initializeTabs() {
 });
 
 // Canvas configuration modals functionality - Version stable
+<script>
 (function() {
     'use strict';
 
