@@ -826,7 +826,6 @@ if (
                                 // Utiliser AJAX au lieu de soumission normale
                                 const formData = new FormData(form);
                                 formData.append('action', 'pdf_builder_save_settings');
-                                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
                                 formData.append('tab', tabId);
 
                                 PDF_Builder_Ajax_Handler.makeRequest(formData, {
@@ -2348,7 +2347,6 @@ window.toggleRGPDControls = toggleRGPDControls;
                 // Collect form data
                 const formData = new FormData(form);
                 formData.append('action', 'pdf_builder_save_settings');
-                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
                 formData.append('tab', tabId);
 
                 console.log('📤 [PDF Builder] Envoi des données du formulaire:', {
@@ -2358,9 +2356,6 @@ window.toggleRGPDControls = toggleRGPDControls;
                 });
 
                 // Make AJAX request using centralized handler
-                formData.append('action', 'pdf_builder_save_settings');
-                formData.append('tab', tabId);
-
                 PDF_Builder_Ajax_Handler.makeRequest(formData, {
                     button: floatingSaveBtn,
                     context: 'PDF Builder',
