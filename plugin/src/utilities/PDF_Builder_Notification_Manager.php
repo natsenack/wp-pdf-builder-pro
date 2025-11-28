@@ -14,9 +14,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Classe pour gérer les notifications de manière unifiée
+ * Classe pour gérer les notifications UI de manière unifiée
  */
-class PDF_Builder_Notification_Manager {
+class PDF_Builder_UI_Notification_Manager {
 
     /**
      * Types de notification supportés
