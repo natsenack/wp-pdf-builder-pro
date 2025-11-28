@@ -674,6 +674,26 @@ document.addEventListener('DOMContentLoaded', function() {
             formId: developpeurForm.id,
             buttonId: submitBtn.id,
             buttonValue: submitBtn.value,
+            buttonVisible: submitBtn.offsetWidth > 0 && submitBtn.offsetHeight > 0,
+            buttonEnabled: !submitBtn.disabled,
+            buttonDisplay: window.getComputedStyle(submitBtn).display,
+            buttonVisibility: window.getComputedStyle(submitBtn).visibility,
+            buttonOpacity: window.getComputedStyle(submitBtn).opacity,
+            formVisible: developpeurForm.offsetWidth > 0 && developpeurForm.offsetHeight > 0,
+            timestamp: new Date().toISOString()
+        });
+
+        // Vérifier si le bouton est dans le viewport
+        const rect = submitBtn.getBoundingClientRect();
+        const isInViewport = rect.top >= 0 && rect.left >= 0 &&
+                           rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                           rect.right <= (window.innerWidth || document.documentElement.clientWidth);
+
+        console.log('👁️ [PDF Builder] Position du bouton développeur', {
+            buttonRect: rect,
+            isInViewport,
+            scrollY: window.scrollY,
+            windowHeight: window.innerHeight,
             timestamp: new Date().toISOString()
         });
 
@@ -684,6 +704,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 formId: developpeurForm.id,
                 formAction: developpeurForm.action,
                 formMethod: developpeurForm.method,
+                eventType: e.type,
+                eventTarget: e.target.id,
+                eventCurrentTarget: e.currentTarget.id,
                 timestamp: new Date().toISOString()
             });
 
@@ -713,6 +736,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Ne pas empêcher la soumission, juste logger
         });
+
+        // Test de cliquabilité toutes les 5 secondes
+        setInterval(() => {
+            const isClickable = !submitBtn.disabled &&
+                              submitBtn.offsetWidth > 0 &&
+                              submitBtn.offsetHeight > 0 &&
+                              window.getComputedStyle(submitBtn).display !== 'none' &&
+                              window.getComputedStyle(submitBtn).visibility !== 'hidden';
+
+            console.log('🔍 [PDF Builder] État du bouton développeur (vérification périodique)', {
+                isClickable,
+                disabled: submitBtn.disabled,
+                visible: submitBtn.offsetWidth > 0 && submitBtn.offsetHeight > 0,
+                display: window.getComputedStyle(submitBtn).display,
+                visibility: window.getComputedStyle(submitBtn).visibility,
+                timestamp: new Date().toISOString()
+            });
+        }, 5000);
+
     } else {
         console.warn('⚠️ [PDF Builder] Bouton ou formulaire développeur non trouvé', {
             formFound: !!developpeurForm,
