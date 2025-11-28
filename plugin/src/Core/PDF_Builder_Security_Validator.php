@@ -475,6 +475,11 @@ class PDF_Builder_Security_Validator
             return '';
         }
 
+        // Vérifier si WordPress est chargé
+        if (!function_exists('wp_kses')) {
+            return $content; // Retourner le contenu non filtré si WordPress n'est pas disponible
+        }
+
         // Liste des tags HTML autorisés pour les PDFs
         $allowed_tags = [
             'p' => [
@@ -591,8 +596,8 @@ class PDF_Builder_Security_Validator
         // Utilisation de wp_kses pour sanitisation
         $sanitized = wp_kses($content, $allowed_tags);
 
-        // Log des modifications pour audit
-        if ($sanitized !== $content) {
+        // Log des modifications pour audit (seulement si WordPress est complètement chargé)
+        if ($sanitized !== $content && function_exists('get_current_user_id')) {
             self::logSecurityEvent(
                 'html_sanitized',
                 [
@@ -617,14 +622,17 @@ class PDF_Builder_Security_Validator
         $data = json_decode($json_data, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            self::logSecurityEvent(
-                'invalid_json',
-                [
-                'error' => json_last_error_msg(),
-                'user_id' => get_current_user_id(),
-                'ip' => self::getClientIp()
-                ]
-            );
+            // Log seulement si WordPress est disponible
+            if (function_exists('get_current_user_id')) {
+                self::logSecurityEvent(
+                    'invalid_json',
+                    [
+                    'error' => json_last_error_msg(),
+                    'user_id' => get_current_user_id(),
+                    'ip' => self::getClientIp()
+                    ]
+                );
+            }
             return false;
         }
 
@@ -649,6 +657,11 @@ class PDF_Builder_Security_Validator
 
     public static function validateNonce($nonce, $action)
     {
+        // Vérifier si WordPress est chargé
+        if (!function_exists('wp_verify_nonce')) {
+            return false; // Retourner false si WordPress n'est pas disponible
+        }
+
         $valid = wp_verify_nonce($nonce, $action);
 
         if (!$valid) {
@@ -717,6 +730,11 @@ class PDF_Builder_Security_Validator
 
     public static function checkPermissions($capability = 'manage_options')
     {
+        // Vérifier si WordPress est chargé
+        if (!function_exists('current_user_can')) {
+            return false; // Retourner false si WordPress n'est pas disponible
+        }
+
         if (!current_user_can($capability)) {
             self::logSecurityEvent(
                 'insufficient_permissions',
