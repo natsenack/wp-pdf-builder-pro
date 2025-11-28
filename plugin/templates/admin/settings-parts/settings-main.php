@@ -237,7 +237,7 @@ window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings); ?
 
 // Variables AJAX globales pour les requêtes AJAX
 window.pdfBuilderAjax = {
-    nonce: '<?php echo wp_create_nonce('pdf_builder_save_settings'); ?>',
+    nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>',
     ajaxurl: '<?php echo admin_url('admin-ajax.php'); ?>'
 };
 
