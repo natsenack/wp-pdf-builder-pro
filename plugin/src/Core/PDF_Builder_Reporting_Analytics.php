@@ -1637,11 +1637,11 @@ class PDF_Builder_Reporting_Analytics {
 }
 
 // Fonctions globales
-function pdf_builder_reporting() {
+function pdf_builder_reporting_analytics() {
     return PDF_Builder_Reporting_Analytics::get_instance();
 }
 
-function pdf_builder_generate_report($type, $period = 'monthly', $format = 'html') {
+function pdf_builder_generate_analytics_report($type, $period = 'monthly', $format = 'html') {
     return PDF_Builder_Reporting_Analytics::get_instance()->generate_report($type, $period, $format);
 }
 

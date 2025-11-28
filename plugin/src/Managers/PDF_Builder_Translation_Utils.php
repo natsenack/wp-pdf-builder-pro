@@ -228,7 +228,7 @@ class PdfBuilderTranslationUtils
 }
 
 // Fonction helper globale pour accéder aux utilitaires de traduction
-function pdf_builder_translate($text, $context = '')
+function pdf_builder_translate_utils($text, $context = '')
 {
     return PDF_Builder_Translation_Utils::getInstance()->translate($text, $context);
 }
