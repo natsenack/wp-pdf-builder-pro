@@ -41,7 +41,7 @@ class PDF_Builder_Metrics_Analytics {
         // Collecte de métriques
         add_action('wp_ajax_pdf_builder_track_metric', [$this, 'track_metric_ajax']);
         add_action('wp_ajax_pdf_builder_get_metrics', [$this, 'get_metrics_ajax']);
-        add_action('wp_ajax_pdf_builder_get_analytics', [$this, 'get_analytics_ajax']);
+        add_action('wp_ajax_pdf_builder_get_metrics_analytics', [$this, 'get_analytics_ajax']);
 
         // Actions de métriques automatiques
         add_action('pdf_builder_pdf_generated', [$this, 'track_pdf_generation']);
@@ -862,7 +862,7 @@ function pdf_builder_get_metrics($type = null, $name = null, $period = 'daily', 
     return PDF_Builder_Metrics_Analytics::get_instance()->get_metrics($type, $name, $period, $limit);
 }
 
-function pdf_builder_get_analytics($period = 'monthly') {
+function pdf_builder_get_metrics_analytics($period = 'monthly') {
     return PDF_Builder_Metrics_Analytics::get_instance()->get_analytics($period);
 }
 
