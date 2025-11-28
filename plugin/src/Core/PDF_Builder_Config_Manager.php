@@ -126,8 +126,10 @@ class PDF_Builder_Global_Config_Manager {
         // Fusionner avec les valeurs par défaut
         $this->config = array_merge($this->defaults, $saved_config);
 
-        // Valider la configuration chargée
-        $this->config = apply_filters('pdf_builder_validate_config', $this->config);
+        // Valider la configuration chargée (seulement si WordPress est chargé)
+        if (function_exists('apply_filters')) {
+            $this->config = apply_filters('pdf_builder_validate_config', $this->config);
+        }
     }
 
     /**
@@ -151,8 +153,10 @@ class PDF_Builder_Global_Config_Manager {
             ]);
         }
 
-        // Déclencher un hook pour les autres composants
-        do_action('pdf_builder_config_updated', $this->config, $validated_config);
+        // Déclencher un hook pour les autres composants (seulement si WordPress est chargé)
+        if (function_exists('do_action')) {
+            do_action('pdf_builder_config_updated', $this->config, $validated_config);
+        }
 
         return true;
     }
@@ -171,7 +175,10 @@ class PDF_Builder_Global_Config_Manager {
             ]);
         }
 
-        do_action('pdf_builder_config_reset', $this->config);
+        // Déclencher un hook (seulement si WordPress est chargé)
+        if (function_exists('do_action')) {
+            do_action('pdf_builder_config_reset', $this->config);
+        }
 
         return true;
     }
@@ -525,7 +532,7 @@ function pdf_builder_health_check() {
     return PDF_Builder_Global_Config_Manager::get_instance()->health_check();
 }
 
-// Initialiser le gestionnaire de configuration
-add_action('plugins_loaded', function() {
+// Initialiser le gestionnaire de configuration (plus tard pour éviter les erreurs)
+add_action('init', function() {
     PDF_Builder_Global_Config_Manager::get_instance();
-});
+}, 5);
