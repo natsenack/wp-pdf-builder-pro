@@ -1551,27 +1551,139 @@ function initializeTabs() {
     }, 500);
 });
 
-// Canvas configuration modals functionality - Version stable
+// Simplified canvas configuration modals functionality
 <script>
 (function() {
     'use strict';
 
-    // Configuration
-    const MODAL_Z_INDEX = 2147483647; // Maximum z-index possible (signed 32-bit integer)
-    const MODAL_CONFIG = {
-        display: 'flex',
-        visibility: 'visible',
-        opacity: '1',
-        position: 'fixed',
-        top: '0',
-        left: '0',
-        width: '100%',
-        height: '100%',
-        background: 'rgba(0,0,0,0.7)',
-        'z-index': MODAL_Z_INDEX.toString()
+    // Basic modal functionality
+    function safeQuerySelector(selector) {
+        try {
+            return document.querySelector(selector);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function safeQuerySelectorAll(selector) {
+        try {
+            return document.querySelectorAll(selector);
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function hideModal(modal) {
+        if (!modal) return;
+        try {
+            modal.style.setProperty('display', 'none', 'important');
+        } catch (e) {
+        }
+    }
+
+    function showModal(modal) {
+        if (!modal) return false;
+        try {
+            modal.style.setProperty('display', 'flex', 'important');
+            modal.style.setProperty('position', 'fixed', 'important');
+            modal.style.setProperty('top', '0', 'important');
+            modal.style.setProperty('left', '0', 'important');
+            modal.style.setProperty('width', '100%', 'important');
+            modal.style.setProperty('height', '100%', 'important');
+            modal.style.setProperty('background', 'rgba(0,0,0,0.7)', 'important');
+            modal.style.setProperty('z-index', '2147483647', 'important');
+            modal.style.setProperty('align-items', 'center', 'important');
+            modal.style.setProperty('justify-content', 'center', 'important');
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // Initialize modals
+    function initializeModals() {
+        // Hide all modals by default
+        const allModals = safeQuerySelectorAll('.canvas-modal');
+        allModals.forEach(hideModal);
+
+        // Basic event delegation for modals
+        document.addEventListener('click', function(event) {
+            const target = event.target;
+
+            // Handle configure buttons
+            if (target.closest('.canvas-configure-btn')) {
+                event.preventDefault();
+                const button = target.closest('.canvas-configure-btn');
+                const card = button.closest('.canvas-card');
+                if (!card) return;
+
+                const category = card.getAttribute('data-category');
+                if (!category) return;
+
+                const modalId = 'canvas-' + category + '-modal';
+                const modal = document.getElementById(modalId);
+                if (!modal) return;
+
+                showModal(modal);
+            }
+
+            // Handle close buttons
+            if (target.closest('.canvas-modal-close, .canvas-modal-cancel')) {
+                const modal = target.closest('.canvas-modal');
+                if (modal) hideModal(modal);
+            }
+
+            // Handle modal background click
+            if (target.classList.contains('canvas-modal') || target.classList.contains('canvas-modal-overlay')) {
+                hideModal(target.closest('.canvas-modal'));
+            }
+        });
+
+        // Handle escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const visibleModals = safeQuerySelectorAll('.canvas-modal[style*="display: flex"]');
+                visibleModals.forEach(hideModal);
+            }
+        });
+    }
+
+    // Basic preview update functions
+    window.updateCanvasPreviews = function(category) {
+        // Simplified preview updates
+        if (typeof window.updateDimensionsCardPreview === 'function') {
+            window.updateDimensionsCardPreview();
+        }
+        if (typeof window.updateApparenceCardPreview === 'function') {
+            window.updateApparenceCardPreview();
+        }
+        if (typeof window.updateGrilleCardPreview === 'function') {
+            window.updateGrilleCardPreview();
+        }
+        if (typeof window.updateInteractionsCardPreview === 'function') {
+            window.updateInteractionsCardPreview();
+        }
+        if (typeof window.updateExportCardPreview === 'function') {
+            window.updateExportCardPreview();
+        }
+        if (typeof window.updatePerformanceCardPreview === 'function') {
+            window.updatePerformanceCardPreview();
+        }
+        if (typeof window.updateAutosaveCardPreview === 'function') {
+            window.updateAutosaveCardPreview();
+        }
     };
 
-    let isInitialized = false;
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeModals();
+        });
+    } else {
+        initializeModals();
+    }
+})();
+</script>
 
     // Utility functions
     function safeQuerySelector(selector) {
