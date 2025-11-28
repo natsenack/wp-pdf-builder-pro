@@ -1199,7 +1199,6 @@ function pdf_builder_get_canvas_settings_handler() {
                     'keyboard_shortcuts' => get_option('pdf_builder_canvas_keyboard_shortcuts', true)
                 ];
                 break;
-                break;
 
             case 'export':
                 $values = [
