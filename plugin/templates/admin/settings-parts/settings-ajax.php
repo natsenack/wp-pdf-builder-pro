@@ -560,7 +560,10 @@ function pdf_builder_save_settings_handler() {
     PDF_Builder_Security_Manager::debug_log('php_errors', 'pdf_builder_save_settings_handler called with current_tab: ' . ($_POST['current_tab'] ?? 'not set'));
     PDF_Builder_Security_Manager::debug_log('php_errors', 'POST data: ' . print_r($_POST, true));
 
-    if (PDF_Builder_Security_Manager::verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
+        return;
+    }
         $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
 
         // Extraire la liste des champs collectés côté JS pour comparaison (si présente)
@@ -698,15 +701,16 @@ function pdf_builder_save_settings_handler() {
 
 
         }
-    } else {
-        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
     }
 }
 
 // Canvas settings AJAX handler
 function pdf_builder_save_canvas_settings_handler() {
 
-    if (PDF_Builder_Security_Manager::verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
+        return;
+    }
 
         $category = PDF_Builder_Sanitizer::text($_POST['category'] ?? 'dimensions');
 
@@ -1052,16 +1056,13 @@ function pdf_builder_save_canvas_settings_handler() {
         } catch (Exception $e) {
             send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
-    } else {
-        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
-    }
 }
 
 // Handler pour récupérer les paramètres canvas
 function pdf_builder_get_canvas_settings_handler() {
     try {
         // Vérifier le nonce - utiliser le même que PDF_Builder_Admin
-        if (!PDF_Builder_Security_Manager::verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
             send_ajax_response(false, 'Nonce invalide');
             return;
         }
@@ -1246,7 +1247,7 @@ function pdf_builder_get_canvas_settings_handler() {
 function pdf_builder_get_all_canvas_settings_handler() {
     try {
         // Verify nonce
-        if (!PDF_Builder_Security_Manager::verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
             send_ajax_response(false, 'Nonce invalide');
             return;
         }
