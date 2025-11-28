@@ -232,8 +232,8 @@ $default_orientation = $preview_data['default_orientation'];
 ?>
 <script>
 // Données centralisées chargées depuis la base de données
-window.pdfBuilderSavedSettings = <?php echo json_encode($preview_data); ?>;
-window.pdfBuilderCanvasSettings = <?php echo json_encode($canvas_settings); ?>;
+window.pdfBuilderSavedSettings = <?php echo wp_json_encode($preview_data); ?>;
+window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings); ?>;
 
 // Système centralisé d'initialisation des previews avec données BDD
 window.PDF_Builder_Preview_Manager = {
@@ -849,8 +849,8 @@ console.log('PDF Builder: TEST SCRIPT STARTED');
 
 // Test PHP constants
 try {
-    const PDF_BUILDER_DEBUG_ENABLED = <?php echo isset($settings['debug_javascript']) && $settings['debug_javascript'] ? 'true' : 'false'; ?>;
-    const PDF_BUILDER_DEBUG_VERBOSE = <?php echo isset($settings['debug_javascript_verbose']) && $settings['debug_javascript_verbose'] ? 'true' : 'false'; ?>;
+    const PDF_BUILDER_DEBUG_ENABLED = <?php echo wp_json_encode(isset($settings['debug_javascript']) && $settings['debug_javascript']); ?>;
+    const PDF_BUILDER_DEBUG_VERBOSE = <?php echo wp_json_encode(isset($settings['debug_javascript_verbose']) && $settings['debug_javascript_verbose']); ?>;
     console.log('PDF Builder: PHP constants loaded successfully - DEBUG_ENABLED:', PDF_BUILDER_DEBUG_ENABLED, 'VERBOSE:', PDF_BUILDER_DEBUG_VERBOSE);
 } catch (error) {
     console.error('PDF Builder: Error loading PHP constants:', error);
@@ -1209,12 +1209,12 @@ function initializeTabs() {
             // Créer ou mettre à jour l'indicateur
             if (selectValue && selectValue !== '') {
                 // Template assigné - récupérer le texte de l'option sélectionnée
-                const selectedOption = select.querySelector(`option[value="${selectValue}"]`);
-                const templateName = selectedOption ? selectedOption.textContent : 'Template inconnu';
+                const selectedOption = select.querySelector(`option[value="${selectValue.replace(/"/g, '\\"')}"]`);
+                const templateName = selectedOption ? selectedOption.textContent.trim() : 'Template inconnu';
                 
                 previewDiv.innerHTML = `
                     <p class="current-template">
-                        <strong>Assigné :</strong> ${templateName}
+                        <strong>Assigné :</strong> ${templateName.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
                         <span class="assigned-badge">✓</span>
                     </p>
                 `;
