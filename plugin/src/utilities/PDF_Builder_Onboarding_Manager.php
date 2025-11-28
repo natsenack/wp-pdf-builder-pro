@@ -1,7 +1,5 @@
 <?php
-
 namespace PDF_Builder\Utilities;
-
 /**
  * PDF Builder Pro - Onboarding Manager
  * Gestionnaire d'onboarding et tutoriels
@@ -9,26 +7,21 @@ namespace PDF_Builder\Utilities;
  * @package PDF_Builder
  * @since 1.0.0
  */
-
 if (!defined('ABSPATH')) {
     exit;
 }
-
 /**
  * Classe pour gérer l'onboarding et les tutoriels
  */
 class PDF_Builder_Onboarding_Manager {
-
     /**
      * Instance unique (Singleton)
      */
     private static $instance = null;
-
     /**
      * Options d'onboarding
      */
     private $onboarding_options = [];
-
     /**
      * Constructeur privé (Singleton)
      */
@@ -38,11 +31,9 @@ class PDF_Builder_Onboarding_Manager {
             debug_log('ABSPATH non défini - WordPress pas chargé');
             return;
         }
-        
         $this->init_hooks();
         $this->load_onboarding_options();
     }
-
     /**
      * Obtenir l'instance unique avec gestion d'erreur
      */
@@ -53,7 +44,6 @@ class PDF_Builder_Onboarding_Manager {
                 debug_log('Classe non trouvée lors de get_instance()');
                 return null;
             }
-            
             try {
                 self::$instance = new self();
             } catch (Exception $e) {
@@ -63,7 +53,6 @@ class PDF_Builder_Onboarding_Manager {
         }
         return self::$instance;
     }
-
     /**
      * Initialiser les hooks
      */
@@ -72,7 +61,6 @@ class PDF_Builder_Onboarding_Manager {
         if (!function_exists('add_action')) {
             return;
         }
-
         // Utiliser admin_enqueue_scripts au lieu de admin_init pour une meilleure synchronisation
         add_action('admin_enqueue_scripts', [$this, 'check_onboarding_status']);
         add_action('wp_ajax_pdf_builder_complete_onboarding_step', [$this, 'ajax_complete_onboarding_step']);
@@ -85,7 +73,6 @@ class PDF_Builder_Onboarding_Manager {
         add_action('wp_ajax_pdf_builder_save_template_assignment', [$this, 'ajax_save_template_assignment']);
         add_action('wp_ajax_pdf_builder_mark_onboarding_complete', [$this, 'ajax_mark_onboarding_complete']);
     }
-
     /**
      * Charger les options d'onboarding
      */
@@ -99,14 +86,12 @@ class PDF_Builder_Onboarding_Manager {
             'last_activity' => current_time('timestamp')
         ]);
     }
-
     /**
      * Sauvegarder les options d'onboarding
      */
     private function save_onboarding_options() {
         update_option('pdf_builder_onboarding', $this->onboarding_options);
     }
-
     /**
      * Vérifier le statut d'onboarding (appelé via admin_enqueue_scripts)
      */
@@ -119,11 +104,9 @@ class PDF_Builder_Onboarding_Manager {
         ])) {
             return;
         }
-
         // Enqueue les scripts et styles d'onboarding
         wp_enqueue_script('pdf-builder-onboarding', PDF_BUILDER_PRO_ASSETS_URL . 'js/onboarding.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
         wp_enqueue_style('pdf-builder-onboarding', PDF_BUILDER_PRO_ASSETS_URL . 'css/onboarding.css', [], PDF_BUILDER_PRO_VERSION);
-
         // Localize le script avec les données AJAX
         wp_localize_script('pdf-builder-onboarding', 'pdfBuilderOnboarding', [
             'ajax_url' => admin_url('admin-ajax.php'),
@@ -138,38 +121,32 @@ class PDF_Builder_Onboarding_Manager {
                 'success' => __('Succès', 'pdf-builder-pro')
             ]
         ]);
-
         // Vérifier le statut d'onboarding
         $completed = $this->is_onboarding_completed();
         $skipped = $this->is_onboarding_skipped();
-
         // Afficher le wizard seulement si ce n'est ni terminé ni ignoré
         if (!$completed && !$skipped) {
             add_action('admin_footer', [$this, 'render_onboarding_wizard']);
         }
     }
-
     /**
      * Vérifier si l'onboarding est terminé
      */
     public function is_onboarding_completed() {
         return $this->onboarding_options['completed'];
     }
-
     /**
      * Vérifier si l'onboarding a été ignoré
      */
     public function is_onboarding_skipped() {
         return $this->onboarding_options['skipped'];
     }
-
     /**
      * Obtenir l'étape actuelle
      */
     public function get_current_step() {
         $current_step = $this->onboarding_options['current_step'] ?? 1;
         $all_steps = $this->get_onboarding_steps();
-        
         // S'assurer que l'étape actuelle existe dans les étapes disponibles
         if (!isset($all_steps[$current_step])) {
             // Si l'étape n'existe pas, prendre la première étape disponible
@@ -178,10 +155,8 @@ class PDF_Builder_Onboarding_Manager {
             $this->onboarding_options['current_step'] = $current_step;
             $this->save_onboarding_options();
         }
-        
         return $current_step;
     }
-
     /**
      * Obtenir toutes les étapes d'onboarding
      */
@@ -229,7 +204,6 @@ class PDF_Builder_Onboarding_Manager {
                 'requires_selection' => true // Template doit être sélectionné pour continuer
             ]
         ];
-
         // Ajouter l'étape WooCommerce seulement si WooCommerce est installé
         if (class_exists('WooCommerce')) {
             $steps[5] = [
@@ -264,10 +238,8 @@ class PDF_Builder_Onboarding_Manager {
                 'can_skip' => false // Dernière étape, ne peut pas être ignorée
             ];
         }
-
         return $steps;
     }
-
     /**
      * Obtenir le contenu d'une étape
      */
@@ -295,15 +267,12 @@ class PDF_Builder_Onboarding_Manager {
                         </div>
                     </div>
                 ';
-
             case 'environment_check':
                 $checks = $this->perform_environment_checks();
                 $content = '<div class="environment-checks">';
-
                 foreach ($checks as $check) {
                     $status_class = $check['status'] ? 'success' : 'warning';
                     $status_icon = $check['status'] ? '✅' : '⚠️';
-
                     $content .= '
                         <div class="check-item ' . $status_class . '">
                             <span class="check-icon">' . $status_icon . '</span>
@@ -314,10 +283,8 @@ class PDF_Builder_Onboarding_Manager {
                         </div>
                     ';
                 }
-
                 $content .= '</div>';
                 return $content;
-
             case 'freemium_mode':
                 return '
                     <div class="freemium-mode-selection">
@@ -386,11 +353,9 @@ class PDF_Builder_Onboarding_Manager {
                         </div>
                     </div>
                 ';
-
             case 'first_template':
                 // Scanner les templates prédéfinis disponibles
                 $predefined_templates = $this->get_predefined_templates();
-
                 $template_cards = '';
                 foreach ($predefined_templates as $template) {
                     $template_cards .= '
@@ -403,7 +368,6 @@ class PDF_Builder_Onboarding_Manager {
                         </div>
                     ';
                 }
-
                 // Ajouter l'option template vierge
                 $template_cards .= '
                     <div class="template-card" data-template="blank" data-tooltip="Canvas vierge pour créer votre propre design personnalisé">
@@ -414,7 +378,6 @@ class PDF_Builder_Onboarding_Manager {
                         <p>' . __('Commencez depuis zéro', 'pdf-builder-pro') . '</p>
                     </div>
                 ';
-
                 return '
                     <div class="first-template-setup">
                         <p>' . __('Choisissez un template de départ pour commencer votre premier PDF :', 'pdf-builder-pro') . '</p>
@@ -426,14 +389,12 @@ class PDF_Builder_Onboarding_Manager {
                         </div>
                     </div>
                 ';
-
             case 'assign_template':
                 // Récupérer les statuts WooCommerce si disponibles
                 $order_statuses = [];
                 if (function_exists('wc_get_order_statuses')) {
                     $order_statuses = wc_get_order_statuses();
                 }
-
                 $status_options = '';
                 foreach ($order_statuses as $status_key => $status_label) {
                     $status_options .= '<label class="status-option">
@@ -441,7 +402,6 @@ class PDF_Builder_Onboarding_Manager {
                         <span class="status-badge status-' . esc_attr(str_replace('wc-', '', $status_key)) . '">' . esc_html($status_label) . '</span>
                     </label>';
                 }
-
                 return '
                     <div class="assign-template-setup">
                         <!-- Aperçu du template sélectionné -->
@@ -456,7 +416,6 @@ class PDF_Builder_Onboarding_Manager {
                                 </div>
                             </div>
                         </div>
-
                         <!-- Personnalisation basique -->
                         <div class="template-customization">
                             <h4>✨ Personnalisez votre template</h4>
@@ -471,16 +430,13 @@ class PDF_Builder_Onboarding_Manager {
                                 </div>
                             </div>
                         </div>
-
                         <!-- Assignation WooCommerce -->
                         <div class="woocommerce-assignment">
                             <h4>🛒 Assignation WooCommerce</h4>
                             <p class="assignment-description">Sélectionnez les statuts de commande pour lesquels ce template sera automatiquement généré :</p>
-
                             <div class="status-selection">
                                 ' . $status_options . '
                             </div>
-
                             <div class="assignment-notice">
                                 <div class="notice-icon">💡</div>
                                 <div class="notice-content">
@@ -488,7 +444,6 @@ class PDF_Builder_Onboarding_Manager {
                                 </div>
                             </div>
                         </div>
-
                         <!-- Actions disponibles -->
                         <div class="template-actions">
                             <h4>🎯 Actions disponibles</h4>
@@ -516,7 +471,6 @@ class PDF_Builder_Onboarding_Manager {
                                 </label>
                             </div>
                         </div>
-
                         <div class="setup-complete-notice">
                             <div class="notice-icon">✅</div>
                             <div class="notice-content">
@@ -525,7 +479,6 @@ class PDF_Builder_Onboarding_Manager {
                         </div>
                     </div>
                 ';
-
             case 'woocommerce_setup':
                 if (class_exists('WooCommerce')) {
                     return '
@@ -537,11 +490,9 @@ class PDF_Builder_Onboarding_Manager {
                                     <p>' . __('Votre boutique WooCommerce est prête pour l\'intégration PDF.', 'pdf-builder-pro') . '</p>
                                 </div>
                             </div>
-
                             <div class="setup-section">
                                 <h5>' . __('Options d\'intégration', 'pdf-builder-pro') . '</h5>
                                 <p class="section-description">' . __('Configurez comment PDF Builder Pro s\'intègre avec votre boutique WooCommerce.', 'pdf-builder-pro') . '</p>
-
                                 <div class="integration-options">
                                     <div class="option-card" data-tooltip="Les clients recevront automatiquement leurs PDFs (factures, bons de commande...) joints aux emails de confirmation de commande WooCommerce">
                                         <div class="option-header">
@@ -556,7 +507,6 @@ class PDF_Builder_Onboarding_Manager {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="option-card" data-tooltip="Aperçu rapide des PDFs générés directement dans l\'interface d\'administration WooCommerce pour chaque commande">
                                         <div class="option-header">
                                             <input type="checkbox" name="admin_preview" checked id="admin_preview">
@@ -570,7 +520,6 @@ class PDF_Builder_Onboarding_Manager {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="option-card" data-tooltip="Utiliser automatiquement les données de commande WooCommerce (prix, produits, informations client...) dans vos templates PDF">
                                         <div class="option-header">
                                             <input type="checkbox" name="variables" checked id="variables">
@@ -586,7 +535,6 @@ class PDF_Builder_Onboarding_Manager {
                                     </div>
                                 </div>
                             </div>
-
                             <div class="setup-benefits">
                                 <div class="benefit-item">
                                     <span class="benefit-icon">🚀</span>
@@ -624,13 +572,11 @@ class PDF_Builder_Onboarding_Manager {
                         </div>
                     ';
                 }
-
             case 'completed':
                 // Récupérer les informations de configuration
                 $has_woocommerce = class_exists('WooCommerce');
                 $template_count = count(glob(plugin_dir_path(dirname(__FILE__)) . '../templates/predefined/*.json'));
                 $current_user = wp_get_current_user();
-
                 return '
                     <div class="onboarding-completed">
                         <!-- Célébration -->
@@ -639,7 +585,6 @@ class PDF_Builder_Onboarding_Manager {
                             <h3>' . __('Félicitations !', 'pdf-builder-pro') . '</h3>
                             <p class="celebration-subtitle">' . __('Votre PDF Builder Pro est maintenant configuré et prêt à l\'emploi', 'pdf-builder-pro') . '</p>
                         </div>
-
                         <!-- Résumé de la configuration -->
                         <div class="configuration-summary">
                             <h4>' . __('📋 Résumé de votre configuration', 'pdf-builder-pro') . '</h4>
@@ -667,7 +612,6 @@ class PDF_Builder_Onboarding_Manager {
                                 </div>
                             </div>
                         </div>
-
                         <!-- Actions rapides -->
                         <div class="quick-actions">
                             <h4>' . __('🚀 Commencez dès maintenant', 'pdf-builder-pro') . '</h4>
@@ -698,7 +642,6 @@ class PDF_Builder_Onboarding_Manager {
                                 </a>
                             </div>
                         </div>
-
                         <!-- Ressources et support -->
                         <div class="resources-section">
                             <h4>' . __('📚 Ressources et support', 'pdf-builder-pro') . '</h4>
@@ -729,7 +672,6 @@ class PDF_Builder_Onboarding_Manager {
                                 </div>
                             </div>
                         </div>
-
                         <!-- Feedback -->
                         <div class="feedback-section">
                             <div class="feedback-content">
@@ -748,7 +690,6 @@ class PDF_Builder_Onboarding_Manager {
                                 </div>
                             </div>
                         </div>
-
                         <!-- Footer avec bienvenue personnalisée -->
                         <div class="welcome-footer">
                             <p class="welcome-message">
@@ -760,25 +701,21 @@ class PDF_Builder_Onboarding_Manager {
                         </div>
                     </div>
                 ';
-
             default:
                 return '';
         }
     }
-
     /**
      * Effectuer les vérifications d'environnement
      */
     private function perform_environment_checks() {
         $checks = [];
-
         // Vérification PHP
         $checks[] = [
             'title' => __('Version PHP', 'pdf-builder-pro'),
             'description' => sprintf(__('Version actuelle : %s (Minimum requis : 7.4)', 'pdf-builder-pro'), PHP_VERSION),
             'status' => version_compare(PHP_VERSION, '7.4', '>=')
         ];
-
         // Vérification WordPress
         global $wp_version;
         $checks[] = [
@@ -786,7 +723,6 @@ class PDF_Builder_Onboarding_Manager {
             'description' => sprintf(__('Version actuelle : %s (Minimum requis : 5.0)', 'pdf-builder-pro'), $wp_version),
             'status' => version_compare($wp_version, '5.0', '>=')
         ];
-
         // Vérification WooCommerce
         $checks[] = [
             'title' => __('WooCommerce', 'pdf-builder-pro'),
@@ -795,7 +731,6 @@ class PDF_Builder_Onboarding_Manager {
                 __('WooCommerce non détecté - Installation recommandée', 'pdf-builder-pro'),
             'status' => class_exists('WooCommerce')
         ];
-
         // Vérification mémoire
         $memory_limit = ini_get('memory_limit');
         $memory_bytes = wp_convert_hr_to_bytes($memory_limit);
@@ -804,7 +739,6 @@ class PDF_Builder_Onboarding_Manager {
             'description' => sprintf(__('Limite actuelle : %s (Recommandé : 128M)', 'pdf-builder-pro'), $memory_limit),
             'status' => $memory_bytes >= 134217728 // 128M
         ];
-
         // Vérification permissions écriture
         $upload_dir = wp_upload_dir();
         $writable = is_writable($upload_dir['basedir']);
@@ -815,19 +749,13 @@ class PDF_Builder_Onboarding_Manager {
                 __('Problème de permissions sur le dossier uploads', 'pdf-builder-pro'),
             'status' => $writable
         ];
-
         return $checks;
     }
-
-
-
     /**
      * Rendre le wizard d'onboarding
      */
     public function render_onboarding_wizard() {
-        
         $steps = $this->get_onboarding_steps();
-
         // Vérifier si une étape spécifique est demandée via URL
         $forced_step = isset($_GET['pdf_onboarding_step']) ? intval($_GET['pdf_onboarding_step']) : null;
         if ($forced_step && $forced_step >= 1 && $forced_step <= count($steps)) {
@@ -838,7 +766,6 @@ class PDF_Builder_Onboarding_Manager {
         } else {
             $current_step = $this->get_current_step() ?: 1;
         }
-
         $current_step_data = isset($steps[$current_step]) ? $steps[$current_step] : $steps[1];
         ?>
         <div id="pdf-builder-onboarding-modal" class="pdf-builder-onboarding-modal">
@@ -849,7 +776,6 @@ class PDF_Builder_Onboarding_Manager {
                         <span class="dashicons dashicons-arrow-left-alt"></span>
                     </button>
                     <?php endif; ?>
-
                     <div class="progress-indicator">
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: <?php echo (($current_step / count($steps)) * 100); ?>%"></div>
@@ -862,7 +788,6 @@ class PDF_Builder_Onboarding_Manager {
                             <?php endfor; ?>
                         </div>
                     </div>
-
                     <button class="modal-close" data-action="skip-onboarding" data-tooltip="Quitter l'assistant">
                         <span class="dashicons dashicons-no"></span>
                     </button>
@@ -907,7 +832,6 @@ class PDF_Builder_Onboarding_Manager {
         ])) {
             return;
         }
-
         // Charger le CSS d'onboarding
         wp_enqueue_style(
             'pdf-builder-onboarding',
@@ -915,7 +839,6 @@ class PDF_Builder_Onboarding_Manager {
             [],
             PDF_BUILDER_PRO_VERSION
         );
-
         wp_enqueue_script(
             'pdf-builder-onboarding',
             PDF_BUILDER_PRO_ASSETS_URL . 'js/onboarding.js',
@@ -923,7 +846,6 @@ class PDF_Builder_Onboarding_Manager {
             PDF_BUILDER_PRO_VERSION,
             true
         );
-
         wp_localize_script('pdf-builder-onboarding', 'pdfBuilderOnboarding', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_onboarding'),
@@ -934,269 +856,195 @@ class PDF_Builder_Onboarding_Manager {
             ]
         ]);
     }
-
     /**
      * AJAX - Compléter une étape d'onboarding
      */
     public function ajax_complete_onboarding_step() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
-
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-
         $step = intval($_POST['step']);
         $action = sanitize_text_field($_POST['step_action'] ?? '');
         $selected_template = sanitize_text_field($_POST['selected_template'] ?? '');
-
-        
-        
-        
-        
-        
-
         // Validation des étapes avant de passer à la suivante
         $validation_error = $this->validate_step_completion($step, $action);
         if ($validation_error) {
             wp_send_json_error(['message' => $validation_error]);
             return;
         }
-
         $this->onboarding_options['steps_completed'][] = $step;
-        
         // Calculer la prochaine étape en fonction des étapes disponibles
         $all_steps = $this->get_onboarding_steps();
         $max_step = max(array_keys($all_steps));
-        
         // Ne pas incrémenter au-delà de la dernière étape disponible
         if ($step < $max_step) {
             $this->onboarding_options['current_step'] = $step + 1;
         }
-        
         $this->onboarding_options['last_activity'] = current_time('timestamp');
-
         // Nettoyer la redirection précédente
         unset($this->onboarding_options['redirect_to']);
-
         // Actions spécifiques selon l'étape
         $all_steps = $this->get_onboarding_steps();
         $current_step_data = $all_steps[$step] ?? null;
-        
         if ($current_step_data) {
             switch ($current_step_data['id']) {
                 case 'freemium_mode':
-                    
                     if (!empty($_POST['selected_mode'])) {
                         $this->onboarding_options['selected_mode'] = sanitize_text_field($_POST['selected_mode']);
-                        
                     } else {
-                        
                     }
                     break;
-
                 case 'first_template':
-                    
                     if (!empty($_POST['selected_template'])) {
-                        
                         $this->onboarding_options['selected_template'] = sanitize_text_field($_POST['selected_template']);
                     } else {
-                        
                     }
                     break;
-
                 case 'assign_template':
-                    
                     // Sauvegarder les préférences d'assignation si fournies
                     if (isset($_POST['template_usage'])) {
                         $this->onboarding_options['template_usage'] = sanitize_text_field($_POST['template_usage']);
                     }
                     break;
-
                 case 'woocommerce_setup':
-                    
                     // Sauvegarder les préférences WooCommerce
                     if (isset($_POST['woocommerce_options'])) {
                         update_option('pdf_builder_woocommerce_integration', $_POST['woocommerce_options']);
                     }
                     break;
-
                 case 'completed':
-                    
                     $this->onboarding_options['completed'] = true;
                     $this->onboarding_options['completed_at'] = current_time('timestamp');
                     // Rediriger vers l'éditeur après completion de l'onboarding
                     $this->onboarding_options['redirect_to'] = admin_url('admin.php?page=pdf-builder-react-editor');
                     break;
-
                 default:
-                    
                     break;
             }
         }
-
         $this->save_onboarding_options();
-
         $response = [
             'next_step' => $this->onboarding_options['current_step'],
             'completed' => $this->onboarding_options['completed'],
             'redirect_to' => $this->onboarding_options['redirect_to'] ?? null
         ];
-
-        
-
         wp_send_json_success($response);
     }
-
     /**
      * AJAX - Sauvegarder la sélection de template
      */
     public function ajax_save_template_selection() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
-
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-
         $selected_template = sanitize_text_field($_POST['selected_template'] ?? '');
-
         $this->onboarding_options['selected_template'] = $selected_template;
         $this->onboarding_options['last_activity'] = current_time('timestamp');
         $this->save_onboarding_options();
-
         wp_send_json_success();
     }
-
     /**
      * AJAX - Sauvegarder le mode freemium sélectionné
      */
     public function ajax_save_freemium_mode() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
-
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-
         $selected_mode = sanitize_text_field($_POST['selected_mode'] ?? '');
-
         // Valider que le mode est valide
         if (!in_array($selected_mode, ['free', 'premium'])) {
             wp_send_json_error(__('Mode invalide', 'pdf-builder-pro'));
             return;
         }
-
         $this->onboarding_options['selected_mode'] = $selected_mode;
         $this->onboarding_options['last_activity'] = current_time('timestamp');
         $this->save_onboarding_options();
-
         wp_send_json_success();
     }
-
     /**
      * AJAX - Mettre à jour l'étape actuelle
      */
     public function ajax_update_onboarding_step() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
-
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-
         $step = intval($_POST['step']);
-
         $this->onboarding_options['current_step'] = $step;
         $this->onboarding_options['last_activity'] = current_time('timestamp');
         $this->save_onboarding_options();
-
         wp_send_json_success();
     }
-
     /**
      * AJAX - Marquer l'onboarding comme terminé
      */
     public function ajax_mark_onboarding_complete() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
-
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-
         $this->onboarding_options['completed'] = true;
         $this->onboarding_options['completed_at'] = current_time('timestamp');
         $this->save_onboarding_options();
-
         wp_send_json_success();
     }
-
     /**
      * Valider la completion d'une étape
      */
     private function validate_step_completion($step, $action) {
         $all_steps = $this->get_onboarding_steps();
-        
         // Vérifier si l'étape existe
         if (!isset($all_steps[$step])) {
             return __('Étape inconnue.', 'pdf-builder-pro');
         }
-
         $step_data = $all_steps[$step];
-
         switch ($step_data['id']) {
             case 'welcome': // Welcome - toujours valide
                 return null;
-
             case 'freemium_mode': // Freemium mode - doit avoir sélectionné un mode
                 if (empty($_POST['selected_mode'])) {
                     return __('Veuillez sélectionner un mode d\'utilisation.', 'pdf-builder-pro');
                 }
                 return null;
-
             case 'first_template': // First template - doit avoir sélectionné un template
                 if (empty($_POST['selected_template'])) {
                     return __('Veuillez sélectionner un template.', 'pdf-builder-pro');
                 }
                 return null;
-
             case 'assign_template': // Template assignment - toujours valide
                 return null;
-
             case 'woocommerce_setup': // WooCommerce setup - toujours valide (optionnel)
                 return null;
-
             case 'completed': // Completed - toujours valide
                 return null;
-
             default:
                 return __('Étape inconnue.', 'pdf-builder-pro');
         }
     }
-
     /**
      * AJAX - Ignorer l'onboarding
      */
     public function ajax_skip_onboarding() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
-
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-
         $this->onboarding_options['skipped'] = true;
         $this->onboarding_options['skipped_at'] = current_time('timestamp');
         $this->save_onboarding_options();
-
         wp_send_json_success();
     }
-
     /**
      * AJAX - Réinitialiser l'onboarding
      */
     public function ajax_reset_onboarding() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
-
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-
         $this->onboarding_options = [
             'completed' => false,
             'current_step' => 0,
@@ -1207,10 +1055,8 @@ class PDF_Builder_Onboarding_Manager {
             'reset_at' => current_time('timestamp')
         ];
         $this->save_onboarding_options();
-
         wp_send_json_success();
     }
-
     /**
      * Générer le contenu HTML d'une étape
      */
@@ -1229,29 +1075,22 @@ class PDF_Builder_Onboarding_Manager {
         <?php
         return ob_get_clean();
     }
-
     /**
      * AJAX - Charger le contenu d'une étape d'onboarding
      */
     public function ajax_load_onboarding_step() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
-
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-
         $step = intval($_POST['step']);
         $steps = $this->get_onboarding_steps();
-
         if (!isset($steps[$step])) {
             wp_send_json_error(__('Étape non trouvée', 'pdf-builder-pro'));
         }
-
         $step_data = $steps[$step];
-
         // Générer le contenu HTML de l'étape
         $html = $this->render_step_content($step_data, $step);
-
         wp_send_json_success([
             'step' => $step,
             'title' => $step_data['title'],
@@ -1266,7 +1105,6 @@ class PDF_Builder_Onboarding_Manager {
             'auto_advance_delay' => $step_data['auto_advance_delay'] ?? 3000
         ]);
     }
-
     /**
      * Reset l'onboarding (méthode publique pour usage externe)
      */
@@ -1274,7 +1112,6 @@ class PDF_Builder_Onboarding_Manager {
         if (!current_user_can('manage_options')) {
             return false;
         }
-
         $this->onboarding_options = [
             'completed' => false,
             'current_step' => 0,
@@ -1287,7 +1124,6 @@ class PDF_Builder_Onboarding_Manager {
         $this->save_onboarding_options();
         return true;
     }
-
     /**
      * Obtenir les statistiques d'onboarding
      */
@@ -1302,23 +1138,18 @@ class PDF_Builder_Onboarding_Manager {
             'last_activity' => $this->onboarding_options['last_activity']
         ];
     }
-
     /**
      * AJAX handler pour sauvegarder l'assignation de template
      */
     public function ajax_save_template_assignment() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
-
         if (!current_user_can('manage_options')) {
             wp_send_json_error(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-
         $assignment_data = json_decode(stripslashes($_POST['assignment_data']), true);
-
         if (!$assignment_data || !isset($assignment_data['template_id'])) {
             wp_send_json_error(__('Données d\'assignation invalides', 'pdf-builder-pro'));
         }
-
         // Sauvegarder les données d'assignation
         $this->onboarding_options['template_assignment'] = [
             'template_id' => sanitize_text_field($assignment_data['template_id']),
@@ -1328,26 +1159,21 @@ class PDF_Builder_Onboarding_Manager {
             'template_actions' => array_map('sanitize_text_field', $assignment_data['template_actions'] ?? []),
             'assigned_at' => current_time('mysql')
         ];
-
         // Marquer l'étape 4 comme complétée
         if (!in_array(4, $this->onboarding_options['steps_completed'])) {
             $this->onboarding_options['steps_completed'][] = 4;
         }
-
         // Sauvegarder les options
         update_option('pdf_builder_onboarding', $this->onboarding_options);
-
         // Créer une configuration WooCommerce si nécessaire
         if (!empty($assignment_data['assigned_statuses'])) {
             $this->create_woocommerce_template_config($assignment_data);
         }
-
         wp_send_json_success([
             'message' => __('Configuration de template sauvegardée avec succès', 'pdf-builder-pro'),
             'assignment' => $this->onboarding_options['template_assignment']
         ]);
     }
-
     /**
      * Créer la configuration WooCommerce pour le template
      */
@@ -1355,14 +1181,11 @@ class PDF_Builder_Onboarding_Manager {
         if (!class_exists('WooCommerce')) {
             return;
         }
-
         // Récupérer ou créer les options WooCommerce
         $wc_options = get_option('pdf_builder_woocommerce', []);
-
         // Configuration pour les statuts assignés
         foreach ($assignment_data['assigned_statuses'] as $status) {
             $clean_status = str_replace('wc-', '', $status);
-
             if (!isset($wc_options[$clean_status])) {
                 $wc_options[$clean_status] = [
                     'enabled' => true,
@@ -1376,29 +1199,22 @@ class PDF_Builder_Onboarding_Manager {
                 ];
             }
         }
-
         update_option('pdf_builder_woocommerce', $wc_options);
     }
-
     /**
      * Obtenir la liste des templates prédéfinis disponibles
      */
     private function get_predefined_templates() {
         $templates = [];
         $template_dir = plugin_dir_path(dirname(__FILE__)) . '../templates/predefined/';
-
         // Scanner les fichiers .json dans le dossier predefined
         $template_files = glob($template_dir . '*.json');
-
         foreach ($template_files as $file_path) {
             $filename = basename($file_path, '.json');
-
             // Essayer de lire le fichier JSON pour extraire les métadonnées
             $template_data = json_decode(file_get_contents($file_path), true);
-
             if ($template_data && isset($template_data['metadata'])) {
                 $metadata = $template_data['metadata'];
-
                 $templates[] = [
                     'id' => $filename,
                     'name' => $metadata['name'] ?? $this->format_template_name($filename),
@@ -1419,10 +1235,8 @@ class PDF_Builder_Onboarding_Manager {
                 ];
             }
         }
-
         return $templates;
     }
-
     /**
      * Formater le nom d'un template depuis son filename
      */
@@ -1430,9 +1244,6 @@ class PDF_Builder_Onboarding_Manager {
         // Convertir les tirets et underscores en espaces, puis capitaliser
         $name = str_replace(['-', '_'], ' ', $filename);
         $name = ucwords($name);
-
         return $name;
     }
 }
-/ /   F o r c e   d e p l o y  
- 
