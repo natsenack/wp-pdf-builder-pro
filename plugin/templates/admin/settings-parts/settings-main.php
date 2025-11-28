@@ -1520,6 +1520,250 @@ window.toggleRGPDControls = toggleRGPDControls;
                     }, 3000);
                 });
             }
+
+            // Handle cache modal save buttons
+            if (target.closest('.cache-modal-save')) {
+                event.preventDefault();
+                const saveButton = target.closest('.cache-modal-save');
+                const modal = saveButton.closest('.canvas-modal');
+                const category = saveButton.getAttribute('data-category') || 'cache';
+
+                if (!modal) return;
+
+                // Disable button and show loading state
+                saveButton.disabled = true;
+                const originalText = saveButton.textContent;
+                saveButton.textContent = 'Sauvegarde...';
+                saveButton.style.opacity = '0.7';
+
+                // Collect form data
+                const form = modal.querySelector('form');
+                if (!form) {
+                    console.error('No form found in cache modal');
+                    saveButton.disabled = false;
+                    saveButton.textContent = originalText;
+                    saveButton.style.opacity = '1';
+                    return;
+                }
+
+                const formData = new FormData(form);
+                formData.append('action', 'pdf_builder_save_cache_settings');
+                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+                formData.append('category', category);
+
+                // Make AJAX request
+                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        saveButton.textContent = '✓ Sauvegardé';
+                        saveButton.style.backgroundColor = '#28a745';
+                        saveButton.style.color = 'white';
+
+                        // Close modal after short delay
+                        setTimeout(() => {
+                            hideModal(modal);
+                            // Reset button
+                            saveButton.disabled = false;
+                            saveButton.textContent = originalText;
+                            saveButton.style.backgroundColor = '';
+                            saveButton.style.color = '';
+                            saveButton.style.opacity = '1';
+                        }, 1500);
+
+                    } else {
+                        // Show error
+                        saveButton.textContent = '❌ Erreur';
+                        saveButton.style.backgroundColor = '#dc3545';
+                        saveButton.style.color = 'white';
+
+                        console.error('Cache save failed:', data.data?.message || 'Unknown error');
+
+                        // Reset button after delay
+                        setTimeout(() => {
+                            saveButton.disabled = false;
+                            saveButton.textContent = originalText;
+                            saveButton.style.backgroundColor = '';
+                            saveButton.style.color = '';
+                            saveButton.style.opacity = '1';
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    console.error('AJAX error:', error);
+                    saveButton.textContent = '❌ Erreur réseau';
+                    saveButton.style.backgroundColor = '#dc3545';
+                    saveButton.style.color = 'white';
+
+                    // Reset button after delay
+                    setTimeout(() => {
+                        saveButton.disabled = false;
+                        saveButton.textContent = originalText;
+                        saveButton.style.backgroundColor = '';
+                        saveButton.style.color = '';
+                        saveButton.style.opacity = '1';
+                    }, 3000);
+                });
+            }
+
+            // Handle clear cache buttons
+            if (target.closest('.clear-cache-from-modal, #clear-cache-from-modal')) {
+                event.preventDefault();
+                const clearButton = target.closest('.clear-cache-from-modal, #clear-cache-from-modal');
+                const modal = clearButton.closest('.canvas-modal');
+
+                // Disable button and show loading state
+                clearButton.disabled = true;
+                const originalText = clearButton.textContent;
+                clearButton.textContent = 'Nettoyage...';
+                clearButton.style.opacity = '0.7';
+
+                // Make AJAX request
+                const formData = new FormData();
+                formData.append('action', 'pdf_builder_clear_cache');
+                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+
+                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        clearButton.textContent = '✓ Cache vidé';
+                        clearButton.style.backgroundColor = '#28a745';
+                        clearButton.style.color = 'white';
+
+                        // Reset button after delay
+                        setTimeout(() => {
+                            clearButton.disabled = false;
+                            clearButton.textContent = originalText;
+                            clearButton.style.backgroundColor = '';
+                            clearButton.style.color = '';
+                            clearButton.style.opacity = '1';
+                        }, 3000);
+
+                    } else {
+                        // Show error
+                        clearButton.textContent = '❌ Erreur';
+                        clearButton.style.backgroundColor = '#dc3545';
+                        clearButton.style.color = 'white';
+
+                        console.error('Cache clear failed:', data.data?.message || 'Unknown error');
+
+                        // Reset button after delay
+                        setTimeout(() => {
+                            clearButton.disabled = false;
+                            clearButton.textContent = originalText;
+                            clearButton.style.backgroundColor = '';
+                            clearButton.style.color = '';
+                            clearButton.style.opacity = '1';
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    console.error('AJAX error:', error);
+                    clearButton.textContent = '❌ Erreur réseau';
+                    clearButton.style.backgroundColor = '#dc3545';
+                    clearButton.style.color = 'white';
+
+                    // Reset button after delay
+                    setTimeout(() => {
+                        clearButton.disabled = false;
+                        clearButton.textContent = originalText;
+                        clearButton.style.backgroundColor = '';
+                        clearButton.style.color = '';
+                        clearButton.style.opacity = '1';
+                    }, 3000);
+                });
+            }
+
+            // Handle perform cleanup buttons
+            if (target.closest('.perform-cleanup-btn, #perform-cleanup-btn')) {
+                event.preventDefault();
+                const cleanupButton = target.closest('.perform-cleanup-btn, #perform-cleanup-btn');
+                const modal = cleanupButton.closest('.canvas-modal');
+
+                // Disable button and show loading state
+                cleanupButton.disabled = true;
+                const originalText = cleanupButton.textContent;
+                cleanupButton.textContent = 'Nettoyage...';
+                cleanupButton.style.opacity = '0.7';
+
+                // Make AJAX request
+                const formData = new FormData();
+                formData.append('action', 'pdf_builder_remove_temp_files');
+                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+
+                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        cleanupButton.textContent = '✓ Nettoyé';
+                        cleanupButton.style.backgroundColor = '#28a745';
+                        cleanupButton.style.color = 'white';
+
+                        // Reset button after delay
+                        setTimeout(() => {
+                            cleanupButton.disabled = false;
+                            cleanupButton.textContent = originalText;
+                            cleanupButton.style.backgroundColor = '';
+                            cleanupButton.style.color = '';
+                            cleanupButton.style.opacity = '1';
+                        }, 3000);
+
+                    } else {
+                        // Show error
+                        cleanupButton.textContent = '❌ Erreur';
+                        cleanupButton.style.backgroundColor = '#dc3545';
+                        cleanupButton.style.color = 'white';
+
+                        console.error('Cleanup failed:', data.data?.message || 'Unknown error');
+
+                        // Reset button after delay
+                        setTimeout(() => {
+                            cleanupButton.disabled = false;
+                            cleanupButton.textContent = originalText;
+                            cleanupButton.style.backgroundColor = '';
+                            cleanupButton.style.color = '';
+                            cleanupButton.style.opacity = '1';
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    console.error('AJAX error:', error);
+                    cleanupButton.textContent = '❌ Erreur réseau';
+                    cleanupButton.style.backgroundColor = '#dc3545';
+                    cleanupButton.style.color = 'white';
+
+                    // Reset button after delay
+                    setTimeout(() => {
+                        cleanupButton.disabled = false;
+                        cleanupButton.textContent = originalText;
+                        cleanupButton.style.backgroundColor = '';
+                        cleanupButton.style.color = '';
+                        cleanupButton.style.opacity = '1';
+                    }, 3000);
+                });
+            }
         });
 
         // Handle escape key
