@@ -1557,6 +1557,74 @@ function pdf_builder_clear_cache_handler() {
     }
 }
 
+/**
+ * AJAX handler for getting cache metrics
+ */
+function pdf_builder_get_cache_metrics_handler() {
+    // Verify nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        global $wpdb;
+
+        // Get cache settings
+        $cache_enabled = get_option('pdf_builder_cache_enabled', '0') === '1';
+        $cache_ttl = intval(get_option('pdf_builder_cache_ttl', 3600));
+
+        // Calculate cache size (approximate)
+        $cache_size = 0;
+        $cache_dirs = array(
+            WP_CONTENT_DIR . '/cache/pdf-builder',
+            WP_CONTENT_DIR . '/cache/pdf-builder-preview'
+        );
+
+        foreach ($cache_dirs as $cache_dir) {
+            if (file_exists($cache_dir) && is_dir($cache_dir)) {
+                $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($cache_dir));
+                foreach ($iterator as $file) {
+                    if ($file->isFile()) {
+                        $cache_size += $file->getSize();
+                    }
+                }
+            }
+        }
+
+        // Count transients
+        $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+
+        // Get last cleanup time
+        $last_cleanup = get_option('pdf_builder_cache_last_cleanup', 'Jamais');
+        if ($last_cleanup !== 'Jamais') {
+            $last_cleanup = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($last_cleanup));
+        }
+
+        // Format cache size
+        $cache_size_formatted = size_format($cache_size);
+
+        wp_send_json_success(array(
+            'metrics' => array(
+                'cache_enabled' => $cache_enabled,
+                'cache_size' => $cache_size_formatted,
+                'transient_count' => intval($transient_count),
+                'last_cleanup' => $last_cleanup,
+                'cache_ttl' => $cache_ttl
+            )
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la récupération des métriques: ' . $e->getMessage());
+    }
+}
+
 // Register AJAX actions for canvas settings
 add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
 add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
@@ -1564,3 +1632,4 @@ add_action('wp_ajax_pdf_builder_get_all_canvas_settings', 'pdf_builder_get_all_c
 add_action('wp_ajax_pdf_builder_save_all_settings', 'pdf_builder_save_all_settings_handler');
 add_action('wp_ajax_pdf_builder_save_cache_settings', 'pdf_builder_save_cache_settings_handler');
 add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
+add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_get_cache_metrics_handler');
