@@ -802,7 +802,8 @@ function pdf_builder_save_canvas_settings_handler() {
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
                             
-                        } elseif ($post_key === 'canvas_shadow_enabled') {
+                        }
+                        if ($post_key === 'canvas_shadow_enabled' && !isset($_POST[$post_key])) {
                             // Checkbox non cochée
                             update_option($option_key, false);
                             $saved_values[$post_key] = false;
