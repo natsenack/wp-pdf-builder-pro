@@ -564,33 +564,31 @@ function pdf_builder_save_settings_handler() {
         send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
         return;
     }
-        $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
+    $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
 
-        // Extraire la liste des champs collectés côté JS pour comparaison (si présente)
-        $js_collected = [];
-        if (isset($_POST['js_collected_fields'])) {
-            $decoded = json_decode($_POST['js_collected_fields'], true);
-            if (is_array($decoded)) {
-                $js_collected = $decoded;
-            } else {
-                error_log('PDF Builder ERROR - js_collected_fields is not valid JSON array: ' . $_POST['js_collected_fields']);
-            }
+    // Extraire la liste des champs collectés côté JS pour comparaison (si présente)
+    $js_collected = [];
+    if (isset($_POST['js_collected_fields'])) {
+        $decoded = json_decode($_POST['js_collected_fields'], true);
+        if (is_array($decoded)) {
+            $js_collected = $decoded;
+        } else {
+            error_log('PDF Builder ERROR - js_collected_fields is not valid JSON array: ' . $_POST['js_collected_fields']);
         }
-        if (isset($_POST['js_collected_fields'])) {
-            unset($_POST['js_collected_fields']);
-        }
+    }
+    if (isset($_POST['js_collected_fields'])) {
+        unset($_POST['js_collected_fields']);
+    }
 
-        // Debug: Log after nonce verification
-        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Nonce verified, current_tab = $current_tab\n", FILE_APPEND);
-        PDF_Builder_Security_Manager::debug_log('php_errors', 'AJAX: Handler started, current_tab = ' . $current_tab);
+    // Debug: Log after nonce verification
+    file_put_contents($log_file, date('Y-m-d H:i:s') . " - Nonce verified, current_tab = $current_tab\n", FILE_APPEND);
+    PDF_Builder_Security_Manager::debug_log('php_errors', 'AJAX: Handler started, current_tab = ' . $current_tab);
 
     // Traiter directement selon l'onglet
     switch ($current_tab) {
         case 'all':
             try {
-                // Processing all settings from the floating save button
-
-                // Initialize variables
+                // Processing all settings from the floating save button                // Initialize variables
                 $saved_count = 0;
                 $errors = [];
                 $processed_fields = [];
@@ -689,15 +687,14 @@ function pdf_builder_save_settings_handler() {
                 error_log('  Saved: ' . $saved_count);
                 error_log('  Errors: ' . count($errors));
 
-            } catch (Exception $e) {
-                // Debug: Log the exception
-                if (defined('WP_DEBUG') && WP_DEBUG) {
-                    error_log('PDF Builder: Exception in save_settings: ' . $e->getMessage());
-                    error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
-                }
-                send_ajax_response(false, 'Error during saving: ' . $e->getMessage());
+        } catch (Exception $e) {
+            // Debug: Log the exception
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('PDF Builder: Exception in save_settings: ' . $e->getMessage());
+                error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
             }
-                break;
+            send_ajax_response(false, 'Error during saving: ' . $e->getMessage());
+        break;
 
 
         }
@@ -712,9 +709,9 @@ function pdf_builder_save_canvas_settings_handler() {
         return;
     }
 
-        $category = PDF_Builder_Sanitizer::text($_POST['category'] ?? 'dimensions');
+    $category = PDF_Builder_Sanitizer::text($_POST['category'] ?? 'dimensions');
 
-        try {
+    try {
             $saved_values = [];
 
             switch ($category) {
@@ -796,7 +793,7 @@ function pdf_builder_save_canvas_settings_handler() {
                             $value = $_POST[$post_key];
                             if ($post_key === 'canvas_shadow_enabled') {
                                 $value = $value === '1';
-                            } elseif ($post_key === 'canvas_border_width') {
+                            } else if ($post_key === 'canvas_border_width') {
                                 $value = PDF_Builder_Sanitizer::int($value);
                             }
                             update_option($option_key, $value);
@@ -826,7 +823,7 @@ function pdf_builder_save_canvas_settings_handler() {
                             $value = $_POST[$post_key];
                             if (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid'])) {
                                 $value = $value === '1';
-                            } elseif ($post_key === 'canvas_grid_size') {
+                            } else if ($post_key === 'canvas_grid_size') {
                                 $value = PDF_Builder_Sanitizer::int($value);
                             }
                             update_option($option_key, $value);
@@ -881,7 +878,7 @@ function pdf_builder_save_canvas_settings_handler() {
                             $value = $_POST[$post_key];
                             if ($post_key === 'canvas_export_transparent') {
                                 $value = $value === '1';
-                            } elseif ($post_key === 'canvas_export_quality') {
+                            } else if ($post_key === 'canvas_export_quality') {
                                 $value = PDF_Builder_Sanitizer::int($value);
                             }
                             update_option($option_key, $value);
@@ -1058,9 +1055,9 @@ function pdf_builder_save_canvas_settings_handler() {
 
             send_ajax_response(true, 'Paramètres ' . $category . ' sauvegardés avec succès.', ['saved' => $saved_values, 'category' => $category]);
 
-        } catch (Exception $e) {
-            send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
-        }
+    } catch (Exception $e) {
+        send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+    }
 }
 
 // Handler pour récupérer les paramètres canvas
@@ -1446,14 +1443,14 @@ function pdf_builder_save_all_settings_handler() {
         error_log('  Sauvegardés: ' . $saved_count);
         error_log('  Erreurs: ' . count($errors));
 
-    } catch (Exception $e) {
-        // Debug: Log the exception
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('PDF Builder: Exception in save_settings: ' . $e->getMessage());
-            error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
+        } catch (Exception $e) {
+            // Debug: Log the exception
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('PDF Builder: Exception in save_settings: ' . $e->getMessage());
+                error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
+            }
+            send_ajax_response(false, 'Error during saving: ' . $e->getMessage());
         }
-        send_ajax_response(false, 'Error during saving: ' . $e->getMessage());
-    }
 }
 
 /**
