@@ -274,7 +274,7 @@ function pdf_builder_ajax_handler_dispatch() {
                 pdf_builder_save_settings_ajax();
                 break;
             case 'pdf_builder_save_all_settings':
-                pdf_builder_save_settings_ajax();
+                pdf_builder_save_all_settings_handler();
                 break;
             case 'pdf_builder_get_fresh_nonce':
                 pdf_builder_get_fresh_nonce_ajax();
@@ -289,15 +289,13 @@ function pdf_builder_ajax_handler_dispatch() {
                 pdf_builder_test_cache_ajax();
                 break;
             case 'pdf_builder_clear_all_cache':
-                pdf_builder_clear_cache_ajax();
+                pdf_builder_clear_cache_handler();
                 break;
             case 'pdf_builder_get_cache_metrics':
-                // This function doesn't exist, let's create a simple fallback
-                wp_send_json_error('Handler not implemented');
+                pdf_builder_get_cache_metrics_handler();
                 break;
             case 'pdf_builder_update_cache_metrics':
-                // This function doesn't exist, let's create a simple fallback
-                wp_send_json_error('Handler not implemented');
+                pdf_builder_update_cache_metrics_handler();
                 break;
             case 'pdf_builder_optimize_database':
                 // This function doesn't exist, let's create a simple fallback
@@ -325,23 +323,46 @@ function pdf_builder_ajax_handler_dispatch() {
                 wp_send_json_error('Handler not implemented');
                 break;
             case 'pdf_builder_test_license':
-                // This function doesn't exist, let's create a simple fallback
-                wp_send_json_error('Handler not implemented');
+                pdf_builder_test_license_handler();
                 break;
             case 'pdf_builder_test_routes':
-                // This function doesn't exist, let's create a simple fallback
-                wp_send_json_error('Handler not implemented');
+                pdf_builder_test_routes_handler();
                 break;
             case 'pdf_builder_export_diagnostic':
-                // This function doesn't exist, let's create a simple fallback
-                wp_send_json_error('Handler not implemented');
+                pdf_builder_export_diagnostic_handler();
                 break;
             case 'pdf_builder_view_logs':
-                // This function doesn't exist, let's create a simple fallback
-                wp_send_json_error('Handler not implemented');
+                pdf_builder_view_logs_handler();
                 break;
             case 'pdf_builder_save_template':
                 pdf_builder_save_template_handler();
+                break;
+            case 'pdf_builder_load_template':
+                pdf_builder_load_template_handler();
+                break;
+            case 'pdf_builder_auto_save_template':
+                pdf_builder_auto_save_template_handler();
+                break;
+            case 'pdf_builder_load_template_settings':
+                pdf_builder_load_template_settings_handler();
+                break;
+            case 'pdf_builder_save_template_settings':
+                pdf_builder_save_template_settings_handler();
+                break;
+            case 'pdf_builder_delete_template':
+                pdf_builder_delete_template_handler();
+                break;
+            case 'pdf_builder_set_default_template':
+                pdf_builder_set_default_template_handler();
+                break;
+            case 'pdf_builder_duplicate_template':
+                pdf_builder_duplicate_template_handler();
+                break;
+            case 'pdf_builder_load_predefined_into_editor':
+                pdf_builder_load_predefined_into_editor_handler();
+                break;
+            case 'pdf_builder_check_template_limit':
+                pdf_builder_check_template_limit_handler();
                 break;
             default:
                 wp_send_json_error('Action non reconnue: ' . $action);
