@@ -68,6 +68,11 @@ class PDF_Builder_Onboarding_Manager {
      * Initialiser les hooks
      */
     private function init_hooks() {
+        // Vérifier que WordPress est chargé avant d'ajouter les hooks
+        if (!function_exists('add_action')) {
+            return;
+        }
+
         // Utiliser admin_enqueue_scripts au lieu de admin_init pour une meilleure synchronisation
         add_action('admin_enqueue_scripts', [$this, 'check_onboarding_status']);
         add_action('wp_ajax_pdf_builder_complete_onboarding_step', [$this, 'ajax_complete_onboarding_step']);
