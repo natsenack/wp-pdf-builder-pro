@@ -300,7 +300,7 @@ class PDF_Builder_Options_Manager {
 // AJAX Handlers
 function pdf_builder_update_cache_metrics_handler() {
     // Vérifier le nonce
-    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'pdf_builder_ajax')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         send_ajax_response(false, 'Nonce invalide');
         return;
     }
@@ -600,7 +600,7 @@ function pdf_builder_save_settings_handler() {
                 // Process all submitted fields
                 foreach ($_POST as $key => $value) {
                     // Ignore special fields
-                    if (in_array($key, ['action', 'security', 'current_tab'])) {
+                    if (in_array($key, ['action', 'nonce', 'current_tab'])) {
                         $ignored_fields[] = $key;
                         continue;
                     }
@@ -1331,7 +1331,7 @@ function pdf_builder_get_all_canvas_settings_handler() {
  */
 function pdf_builder_save_all_settings_handler() {
     // Vérifier le nonce de sécurité
-        if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'pdf_builder_settings')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
             send_ajax_response(false, 'Erreur de sécurité. Veuillez rafraîchir la page et réessayer.');
             return;
         }
@@ -1355,7 +1355,7 @@ function pdf_builder_save_all_settings_handler() {
         // Traiter tous les champs soumis
         foreach ($_POST as $key => $value) {
             // Ignorer les champs spéciaux
-            if (in_array($key, ['action', 'security', 'current_tab'])) {
+            if (in_array($key, ['action', 'nonce', 'current_tab'])) {
                 $ignored_fields[] = $key;
                 continue;
             }
