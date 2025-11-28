@@ -40,6 +40,8 @@ class PreviewImageAPI
         'cache_hit_rate' => 0,
         'last_cleanup' => null
     ];
+    private $generator_manager;
+    private $request_log = [];
 
     public function __construct()
     {
@@ -211,7 +213,7 @@ class PreviewImageAPI
                 $validated['preview_type'] = $validated['order_id'] ? 'order' : 'design';
             // Validation commande existe
                 if ($validated['order_id'] && function_exists('wc_get_order')) {
-                    $order = wc_get_order($validated['order_id']);
+                    $order = \wc_get_order($validated['order_id']);
                     if (!$order) {
                         throw new Exception('Order not found', 404);
                     }
@@ -337,7 +339,7 @@ class PreviewImageAPI
                 $params['preview_type'] = $params['order_id'] ? 'order' : 'design';
             // Validation commande existe
                 if ($params['order_id'] && function_exists('wc_get_order')) {
-                    $order = wc_get_order($params['order_id']);
+                    $order = \wc_get_order($params['order_id']);
                     if (!$order) {
                         $this->sendJsonError('Order not found', 404);
                     }
@@ -640,7 +642,7 @@ class PreviewImageAPI
 
         // Pour les aperçus de commande, vérifier si commande modifiée récemment
         if ($params['order_id'] && function_exists('wc_get_order')) {
-            $order = wc_get_order($params['order_id']);
+            $order = \wc_get_order($params['order_id']);
             if ($order) {
                 $order_modified = strtotime($order->getDateModified());
                 if ($order_modified > filemtime($cache_file)) {
