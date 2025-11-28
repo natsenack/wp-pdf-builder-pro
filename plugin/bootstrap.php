@@ -473,7 +473,7 @@ function pdf_builder_load_core()
         // Localiser les variables nécessaires
         wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_order_actions'),
+            'nonce' => wp_create_nonce('pdf_builder_ajax'),
             'version' => PDF_BUILDER_VERSION,
             'timestamp' => time(),
             'strings' => [

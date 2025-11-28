@@ -326,6 +326,11 @@ function pdf_builder_register_ajax_handlers() {
     add_action('pdf_builder_cleanup_old_backups', 'pdf_builder_cleanup_old_backups');
     add_action('pdf_builder_weekly_maintenance', 'pdf_builder_execute_weekly_maintenance');
     add_action('admin_action_pdf_builder_download_backup', 'pdf_builder_download_backup');
+
+    // Template handlers for React frontend
+    add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_save_template_handler');
+    add_action('wp_ajax_pdf_builder_load_template', 'pdf_builder_load_template_handler');
+    add_action('wp_ajax_pdf_builder_auto_save_template', 'pdf_builder_auto_save_template_handler');
 }
 
 /**
@@ -1412,6 +1417,137 @@ function pdf_builder_auto_clear_cache() {
     } catch (Exception $e) {
         
     }
+}
+
+/**
+ * AJAX handler for saving templates (React frontend)
+ */
+function pdf_builder_save_template_handler() {
+    // Verify nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        $template_id = intval($_POST['template_id'] ?? 0);
+        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+
+        if (!$template_id || empty($template_data)) {
+            wp_send_json_error('Données manquantes');
+            return;
+        }
+
+        // Decode and validate JSON
+        $decoded_data = json_decode($template_data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error('Données JSON invalides');
+            return;
+        }
+
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        // Check if template exists
+        $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id));
+        if (!$existing) {
+            wp_send_json_error('Template non trouvé');
+            return;
+        }
+
+        // Update template
+        $result = $wpdb->update(
+            $table_templates,
+            [
+                'template_data' => $template_data,
+                'updated_at' => current_time('mysql')
+            ],
+            ['id' => $template_id],
+            ['%s', '%s'],
+            ['%d']
+        );
+
+        if ($result === false) {
+            wp_send_json_error('Erreur lors de la sauvegarde');
+            return;
+        }
+
+        wp_send_json_success([
+            'message' => 'Template sauvegardé avec succès',
+            'template_id' => $template_id
+        ]);
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler for loading templates (React frontend)
+ */
+function pdf_builder_load_template_handler() {
+    // Verify nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        $template_id = intval($_POST['template_id'] ?? 0);
+
+        if (!$template_id) {
+            wp_send_json_error('ID du template manquant');
+            return;
+        }
+
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $template = $wpdb->get_row(
+            $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+            ARRAY_A
+        );
+
+        if (!$template) {
+            wp_send_json_error('Template non trouvé');
+            return;
+        }
+
+        $template_data = json_decode($template['template_data'], true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error('Erreur de décodage JSON');
+            return;
+        }
+
+        wp_send_json_success([
+            'template' => $template_data,
+            'id' => $template['id'],
+            'name' => $template['name']
+        ]);
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler for auto-saving templates (React frontend)
+ */
+function pdf_builder_auto_save_template_handler() {
+    // Same logic as save_template_handler but for auto-save
+    pdf_builder_save_template_handler();
 }
 
 
