@@ -665,6 +665,62 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
 <script>
 // Monitoring des performances
 document.addEventListener('DOMContentLoaded', function() {
+    // Bouton Sauvegarder les paramètres développeur
+    const developpeurForm = document.getElementById('developpeur-form');
+    const submitBtn = document.getElementById('submit_developpeur');
+
+    if (developpeurForm && submitBtn) {
+        console.log('🔧 [PDF Builder] Bouton sauvegarde développeur détecté', {
+            formId: developpeurForm.id,
+            buttonId: submitBtn.id,
+            buttonValue: submitBtn.value,
+            timestamp: new Date().toISOString()
+        });
+
+        // Log au clic sur le bouton
+        submitBtn.addEventListener('click', function(e) {
+            console.log('🚀 [PDF Builder] Bouton sauvegarde développeur cliqué', {
+                buttonId: submitBtn.id,
+                formId: developpeurForm.id,
+                formAction: developpeurForm.action,
+                formMethod: developpeurForm.method,
+                timestamp: new Date().toISOString()
+            });
+
+            // Collecter les données du formulaire
+            const formData = new FormData(developpeurForm);
+            const formDataObj = {};
+            for (let [key, value] of formData.entries()) {
+                formDataObj[key] = value;
+            }
+
+            console.log('📋 [PDF Builder] Données du formulaire développeur', {
+                formData: formDataObj,
+                dataCount: Object.keys(formDataObj).length,
+                timestamp: new Date().toISOString()
+            });
+        });
+
+        // Log à la soumission du formulaire
+        developpeurForm.addEventListener('submit', function(e) {
+            console.log('📤 [PDF Builder] Formulaire développeur soumis', {
+                formId: developpeurForm.id,
+                formAction: developpeurForm.action,
+                formMethod: developpeurForm.method,
+                submitter: e.submitter?.id || 'unknown',
+                timestamp: new Date().toISOString()
+            });
+
+            // Ne pas empêcher la soumission, juste logger
+        });
+    } else {
+        console.warn('⚠️ [PDF Builder] Bouton ou formulaire développeur non trouvé', {
+            formFound: !!developpeurForm,
+            buttonFound: !!submitBtn,
+            timestamp: new Date().toISOString()
+        });
+    }
+
     // Bouton Test FPS
     const testFpsBtn = document.getElementById('test_fps_btn');
     const fpsResult = document.getElementById('fps_test_result');
