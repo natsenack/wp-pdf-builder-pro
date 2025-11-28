@@ -15,6 +15,140 @@ ob_start();
 echo "<!DOCTYPE html>\n";
 echo "<html><head><title>Diagnostic PDF Builder Pro</title>\n";
 echo "<style>body{font-family:Arial,sans-serif;margin:20px;} .error{color:red;} .success{color:green;} .warning{color:orange;} pre{background:#f5f5f5;padding:10px;border:1px solid #ddd;overflow:auto;}</style>\n";
+
+// JavaScript pour les logs de diagnostic
+echo "<script>\n";
+echo "console.log('🔍 [DIAGNOSTIC] Starting JavaScript diagnostic...');\n";
+echo "console.log('🔍 [DIAGNOSTIC] User Agent:', navigator.userAgent);\n";
+echo "console.log('🔍 [DIAGNOSTIC] URL:', window.location.href);\n";
+echo "console.log('🔍 [DIAGNOSTIC] Timestamp:', new Date().toISOString());\n";
+echo "console.log('🔍 [DIAGNOSTIC] Screen size:', window.screen.width + 'x' + window.screen.height);\n";
+echo "console.log('🔍 [DIAGNOSTIC] Viewport size:', window.innerWidth + 'x' + window.innerHeight);\n";
+
+// Test des fonctionnalités JavaScript de base
+echo "try {\n";
+echo "    console.log('🔍 [DIAGNOSTIC] Testing basic JS features...');\n";
+echo "    console.log('🔍 [DIAGNOSTIC] Array methods:', typeof Array.prototype.map);\n";
+echo "    console.log('🔍 [DIAGNOSTIC] Promises:', typeof Promise);\n";
+echo "    console.log('🔍 [DIAGNOSTIC] Fetch API:', typeof fetch);\n";
+echo "    console.log('🔍 [DIAGNOSTIC] LocalStorage:', typeof localStorage);\n";
+echo "    console.log('🔍 [DIAGNOSTIC] SessionStorage:', typeof sessionStorage);\n";
+echo "} catch(e) {\n";
+echo "    console.error('🔍 [DIAGNOSTIC] Error testing JS features:', e);\n";
+echo "}\n";
+
+// Test de jQuery si disponible
+echo "if (typeof jQuery !== 'undefined') {\n";
+echo "    console.log('🔍 [DIAGNOSTIC] jQuery version:', jQuery.fn.jquery);\n";
+echo "    console.log('🔍 [DIAGNOSTIC] jQuery ready state:', document.readyState);\n";
+echo "} else {\n";
+echo "    console.warn('🔍 [DIAGNOSTIC] jQuery not loaded');\n";
+echo "}\n";
+
+// Test des variables globales WordPress
+echo "console.log('🔍 [DIAGNOSTIC] WordPress globals:');\n";
+echo "console.log('🔍 [DIAGNOSTIC] - ajaxurl:', typeof ajaxurl !== 'undefined' ? ajaxurl : 'undefined');\n";
+echo "console.log('🔍 [DIAGNOSTIC] - wpApiSettings:', typeof wpApiSettings !== 'undefined' ? 'defined' : 'undefined');\n";
+echo "console.log('🔍 [DIAGNOSTIC] - pdfBuilderAjax:', typeof pdfBuilderAjax !== 'undefined' ? 'defined' : 'undefined');\n";
+
+// Test de chargement des scripts PDF Builder
+echo "function checkPDFBuilderScripts() {\n";
+echo "    console.log('🔍 [DIAGNOSTIC] Checking PDF Builder scripts...');\n";
+echo "    \n";
+echo "    var scripts = document.getElementsByTagName('script');\n";
+echo "    var pdfScripts = [];\n";
+echo "    for (var i = 0; i < scripts.length; i++) {\n";
+echo "        var src = scripts[i].src || '';\n";
+echo "        if (src.indexOf('pdf-builder') !== -1) {\n";
+echo "            pdfScripts.push(src);\n";
+echo "        }\n";
+echo "    }\n";
+echo "    console.log('🔍 [DIAGNOSTIC] PDF Builder scripts found:', pdfScripts.length);\n";
+echo "    pdfScripts.forEach(function(script, index) {\n";
+echo "        console.log('🔍 [DIAGNOSTIC] Script ' + (index + 1) + ':', script);\n";
+echo "    });\n";
+echo "}\n";
+
+// Test de chargement des CSS PDF Builder
+echo "function checkPDFBuilderCSS() {\n";
+echo "    console.log('🔍 [DIAGNOSTIC] Checking PDF Builder CSS...');\n";
+echo "    \n";
+echo "    var links = document.getElementsByTagName('link');\n";
+echo "    var pdfCSS = [];\n";
+echo "    for (var i = 0; i < links.length; i++) {\n";
+echo "        var href = links[i].href || '';\n";
+echo "        if (href.indexOf('pdf-builder') !== -1 && links[i].rel === 'stylesheet') {\n";
+echo "            pdfCSS.push(href);\n";
+echo "        }\n";
+echo "    }\n";
+echo "    console.log('🔍 [DIAGNOSTIC] PDF Builder CSS found:', pdfCSS.length);\n";
+echo "    pdfCSS.forEach(function(css, index) {\n";
+echo "        console.log('🔍 [DIAGNOSTIC] CSS ' + (index + 1) + ':', css);\n";
+echo "    });\n";
+echo "}\n";
+
+// Test des erreurs JavaScript globales
+echo "window.addEventListener('error', function(e) {\n";
+echo "    console.error('🔍 [DIAGNOSTIC] JavaScript error detected:');\n";
+echo "    console.error('🔍 [DIAGNOSTIC] - Message:', e.message);\n";
+echo "    console.error('🔍 [DIAGNOSTIC] - File:', e.filename);\n";
+echo "    console.error('🔍 [DIAGNOSTIC] - Line:', e.lineno);\n";
+echo "    console.error('🔍 [DIAGNOSTIC] - Column:', e.colno);\n";
+echo "    console.error('🔍 [DIAGNOSTIC] - Error:', e.error);\n";
+echo "});\n";
+
+// Test des erreurs de chargement de ressources
+echo "window.addEventListener('error', function(e) {\n";
+echo "    if (e.target !== window) {\n";
+echo "        console.error('🔍 [DIAGNOSTIC] Resource loading error:');\n";
+echo "        console.error('🔍 [DIAGNOSTIC] - Target:', e.target);\n";
+echo "        console.error('🔍 [DIAGNOSTIC] - Type:', e.type);\n";
+echo "    }\n";
+echo "}, true);\n";
+
+// Test du DOM ready
+echo "document.addEventListener('DOMContentLoaded', function() {\n";
+echo "    console.log('🔍 [DIAGNOSTIC] DOM Content Loaded');\n";
+echo "    checkPDFBuilderScripts();\n";
+echo "    checkPDFBuilderCSS();\n";
+echo "    \n";
+echo "    // Test des éléments PDF Builder dans le DOM\n";
+echo "    var pdfElements = document.querySelectorAll('[class*=\"pdf-builder\"], [id*=\"pdf-builder\"]');\n";
+echo "    console.log('🔍 [DIAGNOSTIC] PDF Builder DOM elements found:', pdfElements.length);\n";
+echo "    \n";
+echo "    // Test des erreurs AJAX si jQuery est disponible\n";
+echo "    if (typeof jQuery !== 'undefined') {\n";
+echo "        jQuery(document).ajaxError(function(event, xhr, settings, thrownError) {\n";
+echo "            console.error('🔍 [DIAGNOSTIC] AJAX Error:');\n";
+echo "            console.error('🔍 [DIAGNOSTIC] - URL:', settings.url);\n";
+echo "            console.error('🔍 [DIAGNOSTIC] - Status:', xhr.status);\n";
+echo "            console.error('🔍 [DIAGNOSTIC] - Error:', thrownError);\n";
+echo "        });\n";
+echo "    }\n";
+echo "});\n";
+
+// Test du window load
+echo "window.addEventListener('load', function() {\n";
+echo "    console.log('🔍 [DIAGNOSTIC] Window Load Complete');\n";
+echo "    console.log('🔍 [DIAGNOSTIC] Page fully loaded at:', new Date().toISOString());\n";
+echo "    \n";
+echo "    // Test final des fonctionnalités\n";
+echo "    setTimeout(function() {\n";
+echo "        console.log('🔍 [DIAGNOSTIC] Final check after 2 seconds...');\n";
+echo "        console.log('🔍 [DIAGNOSTIC] All scripts loaded:', document.scripts.length);\n";
+echo "        console.log('🔍 [DIAGNOSTIC] All links loaded:', document.links.length);\n";
+echo "        \n";
+echo "        // Vérifier si des erreurs ont été loggées\n";
+echo "        if (console.error && console.error.toString().indexOf('[DIAGNOSTIC]') !== -1) {\n";
+echo "            console.warn('🔍 [DIAGNOSTIC] Some errors were detected - check above');\n";
+echo "        } else {\n";
+echo "            console.log('🔍 [DIAGNOSTIC] No JavaScript errors detected');\n";
+echo "        }\n";
+echo "    }, 2000);\n";
+echo "});\n";
+
+echo "console.log('🔍 [DIAGNOSTIC] JavaScript diagnostic initialized');\n";
+echo "</script>\n";
 echo "</head><body>\n";
 echo "<h1>🔍 Diagnostic PDF Builder Pro</h1>\n";
 echo "<p><strong>Date:</strong> " . date('Y-m-d H:i:s') . "</p>\n";

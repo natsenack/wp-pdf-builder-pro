@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class PdfBuilderSecurityValidator
+class PDF_Builder_Security_Validator
 {
     private static $instance = null;
 
