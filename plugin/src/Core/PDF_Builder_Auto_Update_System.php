@@ -869,11 +869,11 @@ function pdf_builder_update_system() {
     return PDF_Builder_Auto_Update_System::get_instance();
 }
 
-function pdf_builder_check_updates() {
+function pdf_builder_check_auto_updates() {
     return PDF_Builder_Auto_Update_System::get_instance()->check_for_updates();
 }
 
-function pdf_builder_install_update($version) {
+function pdf_builder_install_auto_update($version) {
     return PDF_Builder_Auto_Update_System::get_instance()->install_update($version);
 }
 
