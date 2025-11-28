@@ -1412,6 +1412,114 @@ window.toggleRGPDControls = toggleRGPDControls;
             if (target.classList.contains('canvas-modal') || target.classList.contains('canvas-modal-overlay')) {
                 hideModal(target.closest('.canvas-modal'));
             }
+
+            // Handle save buttons
+            if (target.closest('.canvas-modal-save')) {
+                event.preventDefault();
+                const saveButton = target.closest('.canvas-modal-save');
+                const modal = saveButton.closest('.canvas-modal');
+                const category = saveButton.getAttribute('data-category');
+
+                if (!modal || !category) return;
+
+                // Disable button and show loading state
+                saveButton.disabled = true;
+                const originalText = saveButton.textContent;
+                saveButton.textContent = 'Sauvegarde...';
+                saveButton.style.opacity = '0.7';
+
+                // Collect form data
+                const form = modal.querySelector('form');
+                if (!form) {
+                    console.error('No form found in modal for category:', category);
+                    saveButton.disabled = false;
+                    saveButton.textContent = originalText;
+                    saveButton.style.opacity = '1';
+                    return;
+                }
+
+                const formData = new FormData(form);
+                formData.append('action', 'pdf_builder_save_canvas_settings');
+                formData.append('nonce', window.pdfBuilderCanvasSettings?.nonce || '');
+                formData.append('category', category);
+
+                // Make AJAX request
+                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        saveButton.textContent = '✓ Sauvegardé';
+                        saveButton.style.backgroundColor = '#28a745';
+                        saveButton.style.color = 'white';
+
+                        // Update canvas settings in window object
+                        if (data.data && data.data.saved) {
+                            // Update window.pdfBuilderCanvasSettings with new values
+                            Object.assign(window.pdfBuilderCanvasSettings, data.data.saved);
+
+                            // Update previews
+                            if (typeof window.updateCanvasPreviews === 'function') {
+                                window.updateCanvasPreviews(category);
+                            }
+
+                            // Update PDF_Builder_Preview_Manager if available
+                            if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeAllPreviews === 'function') {
+                                window.PDF_Builder_Preview_Manager.initializeAllPreviews();
+                            }
+                        }
+
+                        // Close modal after short delay
+                        setTimeout(() => {
+                            hideModal(modal);
+                            // Reset button
+                            saveButton.disabled = false;
+                            saveButton.textContent = originalText;
+                            saveButton.style.backgroundColor = '';
+                            saveButton.style.color = '';
+                            saveButton.style.opacity = '1';
+                        }, 1500);
+
+                    } else {
+                        // Show error
+                        saveButton.textContent = '❌ Erreur';
+                        saveButton.style.backgroundColor = '#dc3545';
+                        saveButton.style.color = 'white';
+
+                        console.error('Save failed:', data.data?.message || 'Unknown error');
+
+                        // Reset button after delay
+                        setTimeout(() => {
+                            saveButton.disabled = false;
+                            saveButton.textContent = originalText;
+                            saveButton.style.backgroundColor = '';
+                            saveButton.style.color = '';
+                            saveButton.style.opacity = '1';
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    console.error('AJAX error:', error);
+                    saveButton.textContent = '❌ Erreur réseau';
+                    saveButton.style.backgroundColor = '#dc3545';
+                    saveButton.style.color = 'white';
+
+                    // Reset button after delay
+                    setTimeout(() => {
+                        saveButton.disabled = false;
+                        saveButton.textContent = originalText;
+                        saveButton.style.backgroundColor = '';
+                        saveButton.style.color = '';
+                        saveButton.style.opacity = '1';
+                    }, 3000);
+                });
+            }
         });
 
         // Handle escape key
