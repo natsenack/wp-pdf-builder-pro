@@ -1336,9 +1336,6 @@ window.updateSystemStatusIndicators = updateSystemStatusIndicators;
 window.toggleRGPDControls = toggleRGPDControls;
 </script>
 <script>
-// Simplified canvas configuration modals functionality
-</script>
-<script>
 (function() {
     'use strict';
 
