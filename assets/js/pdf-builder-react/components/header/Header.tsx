@@ -91,8 +91,18 @@ export const Header = memo(function Header({
 
   // Debug logging
   useEffect(() => {
-
-  }, []);
+    console.log('🔄 [PDF Builder] État bouton Enregistrer mis à jour', {
+      templateName,
+      buttonState: {
+        disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
+        isSaving: deferredIsSaving,
+        isModified: deferredIsModified,
+        isLoading: deferredIsLoading,
+        canSave: !deferredIsSaving && deferredIsModified && !deferredIsLoading
+      },
+      timestamp: new Date().toISOString()
+    });
+  }, [deferredIsSaving, deferredIsModified, deferredIsLoading, templateName]);
 
   useEffect(() => {
 
@@ -500,27 +510,123 @@ export const Header = memo(function Header({
 
         <button
           onClick={async () => {
+            const startTime = performance.now();
             console.log('🚀 [PDF Builder] Bouton Enregistrer cliqué', {
               templateName,
               isModified: deferredIsModified,
               isSaving: deferredIsSaving,
               isLoading: deferredIsLoading,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
+              // Informations détaillées sur le canvas
+              canvasInfo: {
+                width: canvasWidth,
+                height: canvasHeight,
+                showGuides,
+                snapToGrid
+              },
+              // Informations sur les éléments
+              elementsInfo: {
+                totalElements: state.elements?.length || 0,
+                elementTypes: state.elements?.reduce((acc, el) => {
+                  acc[el.type] = (acc[el.type] || 0) + 1;
+                  return acc;
+                }, {}) || {}
+              },
+              // État du builder
+              builderState: {
+                template: state.template ? {
+                  name: state.template.name,
+                  description: state.template.description,
+                  hasBackground: !!state.template.backgroundColor
+                } : null,
+                selectedElement: state.selectedElement?.id || null,
+                zoom: state.zoom || 1
+              },
+              // Paramètres canvas
+              canvasSettings: {
+                guidesEnabled: canvasSettings.guidesEnabled,
+                fpsTarget: canvasSettings.fpsTarget,
+                memoryLimit: canvasSettings.memoryLimit
+              }
             });
+
             try {
+              console.log('⏳ [PDF Builder] Début de la sauvegarde...');
               await onSave();
+              const endTime = performance.now();
+              const saveDuration = endTime - startTime;
+
               console.log('✅ [PDF Builder] Sauvegarde réussie', {
                 templateName,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                duration: `${saveDuration.toFixed(2)}ms`,
+                performance: {
+                  saveTime: saveDuration,
+                  elementsCount: state.elements?.length || 0,
+                  templateSize: JSON.stringify(state.template).length,
+                  elementsSize: JSON.stringify(state.elements).length
+                },
+                // Vérification post-sauvegarde
+                postSaveState: {
+                  isModified: false, // Devrait être false après sauvegarde
+                  isSaving: false
+                }
               });
+
+              // Log des métriques de performance
+              console.log('📊 [PDF Builder] Métriques de sauvegarde', {
+                duration: saveDuration,
+                avgTimePerElement: state.elements?.length ? saveDuration / state.elements.length : 0,
+                memoryUsage: performance.memory ? {
+                  used: performance.memory.usedJSHeapSize,
+                  total: performance.memory.totalJSHeapSize,
+                  limit: performance.memory.jsHeapSizeLimit
+                } : 'N/A'
+              });
+
             } catch (error) {
-              console.error('❌ [PDF Builder] Erreur lors de la sauvegarde:', error);
+              const endTime = performance.now();
+              const failedDuration = endTime - startTime;
+
+              console.error('❌ [PDF Builder] Erreur lors de la sauvegarde:', {
+                error: error instanceof Error ? {
+                  message: error.message,
+                  stack: error.stack,
+                  name: error.name
+                } : error,
+                templateName,
+                timestamp: new Date().toISOString(),
+                duration: `${failedDuration.toFixed(2)}ms`,
+                context: {
+                  isModified: deferredIsModified,
+                  isSaving: deferredIsSaving,
+                  elementsCount: state.elements?.length || 0
+                }
+              });
               alert('Erreur lors de la sauvegarde: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
             }
           }}
           disabled={deferredIsSaving || !deferredIsModified || deferredIsLoading}
-          onMouseEnter={() => setHoveredButton('save')}
-          onMouseLeave={() => setHoveredButton(null)}
+          onMouseEnter={() => {
+            console.log('👆 [PDF Builder] Souris sur bouton Enregistrer', {
+              templateName,
+              buttonState: {
+                disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
+                isSaving: deferredIsSaving,
+                isModified: deferredIsModified,
+                isLoading: deferredIsLoading
+              },
+              timestamp: new Date().toISOString()
+            });
+            setHoveredButton('save');
+          }}
+          onMouseLeave={() => {
+            console.log('👋 [PDF Builder] Souris quitte bouton Enregistrer', {
+              templateName,
+              timestamp: new Date().toISOString()
+            });
+            setHoveredButton(null);
+          }}
           style={{
             ...primaryButtonStyles,
             opacity: (deferredIsSaving || !deferredIsModified || deferredIsLoading) ? 0.6 : 1,
