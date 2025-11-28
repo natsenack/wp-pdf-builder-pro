@@ -726,18 +726,18 @@ class PDF_Builder_Security_Validator
 
 // Fonctions globales pour faciliter l'utilisation
 function pdf_builder_validate_ajax_request($capability = 'manage_options') {
-    return PdfBuilderSecurityValidator::get_instance()->validate_ajax_request($capability);
+    return PDF_Builder_Security_Validator::get_instance()->validate_ajax_request($capability);
 }
 
 function pdf_builder_sanitize_template_data($data) {
-    return PdfBuilderSecurityValidator::get_instance()->sanitize_template_data($data);
+    return PDF_Builder_Security_Validator::get_instance()->sanitize_template_data($data);
 }
 
 function pdf_builder_sanitize_settings($settings) {
-    return PdfBuilderSecurityValidator::get_instance()->sanitize_settings($settings);
+    return PDF_Builder_Security_Validator::get_instance()->sanitize_settings($settings);
 }
 
 // Initialiser le validateur de sécurité
 add_action('plugins_loaded', function() {
-    PdfBuilderSecurityValidator::get_instance();
+    PDF_Builder_Security_Validator::get_instance();
 });
