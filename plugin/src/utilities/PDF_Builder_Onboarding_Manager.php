@@ -28,7 +28,7 @@ class PDF_Builder_Onboarding_Manager {
     private function __construct() {
         // Vérification de sécurité - s'assurer que WordPress est chargé
         if (!defined('ABSPATH')) {
-            debug_log('ABSPATH non défini - WordPress pas chargé');
+            PDF_Builder_Security_Manager::debug_log('php_errors', 'ABSPATH non défini - WordPress pas chargé');
             return;
         }
         $this->init_hooks();
@@ -41,13 +41,13 @@ class PDF_Builder_Onboarding_Manager {
         if (self::$instance === null) {
             // Vérification avant instanciation
             if (!class_exists('PDF_Builder_Onboarding_Manager')) {
-                debug_log('Classe non trouvée lors de get_instance()');
+                PDF_Builder_Security_Manager::debug_log('php_errors', 'Classe non trouvée lors de get_instance()');
                 return null;
             }
             try {
                 self::$instance = new self();
             } catch (Exception $e) {
-                debug_log('Erreur lors de l\'instanciation: ' . $e->getMessage());
+                PDF_Builder_Security_Manager::debug_log('php_errors', 'Erreur lors de l\'instanciation: ' . $e->getMessage());
                 return null;
             }
         }
