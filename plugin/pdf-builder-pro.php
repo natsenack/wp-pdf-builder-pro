@@ -250,7 +250,7 @@ add_action('plugins_loaded', function() {
     } catch (Exception $e) {
         error_log('PDF Builder: Erreur lors de l\'initialisation des systèmes avancés: ' . $e->getMessage());
     }
-}, 5); // Priorité 5 pour s'assurer que cela se passe après les autres initialisations
+}, 10); // Priorité 10 pour s'assurer que cela se passe après le chargement de l'autoloader
 
 /**
  * Fonction d'activation
@@ -405,7 +405,7 @@ function pdf_builder_deactivate()
 
 // Charger le plugin de manière standard
 if (function_exists('add_action')) {
-    add_action('plugins_loaded', 'pdf_builder_init');
+    add_action('plugins_loaded', 'pdf_builder_init', 1); // Priorité 1 pour charger l'autoloader en premier
     add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
 }
 
