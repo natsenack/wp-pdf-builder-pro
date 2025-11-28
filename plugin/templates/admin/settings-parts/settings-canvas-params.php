@@ -138,7 +138,7 @@ try {
     // Décoder les paramètres depuis base64 pour éviter les problèmes d'échappement
     window.pdfBuilderCanvasSettings = JSON.parse(atob('<?php echo $base64_canvas_settings; ?>'));
     pdfBuilderDebug('Canvas settings loaded from WordPress options:', window.pdfBuilderCanvasSettings);
-    window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_canvas_nonce'); ?>';
+    window.pdfBuilderCanvasSettings.nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
 
     // Dimensions standard des formats de papier en mm (centralisées)
     window.pdfBuilderPaperFormats = JSON.parse(atob('<?php echo $base64_paper_formats; ?>'));
