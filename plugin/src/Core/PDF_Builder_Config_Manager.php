@@ -4,7 +4,7 @@
  * Centralise la gestion de tous les paramètres et options du plugin
  */
 
-class PDF_Builder_Config_Manager {
+class PDF_Builder_Global_Config_Manager {
     private static $instance = null;
     private $config = [];
     private $defaults = [];
@@ -504,29 +504,28 @@ class PDF_Builder_Config_Manager {
     }
 }
 
-// Fonctions globales pour faciliter l'utilisation
 function pdf_builder_config($key = null, $default = null) {
-    $config = PDF_Builder_Config_Manager::get_instance();
+    $config = PDF_Builder_Global_Config_Manager::get_instance();
     return $key ? $config->get($key, $default) : $config->get_all();
 }
 
 function pdf_builder_set_config($key, $value) {
-    PDF_Builder_Config_Manager::get_instance()->set($key, $value);
+    PDF_Builder_Global_Config_Manager::get_instance()->set($key, $value);
 }
 
 function pdf_builder_save_config($config) {
-    return PDF_Builder_Config_Manager::get_instance()->save_config($config);
+    return PDF_Builder_Global_Config_Manager::get_instance()->save_config($config);
 }
 
 function pdf_builder_get_system_info() {
-    return PDF_Builder_Config_Manager::get_instance()->get_system_info();
+    return PDF_Builder_Global_Config_Manager::get_instance()->get_system_info();
 }
 
 function pdf_builder_health_check() {
-    return PDF_Builder_Config_Manager::get_instance()->health_check();
+    return PDF_Builder_Global_Config_Manager::get_instance()->health_check();
 }
 
 // Initialiser le gestionnaire de configuration
 add_action('plugins_loaded', function() {
-    PDF_Builder_Config_Manager::get_instance();
+    PDF_Builder_Global_Config_Manager::get_instance();
 });

@@ -167,7 +167,7 @@ add_action('plugins_loaded', function() {
         PDF_Builder_Intelligent_Loader::get_instance();
 
         // Initialiser le gestionnaire de configuration
-        PDF_Builder_Config_Manager::get_instance();
+        PDF_Builder_Global_Config_Manager::get_instance();
 
         // Initialiser le système de cache intelligent
         PDF_Builder_Smart_Cache::get_instance();
