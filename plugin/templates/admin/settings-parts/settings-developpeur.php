@@ -657,7 +657,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
             </div>
 
             <p class="submit">
-                <input type="submit" name="submit_developpeur" id="submit_developpeur" class="button button-primary" value="Sauvegarder les paramètres développeur">
+                <button type="submit" name="submit_developpeur" id="submit_developpeur" class="button button-primary">Sauvegarder les paramètres développeur</button>
             </p>
 
          </form>
@@ -724,6 +724,21 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
+        // Log des clics dans l'onglet développeur
+        const developpeurTab = document.getElementById('developpeur');
+        if (developpeurTab) {
+            developpeurTab.addEventListener('click', function(e) {
+                console.log('🖱️ [PDF Builder] Clic dans l\'onglet développeur', {
+                    target: e.target.id || e.target.tagName,
+                    targetClass: e.target.className,
+                    buttonRect: submitBtn.getBoundingClientRect(),
+                    clickX: e.clientX,
+                    clickY: e.clientY,
+                    timestamp: new Date().toISOString()
+                });
+            });
+        }
+
         // Log à la soumission du formulaire
         developpeurForm.addEventListener('submit', function(e) {
             console.log('📤 [PDF Builder] Formulaire développeur soumis', {
@@ -739,6 +754,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Test de cliquabilité toutes les 5 secondes
         setInterval(() => {
+            const buttonRect = submitBtn.getBoundingClientRect();
+            const centerX = buttonRect.left + buttonRect.width / 2;
+            const centerY = buttonRect.top + buttonRect.height / 2;
+            const elementAtCenter = document.elementFromPoint(centerX, centerY);
+            const isCovered = elementAtCenter !== submitBtn && !submitBtn.contains(elementAtCenter);
+
             const isClickable = !submitBtn.disabled &&
                               submitBtn.offsetWidth > 0 &&
                               submitBtn.offsetHeight > 0 &&
@@ -751,6 +772,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 visible: submitBtn.offsetWidth > 0 && submitBtn.offsetHeight > 0,
                 display: window.getComputedStyle(submitBtn).display,
                 visibility: window.getComputedStyle(submitBtn).visibility,
+                pointerEvents: window.getComputedStyle(submitBtn).pointerEvents,
+                opacity: window.getComputedStyle(submitBtn).opacity,
+                zIndex: window.getComputedStyle(submitBtn).zIndex,
+                transform: window.getComputedStyle(submitBtn).transform,
+                isCovered,
+                elementAtCenter: elementAtCenter ? (elementAtCenter.id || elementAtCenter.tagName) : 'none',
+                buttonRect,
                 timestamp: new Date().toISOString()
             });
         }, 5000);
