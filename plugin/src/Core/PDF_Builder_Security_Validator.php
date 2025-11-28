@@ -643,12 +643,22 @@ class PDF_Builder_Security_Validator
     private static function sanitizeArrayData($data)
     {
         if (!is_array($data)) {
-            return is_string($data) ? sanitize_text_field($data) : $data;
+            // Utiliser les fonctions WordPress si disponibles, sinon faire une sanitisation basique
+            if (function_exists('sanitize_text_field')) {
+                return is_string($data) ? sanitize_text_field($data) : $data;
+            } else {
+                return is_string($data) ? htmlspecialchars($data, ENT_QUOTES, 'UTF-8') : $data;
+            }
         }
 
         $sanitized = [];
         foreach ($data as $key => $value) {
-            $clean_key = sanitize_key($key);
+            // Utiliser sanitize_key si disponible, sinon nettoyer manuellement
+            if (function_exists('sanitize_key')) {
+                $clean_key = sanitize_key($key);
+            } else {
+                $clean_key = preg_replace('/[^a-zA-Z0-9_\-]/', '', $key);
+            }
             $sanitized[$clean_key] = self::sanitizeArrayData($value);
         }
 
@@ -711,9 +721,16 @@ class PDF_Builder_Security_Validator
 
     private static function logSecurityEvent($event, $data = [])
     {
+        // Utiliser current_time si WordPress est disponible, sinon utiliser date()
+        if (function_exists('current_time')) {
+            $timestamp = current_time('mysql');
+        } else {
+            $timestamp = date('Y-m-d H:i:s');
+        }
+
         $log_data = array_merge(
             [
-            'timestamp' => current_time('mysql'),
+            'timestamp' => $timestamp,
             'event' => $event,
             'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'unknown'
             ],
