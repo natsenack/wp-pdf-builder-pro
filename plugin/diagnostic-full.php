@@ -5,7 +5,7 @@
  */
 
 // Chemin vers WordPress (à adapter selon votre installation)
-$wp_load_path = dirname(dirname(__FILE__)) . '/wp-load.php';
+$wp_load_path = dirname(dirname(dirname(dirname(__FILE__)))) . '/wp-load.php';
 
 echo "<h1>🔍 Diagnostic WordPress - PDF Builder Pro</h1>";
 echo "<p><strong>Date:</strong> " . date('Y-m-d H:i:s') . "</p>";
