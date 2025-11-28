@@ -32,13 +32,16 @@ if (defined('DOING_AJAX') && DOING_AJAX) {
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 // PDF_BUILDER_PLUGIN_URL sera défini dans constants.php avec plugins_url()
-// PDF_BUILDER_VERSION sera défini dans constants.php
 // Désactiver les avertissements de dépréciation pour la compatibilité PHP 8.1+
 error_reporting(error_reporting() & ~E_DEPRECATED);
-// Hook d'activation
-register_activation_hook(__FILE__, 'pdf_builder_activate');
-// Hook de désactivation
-register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
+
+// Protéger les hooks WordPress - ne les enregistrer que si WordPress est chargé
+if (function_exists('register_activation_hook')) {
+    // Hook d'activation
+    register_activation_hook(__FILE__, 'pdf_builder_activate');
+    // Hook de désactivation
+    register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
+}
 
 // Charger le bootstrap du plugin (initialisation des utilitaires)
 require_once PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
@@ -110,20 +113,18 @@ if (!class_exists('PDF_Builder_Onboarding_Manager')) {
 }
 
 // Hook très tôt pour garantir le chargement des utilitaires
-add_action('plugins_loaded', function() {
-    if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-        pdf_builder_ensure_onboarding_manager();
-    }
-}, 0); // Priorité 0 = exécution très tôt
+if (function_exists('add_action')) {
+    add_action('plugins_loaded', function() {
+        if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+            pdf_builder_ensure_onboarding_manager();
+        }
+    }, 0);
 
-// Initialiser l'API Preview (Jour 1-2 : API Preview Basique)
-require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'api/PreviewImageAPI.php';
-
-// Initialiser l'API Preview après que WordPress soit chargé
-add_action('init', function() {
-    new \PDF_Builder\Api\PreviewImageAPI();
-});
+    // Initialiser l'API Preview après que WordPress soit chargé
+    add_action('init', function() {
+        new \PDF_Builder\Api\PreviewImageAPI();
+    });
+}
 
 // ==========================================
 // INITIALISATION DES NOUVEAUX SYSTÈMES AVANCÉS
@@ -403,8 +404,10 @@ function pdf_builder_deactivate()
 }
 
 // Charger le plugin de manière standard
-add_action('plugins_loaded', 'pdf_builder_init');
-add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
+if (function_exists('add_action')) {
+    add_action('plugins_loaded', 'pdf_builder_init');
+    add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
+}
 
 /**
  * Enregistrer les handlers AJAX
@@ -646,7 +649,9 @@ function pdf_builder_add_asset_cache_headers()
 }
 
 // Gérer les téléchargements PDF en frontend
-add_action('init', 'pdf_builder_handle_pdf_downloads');
+if (function_exists('add_action')) {
+    add_action('init', 'pdf_builder_handle_pdf_downloads');
+}
 // AJAX handlers supprimés - maintenant gérés dans pdf_builder_register_ajax_handlers()
 
 /**
