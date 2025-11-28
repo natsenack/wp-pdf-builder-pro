@@ -235,6 +235,12 @@ $default_orientation = $preview_data['default_orientation'];
 window.pdfBuilderSavedSettings = <?php echo wp_json_encode($preview_data); ?>;
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings); ?>;
 
+// Variables AJAX globales pour les requêtes AJAX
+window.pdfBuilderAjax = {
+    nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>',
+    ajaxurl: '<?php echo admin_url('admin-ajax.php'); ?>'
+};
+
 // Système centralisé d'initialisation des previews avec données BDD
 window.PDF_Builder_Preview_Manager = {
     /**
