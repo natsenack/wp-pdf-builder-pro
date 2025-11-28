@@ -890,7 +890,7 @@ window.updateZoomCardPreview = function() {
         // Update zoom level display
         const zoomLevel = document.querySelector('.zoom-level');
         if (zoomLevel) {
-            zoomLevel.textContent = `${defaultZoom}%`;
+            zoomLevel.textContent = defaultZoom + '%';
             pdfBuilderDebug('Updated zoom level to:', defaultZoom + '%');
         } else {
             pdfBuilderDebug('zoomLevel element not found');
@@ -899,10 +899,7 @@ window.updateZoomCardPreview = function() {
         // Update zoom info
         const zoomInfo = document.querySelector('.zoom-info');
         if (zoomInfo) {
-            zoomInfo.innerHTML = `
-                <span>${minZoom}% - ${maxZoom}%</span>
-                <span>Pas: ${stepZoom}%</span>
-            `;
+            zoomInfo.innerHTML = '<span>' + minZoom + '% - ' + maxZoom + '%</span><span>Pas: ' + stepZoom + '%</span>';
             pdfBuilderDebug('Updated zoom info');
         } else {
             pdfBuilderDebug('zoomInfo element not found');
@@ -1218,7 +1215,7 @@ function updateTemplateStatusIndicators() {
         // Créer ou mettre à jour l'indicateur
         if (selectValue && selectValue !== '') {
             // Template assigné - récupérer le texte de l'option sélectionnée
-            const selectedOption = select.querySelector(`option[value="${selectValue.replace(/"/g, '\\"')}"]`);
+            const selectedOption = select.querySelector('option[value="' + selectValue.replace(/"/g, '\\"') + '"]');
             const templateName = selectedOption ? selectedOption.textContent.trim() : 'Template inconnu';
             
             previewDiv.innerHTML = '<p class="current-template"><strong>Assigné :</strong> ' + templateName.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '<span class="assigned-badge">✓</span></p>';
