@@ -1773,6 +1773,145 @@ window.toggleRGPDControls = toggleRGPDControls;
                 visibleModals.forEach(hideModal);
             }
         });
+
+        // Handle floating save button
+        const floatingSaveBtn = document.getElementById('floating-save-btn');
+        if (floatingSaveBtn) {
+            floatingSaveBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                console.log('🔄 [PDF Builder] Bouton flottant "Enregistrer" cliqué');
+
+                // Disable button and show loading state
+                floatingSaveBtn.disabled = true;
+                const originalHTML = floatingSaveBtn.innerHTML;
+                floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-update spin"></span> Enregistrement...';
+                floatingSaveBtn.style.opacity = '0.7';
+
+                // Get active tab
+                const activeTab = document.querySelector('.nav-tab.nav-tab-active');
+                if (!activeTab) {
+                    console.error('No active tab found');
+                    floatingSaveBtn.disabled = false;
+                    floatingSaveBtn.innerHTML = originalHTML;
+                    floatingSaveBtn.style.opacity = '1';
+                    return;
+                }
+
+                const tabId = activeTab.getAttribute('data-tab') || activeTab.getAttribute('href')?.substring(1);
+                console.log('📋 [PDF Builder] Onglet actif détecté:', tabId);
+
+                if (!tabId) {
+                    console.error('No tab ID found');
+                    floatingSaveBtn.disabled = false;
+                    floatingSaveBtn.innerHTML = originalHTML;
+                    floatingSaveBtn.style.opacity = '1';
+                    return;
+                }
+
+                // Get form for active tab
+                const activeContent = document.getElementById(tabId);
+                if (!activeContent) {
+                    console.error('No active content found for tab:', tabId);
+                    floatingSaveBtn.disabled = false;
+                    floatingSaveBtn.innerHTML = originalHTML;
+                    floatingSaveBtn.style.opacity = '1';
+                    return;
+                }
+
+                const form = activeContent.querySelector('form');
+                if (!form) {
+                    console.error('No form found in active tab:', tabId);
+                    floatingSaveBtn.disabled = false;
+                    floatingSaveBtn.innerHTML = originalHTML;
+                    floatingSaveBtn.style.opacity = '1';
+                    return;
+                }
+
+                console.log('📝 [PDF Builder] Formulaire trouvé pour l\'onglet:', tabId);
+
+                // Collect form data
+                const formData = new FormData(form);
+                formData.append('action', 'pdf_builder_save_settings');
+                formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+                formData.append('tab', tabId);
+
+                console.log('📤 [PDF Builder] Envoi des données du formulaire:', {
+                    tab: tabId,
+                    action: 'pdf_builder_save_settings',
+                    dataCount: Array.from(formData.entries()).length
+                });
+
+                // Make AJAX request
+                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('📥 [PDF Builder] Réponse AJAX reçue:', data);
+
+                    if (data.success) {
+                        // Show success
+                        floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-yes"></span> Enregistré !';
+                        floatingSaveBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #1e7e34 100%)';
+
+                        // Reset button after delay
+                        setTimeout(() => {
+                            floatingSaveBtn.disabled = false;
+                            floatingSaveBtn.innerHTML = originalHTML;
+                            floatingSaveBtn.style.background = '';
+                            floatingSaveBtn.style.opacity = '1';
+                        }, 3000);
+
+                        // Show success notification if available
+                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                            PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
+                        }
+
+                    } else {
+                        // Show error
+                        console.error('Save failed:', data.data?.message || 'Unknown error');
+                        floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-no"></span> Erreur';
+                        floatingSaveBtn.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
+
+                        // Reset button after delay
+                        setTimeout(() => {
+                            floatingSaveBtn.disabled = false;
+                            floatingSaveBtn.innerHTML = originalHTML;
+                            floatingSaveBtn.style.background = '';
+                            floatingSaveBtn.style.opacity = '1';
+                        }, 5000);
+
+                        // Show error notification if available
+                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                            PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'), 'error');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('AJAX error:', error);
+                    floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-no"></span> Erreur réseau';
+                    floatingSaveBtn.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
+
+                    // Reset button after delay
+                    setTimeout(() => {
+                        floatingSaveBtn.disabled = false;
+                        floatingSaveBtn.innerHTML = originalHTML;
+                        floatingSaveBtn.style.background = '';
+                        floatingSaveBtn.style.opacity = '1';
+                    }, 5000);
+
+                    // Show error notification if available
+                    if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                        PDF_Builder_Notification_Manager.show_toast('Erreur réseau lors de la sauvegarde', 'error');
+                    }
+                });
+            });
+        }
     }
 
     // Basic preview update functions
