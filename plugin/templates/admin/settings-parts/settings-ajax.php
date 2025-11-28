@@ -796,7 +796,7 @@ function pdf_builder_save_canvas_settings_handler() {
                             $value = $_POST[$post_key];
                             if ($post_key === 'canvas_shadow_enabled') {
                                 $value = $value === '1';
-                            } else if ($post_key === 'canvas_border_width') {
+                            } elseif ($post_key === 'canvas_border_width') {
                                 $value = PDF_Builder_Sanitizer::int($value);
                             }
                             update_option($option_key, $value);
@@ -826,7 +826,7 @@ function pdf_builder_save_canvas_settings_handler() {
                             $value = $_POST[$post_key];
                             if (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid'])) {
                                 $value = $value === '1';
-                            } else if ($post_key === 'canvas_grid_size') {
+                            } elseif ($post_key === 'canvas_grid_size') {
                                 $value = PDF_Builder_Sanitizer::int($value);
                             }
                             update_option($option_key, $value);
@@ -881,7 +881,7 @@ function pdf_builder_save_canvas_settings_handler() {
                             $value = $_POST[$post_key];
                             if ($post_key === 'canvas_export_transparent') {
                                 $value = $value === '1';
-                            } else if ($post_key === 'canvas_export_quality') {
+                            } elseif ($post_key === 'canvas_export_quality') {
                                 $value = PDF_Builder_Sanitizer::int($value);
                             }
                             update_option($option_key, $value);
