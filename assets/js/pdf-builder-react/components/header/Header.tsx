@@ -500,9 +500,21 @@ export const Header = memo(function Header({
 
         <button
           onClick={async () => {
+            console.log('🚀 [PDF Builder] Bouton Enregistrer cliqué', {
+              templateName,
+              isModified: deferredIsModified,
+              isSaving: deferredIsSaving,
+              isLoading: deferredIsLoading,
+              timestamp: new Date().toISOString()
+            });
             try {
               await onSave();
+              console.log('✅ [PDF Builder] Sauvegarde réussie', {
+                templateName,
+                timestamp: new Date().toISOString()
+              });
             } catch (error) {
+              console.error('❌ [PDF Builder] Erreur lors de la sauvegarde:', error);
               alert('Erreur lors de la sauvegarde: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
             }
           }}
