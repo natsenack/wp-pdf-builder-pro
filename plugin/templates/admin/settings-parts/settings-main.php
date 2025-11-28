@@ -1168,397 +1168,183 @@ if (document.readyState === 'loading') {
     console.log('PDF Builder: ===== END FINAL STATE CHECK =====');
 };
 
-    function updateSecurityStatusIndicators() {
-        // Mettre à jour l'indicateur de sécurité (enable_logging)
-        const enableLoggingCheckbox = document.getElementById('enable_logging');
-        const securityStatus = document.getElementById('security-status-indicator');
-        if (enableLoggingCheckbox && securityStatus) {
-            const isActive = enableLoggingCheckbox.checked;
-            securityStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-            securityStatus.style.background = isActive ? '#28a745' : '#dc3545';
-        }
+})();
 
-        // Mettre à jour l'indicateur RGPD (gdpr_enabled)
-        const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
-        const rgpdStatus = document.getElementById('rgpd-status-indicator');
-        if (gdprEnabledCheckbox && rgpdStatus) {
-            const isActive = gdprEnabledCheckbox.checked;
-            rgpdStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-            rgpdStatus.style.background = isActive ? '#28a745' : '#dc3545';
-        }
-
-        // Mettre à jour les indicateurs système
-        updateSystemStatusIndicators();
-    }
-
-    // Fonction pour mettre à jour les indicateurs des templates assignés
-    function updateTemplateStatusIndicators() {
-        // Parcourir tous les selects de templates
-        const templateSelects = document.querySelectorAll('.template-select');
-        
-        templateSelects.forEach(select => {
-            const selectValue = select.value;
-            const selectId = select.id;
-            
-            // Trouver le conteneur parent (.template-status-card)
-            const card = select.closest('.template-status-card');
-            if (!card) return;
-            
-            // Trouver la section preview dans cette card
-            const previewDiv = card.querySelector('.template-preview');
-            if (!previewDiv) return;
-            
-            // Créer ou mettre à jour l'indicateur
-            if (selectValue && selectValue !== '') {
-                // Template assigné - récupérer le texte de l'option sélectionnée
-                const selectedOption = select.querySelector(`option[value="${selectValue.replace(/"/g, '\\"')}"]`);
-                const templateName = selectedOption ? selectedOption.textContent.trim() : 'Template inconnu';
-                
-                previewDiv.innerHTML = `
-                    <p class="current-template">
-                        <strong>Assigné :</strong> ${templateName.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
-                        <span class="assigned-badge">✓</span>
-                    </p>
-                `;
-            } else {
-                // Aucun template assigné
-                previewDiv.innerHTML = `
-                    <p class="no-template">Aucun template assigné</p>
-                `;
-            }
-        });
-    }
-
-    // Fonction pour mettre à jour l'indicateur de bibliothèque de templates
-    function updateTemplateLibraryIndicator() {
-        const templateLibraryCheckbox = document.getElementById('template_library_enabled');
-        const indicator = document.getElementById('template-library-indicator');
-        
-        if (templateLibraryCheckbox && indicator) {
-            const isActive = templateLibraryCheckbox.checked;
-            indicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
-            indicator.style.background = isActive ? '#28a745' : '#dc3545';
-        }
-    }
-
-    // Fonction pour mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Système
-    function updateSystemStatusIndicators() {
-        // Indicateur Cache & Performance
-        const cacheEnabledCheckbox = document.getElementById('general_cache_enabled');
-        const cacheStatus = document.querySelector('.cache-performance-status');
-        if (cacheEnabledCheckbox && cacheStatus) {
-            const isActive = cacheEnabledCheckbox.checked;
-            cacheStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-            cacheStatus.style.background = isActive ? '#28a745' : '#dc3545';
-        }
-
-        // Indicateur Maintenance automatique
-        const maintenanceCheckbox = document.getElementById('systeme_auto_maintenance');
-        const maintenanceStatus = document.querySelector('.maintenance-status');
-        if (maintenanceCheckbox && maintenanceStatus) {
-            const isActive = maintenanceCheckbox.checked;
-            maintenanceStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-            maintenanceStatus.style.background = isActive ? '#28a745' : '#dc3545';
-        }
-
-        // Indicateur Sauvegarde automatique
-        const backupCheckbox = document.getElementById('systeme_auto_backup');
-        const backupStatus = document.querySelector('.backup-status');
-        if (backupCheckbox && backupStatus) {
-            const isActive = backupCheckbox.checked;
-            backupStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
-            backupStatus.style.background = isActive ? '#28a745' : '#dc3545';
-        }
-    }
-
-    // Fonction pour gérer l'activation/désactivation des contrôles RGPD
-    function toggleRGPDControls() {
-        const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
-        const isEnabled = gdprEnabledCheckbox ? gdprEnabledCheckbox.checked : false;
-
-        // Liste des contrôles à désactiver/activer
-        const controlsToToggle = [
-            'gdpr_consent_required',
-            'gdpr_data_retention',
-            'gdpr_audit_enabled',
-            'gdpr_encryption_enabled',
-            'gdpr_consent_analytics',
-            'gdpr_consent_templates',
-            'gdpr_consent_marketing',
-            'export-format',
-            'export-my-data',
-            'delete-my-data',
-            'view-consent-status',
-            'refresh-audit-log',
-            'export-audit-log'
-        ];
-
-        // Désactiver/activer chaque contrôle
-        controlsToToggle.forEach(controlId => {
-            const control = document.getElementById(controlId);
-            if (control) {
-                control.disabled = !isEnabled;
-
-                // Ajouter/enlever une classe CSS pour le style visuel
-                if (isEnabled) {
-                    control.classList.remove('gdpr-disabled');
-                } else {
-                    control.classList.add('gdpr-disabled');
-                }
-
-                // Pour les labels de toggle, désactiver aussi le parent label
-                if (control.type === 'checkbox') {
-                    const label = control.closest('label');
-                    if (label) {
-                        if (isEnabled) {
-                            label.classList.remove('gdpr-disabled');
-                        } else {
-                            label.classList.add('gdpr-disabled');
-                        }
-                    }
-                }
-            }
-        });
-
-        // Désactiver/activer les sections entières (actions utilisateur et logs)
-        const gdprSections = document.querySelectorAll('.gdpr-section');
-        gdprSections.forEach(section => {
-            if (isEnabled) {
-                section.classList.remove('gdpr-disabled-section');
-            } else {
-                section.classList.add('gdpr-disabled-section');
-            }
-        });
-    }
-
-    // Initialiser les indicateurs au chargement de la page
-    updateSecurityStatusIndicators();
-    toggleRGPDControls();
-    updateTemplateLibraryIndicator();
-
-    // Ajouter un event listener pour le toggle RGPD principal
-    const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
-    if (gdprEnabledCheckbox) {
-        gdprEnabledCheckbox.addEventListener('change', function() {
-            toggleRGPDControls();
-            // Removed: updateSecurityStatusIndicators(); // Ne plus mettre à jour l'indicateur lors du toggle
-        });
-    }
-
-    // Ajouter des event listeners pour les indicateurs en temps réel
+// Global utility functions
+</script>
+<script>
+// Global utility functions
+function updateSecurityStatusIndicators() {
+    // Mettre à jour l'indicateur de sécurité (enable_logging)
     const enableLoggingCheckbox = document.getElementById('enable_logging');
-    if (enableLoggingCheckbox) {
-        enableLoggingCheckbox.addEventListener('change', updateSecurityStatusIndicators);
+    const securityStatus = document.getElementById('security-status-indicator');
+    if (enableLoggingCheckbox && securityStatus) {
+        const isActive = enableLoggingCheckbox.checked;
+        securityStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+        securityStatus.style.background = isActive ? '#28a745' : '#dc3545';
     }
 
+    // Mettre à jour l'indicateur RGPD (gdpr_enabled)
+    const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
+    const rgpdStatus = document.getElementById('rgpd-status-indicator');
+    if (gdprEnabledCheckbox && rgpdStatus) {
+        const isActive = gdprEnabledCheckbox.checked;
+        rgpdStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+        rgpdStatus.style.background = isActive ? '#28a745' : '#dc3545';
+    }
+
+    // Mettre à jour les indicateurs système
+    updateSystemStatusIndicators();
+}
+
+// Fonction pour mettre à jour les indicateurs des templates assignés
+function updateTemplateStatusIndicators() {
+    // Parcourir tous les selects de templates
+    const templateSelects = document.querySelectorAll('.template-select');
+    
+    templateSelects.forEach(select => {
+        const selectValue = select.value;
+        const selectId = select.id;
+        
+        // Trouver le conteneur parent (.template-status-card)
+        const card = select.closest('.template-status-card');
+        if (!card) return;
+        
+        // Trouver la section preview dans cette card
+        const previewDiv = card.querySelector('.template-preview');
+        if (!previewDiv) return;
+        
+        // Créer ou mettre à jour l'indicateur
+        if (selectValue && selectValue !== '') {
+            // Template assigné - récupérer le texte de l'option sélectionnée
+            const selectedOption = select.querySelector(`option[value="${selectValue.replace(/"/g, '\\"')}"]`);
+            const templateName = selectedOption ? selectedOption.textContent.trim() : 'Template inconnu';
+            
+            previewDiv.innerHTML = `
+                <p class="current-template">
+                    <strong>Assigné :</strong> ${templateName.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                    <span class="assigned-badge">✓</span>
+                </p>
+            `;
+        } else {
+            // Aucun template assigné
+            previewDiv.innerHTML = `
+                <p class="no-template">Aucun template assigné</p>
+            `;
+        }
+    });
+}
+
+// Fonction pour mettre à jour l'indicateur de bibliothèque de templates
+function updateTemplateLibraryIndicator() {
+    const templateLibraryCheckbox = document.getElementById('template_library_enabled');
+    const indicator = document.getElementById('template-library-indicator');
+    
+    if (templateLibraryCheckbox && indicator) {
+        const isActive = templateLibraryCheckbox.checked;
+        indicator.textContent = isActive ? 'ACTIF' : 'INACTIF';
+        indicator.style.background = isActive ? '#28a745' : '#dc3545';
+    }
+}
+
+// Fonction pour mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Système
+function updateSystemStatusIndicators() {
+    // Indicateur Cache & Performance
     const cacheEnabledCheckbox = document.getElementById('general_cache_enabled');
-    if (cacheEnabledCheckbox) {
-        cacheEnabledCheckbox.addEventListener('change', updateSystemStatusIndicators);
+    const cacheStatus = document.querySelector('.cache-performance-status');
+    if (cacheEnabledCheckbox && cacheStatus) {
+        const isActive = cacheEnabledCheckbox.checked;
+        cacheStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+        cacheStatus.style.background = isActive ? '#28a745' : '#dc3545';
     }
 
+    // Indicateur Maintenance automatique
     const maintenanceCheckbox = document.getElementById('systeme_auto_maintenance');
-    if (maintenanceCheckbox) {
-        maintenanceCheckbox.addEventListener('change', updateSystemStatusIndicators);
+    const maintenanceStatus = document.querySelector('.maintenance-status');
+    if (maintenanceCheckbox && maintenanceStatus) {
+        const isActive = maintenanceCheckbox.checked;
+        maintenanceStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+        maintenanceStatus.style.background = isActive ? '#28a745' : '#dc3545';
     }
 
+    // Indicateur Sauvegarde automatique
     const backupCheckbox = document.getElementById('systeme_auto_backup');
-    if (backupCheckbox) {
-        backupCheckbox.addEventListener('change', updateSystemStatusIndicators);
+    const backupStatus = document.querySelector('.backup-status');
+    if (backupCheckbox && backupStatus) {
+        const isActive = backupCheckbox.checked;
+        backupStatus.textContent = isActive ? 'ACTIF' : 'INACTIF';
+        backupStatus.style.background = isActive ? '#28a745' : '#dc3545';
     }
+}
 
-    // Gestion du bouton flottant de sauvegarde
-    const floatingSaveBtn = document.getElementById('floating-save-btn');
-    if (floatingSaveBtn) {
-        floatingSaveBtn.addEventListener('click', function() {
-            // Vérifier que pdf_builder_ajax est défini
-            if (typeof pdf_builder_ajax === 'undefined') {
-                alert('Erreur: Configuration AJAX manquante. Actualisez la page.');
-                return;
+// Fonction pour gérer l'activation/désactivation des contrôles RGPD
+function toggleRGPDControls() {
+    const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
+    const isEnabled = gdprEnabledCheckbox ? gdprEnabledCheckbox.checked : false;
+
+    // Liste des contrôles à désactiver/activer
+    const controlsToToggle = [
+        'gdpr_consent_required',
+        'gdpr_data_retention',
+        'gdpr_audit_enabled',
+        'gdpr_encryption_enabled',
+        'gdpr_consent_analytics',
+        'gdpr_consent_templates',
+        'gdpr_consent_marketing',
+        'export-format',
+        'export-my-data',
+        'delete-my-data',
+        'view-consent-status',
+        'refresh-audit-log',
+        'export-audit-log'
+    ];
+
+    // Désactiver/activer chaque contrôle
+    controlsToToggle.forEach(controlId => {
+        const control = document.getElementById(controlId);
+        if (control) {
+            control.disabled = !isEnabled;
+
+            // Ajouter/enlever une classe CSS pour le style visuel
+            if (isEnabled) {
+                control.classList.remove('gdpr-disabled');
+            } else {
+                control.classList.add('gdpr-disabled');
             }
 
-            // Changer l'apparence du bouton pendant la sauvegarde
-            const originalText = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>'; // Texte fixe original
-            floatingSaveBtn.innerHTML = '<span class="save-icon">⏳</span><span class="save-text">Sauvegarde...</span>';
-            floatingSaveBtn.classList.add('saving');
-
-            // Timeout de sécurité : remettre le bouton à l'état normal après 5 secondes maximum
-            const safetyTimeout = setTimeout(() => {
-                floatingSaveBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
-                floatingSaveBtn.classList.remove('saving', 'saved', 'error');
-            }, 5000);
-
-            // Collecter les données de tous les formulaires
-            const formData = new FormData();
-
-            // Ajouter l'action AJAX
-            formData.append('action', 'pdf_builder_save_settings');
-            formData.append('nonce', pdf_builder_ajax?.nonce || '');
-            formData.append('current_tab', 'all'); // Sauvegarder tous les onglets
-
-            // Collecter les données de TOUS les formulaires (pas seulement visibles)
-            const forms = document.querySelectorAll('form');
-            forms.forEach(form => {
-                const formInputs = form.querySelectorAll('input, select, textarea');
-
-                // Collecter d'abord les checkboxes multiples (arrays)
-                const checkboxArrays = {};
-                formInputs.forEach(input => {
-                    if (input.type === 'checkbox' && input.name && input.name.endsWith('[]')) {
-                        const baseName = input.name.slice(0, -2); // Retirer []
-                        if (!checkboxArrays[baseName]) {
-                            checkboxArrays[baseName] = [];
-                        }
-                        // Inclure même les checkboxes disabled si elles sont checked
-                        if (input.checked) {
-                            checkboxArrays[baseName].push(input.value);
-                        }
-                    }
-                });
-
-                // Ajouter les arrays de checkboxes
-                Object.keys(checkboxArrays).forEach(name => {
-                    if (checkboxArrays[name].length > 0) {
-                        checkboxArrays[name].forEach(value => {
-                            formData.append(name + '[]', value);
-                        });
+            // Pour les labels de toggle, désactiver aussi le parent label
+            if (control.type === 'checkbox') {
+                const label = control.closest('label');
+                if (label) {
+                    if (isEnabled) {
+                        label.classList.remove('gdpr-disabled');
                     } else {
-                        // Si aucun checkbox coché, envoyer un array vide
-                        formData.append(name + '[]', '');
-                    }
-                });
-
-                // Collecter les autres inputs
-                formInputs.forEach(input => {
-                    if (input.name && input.type !== 'submit' && input.type !== 'button' &&
-                        input.name !== 'action' && input.name !== 'nonce' && input.name !== 'current_tab' &&
-                        !input.name.endsWith('[]')) { // Ne pas traiter les arrays ici
-                        if (input.type === 'checkbox') {
-                            formData.append(input.name, input.checked ? '1' : '0');
-                        } else if (input.type === 'radio') {
-                            if (input.checked) {
-                                formData.append(input.name, input.value);
-                            }
-                        } else {
-                            formData.append(input.name, input.value);
-                        }
-                    }
-                });
-            });
-
-            // Envoyer la requête AJAX
-            fetch(pdf_builder_ajax.ajax_url, {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin'
-            })
-            .then(response => response.json())
-            .then(data => {
-                clearTimeout(safetyTimeout); // Annuler le timeout de sécurité
-
-                if (data.success) {
-                    // Succès
-                    floatingSaveBtn.innerHTML = '<span class="save-icon">✅</span><span class="save-text">Sauvegardé !</span>';
-                    floatingSaveBtn.classList.remove('saving');
-                    floatingSaveBtn.classList.add('saved');
-
-                    // Mettre à jour les indicateurs ACTIF/INACTIF dans l'onglet Sécurité & Conformité
-                    updateSecurityStatusIndicators();
-
-                    // Mettre à jour l'état des contrôles RGPD
-                    toggleRGPDControls();
-
-                    // Mettre à jour les indicateurs des templates assignés
-                    updateTemplateStatusIndicators();
-
-                    // Mettre à jour l'indicateur de bibliothèque de templates
-                    updateTemplateLibraryIndicator();
-
-                    // Remettre le texte original après 2 secondes
-                    setTimeout(() => {
-                        floatingSaveBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
-                        floatingSaveBtn.classList.remove('saved');
-                    }, 2000);
-
-                    // Notification de succès déjà gérée par le changement d'apparence du bouton
-                    // La notification popup a été supprimée pour éviter les doublons
-                } else {
-                    // Erreur
-                    
-                    const errorMessage = data.data && data.data.message ? data.data.message : 'Erreur inconnue';
-                    
-                    alert('Erreur de sauvegarde: ' + errorMessage);
-                    floatingSaveBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
-                    floatingSaveBtn.classList.remove('saving');
-                    floatingSaveBtn.classList.add('error');
-
-                    // Remettre le texte original après 3 secondes
-                    setTimeout(() => {
-                        floatingSaveBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
-                        floatingSaveBtn.classList.remove('error');
-                    }, 3000);
-
-                    // Afficher l'erreur
-                    if (data.data && data.data.message) {
-                        alert('Erreur de sauvegarde: ' + data.data.message);
+                        label.classList.add('gdpr-disabled');
                     }
                 }
-            })
-            .catch(error => {
-                
-                clearTimeout(safetyTimeout); // Annuler le timeout de sécurité
-                floatingSaveBtn.innerHTML = '<span class="save-icon">❌</span><span class="save-text">Erreur</span>';
-                floatingSaveBtn.classList.remove('saving');
-                floatingSaveBtn.classList.add('error');
-
-                setTimeout(() => {
-                    floatingSaveBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
-                    floatingSaveBtn.classList.remove('error');
-                }, 3000);
-
-                alert('Erreur de connexion lors de la sauvegarde');
-            });
-        });
-    }
-
-    // Initialize zoom card preview with real values
-    updateZoomCardPreview();
-
-    // Initialize all canvas card previews with real values
-    // Use setTimeout to ensure window.pdfBuilderCanvasSettings is loaded
-    setTimeout(function() {
-        try {
-            if (window.updateCanvasPreviews) {
-                window.updateCanvasPreviews('all');
-            } else if (window.CanvasPreviewManager && typeof window.CanvasPreviewManager.updatePreviews === 'function') {
-                window.CanvasPreviewManager.updatePreviews('all');
-            } else {
-                // Fallback: call individual update functions if they exist
-                const updateFunctions = [
-                    'updateDimensionsCardPreview', 'updateApparenceCardPreview', 'updatePerformanceCardPreview',
-                    'updateAutosaveCardPreview', 'updateZoomCardPreview', 'updateGrilleCardPreview',
-                    'updateInteractionsCardPreview', 'updateExportCardPreview'
-                ];
-                updateFunctions.forEach(funcName => {
-                    if (typeof window[funcName] === 'function') {
-                        try {
-                            window[funcName]();
-                        } catch (error) {
-                            pdfBuilderError('Error calling ' + funcName + ':', error);
-                        }
-                    }
-                });
             }
-        } catch (error) {
-            pdfBuilderError('Error initializing canvas previews:', error);
         }
-    // Make functions globally accessible
-    window.updateSecurityStatusIndicators = updateSecurityStatusIndicators;
-    window.updateTemplateStatusIndicators = updateTemplateStatusIndicators;
-    window.updateTemplateLibraryIndicator = updateTemplateLibraryIndicator;
-    window.updateSystemStatusIndicators = updateSystemStatusIndicators;
-    window.toggleRGPDControls = toggleRGPDControls;
-});
+    });
 
+    // Désactiver/activer les sections entières (actions utilisateur et logs)
+    const gdprSections = document.querySelectorAll('.gdpr-section');
+    gdprSections.forEach(section => {
+        if (isEnabled) {
+            section.classList.remove('gdpr-disabled-section');
+        } else {
+            section.classList.add('gdpr-disabled-section');
+        }
+    });
+}
+
+// Make functions globally accessible
+window.updateSecurityStatusIndicators = updateSecurityStatusIndicators;
+window.updateTemplateStatusIndicators = updateTemplateStatusIndicators;
+window.updateTemplateLibraryIndicator = updateTemplateLibraryIndicator;
+window.updateSystemStatusIndicators = updateSystemStatusIndicators;
+window.toggleRGPDControls = toggleRGPDControls;
+</script>
+<script>
 // Simplified canvas configuration modals functionality
 </script>
 <script>
