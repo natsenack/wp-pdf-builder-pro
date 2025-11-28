@@ -428,6 +428,24 @@ function pdf_builder_load_core()
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_ajax')
             ));
+
+            // Localisation pour settings-page.js qui utilise pdfBuilderAjax
+            wp_localize_script('jquery', 'pdfBuilderAjax', array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_ajax'),
+                'debug' => array(
+                    'enabled' => true,
+                    'level' => 'info',
+                    'console' => true,
+                    'server' => false
+                ),
+                'strings' => array(
+                    'loading' => __('Chargement...', 'pdf-builder-pro'),
+                    'error' => __('Erreur', 'pdf-builder-pro'),
+                    'success' => __('Succès', 'pdf-builder-pro'),
+                    'saving' => __('Sauvegarde en cours...', 'pdf-builder-pro')
+                )
+            ));
         }
     });
 
