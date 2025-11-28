@@ -213,19 +213,21 @@ if (function_exists('is_admin') && is_admin()) {
 // ============================================================================
 // ✅ CACHE DÉSACTIVÉ - Force désactiver le cache pour la cohérence des données
 // ============================================================================
-add_action('plugins_loaded', function() {
-    $settings = get_option('pdf_builder_settings', []);
-    $settings['cache_enabled'] = false;  // Force désactivé
-    $settings['cache_ttl'] = 0;           // Pas de TTL
-    update_option('pdf_builder_settings', $settings);
-}, 1);
+if (function_exists('add_action')) {
+    add_action('plugins_loaded', function() {
+        $settings = get_option('pdf_builder_settings', []);
+        $settings['cache_enabled'] = false;  // Force désactivé
+        $settings['cache_ttl'] = 0;           // Pas de TTL
+        update_option('pdf_builder_settings', $settings);
+    }, 1);
 
-// Instancier PDF_Builder_Admin pour enregistrer les hooks AJAX
-add_action('plugins_loaded', function() {
-    if (class_exists('PDF_Builder_Admin')) {
-        new PDF_Builder_Admin();
-    }
-}, 5);
+    // Instancier PDF_Builder_Admin pour enregistrer les hooks AJAX
+    add_action('plugins_loaded', function() {
+        if (class_exists('PDF_Builder_Admin')) {
+            new PDF_Builder_Admin();
+        }
+    }, 5);
+}
 
 // ============================================================================
 // HOOKS AJAX ESSENTIELS
@@ -235,38 +237,40 @@ add_action('plugins_loaded', function() {
 // Les vrais handlers sont enregistrés plus loin dans ce fichier avec le template manager
 
 // Test AJAX simple pour l'intégration du cache
-add_action('wp_ajax_pdf_builder_simple_test', function() {
-    
-    try {
-        // Vérifier que WordPress est chargé
-        if (!function_exists('wp_send_json_success')) {
-            
-            throw new Exception('wp_send_json_success function not available');
-        }
+if (function_exists('add_action')) {
+    add_action('wp_ajax_pdf_builder_simple_test', function() {
+        
+        try {
+            // Vérifier que WordPress est chargé
+            if (!function_exists('wp_send_json_success')) {
+                
+                throw new Exception('wp_send_json_success function not available');
+            }
 
-        
-        wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
-    } catch (Exception $e) {
-        
-        wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
-    }
-});
-add_action('wp_ajax_nopriv_pdf_builder_simple_test', function() {
-    
-    try {
-        // Vérifier que WordPress est chargé
-        if (!function_exists('wp_send_json_success')) {
             
-            throw new Exception('wp_send_json_success function not available');
+            wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
+        } catch (Exception $e) {
+            
+            wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
         }
+    });
+    add_action('wp_ajax_nopriv_pdf_builder_simple_test', function() {
+        
+        try {
+            // Vérifier que WordPress est chargé
+            if (!function_exists('wp_send_json_success')) {
+                
+                throw new Exception('wp_send_json_success function not available');
+            }
 
-        
-        wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
-    } catch (Exception $e) {
-        
-        wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
-    }
-});
+            
+            wp_send_json_success('<p>✅ Test AJAX simplifié réussi !</p>');
+        } catch (Exception $e) {
+            
+            wp_send_json_error('<p>❌ Erreur lors du test AJAX: ' . esc_html($e->getMessage()) . '</p>');
+        }
+    });
+}
 
 // Initialiser les variables $_SERVER manquantes pour éviter les erreurs PHP 8.1+
 if (!isset($_SERVER['HTTP_B701CD7'])) {
