@@ -462,7 +462,7 @@
                                 // ✅ Appel AJAX pour vider le cache
                                 var formData = new FormData();
                                 formData.append('action', 'pdf_builder_clear_cache');
-                                formData.append('security', pdf_builder_ajax.nonce);
+                                formData.append('nonce', pdf_builder_ajax.nonce);
 
                                 fetch(pdf_builder_ajax.ajax_url, {
                                     method: 'POST',

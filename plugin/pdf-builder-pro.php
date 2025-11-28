@@ -861,7 +861,10 @@ function pdf_builder_save_settings_ajax() {
     } // End of else block
 
     if ($saved_count > 0) {
-        wp_send_json_success(array('message' => 'Paramètres sauvegardés avec succès'));
+        wp_send_json_success(array(
+            'message' => 'Paramètres sauvegardés avec succès',
+            'new_nonce' => wp_create_nonce('pdf_builder_ajax')
+        ));
     } else {
         wp_send_json_error(array('message' => 'Aucun paramètre sauvegardé'));
     }
@@ -895,7 +898,7 @@ function pdf_builder_get_cache_status_ajax() {
  */
 function pdf_builder_test_cache_ajax() {
     // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['security'], 'pdf_builder_ajax')) {
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         wp_send_json_error('Nonce invalide');
         return;
     }
@@ -965,7 +968,7 @@ function pdf_builder_test_cache_ajax() {
  */
 function pdf_builder_clear_cache_ajax() {
     // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['security'], 'pdf_builder_ajax')) {
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         wp_send_json_error('Nonce invalide');
         return;
     }

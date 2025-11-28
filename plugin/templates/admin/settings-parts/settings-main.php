@@ -1861,6 +1861,12 @@ window.toggleRGPDControls = toggleRGPDControls;
                     console.log('📥 [PDF Builder] Réponse AJAX reçue:', data);
 
                     if (data.success) {
+                        // Update nonce if provided
+                        if (data.data && data.data.new_nonce) {
+                            window.pdfBuilderAjax.nonce = data.data.new_nonce;
+                            console.log('🔄 [PDF Builder] Nonce mis à jour');
+                        }
+
                         // Show success
                         floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-yes"></span> Enregistré !';
                         floatingSaveBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #1e7e34 100%)';
@@ -1879,6 +1885,20 @@ window.toggleRGPDControls = toggleRGPDControls;
                         }
 
                     } else {
+                        // Handle nonce error specifically
+                        if (data.data && data.data.message && data.data.message.includes('Nonce invalide')) {
+                            console.warn('🔐 [PDF Builder] Erreur de nonce détectée, tentative de régénération');
+
+                            // Try to refresh the page to get a new nonce
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+
+                            floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-update spin"></span> Actualisation...';
+                            floatingSaveBtn.style.background = 'linear-gradient(135deg, #ffc107 0%, #e0a800 100%)';
+                            return;
+                        }
+
                         // Show error
                         console.error('Save failed:', data.data?.message || 'Unknown error');
                         floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-no"></span> Erreur';

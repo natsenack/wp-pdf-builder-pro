@@ -86,7 +86,7 @@
                     ajaxData.nonce = ajaxNonce;
                 } else if (typeof pdf_builder_ajax !== 'undefined') {
                     ajaxUrl = pdf_builder_ajax.ajax_url;
-                    ajaxData.security = pdf_builder_ajax.nonce;
+                    ajaxData.nonce = pdf_builder_ajax.nonce;
                 } else {
                     console.error('LICENSE TEST JS: No AJAX configuration found');
                     this.showError('Configuration AJAX manquante');
