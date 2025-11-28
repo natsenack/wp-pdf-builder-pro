@@ -289,7 +289,7 @@ class PDF_Builder_Intelligent_Loader {
     }
 
     private function load_backup_component() {
-        return class_exists('PDF_Builder_Backup_Recovery');
+        return class_exists('PDF_Builder_Backup_Recovery_System');
     }
 
     private function load_updates_component() {

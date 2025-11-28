@@ -146,7 +146,7 @@ require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Task_Scheduler.php';
 require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
 require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Diagnostic_Tool.php';
 require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Analytics_Manager.php';
-require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Backup_Recovery.php';
+require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Backup_Recovery_System.php';
 require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Security_Monitor.php';
 require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Update_Manager.php';
 require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Reporting_System.php';
@@ -193,7 +193,7 @@ add_action('plugins_loaded', function() {
         PDF_Builder_Analytics_Manager::get_instance();
 
         // Initialiser le système de sauvegarde/récupération
-        PDF_Builder_Backup_Recovery::get_instance();
+        PDF_Builder_Backup_Recovery_System::get_instance();
 
         // Initialiser le moniteur de sécurité
         PDF_Builder_Security_Monitor::get_instance();
