@@ -943,8 +943,10 @@ if (document.readyState === 'loading') {
     }, 100);
 }
 
-// Separate initialization function
-function initializeTabs() {
+// Tab switching functionality
+(function() {
+    // Make initializeTabs globally accessible
+    window.initializeTabs = function() {
     console.log('PDF Builder: initializeTabs() function called');
 
     const tabs = document.querySelectorAll('.nav-tab');
@@ -1164,7 +1166,7 @@ function initializeTabs() {
     console.log('PDF Builder: Final state - all tabs:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({href: tab.getAttribute('href'), classes: tab.classList.toString()})));
     console.log('PDF Builder: Final state - all contents:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({id: content.id, classes: content.classList.toString()})));
     console.log('PDF Builder: ===== END FINAL STATE CHECK =====');
-}
+};
 
     function updateSecurityStatusIndicators() {
         // Mettre à jour l'indicateur de sécurité (enable_logging)
@@ -1549,7 +1551,12 @@ function initializeTabs() {
         } catch (error) {
             pdfBuilderError('Error initializing canvas previews:', error);
         }
-    }, 500);
+    // Make functions globally accessible
+    window.updateSecurityStatusIndicators = updateSecurityStatusIndicators;
+    window.updateTemplateStatusIndicators = updateTemplateStatusIndicators;
+    window.updateTemplateLibraryIndicator = updateTemplateLibraryIndicator;
+    window.updateSystemStatusIndicators = updateSystemStatusIndicators;
+    window.toggleRGPDControls = toggleRGPDControls;
 });
 
 // Simplified canvas configuration modals functionality
