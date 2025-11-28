@@ -290,6 +290,17 @@ function pdf_builder_register_ajax_handlers() {
         require_once $settings_ajax_path;
     }
 
+    // Canvas settings save handler
+    add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
+
+    // Cache settings save handler
+    add_action('wp_ajax_pdf_builder_save_cache_settings', 'pdf_builder_save_cache_settings_handler');
+
+    // Clear cache handler (if not already defined)
+    if (!has_action('wp_ajax_pdf_builder_clear_cache')) {
+        add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
+    }
+
     // Preview images
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');

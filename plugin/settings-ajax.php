@@ -11,23 +11,6 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Register AJAX handlers for settings
- */
-function pdf_builder_register_ajax_handlers() {
-    // Canvas settings save handler
-    add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
-
-    // Cache settings save handler
-    add_action('wp_ajax_pdf_builder_save_cache_settings', 'pdf_builder_save_cache_settings_handler');
-
-    // Clear cache handler (if not already defined)
-    if (!has_action('wp_ajax_pdf_builder_clear_cache')) {
-        add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
-    }
-}
-add_action('init', 'pdf_builder_register_ajax_handlers');
-
-/**
  * AJAX handler for saving canvas settings
  */
 function pdf_builder_save_canvas_settings_handler() {
