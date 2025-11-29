@@ -160,6 +160,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log('[PDF Builder] save_all_settings called');
         error_log('[PDF Builder] developer_enabled received: ' . (isset($_POST['developer_enabled']) ? $_POST['developer_enabled'] : 'NOT SET'));
 
+        // Vérifier la valeur actuelle
+        $current_value = get_option('pdf_builder_developer_enabled', '0');
+        error_log('[PDF Builder] developer_enabled current value in DB: ' . $current_value);
+
         $settings = [
             // Général - Informations entreprise
             'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
