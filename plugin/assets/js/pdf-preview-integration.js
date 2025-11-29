@@ -21,27 +21,15 @@ window.PDFBuilderLogger = {
     },
 
     debug: function(message, ...args) {
-        if (this.currentLevel <= this.levels.DEBUG) {
-            console.log(`[PDF Builder DEBUG] ${message}`, ...args);
-        }
     },
 
     info: function(message, ...args) {
-        if (this.currentLevel <= this.levels.INFO) {
-            console.log(`[PDF Builder] ${message}`, ...args);
-        }
     },
 
     warn: function(message, ...args) {
-        if (this.currentLevel <= this.levels.WARN) {
-            console.warn(`[PDF Builder WARN] ${message}`, ...args);
-        }
     },
 
     error: function(message, ...args) {
-        if (this.currentLevel <= this.levels.ERROR) {
-            console.error(`[PDF Builder ERROR] ${message}`, ...args);
-        }
     },
 
     // Méthode pour logger avec contexte

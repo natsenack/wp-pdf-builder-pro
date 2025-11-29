@@ -73,7 +73,6 @@
                 } else if (typeof pdf_builder_ajax !== 'undefined') {
                     ajaxUrl = pdf_builder_ajax.ajax_url;
                 } else {
-                    console.error('LICENSE TEST JS: No AJAX configuration found');
                     this.showError('Configuration AJAX manquante');
                     return;
                 }
@@ -88,7 +87,6 @@
                     ajaxUrl = pdf_builder_ajax.ajax_url;
                     ajaxData.nonce = pdf_builder_ajax.nonce;
                 } else {
-                    console.error('LICENSE TEST JS: No AJAX configuration found');
                     this.showError('Configuration AJAX manquante');
                     return;
                 }
@@ -102,7 +100,6 @@
                     if (response.success) {
                         this.showSuccess(response.data.message);
                     } else {
-                        console.error('LICENSE TEST JS: Server returned error:', response.data);
                         this.showError(response.data.message);
                         // Revert UI change on error
                         $checkbox.prop('checked', isChecked);
@@ -120,12 +117,6 @@
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('LICENSE TEST JS: AJAX error:', {
-                        status: xhr.status,
-                        statusText: xhr.statusText,
-                        responseText: xhr.responseText,
-                        error: error
-                    });
                     this.showError('Erreur AJAX lors du toggle du mode test');
                     // Revert UI change on error
                     $checkbox.prop('checked', isChecked);
@@ -171,7 +162,6 @@
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('DEVELOPER TOOLS: Generate key AJAX error:', error);
                     this.showError('Erreur lors de la génération de la clé de test');
                 }
             });
@@ -202,7 +192,6 @@
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('DEVELOPER TOOLS: Validate key AJAX error:', error);
                     this.showError('Erreur lors de la validation de la clé de test');
                 }
             });

@@ -536,7 +536,6 @@
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('PDF Builder Onboarding: Complete step error:', error);
                     this.showError('Erreur de connexion');
                     $button.prop('disabled', false).text(originalText);
                 }
@@ -595,7 +594,6 @@
                         this.showNotification('Assistant de configuration ignoré', 'info');
                     },
                     error: (xhr, status, error) => {
-                        console.error('PDF Builder Onboarding: Skip onboarding error:', error);
                         // Fallback : masquer quand même
                         this.hideModal();
                     }
@@ -617,11 +615,9 @@
                     if (response.success) {
 
                     } else {
-                        console.error('PDF Builder Onboarding: Failed to save template selection:', response.data);
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('PDF Builder Onboarding: AJAX error saving template selection:', error);
                 }
             });
         }
@@ -666,11 +662,9 @@
 
                         this.applyStepData(stepNumber, response.data);
                     } else {
-                        console.error('PDF Builder Onboarding: Failed to load step:', response.data);
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('PDF Builder Onboarding: AJAX error loading step:', error);
                 }
             });
         }
@@ -947,7 +941,6 @@
             $button.html('<span class="dashicons dashicons-update spin"></span> ' + loadingText);
 
             if (typeof pdfBuilderOnboarding === 'undefined') {
-                console.error('pdfBuilderOnboarding object not found');
                 $button.prop('disabled', false).html(originalText);
                 return;
             }
@@ -1016,8 +1009,6 @@
                                 this.loadStep(nextStep);
                             }, 500);
                         } else {
-                            console.error('PDF Builder Onboarding: AJAX returned error:', response.data);
-
                             // En cas d'erreur normale, réactiver tous les boutons
                             this.resetButtonStates();
                             $button.html(originalText);
@@ -1027,7 +1018,6 @@
                 },
                 error: (xhr, status, error) => {
                     clearTimeout(timeoutId);
-                    console.error('PDF Builder Onboarding: AJAX error:', status, error);
 
                     // En cas d'erreur AJAX, réactiver tous les boutons
                     this.resetButtonStates();
@@ -1456,11 +1446,9 @@
                 },
                 success: (response) => {
                     if (!response.success) {
-                        console.warn('Failed to save template selection:', response.data);
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.warn('Error saving template selection:', error);
                 }
             });
         }
@@ -1477,11 +1465,9 @@
                 },
                 success: (response) => {
                     if (!response.success) {
-                        console.warn('Failed to save freemium mode selection:', response.data);
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.warn('Error saving freemium mode selection:', error);
                 }
             });
         }
@@ -1513,25 +1499,21 @@
                                     // Afficher un message de bienvenue premium avant la redirection
                                     this.showPremiumWelcome();
                                 } else {
-                                    console.warn('Failed to mark onboarding as complete:', completeResponse.data);
                                     // Rediriger quand même
                                     window.location.href = 'admin.php?page=pdf-builder-settings#licence';
                                 }
                             },
                             error: (xhr, status, error) => {
-                                console.warn('Error marking onboarding as complete:', error);
                                 // Rediriger quand même
                                 window.location.href = 'admin.php?page=pdf-builder-settings#licence';
                             }
                         });
                     } else {
-                        console.warn('Failed to save freemium mode selection:', response.data);
                         // Rediriger quand même
                         window.location.href = 'admin.php?page=pdf-builder-settings#licence';
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.warn('Error saving freemium mode selection:', error);
                     // Rediriger quand même
                     window.location.href = 'admin.php?page=pdf-builder-settings#licence';
                 }
@@ -1633,11 +1615,9 @@
                             pdfBuilderOnboarding.current_step = step;
                         }
                     } else {
-                        console.error('PDF Builder Onboarding: Failed to update step on server');
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('PDF Builder Onboarding: AJAX error updating step:', error);
                 }
             });
         }
@@ -1879,7 +1859,6 @@
         saveTemplateAssignment() {
             // Vérifier si un template est sélectionné
             if (!this.selectedTemplate) {
-                console.warn('PDF Builder Onboarding: No template selected, cannot save assignment');
                 this.showNotification('Veuillez d\'abord sélectionner un template à l\'étape précédente.', 'error');
 
                 // Optionnel : rediriger vers l'étape 3 après un délai
@@ -1924,12 +1903,10 @@
 
                         this.showNotification('Configuration sauvegardée avec succès !', 'success');
                     } else {
-                        console.error('PDF Builder Onboarding: Failed to save template assignment', response.data);
                         this.showNotification('Erreur lors de la sauvegarde', 'error');
                     }
                 },
                 error: (xhr, status, error) => {
-                    console.error('PDF Builder Onboarding: AJAX error saving template assignment', error);
                     this.showNotification('Erreur de communication', 'error');
                 }
             });

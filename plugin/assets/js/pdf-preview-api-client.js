@@ -17,15 +17,11 @@ function debugLog(...args) {
 }
 
 function debugError(...args) {
-    if (isDebugEnabled()) {
-        console.error(...args);
-    }
+    // Error logging disabled
 }
 
 function debugWarn(...args) {
-    if (isDebugEnabled()) {
-        console.warn(...args);
-    }
+    // Warning logging disabled
 }
 
 class PDFPreviewAPI {
@@ -121,12 +117,10 @@ class PDFPreviewAPI {
                 this.displayPreview(result.data.image_url, 'editor');
                 return result.data;
             } else {
-                console.error('❌ [JS] Erreur génération éditeur:', result);
                 this.showError('Erreur lors de la génération de l\'aperçu');
                 return null;
             }
         } catch (error) {
-            console.error('❌ [JS] Erreur réseau/catch:', error);
             this.showError('Erreur de connexion');
             return null;
         } finally {
