@@ -314,6 +314,8 @@ function pdf_builder_load_core()
         }
     }
 
+    // Forcer le déploiement - marqueur de test
+
     // Charger les utilitaires essentiels depuis src/utilities/
     $utilities = array(
         'PDF_Builder_Onboarding_Manager.php',
