@@ -43,6 +43,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_optimize_database', [$this, 'handle_optimize_database']);
         add_action('wp_ajax_pdf_builder_remove_temp_files', [$this, 'handle_remove_temp_files']);
 
+        // Actions de sauvegarde
+        add_action('wp_ajax_pdf_builder_create_backup', [$this, 'handle_create_backup']);
+        add_action('wp_ajax_pdf_builder_list_backups', [$this, 'handle_list_backups']);
+        add_action('wp_ajax_pdf_builder_restore_backup', [$this, 'handle_restore_backup']);
+        add_action('wp_ajax_pdf_builder_delete_backup', [$this, 'handle_delete_backup']);
+        add_action('wp_ajax_pdf_builder_download_backup', [$this, 'handle_download_backup']);
+
         // Actions de licence
         add_action('wp_ajax_pdf_builder_test_license', [$this, 'handle_test_license']);
 
@@ -640,6 +647,200 @@ class PDF_Builder_Unified_Ajax_Handler {
             'timestamp' => current_time('mysql'),
             'user_id' => get_current_user_id()
         ]);
+    }
+
+    /**
+     * Handler pour créer une sauvegarde
+     */
+    public function handle_create_backup() {
+        if (!$this->nonce_manager->validate_ajax_request('create_backup')) {
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            return;
+        }
+
+        try {
+            $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+
+            $options = [
+                'compress' => isset($_POST['compress']) && $_POST['compress'] === '1',
+                'exclude_templates' => isset($_POST['exclude_templates']) && $_POST['exclude_templates'] === '1',
+                'exclude_settings' => isset($_POST['exclude_settings']) && $_POST['exclude_settings'] === '1',
+                'exclude_user_data' => isset($_POST['exclude_user_data']) && $_POST['exclude_user_data'] === '1'
+            ];
+
+            $result = $backup_manager->createBackup($options);
+
+            if ($result['success']) {
+                wp_send_json_success([
+                    'message' => $result['message'],
+                    'filename' => $result['filename'],
+                    'size_human' => size_format($result['size'])
+                ]);
+            } else {
+                wp_send_json_error(['message' => $result['message']]);
+            }
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder AJAX] Erreur création sauvegarde: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+        }
+    }
+
+    /**
+     * Handler pour lister les sauvegardes
+     */
+    public function handle_list_backups() {
+        if (!$this->nonce_manager->validate_ajax_request('list_backups')) {
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            return;
+        }
+
+        try {
+            $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+            $backups = $backup_manager->listBackups();
+
+            wp_send_json_success(['backups' => $backups]);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder AJAX] Erreur listage sauvegardes: ' . $e->getMessage());
+            wp_send_json_error(['message' => __('Erreur lors du chargement des sauvegardes.', 'pdf-builder-pro')]);
+        }
+    }
+
+    /**
+     * Handler pour restaurer une sauvegarde
+     */
+    public function handle_restore_backup() {
+        if (!$this->nonce_manager->validate_ajax_request('restore_backup')) {
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            return;
+        }
+
+        $filename = $_POST['filename'] ?? '';
+
+        if (empty($filename)) {
+            wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
+            return;
+        }
+
+        try {
+            $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+
+            $options = [
+                'overwrite' => isset($_POST['overwrite']) && $_POST['overwrite'] === '1',
+                'exclude_templates' => isset($_POST['exclude_templates']) && $_POST['exclude_templates'] === '1',
+                'exclude_settings' => isset($_POST['exclude_settings']) && $_POST['exclude_settings'] === '1',
+                'exclude_user_data' => isset($_POST['exclude_user_data']) && $_POST['exclude_user_data'] === '1'
+            ];
+
+            $result = $backup_manager->restoreBackup($filename, $options);
+
+            if ($result['success']) {
+                wp_send_json_success([
+                    'message' => $result['message'],
+                    'results' => $result['results']
+                ]);
+            } else {
+                wp_send_json_error(['message' => $result['message']]);
+            }
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder AJAX] Erreur restauration sauvegarde: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+        }
+    }
+
+    /**
+     * Handler pour supprimer une sauvegarde
+     */
+    public function handle_delete_backup() {
+        if (!$this->nonce_manager->validate_ajax_request('delete_backup')) {
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            return;
+        }
+
+        $filename = $_POST['filename'] ?? '';
+
+        if (empty($filename)) {
+            wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
+            return;
+        }
+
+        try {
+            $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+            $result = $backup_manager->deleteBackup($filename);
+
+            if ($result['success']) {
+                wp_send_json_success(['message' => $result['message']]);
+            } else {
+                wp_send_json_error(['message' => $result['message']]);
+            }
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder AJAX] Erreur suppression sauvegarde: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+        }
+    }
+
+    /**
+     * Handler pour télécharger une sauvegarde
+     */
+    public function handle_download_backup() {
+        if (!$this->nonce_manager->validate_ajax_request('download_backup')) {
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            return;
+        }
+
+        $filename = $_POST['filename'] ?? '';
+
+        if (empty($filename)) {
+            wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
+            return;
+        }
+
+        try {
+            $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+            $filepath = $backup_manager->backup_dir . $filename;
+
+            if (!file_exists($filepath)) {
+                wp_send_json_error(['message' => __('Fichier de sauvegarde introuvable.', 'pdf-builder-pro')]);
+                return;
+            }
+
+            // Générer l'URL de téléchargement
+            $upload_dir = wp_upload_dir();
+            $relative_path = str_replace($upload_dir['basedir'], '', $filepath);
+            $download_url = $upload_dir['baseurl'] . $relative_path;
+
+            wp_send_json_success([
+                'download_url' => $download_url,
+                'filename' => $filename
+            ]);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder AJAX] Erreur téléchargement sauvegarde: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+        }
     }
 }
 
