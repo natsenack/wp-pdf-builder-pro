@@ -2666,10 +2666,8 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                         // Notification gérée par le système centralisé
 
-                        // Reset button state after success
-                        setTimeout(() => {
-                            PDF_Builder_Ajax_Handler.setButtonState(floatingSaveBtn, 'reset');
-                        }, 2000);
+                        // Reset button state immediately after success
+                        PDF_Builder_Ajax_Handler.setButtonState(floatingSaveBtn, 'reset');
                     },
                     errorCallback: (result, originalData) => {
                         // Log error
