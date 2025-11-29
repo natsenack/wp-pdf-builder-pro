@@ -1126,39 +1126,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
         addNotificationLog(`🔔 Test ${type}: "${message.substring(0, 50)}..."`, type);
 
-        try {
-            // Check if notification system is available
-            if (typeof window.pdfBuilderNotify !== 'undefined' && window.pdfBuilderNotify[type]) {
-                const result = window.pdfBuilderNotify[type](message, 4000); // 4 seconds for testing
-                notificationStats[type]++;
-                notificationTestCount++;
+        // Function to attempt showing notification
+        function attemptShowNotification(retryCount = 0) {
+            try {
+                // Check if notification system is available
+                if (typeof window.pdfBuilderNotify !== 'undefined' && window.pdfBuilderNotify[type]) {
+                    const result = window.pdfBuilderNotify[type](message, 4000); // 4 seconds for testing
+                    notificationStats[type]++;
+                    notificationTestCount++;
 
-                logToConsole('success', `${type} notification shown successfully`, {
-                    id: result,
-                    stats: notificationStats
-                });
+                    logToConsole('success', `${type} notification shown successfully`, {
+                        id: result,
+                        stats: notificationStats
+                    });
 
-                addNotificationLog(`✅ ${type} notification affichée (ID: ${result})`, 'success');
-            } else if (typeof window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`] === 'function') {
-                // Fallback to old global functions
-                const showFunction = window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`];
-                const result = showFunction(message, 4000); // 4 seconds for testing
-                notificationStats[type]++;
-                notificationTestCount++;
+                    addNotificationLog(`✅ ${type} notification affichée (ID: ${result})`, 'success');
+                } else if (typeof window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`] === 'function') {
+                    // Fallback to old global functions
+                    const showFunction = window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`];
+                    const result = showFunction(message, 4000); // 4 seconds for testing
+                    notificationStats[type]++;
+                    notificationTestCount++;
 
-                logToConsole('success', `${type} notification shown successfully`, {
-                    id: result,
-                    stats: notificationStats
-                });
+                    logToConsole('success', `${type} notification shown successfully`, {
+                        id: result,
+                        stats: notificationStats
+                    });
 
-                addNotificationLog(`✅ ${type} notification affichée (ID: ${result})`, 'success');
-            } else {
-                throw new Error(`Notification system not available. Please refresh the page.`);
+                    addNotificationLog(`✅ ${type} notification affichée (ID: ${result})`, 'success');
+                } else {
+                    // Retry up to 5 times with increasing delay
+                    if (retryCount < 5) {
+                        setTimeout(() => attemptShowNotification(retryCount + 1), 200 * (retryCount + 1));
+                        return;
+                    }
+                    throw new Error(`Notification system not available after ${retryCount} retries. Please refresh the page.`);
+                }
+            } catch (error) {
+                logToConsole('error', `Failed to show ${type} notification`, error);
+                addNotificationLog(`❌ Erreur ${type}: ${error.message}`, 'error');
             }
-        } catch (error) {
-            logToConsole('error', `Failed to show ${type} notification`, error);
-            addNotificationLog(`❌ Erreur ${type}: ${error.message}`, 'error');
         }
+
+        // Start attempt
+        attemptShowNotification();
     }
 
     // Individual test buttons
