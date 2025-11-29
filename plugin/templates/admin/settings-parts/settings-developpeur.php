@@ -1428,19 +1428,7 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
     logToConsole('info', 'Notification test system initialized');
     addNotificationLog('🚀 Système de test des notifications initialisé', 'system');
 
-    // Delay the test execution until all scripts are loaded
-    window.addEventListener('load', function() {
-        logToConsole('info', 'Window fully loaded, starting notification tests');
-        addNotificationLog('⏳ Page complètement chargée, démarrage des tests...', 'system');
-
-        // Wait additional 2 seconds to ensure all scripts are ready
-        setTimeout(function() {
-            logToConsole('info', 'Starting notification tests after delay');
-            addNotificationLog('🎯 Démarrage des tests de notifications...', 'system');
-
-            // Test all notifications
-            testAllNotifications();
-        }, 2000);
-    });
+    // Manual testing only - no automatic execution on page load
+    // Tests are triggered manually via buttons only
 });
 </script>

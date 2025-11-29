@@ -152,14 +152,6 @@
         show(message, type = 'info', options = {}) {
             if (!this.settings.enabled) return;
 
-            // Bloquer les notifications de test automatique
-            if (this.isTestNotification(message)) {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('PDF Builder: Test notification blocked:', message);
-                }
-                return;
-            }
-
             const notificationOptions = Object.assign({
                 message: message,
                 type: type,
@@ -365,27 +357,6 @@
             }
         }
 
-        /**
-         * Vérifier si c'est une notification de test
-         */
-        isTestNotification(message) {
-            if (!message) return false;
-
-            const testPatterns = [
-                /Test success/i,
-                /Test error/i,
-                /Test warning/i,
-                /Test info/i,
-                /Opération réussie/i,
-                /Erreur critique/i,
-                /Attention requise/i,
-                /Information importante/i,
-                /tous les types testés/i,
-                /notification affichée/i
-            ];
-
-            return testPatterns.some(pattern => pattern.test(message));
-        }
 
         /**
          * Échapper le HTML
@@ -475,97 +446,6 @@
         }
     }
 
-    // BLOQUER LES NOTIFICATIONS DE TEST - Override global
-    const originalSuccess = PDF_Builder_Notifications.prototype.success;
-    const originalError = PDF_Builder_Notifications.prototype.error;
-    const originalWarning = PDF_Builder_Notifications.prototype.warning;
-    const originalInfo = PDF_Builder_Notifications.prototype.info;
-
-    PDF_Builder_Notifications.prototype.success = function(message, options = {}) {
-        if (this.isTestNotification(message)) {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: Test success notification blocked:', message);
-            }
-            return null;
-        }
-        return originalSuccess.call(this, message, options);
-    };
-
-    PDF_Builder_Notifications.prototype.error = function(message, options = {}) {
-        if (this.isTestNotification(message)) {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: Test error notification blocked:', message);
-            }
-            return null;
-        }
-        return originalError.call(this, message, options);
-    };
-
-    PDF_Builder_Notifications.prototype.warning = function(message, options = {}) {
-        if (this.isTestNotification(message)) {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: Test warning notification blocked:', message);
-            }
-            return null;
-        }
-        return originalWarning.call(this, message, options);
-    };
-
-    PDF_Builder_Notifications.prototype.info = function(message, options = {}) {
-        if (this.isTestNotification(message)) {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: Test info notification blocked:', message);
-            }
-            return null;
-        }
-        return originalInfo.call(this, message, options);
-    };
-
-    // BLOQUER COMPLETEMENT LES NOTIFICATIONS DE TEST - Override global ultime
-    function isTestNotificationGlobal(message) {
-        if (!message) return false;
-
-        const testPatterns = [
-            /Test success/i,
-            /Test error/i,
-            /Test warning/i,
-            /Test info/i,
-            /Opération réussie/i,
-            /Erreur critique/i,
-            /Attention requise/i,
-            /Information importante/i,
-            /tous les types testés/i,
-            /notification affichée/i,
-            /Système de test/i,
-            /Page complètement chargée/i,
-            /Démarrage des tests/i
-        ];
-
-        return testPatterns.some(pattern => pattern.test(message));
-    }
-
-    const originalCreateElement = document.createElement;
-    document.createElement = function(tagName) {
-        const element = originalCreateElement.call(this, tagName);
-
-        // Si c'est une div, surveiller pour les notifications de test
-        if (tagName === 'div') {
-            // Délai pour permettre au contenu d'être ajouté
-            setTimeout(() => {
-                if (element && element.classList && element.classList.contains('pdf-builder-notification')) {
-                    const textContent = element.textContent || '';
-                    if (isTestNotificationGlobal(textContent)) {
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                            console.log('PDF Builder: Blocking test notification at DOM creation:', textContent);
-                        }
-                        element.remove();
-                    }
-                }
-            }, 1);
-        }
-
-        return element;
-    };
 
     // Instance globale
     window.PDF_Builder_Notifications = PDF_Builder_Notifications;
@@ -630,80 +510,6 @@
     // Initialisation automatique
     $(document).ready(function() {
         window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
-
-        // SURVEILLANCE DOM POUR BLOQUER LES NOTIFICATIONS DE TEST
-        // Observer les changements du DOM pour détecter et supprimer les notifications de test
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach(function(node) {
-                        if (node.nodeType === 1) {
-                            // Vérifier si c'est une notification de test
-                            if (isTestNotificationElement(node)) {
-                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                    console.log('PDF Builder: Test notification DOM element blocked and removed:', node);
-                                }
-                                node.remove();
-                                return;
-                            }
-
-                            // Vérifier récursivement les enfants
-                            const testElements = node.querySelectorAll ?
-                                node.querySelectorAll('.pdf-builder-notification, [class*="notification"]') : [];
-                            testElements.forEach(function(el) {
-                                if (isTestNotificationElement(el)) {
-                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                        console.log('PDF Builder: Test notification child element blocked and removed:', el);
-                                    }
-                                    el.remove();
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        });
-
-        // Fonction pour vérifier si un élément est une notification de test
-        function isTestNotificationElement(element) {
-            if (!element || element.nodeType !== 1) return false;
-
-            // Vérifier les classes
-            const classList = element.classList;
-            if (classList && (classList.contains('pdf-builder-notification') || classList.contains('notification'))) {
-                // Vérifier le contenu textuel
-                const textContent = element.textContent || '';
-                const testPatterns = [
-                    /Test success/i,
-                    /Test error/i,
-                    /Test warning/i,
-                    /Test info/i,
-                    /Opération réussie/i,
-                    /Erreur critique/i,
-                    /Attention requise/i,
-                    /Information importante/i,
-                    /tous les types testés/i,
-                    /notification affichée/i,
-                    /Système de test/i,
-                    /Page complètement chargée/i,
-                    /Démarrage des tests/i
-                ];
-
-                return testPatterns.some(pattern => pattern.test(textContent));
-            }
-
-            return false;
-        }
-
-        // Démarrer l'observation
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: DOM observer started to block test notifications');
-        }
     });
 
 })(jQuery);
