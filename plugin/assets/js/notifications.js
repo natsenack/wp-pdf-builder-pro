@@ -152,6 +152,14 @@
         show(message, type = 'info', options = {}) {
             if (!this.settings.enabled) return;
 
+            // Bloquer les notifications de test automatique
+            if (this.isTestNotification(message)) {
+                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    console.log('PDF Builder: Test notification blocked:', message);
+                }
+                return;
+            }
+
             const notificationOptions = Object.assign({
                 message: message,
                 type: type,
@@ -355,6 +363,28 @@
             } catch {
                 // Silencieux en cas d'erreur
             }
+        }
+
+        /**
+         * Vérifier si c'est une notification de test
+         */
+        isTestNotification(message) {
+            if (!message) return false;
+
+            const testPatterns = [
+                /Test success/i,
+                /Test error/i,
+                /Test warning/i,
+                /Test info/i,
+                /Opération réussie/i,
+                /Erreur critique/i,
+                /Attention requise/i,
+                /Information importante/i,
+                /tous les types testés/i,
+                /notification affichée/i
+            ];
+
+            return testPatterns.some(pattern => pattern.test(message));
         }
 
         /**
