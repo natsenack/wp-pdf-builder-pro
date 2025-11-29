@@ -275,7 +275,7 @@ function pdf_builder_ajax_handler_dispatch() {
                 pdf_builder_save_settings_ajax();
                 break;
             case 'pdf_builder_save_all_settings':
-                wp_send_json_error('Handler not implemented - use settings-ajax.php');
+                pdf_builder_save_all_settings_handler();
                 break;
             case 'pdf_builder_get_fresh_nonce':
                 pdf_builder_get_fresh_nonce_ajax();
@@ -290,7 +290,7 @@ function pdf_builder_ajax_handler_dispatch() {
                 pdf_builder_test_cache_ajax();
                 break;
             case 'pdf_builder_clear_all_cache':
-                wp_send_json_error('Handler not implemented - use settings-ajax.php');
+                pdf_builder_clear_cache_handler();
                 break;
             case 'pdf_builder_get_cache_metrics':
                 pdf_builder_get_cache_metrics_handler();
@@ -330,10 +330,10 @@ function pdf_builder_ajax_handler_dispatch() {
                 wp_send_json_error('Handler not implemented - use settings-ajax.php');
                 break;
             case 'pdf_builder_export_diagnostic':
-                wp_send_json_error('Handler not implemented - use settings-ajax.php');
+                pdf_builder_export_diagnostic_handler();
                 break;
             case 'pdf_builder_view_logs':
-                wp_send_json_error('Handler not implemented - use settings-ajax.php');
+                pdf_builder_view_logs_handler();
                 break;
             case 'pdf_builder_save_template':
                 pdf_builder_save_template_handler();
@@ -2265,92 +2265,13 @@ function pdf_builder_restore_backup_ajax() {
     }
 }
 
-/**
- * Handler pour vider le cache (dispatcher) - REMOVED: Duplicate function, use settings-ajax.php implementation
- */
-// function pdf_builder_clear_cache_handler() {
-//     // Vérifier le nonce
-//     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-//         wp_send_json_error('Nonce invalide');
-//         return;
-//     }
-//
-//     // Vérifier les permissions
-//     if (!current_user_can('manage_options')) {
-//         wp_send_json_error('Permissions insuffisantes');
-//         return;
-//     }
-//
-//     // Vider le cache WordPress
-//     wp_cache_flush();
-//
-//     // Supprimer les transients liés au plugin
-//     global $wpdb;
-//     $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-//     $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
-//
-//     wp_send_json_success(array(
-//         'message' => 'Cache vidé avec succès'
-//     ));
-// }
 
-/**
- * Handler pour obtenir les métriques du cache (dispatcher)
- */
-function pdf_builder_get_cache_metrics_handler() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
 
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
 
-    // Métriques simples du cache
-    $cache_enabled = get_option('pdf_builder_cache_enabled', '0');
-    $cache_ttl = get_option('pdf_builder_cache_ttl', 3600);
 
-    wp_send_json_success(array(
-        'cache_enabled' => $cache_enabled,
-        'cache_ttl' => $cache_ttl,
-        'cache_status' => $cache_enabled ? 'Activé' : 'Désactivé'
-    ));
-}
 
-/**
- * Handler pour sauvegarder tous les paramètres (dispatcher) - REMOVED: Duplicate function, use settings-ajax.php implementation
- */
-// function pdf_builder_save_all_settings_handler() {
-//     // Utiliser la même logique que pdf_builder_save_settings_ajax
-//     pdf_builder_save_settings_ajax();
-// }
 
-/**
- * Handler pour voir les logs (dispatcher) - REMOVED: Duplicate function, use settings-ajax.php implementation
- */
-// function pdf_builder_view_logs_handler() {
-//     // Vérifier le nonce
-//     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-//         wp_send_json_error('Nonce invalide');
-//         return;
-//     }
-//
-//     // Vérifier les permissions
-//     if (!current_user_can('manage_options')) {
-//         wp_send_json_error('Permissions insuffisantes');
-//         return;
-//     }
-//
-//     // Logs simples
-//     wp_send_json_success(array(
-//         'logs' => array('Aucun log disponible'),
-//         'message' => 'Logs récupérés'
-//     ));
-// }
+
 
 /**
  * Vérifier l'état des systèmes avancés
