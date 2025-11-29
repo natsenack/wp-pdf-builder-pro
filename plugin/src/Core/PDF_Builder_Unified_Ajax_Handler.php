@@ -105,6 +105,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 case 'licence':
                     $saved_count = $this->save_license_settings();
                     break;
+                case 'templates':
+                    $saved_count = $this->save_templates_settings();
+                    break;
                 default:
                     wp_send_json_error(['message' => 'Onglet inconnu: ' . $current_tab]);
                     return;
@@ -234,12 +237,17 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Contenu - Templates
             'template_library_enabled' => !empty($_POST['template_library_enabled']) ? '1' : '0',
             'default_template' => sanitize_text_field($_POST['default_template'] ?? 'blank'),
+
+            // Templates par statut
+            'order_status_templates' => isset($_POST['order_status_templates']) ? $_POST['order_status_templates'] : [],
         ];
 
         $saved_count = 0;
         foreach ($settings as $key => $value) {
             if ($key === 'allowed_roles') {
                 update_option('pdf_builder_allowed_roles', $value);
+            } elseif ($key === 'order_status_templates') {
+                update_option('pdf_builder_order_status_templates', $value);
             } else {
                 update_option('pdf_builder_' . $key, $value);
             }
@@ -469,6 +477,15 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // No license settings are handled here anymore
         return 0;
+    }
+
+    /**
+     * Sauvegarde des paramètres templates
+     */
+    private function save_templates_settings() {
+        $order_status_templates = isset($_POST['order_status_templates']) ? $_POST['order_status_templates'] : [];
+        update_option('pdf_builder_order_status_templates', $order_status_templates);
+        return 1;
     }
 
     /**
