@@ -1021,12 +1021,6 @@ function pdf_builder_get_fresh_nonce_ajax() {
  * AJAX handler pour vider le cache
  */
 function pdf_builder_clear_cache_ajax() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -1493,12 +1487,6 @@ function pdf_builder_auto_clear_cache() {
  * AJAX handler for saving templates (React frontend)
  */
 function pdf_builder_save_template_handler() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -1562,12 +1550,6 @@ function pdf_builder_save_template_handler() {
  * AJAX handler for loading templates (React frontend)
  */
 function pdf_builder_load_template_handler() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -1624,12 +1606,6 @@ function pdf_builder_auto_save_template_handler() {
  * AJAX handler for loading template settings (templates page)
  */
 function pdf_builder_load_template_settings_handler() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -1681,12 +1657,6 @@ function pdf_builder_load_template_settings_handler() {
  * AJAX handler for saving template settings (templates page)
  */
 function pdf_builder_save_template_settings_handler() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -1766,12 +1736,6 @@ function pdf_builder_save_template_settings_handler() {
  * AJAX handler for deleting templates (templates page)
  */
 function pdf_builder_delete_template_handler() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -1821,12 +1785,6 @@ function pdf_builder_delete_template_handler() {
  * AJAX handler for setting default template (templates page)
  */
 function pdf_builder_set_default_template_handler() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -1883,12 +1841,6 @@ function pdf_builder_set_default_template_handler() {
  * AJAX handler for duplicating templates (templates page)
  */
 function pdf_builder_duplicate_template_handler() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -1950,12 +1902,6 @@ function pdf_builder_duplicate_template_handler() {
  * AJAX handler for loading predefined template into editor (templates page)
  */
 function pdf_builder_load_predefined_into_editor_handler() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -2021,12 +1967,6 @@ function pdf_builder_load_predefined_into_editor_handler() {
  * AJAX handler for checking template creation limit (templates page)
  */
 function pdf_builder_check_template_limit_handler() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -2063,12 +2003,6 @@ function pdf_builder_check_template_limit_handler() {
  * AJAX handler for creating backups
  */
 function pdf_builder_create_backup_ajax() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -2131,12 +2065,6 @@ function pdf_builder_create_backup_ajax() {
  * AJAX handler for listing backups
  */
 function pdf_builder_list_backups_ajax() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -2198,12 +2126,6 @@ function pdf_builder_list_backups_ajax() {
  * AJAX handler for restoring backups
  */
 function pdf_builder_restore_backup_ajax() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
