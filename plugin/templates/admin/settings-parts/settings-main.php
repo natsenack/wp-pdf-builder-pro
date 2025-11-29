@@ -1970,7 +1970,7 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                         if (data.success) {
                             // Succès
-                            if (opts.button) {
+                            if (opts.button && opts.context !== 'PDF Builder') {
                                 this.setButtonState(opts.button, 'success');
                             }
                             if (opts.successCallback) {
@@ -2666,10 +2666,11 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                         // Notification gérée par le système centralisé
 
-                        // Reset button state immediately after success
-                        floatingSaveBtn.disabled = false;
-                        floatingSaveBtn.innerHTML = '<span class="save-icon" style="font-size: 16px; line-height: 1;">💾</span><span class="save-text" style="font-weight: 600;">Enregistrer</span>';
-                        floatingSaveBtn.style.opacity = '1';
+                        // Handle button state for floating save button
+                        PDF_Builder_Ajax_Handler.setButtonState(floatingSaveBtn, 'success');
+                        setTimeout(() => {
+                            PDF_Builder_Ajax_Handler.setButtonState(floatingSaveBtn, 'reset');
+                        }, 2000);
                     },
                     errorCallback: (result, originalData) => {
                         // Log error
