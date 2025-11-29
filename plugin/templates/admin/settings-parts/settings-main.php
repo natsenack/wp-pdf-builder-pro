@@ -1811,7 +1811,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                     fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
                         method: 'POST',
                         body: formData,
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        headers: { 
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-WP-Nonce': this.nonceState.current
+                        }
                     })
                     .then(response => {
                         console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Response status: ${response.status}`);
