@@ -281,6 +281,17 @@ function pdf_builder_load_core()
         }
     }
 
+    // Charger les handlers Admin depuis src/Admin/Handlers/
+    $admin_handlers = array(
+        'AjaxHandler.php'
+    );
+    foreach ($admin_handlers as $handler) {
+        $handler_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Handlers/' . $handler;
+        if (file_exists($handler_path)) {
+            require_once $handler_path;
+        }
+    }
+
     // Charger les utilitaires essentiels depuis src/utilities/
     $utilities = array(
         'PDF_Builder_Onboarding_Manager.php',
