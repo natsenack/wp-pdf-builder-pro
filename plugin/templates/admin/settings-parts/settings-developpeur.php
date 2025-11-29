@@ -1295,22 +1295,28 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
 
     // Système de notification de secours simple
     window.simpleNotificationSystem = {
+        notifications: [],
+        nextTop: 50,
+
         show: function(message, type = 'info') {
             console.log(`[NOTIFICATION ${type.toUpperCase()}] ${message}`);
+
+            // Calculer la position verticale pour éviter la superposition
+            const currentTop = this.nextTop;
+            this.nextTop += 70; // Espace entre notifications
 
             // Créer une notification simple dans le DOM
             const notification = document.createElement('div');
             notification.className = `simple-notification simple-notification-${type}`;
             notification.style.cssText = `
                 position: fixed;
-                top: 50px;
+                top: ${currentTop}px;
                 right: 20px;
                 background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : type === 'warning' ? '#fff3cd' : '#d1ecf1'};
                 color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : type === 'warning' ? '#856404' : '#0c5460'};
                 border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : type === 'warning' ? '#ffeaa7' : '#bee5eb'};
                 border-radius: 4px;
                 padding: 12px 16px;
-                margin-bottom: 10px;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.15);
                 z-index: 10000;
                 max-width: 400px;
@@ -1329,6 +1335,8 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
                 </div>
             `;
 
+            // Ajouter à la liste des notifications
+            this.notifications.push(notification);
             document.body.appendChild(notification);
 
             // Animation d'entrée
@@ -1339,18 +1347,59 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
 
             // Auto-remove après 5 secondes
             setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => notification.remove(), 300);
+                this.remove(notification);
             }, 5000);
 
             return notification;
         },
 
+        remove: function(notification) {
+            if (!notification) return;
+
+            // Animation de sortie
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+
+            setTimeout(() => {
+                // Retirer de la liste
+                const index = this.notifications.indexOf(notification);
+                if (index > -1) {
+                    this.notifications.splice(index, 1);
+                }
+
+                // Supprimer du DOM
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+
+                // Recalculer les positions des notifications restantes
+                this.repositionNotifications();
+            }, 300);
+        },
+
+        repositionNotifications: function() {
+            this.nextTop = 50;
+            this.notifications.forEach(notification => {
+                notification.style.top = this.nextTop + 'px';
+                this.nextTop += 70;
+            });
+        },
+
         success: function(message) { return this.show(message, 'success'); },
         error: function(message) { return this.show(message, 'error'); },
         warning: function(message) { return this.show(message, 'warning'); },
-        info: function(message) { return this.show(message, 'info'); }
+        info: function(message) { return this.show(message, 'info'); },
+
+        clear: function() {
+            // Supprimer toutes les notifications
+            this.notifications.forEach(notification => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            });
+            this.notifications = [];
+            this.nextTop = 50;
+        }
     };
 
     // Alias pour compatibilité
