@@ -823,28 +823,26 @@ if (
                             if (form) {
                                 console.log('📝 [PDF Builder] Formulaire trouvé, tentative de soumission AJAX...');
 
-                                // Utiliser AJAX au lieu de soumission normale
-                                const formData = new FormData(form);
-                                formData.append('action', 'pdf_builder_save_settings');
-                                formData.append('tab', tabId);
-
-                                PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                        // Utiliser AJAX pour la sauvegarde des paramètres
+                        const formData = new FormData(form);
+                        formData.append('action', 'pdf_builder_save_settings');
+                        formData.append('tab', tabId);                                PDF_Builder_Ajax_Handler.makeRequest(formData, {
                                     button: floatingBtn,
-                                    context: 'Fallback Save',
+                                    context: 'Paramètres sauvegarde',
                                     successCallback: (result, originalData) => {
-                                        console.log('✅ [PDF Builder] Sauvegarde de secours réussie');
+                                        console.log('✅ [PDF Builder] Paramètres sauvegardés avec succès');
                                         if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                                             PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
                                         }
                                     },
                                     errorCallback: (result, originalData) => {
-                                        console.error('❌ [PDF Builder] Erreur de sauvegarde de secours:', result);
+                                        console.error('❌ [PDF Builder] Erreur lors de la sauvegarde des paramètres:', result);
                                         if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                                             PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'), 'error');
                                         }
                                     }
                                 }).catch(error => {
-                                    console.error('❌ [PDF Builder] Erreur réseau de secours:', error);
+                                    console.error('❌ [PDF Builder] Erreur réseau lors de la sauvegarde:', error);
                                     if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
                                         PDF_Builder_Notification_Manager.show_toast('Erreur réseau lors de la sauvegarde', 'error');
                                     }
