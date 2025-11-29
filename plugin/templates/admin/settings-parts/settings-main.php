@@ -2741,6 +2741,13 @@ window.toggleRGPDControls = toggleRGPDControls;
                     if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                         console.log('📤 [PDF Builder] Paramètres canvas inclus:', window.pdfBuilderCanvasSettings);
                     }
+
+                    // Ajouter aussi les paramètres canvas individuels pour traitement unifié
+                    Object.keys(window.pdfBuilderCanvasSettings).forEach(key => {
+                        if (key !== 'debug' && typeof window.pdfBuilderCanvasSettings[key] !== 'object') {
+                            formData.append('pdf_builder_canvas_' + key, window.pdfBuilderCanvasSettings[key]);
+                        }
+                    });
                 }
 
                 if (window.pdfBuilderCanvasSettings?.debug?.javascript) {

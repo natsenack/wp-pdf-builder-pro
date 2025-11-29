@@ -241,18 +241,68 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             // Templates par statut
             'order_status_templates' => isset($_POST['order_status_templates']) ? $_POST['order_status_templates'] : [],
+
+            // Paramètres Canvas - ajoutés pour le bouton flottant
+            'canvas_width' => intval($_POST['pdf_builder_canvas_canvas_width'] ?? $_POST['pdf_builder_canvas_width'] ?? 794),
+            'canvas_height' => intval($_POST['pdf_builder_canvas_canvas_height'] ?? $_POST['pdf_builder_canvas_height'] ?? 1123),
+            'canvas_format' => sanitize_text_field($_POST['pdf_builder_canvas_default_canvas_format'] ?? $_POST['pdf_builder_canvas_format'] ?? 'A4'),
+            'canvas_orientation' => sanitize_text_field($_POST['pdf_builder_canvas_default_canvas_orientation'] ?? $_POST['pdf_builder_canvas_orientation'] ?? 'portrait'),
+            'canvas_dpi' => intval($_POST['pdf_builder_canvas_default_canvas_dpi'] ?? $_POST['pdf_builder_canvas_dpi'] ?? 96),
+            'canvas_bg_color' => sanitize_hex_color($_POST['pdf_builder_canvas_canvas_bg_color'] ?? $_POST['pdf_builder_canvas_bg_color'] ?? '#ffffff'),
+            'canvas_border_color' => sanitize_hex_color($_POST['pdf_builder_canvas_canvas_border_color'] ?? $_POST['pdf_builder_canvas_border_color'] ?? '#cccccc'),
+            'canvas_border_width' => intval($_POST['pdf_builder_canvas_canvas_border_width'] ?? $_POST['pdf_builder_canvas_border_width'] ?? 1),
+            'canvas_shadow_enabled' => !empty($_POST['pdf_builder_canvas_canvas_shadow_enabled']) || !empty($_POST['pdf_builder_canvas_shadow_enabled']) ? '1' : '0',
+            'canvas_container_bg_color' => sanitize_hex_color($_POST['pdf_builder_canvas_canvas_container_bg_color'] ?? $_POST['pdf_builder_canvas_container_bg_color'] ?? '#f8f9fa'),
+            'canvas_zoom_min' => intval($_POST['pdf_builder_canvas_min_zoom'] ?? $_POST['pdf_builder_canvas_zoom_min'] ?? 10),
+            'canvas_zoom_max' => intval($_POST['pdf_builder_canvas_max_zoom'] ?? $_POST['pdf_builder_canvas_zoom_max'] ?? 500),
+            'canvas_zoom_default' => intval($_POST['pdf_builder_canvas_default_zoom'] ?? $_POST['pdf_builder_canvas_zoom_default'] ?? 100),
+            'canvas_zoom_step' => intval($_POST['pdf_builder_canvas_zoom_step'] ?? $_POST['pdf_builder_canvas_zoom_step'] ?? 25),
+            'canvas_grid_enabled' => !empty($_POST['pdf_builder_canvas_show_grid']) || !empty($_POST['pdf_builder_canvas_grid_enabled']) ? '1' : '0',
+            'canvas_grid_size' => intval($_POST['pdf_builder_canvas_grid_size'] ?? $_POST['pdf_builder_canvas_grid_size'] ?? 20),
+            'canvas_snap_to_grid' => !empty($_POST['pdf_builder_canvas_snap_to_grid']) || !empty($_POST['pdf_builder_canvas_snap_to_grid']) ? '1' : '0',
+            'canvas_guides_enabled' => !empty($_POST['pdf_builder_canvas_show_guides']) || !empty($_POST['pdf_builder_canvas_guides_enabled']) ? '1' : '0',
+            'canvas_drag_enabled' => !empty($_POST['pdf_builder_canvas_drag_enabled']) ? '1' : '0',
+            'canvas_resize_enabled' => !empty($_POST['pdf_builder_canvas_resize_enabled']) ? '1' : '0',
+            'canvas_rotate_enabled' => !empty($_POST['pdf_builder_canvas_rotate_enabled']) || !empty($_POST['pdf_builder_canvas_enable_rotation']) ? '1' : '0',
+            'canvas_multi_select' => !empty($_POST['pdf_builder_canvas_multi_select']) ? '1' : '0',
+            'canvas_keyboard_shortcuts' => !empty($_POST['pdf_builder_canvas_enable_keyboard_shortcuts']) || !empty($_POST['pdf_builder_canvas_keyboard_shortcuts']) ? '1' : '0',
+            'canvas_selection_mode' => sanitize_text_field($_POST['pdf_builder_canvas_canvas_selection_mode'] ?? $_POST['pdf_builder_canvas_selection_mode'] ?? 'click'),
+            'canvas_export_format' => sanitize_text_field($_POST['pdf_builder_canvas_export_format'] ?? $_POST['pdf_builder_canvas_export_format'] ?? 'png'),
+            'canvas_export_quality' => intval($_POST['pdf_builder_canvas_export_quality'] ?? $_POST['pdf_builder_canvas_export_quality'] ?? 90),
+            'canvas_export_transparent' => !empty($_POST['pdf_builder_canvas_export_transparent']) ? '1' : '0',
+            'canvas_fps_target' => intval($_POST['pdf_builder_canvas_max_fps'] ?? $_POST['pdf_builder_canvas_fps_target'] ?? 60),
+            'canvas_memory_limit_js' => intval($_POST['pdf_builder_canvas_memory_limit_js'] ?? $_POST['pdf_builder_canvas_memory_limit_js'] ?? 256),
+            'canvas_memory_limit_php' => intval($_POST['pdf_builder_canvas_memory_limit_php'] ?? $_POST['pdf_builder_canvas_memory_limit_php'] ?? 256),
+            'canvas_lazy_loading_editor' => !empty($_POST['pdf_builder_canvas_lazy_loading_editor']) ? '1' : '0',
+            'canvas_preload_critical' => !empty($_POST['pdf_builder_canvas_preload_critical']) ? '1' : '0',
+            'canvas_lazy_loading_plugin' => !empty($_POST['pdf_builder_canvas_lazy_loading_plugin']) ? '1' : '0',
+            'canvas_debug_enabled' => !empty($_POST['pdf_builder_canvas_debug_mode']) || !empty($_POST['pdf_builder_canvas_debug_enabled']) ? '1' : '0',
+            'canvas_performance_monitoring' => !empty($_POST['pdf_builder_canvas_show_fps']) || !empty($_POST['pdf_builder_canvas_performance_monitoring']) ? '1' : '0',
+            'canvas_error_reporting' => !empty($_POST['pdf_builder_canvas_error_reporting']) ? '1' : '0',
         ];
 
         $saved_count = 0;
+        $canvas_settings = [];
+
         foreach ($settings as $key => $value) {
             if ($key === 'allowed_roles') {
                 update_option('pdf_builder_allowed_roles', $value);
             } elseif ($key === 'order_status_templates') {
                 update_option('pdf_builder_order_status_templates', $value);
+            } elseif (strpos($key, 'canvas_') === 0) {
+                // Paramètres canvas utilisent le préfixe pdf_builder_canvas_
+                $canvas_key = substr($key, 7); // Enlever 'canvas_' du début
+                update_option('pdf_builder_canvas_' . $canvas_key, $value);
+                $canvas_settings[$canvas_key] = $value;
             } else {
                 update_option('pdf_builder_' . $key, $value);
             }
             $saved_count++;
+        }
+
+        // Sauvegarder aussi l'option globale canvas_settings pour la cohérence
+        if (!empty($canvas_settings)) {
+            update_option('pdf_builder_canvas_settings', $canvas_settings);
         }
 
         return $saved_count;
