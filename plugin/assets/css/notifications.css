@@ -209,5 +209,17 @@
     outline-offset: 2px;
 }
 
+/* Animation de sortie */
+.pdf-builder-notification-dismissing {
+    opacity: 0 !important;
+    transform: translateX(100%) !important;
+}
+
+/* État visible pour l'animation */
+.pdf-builder-notification-visible {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
 
 

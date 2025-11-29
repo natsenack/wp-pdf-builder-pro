@@ -70,9 +70,8 @@
             // Forcer un reflow pour que les styles soient appliqués
             toast[0].offsetHeight;
 
-            // Déclencher l'animation en changeant les propriétés
-            toast[0].style.opacity = '1';
-            toast[0].style.transform = 'translateX(0)';
+            // Déclencher l'animation en ajoutant la classe
+            toast.addClass('pdf-builder-notification-visible');
 
             // Attendre la fin de l'animation
             setTimeout(() => {
@@ -129,9 +128,8 @@
         }
 
         dismissNotification($notification) {
-            // Animation de sortie avec CSS transitions
-            $notification[0].style.opacity = '0';
-            $notification[0].style.transform = 'translateX(100%)';
+            // Animation de sortie avec CSS class
+            $notification.addClass('pdf-builder-notification-dismissing');
 
             setTimeout(() => {
                 $notification.remove();
