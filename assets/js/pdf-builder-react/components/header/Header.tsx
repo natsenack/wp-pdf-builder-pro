@@ -92,7 +92,7 @@ export const Header = memo(function Header({
 
   // Debug logging
   useEffect(() => {
-    console.log('🔄 [PDF Builder] État bouton Enregistrer mis à jour', {
+    debugLog('🔄 [PDF Builder] État bouton Enregistrer mis à jour', {
       templateName,
       buttonState: {
         disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
