@@ -50,13 +50,24 @@
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             const closeText = window.pdfBuilderNotifications?.strings?.close || '×';
 
-            const toast = $(`
-                <div class="pdf-builder-notification pdf-builder-notification-${type}" id="${toastId}">
-                    <span class="pdf-builder-notification-icon"></span>
-                    <span class="pdf-builder-notification-message">${this.escapeHtml(message)}</span>
-                    <span class="pdf-builder-notification-close">${closeText}</span>
-                </div>
-            `);
+            // Utiliser le template au lieu de générer HTML
+            const template = document.getElementById('pdf-builder-toast-template');
+            if (!template) {
+                console.error('Template de toast non trouvé');
+                return;
+            }
+
+            const toast = template.content.cloneNode(true).querySelector('.pdf-builder-notification');
+            toast.id = toastId;
+            toast.classList.add(`pdf-builder-notification-${type}`);
+
+            // Remplir le contenu
+            const messageEl = toast.querySelector('.pdf-builder-notification-message');
+            const closeEl = toast.querySelector('.pdf-builder-notification-close');
+            if (messageEl) messageEl.textContent = this.escapeHtml(message);
+            if (closeEl) closeEl.textContent = closeText;
+
+            const $toast = $(toast);
 
             if (!this.toastContainer || this.toastContainer.length === 0) {
                 this.createToastContainer();
