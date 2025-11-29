@@ -2367,6 +2367,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                                         value = input.checked ? '1' : '0';
                                         formData.append(name, value);
                                         collectedData[name] = value;
+                                        console.log(`📋 [PDF Builder] Collecté checkbox ${name}: ${value} (checked: ${input.checked})`);
                                     } else if (input.type === 'radio') {
                                         // Pour les radios, seulement si coché
                                         if (input.checked) {
@@ -2416,18 +2417,29 @@ window.toggleRGPDControls = toggleRGPDControls;
                             const fieldValue = collectedData[fieldName];
                             const fieldElement = document.querySelector(`[name="${fieldName}"]`);
 
+                            console.log(`🔍 [PDF Builder] Mise à jour champ ${fieldName}: valeur=${fieldValue}, élément trouvé=${!!fieldElement}`);
+
                             if (fieldElement && fieldElement.type === 'checkbox') {
                                 // Pour les checkboxes, mettre à jour l'état checked
+                                const oldChecked = fieldElement.checked;
                                 fieldElement.checked = fieldValue === '1';
-                                console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${fieldElement.checked}`);
+                                console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${fieldElement.checked}`);
 
                                 // Déclencher les fonctions de toggle si nécessaire
                                 if (fieldName === 'developer_enabled') {
+                                    console.log('🔄 [PDF Builder] Mise à jour des sections développeur...');
                                     // Mettre à jour les sections développeur
                                     if (window.updateDeveloperSections) {
                                         window.updateDeveloperSections();
+                                        console.log('✅ [PDF Builder] Sections développeur mises à jour');
+                                    } else {
+                                        console.error('❌ [PDF Builder] Fonction updateDeveloperSections non trouvée');
                                     }
                                 }
+                            } else if (fieldElement) {
+                                console.log(`ℹ️ [PDF Builder] Champ ${fieldName} trouvé mais pas checkbox (type: ${fieldElement.type})`);
+                            } else {
+                                console.warn(`⚠️ [PDF Builder] Champ ${fieldName} non trouvé dans le DOM`);
                             }
                         });
 
