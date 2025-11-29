@@ -275,7 +275,7 @@ function pdf_builder_ajax_handler_dispatch() {
                 pdf_builder_save_settings_ajax();
                 break;
             case 'pdf_builder_save_all_settings':
-                pdf_builder_save_all_settings_handler();
+                wp_send_json_error('Handler not implemented - use settings-ajax.php');
                 break;
             case 'pdf_builder_get_fresh_nonce':
                 pdf_builder_get_fresh_nonce_ajax();
@@ -2322,12 +2322,12 @@ function pdf_builder_get_cache_metrics_handler() {
 }
 
 /**
- * Handler pour sauvegarder tous les paramètres (dispatcher)
+ * Handler pour sauvegarder tous les paramètres (dispatcher) - REMOVED: Duplicate function, use settings-ajax.php implementation
  */
-function pdf_builder_save_all_settings_handler() {
-    // Utiliser la même logique que pdf_builder_save_settings_ajax
-    pdf_builder_save_settings_ajax();
-}
+// function pdf_builder_save_all_settings_handler() {
+//     // Utiliser la même logique que pdf_builder_save_settings_ajax
+//     pdf_builder_save_settings_ajax();
+// }
 
 /**
  * Handler pour voir les logs (dispatcher) - REMOVED: Duplicate function, use settings-ajax.php implementation
