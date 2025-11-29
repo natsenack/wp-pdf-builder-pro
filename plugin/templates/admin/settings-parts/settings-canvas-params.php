@@ -70,7 +70,14 @@ $canvas_settings_js = [
     // Debug
     'canvas_debug_enabled' => get_option('pdf_builder_canvas_debug_enabled', '0') === '1',
     'canvas_performance_monitoring' => get_option('pdf_builder_canvas_performance_monitoring', '0') === '1',
-    'canvas_error_reporting' => get_option('pdf_builder_canvas_error_reporting', '0') === '1'
+    'canvas_error_reporting' => get_option('pdf_builder_canvas_error_reporting', '0') === '1',
+    
+    // Debug structure for JavaScript (mapped from canvas_debug_enabled)
+    'debug' => [
+        'javascript' => get_option('pdf_builder_canvas_debug_enabled', '0') === '1',
+        'performance' => get_option('pdf_builder_canvas_performance_monitoring', '0') === '1',
+        'ajax' => get_option('pdf_builder_canvas_debug_enabled', '0') === '1'
+    ]
 ];
 
 // Sanitiser les paramètres canvas pour éviter les erreurs JSON

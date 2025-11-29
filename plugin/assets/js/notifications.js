@@ -33,6 +33,7 @@
 
             this.createContainer();
             this.bindEvents();
+            this.clear(); // Clear any existing notifications on init
             this.initialized = true;
 
             if (window.pdfBuilderCanvasSettings?.debug?.javascript) console.log('PDF Builder Notifications: Initialized', this.settings);

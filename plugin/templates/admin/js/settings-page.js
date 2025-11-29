@@ -16,11 +16,17 @@ jQuery(document).ready(function($) {
      * @returns {boolean}
      */
     function isDebugEnabled(type) {
-        // Vérifier d'abord le debug global JavaScript
-        if (typeof PDF_BUILDER_DEBUG_ENABLED !== 'undefined' && !PDF_BUILDER_DEBUG_ENABLED) {
-            return false;
+        // Priorité à pdfBuilderCanvasSettings.debug.javascript pour le contrôle global
+        if (typeof window.pdfBuilderCanvasSettings !== 'undefined' && typeof window.pdfBuilderCanvasSettings.debug !== 'undefined') {
+            // Si debug.javascript est défini dans canvas settings, l'utiliser comme contrôle global
+            if (!window.pdfBuilderCanvasSettings.debug.javascript) {
+                return false;
+            }
+            // Si debug.javascript est true, vérifier le type spécifique demandé
+            return !!window.pdfBuilderCanvasSettings.debug[type];
         }
 
+        // Fallback vers pdfBuilderAjax.debug pour la compatibilité
         if (!window.pdfBuilderAjax || !window.pdfBuilderAjax.debug) {
             return false;
         }
