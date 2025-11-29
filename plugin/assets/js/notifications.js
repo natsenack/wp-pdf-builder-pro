@@ -46,7 +46,12 @@
             }
         }
 
-        showToast(message, type = 'success', duration = 6000) {
+        showToast(message, type = 'success', duration = null) {
+            const config = window.pdfBuilderNotifications?.config || {};
+            const defaultDuration = config.default_toast_duration || 6000;
+            const animationDuration = config.animation_duration || 300;
+            duration = duration !== null ? duration : defaultDuration;
+
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             const closeText = window.pdfBuilderNotifications?.strings?.close || '×';
 
@@ -87,7 +92,7 @@
             // Attendre la fin de l'animation
             setTimeout(() => {
                 // Animation terminée
-            }, 300);
+            }, animationDuration);
 
             let dismissTimeout;
 
@@ -139,12 +144,13 @@
         }
 
         dismissNotification($notification) {
+            const animationDuration = window.pdfBuilderNotifications?.config?.animation_duration || 300;
             // Animation de sortie avec CSS class
             $notification.addClass('pdf-builder-notification-dismissing');
 
             setTimeout(() => {
                 $notification.remove();
-            }, 300);
+            }, animationDuration);
         }
 
         escapeHtml(text) {
