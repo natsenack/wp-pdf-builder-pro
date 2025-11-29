@@ -10,7 +10,7 @@ import {
   BuilderMode,
   HistoryState
 } from '../../types/elements';
-import { debugError } from '../../utils/debug';
+import { debugError, debugWarn } from '../../utils/debug';
 
 // Type pour les propriétés des éléments product_table
 interface ProductTableProperties {
@@ -633,7 +633,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
           payload: templateData
         });
       } else {
-        console.warn('[BuilderContext] No template data in event detail');
+        debugWarn('[BuilderContext] No template data in event detail');
       }
     };
 

@@ -1,5 +1,12 @@
 // Diagnostic de compatibilité navigateur pour PDF Builder
 
+// Debug function
+const debugEnabled = typeof window !== 'undefined' && window.pdfBuilderCanvasSettings?.debug?.javascript;
+const debugLog = (...args) => debugEnabled && console.log(...args);
+const debugError = (...args) => debugEnabled && console.error(...args);
+const debugWarn = (...args) => debugEnabled && console.warn(...args);
+const debugTable = (...args) => debugEnabled && console.table(...args);
+
 
 // Vérifier les APIs critiques
 const compatibilityChecks = {
@@ -49,7 +56,7 @@ const compatibilityChecks = {
   ie: /MSIE|Trident/.test(navigator.userAgent)
 };
 
-console.table(compatibilityChecks);
+debugTable(compatibilityChecks);
 
 // Vérifier les APIs problématiques
 const problematicAPIs = Object.entries(compatibilityChecks)
@@ -57,7 +64,7 @@ const problematicAPIs = Object.entries(compatibilityChecks)
   .map(([key]) => key);
 
 if (problematicAPIs.length > 0) {
-  console.error('❌ APIs manquantes:', problematicAPIs);
+  debugError('❌ APIs manquantes:', problematicAPIs);
 } else {
 
 }
@@ -68,14 +75,14 @@ try {
   testElement.addEventListener('test', () => {}, { passive: true, capture: false });
 
 } catch (e) {
-  console.error('❌ Event Listeners passifs NON supportés:', e);
+  debugError('❌ Event Listeners passifs NON supportés:', e);
 }
 
 // Test de fetch API
 if (typeof fetch !== 'undefined') {
   fetch(window.location.href, { method: 'HEAD' })
     .then(() => {})
-    .catch(e => console.error('❌ Fetch API ne fonctionne pas:', e));
+    .catch(e => debugError('❌ Fetch API ne fonctionne pas:', e));
 }
 
 // Test de Canvas
@@ -85,10 +92,10 @@ try {
   if (ctx) {
 
   } else {
-    console.error('❌ Canvas 2D API ne fonctionne pas');
+    debugError('❌ Canvas 2D API ne fonctionne pas');
   }
 } catch (e) {
-  console.error('❌ Erreur Canvas:', e);
+  debugError('❌ Erreur Canvas:', e);
 }
 
 

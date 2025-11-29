@@ -3,6 +3,7 @@ import { TemplateState } from '../../types/elements';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
 import { usePreview } from '../../hooks/usePreview';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
+import { debugLog, debugError } from '../../utils/debug';
 
 // Extension de Window pour l'API Preview
 declare global {

@@ -1155,12 +1155,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     addNotificationLog(`✅ ${type} notification affichée (ID: ${result})`, 'success');
                 } else {
-                    // Retry up to 5 times with increasing delay
-                    if (retryCount < 5) {
-                        setTimeout(() => attemptShowNotification(retryCount + 1), 200 * (retryCount + 1));
+                    // Retry up to 10 times with increasing delay (up to ~3 seconds total)
+                    if (retryCount < 10) {
+                        const delay = Math.min(200 * (retryCount + 1), 1000); // Max 1 second delay
+                        setTimeout(() => attemptShowNotification(retryCount + 1), delay);
                         return;
                     }
-                    throw new Error(`Notification system not available after ${retryCount} retries. Please refresh the page.`);
+                    throw new Error(`Notification system not available after ${retryCount} retries. Scripts may not be loaded yet.`);
                 }
             } catch (error) {
                 logToConsole('error', `Failed to show ${type} notification`, error);

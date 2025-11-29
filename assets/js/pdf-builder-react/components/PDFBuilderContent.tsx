@@ -9,6 +9,7 @@ import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas.ts';
 import { injectResponsiveUtils } from '../utils/responsive.ts';
 import { useIsMobile, useIsTablet } from '../hooks/useResponsive.ts';
+import { debugLog, debugError } from '../utils/debug';
 
 // Déclaration des types pour les fonctions de notification globales
 declare global {
@@ -98,7 +99,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     try {
       // Effectuer la sauvegarde manuelle
       await saveTemplate();
-      console.log('[PDF_BUILDER] Manual save successful');
+      debugLog('[PDF_BUILDER] Manual save successful');
 
       // Afficher une notification de succès
       if (typeof window !== 'undefined' && window.showSuccessNotification) {
@@ -106,7 +107,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
       }
 
     } catch (manualSaveError) {
-      console.error('[PDF_BUILDER] Manual save failed:', manualSaveError);
+      debugError('[PDF_BUILDER] Manual save failed:', manualSaveError);
 
       // Afficher une notification d'erreur
       if (typeof window !== 'undefined' && window.showErrorNotification) {

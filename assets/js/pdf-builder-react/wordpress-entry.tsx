@@ -4,12 +4,12 @@
  */
 
 // DEBUG: Log when script starts loading
-console.log('🔧 DEBUG: pdf-builder-react.js script started loading');
+debugLog('🔧 DEBUG: pdf-builder-react.js script started loading');
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
-import { debugError, debugWarn } from './utils/debug';
+import { debugError, debugWarn, debugLog } from './utils/debug';
 import {
   registerEditorInstance,
   loadTemplate,
@@ -113,7 +113,7 @@ declare global {
 window.initPDFBuilderReact = initPDFBuilderReact;
 
 // Exporter l'API complète pour WordPress
-console.log('🔧 DEBUG: About to assign window.pdfBuilderReact');
+debugLog('🔧 DEBUG: About to assign window.pdfBuilderReact');
 window.pdfBuilderReact = {
   initPDFBuilderReact,
   loadTemplate,
@@ -125,4 +125,4 @@ window.pdfBuilderReact = {
   registerEditorInstance,
   resetAPI
 };
-console.log('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);
+debugLog('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);

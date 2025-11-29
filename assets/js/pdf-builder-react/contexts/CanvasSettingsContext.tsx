@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { debugError } from '../utils/debug';
 
 declare global {
   interface Window {
@@ -357,13 +358,13 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             // Mettre à jour l'état local
             setSettings(prev => ({ ...prev, ...gridSettings }));
           } else {
-            console.error('Erreur lors de la sauvegarde des paramètres de grille:', result.message);
+            debugError('Erreur lors de la sauvegarde des paramètres de grille:', result.message);
           }
         } else {
-          console.error('Erreur HTTP lors de la sauvegarde des paramètres de grille');
+          debugError('Erreur HTTP lors de la sauvegarde des paramètres de grille');
         }
       } catch (error) {
-        console.error('Erreur lors de la sauvegarde des paramètres de grille:', error);
+        debugError('Erreur lors de la sauvegarde des paramètres de grille:', error);
       }
     },
     saveGridSettings: async (newSettings: Partial<{ gridShow: boolean; gridSize: number; gridSnapEnabled: boolean }>) => {
@@ -405,13 +406,13 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
             // Mettre à jour l'état local
             setSettings(prev => ({ ...prev, ...syncedSettings }));
           } else {
-            console.error('Erreur lors de la sauvegarde des paramètres de grille:', result.message);
+            debugError('Erreur lors de la sauvegarde des paramètres de grille:', result.message);
           }
         } else {
-          console.error('Erreur HTTP lors de la sauvegarde des paramètres de grille');
+          debugError('Erreur HTTP lors de la sauvegarde des paramètres de grille');
         }
       } catch (error) {
-        console.error('Erreur lors de la sauvegarde des paramètres de grille:', error);
+        debugError('Erreur lors de la sauvegarde des paramètres de grille:', error);
       }
     },
     refreshSettings: handleRefresh
