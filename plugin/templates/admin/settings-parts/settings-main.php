@@ -2665,6 +2665,11 @@ window.toggleRGPDControls = toggleRGPDControls;
                         });
 
                         // Notification gérée par le système centralisé
+
+                        // Reset button state after success
+                        setTimeout(() => {
+                            PDF_Builder_Ajax_Handler.setButtonState(floatingSaveBtn, 'reset');
+                        }, 2000);
                     },
                     errorCallback: (result, originalData) => {
                         // Log error
