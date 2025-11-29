@@ -633,9 +633,12 @@ function pdf_builder_load_bootstrap()
             require_once $notification_path;
         }
     }
-    if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
-        \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance();
-    }
+    // Initialiser le notification manager seulement après l'action 'init' pour éviter les erreurs de headers
+    add_action('init', function() {
+        if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
+            \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance();
+        }
+    }, 5);
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
     // Les utilitaires sont déjà chargés ci-dessus
