@@ -8,6 +8,10 @@
     class PDFBuilderNotifications {
         constructor() {
             this.toastContainer = null;
+            this.config = window.pdfBuilderNotifications?.config || {};
+            this.selectors = window.pdfBuilderNotifications?.selectors || {};
+            this.classes = window.pdfBuilderNotifications?.classes || {};
+            this.strings = window.pdfBuilderNotifications?.strings || {};
             // Init will be called on DOM ready
         }
 
@@ -18,19 +22,22 @@
         }
 
         createToastContainer() {
-            if (!$('#pdf-builder-toast-container').length) {
+            const containerSelector = this.selectors.container || '#pdf-builder-toast-container';
+            if (!$(containerSelector).length) {
                 this.toastContainer = $('<div id="pdf-builder-toast-container"></div>');
                 $('body').append(this.toastContainer);
             } else {
-                this.toastContainer = $('#pdf-builder-toast-container');
+                this.toastContainer = $(containerSelector);
             }
         }
 
         bindEvents() {
+            const closeSelector = this.selectors.close || '.pdf-builder-notification-close';
             // Délégation d'événements pour les boutons de fermeture
-            $(document).on('click', '.pdf-builder-notification-close', (e) => {
+            $(document).on('click', closeSelector, (e) => {
                 e.preventDefault();
-                const $notification = $(e.target).closest('.pdf-builder-notification');
+                const notificationSelector = this.selectors.notification || '.pdf-builder-notification';
+                const $notification = $(e.target).closest(notificationSelector);
                 this.dismissNotification($notification);
             });
         }
@@ -47,28 +54,31 @@
         }
 
         showToast(message, type = 'success', duration = null) {
-            const config = window.pdfBuilderNotifications?.config || {};
-            const defaultDuration = config.default_toast_duration || 6000;
-            const animationDuration = config.animation_duration || 300;
+            const defaultDuration = this.config.default_toast_duration || 6000;
+            const animationDuration = this.config.animation_duration || 300;
             duration = duration !== null ? duration : defaultDuration;
 
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            const closeText = window.pdfBuilderNotifications?.strings?.close || '×';
+            const closeText = this.strings.close || '×';
 
             // Utiliser le template au lieu de générer HTML
-            const template = document.getElementById('pdf-builder-toast-template');
+            const templateSelector = this.selectors.template || '#pdf-builder-toast-template';
+            const template = document.getElementById(templateSelector.replace('#', ''));
             if (!template) {
                 console.error('Template de toast non trouvé');
                 return;
             }
 
-            const toast = template.content.cloneNode(true).querySelector('.pdf-builder-notification');
+            const toast = template.content.cloneNode(true).querySelector(this.classes.notification || '.pdf-builder-notification');
             toast.id = toastId;
-            toast.classList.add(`pdf-builder-notification-${type}`);
+            const typeClass = this.classes['type_' + type] || `pdf-builder-notification-${type}`;
+            toast.classList.add(typeClass);
 
             // Remplir le contenu
-            const messageEl = toast.querySelector('.pdf-builder-notification-message');
-            const closeEl = toast.querySelector('.pdf-builder-notification-close');
+            const messageSelector = this.classes.message || '.pdf-builder-notification-message';
+            const closeSelector = this.classes.close || '.pdf-builder-notification-close';
+            const messageEl = toast.querySelector(messageSelector);
+            const closeEl = toast.querySelector(closeSelector);
             if (messageEl) messageEl.textContent = this.escapeHtml(message);
             if (closeEl) closeEl.textContent = closeText;
 
@@ -87,7 +97,8 @@
             toast[0].offsetHeight;
 
             // Déclencher l'animation en ajoutant la classe
-            toast.addClass('pdf-builder-notification-visible');
+            const visibleClass = this.classes.visible || 'pdf-builder-notification-visible';
+            toast.addClass(visibleClass);
 
             // Attendre la fin de l'animation
             setTimeout(() => {
@@ -144,9 +155,10 @@
         }
 
         dismissNotification($notification) {
-            const animationDuration = window.pdfBuilderNotifications?.config?.animation_duration || 300;
+            const animationDuration = this.config.animation_duration || 300;
+            const dismissingClass = this.classes.dismissing || 'pdf-builder-notification-dismissing';
             // Animation de sortie avec CSS class
-            $notification.addClass('pdf-builder-notification-dismissing');
+            $notification.addClass(dismissingClass);
 
             setTimeout(() => {
                 $notification.remove();
