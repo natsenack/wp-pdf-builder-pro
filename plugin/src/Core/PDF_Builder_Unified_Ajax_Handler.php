@@ -521,8 +521,17 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Notifications removed from the license settings — ensure any old option is deleted
         delete_option('pdf_builder_license_enable_notifications');
 
-        // No license settings are handled here anymore
-        return 0;
+        // Paramètres de rappel par email
+        $settings = [
+            'license_email_reminders' => !empty($_POST['license_email_reminders']) ? '1' : '0',
+            'license_reminder_email' => sanitize_email($_POST['license_reminder_email'] ?? ''),
+        ];
+
+        foreach ($settings as $key => $value) {
+            update_option('pdf_builder_' . $key, $value);
+        }
+
+        return count($settings);
     }
 
     /**

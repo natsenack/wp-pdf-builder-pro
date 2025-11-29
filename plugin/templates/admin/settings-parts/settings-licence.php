@@ -817,5 +817,96 @@
                         </div>
                     </section>
 
-                    <!-- Section Notifications removed -->
+                    <!-- Section Rappel par Email -->
+                    <section class="licence-section" style="background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 2px solid #4caf50; margin-top: 30px;">
+                        <h3 style="color: #2e7d32; margin-top: 0; border-bottom: 2px solid #4caf50; padding-bottom: 8px; font-size: 18px;">
+                            📧 Rappels par Email
+                        </h3>
+
+                        <p style="color: #2e7d32; margin-bottom: 20px; font-size: 14px;">
+                            Recevez des rappels automatiques par email concernant l'expiration de votre licence premium.
+                        </p>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="license_email_reminders">Activer les rappels</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="license_email_reminders" name="license_email_reminders"
+                                            value="1" <?php checked(get_option('pdf_builder_license_email_reminders', '0'), '1'); ?> />
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="description">Recevoir des rappels par email 30 jours, 7 jours et 1 jour avant l'expiration</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="license_reminder_email">Adresse email</label></th>
+                                <td>
+                                    <input type="email" id="license_reminder_email" name="license_reminder_email"
+                                        value="<?php echo esc_attr(get_option('pdf_builder_license_reminder_email', get_option('admin_email', ''))); ?>"
+                                        placeholder="votre@email.com" style="width: 300px;" />
+                                    <p class="description">Adresse email où envoyer les rappels d'expiration de licence</p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4caf50; border-radius: 6px; padding: 15px; margin-top: 20px;">
+                            <h5 style="margin: 0 0 10px 0; color: #2e7d32; font-size: 14px;">ℹ️ Informations sur les rappels</h5>
+                            <ul style="margin: 0; padding-left: 20px; color: #2e7d32; font-size: 13px; line-height: 1.5;">
+                                <li>Les rappels sont envoyés automatiquement selon le calendrier ci-dessus</li>
+                                <li>Vous recevrez au maximum 3 emails par période de licence</li>
+                                <li>Les emails sont envoyés depuis votre propre serveur WordPress</li>
+                                <li>Vous pouvez désactiver cette fonctionnalité à tout moment</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Styles pour les toggles -->
+                    <style>
+                        .toggle-switch {
+                            position: relative;
+                            display: inline-block;
+                            width: 50px;
+                            height: 24px;
+                        }
+
+                        .toggle-switch input {
+                            opacity: 0;
+                            width: 0;
+                            height: 0;
+                        }
+
+                        .toggle-slider {
+                            position: absolute;
+                            cursor: pointer;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            background-color: #ccc;
+                            transition: 0.3s;
+                            border-radius: 24px;
+                        }
+
+                        .toggle-slider:before {
+                            position: absolute;
+                            content: "";
+                            height: 18px;
+                            width: 18px;
+                            left: 3px;
+                            bottom: 3px;
+                            background-color: white;
+                            transition: 0.3s;
+                            border-radius: 50%;
+                        }
+
+                        input:checked + .toggle-slider {
+                            background-color: #4caf50;
+                        }
+
+                        input:checked + .toggle-slider:before {
+                            transform: translateX(26px);
+                        }
+                    </style>
+
             </form>
