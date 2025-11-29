@@ -1098,10 +1098,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Test individual notification types
     function testNotification(type, customMessage = null) {
         const messages = {
-            success: '✅ Opération réussie ! Les données ont été sauvegardées.',
-            error: '❌ Erreur critique ! Impossible de traiter la demande.',
-            warning: '⚠️ Attention requise ! Vérifiez vos paramètres.',
-            info: 'ℹ️ Information importante ! Mise à jour disponible.'
+            success: 'Opération réussie ! Les données ont été sauvegardées.',
+            error: 'Erreur critique ! Impossible de traiter la demande.',
+            warning: 'Attention requise ! Vérifiez vos paramètres.',
+            info: 'Information importante ! Mise à jour disponible.'
         };
 
         const message = customMessage || messages[type];
