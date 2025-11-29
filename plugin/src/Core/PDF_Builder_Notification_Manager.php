@@ -190,10 +190,10 @@ class PDF_Builder_Notification_Manager {
      */
     private function get_icon($type) {
         $icons = [
-            'success' => '✓',
-            'error' => '✕',
-            'warning' => '⚠',
-            'info' => 'ℹ'
+            'success' => '✅',
+            'error' => '❌',
+            'warning' => '⚠️',
+            'info' => 'ℹ️'
         ];
 
         return isset($icons[$type]) ? $icons[$type] : $icons['info'];

@@ -13,7 +13,7 @@
 
 /* Positions des notifications */
 .pdf-notifications-container[data-position="top-right"] {
-    top: 20px;
+    top: 80px;
     right: 20px;
 }
 

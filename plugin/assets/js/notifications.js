@@ -128,10 +128,10 @@ class PDFBuilderNotifications {
 
     getIcon(type) {
         const icons = {
-            success: '✓',
-            error: '✕',
-            warning: '⚠',
-            info: 'ℹ'
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
         };
         return icons[type] || icons.info;
     }
