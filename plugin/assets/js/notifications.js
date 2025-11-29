@@ -48,12 +48,13 @@
 
         showToast(message, type = 'success', duration = 6000) {
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            const closeText = window.pdfBuilderNotifications?.strings?.close || '×';
 
             const toast = $(`
                 <div class="pdf-builder-notification pdf-builder-notification-${type}" id="${toastId}">
                     <span class="pdf-builder-notification-icon"></span>
                     <span class="pdf-builder-notification-message">${this.escapeHtml(message)}</span>
-                    <span class="pdf-builder-notification-close">×</span>
+                    <span class="pdf-builder-notification-close">${closeText}</span>
                 </div>
             `);
 
@@ -109,11 +110,12 @@
         }
 
         showInline(message, type = 'success', target = null) {
+            const closeText = window.pdfBuilderNotifications?.strings?.close || '×';
             const notification = $(`
                 <div class="pdf-builder-notification pdf-builder-notification-${type} pdf-builder-notification-inline">
-                    <span class="pdf-builder-notification-icon">${this.getIcon(type)}</span>
+                    <span class="pdf-builder-notification-icon"></span>
                     <span class="pdf-builder-notification-message">${this.escapeHtml(message)}</span>
-                    <span class="pdf-builder-notification-close">×</span>
+                    <span class="pdf-builder-notification-close">${closeText}</span>
                 </div>
             `);
 
