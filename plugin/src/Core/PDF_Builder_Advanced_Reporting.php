@@ -900,12 +900,6 @@ class PDF_Builder_Advanced_Reporting {
      * Envoie un rapport par email
      */
     private function email_report($report, $recipients) {
-        if (!class_exists('PDF_Builder_Notification_Manager')) {
-            return;
-        }
-
-        $notification_manager = PDF_Builder_Notification_Manager::get_instance();
-
         $subject = sprintf(
             pdf_builder_translate('Rapport PDF Builder Pro : %s', 'reporting'),
             $this->get_report_title($report['type'])
@@ -927,7 +921,7 @@ class PDF_Builder_Advanced_Reporting {
         }
 
         foreach ($recipients as $recipient) {
-            $notification_manager->send_email($recipient, $subject, $message, $attachments);
+            wp_mail($recipient, $subject, $message, [], $attachments);
         }
 
         // Nettoyer les fichiers temporaires

@@ -2216,7 +2216,7 @@ function pdf_builder_check_advanced_systems_status() {
         'security_validator' => class_exists('PDF_Builder_Security_Validator') && PDF_Builder_Security_Validator::get_instance() !== null,
         'error_handler' => class_exists('PDF_Builder_Error_Handler') && PDF_Builder_Error_Handler::get_instance() !== null,
         'task_scheduler' => class_exists('PDF_Builder_Task_Scheduler') && PDF_Builder_Task_Scheduler::get_instance() !== null,
-        'notification_manager' => class_exists('PDF_Builder_Notification_Manager') && PDF_Builder_Notification_Manager::get_instance() !== null,
+        // 'notification_manager' => class_exists('PDF_Builder_Notification_Manager') && PDF_Builder_Notification_Manager::get_instance() !== null,
         'diagnostic_tool' => class_exists('PDF_Builder_Diagnostic_Tool') && PDF_Builder_Diagnostic_Tool::get_instance() !== null,
         'analytics_manager' => class_exists('PDF_Builder_Analytics_Manager') && PDF_Builder_Analytics_Manager::get_instance() !== null,
         'backup_recovery' => class_exists('PDF_Builder_Backup_Recovery') && PDF_Builder_Backup_Recovery::get_instance() !== null,

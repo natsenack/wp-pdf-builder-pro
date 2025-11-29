@@ -1276,15 +1276,7 @@ class PdfBuilderAdmin
 
         // Note: pdfBuilderCanvasSettings est maintenant défini directement dans le template
 
-        // ✅ Initialiser le système de notification unifié
-        
-        if (class_exists('PDF_Builder\Utilities\PDF_Builder_Notification_Manager')) {
-            
-            \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance()->enqueue_scripts();
-            
-        } else {
-            
-        }
+        // ✅ Système de notification supprimé - plus utilisé
 
         // Charger le script JavaScript pour la page de paramètres
         if ($hook === 'pdf-builder_page_pdf-builder-settings') {

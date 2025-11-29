@@ -1425,13 +1425,7 @@
         }
 
         showNotification(message, type = 'info') {
-            // Utiliser le système de notifications unifié
-            if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.show) {
-                window.pdfBuilderNotifications.show(message, type);
-            } else {
-                // Fallback avec alert
-                alert(message);
-            }
+            // Notifications supprimées - système retiré
         }
 
         saveTemplateSelection() {

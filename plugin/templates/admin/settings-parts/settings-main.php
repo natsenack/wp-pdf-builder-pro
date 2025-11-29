@@ -831,21 +831,12 @@ if (
                                     context: 'Paramètres sauvegarde',
                                     successCallback: (result, originalData) => {
                                         console.log('✅ [PDF Builder] Paramètres sauvegardés avec succès');
-                                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                            PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
-                                        }
                                     },
                                     errorCallback: (result, originalData) => {
                                         console.error('❌ [PDF Builder] Erreur lors de la sauvegarde des paramètres:', result);
-                                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                            PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'), 'error');
-                                        }
                                     }
                                 }).catch(error => {
                                     console.error('❌ [PDF Builder] Erreur réseau lors de la sauvegarde:', error);
-                                    if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                        PDF_Builder_Notification_Manager.show_toast('Erreur réseau lors de la sauvegarde', 'error');
-                                    }
                                 });
                                 return;
                             }
@@ -2362,21 +2353,15 @@ window.toggleRGPDControls = toggleRGPDControls;
                     context: 'PDF Builder',
                     successCallback: (result, originalData) => {
                         // Show success notification if available
-                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                            PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
-                        }
+                        console.log('Paramètres sauvegardés avec succès !');
                     },
                     errorCallback: (result, originalData) => {
                         // Show error notification if available
-                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                            PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'), 'error');
-                        }
+                        console.error('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'));
                     }
                 }).catch(error => {
                     // Show error notification if available
-                    if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                        PDF_Builder_Notification_Manager.show_toast('Erreur réseau lors de la sauvegarde', 'error');
-                    }
+                    console.error('Erreur réseau lors de la sauvegarde');
                     console.error('Floating save error:', error);
                 });
             });

@@ -197,7 +197,7 @@
                                             echo $visible_start . '••••••••••••••••' . $visible_end;
                                             ?>
                                         </code>
-                                        <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>'); PDF_Builder_Notification_Manager.show_toast('Clé copiée !', 'success');">📋 Copier</span>
+                                        <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>');">📋 Copier</span>
                                     </td>
                                 </tr>
                                     <?php
@@ -482,10 +482,6 @@
                                         var cacheSizeDisplay = document.getElementById('cache-size-display');
                                         if (cacheSizeDisplay && data.data && data.data.new_cache_size) {
                                             cacheSizeDisplay.innerHTML = data.data.new_cache_size;
-                                        }
-                                        // Show toast notification
-                                        if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                            PDF_Builder_Notification_Manager.show_toast('Cache vidé avec succès!', 'success');
                                         }
                                     } else {
                                         resultsSpan.textContent = '❌ Erreur: ' + (data.data || 'Erreur inconnue');

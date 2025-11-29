@@ -904,17 +904,20 @@ class PDF_Builder_Auto_Update_Manager {
      * Notifie l'administrateur d'une mise à jour installée
      */
     private function notify_admin_update_installed($update) {
-        if (!class_exists('PDF_Builder_Notification_Manager')) {
-            return;
-        }
+        $admin_email = get_option('admin_email');
+        $subject = sprintf('PDF Builder Pro - Mise à jour %s installée', $update['version']);
+        $message = sprintf(
+            "Une mise à jour de PDF Builder Pro a été installée avec succès.\n\n" .
+            "Version: %s\n" .
+            "Type: %s\n" .
+            "Installée le: %s\n\n" .
+            "Le plugin fonctionne maintenant avec la nouvelle version.",
+            $update['version'],
+            $update['type'],
+            date('d/m/Y H:i:s', time())
+        );
 
-        $notification_manager = PDF_Builder_Notification_Manager::get_instance();
-
-        $notification_manager->send_notification('update_installed', [
-            'update_version' => $update['version'],
-            'update_type' => $update['type'],
-            'installed_at' => time()
-        ]);
+        wp_mail($admin_email, $subject, $message);
     }
 
     /**

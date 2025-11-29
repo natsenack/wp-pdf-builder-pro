@@ -224,28 +224,28 @@
                                 button: submitBtn[0],
                                 context: 'General Settings',
                                 successCallback: (result, originalData) => {
-                                    // Afficher une notification de succès
-                                    if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                        PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
-                                    } else {
-                                        alert('Paramètres sauvegardés avec succès !');
-                                    }
+                                    // Afficher une notification de succès - supprimé
+                                    // if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                    //     PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
+                                    // } else {
+                                    //     alert('Paramètres sauvegardés avec succès !');
+                                    // }
                                 },
                                 errorCallback: (result, originalData) => {
-                                    // Afficher une notification d'erreur
-                                    if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                        PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'), 'error');
-                                    } else {
-                                        alert('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'));
-                                    }
+                                    // Afficher une notification d'erreur - supprimé
+                                    // if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                    //     PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'), 'error');
+                                    // } else {
+                                    //     alert('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'));
+                                    // }
                                 }
                             }).catch(error => {
                                 console.error('Erreur AJAX:', error);
-                                if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                    PDF_Builder_Notification_Manager.show_toast('Erreur réseau lors de la sauvegarde', 'error');
-                                } else {
-                                    alert('Erreur réseau lors de la sauvegarde');
-                                }
+                                // if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
+                                //     PDF_Builder_Notification_Manager.show_toast('Erreur réseau lors de la sauvegarde', 'error');
+                                // } else {
+                                //     alert('Erreur réseau lors de la sauvegarde');
+                                // }
                             });
                         } else {
                             // Fallback si le gestionnaire AJAX n'est pas disponible

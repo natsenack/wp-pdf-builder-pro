@@ -108,7 +108,6 @@ export default [
         CodeMirror: 'readonly',
         pdfBuilderAjax: 'readonly',
         pdfBuilderPredefined: 'readonly',
-        toastr: 'readonly',
         refreshNonceAndRetry: 'readonly',
         MutationObserver: 'readonly',
         btoa: 'readonly',

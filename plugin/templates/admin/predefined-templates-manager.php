@@ -109,7 +109,7 @@ class PDF_Builder_Predefined_Templates_Manager
                             $("#save-template-btn").trigger("click");
                         }, 500);
                     } catch (e) {
-                        PDF_Builder_Notification_Manager.show_toast(\'Erreur lors du décodage du JSON depuis l\\\'URL: \' + e.message, \'error\');
+                        console.error('Erreur lors du décodage du JSON depuis l\'URL:', e.message);
                     }
                 }
                 // Gestion de la déconnexion développeur
@@ -126,11 +126,11 @@ class PDF_Builder_Predefined_Templates_Manager
                                 if (response.success) {
                                     location.reload();
                                 } else {
-                                    PDF_Builder_Notification_Manager.show_toast(\'Erreur de déconnexion\', \'error\');
+                                    console.error('Erreur de déconnexion');
                                 }
                             },
                             error: function() {
-                                PDF_Builder_Notification_Manager.show_toast(\'Erreur de déconnexion\', \'error\');
+                                console.error('Erreur de déconnexion');
                             }
                         });
                     }
@@ -741,12 +741,12 @@ class PDF_Builder_Predefined_Templates_Manager
 
                 // Validation côté client
                 if (!password) {
-                    PDF_Builder_Notification_Manager.show_toast('Veuillez entrer un mot de passe', 'error');
+                    console.error('Veuillez entrer un mot de passe');
                     return;
                 }
 
                 // Afficher notification de connexion
-                PDF_Builder_Notification_Manager.show_toast('Vérification du mot de passe...', 'info');
+                console.log('Vérification du mot de passe...');
 
                 $button.prop('disabled', true).text('<?php _e('Connexion...', 'pdf-builder-pro'); ?>');
                 $message.hide();
@@ -762,7 +762,7 @@ class PDF_Builder_Predefined_Templates_Manager
                     success: function(response) {
                         if (response.success) {
                             // Notification de succès
-                            PDF_Builder_Notification_Manager.show_toast('Authentification réussie ! Redirection en cours...', 'success');
+                            console.log('Authentification réussie ! Redirection en cours...');
                             
                             setTimeout(function() {
                                 location.reload();
@@ -771,7 +771,7 @@ class PDF_Builder_Predefined_Templates_Manager
                             const errorMsg = response.data || response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>';
                             
                             // Notification d'erreur
-                            PDF_Builder_Notification_Manager.show_toast(' ' + errorMsg, 'error');
+                            console.error('Erreur: ' + errorMsg);
                             
                             $button.prop('disabled', false).text(originalText);
                         }
@@ -781,7 +781,7 @@ class PDF_Builder_Predefined_Templates_Manager
                         const errorMsg = '<?php _e('Erreur de connexion au serveur', 'pdf-builder-pro'); ?>';
                         
                         // Notification d'erreur réseau
-                        PDF_Builder_Notification_Manager.show_toast(' ' + errorMsg, 'error');
+                        console.error('Erreur réseau: ' + errorMsg);
                         
                         $button.prop('disabled', false).text(originalText);
                     }

@@ -26,7 +26,6 @@ function pdf_builder_load_utilities_emergency() {
     }
 
     $utilities = array(
-        'PDF_Builder_Notification_Manager.php',
         'PDF_Builder_Onboarding_Manager.php',
         'PDF_Builder_GDPR_Manager.php'
     );
@@ -264,7 +263,6 @@ function pdf_builder_load_core()
 
     // Charger les utilitaires essentiels depuis src/utilities/
     $utilities = array(
-        'PDF_Builder_Notification_Manager.php',
         'PDF_Builder_Onboarding_Manager.php',
         'PDF_Builder_GDPR_Manager.php'
     );
@@ -619,7 +617,6 @@ function pdf_builder_load_bootstrap()
         pdf_builder_load_utilities_emergency();
 
         $utilities = array(
-            'PDF_Builder_Notification_Manager.php',
             'PDF_Builder_Onboarding_Manager.php',
             'PDF_Builder_GDPR_Manager.php'
         );
@@ -631,17 +628,12 @@ function pdf_builder_load_bootstrap()
         }
 
         // Vérifier et charger les classes manuellement si nécessaire
-        if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
-            $notification_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Notification_Manager.php';
-            if (file_exists($notification_path)) {
-                require_once $notification_path;
-            }
-        }
+        // Notification Manager supprimé - plus utilisé
 
-        // Initialiser le notification manager seulement maintenant
-        if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
-            \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance();
-        }
+        // Initialiser le notification manager seulement maintenant - supprimé
+        // if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
+        //     \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance();
+        // }
     }, 5);
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
@@ -961,10 +953,8 @@ function pdf_builder_load_core_on_demand()
             'pdf_builder_save_freemium_mode',
             'pdf_builder_update_onboarding_step',
             'pdf_builder_save_template_assignment',
-            'pdf_builder_mark_onboarding_complete',
-            // Actions AJAX du Notification Manager
-            'pdf_builder_show_toast',
-            'pdf_builder_dismiss_notification'
+            'pdf_builder_mark_onboarding_complete'
+            // Actions AJAX du Notification Manager supprimées - système retiré
         ];
         if (in_array($_REQUEST['action'], $pdf_builder_ajax_actions)) {
             $load_core = true;

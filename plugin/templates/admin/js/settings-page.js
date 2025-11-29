@@ -63,15 +63,9 @@ jQuery(document).ready(function($) {
     // FIN FONCTIONS DE DEBUG
     // ==========================================
 
-    // Fonction de notification utilisant le système unifié
+    // Fonction de notification supprimée - système de notifications retiré
     function showMaintenanceNotification(type, title, message, duration = 5000) {
-        // Utiliser le système de notifications unifié
-        if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.show) {
-            window.pdfBuilderNotifications.show(message, type, duration);
-        } else {
-            // Fallback: utiliser alert si le système de notifications n'est pas disponible
-            alert(title + ': ' + message);
-        }
+        // Notifications supprimées
     }
 
     // Test de l'intégration du cache
@@ -98,18 +92,18 @@ jQuery(document).ready(function($) {
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
                 if (response.success) {
-                    showMaintenanceNotification('success', 'Test du cache réussi', 'L\'intégration du cache fonctionne correctement.');
+                    // showMaintenanceNotification('success', 'Test du cache réussi', 'L\'intégration du cache fonctionne correctement.');
                     $results.html('<span style="color: #28a745;">✅ Test réussi</span>');
                     $output.html('<pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px;">' +
                         JSON.stringify(response.data, null, 2) + '</pre>').show();
                 } else {
-                    showMaintenanceNotification('error', 'Test du cache échoué', response.data || 'Erreur inconnue lors du test.');
+                    // showMaintenanceNotification('error', 'Test du cache échoué', response.data || 'Erreur inconnue lors du test.');
                     $results.html('<span style="color: #dc3545;">❌ Test échoué</span>');
                     $output.html('<div style="color: #dc3545;">Erreur: ' + (response.data || 'Erreur inconnue') + '</div>').show();
                 }
             },
             error: function(xhr, status, error) {
-                showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour le test du cache.');
+                // showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour le test du cache.');
                 $results.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
                 $output.html('<div style="color: #dc3545;">Erreur AJAX: ' + error + '</div>').show();
             },
@@ -147,7 +141,7 @@ jQuery(document).ready(function($) {
             timeout: 60000, // 60 secondes timeout pour le nettoyage
             success: function(response) {
                 if (response.success) {
-                    showMaintenanceNotification('success', 'Cache vidé', 'Toutes les données en cache ont été supprimées avec succès.');
+                    // showMaintenanceNotification('success', 'Cache vidé', 'Toutes les données en cache ont été supprimées avec succès.');
                     $results.html('<span style="color: #28a745;">✅ Cache vidé avec succès</span>');
 
                     // Mettre à jour les métriques du cache en temps réel
@@ -156,13 +150,13 @@ jQuery(document).ready(function($) {
                         location.reload();
                     }, 2000);
                 } else {
-                    showMaintenanceNotification('error', 'Échec du nettoyage', 'Erreur lors du nettoyage du cache: ' + (response.data || 'Erreur inconnue'));
+                    // showMaintenanceNotification('error', 'Échec du nettoyage', 'Erreur lors du nettoyage du cache: ' + (response.data || 'Erreur inconnue'));
                     $results.html('<span style="color: #dc3545;">❌ Échec du nettoyage</span>');
                     alert('Erreur lors du nettoyage du cache: ' + (response.data || 'Erreur inconnue'));
                 }
             },
             error: function(xhr, status, error) {
-                showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour le nettoyage du cache.');
+                // showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour le nettoyage du cache.');
                 $results.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
                 alert('Erreur AJAX lors du nettoyage: ' + error);
             },
@@ -364,7 +358,7 @@ jQuery(document).ready(function($) {
         // Désactiver le bouton pendant l'opération
         $button.prop('disabled', true).text('🗃️ Optimisation en cours...');
 
-        showMaintenanceNotification('info', 'Optimisation en cours', 'Optimisation de la base de données en cours...');
+        // showMaintenanceNotification('info', 'Optimisation en cours', 'Optimisation de la base de données en cours...');
 
         // Faire l'appel AJAX
         $.ajax({
@@ -377,15 +371,15 @@ jQuery(document).ready(function($) {
             timeout: 60000, // 60 secondes timeout
             success: function(response) {
                 if (response.success) {
-                    showMaintenanceNotification('success', 'Base optimisée', 'La base de données a été optimisée avec succès.');
+                    // showMaintenanceNotification('success', 'Base optimisée', 'La base de données a été optimisée avec succès.');
                     $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Base de données optimisée</div>');
                 } else {
-                    showMaintenanceNotification('error', 'Échec de l\'optimisation', response.data || 'Erreur lors de l\'optimisation de la base.');
+                    // showMaintenanceNotification('error', 'Échec de l\'optimisation', response.data || 'Erreur lors de l\'optimisation de la base.');
                     $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Échec de l\'optimisation</div>');
                 }
             },
             error: function(xhr, status, error) {
-                showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour l\'optimisation.');
+                // showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour l\'optimisation.');
                 $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur de connexion</div>');
             },
             complete: function() {
@@ -405,7 +399,7 @@ jQuery(document).ready(function($) {
         // Désactiver le bouton pendant l'opération
         $button.prop('disabled', true).text('🔧 Réparation en cours...');
 
-        showMaintenanceNotification('info', 'Réparation en cours', 'Vérification et réparation des templates en cours...');
+        // showMaintenanceNotification('info', 'Réparation en cours', 'Vérification et réparation des templates en cours...');
 
         // Faire l'appel AJAX
         $.ajax({
@@ -418,15 +412,15 @@ jQuery(document).ready(function($) {
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
                 if (response.success) {
-                    showMaintenanceNotification('success', 'Templates réparés', 'Les templates ont été vérifiés et réparés avec succès.');
+                    // showMaintenanceNotification('success', 'Templates réparés', 'Les templates ont été vérifiés et réparés avec succès.');
                     $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Templates réparés</div>');
                 } else {
-                    showMaintenanceNotification('error', 'Échec de la réparation', response.data || 'Erreur lors de la réparation des templates.');
+                    // showMaintenanceNotification('error', 'Échec de la réparation', response.data || 'Erreur lors de la réparation des templates.');
                     $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Échec de la réparation</div>');
                 }
             },
             error: function(xhr, status, error) {
-                showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour la réparation.');
+                // showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour la réparation.');
                 $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur de connexion</div>');
             },
             complete: function() {
@@ -451,7 +445,7 @@ jQuery(document).ready(function($) {
         // Désactiver le bouton pendant l'opération
         $button.prop('disabled', true).text('🗂️ Suppression en cours...');
 
-        showMaintenanceNotification('info', 'Suppression en cours', 'Suppression des fichiers temporaires en cours...');
+        // showMaintenanceNotification('info', 'Suppression en cours', 'Suppression des fichiers temporaires en cours...');
 
         // Faire l'appel AJAX
         $.ajax({
@@ -464,15 +458,15 @@ jQuery(document).ready(function($) {
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
                 if (response.success) {
-                    showMaintenanceNotification('success', 'Fichiers supprimés', response.data || 'Les fichiers temporaires ont été supprimés avec succès.');
+                    // showMaintenanceNotification('success', 'Fichiers supprimés', response.data || 'Les fichiers temporaires ont été supprimés avec succès.');
                     $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Fichiers temporaires supprimés</div>');
                 } else {
-                    showMaintenanceNotification('error', 'Échec de la suppression', response.data || 'Erreur lors de la suppression des fichiers temporaires.');
+                    // showMaintenanceNotification('error', 'Échec de la suppression', response.data || 'Erreur lors de la suppression des fichiers temporaires.');
                     $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Échec de la suppression</div>');
                 }
             },
             error: function(xhr, status, error) {
-                showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour la suppression.');
+                // showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour la suppression.');
                 $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur de connexion</div>');
             },
             complete: function() {
@@ -492,7 +486,7 @@ jQuery(document).ready(function($) {
         // Désactiver le bouton pendant l'opération
         $button.prop('disabled', true).html('<span>⏳</span> Création en cours...');
 
-        showMaintenanceNotification('info', 'Sauvegarde en cours', 'Création de la sauvegarde en cours...');
+        // showMaintenanceNotification('info', 'Sauvegarde en cours', 'Création de la sauvegarde en cours...');
 
         // Faire l'appel AJAX
         $.ajax({
@@ -505,15 +499,15 @@ jQuery(document).ready(function($) {
             timeout: 120000, // 2 minutes timeout pour les sauvegardes
             success: function(response) {
                 if (response.success) {
-                    showMaintenanceNotification('success', 'Sauvegarde créée', 'La sauvegarde a été créée avec succès.');
+                    // showMaintenanceNotification('success', 'Sauvegarde créée', 'La sauvegarde a été créée avec succès.');
                     $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Sauvegarde créée avec succès</div>');
                 } else {
-                    showMaintenanceNotification('error', 'Échec de la sauvegarde', response.data || 'Erreur lors de la création de la sauvegarde.');
+                    // showMaintenanceNotification('error', 'Échec de la sauvegarde', response.data || 'Erreur lors de la création de la sauvegarde.');
                     $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Échec de la sauvegarde</div>');
                 }
             },
             error: function(xhr, status, error) {
-                showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour la sauvegarde.');
+                // showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de contacter le serveur pour la sauvegarde.');
                 $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur de connexion</div>');
             },
             complete: function() {
@@ -533,7 +527,7 @@ jQuery(document).ready(function($) {
         // Désactiver le bouton pendant l'opération
         $button.prop('disabled', true).html('<span>⏳</span> Chargement...');
 
-        showMaintenanceNotification('info', 'Chargement en cours', 'Récupération de la liste des sauvegardes...');
+        // showMaintenanceNotification('info', 'Chargement en cours', 'Récupération de la liste des sauvegardes...');
 
         // Faire l'appel AJAX
         $.ajax({
@@ -546,7 +540,7 @@ jQuery(document).ready(function($) {
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
                 if (response.success && response.data.backups && response.data.backups.length > 0) {
-                    showMaintenanceNotification('success', 'Sauvegardes listées', response.data.backups.length + ' sauvegarde(s) trouvée(s).');
+                    // showMaintenanceNotification('success', 'Sauvegardes listées', response.data.backups.length + ' sauvegarde(s) trouvée(s).');
 
                     // Créer la liste des sauvegardes
                     let html = '<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">';
@@ -576,12 +570,12 @@ jQuery(document).ready(function($) {
                     attachBackupButtonEvents();
 
                 } else {
-                    showMaintenanceNotification('warning', 'Aucune sauvegarde', 'Aucune sauvegarde trouvée.');
+                    // showMaintenanceNotification('warning', 'Aucune sauvegarde', 'Aucune sauvegarde trouvée.');
                     $results.html('<div style="color: #856404; padding: 10px; background: #fff3cd; border-radius: 4px; margin-top: 10px;">⚠️ Aucune sauvegarde trouvée</div>');
                 }
             },
             error: function(xhr, status, error) {
-                showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de récupérer la liste des sauvegardes.');
+                // showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de récupérer la liste des sauvegardes.');
                 $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur de connexion</div>');
             },
             complete: function() {
@@ -648,17 +642,17 @@ jQuery(document).ready(function($) {
                     },
                     success: function(response) {
                         if (response.success) {
-                            showMaintenanceNotification('success', 'Sauvegarde restaurée', 'La sauvegarde a été restaurée avec succès.');
+                            // showMaintenanceNotification('success', 'Sauvegarde restaurée', 'La sauvegarde a été restaurée avec succès.');
                             // Recharger la page après 2 secondes
                             setTimeout(function() {
                                 location.reload();
                             }, 2000);
                         } else {
-                            showMaintenanceNotification('error', 'Erreur de restauration', response.data.message || 'Erreur lors de la restauration.');
+                            // showMaintenanceNotification('error', 'Erreur de restauration', response.data.message || 'Erreur lors de la restauration.');
                         }
                     },
                     error: function(xhr, status, error) {
-                        showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de restaurer la sauvegarde.');
+                        // showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de restaurer la sauvegarde.');
                     },
                     complete: function() {
                         $button.prop('disabled', false).html('<span>🔄</span>');
@@ -686,15 +680,15 @@ jQuery(document).ready(function($) {
                     },
                     success: function(response) {
                         if (response.success) {
-                            showMaintenanceNotification('success', 'Sauvegarde supprimée', 'La sauvegarde a été supprimée avec succès.');
+                            // showMaintenanceNotification('success', 'Sauvegarde supprimée', 'La sauvegarde a été supprimée avec succès.');
                             // Recharger la liste des sauvegardes
                             $('#list-backups-btn').trigger('click');
                         } else {
-                            showMaintenanceNotification('error', 'Erreur de suppression', response.data.message || 'Erreur lors de la suppression.');
+                            // showMaintenanceNotification('error', 'Erreur de suppression', response.data.message || 'Erreur lors de la suppression.');
                         }
                     },
                     error: function(xhr, status, error) {
-                        showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de supprimer la sauvegarde.');
+                        // showMaintenanceNotification('error', 'Erreur de connexion', 'Impossible de supprimer la sauvegarde.');
                     },
                     complete: function() {
                         $button.prop('disabled', false).html('<span>🗑️</span>');

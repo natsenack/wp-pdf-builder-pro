@@ -206,7 +206,6 @@ class PDF_Builder_Loader {
      */
     private function load_utilities() {
         $utilities = [
-            'PDF_Builder_Notification_Manager.php',
             'PDF_Builder_Onboarding_Manager.php',
             'PDF_Builder_GDPR_Manager.php'
         ];

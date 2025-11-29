@@ -52,7 +52,6 @@ class PdfBuilderCore
             'PDF_Builder_Feature_Manager.php',
             'PDF_Builder_License_Manager.php',
             'PDF_Builder_Logger.php',
-            'PDF_Builder_Notification_Manager.php',
             'PDF_Builder_PDF_Generator.php',
             'PDF_Builder_Resize_Manager.php',
             'PDF_Builder_Settings_Manager.php',
@@ -404,7 +403,7 @@ class PdfBuilderCore
                                     <td><?php echo esc_html($log->log_message); ?></td>
                                     <td>
                                         <button class="button button-small"
-                                                onclick="PDF_Builder_Notification_Manager.show_toast('<?php echo esc_js(__('Fonctionnalité de téléchargement à implémenter', 'pdf-builder-pro')); ?>', 'info')">
+                                                onclick="alert('<?php echo esc_js(__('Fonctionnalité de téléchargement à implémenter', 'pdf-builder-pro')); ?>')">
                                             📄 <?php _e('Détails', 'pdf-builder-pro'); ?>
                                         </button>
                                     </td>

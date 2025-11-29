@@ -564,16 +564,20 @@ class PDF_Builder_License_Manager {
     public function handle_license_expiring_soon() {
         $data = $this->get_license_data();
         $expires_at = $data['expires_at'] ?? '';
+        $days_left = floor((strtotime($expires_at) - time()) / (60 * 60 * 24));
 
-        if (class_exists('PDF_Builder_Notification_Manager')) {
-            PDF_Builder_Notification_Manager::get_instance()->send_notification(
-                'license_expiring',
-                [
-                    'expires_at' => $expires_at,
-                    'days_left' => floor((strtotime($expires_at) - time()) / (60 * 60 * 24))
-                ]
-            );
-        }
+        $admin_email = get_option('admin_email');
+        $subject = 'PDF Builder Pro - Licence expirant bientôt';
+        $message = sprintf(
+            "Votre licence PDF Builder Pro expire bientôt.\n\n" .
+            "Date d'expiration: %s\n" .
+            "Jours restants: %d\n\n" .
+            "Veuillez renouveler votre licence pour continuer à bénéficier de toutes les fonctionnalités.",
+            $expires_at,
+            $days_left
+        );
+
+        wp_mail($admin_email, $subject, $message);
     }
 
     /**

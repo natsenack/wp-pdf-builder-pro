@@ -485,12 +485,12 @@ class PDFPreviewAPI {
      * Affiche un message d'erreur
      */
     showError(message) {
-        // Utiliser toastr si disponible, sinon alert
-        if (typeof toastr !== 'undefined') {
-            toastr.error(message);
-        } else {
-            alert(message);
-        }
+        // Notifications supprimées - système retiré
+        // if (typeof toastr !== 'undefined') {
+        //     toastr.error(message);
+        // } else {
+        //     alert(message);
+        // }
     }
 }
 
