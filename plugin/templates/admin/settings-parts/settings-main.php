@@ -3025,37 +3025,4 @@ window.toggleRGPDControls = toggleRGPDControls;
 
 
 <?php require_once __DIR__ . '/tab-diagnostic.php'; ?>
-                        // Ré-attacher l'événement
-                        newBtn.addEventListener('click', function(event) {
-                            event.preventDefault();
-                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                console.log('🔄 [PDF Builder] Bouton flottant recréé cliqué');
-                            }
-                            alert('Bouton Enregistrer cliqué ! Fonctionnalité à implémenter.');
-                        });
-                    }
-                }
-            }, 2000); // Attendre 2 secondes pour que tout soit chargé
-        });
-    } else {
-        initializeModals();
-        // Diagnostic immédiat
-        setTimeout(function() {
-            const floatingBtn = document.getElementById('floating-save-btn');
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('🔍 [PDF Builder] Bouton flottant trouvé (immédiat):', !!floatingBtn);
-            }
-            if (floatingBtn) {
-                floatingBtn.style.setProperty('display', 'flex', 'important');
-                floatingBtn.style.setProperty('visibility', 'visible', 'important');
-                floatingBtn.style.setProperty('opacity', '1', 'important');
-            }
-        }, 100);
-    }
-})();
-</script>
-
-
-
-<?php require_once __DIR__ . '/tab-diagnostic.php'; ?>
 
