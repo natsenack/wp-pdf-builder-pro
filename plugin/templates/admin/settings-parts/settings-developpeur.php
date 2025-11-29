@@ -812,22 +812,33 @@ document.addEventListener('DOMContentLoaded', function() {
         'dev-notifications-test-section'
     ];
 
-    if (developerEnabledToggle) {
-        function toggleDeveloperSections() {
-            const isEnabled = developerEnabledToggle.checked;
-            devSections.forEach(sectionId => {
-                const section = document.getElementById(sectionId);
-                if (section) {
-                    section.style.display = isEnabled ? 'block' : 'none';
-                }
-            });
-        }
+    // Fonction globale pour mettre à jour les sections développeur
+    window.updateDeveloperSections = function() {
+        if (!developerEnabledToggle) return;
 
+        const isEnabled = developerEnabledToggle.checked;
+        devSections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.style.display = isEnabled ? 'block' : 'none';
+            }
+        });
+
+        // Mettre à jour l'indicateur de statut
+        const statusIndicator = document.querySelector('.developer-status-indicator');
+        if (statusIndicator) {
+            statusIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
+            statusIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
+            statusIndicator.style.color = 'white';
+        }
+    };
+
+    if (developerEnabledToggle) {
         // Appliquer l'état initial
-        toggleDeveloperSections();
+        window.updateDeveloperSections();
 
         // Écouter les changements
-        developerEnabledToggle.addEventListener('change', toggleDeveloperSections);
+        developerEnabledToggle.addEventListener('change', window.updateDeveloperSections);
     }
 
     // Gestion du nettoyage complet de la licence

@@ -2408,11 +2408,28 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Log success
                         console.log('Paramètres sauvegardés avec succès !');
 
-                        // Recharger la page pour refléter les nouvelles valeurs sauvegardées
-                        console.log('🔄 [PDF Builder] Rechargement de la page pour mettre à jour l\'interface...');
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1000); // Attendre 1 seconde pour que l'utilisateur voie le message de succès
+                        // Mettre à jour l'interface avec les nouvelles valeurs sauvegardées
+                        console.log('🔄 [PDF Builder] Mise à jour de l\'interface avec les nouvelles valeurs...');
+
+                        // Mettre à jour les checkboxes avec les valeurs sauvegardées
+                        Object.keys(collectedData).forEach(fieldName => {
+                            const fieldValue = collectedData[fieldName];
+                            const fieldElement = document.querySelector(`[name="${fieldName}"]`);
+
+                            if (fieldElement && fieldElement.type === 'checkbox') {
+                                // Pour les checkboxes, mettre à jour l'état checked
+                                fieldElement.checked = fieldValue === '1';
+                                console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${fieldElement.checked}`);
+
+                                // Déclencher les fonctions de toggle si nécessaire
+                                if (fieldName === 'developer_enabled') {
+                                    // Mettre à jour les sections développeur
+                                    if (window.updateDeveloperSections) {
+                                        window.updateDeveloperSections();
+                                    }
+                                }
+                            }
+                        });
 
                         // Notification gérée par le système centralisé
                     },
