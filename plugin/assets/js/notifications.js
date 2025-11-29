@@ -488,10 +488,22 @@
     };
 
     // Alias pour la compatibilité - définis immédiatement
-    window.showSuccessNotification = window.pdfBuilderNotify.success;
-    window.showErrorNotification = window.pdfBuilderNotify.error;
-    window.showWarningNotification = window.pdfBuilderNotify.warning;
-    window.showInfoNotification = window.pdfBuilderNotify.info;
+    window.showSuccessNotification = function(message, options) {
+        console.trace('showSuccessNotification called with:', message);
+        return window.pdfBuilderNotify.success(message, options);
+    };
+    window.showErrorNotification = function(message, options) {
+        console.trace('showErrorNotification called with:', message);
+        return window.pdfBuilderNotify.error(message, options);
+    };
+    window.showWarningNotification = function(message, options) {
+        console.trace('showWarningNotification called with:', message);
+        return window.pdfBuilderNotify.warning(message, options);
+    };
+    window.showInfoNotification = function(message, options) {
+        console.trace('showInfoNotification called with:', message);
+        return window.pdfBuilderNotify.info(message, options);
+    };
 
     // Initialisation automatique
     $(document).ready(function() {
