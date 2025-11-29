@@ -1293,6 +1293,73 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
         testNext();
     }
 
+    // Système de notification de secours simple
+    window.simpleNotificationSystem = {
+        show: function(message, type = 'info') {
+            console.log(`[NOTIFICATION ${type.toUpperCase()}] ${message}`);
+
+            // Créer une notification simple dans le DOM
+            const notification = document.createElement('div');
+            notification.className = `simple-notification simple-notification-${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 50px;
+                right: 20px;
+                background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : type === 'warning' ? '#fff3cd' : '#d1ecf1'};
+                color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : type === 'warning' ? '#856404' : '#0c5460'};
+                border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : type === 'warning' ? '#ffeaa7' : '#bee5eb'};
+                border-radius: 4px;
+                padding: 12px 16px;
+                margin-bottom: 10px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                z-index: 10000;
+                max-width: 400px;
+                font-size: 14px;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px;">${icon}</span>
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" style="margin-left: auto; background: none; border: none; cursor: pointer; font-size: 18px; opacity: 0.7;">×</button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Animation d'entrée
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+
+            // Auto-remove après 5 secondes
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+
+            return notification;
+        },
+
+        success: function(message) { return this.show(message, 'success'); },
+        error: function(message) { return this.show(message, 'error'); },
+        warning: function(message) { return this.show(message, 'warning'); },
+        info: function(message) { return this.show(message, 'info'); }
+    };
+
+    // Alias pour compatibilité
+    window.pdfBuilderNotify = window.simpleNotificationSystem;
+    window.showSuccessNotification = window.simpleNotificationSystem.success;
+    window.showErrorNotification = window.simpleNotificationSystem.error;
+    window.showWarningNotification = window.simpleNotificationSystem.warning;
+    window.showInfoNotification = window.simpleNotificationSystem.info;
+
     // Add section to dev sections array for toggle
     devSections.push('dev-notifications-test-section');
 

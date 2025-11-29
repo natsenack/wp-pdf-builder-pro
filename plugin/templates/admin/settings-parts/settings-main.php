@@ -241,6 +241,30 @@ window.pdfBuilderAjax = {
     ajaxurl: '<?php echo admin_url('admin-ajax.php'); ?>'
 };
 
+// Paramètres de notifications pour le JavaScript
+window.pdfBuilderNotifications = {
+    settings: <?php echo wp_json_encode([
+        'enabled' => get_option('pdf_builder_notifications_enabled', true),
+        'position' => get_option('pdf_builder_notifications_position', 'top-right'),
+        'duration' => get_option('pdf_builder_notifications_duration', 5000),
+        'max_notifications' => get_option('pdf_builder_notifications_max', 5),
+        'animation' => get_option('pdf_builder_notifications_animation', 'slide'),
+        'sound_enabled' => get_option('pdf_builder_notifications_sound', false),
+        'types' => [
+            'success' => ['icon' => '✅', 'color' => '#28a745', 'bg' => '#d4edda'],
+            'error' => ['icon' => '❌', 'color' => '#dc3545', 'bg' => '#f8d7da'],
+            'warning' => ['icon' => '⚠️', 'color' => '#ffc107', 'bg' => '#fff3cd'],
+            'info' => ['icon' => 'ℹ️', 'color' => '#17a2b8', 'bg' => '#d1ecf1']
+        ]
+    ]); ?>,
+    ajax_url: '<?php echo admin_url('admin-ajax.php'); ?>',
+    nonce: '<?php echo wp_create_nonce('pdf_builder_notifications'); ?>',
+    strings: {
+        close: '<?php echo esc_js(__('Fermer', 'pdf-builder-pro')); ?>',
+        dismiss_all: '<?php echo esc_js(__('Tout fermer', 'pdf-builder-pro')); ?>'
+    }
+};
+
 // Système centralisé d'initialisation des previews avec données BDD
 window.PDF_Builder_Preview_Manager = {
     /**
