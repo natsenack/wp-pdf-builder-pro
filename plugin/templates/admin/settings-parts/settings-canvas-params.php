@@ -129,7 +129,7 @@ try {
     // Fallback definition for pdfBuilderDebug if not loaded yet
     if (typeof pdfBuilderDebug === 'undefined') {
         window.pdfBuilderDebug = function(message, ...args) {
-            if (console && console.log) {
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript && console && console.log) {
                 console.log('[PDF Builder Debug]', message, ...args);
             }
         };
@@ -143,7 +143,9 @@ try {
     // Dimensions standard des formats de papier en mm (centralisées)
     window.pdfBuilderPaperFormats = JSON.parse(atob('<?php echo $base64_paper_formats; ?>'));
 } catch (e) {
-    console.error('Erreur lors du chargement des paramètres canvas:', e);
+    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        console.error('Erreur lors du chargement des paramètres canvas:', e);
+    }
     window.pdfBuilderCanvasSettings = {};
     window.pdfBuilderPaperFormats = {};
 }

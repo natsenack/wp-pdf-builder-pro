@@ -893,7 +893,9 @@ class PdfBuilderCore
                     nonce: '<?php echo wp_create_nonce('pdf_builder_nonce'); ?>'
                 };
             } catch (e) {
-                console.error('Erreur lors du chargement des données PDF Builder:', e);
+                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    console.error('Erreur lors du chargement des données PDF Builder:', e);
+                }
                 window.pdfBuilderData = {
                     templateId: null,
                     templateData: null,

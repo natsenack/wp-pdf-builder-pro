@@ -225,7 +225,9 @@
                                 context: 'General Settings',
                                 successCallback: (result, originalData) => {
                                     // Log success
-                                    console.log('Paramètres sauvegardés avec succès !');
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.log('Paramètres sauvegardés avec succès !');
+                                    }
 
                                     // Afficher une notification de succès
                                     if (window.showSuccessNotification) {
@@ -234,15 +236,21 @@
                                 },
                                 errorCallback: (result, originalData) => {
                                     // Log error
-                                    console.error('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'));
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.error('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'));
+                                    }
                                 }
                             }).catch(error => {
-                                console.error('Erreur AJAX:', error);
-                                console.error('Erreur réseau lors de la sauvegarde');
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.error('Erreur AJAX:', error);
+                                    console.error('Erreur réseau lors de la sauvegarde');
+                                }
                             });
                         } else {
                             // Fallback si le gestionnaire AJAX n'est pas disponible
-                            console.warn('PDF_Builder_Ajax_Handler not available, using fallback');
+                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                console.warn('PDF_Builder_Ajax_Handler not available, using fallback');
+                            }
                             this.submit();
                         }
 

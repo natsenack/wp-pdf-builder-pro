@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { debugWarn } from '../utils/debug';
 
 /**
  * Hook pour accéder aux paramètres du canvas
@@ -44,11 +45,11 @@ export const useCanvasSettings = () => {
                     };
                     setSettings(window.pdfBuilderCanvasSettings);
                 } else {
-                    console.warn('REACT: Invalid AJAX response:', data);
+                    debugWarn('REACT: Invalid AJAX response:', data);
                 }
             } catch (error) {
                 if (isMounted) {
-                    console.warn('REACT: Failed to fetch updated settings:', error);
+                    debugWarn('REACT: Failed to fetch updated settings:', error);
                 }
             } finally {
                 if (isMounted) {

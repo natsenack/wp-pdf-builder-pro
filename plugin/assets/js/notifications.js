@@ -5,8 +5,6 @@
  * Updated: 2025-11-29
  */
 
-const PDF_BUILDER_DEBUG = (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax.debug) || (typeof window.pdfBuilderCanvasSettings !== 'undefined' && window.pdfBuilderCanvasSettings?.debug?.javascript) || false;
-
 (function($) {
     'use strict';
 
@@ -37,7 +35,7 @@ const PDF_BUILDER_DEBUG = (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAj
             this.bindEvents();
             this.initialized = true;
 
-            if (PDF_BUILDER_DEBUG) console.log('PDF Builder Notifications: Initialized', this.settings);
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) console.log('PDF Builder Notifications: Initialized', this.settings);
         }
 
         /**
@@ -353,7 +351,7 @@ const PDF_BUILDER_DEBUG = (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAj
 
                 oscillator.start(audioContext.currentTime);
                 oscillator.stop(audioContext.currentTime + 0.2);
-            } catch (e) {
+            } catch {
                 // Silencieux en cas d'erreur
             }
         }
@@ -403,11 +401,11 @@ const PDF_BUILDER_DEBUG = (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAj
             $.post(this.ajaxUrl, data)
                 .done((response) => {
                     if (response.success) {
-                        if (PDF_BUILDER_DEBUG) console.log('Notification AJAX sent successfully');
+                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) console.log('Notification AJAX sent successfully');
                     }
                 })
                 .fail((error) => {
-                    if (PDF_BUILDER_DEBUG) console.error('Failed to send AJAX notification:', error);
+                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) console.error('Failed to send AJAX notification:', error);
                 });
         }
 

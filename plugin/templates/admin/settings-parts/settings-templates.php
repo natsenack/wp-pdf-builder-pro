@@ -388,12 +388,6 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
             </div>
             <?php else: ?>
 
-            <div class="templates-status-notice">
-                <div class="notice notice-info">
-                    <p><strong>ℹ️ Configuration des templates par statut</strong></p>
-                    <p>Assignez un template PDF par défaut pour chaque statut de commande WooCommerce. Lorsque le statut d'une commande change, le template correspondant sera automatiquement utilisé pour générer le PDF.</p>
-                </div>
-            </div>
 
             <form method="post" action="" id="templates-status-form">
                 <div class="templates-status-grid">

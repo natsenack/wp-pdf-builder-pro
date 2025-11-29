@@ -109,7 +109,9 @@ class PDF_Builder_Predefined_Templates_Manager
                             $("#save-template-btn").trigger("click");
                         }, 500);
                     } catch (e) {
-                        console.error('Erreur lors du décodage du JSON depuis l\'URL:', e.message);
+                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            console.error('Erreur lors du décodage du JSON depuis l\'URL:', e.message);
+                        }
                     }
                 }
                 // Gestion de la déconnexion développeur
@@ -126,11 +128,15 @@ class PDF_Builder_Predefined_Templates_Manager
                                 if (response.success) {
                                     location.reload();
                                 } else {
-                                    console.error('Erreur de déconnexion');
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.error('Erreur de déconnexion');
+                                    }
                                 }
                             },
                             error: function() {
-                                console.error('Erreur de déconnexion');
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.error('Erreur de déconnexion');
+                                }
                             }
                         });
                     }
@@ -742,12 +748,16 @@ JS;
 
                 // Validation côté client
                 if (!password) {
-                    console.error('Veuillez entrer un mot de passe');
+                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        console.error('Veuillez entrer un mot de passe');
+                    }
                     return;
                 }
 
                 // Log: vérification du mot de passe
-                console.log('Vérification du mot de passe...');
+                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    console.log('Vérification du mot de passe...');
+                }
 
                 $button.prop('disabled', true).text('<?php _e('Connexion...', 'pdf-builder-pro'); ?>');
                 $message.hide();
@@ -763,7 +773,9 @@ JS;
                     success: function(response) {
                         if (response.success) {
                             // Log success
-                            console.log('Authentification réussie ! Redirection en cours...');
+                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                console.log('Authentification réussie ! Redirection en cours...');
+                            }
                             
                             setTimeout(function() {
                                 location.reload();
@@ -772,17 +784,23 @@ JS;
                             const errorMsg = response.data || response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>';
                             
                             // Log error
-                            console.error('Erreur: ' + errorMsg);
+                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                console.error('Erreur: ' + errorMsg);
+                            }
                             
                             $button.prop('disabled', false).text(originalText);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Developer auth error:', error, xhr.responseText);
+                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            console.error('Developer auth error:', error, xhr.responseText);
+                        }
                         const errorMsg = '<?php _e('Erreur de connexion au serveur', 'pdf-builder-pro'); ?>';
                         
                         // Log network error
-                        console.error('Erreur réseau: ' + errorMsg);
+                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            console.error('Erreur réseau: ' + errorMsg);
+                        }
                         
                         $button.prop('disabled', false).text(originalText);
                     }

@@ -887,7 +887,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                console.error('Erreur AJAX cleanup license:', error);
+                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    console.error('Erreur AJAX cleanup license:', error);
+                }
                 cleanupStatus.textContent = '❌ Erreur de connexion';
                 cleanupStatus.style.color = '#dc3545';
                 cleanupLicenseBtn.disabled = false;
@@ -935,7 +937,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
-            console.error('Erreur AJAX:', error);
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.error('Erreur AJAX:', error);
+            }
             button.disabled = false;
             button.textContent = originalText;
             alert('❌ Erreur de connexion');
@@ -1085,6 +1089,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Console logging helper
     function logToConsole(level, message, data = null) {
+        if (!window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            return;
+        }
+        
         const prefix = '[🔔 NOTIFICATION TEST]';
         const timestamp = new Date().toISOString();
 
@@ -1264,8 +1272,10 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
             }
 
             // Log detailed stats
-            console.table(notificationStats);
-            console.log(statsMessage);
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.table(notificationStats);
+                console.log(statsMessage);
+            }
 
             addNotificationLog(`📊 Stats: ${notificationTestCount} tests (${notificationStats.success}✓ ${notificationStats.error}✗ ${notificationStats.warning}⚠ ${notificationStats.info}ℹ)`, 'info');
         });
@@ -1299,7 +1309,9 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
         nextTop: 50,
 
         show: function(message, type = 'info') {
-            console.log(`[NOTIFICATION ${type.toUpperCase()}] ${message}`);
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.log(`[NOTIFICATION ${type.toUpperCase()}] ${message}`);
+            }
 
             // Calculer la position verticale pour éviter la superposition
             const currentTop = this.nextTop;

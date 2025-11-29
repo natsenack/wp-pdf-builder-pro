@@ -491,7 +491,9 @@
                                     clearCacheBtn.textContent = '🗑️ Vider tout le cache';
                                     resultsSpan.textContent = '❌ Erreur AJAX: ' + error.message;
                                     resultsSpan.style.color = '#dc3232';
-                                    console.error('Erreur lors du vide du cache:', error);
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.error('Erreur lors du vide du cache:', error);
+                                    }
                                 });
                             });
                         }
