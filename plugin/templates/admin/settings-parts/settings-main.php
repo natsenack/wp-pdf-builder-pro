@@ -2136,6 +2136,17 @@ window.toggleRGPDControls = toggleRGPDControls;
                 config: this.config,
                 preloadQueue: this.nonceState.preloadQueue.length
             };
+        },
+    
+        /**
+         * Méthode show pour la compatibilité avec les successCallback qui utilisent this.show
+         */
+        show: function(message) {
+            if (window.showSuccessNotification) {
+                window.showSuccessNotification(message);
+            } else if (window.pdfBuilderNotificationsInstance && window.pdfBuilderNotificationsInstance.success) {
+                window.pdfBuilderNotificationsInstance.success(message);
+            }
         }
     };
 
