@@ -43,12 +43,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_optimize_database', [$this, 'handle_optimize_database']);
         add_action('wp_ajax_pdf_builder_remove_temp_files', [$this, 'handle_remove_temp_files']);
 
-        // Actions de sauvegarde/backup
-        add_action('wp_ajax_pdf_builder_create_backup', [$this, 'handle_create_backup']);
-        add_action('wp_ajax_pdf_builder_list_backups', [$this, 'handle_list_backups']);
-        add_action('wp_ajax_pdf_builder_restore_backup', [$this, 'handle_restore_backup']);
-        add_action('wp_ajax_pdf_builder_delete_backup', [$this, 'handle_delete_backup']);
-
         // Actions de licence
         add_action('wp_ajax_pdf_builder_test_license', [$this, 'handle_test_license']);
 
@@ -487,50 +481,6 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     public function handle_remove_temp_files() {
         if (!$this->nonce_manager->validate_ajax_request('remove_temp_files')) {
-            return;
-        }
-
-        wp_send_json_error(['message' => 'Handler not implemented']);
-    }
-
-    /**
-     * Handler pour créer une sauvegarde
-     */
-    public function handle_create_backup() {
-        if (!$this->nonce_manager->validate_ajax_request('create_backup')) {
-            return;
-        }
-
-        wp_send_json_error(['message' => 'Handler not implemented']);
-    }
-
-    /**
-     * Handler pour lister les sauvegardes
-     */
-    public function handle_list_backups() {
-        if (!$this->nonce_manager->validate_ajax_request('list_backups')) {
-            return;
-        }
-
-        wp_send_json_error(['message' => 'Handler not implemented']);
-    }
-
-    /**
-     * Handler pour restaurer une sauvegarde
-     */
-    public function handle_restore_backup() {
-        if (!$this->nonce_manager->validate_ajax_request('restore_backup')) {
-            return;
-        }
-
-        wp_send_json_error(['message' => 'Handler not implemented']);
-    }
-
-    /**
-     * Handler pour supprimer une sauvegarde
-     */
-    public function handle_delete_backup() {
-        if (!$this->nonce_manager->validate_ajax_request('delete_backup')) {
             return;
         }
 
