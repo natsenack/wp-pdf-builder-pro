@@ -1211,18 +1211,11 @@ class PdfBuilderAdmin
         wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param, true);
         wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param, true);
 
-        // Charger le script des notifications
-        wp_enqueue_script('pdf-builder-notifications', PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js', ['jquery'], $version_param, true);
-
-        // Localizer ajaxurl for the integration script
+        // Localize ajaxurl for the integration script
         wp_localize_script('pdf-preview-integration', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_order_actions')
         ]);
-
-        // Localizer notifications data
-        $notification_manager = \PDF_Builder\Utilities\PDF_Builder_UI_Notification_Manager::get_instance();
-        wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', $notification_manager->get_localization_data());
 
         // Charger les outils développeur de manière asynchrone pour éviter les blocages
         wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
