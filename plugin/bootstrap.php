@@ -613,63 +613,73 @@ function pdf_builder_load_bootstrap()
     }
 
     // INITIALISER LE GESTIONNAIRE DE NOTIFICATIONS
-    // Charger explicitement les utilitaires avant l'initialisation
-    pdf_builder_load_utilities_emergency(); // Chargement d'urgence
-    $utilities = array(
-        'PDF_Builder_Notification_Manager.php',
-        'PDF_Builder_Onboarding_Manager.php',
-        'PDF_Builder_GDPR_Manager.php'
-    );
-    foreach ($utilities as $utility) {
-        $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
-        if (file_exists($utility_path)) {
-            require_once $utility_path;
-        }
-    }
-    if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
-        // Fallback: charger manuellement si la classe n'est pas trouvée
-        $notification_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Notification_Manager.php';
-        if (file_exists($notification_path)) {
-            require_once $notification_path;
-        }
-    }
-    // Initialiser le notification manager seulement après l'action 'init' pour éviter les erreurs de headers
+    // Retarder complètement le chargement et l'initialisation au hook 'init' pour éviter les erreurs de headers
     add_action('init', function() {
+        // Charger les utilitaires seulement maintenant
+        pdf_builder_load_utilities_emergency();
+
+        $utilities = array(
+            'PDF_Builder_Notification_Manager.php',
+            'PDF_Builder_Onboarding_Manager.php',
+            'PDF_Builder_GDPR_Manager.php'
+        );
+        foreach ($utilities as $utility) {
+            $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
+            if (file_exists($utility_path)) {
+                require_once $utility_path;
+            }
+        }
+
+        // Vérifier et charger les classes manuellement si nécessaire
+        if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
+            $notification_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Notification_Manager.php';
+            if (file_exists($notification_path)) {
+                require_once $notification_path;
+            }
+        }
+
+        // Initialiser le notification manager seulement maintenant
         if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
             \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance();
         }
     }, 5);
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
-    // Les utilitaires sont déjà chargés ci-dessus
-    if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-        // Fallback: charger manuellement si la classe n'est pas trouvée
-        $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
-        if (file_exists($onboarding_path)) {
-            require_once $onboarding_path;
+    // Retarder complètement le chargement et l'initialisation au hook 'init'
+    add_action('init', function() {
+        // Les utilitaires sont déjà chargés ci-dessus dans le même hook 'init'
+        if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+            // Fallback: charger manuellement si la classe n'est pas trouvée
+            $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
+            if (file_exists($onboarding_path)) {
+                require_once $onboarding_path;
+            }
         }
-    }
-    
-    // Utiliser la classe alias qui garantit la disponibilité
-    if (class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
-        // Instancier explicitement pour s'assurer que les hooks AJAX sont enregistrés
-        PDF_Builder_Onboarding_Manager_Alias::get_instance();
-    } elseif (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-        \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
-    }
+
+        // Utiliser la classe alias qui garantit la disponibilité
+        if (class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
+            // Instancier explicitement pour s'assurer que les hooks AJAX sont enregistrés
+            PDF_Builder_Onboarding_Manager_Alias::get_instance();
+        } elseif (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
+            \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
+        }
+    }, 5);
 
     // INITIALISER LE GESTIONNAIRE RGPD
-    // Les utilitaires sont déjà chargés ci-dessus
-    if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
-        // Fallback: charger manuellement si la classe n'est pas trouvée
-        $gdpr_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_GDPR_Manager.php';
-        if (file_exists($gdpr_path)) {
-            require_once $gdpr_path;
+    // Retarder complètement le chargement et l'initialisation au hook 'init'
+    add_action('init', function() {
+        // Les utilitaires sont déjà chargés ci-dessus dans le même hook 'init'
+        if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
+            // Fallback: charger manuellement si la classe n'est pas trouvée
+            $gdpr_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_GDPR_Manager.php';
+            if (file_exists($gdpr_path)) {
+                require_once $gdpr_path;
+            }
         }
-    }
-    if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
-        \PDF_Builder\Utilities\PDF_Builder_GDPR_Manager::get_instance();
-    }
+        if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
+            \PDF_Builder\Utilities\PDF_Builder_GDPR_Manager::get_instance();
+        }
+    }, 5);
 
     // INITIALISER LES HOOKS WOOCOMMERCE (Phase 1.6.1) - seulement si WooCommerce est actif
     add_action('init', function() {
