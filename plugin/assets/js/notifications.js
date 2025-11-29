@@ -21,9 +21,17 @@ class PDFBuilderNotifications {
             this.container = document.createElement('div');
             this.container.id = 'pdf-notifications-container';
             this.container.className = 'pdf-notifications-container';
+            // Définir la position par défaut
+            const defaultPosition = window.pdfBuilderNotifications?.position || 'top-right';
+            this.container.setAttribute('data-position', defaultPosition);
             document.body.appendChild(this.container);
         } else {
             this.container = document.getElementById('pdf-notifications-container');
+            // S'assurer que la position est définie
+            if (!this.container.hasAttribute('data-position')) {
+                const defaultPosition = window.pdfBuilderNotifications?.position || 'top-right';
+                this.container.setAttribute('data-position', defaultPosition);
+            }
         }
     }
 
