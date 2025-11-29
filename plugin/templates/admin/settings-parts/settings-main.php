@@ -1851,10 +1851,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                             }
                             if (opts.successCallback) {
                                 // Assurer que l'instance de notifications existe
-                                if (!window.pdfBuilderNotificationsInstance) {
-                                    window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                                if (!window.pdfBuilderNotificationsInstance && window.PDF_Builder_Notifications) {
+                                    window.pdfBuilderNotificationsInstance = new window.PDF_Builder_Notifications();
                                 }
-                                opts.successCallback.call(window.pdfBuilderNotificationsInstance, data, data);
+                                opts.successCallback.call(window.pdfBuilderNotificationsInstance || window, data, data);
                             }
                             resolve(data);
                         } else {
@@ -1881,10 +1881,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                                         }
                                         if (opts.errorCallback) {
                                             // Assurer que l'instance de notifications existe
-                                            if (!window.pdfBuilderNotificationsInstance) {
-                                                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                                            if (!window.pdfBuilderNotificationsInstance && window.PDF_Builder_Notifications) {
+                                                window.pdfBuilderNotificationsInstance = new window.PDF_Builder_Notifications();
                                             }
-                                            opts.errorCallback.call(window.pdfBuilderNotificationsInstance, data, data);
+                                            opts.errorCallback.call(window.pdfBuilderNotificationsInstance || window, data, data);
                                         }
                                         reject(new Error(errorMessage));
                                     });
@@ -1898,10 +1898,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                             }
                             if (opts.errorCallback) {
                                 // Assurer que l'instance de notifications existe
-                                if (!window.pdfBuilderNotificationsInstance) {
-                                    window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                                if (!window.pdfBuilderNotificationsInstance && window.PDF_Builder_Notifications) {
+                                    window.pdfBuilderNotificationsInstance = new window.PDF_Builder_Notifications();
                                 }
-                                opts.errorCallback.call(window.pdfBuilderNotificationsInstance, data, data);
+                                opts.errorCallback.call(window.pdfBuilderNotificationsInstance || window, data, data);
                             }
                             reject(new Error(errorMessage));
                         }
@@ -1916,10 +1916,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                         }
                         if (opts.errorCallback) {
                             // Assurer que l'instance de notifications existe
-                            if (!window.pdfBuilderNotificationsInstance) {
-                                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                            if (!window.pdfBuilderNotificationsInstance && window.PDF_Builder_Notifications) {
+                                window.pdfBuilderNotificationsInstance = new window.PDF_Builder_Notifications();
                             }
-                            opts.errorCallback.call(window.pdfBuilderNotificationsInstance, {error: error.message}, {error: error.message});
+                            opts.errorCallback.call(window.pdfBuilderNotificationsInstance || window, {error: error.message}, {error: error.message});
                         }
                         reject(error);
                     });
