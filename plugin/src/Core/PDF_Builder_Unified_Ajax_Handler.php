@@ -656,7 +656,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Debug: Log que le handler est appelé
         error_log('[PDF Builder] handle_create_backup called');
 
-        if (!$this->nonce_manager->validate_ajax_request('create_backup')) {
+        if (!$this->nonce_manager->validate_ajax_request()) {
             error_log('[PDF Builder] Nonce validation failed for create_backup');
             return;
         }
@@ -702,7 +702,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler pour lister les sauvegardes
      */
     public function handle_list_backups() {
-        if (!$this->nonce_manager->validate_ajax_request('list_backups')) {
+        if (!$this->nonce_manager->validate_ajax_request()) {
             return;
         }
 
@@ -727,7 +727,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler pour restaurer une sauvegarde
      */
     public function handle_restore_backup() {
-        if (!$this->nonce_manager->validate_ajax_request('restore_backup')) {
+        if (!$this->nonce_manager->validate_ajax_request()) {
             return;
         }
 
@@ -774,7 +774,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler pour supprimer une sauvegarde
      */
     public function handle_delete_backup() {
-        if (!$this->nonce_manager->validate_ajax_request('delete_backup')) {
+        if (!$this->nonce_manager->validate_ajax_request()) {
             return;
         }
 
@@ -810,7 +810,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler pour télécharger une sauvegarde
      */
     public function handle_download_backup() {
-        if (!$this->nonce_manager->validate_ajax_request('download_backup')) {
+        if (!$this->nonce_manager->validate_ajax_request()) {
             return;
         }
 

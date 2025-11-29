@@ -213,10 +213,10 @@ function pdf_builder_load_core()
         return;
     }
 
-    // Charger le autoloader pour le nouveau système PSR-4
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
-    }
+    // Charger le autoloader pour le nouveau système PSR-4 - DISABLED
+    // if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
+    //     require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
+    // }
 
     // Charger les constantes
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/constants.php')) {
@@ -532,10 +532,10 @@ function pdf_builder_load_bootstrap()
     }
     $bootstrap_loaded = true;
 
-    // CHARGER L'AUTOLOADER POUR LES NOUVELLES CLASSES (PDF_Builder)
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
-    }
+    // CHARGER L'AUTOLOADER POUR LES NOUVELLES CLASSES (PDF_Builder) - DISABLED
+    // if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
+    //     require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
+    // }
 
     // Charger la configuration si pas déjà faite
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'config/config.php')) {

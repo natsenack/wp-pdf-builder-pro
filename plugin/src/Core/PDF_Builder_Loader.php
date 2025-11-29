@@ -31,7 +31,7 @@ class PDF_Builder_Loader {
      */
     public function load_early_components() {
         $this->load_constants();
-        $this->load_core_autoloader();
+        // $this->load_core_autoloader();
         $this->load_security_components();
     }
 
@@ -149,13 +149,13 @@ class PDF_Builder_Loader {
      * Charge l'autoloader du core
      */
     private function load_core_autoloader() {
-        $autoloader_path = PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
-        if (file_exists($autoloader_path)) {
-            require_once $autoloader_path;
-            if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
-                \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
-            }
-        }
+        // $autoloader_path = PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
+        // if (file_exists($autoloader_path)) {
+        //     require_once $autoloader_path;
+        //     if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
+        //         \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
+        //     }
+        // }
     }
 
     /**

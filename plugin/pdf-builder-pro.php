@@ -433,10 +433,10 @@ function pdf_builder_init()
     }
 
     // Initialiser notre autoloader personnalisé
-    require_once plugin_dir_path(__FILE__) . 'core/autoloader.php';
-    if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
-        \PDF_Builder\Core\PdfBuilderAutoloader::init(plugin_dir_path(__FILE__));
-    }
+    // require_once plugin_dir_path(__FILE__) . 'core/autoloader.php';
+    // if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
+    //     \PDF_Builder\Core\PdfBuilderAutoloader::init(plugin_dir_path(__FILE__));
+    // }
 
     // Charger le système de nonce unifié
     require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Nonce_Manager.php';
