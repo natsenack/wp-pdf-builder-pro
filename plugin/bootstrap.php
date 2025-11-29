@@ -10,6 +10,14 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Accès direct interdit');
 }
 
+// Définir les constantes essentielles si elles ne sont pas déjà définies
+if (!defined('PDF_BUILDER_PLUGIN_FILE')) {
+    define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
+}
+if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
+    define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
+}
+
 // ============================================================================
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
