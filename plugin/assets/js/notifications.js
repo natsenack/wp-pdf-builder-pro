@@ -475,6 +475,52 @@
         }
     }
 
+    // BLOQUER LES NOTIFICATIONS DE TEST - Override global
+    const originalSuccess = PDF_Builder_Notifications.prototype.success;
+    const originalError = PDF_Builder_Notifications.prototype.error;
+    const originalWarning = PDF_Builder_Notifications.prototype.warning;
+    const originalInfo = PDF_Builder_Notifications.prototype.info;
+
+    PDF_Builder_Notifications.prototype.success = function(message, options = {}) {
+        if (this.isTestNotification(message)) {
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.log('PDF Builder: Test success notification blocked:', message);
+            }
+            return null;
+        }
+        return originalSuccess.call(this, message, options);
+    };
+
+    PDF_Builder_Notifications.prototype.error = function(message, options = {}) {
+        if (this.isTestNotification(message)) {
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.log('PDF Builder: Test error notification blocked:', message);
+            }
+            return null;
+        }
+        return originalError.call(this, message, options);
+    };
+
+    PDF_Builder_Notifications.prototype.warning = function(message, options = {}) {
+        if (this.isTestNotification(message)) {
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.log('PDF Builder: Test warning notification blocked:', message);
+            }
+            return null;
+        }
+        return originalWarning.call(this, message, options);
+    };
+
+    PDF_Builder_Notifications.prototype.info = function(message, options = {}) {
+        if (this.isTestNotification(message)) {
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.log('PDF Builder: Test info notification blocked:', message);
+            }
+            return null;
+        }
+        return originalInfo.call(this, message, options);
+    };
+
     // Instance globale
     window.PDF_Builder_Notifications = PDF_Builder_Notifications;
 
