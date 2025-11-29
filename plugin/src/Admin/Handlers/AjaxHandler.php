@@ -61,8 +61,8 @@ class AjaxHandler
         add_action('wp_ajax_pdf_builder_clear_cache', [$this, 'ajaxClearCache']);
         add_action('wp_ajax_pdf_builder_check_integrity', [$this, 'ajaxCheckIntegrity']);
 
-        // Hooks AJAX de paramètres
-        add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajaxSaveSettings']);
+        // Hooks AJAX de paramètres - Désactivé pour éviter les conflits avec le système unifié
+        // add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajaxSaveSettings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajaxSaveSettingsPage']);
         add_action('wp_ajax_pdf_builder_save_general_settings', [$this, 'ajaxSaveGeneralSettings']);
         add_action('wp_ajax_pdf_builder_save_performance_settings', [$this, 'ajaxSavePerformanceSettings']);

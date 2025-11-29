@@ -201,7 +201,7 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
     // Handlers de paramètres - maintenant gérés par le nouveau système AJAX
-    add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax');
+    // add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_save_settings_ajax'); // Désactivé - conflits avec système unifié
     add_action('wp_ajax_pdf_builder_save_all_settings', 'pdf_builder_ajax_handler_dispatch');
     add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce_ajax');
 
@@ -443,6 +443,14 @@ function pdf_builder_init()
     if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
         \PDF_Builder\Core\PdfBuilderAutoloader::init(plugin_dir_path(__FILE__));
     }
+
+    // Charger le système de nonce unifié
+    require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Nonce_Manager.php';
+    require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Unified_Ajax_Handler.php';
+
+    // Initialiser le système de nonce unifié
+    $nonce_manager = new PDF_Builder_Nonce_Manager();
+    $unified_handler = new PDF_Builder_Unified_Ajax_Handler($nonce_manager);
 
     // Vérifier et créer les tables manquantes
     pdf_builder_check_tables();

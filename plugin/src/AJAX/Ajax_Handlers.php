@@ -299,9 +299,9 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
 
 // Fonction d'initialisation des handlers AJAX
 function pdf_builder_init_ajax_handlers() {
-    // Settings handler
-    $settings_handler = new PDF_Builder_Settings_Ajax_Handler();
-    add_action('wp_ajax_pdf_builder_save_settings', [$settings_handler, 'handle']);
+    // Settings handler - Désactivé pour éviter les conflits avec le système unifié
+    // $settings_handler = new PDF_Builder_Settings_Ajax_Handler();
+    // add_action('wp_ajax_pdf_builder_save_settings', [$settings_handler, 'handle']);
 
     // Template handler
     $template_handler = new PDF_Builder_Template_Ajax_Handler();
