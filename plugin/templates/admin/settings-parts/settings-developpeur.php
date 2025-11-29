@@ -301,6 +301,57 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
             </div>
             </div>
 
+            <div id="dev-notifications-test-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
+            <h3 class="section-title">🔔 Test du Système de Notifications</h3>
+            <p style="color: #666; margin-bottom: 15px;">Testez le système de notifications toast avec différents types et logs détaillés en console.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <button type="button" id="test_notification_success" class="button button-secondary" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; font-weight: bold;">
+                    ✅ Succès
+                </button>
+                <button type="button" id="test_notification_error" class="button button-secondary" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; font-weight: bold;">
+                    ❌ Erreur
+                </button>
+                <button type="button" id="test_notification_warning" class="button button-secondary" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; font-weight: bold;">
+                    ⚠️ Avertissement
+                </button>
+                <button type="button" id="test_notification_info" class="button button-secondary" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; font-weight: bold;">
+                    ℹ️ Info
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <button type="button" id="test_notification_all" class="button button-primary" style="font-weight: bold;">
+                    🎯 Tester Tous les Types
+                </button>
+                <button type="button" id="test_notification_clear" class="button button-secondary" style="background: #6c757d; color: white; border: none;">
+                    🗑️ Vider Toutes
+                </button>
+                <button type="button" id="test_notification_stats" class="button button-secondary" style="background: #17a2b8; color: white; border: none;">
+                    📊 Statistiques
+                </button>
+            </div>
+
+            <div id="notification_test_logs" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; line-height: 1.4; margin-top: 15px;">
+                <div style="color: #666; font-style: italic;">
+                    Logs des tests de notifications apparaîtront ici...<br>
+                    Ouvrez la console développeur (F12) pour voir les logs détaillés.
+                </div>
+            </div>
+
+            <div style="background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; padding: 15px; margin-top: 15px;">
+                <h4 style="margin-top: 0; color: #2e7d32;">💡 Instructions :</h4>
+                <ul style="margin: 0; padding-left: 20px; color: #2e7d32;">
+                    <li>Cliquez sur les boutons pour tester chaque type de notification</li>
+                    <li>Les notifications apparaissent en haut à droite par défaut</li>
+                    <li>Elles se ferment automatiquement après 5 secondes</li>
+                    <li>Survolez-les pour arrêter le timer d'auto-fermeture</li>
+                    <li>Cliquez sur × pour les fermer manuellement</li>
+                    <li>Les logs détaillés sont affichés en console (F12)</li>
+                </ul>
+            </div>
+            </div>
+
             <div id="dev-shortcuts-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">Raccourcis Clavier Développeur</h3>
 
@@ -757,7 +808,8 @@ document.addEventListener('DOMContentLoaded', function() {
         'dev-logs-viewer-section',
         'dev-tools-section',
         'dev-shortcuts-section',
-        'dev-todo-section'
+        'dev-todo-section',
+        'dev-notifications-test-section'
     ];
 
     if (developerEnabledToggle) {
@@ -970,5 +1022,223 @@ document.addEventListener('DOMContentLoaded', function() {
             );
         });
     }
+
+    // === NOTIFICATIONS TEST SYSTEM ===
+    const notificationTestLogs = document.getElementById('notification_test_logs');
+    let notificationTestCount = 0;
+    let notificationStats = { success: 0, error: 0, warning: 0, info: 0 };
+
+    // Helper function to add log entry
+    function addNotificationLog(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = document.createElement('div');
+        logEntry.style.cssText = `
+            padding: 4px 8px;
+            margin: 2px 0;
+            border-radius: 4px;
+            font-size: 11px;
+            border-left: 3px solid ${getLogColor(type)};
+            background: ${getLogBackground(type)};
+        `;
+        logEntry.innerHTML = `<strong>${timestamp}</strong> ${message}`;
+        notificationTestLogs.appendChild(logEntry);
+        notificationTestLogs.scrollTop = notificationTestLogs.scrollHeight;
+
+        // Keep only last 20 entries
+        while (notificationTestLogs.children.length > 20) {
+            notificationTestLogs.removeChild(notificationTestLogs.firstChild);
+        }
+    }
+
+    function getLogColor(type) {
+        const colors = {
+            success: '#28a745',
+            error: '#dc3545',
+            warning: '#ffc107',
+            info: '#17a2b8',
+            system: '#6c757d'
+        };
+        return colors[type] || colors.info;
+    }
+
+    function getLogBackground(type) {
+        const backgrounds = {
+            success: '#f8fff8',
+            error: '#fff8f8',
+            warning: '#fffef8',
+            info: '#f8fdff',
+            system: '#f8f9fa'
+        };
+        return backgrounds[type] || backgrounds.info;
+    }
+
+    // Console logging helper
+    function logToConsole(level, message, data = null) {
+        const prefix = '[🔔 NOTIFICATION TEST]';
+        const timestamp = new Date().toISOString();
+
+        switch(level) {
+            case 'info':
+                console.info(`${prefix} ${timestamp} - ${message}`, data || '');
+                break;
+            case 'success':
+                console.log(`${prefix} ✅ ${timestamp} - ${message}`, data || '');
+                break;
+            case 'error':
+                console.error(`${prefix} ❌ ${timestamp} - ${message}`, data || '');
+                break;
+            case 'warning':
+                console.warn(`${prefix} ⚠️ ${timestamp} - ${message}`, data || '');
+                break;
+            default:
+                console.log(`${prefix} ${timestamp} - ${message}`, data || '');
+        }
+    }
+
+    // Test individual notification types
+    function testNotification(type, customMessage = null) {
+        const messages = {
+            success: '✅ Opération réussie ! Les données ont été sauvegardées.',
+            error: '❌ Erreur critique ! Impossible de traiter la demande.',
+            warning: '⚠️ Attention requise ! Vérifiez vos paramètres.',
+            info: 'ℹ️ Information importante ! Mise à jour disponible.'
+        };
+
+        const message = customMessage || messages[type];
+        const notificationId = `test_${type}_${Date.now()}`;
+
+        logToConsole('info', `Testing ${type} notification`, {
+            message: message,
+            id: notificationId,
+            timestamp: Date.now()
+        });
+
+        addNotificationLog(`🔔 Test ${type}: "${message.substring(0, 50)}..."`, type);
+
+        try {
+            // Use the global notification functions
+            const showFunction = window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`];
+            if (showFunction) {
+                const result = showFunction(message, 4000); // 4 seconds for testing
+                notificationStats[type]++;
+                notificationTestCount++;
+
+                logToConsole('success', `${type} notification shown successfully`, {
+                    id: result,
+                    stats: notificationStats
+                });
+
+                addNotificationLog(`✅ ${type} notification affichée (ID: ${result})`, 'success');
+            } else {
+                throw new Error(`Function show${type.charAt(0).toUpperCase() + type.slice(1)}Notification not found`);
+            }
+        } catch (error) {
+            logToConsole('error', `Failed to show ${type} notification`, error);
+            addNotificationLog(`❌ Erreur ${type}: ${error.message}`, 'error');
+        }
+    }
+
+    // Individual test buttons
+    const testButtons = {
+        success: document.getElementById('test_notification_success'),
+        error: document.getElementById('test_notification_error'),
+        warning: document.getElementById('test_notification_warning'),
+        info: document.getElementById('test_notification_info')
+    };
+
+    Object.keys(testButtons).forEach(type => {
+        if (testButtons[type]) {
+            testButtons[type].addEventListener('click', function() {
+                logToConsole('info', `Manual test triggered for ${type} notification`);
+                testNotification(type);
+            });
+        }
+    });
+
+    // Test all notifications button
+    const testAllBtn = document.getElementById('test_notification_all');
+    if (testAllBtn) {
+        testAllBtn.addEventListener('click', function() {
+            logToConsole('info', 'Testing all notification types sequentially');
+            addNotificationLog('🎯 Démarrage test de tous les types', 'system');
+
+            const types = ['success', 'error', 'warning', 'info'];
+            let index = 0;
+
+            const testNext = () => {
+                if (index < types.length) {
+                    testNotification(types[index]);
+                    index++;
+                    setTimeout(testNext, 1000); // 1 second delay between tests
+                } else {
+                    logToConsole('success', 'All notification types tested successfully');
+                    addNotificationLog('✅ Tous les types testés avec succès', 'success');
+                }
+            };
+
+            testNext();
+        });
+    }
+
+    // Clear all notifications button
+    const clearAllBtn = document.getElementById('test_notification_clear');
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', function() {
+            logToConsole('info', 'Clearing all notifications');
+            addNotificationLog('🗑️ Suppression de toutes les notifications', 'system');
+
+            try {
+                if (window.pdfBuilderNotificationsInstance && window.pdfBuilderNotificationsInstance.closeAll) {
+                    window.pdfBuilderNotificationsInstance.closeAll();
+                    logToConsole('success', 'All notifications cleared successfully');
+                    addNotificationLog('✅ Toutes les notifications supprimées', 'success');
+                } else {
+                    throw new Error('Notification instance not available');
+                }
+            } catch (error) {
+                logToConsole('error', 'Failed to clear notifications', error);
+                addNotificationLog(`❌ Erreur suppression: ${error.message}`, 'error');
+            }
+        });
+    }
+
+    // Statistics button
+    const statsBtn = document.getElementById('test_notification_stats');
+    if (statsBtn) {
+        statsBtn.addEventListener('click', function() {
+            logToConsole('info', 'Showing notification statistics', notificationStats);
+            addNotificationLog('📊 Statistiques des notifications', 'system');
+
+            const statsMessage = `
+📊 STATISTIQUES DES TESTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Total tests: ${notificationTestCount}
+• Succès: ${notificationStats.success}
+• Erreurs: ${notificationStats.error}
+• Avertissements: ${notificationStats.warning}
+• Infos: ${notificationStats.info}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
+            `.trim();
+
+            // Show in notification
+            if (window.showInfoNotification) {
+                window.showInfoNotification('Statistiques affichées en console (F12)', 3000);
+            }
+
+            // Log detailed stats
+            console.table(notificationStats);
+            console.log(statsMessage);
+
+            addNotificationLog(`📊 Stats: ${notificationTestCount} tests (${notificationStats.success}✓ ${notificationStats.error}✗ ${notificationStats.warning}⚠ ${notificationStats.info}ℹ)`, 'info');
+        });
+    }
+
+    // Add section to dev sections array for toggle
+    devSections.push('dev-notifications-test-section');
+
+    // Initial log
+    logToConsole('info', 'Notification test system initialized');
+    addNotificationLog('🚀 Système de test des notifications initialisé', 'system');
 });
 </script>
