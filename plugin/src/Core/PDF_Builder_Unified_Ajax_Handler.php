@@ -156,13 +156,6 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Sauvegarde tous les paramètres
      */
     private function save_all_settings() {
-        // Log pour déboguer
-        error_log('[PDF Builder] save_all_settings called');
-        error_log('[PDF Builder] developer_enabled received: ' . (isset($_POST['developer_enabled']) ? $_POST['developer_enabled'] : 'NOT SET'));
-
-        // Vérifier la valeur actuelle
-        $current_value = get_option('pdf_builder_developer_enabled', '0');
-        error_log('[PDF Builder] developer_enabled current value in DB: ' . $current_value);
 
         $settings = [
             // Général - Informations entreprise
@@ -257,11 +250,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             } elseif ($key === 'order_status_templates') {
                 update_option('pdf_builder_order_status_templates', $value);
             } else {
-                $option_key = 'pdf_builder_' . $key;
-                $result = update_option($option_key, $value);
-                if ($key === 'developer_enabled') {
-                    error_log('[PDF Builder] Saved developer_enabled: ' . $value . ' to option: ' . $option_key . ' - result: ' . ($result ? 'SUCCESS' : 'FAILED'));
-                }
+                update_option('pdf_builder_' . $key, $value);
             }
             $saved_count++;
         }
