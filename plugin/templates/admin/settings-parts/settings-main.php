@@ -211,8 +211,8 @@ $notices = [];
 // Charger TOUS les paramètres sauvegardés de manière centralisée
 $all_settings = PDF_Builder_Settings_Loader::load_all_settings();
 
-// Extraire les paramètres principaux
-$settings = $all_settings['pdf_builder_settings'];
+// Les paramètres sont déjà dans $all_settings avec leurs clés complètes
+$settings = $all_settings;
 $canvas_settings = $all_settings['pdf_builder_canvas_settings'];
 
 // Préparer les données pour les previews
