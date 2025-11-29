@@ -21,7 +21,6 @@ function pdf_builder_get_directory_size($directory) {
             <form id="systeme-settings-form" method="post" action="">
                 <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_systeme_nonce'); ?>
                 <input type="hidden" name="current_tab" value="systeme">
-                <input type="hidden" name="current_tab" value="systeme">
 
                 <!-- Section Cache et Performance -->
                 <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
