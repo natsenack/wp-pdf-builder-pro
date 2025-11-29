@@ -1425,9 +1425,9 @@
         }
 
         showNotification(message, type = 'info') {
-            // Utiliser le système de notifications existant si disponible
-            if (window.PDF_Builder_Notification_Manager) {
-                window.PDF_Builder_Notification_Manager.show_toast(message, type);
+            // Utiliser le système de notifications unifié
+            if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.show) {
+                window.pdfBuilderNotifications.show(message, type);
             } else {
                 // Fallback avec alert
                 alert(message);

@@ -66,8 +66,8 @@ jQuery(document).ready(function($) {
     // Fonction de notification utilisant le système unifié
     function showMaintenanceNotification(type, title, message, duration = 5000) {
         // Utiliser le système de notifications unifié
-        if (window.PDF_Builder_Notification_Manager && window.PDF_Builder_Notification_Manager.show_toast) {
-            window.PDF_Builder_Notification_Manager.show_toast(message, type, duration);
+        if (window.pdfBuilderNotifications && window.pdfBuilderNotifications.show) {
+            window.pdfBuilderNotifications.show(message, type, duration);
         } else {
             // Fallback: utiliser alert si le système de notifications n'est pas disponible
             alert(title + ': ' + message);
