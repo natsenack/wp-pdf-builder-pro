@@ -831,11 +831,7 @@ if (
                                     context: 'Paramètres sauvegarde',
                                     successCallback: (result, originalData) => {
                                         console.log('✅ [PDF Builder] Paramètres sauvegardés avec succès');
-
-                                        // Afficher une notification de succès
-                                        if (window.showSuccessNotification) {
-                                            window.showSuccessNotification('Paramètres sauvegardés avec succès !');
-                                        }
+                                        // Notification gérée automatiquement par le système centralisé
                                     },
                                     errorCallback: (result, originalData) => {
                                         console.error('❌ [PDF Builder] Erreur lors de la sauvegarde des paramètres:', result);
@@ -2360,10 +2356,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Log success
                         console.log('Paramètres sauvegardés avec succès !');
 
-                        // Afficher une notification de succès
-                        if (window.showSuccessNotification) {
-                            window.showSuccessNotification('Paramètres sauvegardés avec succès !');
-                        }
+                        // Notification gérée par le système centralisé
                     },
                     errorCallback: (result, originalData) => {
                         // Log error

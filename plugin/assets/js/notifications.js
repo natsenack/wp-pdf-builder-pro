@@ -1,256 +1,512 @@
 /**
- * PDF Builder Pro - Système de Notifications Frontend
- * Gestion centralisée des notifications toast
+ * PDF Builder Pro - Notifications JavaScript
+ * Système de notifications frontend moderne et responsive
+ * Version: 1.0.0
+ * Updated: 2025-11-29
  */
 
-class PDFBuilderNotifications {
-    constructor() {
-        this.container = null;
-        this.notifications = new Map();
-        this.init();
-    }
+(function($) {
+    'use strict';
 
-    init() {
-        this.createContainer();
-        this.bindEvents();
-    }
+    /**
+     * Classe principale pour la gestion des notifications frontend
+     */
+    class PDF_Builder_Notifications {
 
-    createContainer() {
-        // Créer le conteneur principal s'il n'existe pas
-        if (!document.getElementById('pdf-notifications-container')) {
+        constructor() {
+            this.settings = window.pdfBuilderNotifications?.settings || {};
+            this.strings = window.pdfBuilderNotifications?.strings || {};
+            this.ajaxUrl = window.pdfBuilderNotifications?.ajax_url || '';
+            this.nonce = window.pdfBuilderNotifications?.nonce || '';
+            this.notifications = [];
+            this.container = null;
+            this.initialized = false;
+
+            this.init();
+        }
+
+        /**
+         * Initialisation du système
+         */
+        init() {
+            if (this.initialized) return;
+
+            this.createContainer();
+            this.bindEvents();
+            this.initialized = true;
+
+            console.log('PDF Builder Notifications: Initialized', this.settings);
+        }
+
+        /**
+         * Créer le conteneur principal des notifications
+         */
+        createContainer() {
+            if (this.container) return;
+
             this.container = document.createElement('div');
-            this.container.id = 'pdf-notifications-container';
-            this.container.className = 'pdf-notifications-container';
-            // Définir la position par défaut
-            const defaultPosition = window.pdfBuilderNotifications?.position || 'top-right';
-            this.container.setAttribute('data-position', defaultPosition);
+            this.container.className = 'pdf-builder-notifications-container';
+            this.container.setAttribute('data-position', this.settings.position || 'top-right');
+            this.container.setAttribute('aria-live', 'polite');
+            this.container.setAttribute('aria-atomic', 'false');
+
             document.body.appendChild(this.container);
-        } else {
-            this.container = document.getElementById('pdf-notifications-container');
-            // S'assurer que la position est définie
-            if (!this.container.hasAttribute('data-position')) {
-                const defaultPosition = window.pdfBuilderNotifications?.position || 'top-right';
-                this.container.setAttribute('data-position', defaultPosition);
-            }
-        }
-    }
 
-    bindEvents() {
-        // Gestionnaire pour fermer les notifications au clic
-        this.container.addEventListener('click', (e) => {
-            if (e.target.classList.contains('pdf-notification-close')) {
-                const notification = e.target.closest('.pdf-notification');
-                if (notification) {
-                    this.close(notification.dataset.id);
+            // Appliquer les styles de positionnement
+            this.updateContainerPosition();
+        }
+
+        /**
+         * Mettre à jour la position du conteneur
+         */
+        updateContainerPosition() {
+            if (!this.container) return;
+
+            const position = this.settings.position || 'top-right';
+            this.container.setAttribute('data-position', position);
+
+            // Styles CSS pour le positionnement
+            const styles = {
+                'top-left': {
+                    top: '20px',
+                    left: '20px',
+                    right: 'auto',
+                    bottom: 'auto'
+                },
+                'top-right': {
+                    top: '20px',
+                    right: '20px',
+                    left: 'auto',
+                    bottom: 'auto'
+                },
+                'bottom-left': {
+                    bottom: '20px',
+                    left: '20px',
+                    top: 'auto',
+                    right: 'auto'
+                },
+                'bottom-right': {
+                    bottom: '20px',
+                    right: '20px',
+                    top: 'auto',
+                    left: 'auto'
+                },
+                'top-center': {
+                    top: '20px',
+                    left: '50%',
+                    right: 'auto',
+                    bottom: 'auto',
+                    transform: 'translateX(-50%)'
+                },
+                'bottom-center': {
+                    bottom: '20px',
+                    left: '50%',
+                    right: 'auto',
+                    top: 'auto',
+                    transform: 'translateX(-50%)'
+                }
+            };
+
+            const style = styles[position] || styles['top-right'];
+            Object.assign(this.container.style, style);
+        }
+
+        /**
+         * Lier les événements
+         */
+        bindEvents() {
+            // Délégation d'événements pour les boutons de fermeture
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.notification-close')) {
+                    e.preventDefault();
+                    const notification = e.target.closest('.pdf-builder-notification');
+                    if (notification) {
+                        this.dismiss(notification);
+                    }
+                }
+
+                // Bouton "Tout fermer"
+                if (e.target.closest('.notifications-dismiss-all')) {
+                    e.preventDefault();
+                    this.dismissAll();
+                }
+            });
+
+            // Gestion du clavier (Échap pour fermer)
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.dismissAll();
+                }
+            });
+
+            // Gestion du redimensionnement de la fenêtre
+            window.addEventListener('resize', () => {
+                this.updateContainerPosition();
+            });
+        }
+
+        /**
+         * Afficher une notification
+         */
+        show(message, type = 'info', options = {}) {
+            if (!this.settings.enabled) return;
+
+            const notificationOptions = Object.assign({
+                message: message,
+                type: type,
+                duration: this.settings.duration || 5000,
+                dismissible: true,
+                persistent: false,
+                sound: this.settings.sound_enabled || false
+            }, options);
+
+            const notification = this.createNotificationElement(notificationOptions);
+            this.addToContainer(notification);
+            this.playSoundIfEnabled(notificationOptions.sound);
+
+            // Auto-dismiss si durée définie et pas persistent
+            if (notificationOptions.duration > 0 && !notificationOptions.persistent) {
+                this.scheduleAutoDismiss(notification, notificationOptions.duration);
+            }
+
+            // Animation d'entrée
+            setTimeout(() => {
+                notification.classList.add('visible');
+            }, 10);
+
+            return notification;
+        }
+
+        /**
+         * Créer l'élément DOM d'une notification
+         */
+        createNotificationElement(options) {
+            const typeConfig = this.settings.types?.[options.type] || this.settings.types?.info || {
+                icon: 'ℹ️',
+                color: '#17a2b8',
+                bg: '#d1ecf1'
+            };
+
+            const notification = document.createElement('div');
+            notification.className = `pdf-builder-notification pdf-builder-notification-${options.type} pdf-builder-notification-${this.settings.animation || 'slide'}`;
+            notification.setAttribute('role', 'alert');
+            notification.setAttribute('aria-live', 'assertive');
+
+            if (options.dismissible) {
+                notification.classList.add('dismissible');
+            }
+
+            // Styles inline pour les couleurs
+            notification.style.backgroundColor = typeConfig.bg;
+            notification.style.color = typeConfig.color;
+            notification.style.borderLeftColor = typeConfig.color;
+
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-icon">${typeConfig.icon}</span>
+                    <span class="notification-message">${this.escapeHtml(options.message)}</span>
+                    ${options.dismissible ? `
+                        <button class="notification-close" aria-label="${this.strings.close || 'Fermer'}">
+                            <span class="dashicons dashicons-no"></span>
+                        </button>
+                    ` : ''}
+                </div>
+                ${options.duration > 0 && !options.persistent ? `
+                    <div class="notification-progress-bar">
+                        <div class="notification-progress" style="background-color: ${typeConfig.color}"></div>
+                    </div>
+                ` : ''}
+            `;
+
+            // Stocker les options dans l'élément
+            notification._notificationOptions = options;
+
+            return notification;
+        }
+
+        /**
+         * Ajouter une notification au conteneur
+         */
+        addToContainer(notification) {
+            if (!this.container) return;
+
+            // Limiter le nombre de notifications
+            const maxNotifications = this.settings.max_notifications || 5;
+            const existingNotifications = this.container.querySelectorAll('.pdf-builder-notification');
+
+            if (existingNotifications.length >= maxNotifications) {
+                // Supprimer la plus ancienne
+                const oldest = existingNotifications[0];
+                this.dismiss(oldest, false);
+            }
+
+            // Ajouter la nouvelle notification
+            this.container.appendChild(notification);
+            this.notifications.push(notification);
+
+            // Ajouter le bouton "Tout fermer" si plusieurs notifications
+            this.updateDismissAllButton();
+        }
+
+        /**
+         * Mettre à jour le bouton "Tout fermer"
+         */
+        updateDismissAllButton() {
+            const existingButton = this.container.querySelector('.notifications-dismiss-all');
+            const notificationCount = this.container.querySelectorAll('.pdf-builder-notification:not(.dismissing)').length;
+
+            if (notificationCount > 1) {
+                if (!existingButton) {
+                    const button = document.createElement('button');
+                    button.className = 'notifications-dismiss-all';
+                    button.innerHTML = `<span class="dashicons dashicons-dismiss"></span> ${this.strings.dismiss_all || 'Tout fermer'}`;
+                    button.setAttribute('aria-label', this.strings.dismiss_all || 'Fermer toutes les notifications');
+
+                    this.container.insertBefore(button, this.container.firstChild);
+                }
+            } else {
+                if (existingButton) {
+                    existingButton.remove();
                 }
             }
-        });
+        }
 
-        // Fermeture automatique au survol (optionnel)
-        this.container.addEventListener('mouseenter', (e) => {
-            if (e.target.classList.contains('pdf-notification')) {
-                // Pause du timer d'auto-fermeture
-                const id = e.target.dataset.id;
-                if (this.notifications.has(id)) {
-                    clearTimeout(this.notifications.get(id).timer);
-                }
+        /**
+         * Programmer la fermeture automatique
+         */
+        scheduleAutoDismiss(notification, duration) {
+            const progressBar = notification.querySelector('.notification-progress');
+            if (progressBar) {
+                progressBar.style.transition = `width ${duration}ms linear`;
+                progressBar.style.width = '0%';
             }
-        });
 
-        this.container.addEventListener('mouseleave', (e) => {
-            if (e.target.classList.contains('pdf-notification')) {
-                // Redémarrage du timer d'auto-fermeture
-                const id = e.target.dataset.id;
-                if (this.notifications.has(id)) {
-                    this.restartTimer(id);
-                }
+            notification._dismissTimeout = setTimeout(() => {
+                this.dismiss(notification);
+            }, duration);
+        }
+
+        /**
+         * Fermer une notification
+         */
+        dismiss(notification, animate = true) {
+            if (!notification || notification.classList.contains('dismissing')) return;
+
+            notification.classList.add('dismissing');
+
+            if (animate) {
+                // Animation de sortie
+                notification.classList.remove('visible');
+                notification.classList.add('dismissing');
+
+                setTimeout(() => {
+                    this.removeNotification(notification);
+                }, 300);
+            } else {
+                this.removeNotification(notification);
             }
-        });
-    }
-
-    show(message, type = 'info', duration = null) {
-        if (!window.pdfBuilderNotifications || !window.pdfBuilderNotifications.enabled) {
-            console.log('Notifications disabled or not configured');
-            return null;
         }
 
-        const id = 'notification_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        const position = window.pdfBuilderNotifications.position || 'top-right';
-        const autoDuration = duration || window.pdfBuilderNotifications.duration || 5000;
-
-        // Créer l'élément de notification
-        const notification = this.createNotificationElement(id, message, type, position);
-
-        // Ajouter au conteneur
-        this.container.appendChild(notification);
-
-        // Animation d'entrée
-        setTimeout(() => {
-            notification.classList.add('visible');
-        }, 10);
-
-        // Programmer la fermeture automatique
-        const timer = setTimeout(() => {
-            this.close(id);
-        }, autoDuration);
-
-        // Stocker la notification
-        this.notifications.set(id, {
-            element: notification,
-            timer: timer,
-            duration: autoDuration
-        });
-
-        return id;
-    }
-
-    createNotificationElement(id, message, type, position) {
-        const notification = document.createElement('div');
-        notification.className = `pdf-notification pdf-notification-${type}`;
-        notification.dataset.id = id;
-
-        const icon = this.getIcon(type);
-
-        notification.innerHTML = `
-            <div class="pdf-notification-content">
-                <span class="pdf-notification-icon">${icon}</span>
-                <span class="pdf-notification-message">${this.escapeHtml(message)}</span>
-                <button class="pdf-notification-close" aria-label="Fermer">×</button>
-            </div>
-            <div class="pdf-notification-progress"></div>
-        `;
-
-        // Ajouter la classe de position
-        notification.classList.add(`pdf-notification-${position}`);
-
-        return notification;
-    }
-
-    getIcon(type) {
-        const icons = {
-            success: '✅',
-            error: '❌',
-            warning: '⚠️',
-            info: 'ℹ️'
-        };
-        return icons[type] || icons.info;
-    }
-
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    close(id) {
-        const notificationData = this.notifications.get(id);
-        if (!notificationData) return;
-
-        const { element, timer } = notificationData;
-
-        // Annuler le timer
-        if (timer) {
-            clearTimeout(timer);
-        }
-
-        // Animation de sortie
-        element.classList.remove('visible');
-        element.classList.add('closing');
-
-        // Supprimer après l'animation
-        setTimeout(() => {
-            if (element.parentNode) {
-                element.parentNode.removeChild(element);
+        /**
+         * Supprimer une notification du DOM
+         */
+        removeNotification(notification) {
+            if (notification && notification.parentNode) {
+                notification.remove();
             }
-            this.notifications.delete(id);
-        }, 300);
-    }
 
-    restartTimer(id) {
-        const notificationData = this.notifications.get(id);
-        if (!notificationData) return;
+            // Retirer de la liste
+            const index = this.notifications.indexOf(notification);
+            if (index > -1) {
+                this.notifications.splice(index, 1);
+            }
 
-        // Annuler l'ancien timer
-        if (notificationData.timer) {
-            clearTimeout(notificationData.timer);
+            // Nettoyer le timeout
+            if (notification._dismissTimeout) {
+                clearTimeout(notification._dismissTimeout);
+            }
+
+            // Mettre à jour le bouton "Tout fermer"
+            this.updateDismissAllButton();
         }
 
-        // Créer un nouveau timer
-        const newTimer = setTimeout(() => {
-            this.close(id);
-        }, notificationData.duration);
+        /**
+         * Fermer toutes les notifications
+         */
+        dismissAll() {
+            const notifications = Array.from(this.container.querySelectorAll('.pdf-builder-notification:not(.dismissing)'));
+            notifications.forEach(notification => {
+                this.dismiss(notification);
+            });
+        }
 
-        // Mettre à jour
-        notificationData.timer = newTimer;
-        this.notifications.set(id, notificationData);
-    }
+        /**
+         * Jouer un son si activé
+         */
+        playSoundIfEnabled(enabled) {
+            if (!enabled || !this.settings.sound_enabled) return;
 
-    // Méthodes de commodité
-    success(message, duration = null) {
-        return this.show(message, 'success', duration);
-    }
+            // Créer un son simple (peep)
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
 
-    error(message, duration = null) {
-        return this.show(message, 'error', duration);
-    }
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
 
-    warning(message, duration = null) {
-        return this.show(message, 'warning', duration);
-    }
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
 
-    info(message, duration = null) {
-        return this.show(message, 'info', duration);
-    }
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
 
-    // Fermer toutes les notifications
-    closeAll() {
-        for (const [id] of this.notifications) {
-            this.close(id);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.2);
+            } catch (e) {
+                // Silencieux en cas d'erreur
+            }
+        }
+
+        /**
+         * Échapper le HTML
+         */
+        escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        /**
+         * Méthodes publiques pour afficher différents types de notifications
+         */
+        success(message, options = {}) {
+            return this.show(message, 'success', options);
+        }
+
+        error(message, options = {}) {
+            return this.show(message, 'error', options);
+        }
+
+        warning(message, options = {}) {
+            return this.show(message, 'warning', options);
+        }
+
+        info(message, options = {}) {
+            return this.show(message, 'info', options);
+        }
+
+        /**
+         * Afficher une notification via AJAX
+         */
+        showAjax(message, type = 'info', duration = null) {
+            if (!this.ajaxUrl || !this.nonce) return;
+
+            const data = {
+                action: 'pdf_builder_show_notification',
+                nonce: this.nonce,
+                message: message,
+                type: type,
+                duration: duration || this.settings.duration
+            };
+
+            $.post(this.ajaxUrl, data)
+                .done((response) => {
+                    if (response.success) {
+                        console.log('Notification AJAX sent successfully');
+                    }
+                })
+                .fail((error) => {
+                    console.error('Failed to send AJAX notification:', error);
+                });
+        }
+
+        /**
+         * Mettre à jour les paramètres
+         */
+        updateSettings(newSettings) {
+            this.settings = Object.assign(this.settings, newSettings);
+            this.updateContainerPosition();
+        }
+
+        /**
+         * Obtenir les paramètres actuels
+         */
+        getSettings() {
+            return this.settings;
+        }
+
+        /**
+         * Vider toutes les notifications
+         */
+        clear() {
+            this.dismissAll();
+        }
+
+        /**
+         * Détruire l'instance
+         */
+        destroy() {
+            this.clear();
+            if (this.container) {
+                this.container.remove();
+                this.container = null;
+            }
+            this.initialized = false;
         }
     }
 
-    // Méthode AJAX pour afficher une notification depuis PHP
-    static showFromAjax(message, type = 'info', duration = null) {
-        if (typeof window.PDFBuilderNotificationsInstance === 'undefined') {
-            window.PDFBuilderNotificationsInstance = new PDFBuilderNotifications();
+    // Instance globale
+    window.PDF_Builder_Notifications = PDF_Builder_Notifications;
+
+    // Fonctions globales pour un accès facile
+    window.pdfBuilderNotify = {
+        success: function(message, options) {
+            if (!window.pdfBuilderNotificationsInstance) {
+                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+            }
+            return window.pdfBuilderNotificationsInstance.success(message, options);
+        },
+        error: function(message, options) {
+            if (!window.pdfBuilderNotificationsInstance) {
+                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+            }
+            return window.pdfBuilderNotificationsInstance.error(message, options);
+        },
+        warning: function(message, options) {
+            if (!window.pdfBuilderNotificationsInstance) {
+                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+            }
+            return window.pdfBuilderNotificationsInstance.warning(message, options);
+        },
+        info: function(message, options) {
+            if (!window.pdfBuilderNotificationsInstance) {
+                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+            }
+            return window.pdfBuilderNotificationsInstance.info(message, options);
+        },
+        showAjax: function(message, type, duration) {
+            if (!window.pdfBuilderNotificationsInstance) {
+                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+            }
+            return window.pdfBuilderNotificationsInstance.showAjax(message, type, duration);
+        },
+        clear: function() {
+            if (window.pdfBuilderNotificationsInstance) {
+                window.pdfBuilderNotificationsInstance.clear();
+            }
         }
-        return window.PDFBuilderNotificationsInstance.show(message, type, duration);
-    }
-}
+    };
 
-// Initialisation globale
-window.PDFBuilderNotifications = PDFBuilderNotifications;
+    // Alias pour la compatibilité
+    window.showSuccessNotification = window.pdfBuilderNotify.success;
+    window.showErrorNotification = window.pdfBuilderNotify.error;
+    window.showWarningNotification = window.pdfBuilderNotify.warning;
+    window.showInfoNotification = window.pdfBuilderNotify.info;
 
-// Instance globale
-window.pdfBuilderNotificationsInstance = new PDFBuilderNotifications();
+    // Initialisation automatique
+    $(document).ready(function() {
+        window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+    });
 
-// Fonctions helper globales
-window.showNotification = (message, type, duration) => {
-    return window.pdfBuilderNotificationsInstance.show(message, type, duration);
-};
-
-window.showSuccessNotification = (message, duration) => {
-    return window.pdfBuilderNotificationsInstance.success(message, duration);
-};
-
-window.showErrorNotification = (message, duration) => {
-    return window.pdfBuilderNotificationsInstance.error(message, duration);
-};
-
-window.showWarningNotification = (message, duration) => {
-    return window.pdfBuilderNotificationsInstance.warning(message, duration);
-};
-
-window.showInfoNotification = (message, duration) => {
-    return window.pdfBuilderNotificationsInstance.info(message, duration);
-};
-
-// Initialisation quand le DOM est prêt
-document.addEventListener('DOMContentLoaded', function() {
-    // S'assurer que l'instance est créée
-    if (typeof window.pdfBuilderNotificationsInstance === 'undefined') {
-        window.pdfBuilderNotificationsInstance = new PDFBuilderNotifications();
-    }
-});
-
-console.log('🔔 PDF Builder Notifications system loaded');
+})(jQuery);

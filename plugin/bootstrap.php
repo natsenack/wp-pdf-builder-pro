@@ -625,6 +625,31 @@ function pdf_builder_load_bootstrap()
         PDF_Builder_Notification_Manager::get_instance();
     }
 
+    // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS
+    add_action('admin_enqueue_scripts', function() {
+        // Charger le CSS des notifications
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'plugin/assets/css/notifications.css')) {
+            wp_enqueue_style(
+                'pdf-builder-notifications',
+                PDF_BUILDER_PLUGIN_URL . 'plugin/assets/css/notifications.css',
+                array(),
+                PDF_BUILDER_VERSION . '-' . time(),
+                'all'
+            );
+        }
+
+        // Charger le JavaScript des notifications
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'plugin/assets/js/notifications.js')) {
+            wp_enqueue_script(
+                'pdf-builder-notifications',
+                PDF_BUILDER_PLUGIN_URL . 'plugin/assets/js/notifications.js',
+                array('jquery'),
+                PDF_BUILDER_VERSION . '-' . time(),
+                true
+            );
+        }
+    });
+
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
     // Retarder complètement le chargement et l'initialisation au hook 'init'
     add_action('init', function() {
