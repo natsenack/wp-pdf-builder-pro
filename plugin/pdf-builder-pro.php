@@ -609,6 +609,12 @@ function pdf_builder_handle_pdf_downloads()
  * Handler AJAX pour sauvegarder les paramètres
  */
 function pdf_builder_save_settings_ajax() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error(array('message' => 'Permissions insuffisantes'));
