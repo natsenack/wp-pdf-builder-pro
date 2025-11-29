@@ -789,10 +789,8 @@ window.PDFBuilderAjax = {
         // Afficher un message d'erreur à l'utilisateur
         const message = error.message || 'Une erreur inattendue s\'est produite';
 
-        // Essayer différentes méthodes de notification
-        if (window.pdfBuilderNotifications?.showToast) {
-            window.pdfBuilderNotifications.showToast(`${context}: ${message}`, 'error', 6000);
-        } else if (window.PDF_Builder_Notification_Manager?.show_toast) {
+        // Essayer le système de notifications unifié
+        if (window.PDF_Builder_Notification_Manager?.show_toast) {
             window.PDF_Builder_Notification_Manager.show_toast(`${context}: ${message}`, 'error', 6000);
         } else {
             alert(`${context}: ${message}`);

@@ -264,65 +264,6 @@ input:focus, select:focus, textarea:focus {
 
 /* ===== FEEDBACK VISUEL ET NOTIFICATIONS ===== */
 
-/* Toast notifications */
-.toast-notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  padding: 12px 16px;
-  border-radius: 8px;
-  color: white;
-  font-weight: 500;
-  font-size: 14px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  max-width: 300px;
-  word-wrap: break-word;
-}
-
-.toast-notification.success {
-  background: linear-gradient(135deg, #10b981, #059669);
-  border-left: 4px solid #047857;
-}
-
-.toast-notification.error {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  border-left: 4px solid #b91c1c;
-}
-
-.toast-notification.warning {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  border-left: 4px solid #b45309;
-}
-
-.toast-notification.info {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  border-left: 4px solid #1d4ed8;
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.toast-notification.fade-out {
-  animation: fadeOut 0.3s ease forwards;
-}
-
-@keyframes fadeOut {
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
 /* Indicateurs de chargement */
 .loading-overlay {
   position: absolute;
