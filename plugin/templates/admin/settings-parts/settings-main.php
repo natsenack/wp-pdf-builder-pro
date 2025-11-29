@@ -483,7 +483,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         }
         $to_save = [
             'debug_mode' => isset($_POST['debug_mode']),
-            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
+            'log_level' => sanitize_text_field($_POST['pdf_builder_log_level'] ?? 'info'),
             'cache_enabled' => isset($_POST['cache_enabled']),
             'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
             'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
@@ -497,18 +497,18 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             // PDF settings moved to PDF tab only
             // Canvas settings moved to Canvas tab only
             // Développeur
-            'developer_enabled' => isset($_POST['developer_enabled']),
-            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
-            'debug_php_errors' => isset($_POST['debug_php_errors']),
-            'debug_javascript' => isset($_POST['debug_javascript']),
-            'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']),
-            'debug_ajax' => isset($_POST['debug_ajax']),
-            'debug_performance' => isset($_POST['debug_performance']),
-            'debug_database' => isset($_POST['debug_database']),
-            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
-            'log_retention' => intval($_POST['log_retention'] ?? 30),
-            'license_test_mode' => isset($_POST['license_test_mode']),
-            'force_https' => isset($_POST['force_https']),
+            'developer_enabled' => isset($_POST['pdf_builder_developer_enabled']),
+            'developer_password' => sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''),
+            'debug_php_errors' => isset($_POST['pdf_builder_debug_php_errors']),
+            'debug_javascript' => isset($_POST['pdf_builder_debug_javascript']),
+            'debug_javascript_verbose' => isset($_POST['pdf_builder_debug_javascript_verbose']),
+            'debug_ajax' => isset($_POST['pdf_builder_debug_ajax']),
+            'debug_performance' => isset($_POST['pdf_builder_debug_performance']),
+            'debug_database' => isset($_POST['pdf_builder_debug_database']),
+            'log_file_size' => intval($_POST['pdf_builder_log_file_size'] ?? 10),
+            'log_retention' => intval($_POST['pdf_builder_log_retention'] ?? 30),
+            'license_test_mode' => isset($_POST['pdf_builder_license_test_mode_enabled']),
+            'force_https' => isset($_POST['pdf_builder_force_https']),
         ];
         $new_settings = array_merge($settings, $to_save);
         // Check if settings actually changed - use serialize for deep comparison
