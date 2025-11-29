@@ -2667,7 +2667,9 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Notification gérée par le système centralisé
 
                         // Reset button state immediately after success
-                        PDF_Builder_Ajax_Handler.setButtonState(floatingSaveBtn, 'reset');
+                        floatingSaveBtn.disabled = false;
+                        floatingSaveBtn.innerHTML = '<span class="save-icon" style="font-size: 16px; line-height: 1;">💾</span><span class="save-text" style="font-weight: 600;">Enregistrer</span>';
+                        floatingSaveBtn.style.opacity = '1';
                     },
                     errorCallback: (result, originalData) => {
                         // Log error
