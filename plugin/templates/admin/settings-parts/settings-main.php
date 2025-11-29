@@ -1812,8 +1812,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                         method: 'POST',
                         body: formData,
                         headers: { 
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-WP-Nonce': this.nonceState.current
+                            'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
                     .then(response => {
