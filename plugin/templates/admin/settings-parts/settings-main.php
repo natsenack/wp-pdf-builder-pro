@@ -2165,6 +2165,15 @@ window.toggleRGPDControls = toggleRGPDControls;
         return PDF_Builder_Ajax_Handler.getStats();
     };
 
+    // Méthode show globale pour la compatibilité
+    window.show = function(message) {
+        if (window.showSuccessNotification) {
+            window.showSuccessNotification(message);
+        } else if (window.pdfBuilderNotificationsInstance && window.pdfBuilderNotificationsInstance.success) {
+            window.pdfBuilderNotificationsInstance.success(message);
+        }
+    };
+
     // Basic modal functionality
     function safeQuerySelector(selector) {
         try {
