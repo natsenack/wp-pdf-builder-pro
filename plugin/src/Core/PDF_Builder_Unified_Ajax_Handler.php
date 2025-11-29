@@ -165,11 +165,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
             'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
 
-            // Général - Notifications
-            'notifications_enabled' => !empty($_POST['notifications_enabled']) ? '1' : '0',
-            'notifications_position' => sanitize_text_field($_POST['notifications_position'] ?? 'top-right'),
-            'notifications_duration' => intval($_POST['notifications_duration'] ?? 5000),
-
             // Licence
             'license_test_mode' => isset($_POST['license_test_mode']) ? '1' : '0',
 
@@ -323,9 +318,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
             'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
             'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
-            'notifications_enabled' => !empty($_POST['notifications_enabled']) ? '1' : '0',
-            'notifications_position' => sanitize_text_field($_POST['notifications_position'] ?? 'top-right'),
-            'notifications_duration' => intval($_POST['notifications_duration'] ?? 5000),
             'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
             'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
             'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
