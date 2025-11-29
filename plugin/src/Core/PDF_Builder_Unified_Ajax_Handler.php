@@ -653,16 +653,22 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler pour créer une sauvegarde
      */
     public function handle_create_backup() {
+        // Debug: Log que le handler est appelé
+        error_log('[PDF Builder] handle_create_backup called');
+
         if (!$this->nonce_manager->validate_ajax_request('create_backup')) {
+            error_log('[PDF Builder] Nonce validation failed for create_backup');
             return;
         }
 
         if (!current_user_can('manage_options')) {
+            error_log('[PDF Builder] User does not have manage_options capability');
             wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
             return;
         }
 
         try {
+            error_log('[PDF Builder] Creating backup manager instance');
             $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
 
             $options = [
@@ -672,7 +678,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'exclude_user_data' => isset($_POST['exclude_user_data']) && $_POST['exclude_user_data'] === '1'
             ];
 
+            error_log('[PDF Builder] Calling createBackup with options: ' . json_encode($options));
             $result = $backup_manager->createBackup($options);
+            error_log('[PDF Builder] createBackup result: ' . json_encode($result));
 
             if ($result['success']) {
                 wp_send_json_success([
@@ -686,7 +694,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         } catch (Exception $e) {
             error_log('[PDF Builder AJAX] Erreur création sauvegarde: ' . $e->getMessage());
-            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+            wp_send_json_error(['message' => 'Erreur interne du serveur: ' . $e->getMessage()]);
         }
     }
 
