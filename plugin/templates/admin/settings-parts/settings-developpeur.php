@@ -114,16 +114,6 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
             </table>
             </div>
 
-            <h3 class="section-title">🔔 Tests de Notifications</h3>
-            <p style="color: #666; margin-bottom: 15px;">Testez les différents types de notifications du système.</p>
-
-            <div style="margin-bottom: 20px;">
-                <button type="button" id="test-notifications-success" class="button button-small" style="margin-right: 5px; background: #28a745; color: white; border: none;">✅ Test Succès</button>
-                <button type="button" id="test-notifications-error" class="button button-small" style="margin-right: 5px; background: #dc3545; color: white; border: none;">❌ Test Erreur</button>
-                <button type="button" id="test-notifications-warning" class="button button-small" style="margin-right: 5px; background: #ffc107; color: black; border: none;">⚠️ Test Avertissement</button>
-                <button type="button" id="test-notifications-info" class="button button-small" style="background: #17a2b8; color: white; border: none;">ℹ️ Test Info</button>
-            </div>
-
             <div id="dev-debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] ? 'display: none;' : ''; ?>">
             <h3 class="section-title">🔍 Paramètres de Debug</h3>
 
@@ -978,52 +968,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('❌ ' + data.data.message);
                 }
             );
-        });
-    }
-
-    // Tests de Notifications
-    const testSuccessBtn = document.getElementById('test-notifications-success');
-    const testErrorBtn = document.getElementById('test-notifications-error');
-    const testWarningBtn = document.getElementById('test-notifications-warning');
-    const testInfoBtn = document.getElementById('test-notifications-info');
-
-    if (testSuccessBtn) {
-        testSuccessBtn.addEventListener('click', function() {
-            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                PDF_Builder_Notification_Manager.show_toast(' Test de notification de succès réussi !', 'success');
-            } else {
-                alert('Le système de notifications n\'est pas chargé.');
-            }
-        });
-    }
-
-    if (testErrorBtn) {
-        testErrorBtn.addEventListener('click', function() {
-            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                PDF_Builder_Notification_Manager.show_toast(' Test de notification d\'erreur réussi !', 'error');
-            } else {
-                alert('Le système de notifications n\'est pas chargé.');
-            }
-        });
-    }
-
-    if (testWarningBtn) {
-        testWarningBtn.addEventListener('click', function() {
-            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                PDF_Builder_Notification_Manager.show_toast(' Test de notification d\'avertissement réussi !', 'warning');
-            } else {
-                alert('Le système de notifications n\'est pas chargé.');
-            }
-        });
-    }
-
-    if (testInfoBtn) {
-        testInfoBtn.addEventListener('click', function() {
-            if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                PDF_Builder_Notification_Manager.show_toast(' Test de notification d\'information réussi !', 'info');
-            } else {
-                alert('Le système de notifications n\'est pas chargé.');
-            }
         });
     }
 });

@@ -680,7 +680,7 @@ function saveTemplateSettings() {
             // Erreur
             saveButton.innerHTML = '❌ Erreur';
             saveButton.style.background = '#dc3545';
-            PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + ((response.data && response.data.message) || 'Erreur inconnue'), 'error');
+            showErrorMessage('Erreur lors de la sauvegarde: ' + ((response.data && response.data.message) || 'Erreur inconnue'));
 
             // Remettre le bouton normal après un délai
             setTimeout(() => {
@@ -693,7 +693,7 @@ function saveTemplateSettings() {
         // Erreur de réseau
         saveButton.innerHTML = '❌ Erreur réseau';
         saveButton.style.background = '#dc3545';
-        PDF_Builder_Notification_Manager.show_toast('Erreur de connexion: ' + error, 'error');
+        showErrorMessage('Erreur de connexion: ' + error);
 
         // Remettre le bouton normal
         setTimeout(() => {
@@ -746,7 +746,7 @@ function deleteTemplate(templateId, templateName) {
                 // Erreur
                 deleteButton.innerHTML = '❌ Erreur';
                 deleteButton.style.background = '#dc3545';
-                PDF_Builder_Notification_Manager.show_toast('Erreur lors de la suppression: ' + (response.data.message || 'Erreur inconnue'), 'error');
+                showErrorMessage('Erreur lors de la suppression: ' + (response.data.message || 'Erreur inconnue'));
 
                 // Remettre le bouton normal après un délai
                 setTimeout(() => {
@@ -760,7 +760,7 @@ function deleteTemplate(templateId, templateName) {
             // Erreur de connexion
             deleteButton.innerHTML = '❌ Erreur';
             deleteButton.style.background = '#dc3545';
-            PDF_Builder_Notification_Manager.show_toast('Erreur de connexion lors de la suppression', 'error');
+            showErrorMessage('Erreur de connexion lors de la suppression');
 
             // Remettre le bouton normal après un délai
             setTimeout(() => {
