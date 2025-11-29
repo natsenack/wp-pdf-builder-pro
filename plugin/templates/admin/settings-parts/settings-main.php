@@ -2169,8 +2169,6 @@ window.toggleRGPDControls = toggleRGPDControls;
     window.show = function(message) {
         if (window.pdfBuilderNotificationsInstance && window.pdfBuilderNotificationsInstance.show) {
             window.pdfBuilderNotificationsInstance.show(message, 'info');
-        } else if (window.showSuccessNotification) {
-            window.showSuccessNotification(message);
         }
     };
 
