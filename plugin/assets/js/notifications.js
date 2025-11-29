@@ -5,6 +5,8 @@
  * Updated: 2025-11-29
  */
 
+const PDF_BUILDER_DEBUG = (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax.debug) || false;
+
 (function($) {
     'use strict';
 
@@ -35,7 +37,7 @@
             this.bindEvents();
             this.initialized = true;
 
-            console.log('PDF Builder Notifications: Initialized', this.settings);
+            if (PDF_BUILDER_DEBUG) console.log('PDF Builder Notifications: Initialized', this.settings);
         }
 
         /**
@@ -401,7 +403,7 @@
             $.post(this.ajaxUrl, data)
                 .done((response) => {
                     if (response.success) {
-                        console.log('Notification AJAX sent successfully');
+                        if (PDF_BUILDER_DEBUG) console.log('Notification AJAX sent successfully');
                     }
                 })
                 .fail((error) => {
@@ -447,7 +449,7 @@
     // Instance globale
     window.PDF_Builder_Notifications = PDF_Builder_Notifications;
 
-    // Fonctions globales pour un accès facile
+    // Fonctions globales pour un accès facile - définies immédiatement
     window.pdfBuilderNotify = {
         success: function(message, options) {
             if (!window.pdfBuilderNotificationsInstance) {
@@ -486,7 +488,7 @@
         }
     };
 
-    // Alias pour la compatibilité
+    // Alias pour la compatibilité - définis immédiatement
     window.showSuccessNotification = window.pdfBuilderNotify.success;
     window.showErrorNotification = window.pdfBuilderNotify.error;
     window.showWarningNotification = window.pdfBuilderNotify.warning;
