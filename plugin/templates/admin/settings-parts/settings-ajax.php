@@ -1633,3 +1633,4 @@ add_action('wp_ajax_pdf_builder_save_all_settings', 'pdf_builder_save_all_settin
 add_action('wp_ajax_pdf_builder_save_cache_settings', 'pdf_builder_save_cache_settings_handler');
 add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
 add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_get_cache_metrics_handler');
+add_action('wp_ajax_pdf_builder_export_diagnostic', 'pdf_builder_export_diagnostic_handler');
