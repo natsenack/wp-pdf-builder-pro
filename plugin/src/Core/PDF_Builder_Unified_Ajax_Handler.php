@@ -156,6 +156,10 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Sauvegarde tous les paramètres
      */
     private function save_all_settings() {
+        // Log pour déboguer
+        error_log('[PDF Builder] save_all_settings called');
+        error_log('[PDF Builder] developer_enabled received: ' . (isset($_POST['developer_enabled']) ? $_POST['developer_enabled'] : 'NOT SET'));
+
         $settings = [
             // Général - Informations entreprise
             'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
@@ -205,7 +209,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             'gdpr_consent_marketing' => !empty($_POST['gdpr_consent_marketing']) ? '1' : '0',
 
             // Développeur - Contrôle d'accès
-            'developer_enabled' => !empty($_POST['developer_enabled']) ? '1' : '0',
+            'developer_enabled' => isset($_POST['developer_enabled']) ? '1' : '0',
             'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
 
             // Développeur - Debug
@@ -249,7 +253,11 @@ class PDF_Builder_Unified_Ajax_Handler {
             } elseif ($key === 'order_status_templates') {
                 update_option('pdf_builder_order_status_templates', $value);
             } else {
-                update_option('pdf_builder_' . $key, $value);
+                $option_key = 'pdf_builder_' . $key;
+                $result = update_option($option_key, $value);
+                if ($key === 'developer_enabled') {
+                    error_log('[PDF Builder] Saved developer_enabled: ' . $value . ' to option: ' . $option_key . ' - result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+                }
             }
             $saved_count++;
         }
