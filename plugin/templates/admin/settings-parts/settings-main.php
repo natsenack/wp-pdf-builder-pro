@@ -2770,45 +2770,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                             console.log('Paramètres sauvegardés avec succès !');
                         }
 
-                        // Mettre à jour l'interface avec les nouvelles valeurs sauvegardées
+                        // Mettre à jour l'interface avec les nouvelles valeurs sauvegardées depuis le serveur
                         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                             console.log('🔄 [PDF Builder] Mise à jour de l\'interface avec les nouvelles valeurs...');
                         }
-
-                        // Mettre à jour les checkboxes avec les valeurs sauvegardées
-                        Object.keys(collectedData).forEach(fieldName => {
-                            const fieldValue = collectedData[fieldName];
-                            const fieldElement = document.querySelector(`[name="${fieldName}"]`);
-
-                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                console.log(`🔍 [PDF Builder] Mise à jour champ ${fieldName}: valeur=${fieldValue}, élément trouvé=${!!fieldElement}`);
-                            }
-
-                            if (fieldElement && fieldElement.type === 'checkbox') {
-                                // Pour les checkboxes, mettre à jour l'état checked
-                                const oldChecked = fieldElement.checked;
-                                fieldElement.checked = fieldValue === '1';
-                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                    console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${fieldElement.checked}`);
-                                }
-
-                                // Déclencher les fonctions de toggle si nécessaire
-                                if (fieldName === 'developer_enabled') {
-                                    // Mettre à jour les sections développeur
-                                    if (window.updateDeveloperSections) {
-                                        window.updateDeveloperSections();
-                                    }
-                                }
-                            } else if (fieldElement) {
-                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                    console.log(`ℹ️ [PDF Builder] Champ ${fieldName} trouvé mais pas checkbox (type: ${fieldElement.type})`);
-                                }
-                            } else {
-                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                    console.warn(`⚠️ [PDF Builder] Champ ${fieldName} non trouvé dans le DOM`);
-                                }
-                            }
-                        });
 
                         // Mettre à jour les données JavaScript avec les valeurs sauvegardées depuis le serveur
                         if (originalData && originalData.data) {
@@ -2816,20 +2781,107 @@ window.toggleRGPDControls = toggleRGPDControls;
                             if (typeof window.pdfBuilderSavedSettings === 'object') {
                                 // Fusionner les nouvelles valeurs sauvegardées
                                 Object.assign(window.pdfBuilderSavedSettings, originalData.data);
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.log('✅ [PDF Builder] window.pdfBuilderSavedSettings mis à jour');
+                                }
                             }
 
                             // Mettre à jour window.pdfBuilderCanvasSettings si des paramètres canvas ont été sauvegardés
                             if (originalData.data.canvas_settings) {
                                 window.pdfBuilderCanvasSettings = originalData.data.canvas_settings;
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.log('✅ [PDF Builder] window.pdfBuilderCanvasSettings mis à jour');
+                                }
                             }
+                        }
+
+                        // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
+                        if (originalData && originalData.data) {
+                            // Parcourir toutes les données sauvegardées et mettre à jour les champs correspondants
+                            Object.keys(originalData.data).forEach(fieldName => {
+                                const fieldValue = originalData.data[fieldName];
+                                const fieldElement = document.querySelector(`[name="${fieldName}"]`);
+
+                                if (fieldElement) {
+                                    if (fieldElement.type === 'checkbox') {
+                                        // Pour les checkboxes, mettre à jour l'état checked
+                                        const oldChecked = fieldElement.checked;
+                                        const newChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
+                                        fieldElement.checked = newChecked;
+                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                            console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${newChecked}`);
+                                        }
+
+                                        // Déclencher les fonctions de toggle si nécessaire
+                                        if (fieldName === 'developer_enabled') {
+                                            // Mettre à jour les sections développeur
+                                            if (window.updateDeveloperSections) {
+                                                window.updateDeveloperSections();
+                                            }
+                                            // Mettre à jour les indicateurs développeur
+                                            if (window.updateDeveloperPreview) {
+                                                window.updateDeveloperPreview();
+                                            }
+                                        } else if (fieldName === 'cache_enabled') {
+                                            // Mettre à jour les indicateurs cache
+                                            if (window.updateCachePreview) {
+                                                window.updateCachePreview();
+                                            }
+                                        } else if (fieldName === 'template_library_enabled') {
+                                            // Mettre à jour les indicateurs templates
+                                            if (window.updateTemplateLibraryIndicator) {
+                                                window.updateTemplateLibraryIndicator();
+                                            }
+                                        }
+                                    } else if (fieldElement.type === 'radio') {
+                                        // Pour les radios, cocher la bonne option
+                                        if (fieldElement.value == fieldValue) { // Utiliser == pour comparaison lâche
+                                            fieldElement.checked = true;
+                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                console.log(`📝 [PDF Builder] Radio ${fieldName} coché: ${fieldValue}`);
+                                            }
+                                        }
+                                    } else {
+                                        // Pour les autres champs (text, select, etc.)
+                                        const oldValue = fieldElement.value;
+                                        fieldElement.value = fieldValue;
+                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                            console.log(`📝 [PDF Builder] Champ ${fieldName} mis à jour: "${oldValue}" -> "${fieldValue}"`);
+                                        }
+                                    }
+                                } else {
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.log(`⚠️ [PDF Builder] Champ ${fieldName} non trouvé dans le DOM pour mise à jour`);
+                                    }
+                                }
+                            });
                         }
 
                         // Recharger les previews avec les nouvelles données
                         if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeAllPreviews === 'function') {
                             setTimeout(() => {
                                 window.PDF_Builder_Preview_Manager.initializeAllPreviews();
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.log('✅ [PDF Builder] Previews rechargées');
+                                }
                             }, 500);
                         }
+
+                        // Mettre à jour les indicateurs d'état (ACTIF/INACTIF)
+                        setTimeout(() => {
+                            if (window.updateSecurityStatusIndicators) {
+                                window.updateSecurityStatusIndicators();
+                            }
+                            if (window.updateSystemStatusIndicators) {
+                                window.updateSystemStatusIndicators();
+                            }
+                            if (window.updateTemplateStatusIndicators) {
+                                window.updateTemplateStatusIndicators();
+                            }
+                            if (window.updateTemplateLibraryIndicator) {
+                                window.updateTemplateLibraryIndicator();
+                            }
+                        }, 600);
 
                         // Notification gérée par le système centralisé
 
