@@ -1127,9 +1127,21 @@ document.addEventListener('DOMContentLoaded', function() {
         addNotificationLog(`🔔 Test ${type}: "${message.substring(0, 50)}..."`, type);
 
         try {
-            // Use the global notification functions
-            const showFunction = window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`];
-            if (showFunction) {
+            // Check if notification system is available
+            if (typeof window.pdfBuilderNotify !== 'undefined' && window.pdfBuilderNotify[type]) {
+                const result = window.pdfBuilderNotify[type](message, 4000); // 4 seconds for testing
+                notificationStats[type]++;
+                notificationTestCount++;
+
+                logToConsole('success', `${type} notification shown successfully`, {
+                    id: result,
+                    stats: notificationStats
+                });
+
+                addNotificationLog(`✅ ${type} notification affichée (ID: ${result})`, 'success');
+            } else if (typeof window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`] === 'function') {
+                // Fallback to old global functions
+                const showFunction = window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`];
                 const result = showFunction(message, 4000); // 4 seconds for testing
                 notificationStats[type]++;
                 notificationTestCount++;
@@ -1141,7 +1153,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 addNotificationLog(`✅ ${type} notification affichée (ID: ${result})`, 'success');
             } else {
-                throw new Error(`Function show${type.charAt(0).toUpperCase() + type.slice(1)}Notification not found`);
+                throw new Error(`Notification system not available. Please refresh the page.`);
             }
         } catch (error) {
             logToConsole('error', `Failed to show ${type} notification`, error);
@@ -1233,7 +1245,9 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
             `.trim();
 
             // Show in notification
-            if (window.showInfoNotification) {
+            if (typeof window.pdfBuilderNotify !== 'undefined' && window.pdfBuilderNotify.info) {
+                window.pdfBuilderNotify.info('Statistiques affichées en console (F12)', 3000);
+            } else if (typeof window.showInfoNotification === 'function') {
                 window.showInfoNotification('Statistiques affichées en console (F12)', 3000);
             }
 
