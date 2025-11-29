@@ -1837,7 +1837,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                             resolve(data);
                         } else {
                             // Erreur côté serveur
-                            const errorMessage = data.data || 'Unknown error';
+                            const errorMessage = typeof data.data === 'string' ? data.data : JSON.stringify(data.data) || 'Unknown error';
 
                             // Vérifier si c'est une erreur de nonce
                             if (errorMessage.includes('Nonce invalide') || errorMessage.includes('invalid nonce')) {
