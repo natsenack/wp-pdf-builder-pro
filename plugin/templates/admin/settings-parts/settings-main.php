@@ -481,35 +481,66 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         if ($max_input_vars && count($_POST) >= $max_input_vars) {
             $notices[] = '<div class="notice notice-error"><p><strong>⚠️</strong> Trop de paramètres soumis (' . count($_POST) . '). Limite PHP max_input_vars: ' . $max_input_vars . '. Certains paramètres n\'ont pas été sauvegardés.</p></div>';
         }
-        $to_save = [
-            'debug_mode' => isset($_POST['debug_mode']),
-            'log_level' => sanitize_text_field($_POST['pdf_builder_log_level'] ?? 'info'),
-            'cache_enabled' => isset($_POST['cache_enabled']),
-            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-            'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
-            'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
-            'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
-            // PDF settings from general tab
-            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
-            'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
-            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
-            // Performance settings moved to Performance tab only
-            // PDF settings moved to PDF tab only
-            // Canvas settings moved to Canvas tab only
-            // Développeur
-            'developer_enabled' => isset($_POST['pdf_builder_developer_enabled']),
-            'developer_password' => sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''),
-            'debug_php_errors' => isset($_POST['pdf_builder_debug_php_errors']),
-            'debug_javascript' => isset($_POST['pdf_builder_debug_javascript']),
-            'debug_javascript_verbose' => isset($_POST['pdf_builder_debug_javascript_verbose']),
-            'debug_ajax' => isset($_POST['pdf_builder_debug_ajax']),
-            'debug_performance' => isset($_POST['pdf_builder_debug_performance']),
-            'debug_database' => isset($_POST['pdf_builder_debug_database']),
-            'log_file_size' => intval($_POST['pdf_builder_log_file_size'] ?? 10),
-            'log_retention' => intval($_POST['pdf_builder_log_retention'] ?? 30),
-            'license_test_mode' => isset($_POST['pdf_builder_license_test_mode_enabled']),
-            'force_https' => isset($_POST['pdf_builder_force_https']),
-        ];
+        // Collect all form data from all tabs - comprehensive field processing
+        $to_save = [];
+
+        // General tab fields
+        $to_save['company_phone_manual'] = sanitize_text_field($_POST['company_phone_manual'] ?? '');
+        $to_save['company_siret'] = sanitize_text_field($_POST['company_siret'] ?? '');
+        $to_save['company_vat'] = sanitize_text_field($_POST['company_vat'] ?? '');
+        $to_save['company_rcs'] = sanitize_text_field($_POST['company_rcs'] ?? '');
+        $to_save['company_capital'] = sanitize_text_field($_POST['company_capital'] ?? '');
+
+        // PDF tab fields
+        $to_save['pdf_quality'] = sanitize_text_field($_POST['pdf_quality'] ?? 'high');
+        $to_save['default_format'] = sanitize_text_field($_POST['default_format'] ?? 'A4');
+        $to_save['default_orientation'] = sanitize_text_field($_POST['default_orientation'] ?? 'portrait');
+
+        // System tab fields
+        $to_save['cache_enabled'] = isset($_POST['cache_enabled']);
+        $to_save['cache_compression'] = isset($_POST['cache_compression']);
+        $to_save['cache_auto_cleanup'] = isset($_POST['cache_auto_cleanup']);
+        $to_save['cache_max_size'] = intval($_POST['cache_max_size'] ?? 100);
+        $to_save['cache_ttl'] = intval($_POST['cache_ttl'] ?? 3600);
+        $to_save['performance_auto_optimization'] = isset($_POST['performance_auto_optimization']);
+        $to_save['systeme_auto_maintenance'] = isset($_POST['systeme_auto_maintenance']);
+        $to_save['systeme_auto_backup'] = isset($_POST['systeme_auto_backup']);
+        $to_save['systeme_auto_backup_frequency'] = sanitize_text_field($_POST['systeme_auto_backup_frequency'] ?? 'daily');
+        $to_save['systeme_backup_retention'] = intval($_POST['systeme_backup_retention'] ?? 30);
+
+        // Content tab fields
+        $to_save['default_template'] = sanitize_text_field($_POST['default_template'] ?? 'blank');
+        $to_save['template_library_enabled'] = isset($_POST['template_library_enabled']);
+
+        // Developer tab fields
+        $to_save['developer_enabled'] = isset($_POST['pdf_builder_developer_enabled']);
+        $to_save['developer_password'] = sanitize_text_field($_POST['pdf_builder_developer_password'] ?? '');
+        $to_save['debug_php_errors'] = isset($_POST['pdf_builder_debug_php_errors']);
+        $to_save['debug_javascript'] = isset($_POST['pdf_builder_debug_javascript']);
+        $to_save['debug_javascript_verbose'] = isset($_POST['pdf_builder_debug_javascript_verbose']);
+        $to_save['debug_ajax'] = isset($_POST['pdf_builder_debug_ajax']);
+        $to_save['debug_performance'] = isset($_POST['pdf_builder_debug_performance']);
+        $to_save['debug_database'] = isset($_POST['pdf_builder_debug_database']);
+        $to_save['log_level'] = sanitize_text_field($_POST['pdf_builder_log_level'] ?? 'info');
+        $to_save['log_file_size'] = intval($_POST['pdf_builder_log_file_size'] ?? 10);
+        $to_save['log_retention'] = intval($_POST['pdf_builder_log_retention'] ?? 30);
+        $to_save['force_https'] = isset($_POST['pdf_builder_force_https']);
+
+        // License tab fields
+        $to_save['license_test_mode'] = isset($_POST['pdf_builder_license_test_mode_enabled']);
+
+        // Templates tab fields (array)
+        if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
+            $to_save['order_status_templates'] = array_map('sanitize_text_field', $_POST['order_status_templates']);
+        } else {
+            $to_save['order_status_templates'] = [];
+        }
+
+        // Legacy compatibility fields
+        $to_save['debug_mode'] = isset($_POST['debug_mode']);
+        $to_save['max_template_size'] = intval($_POST['max_template_size'] ?? 52428800);
+        $to_save['max_execution_time'] = intval($_POST['max_execution_time'] ?? 300);
+        $to_save['memory_limit'] = sanitize_text_field($_POST['memory_limit'] ?? '256M');
         $new_settings = array_merge($settings, $to_save);
         // Check if settings actually changed - use serialize for deep comparison
         $settings_changed = serialize($new_settings) !== serialize($settings);
@@ -531,6 +562,14 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
                 if (defined('WP_DEBUG') && WP_DEBUG) {
                     error_log('PDF Builder: Invalid canvas settings JSON: ' . json_last_error_msg());
                 }
+            }
+        }
+
+        // Also save canvas settings to the main settings array for consistency
+        if (isset($_POST['canvas_settings']) && !empty($_POST['canvas_settings'])) {
+            $canvas_settings = json_decode(stripslashes($_POST['canvas_settings']), true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($canvas_settings)) {
+                $to_save['canvas_settings'] = $canvas_settings;
             }
         }
 
@@ -557,27 +596,59 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             }
         }
         $settings = get_option('pdf_builder_settings', []);
-        // Also update the standalone PDF options so that other parts of the plugin
+        // Also update the standalone options so that other parts of the plugin
         // which read from individual options get updated when the non-AJAX form is used
-        if (isset($_POST['pdf_quality'])) {
-            update_option('pdf_builder_pdf_quality', sanitize_text_field($_POST['pdf_quality']));
-        }
-        if (isset($_POST['pdf_page_size'])) {
-            update_option('pdf_builder_pdf_page_size', sanitize_text_field($_POST['pdf_page_size']));
-        }
-        if (isset($_POST['pdf_orientation'])) {
-            update_option('pdf_builder_pdf_orientation', sanitize_text_field($_POST['pdf_orientation']));
-        }
-        // Checkboxes
-        update_option('pdf_builder_pdf_cache_enabled', isset($_POST['pdf_cache_enabled']) ? 1 : 0);
-        if (isset($_POST['pdf_compression'])) {
-            update_option('pdf_builder_pdf_compression', sanitize_text_field($_POST['pdf_compression']));
-        }
-        update_option('pdf_builder_pdf_metadata_enabled', isset($_POST['pdf_metadata_enabled']) ? 1 : 0);
-        update_option('pdf_builder_pdf_print_optimized', isset($_POST['pdf_print_optimized']) ? 1 : 0);
+
+        // Company information
+        update_option('pdf_builder_company_phone_manual', sanitize_text_field($_POST['company_phone_manual'] ?? ''));
+        update_option('pdf_builder_company_siret', sanitize_text_field($_POST['company_siret'] ?? ''));
+        update_option('pdf_builder_company_vat', sanitize_text_field($_POST['company_vat'] ?? ''));
+        update_option('pdf_builder_company_rcs', sanitize_text_field($_POST['company_rcs'] ?? ''));
+        update_option('pdf_builder_company_capital', sanitize_text_field($_POST['company_capital'] ?? ''));
+
+        // PDF settings
+        update_option('pdf_builder_pdf_quality', sanitize_text_field($_POST['pdf_quality'] ?? 'high'));
+        update_option('pdf_builder_default_format', sanitize_text_field($_POST['default_format'] ?? 'A4'));
+        update_option('pdf_builder_default_orientation', sanitize_text_field($_POST['default_orientation'] ?? 'portrait'));
+
+        // Cache settings
+        update_option('pdf_builder_cache_enabled', isset($_POST['cache_enabled']) ? 1 : 0);
+        update_option('pdf_builder_cache_compression', isset($_POST['cache_compression']) ? 1 : 0);
+        update_option('pdf_builder_cache_auto_cleanup', isset($_POST['cache_auto_cleanup']) ? 1 : 0);
+        update_option('pdf_builder_cache_max_size', intval($_POST['cache_max_size'] ?? 100));
+        update_option('pdf_builder_cache_ttl', intval($_POST['cache_ttl'] ?? 3600));
+
+        // System settings
+        update_option('pdf_builder_performance_auto_optimization', isset($_POST['performance_auto_optimization']) ? 1 : 0);
+        update_option('pdf_builder_auto_maintenance', isset($_POST['systeme_auto_maintenance']) ? 1 : 0);
+        update_option('pdf_builder_auto_backup', isset($_POST['systeme_auto_backup']) ? 1 : 0);
+        update_option('pdf_builder_auto_backup_frequency', sanitize_text_field($_POST['systeme_auto_backup_frequency'] ?? 'daily'));
+        update_option('pdf_builder_backup_retention', intval($_POST['systeme_backup_retention'] ?? 30));
+
+        // Template settings
+        update_option('pdf_builder_default_template', sanitize_text_field($_POST['default_template'] ?? 'blank'));
         update_option('pdf_builder_template_library_enabled', isset($_POST['template_library_enabled']) ? 1 : 0);
-        if (isset($_POST['default_template'])) {
-            update_option('pdf_builder_default_template', sanitize_text_field($_POST['default_template']));
+
+        // Developer settings
+        update_option('pdf_builder_developer_enabled', isset($_POST['pdf_builder_developer_enabled']) ? 1 : 0);
+        update_option('pdf_builder_developer_password', sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''));
+        update_option('pdf_builder_debug_php_errors', isset($_POST['pdf_builder_debug_php_errors']) ? 1 : 0);
+        update_option('pdf_builder_debug_javascript', isset($_POST['pdf_builder_debug_javascript']) ? 1 : 0);
+        update_option('pdf_builder_debug_javascript_verbose', isset($_POST['pdf_builder_debug_javascript_verbose']) ? 1 : 0);
+        update_option('pdf_builder_debug_ajax', isset($_POST['pdf_builder_debug_ajax']) ? 1 : 0);
+        update_option('pdf_builder_debug_performance', isset($_POST['pdf_builder_debug_performance']) ? 1 : 0);
+        update_option('pdf_builder_debug_database', isset($_POST['pdf_builder_debug_database']) ? 1 : 0);
+        update_option('pdf_builder_log_level', sanitize_text_field($_POST['pdf_builder_log_level'] ?? 'info'));
+        update_option('pdf_builder_log_file_size', intval($_POST['pdf_builder_log_file_size'] ?? 10));
+        update_option('pdf_builder_log_retention', intval($_POST['pdf_builder_log_retention'] ?? 30));
+        update_option('pdf_builder_force_https', isset($_POST['pdf_builder_force_https']) ? 1 : 0);
+
+        // License settings
+        update_option('pdf_builder_license_test_mode_enabled', isset($_POST['pdf_builder_license_test_mode_enabled']) ? 1 : 0);
+
+        // Templates mapping
+        if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
+            update_option('pdf_builder_order_status_templates', array_map('sanitize_text_field', $_POST['order_status_templates']));
         }
     } else {
         $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
