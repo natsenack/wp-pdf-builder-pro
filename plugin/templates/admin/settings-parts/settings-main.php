@@ -2667,6 +2667,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Notification gérée par le système centralisé
 
                         // Handle button state for floating save button directly
+                        floatingSaveBtn.removeAttribute('data-original-text');
                         floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-yes"></span> Succès';
                         floatingSaveBtn.disabled = false;
                         floatingSaveBtn.style.opacity = '1';
