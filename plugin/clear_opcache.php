@@ -4,6 +4,14 @@
  * Run this file once to clear cached PHP files
  */
 
+// Load WordPress
+$wp_load_path = dirname(__FILE__) . '/../../../wp-load.php';
+if (file_exists($wp_load_path)) {
+    require_once $wp_load_path;
+} else {
+    die('WordPress not found');
+}
+
 // Only allow access if user is logged in and has admin capabilities
 if (!is_user_logged_in() || !current_user_can('manage_options')) {
     die('Access denied');
