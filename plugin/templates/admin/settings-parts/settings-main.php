@@ -2167,10 +2167,10 @@ window.toggleRGPDControls = toggleRGPDControls;
 
     // Méthode show globale pour la compatibilité
     window.show = function(message) {
-        if (window.showSuccessNotification) {
+        if (window.pdfBuilderNotificationsInstance && window.pdfBuilderNotificationsInstance.show) {
+            window.pdfBuilderNotificationsInstance.show(message, 'info');
+        } else if (window.showSuccessNotification) {
             window.showSuccessNotification(message);
-        } else if (window.pdfBuilderNotificationsInstance && window.pdfBuilderNotificationsInstance.success) {
-            window.pdfBuilderNotificationsInstance.success(message);
         }
     };
 
