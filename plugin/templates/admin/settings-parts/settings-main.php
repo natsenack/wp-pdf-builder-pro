@@ -2343,6 +2343,7 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                 // Collect form data from ALL tabs - sauvegarder tous les onglets
                 const formData = new FormData();
+                const collectedData = {};
 
                 // Liste des onglets à traiter
                 const allTabs = ['general', 'licence', 'systeme', 'acces', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
@@ -2360,17 +2361,24 @@ window.toggleRGPDControls = toggleRGPDControls;
                             allInputs.forEach(input => {
                                 const name = input.name;
                                 if (name) {
+                                    let value;
                                     if (input.type === 'checkbox') {
                                         // Pour les checkboxes, inclure toujours la valeur (0 ou 1)
-                                        formData.append(name, input.checked ? '1' : '0');
+                                        value = input.checked ? '1' : '0';
+                                        formData.append(name, value);
+                                        collectedData[name] = value;
                                     } else if (input.type === 'radio') {
                                         // Pour les radios, seulement si coché
                                         if (input.checked) {
-                                            formData.append(name, input.value);
+                                            value = input.value;
+                                            formData.append(name, value);
+                                            collectedData[name] = value;
                                         }
                                     } else {
                                         // Pour les autres champs
-                                        formData.append(name, input.value);
+                                        value = input.value;
+                                        formData.append(name, value);
+                                        collectedData[name] = value;
                                     }
                                 }
                             });
@@ -2388,7 +2396,8 @@ window.toggleRGPDControls = toggleRGPDControls;
                 console.log('📤 [PDF Builder] Envoi des données du formulaire:', {
                     tab: tabId,
                     action: 'pdf_builder_save_settings',
-                    dataCount: Array.from(formData.entries()).length
+                    dataCount: Array.from(formData.entries()).length,
+                    collectedData: collectedData
                 });
 
                 // Make AJAX request using centralized handler
