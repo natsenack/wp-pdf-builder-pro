@@ -290,7 +290,7 @@ function pdf_builder_ajax_handler_dispatch() {
                 pdf_builder_test_cache_ajax();
                 break;
             case 'pdf_builder_clear_all_cache':
-                pdf_builder_clear_cache_handler();
+                wp_send_json_error('Handler not implemented - use settings-ajax.php');
                 break;
             case 'pdf_builder_get_cache_metrics':
                 pdf_builder_get_cache_metrics_handler();
@@ -2266,33 +2266,33 @@ function pdf_builder_restore_backup_ajax() {
 }
 
 /**
- * Handler pour vider le cache (dispatcher)
+ * Handler pour vider le cache (dispatcher) - REMOVED: Duplicate function, use settings-ajax.php implementation
  */
-function pdf_builder_clear_cache_handler() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    // Vider le cache WordPress
-    wp_cache_flush();
-
-    // Supprimer les transients liés au plugin
-    global $wpdb;
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
-
-    wp_send_json_success(array(
-        'message' => 'Cache vidé avec succès'
-    ));
-}
+// function pdf_builder_clear_cache_handler() {
+//     // Vérifier le nonce
+//     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+//         wp_send_json_error('Nonce invalide');
+//         return;
+//     }
+//
+//     // Vérifier les permissions
+//     if (!current_user_can('manage_options')) {
+//         wp_send_json_error('Permissions insuffisantes');
+//         return;
+//     }
+//
+//     // Vider le cache WordPress
+//     wp_cache_flush();
+//
+//     // Supprimer les transients liés au plugin
+//     global $wpdb;
+//     $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+//     $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
+//
+//     wp_send_json_success(array(
+//         'message' => 'Cache vidé avec succès'
+//     ));
+// }
 
 /**
  * Handler pour obtenir les métriques du cache (dispatcher)
