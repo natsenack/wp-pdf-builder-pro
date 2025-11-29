@@ -16,24 +16,21 @@ if (!isset($toast_data)) {
     return;
 }
 
-$json_toasts = wp_json_encode($toast_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+$json_toasts = wp_json_encode($toast_data);
 if ($json_toasts === false) {
     return;
 }
 
-// Échapper complètement le JSON pour JavaScript
+// Échapper pour éviter les injections XSS
 $escaped_json = str_replace('</script>', '<\/script>', $json_toasts);
-$escaped_json = str_replace('<!--', '<\!--', $escaped_json);
-$escaped_json = str_replace('-->', '--\>', $escaped_json);
 
 // Données de localisation si disponibles
 $localization_json = '';
 if (isset($localization_data) && is_array($localization_data)) {
-    $json_localization = wp_json_encode($localization_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $json_localization = wp_json_encode($localization_data);
     if ($json_localization !== false) {
+        // Échapper pour éviter les injections XSS
         $localization_json = str_replace('</script>', '<\/script>', $json_localization);
-        $localization_json = str_replace('<!--', '<\!--', $localization_json);
-        $localization_json = str_replace('-->', '--\>', $localization_json);
     }
 }
 ?>
