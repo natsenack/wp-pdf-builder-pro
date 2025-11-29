@@ -745,7 +745,7 @@ class PDF_Builder_Predefined_Templates_Manager
                     return;
                 }
 
-                // Afficher notification de connexion
+                // Log: vérification du mot de passe
                 console.log('Vérification du mot de passe...');
 
                 $button.prop('disabled', true).text('<?php _e('Connexion...', 'pdf-builder-pro'); ?>');
@@ -761,7 +761,7 @@ class PDF_Builder_Predefined_Templates_Manager
                     },
                     success: function(response) {
                         if (response.success) {
-                            // Notification de succès
+                            // Log success
                             console.log('Authentification réussie ! Redirection en cours...');
                             
                             setTimeout(function() {
@@ -770,7 +770,7 @@ class PDF_Builder_Predefined_Templates_Manager
                         } else {
                             const errorMsg = response.data || response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>';
                             
-                            // Notification d'erreur
+                            // Log error
                             console.error('Erreur: ' + errorMsg);
                             
                             $button.prop('disabled', false).text(originalText);
@@ -780,7 +780,7 @@ class PDF_Builder_Predefined_Templates_Manager
                         console.error('Developer auth error:', error, xhr.responseText);
                         const errorMsg = '<?php _e('Erreur de connexion au serveur', 'pdf-builder-pro'); ?>';
                         
-                        // Notification d'erreur réseau
+                        // Log network error
                         console.error('Erreur réseau: ' + errorMsg);
                         
                         $button.prop('disabled', false).text(originalText);

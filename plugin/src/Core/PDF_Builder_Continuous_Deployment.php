@@ -70,7 +70,7 @@ class PDF_Builder_Continuous_Deployment {
                 'auto_deploy' => true,
                 'require_tests' => false,
                 'backup_before_deploy' => false,
-                'notification_channels' => ['email'],
+                // notification_channels removed
                 'webhook_secret' => wp_generate_password(32, false)
             ],
             self::ENV_STAGING => [
@@ -78,7 +78,7 @@ class PDF_Builder_Continuous_Deployment {
                 'auto_deploy' => pdf_builder_config('auto_deploy_staging', true),
                 'require_tests' => true,
                 'backup_before_deploy' => true,
-                'notification_channels' => ['email', 'slack'],
+                // notification_channels removed
                 'webhook_secret' => wp_generate_password(32, false)
             ],
             self::ENV_PRODUCTION => [
@@ -86,7 +86,7 @@ class PDF_Builder_Continuous_Deployment {
                 'auto_deploy' => pdf_builder_config('auto_deploy_production', false),
                 'require_tests' => true,
                 'backup_before_deploy' => true,
-                'notification_channels' => ['email', 'slack', 'sms'],
+                // notification_channels removed
                 'webhook_secret' => wp_generate_password(32, false)
             ]
         ];
@@ -694,8 +694,8 @@ class PDF_Builder_Continuous_Deployment {
         }
 
         if (!empty($issues)) {
-            pdf_builder_notify('medium', 'Vérifications pré-déploiement',
-                'Issues détectées: ' . implode("\n", $issues), [], ['issues' => $issues]);
+            // Legacy notification calls removed — log as warning
+            PDF_Builder_Logger::get_instance()->warning('Vérifications pré-déploiement: Issues détectées: ' . implode("\n", $issues), ['issues' => $issues]);
         }
     }
 
@@ -740,11 +740,8 @@ class PDF_Builder_Continuous_Deployment {
                 'error' => 'Déploiement bloqué - timeout dépassé'
             ]);
 
-            // Notifier
-            pdf_builder_notify('high', 'Déploiement bloqué détecté',
-                "Le déploiement {$deployment['id']} est bloqué depuis plus d'une heure", [], [
-                'deployment' => $deployment
-            ]);
+            // Legacy notification calls removed — log as error
+            PDF_Builder_Logger::get_instance()->error("Déploiement bloqué détecté: Le déploiement {$deployment['id']} est bloqué depuis plus d'une heure", ['deployment' => $deployment]);
         }
     }
 
@@ -761,9 +758,8 @@ class PDF_Builder_Continuous_Deployment {
         $message .= "Type: {$deployment['deployment_type']}\n";
         $message .= "Déploiement ID: {$deployment_id}";
 
-        pdf_builder_notify('success', 'Déploiement réussi', $message, $env_config['notification_channels'], [
-            'deployment' => $deployment
-        ]);
+        // Legacy notification calls removed — log success
+        PDF_Builder_Logger::get_instance()->info('Déploiement réussi: ' . $message, ['deployment' => $deployment]);
     }
 
     /**
@@ -780,10 +776,8 @@ class PDF_Builder_Continuous_Deployment {
         }
         $message .= "Erreur: {$exception->getMessage()}";
 
-        pdf_builder_notify('critical', 'Échec de déploiement', $message, $env_config['notification_channels'], [
-            'deployment' => $deployment,
-            'error' => $exception->getMessage()
-        ]);
+        // Legacy notification calls removed — log critical
+        PDF_Builder_Logger::get_instance()->critical('Échec de déploiement: ' . $message, ['deployment' => $deployment, 'error' => $exception->getMessage()]);
     }
 
     /**
@@ -798,10 +792,8 @@ class PDF_Builder_Continuous_Deployment {
         $message .= "Déploiement original: {$original_deployment_id}\n";
         $message .= "Rollback ID: {$rollback_id}";
 
-        pdf_builder_notify('warning', 'Rollback réussi', $message, $env_config['notification_channels'], [
-            'rollback' => $rollback,
-            'original_deployment' => $original_deployment_id
-        ]);
+        // Legacy notification calls removed — log warning
+        PDF_Builder_Logger::get_instance()->warning('Rollback réussi: ' . $message, ['rollback' => $rollback, 'original_deployment' => $original_deployment_id]);
     }
 
     /**
@@ -814,10 +806,8 @@ class PDF_Builder_Continuous_Deployment {
         $message = "Échec de rollback\n";
         $message .= "Erreur: {$exception->getMessage()}";
 
-        pdf_builder_notify('critical', 'Échec de rollback', $message, $env_config['notification_channels'], [
-            'rollback' => $rollback,
-            'error' => $exception->getMessage()
-        ]);
+        // Legacy notification calls removed — log critical
+        PDF_Builder_Logger::get_instance()->critical('Échec de rollback: ' . $message, ['rollback' => $rollback, 'error' => $exception->getMessage()]);
     }
 
     /**

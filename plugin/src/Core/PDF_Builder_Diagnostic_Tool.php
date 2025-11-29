@@ -207,8 +207,7 @@ class PDF_Builder_Diagnostic_Tool {
             'pdf_builder_errors',
             'pdf_builder_performance_metrics',
             'pdf_builder_performance_issues',
-            'pdf_builder_backups',
-            'pdf_builder_notifications'
+            'pdf_builder_backups'
         ];
 
         $status = [
@@ -441,9 +440,7 @@ class PDF_Builder_Diagnostic_Tool {
             $issues[] = 'Nom de l\'entreprise non configuré';
         }
 
-        if (empty($config['notification_email'])) {
-            $issues[] = 'Email de notification non configuré';
-        }
+        // Notification email removed from config
 
         if (!$config['cache_enabled']) {
             $issues[] = 'Cache désactivé - impact sur les performances';

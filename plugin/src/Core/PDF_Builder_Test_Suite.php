@@ -995,9 +995,8 @@ class PDF_Builder_Test_Suite {
         $message .= "Erreurs: {$results['summary']['errors']}\n";
         $message .= "Taux de succès: " . round($results['summary']['success_rate'], 2) . "%";
 
-        pdf_builder_notify('high', 'Échecs de tests détectés', $message, [], [
-            'test_results' => $results
-        ]);
+        // Legacy notification calls removed — log as error
+        PDF_Builder_Logger::get_instance()->error('Échecs de tests détectés: ' . $message, ['test_results' => $results]);
     }
 
     /**

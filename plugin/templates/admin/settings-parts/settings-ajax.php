@@ -210,8 +210,6 @@ class PDF_Builder_Options_Manager {
         'pdf_builder_log_retention' => ['type' => 'int', 'sanitize' => 'intval'],
         'pdf_builder_force_https' => ['type' => 'boolean', 'sanitize' => 'intval'],
         'pdf_builder_performance_monitoring' => ['type' => 'boolean', 'sanitize' => 'intval'],
-        'pdf_builder_license_enable_notifications' => ['type' => 'boolean', 'sanitize' => 'intval'],
-        'pdf_builder_license_notification_email' => ['type' => 'string', 'sanitize' => 'sanitize_email'],
 
         // Canvas Settings
         'pdf_builder_canvas_width' => ['type' => 'int', 'sanitize' => 'intval'],

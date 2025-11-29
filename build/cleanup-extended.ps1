@@ -1,5 +1,5 @@
-# Script étendu pour supprimer TOASTR et NOTIFICATIONS du serveur distant
-# Vérifie tous les fichiers JS/CSS/PHP pour 'toastr' et 'notification'
+# Script étendu pour rechercher et supprimer des références d'UIs obsolètes sur le serveur distant
+# Vérifie les fichiers JS/CSS/PHP pour des marques de bibliothèques obsolètes
 
 param(
     [switch]$TestMode
@@ -13,15 +13,15 @@ $FtpUser = "nats"
 $FtpPass = "iZ6vU3zV2y"
 $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
 
-Write-Host "NETTOYAGE ÉTENDU TOASTR/NOTIFICATIONS SUR SERVEUR DISTANT" -ForegroundColor Cyan
+Write-Host "NETTOYAGE ÉTENDU: RECHERCHE DE RÉFÉRENCES D'UI OBSOLÈTES SUR SERVEUR DISTANT" -ForegroundColor Cyan
 Write-Host ("=" * 80) -ForegroundColor White
 
 if ($TestMode) {
     Write-Host "MODE TEST - Simulation uniquement" -ForegroundColor Yellow
 }
 
-# Fonction pour vérifier si un fichier contient "toastr" ou "notification"
-function Test-FileContainsToastrOrNotification {
+# Fonction pour vérifier si un fichier contient un marqueur d'UI obsolète
+function Test-FileContainsLegacyUI {
     param([string]$remotePath)
 
     try {
@@ -40,21 +40,18 @@ function Test-FileContainsToastrOrNotification {
         $reader.Close()
         $response.Close()
 
-        # Vérifier si le contenu contient "toastr" ou "notification" (insensible à la casse)
-        $hasToastr = $content -match '(?i)toastr'
-        $hasNotification = $content -match '(?i)notification'
+        # Vérifier si le contenu contient des marques de librairies obsolètes (ex: toastr)
+        $hasLegacyUI = $content -match '(?i)legacy_ui'
 
         return @{
-            HasToastr = $hasToastr
-            HasNotification = $hasNotification
-            HasEither = $hasToastr -or $hasNotification
+            HasLegacyUI = $hasLegacyUI
+            HasEither = $hasLegacyUI
         }
 
     } catch {
         # Fichier n'existe pas ou erreur d'accès
         return @{
-            HasToastr = $false
-            HasNotification = $false
+            HasLegacyUI = $false
             HasEither = $false
         }
     }
@@ -84,24 +81,16 @@ $filesToCheck = @(
     "templates/admin/js/settings-page.js",
 
     # Fichiers de bibliothèque potentiels
-    "assets/js/toastr.js",
-    "assets/js/toastr.min.js",
-    "assets/css/toastr.css",
-    "assets/css/toastr.min.css",
-    "assets/js/notifications.js",
-    "assets/js/notifications.min.js",
-    "assets/css/notifications.css",
 
     # Fichiers PHP principaux
     "pdf-builder-pro.php",
     "bootstrap.php",
 
     # Classes PHP
-    "core/PDF_Builder_Notification_Manager.php",
-    "src/utilities/PDF_Builder_Notification_Manager.php"
+    # Removed legacy Notification Manager class files
 )
 
-Write-Host "`nVérification étendue des fichiers pour 'toastr' et 'notification'..." -ForegroundColor Magenta
+Write-Host "`nVérification étendue des fichiers pour UI obsolètes..." -ForegroundColor Magenta
 
 $suspiciousFiles = @()
 
@@ -109,18 +98,16 @@ foreach ($file in $filesToCheck) {
     $remotePath = "$FtpPath/$file"
     Write-Host "   Vérification: $file" -ForegroundColor Gray
 
-    $result = Test-FileContainsToastrOrNotification -remotePath $remotePath
+    $result = Test-FileContainsLegacyUI -remotePath $remotePath
 
-    if ($result.HasEither) {
-        $flags = @()
-        if ($result.HasToastr) { $flags += "toastr" }
-        if ($result.HasNotification) { $flags += "notification" }
-        $flagStr = $flags -join "/"
+        if ($result.HasLegacyUI) {
+            $flags = @()
+            if ($result.HasLegacyUI) { $flags += "legacy_ui" }
+            $flagStr = $flags -join "/"
 
         $suspiciousFiles += @{
             File = $file
-            HasToastr = $result.HasToastr
-            HasNotification = $result.HasNotification
+            HasLegacyUI = $result.HasLegacyUI
         }
         Write-Host "   ⚠️  SUSPECT: $file contient '$flagStr'" -ForegroundColor Yellow
     } else {
@@ -142,8 +129,7 @@ if ($suspiciousFiles.Count -eq 0) {
         $remotePath = "$FtpPath/$file"
 
         $flags = @()
-        if ($fileInfo.HasToastr) { $flags += "toastr" }
-        if ($fileInfo.HasNotification) { $flags += "notification" }
+        if ($fileInfo.HasLegacyUI) { $flags += "legacy_ui" }
         $flagStr = $flags -join "/"
 
         if ($TestMode) {
@@ -188,8 +174,8 @@ if ($TestMode) {
     Write-Host "`nPour exécuter réellement le nettoyage, relancer sans -TestMode" -ForegroundColor Yellow
 } else {
     if ($suspiciousFiles.Count -eq 0) {
-        Write-Host "`nServeur distant déjà propre - aucun fichier toastr/notification trouvé ✅" -ForegroundColor Green
+        Write-Host "`nServeur distant déjà propre - pas d'UI obsolète détectée ✅" -ForegroundColor Green
     } else {
-        Write-Host "`nServeur distant nettoyé de toutes références toastr/notifications ✅" -ForegroundColor Green
+        Write-Host "`nServeur distant nettoyé de toutes références d'UI obsolètes ✅" -ForegroundColor Green
     }
 }

@@ -105,12 +105,7 @@ class PDF_Builder_Global_Config_Manager {
             'time_format' => 'H:i:s',
             'timezone' => 'Europe/Paris', // Valeur par défaut sûre
 
-            // Paramètres de notification
-            'email_notifications_enabled' => true,
-            'notification_email' => '', // Sera défini plus tard
-            'notify_on_errors' => true,
-            'notify_on_backups' => false,
-            'notify_on_updates' => true,
+            // Notification options removed
 
             // Paramètres de licence
             'license_key' => '',
@@ -122,7 +117,7 @@ class PDF_Builder_Global_Config_Manager {
         // Définir les valeurs qui dépendent de WordPress si disponibles
         if (function_exists('get_option')) {
             $this->defaults['company_email'] = get_option('admin_email', '');
-            $this->defaults['notification_email'] = get_option('admin_email', '');
+            // notification_email setting removed
         }
 
         if (function_exists('get_site_url')) {
@@ -263,10 +258,7 @@ class PDF_Builder_Global_Config_Manager {
             case 'db_optimization_enabled':
             case 'db_query_cache_enabled':
             case 'db_connection_pooling':
-            case 'email_notifications_enabled':
-            case 'notify_on_errors':
-            case 'notify_on_backups':
-            case 'notify_on_updates':
+            // Notification options removed - ignore these cases
             case 'auto_update_enabled':
                 return (bool) $value;
 
@@ -288,7 +280,6 @@ class PDF_Builder_Global_Config_Manager {
 
             // Chaînes avec validation
             case 'company_email':
-            case 'notification_email':
                 return is_email($value) ? sanitize_email($value) : $this->defaults[$key];
 
             case 'company_website':

@@ -413,8 +413,6 @@ msgid "Échec de l\'envoi de l\'email de test"
 msgstr ""
 
 #: Generated automatically
-msgid "Gestionnaire de notifications non disponible"
-msgstr ""
 
 #: Generated automatically
 msgid "Erreur lors du test : "
@@ -741,7 +739,7 @@ msgid "Échec de l\'envoi de l\'email de test\', \'pdf-builder-pro"
 msgstr ""
 
 #: Generated automatically
-msgid "Gestionnaire de notifications non disponible\', \'pdf-builder-pro"
+msgid "Notification manager not available', 'pdf-builder-pro"
 msgstr ""
 
 #: Generated automatically
@@ -1153,11 +1151,11 @@ msgid "Bonjour,nnUn avertissement de performance a été détecté.nnDétails :n
 msgstr ""
 
 #: Generated automatically
-msgid "PDF Builder Pro: Test de notification"
+msgid "Legacy: Test email (removed)"
 msgstr ""
 
 #: Generated automatically
-msgid "Bonjour,nnCeci est un email de test du système de notifications PDF Builder Pro.nnSi vous recevez cet email, les notifications fonctionnent correctement.nnDétails :n- Date : %sn- Site : %snnCordialement,nL\'équipe PDF Builder Pro"
+msgid "Ceci est une entrée d'email de test héritée qui a été supprimée."
 msgstr ""
 
 #: Generated automatically

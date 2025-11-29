@@ -1,5 +1,5 @@
 # Script de vérification basé sur les fichiers de déploiement
-# Utilise la liste des fichiers déployés pour vérifier toastr/notifications
+# Utilise la liste des fichiers déployés pour vérifier l'UI obsolète
 
 param(
     [switch]$TestMode
@@ -13,7 +13,7 @@ $FtpUser = "nats"
 $FtpPass = "iZ6vU3zV2y"
 $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
 
-Write-Host "VÉRIFICATION DES FICHIERS DÉPLOYÉS POUR TOASTR/NOTIFICATIONS" -ForegroundColor Cyan
+Write-Host "VÉRIFICATION DES FICHIERS DÉPLOYÉS POUR UI OBSOLÈTE" -ForegroundColor Cyan
 Write-Host ("=" * 85) -ForegroundColor White
 
 if ($TestMode) {
@@ -188,8 +188,8 @@ $deployedFiles = @(
     "vendor/monolog/monolog/src/Monolog/Utils.php"
 )
 
-# Fonction pour vérifier si un fichier contient "toastr" ou "notification"
-function Test-FileContainsKeywords {
+# Fonction pour vérifier si un fichier contient des indicateurs d'UI obsolète
+function Test-FileContainsLegacyUI {
     param([string]$remotePath)
 
     try {
@@ -208,14 +208,12 @@ function Test-FileContainsKeywords {
         $reader.Close()
         $response.Close()
 
-        # Vérifier les mots-clés (insensible à la casse)
-        $hasToastr = $content -match '(?i)toastr'
-        $hasNotification = $content -match '(?i)notification'
+        # Vérifier les marqueurs d'UI obsolète (pattern générique)
+        $hasLegacyUI = $content -match '(?i)legacy_ui'
 
-        if ($hasToastr -or $hasNotification) {
+        if ($hasLegacyUI) {
             return @{
-                HasToastr = $hasToastr
-                HasNotification = $hasNotification
+                HasLegacyUI = $hasLegacyUI
             }
         }
 
@@ -237,18 +235,16 @@ foreach ($file in $deployedFiles) {
 
     Write-Host "   [$checkedCount/$($deployedFiles.Count)] Vérification: $file" -ForegroundColor Gray
 
-    $result = Test-FileContainsKeywords -remotePath $remotePath
+    $result = Test-FileContainsLegacyUI -remotePath $remotePath
 
     if ($result) {
         $flags = @()
-        if ($result.HasToastr) { $flags += "toastr" }
-        if ($result.HasNotification) { $flags += "notification" }
+        if ($result.HasLegacyUI) { $flags += "legacy_ui" }
         $flagStr = $flags -join "/"
 
         $suspiciousFiles += @{
             File = $file
-            HasToastr = $result.HasToastr
-            HasNotification = $result.HasNotification
+            HasLegacyUI = $result.HasLegacyUI
         }
         Write-Host "   ⚠️  SUSPECT: $file contient '$flagStr'" -ForegroundColor Yellow
     }
@@ -268,8 +264,7 @@ if ($suspiciousFiles.Count -eq 0) {
     Write-Host "`nFichiers suspects détectés:" -ForegroundColor Magenta
     foreach ($fileInfo in $suspiciousFiles) {
         $flags = @()
-        if ($fileInfo.HasToastr) { $flags += "toastr" }
-        if ($fileInfo.HasNotification) { $flags += "notification" }
+        if ($fileInfo.HasLegacyUI) { $flags += "legacy_ui" }
         $flagStr = $flags -join "/"
         Write-Host "   - $($fileInfo.File) ($flagStr)" -ForegroundColor Yellow
     }
@@ -281,8 +276,7 @@ if ($suspiciousFiles.Count -eq 0) {
             $remotePath = "$FtpPath/$($fileInfo.File)"
 
             $flags = @()
-            if ($fileInfo.HasToastr) { $flags += "toastr" }
-            if ($fileInfo.HasNotification) { $flags += "notification" }
+            if ($fileInfo.HasLegacyUI) { $flags += "legacy_ui" }
             $flagStr = $flags -join "/"
 
             try {
@@ -325,8 +319,8 @@ if ($TestMode) {
     Write-Host "`nPour exécuter réellement le nettoyage, relancer sans -TestMode" -ForegroundColor Yellow
 } else {
     if ($suspiciousFiles.Count -eq 0) {
-        Write-Host "`nServeur distant complètement propre - aucun fichier déployé ne contient toastr/notification ✅" -ForegroundColor Green
+        Write-Host "`nServeur distant complètement propre - aucun fichier déployé n'indique d'UI obsolète ✅" -ForegroundColor Green
     } else {
-        Write-Host "`nServeur distant nettoyé de toutes références toastr/notifications ✅" -ForegroundColor Green
+        Write-Host "`nServeur distant nettoyé de toutes références d'UI obsolètes ✅" -ForegroundColor Green
     }
 }

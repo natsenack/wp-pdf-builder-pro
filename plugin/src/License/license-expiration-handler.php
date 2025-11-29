@@ -77,65 +77,25 @@ class License_Expiration_Handler
     }
 
     /**
-     * Send email notification for upcoming license expiration
+     * Record a logged event for upcoming license expiration
      */
     private static function sendExpirationNotification($expiration_date, $days_remaining)
     {
-        // Check if notifications are enabled
-        $enable_notifications = get_option('pdf_builder_license_enable_notifications', true);
-        if (!$enable_notifications) {
-            return;
-        }
-
-        // Get notification email
-        $notification_email = get_option('pdf_builder_license_notification_email', get_option('admin_email'));
-        if (empty($notification_email)) {
-            return;
-        }
-
-        // Check if we already sent a notification for this date today
-        $last_notification = get_option('pdf_builder_license_last_notification_' . date('Y-m-d'), '');
-        if (!empty($last_notification)) {
-            return;
-        // Already sent today
-        }
-
-        // Prepare email
+        // Legacy notification emails are disabled: record the event in logs/DB for audit purposes
         $site_name = get_option('blogname');
         $site_url = get_option('siteurl');
-
-        $subject = sprintf(
-            '[%s] Votre licence PDF Builder Pro expire dans %d jour%s',
-            $site_name,
-            $days_remaining,
-            $days_remaining > 1 ? 's' : ''
-        );
-        $message = sprintf('<h2>Notification d\'expiration de licence</h2>' .
-            '<p>Bonjour,</p>' .
-            '<p>Votre licence PDF Builder Pro pour <strong>%s</strong> expire dans <strong>%d jour%s</strong> (le %s).</p>' .
-            '<p>Nous vous recommandons de renouveler votre licence dès maintenant pour continuer à bénéficier de toutes les mises à jour et du support.</p>' .
-            '<hr>' .
-            '<p><strong>Détails :</strong></p>' .
-            '<ul>' .
-            '<li>Site : %s</li>' .
-            '<li>Date d\'expiration : %s</li>' .
-            '<li>Jours restants : %d</li>' .
-            '</ul>' .
-            '<hr>' .
-            '<p><a href="%s">Renouveler votre licence</a></p>' .
-            '<p><em>Vous recevez ce email car vous êtes administrateur de ce site. ' .
-            'Vous pouvez désactiver les notifications dans l\'onglet Licence des paramètres de PDF Builder Pro.</em></p>', $site_name, $days_remaining, $days_remaining > 1 ? 's' : '', date('d/m/Y', strtotime($expiration_date)), $site_url, date('d/m/Y', strtotime($expiration_date)), $days_remaining, admin_url('admin.php?page=pdf-builder-pro-settings&tab=licence'));
-// Set HTML content type
-        $headers = ['Content-Type: text/html; charset=UTF-8'];
-// Send email
-        $sent = wp_mail($notification_email, $subject, $message, $headers);
-        if ($sent) {
-        // Mark that we sent the notification today
-            update_option('pdf_builder_license_last_notification_' . date('Y-m-d'), time());
-            
-        } else {
-            
+        if (class_exists('PDF_Builder_Logger')) {
+            PDF_Builder_Logger::get_instance()->info('License nearing expiration: ' . $site_name . ' (remaining ' . $days_remaining . ' days)', ['license_expires' => $expiration_date]);
         }
+
+        // Check if we already recorded an event for this date today
+        $last_notification = get_option('pdf_builder_license_last_notification_' . date('Y-m-d'), '');
+        if (!empty($last_notification)) {
+            return; // event already recorded today
+        }
+
+        // Record that we've logged this event today
+        update_option('pdf_builder_license_last_notification_' . date('Y-m-d'), time());
     }
 
     /**

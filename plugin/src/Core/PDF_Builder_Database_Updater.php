@@ -668,10 +668,8 @@ class PDF_Builder_Database_Updater {
         }
 
         if (!empty($issues)) {
-            pdf_builder_notify('critical', 'Problèmes de base de données détectés',
-                'Issues d\'intégrité de base de données: ' . implode(', ', $issues), [], [
-                'issues' => $issues
-            ]);
+            // Legacy notification calls removed — log as critical
+            PDF_Builder_Logger::get_instance()->critical('Problèmes de base de données détectés: ' . implode(', ', $issues), ['issues' => $issues]);
         }
     }
 

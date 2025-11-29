@@ -119,7 +119,7 @@ class PdfBuilderCore
         // Initialiser les dossiers au hook WordPress 'init' (plus tardif)
         add_action('init', [$this, 'initialize_directories']);
 
-        // Initialiser le gestionnaire de notifications
+        // Notification system removed - no initialization required
     }
 
     /**
@@ -628,13 +628,7 @@ class PdfBuilderCore
             'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
             'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
             'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
-            'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
-            'notification_events' => isset($_POST['notification_events']) ? array_map(
-                function ($event) {
-                    return sanitize_text_field($event);
-                },
-                $_POST['notification_events']
-            ) : [],
+            // Notification settings removed
             // Paramètres Canvas - anciens
             'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
             'canvas_border_width' => isset($_POST['canvas_border_width']) ? floatval($_POST['canvas_border_width']) : 1,
@@ -709,9 +703,8 @@ class PdfBuilderCore
             'enable_keyboard_shortcuts' => isset($_POST['enable_keyboard_shortcuts']),
             'debug_mode' => isset($_POST['debug_mode']),
             'show_fps' => isset($_POST['show_fps']),
-            'email_notifications' => isset($_POST['email_notifications']),
-            'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
-            'notification_log_level' => sanitize_text_field($_POST['notification_log_level'] ?? 'error')
+            // 'email_notifications' removed
+            'admin_email' => sanitize_email($_POST['admin_email'] ?? '')
         ];
 
         // Sauvegarder les paramètres

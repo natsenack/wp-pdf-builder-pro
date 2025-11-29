@@ -610,31 +610,12 @@ function pdf_builder_load_bootstrap()
         \PDF_Builder\Admin\Canvas_AJAX_Handler::register_hooks();
     }
 
-    // INITIALISER LE GESTIONNAIRE DE NOTIFICATIONS
-    // Retarder complètement le chargement et l'initialisation au hook 'init' pour éviter les erreurs de headers
-    add_action('init', function() {
-        // Charger les utilitaires seulement maintenant
-        pdf_builder_load_utilities_emergency();
-
-        $utilities = array(
-            'PDF_Builder_Onboarding_Manager.php',
-            'PDF_Builder_GDPR_Manager.php'
-        );
-        foreach ($utilities as $utility) {
-            $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
-            if (file_exists($utility_path)) {
-                require_once $utility_path;
-            }
-        }
-
-        // Vérifier et charger les classes manuellement si nécessaire
-        // Notification Manager supprimé - plus utilisé
-
-        // Initialiser le notification manager seulement maintenant - supprimé
-        // if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager')) {
-        //     \PDF_Builder\Utilities\PDF_Builder_Notification_Manager::get_instance();
-        // }
-    }, 5);
+    // CHARGER LE GESTIONNAIRE DE NOTIFICATIONS
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
+        // Initialiser l'instance
+        PDF_Builder_Notification_Manager::get_instance();
+    }
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
     // Retarder complètement le chargement et l'initialisation au hook 'init'
@@ -954,7 +935,6 @@ function pdf_builder_load_core_on_demand()
             'pdf_builder_update_onboarding_step',
             'pdf_builder_save_template_assignment',
             'pdf_builder_mark_onboarding_complete'
-            // Actions AJAX du Notification Manager supprimées - système retiré
         ];
         if (in_array($_REQUEST['action'], $pdf_builder_ajax_actions)) {
             $load_core = true;

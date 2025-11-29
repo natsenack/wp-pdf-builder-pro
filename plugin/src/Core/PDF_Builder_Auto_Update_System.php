@@ -90,11 +90,8 @@ class PDF_Builder_Auto_Update_System {
 
                 // Notifier si c'est une mise à jour de sécurité
                 if ($best_update['type'] === self::UPDATE_TYPE_SECURITY) {
-                    pdf_builder_notify('high', 'Mise à jour de sécurité disponible',
-                        "Une mise à jour de sécurité est disponible: {$best_update['version']}", [], [
-                        'update' => $best_update,
-                        'current_version' => $current_version
-                    ]);
+                    // Legacy notification calls removed — log an error for security updates
+                    PDF_Builder_Logger::get_instance()->warning("Mise à jour de sécurité disponible: {$best_update['version']}", ['update' => $best_update, 'current_version' => $current_version]);
                 }
 
                 if (class_exists('PDF_Builder_Logger')) {
@@ -325,12 +322,8 @@ class PDF_Builder_Auto_Update_System {
                 'backup_id' => $backup_id ?? null
             ]);
 
-            // Notifier le succès
-            pdf_builder_notify('success', 'Mise à jour installée avec succès',
-                "PDF Builder Pro a été mis à jour vers la version $version", [], [
-                'version' => $version,
-                'backup_id' => $backup_id ?? null
-            ]);
+            // Legacy notification calls removed — log info for success
+            PDF_Builder_Logger::get_instance()->info('Mise à jour installée avec succès: PDF Builder Pro mis à jour vers la version ' . $version, ['version' => $version, 'backup_id' => $backup_id ?? null]);
 
             if (class_exists('PDF_Builder_Logger')) {
                 PDF_Builder_Logger::get_instance()->info('Update installed successfully', [
@@ -631,10 +624,8 @@ class PDF_Builder_Auto_Update_System {
         $update = $this->check_for_updates();
 
         if ($update) {
-            pdf_builder_notify('info', 'Mise à jour disponible',
-                "Une nouvelle version de PDF Builder Pro est disponible: {$update['version']}", [], [
-                'update' => $update
-            ]);
+            // Legacy notification calls removed — log info
+            PDF_Builder_Logger::get_instance()->info('Mise à jour disponible: Une nouvelle version de PDF Builder Pro est disponible: ' . $update['version'], ['update' => $update]);
         }
     }
 

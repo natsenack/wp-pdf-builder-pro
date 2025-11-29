@@ -1,4 +1,4 @@
-# Script de scan complet du serveur FTP pour TOASTR/NOTIFICATIONS
+# Script de scan complet du serveur FTP pour UI obsolète
 # Recherche récursive dans tous les fichiers
 
 param(
@@ -14,7 +14,7 @@ $FtpUser = "nats"
 $FtpPass = "iZ6vU3zV2y"
 $FtpPath = "/wp-content/plugins/wp-pdf-builder-pro"
 
-Write-Host "SCAN COMPLET DU SERVEUR FTP POUR TOASTR/NOTIFICATIONS" -ForegroundColor Cyan
+Write-Host "SCAN COMPLET DU SERVEUR FTP POUR UI OBSOLÈTE" -ForegroundColor Cyan
 Write-Host ("=" * 80) -ForegroundColor White
 
 if ($TestMode) {
@@ -81,8 +81,8 @@ function Get-AllFtpFiles {
     return $allFiles
 }
 
-# Fonction pour vérifier si un fichier contient "toastr" ou "notification"
-function Test-FileContainsKeywords {
+# Fonction pour vérifier si un fichier contient des marqueurs d'UI obsolète
+function Test-FileContainsLegacyUI {
     param([string]$remotePath, [string]$fileName)
 
     # Ne scanner que les fichiers texte (extensions communes)
@@ -109,15 +109,13 @@ function Test-FileContainsKeywords {
         $reader.Close()
         $response.Close()
 
-        # Vérifier les mots-clés (insensible à la casse)
-        $hasToastr = $content -match '(?i)toastr'
-        $hasNotification = $content -match '(?i)notification'
+        # Vérifier les marqueurs d'UI obsolète (pattern générique)
+        $hasLegacyUI = $content -match '(?i)legacy_ui'
 
-        if ($hasToastr -or $hasNotification) {
+        if ($hasLegacyUI) {
             return @{
                 File = $remotePath
-                HasToastr = $hasToastr
-                HasNotification = $hasNotification
+                HasLegacyUI = $hasLegacyUI
                 Size = $content.Length
             }
         }
@@ -154,8 +152,7 @@ foreach ($file in $textFiles) {
 
     if ($result) {
         $flags = @()
-        if ($result.HasToastr) { $flags += "toastr" }
-        if ($result.HasNotification) { $flags += "notification" }
+        if ($result.HasLegacyUI) { $flags += "legacy_ui" }
         $flagStr = $flags -join "/"
 
         $suspiciousFiles += $result
@@ -177,8 +174,7 @@ if ($suspiciousFiles.Count -eq 0) {
     Write-Host "`nDétails des fichiers suspects:" -ForegroundColor Magenta
     foreach ($file in $suspiciousFiles) {
         $flags = @()
-        if ($file.HasToastr) { $flags += "toastr" }
-        if ($file.HasNotification) { $flags += "notification" }
+        if ($file.HasLegacyUI) { $flags += "legacy_ui" }
         $flagStr = $flags -join "/"
         $shortPath = $file.File.Replace("$FtpPath/", "")
         Write-Host "   - $shortPath ($flagStr, $($file.Size) octets)" -ForegroundColor Yellow
@@ -191,8 +187,7 @@ if ($suspiciousFiles.Count -eq 0) {
             $remotePath = $fileInfo.File
 
             $flags = @()
-            if ($fileInfo.HasToastr) { $flags += "toastr" }
-            if ($fileInfo.HasNotification) { $flags += "notification" }
+            if ($fileInfo.HasLegacyUI) { $flags += "legacy_ui" }
             $flagStr = $flags -join "/"
 
             try {
@@ -236,8 +231,8 @@ if ($TestMode) {
     Write-Host "`nPour exécuter réellement le nettoyage, relancer sans -TestMode" -ForegroundColor Yellow
 } else {
     if ($suspiciousFiles.Count -eq 0) {
-        Write-Host "`nServeur distant complètement propre - aucun fichier toastr/notification trouvé ✅" -ForegroundColor Green
+        Write-Host "`nServeur distant complètement propre - pas d'UI obsolète détectée ✅" -ForegroundColor Green
     } else {
-        Write-Host "`nServeur distant nettoyé de toutes références toastr/notifications ✅" -ForegroundColor Green
+        Write-Host "`nServeur distant nettoyé de toutes références d'UI obsolètes ✅" -ForegroundColor Green
     }
 }

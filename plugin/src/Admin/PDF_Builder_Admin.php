@@ -625,7 +625,6 @@ class PdfBuilderAdmin
                                 <li>Configuration React</li>
                                 <li>Paramètres de performance</li>
                                 <li>Gestion des rôles</li>
-                                <li>Notifications email</li>
                                 <li>Cache intelligent</li>
                                 <li>Logs détaillés</li>
                                 <li>Actions de maintenance</li>
@@ -656,7 +655,6 @@ class PdfBuilderAdmin
                                 <li>Navigation intuitive et moderne</li>
                                 <li>Responsive design optimisé</li>
                                 <li>Thème sombre/clair adaptable</li>
-                                <li>Notifications contextuelles</li>
                                 <li>Performance AJAX - Requêtes plus rapides et fiables</li>
                                 <li>Health checks automatiques</li>
                                 <li>Monitoring intégré et logs détaillés</li>
@@ -1276,23 +1274,15 @@ class PdfBuilderAdmin
 
         // Note: pdfBuilderCanvasSettings est maintenant défini directement dans le template
 
-        // ✅ Système de notification supprimé - plus utilisé
+        // ✅ Legacy notification system removed
 
         // Charger le script JavaScript pour la page de paramètres
         if ($hook === 'pdf-builder_page_pdf-builder-settings') {
-            // Charger le système de notifications unifié
-            wp_enqueue_script(
-                'pdf-builder-notifications',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js',
-                ['jquery'],
-                PDF_BUILDER_PRO_VERSION . '-' . time(),
-                true
-            );
-
+            // NOTE: Notification UI assets have been removed and are not enqueued
             wp_enqueue_script(
                 'pdf-builder-settings-page',
                 plugins_url('templates/admin/js/settings-page.js', PDF_BUILDER_PLUGIN_FILE),
-                ['jquery', 'pdf-builder-notifications'],
+                ['jquery'],
                 PDF_BUILDER_PRO_VERSION . '-' . time(),
                 true
             );
@@ -2437,7 +2427,7 @@ class PdfBuilderAdmin
             'pdf_builder_allowed_roles',
             'pdf_builder_templates',
             'pdf_builder_admin_email',
-            'pdf_builder_notification_log_level',
+            
             'pdf_builder_default_canvas_width',
             'pdf_builder_default_canvas_height',
             'pdf_builder_show_grid',

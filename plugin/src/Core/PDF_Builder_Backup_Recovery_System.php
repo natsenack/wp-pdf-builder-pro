@@ -365,7 +365,6 @@ class PDF_Builder_Backup_Recovery_System {
             $wpdb->prefix . 'pdf_builder_performance_metrics',
             $wpdb->prefix . 'pdf_builder_performance_issues',
             $wpdb->prefix . 'pdf_builder_backups',
-            $wpdb->prefix . 'pdf_builder_notifications',
             $wpdb->prefix . 'pdf_builder_analytics'
         ];
     }
@@ -665,10 +664,8 @@ class PDF_Builder_Backup_Recovery_System {
             $emergency_backup = $this->create_emergency_backup();
 
             // Notifier l'admin
-            pdf_builder_notify('critical', 'Problème d\'intégrité système détecté', implode("\n", $issues), [], [
-                'issues' => $issues,
-                'emergency_backup' => $emergency_backup
-            ]);
+            // Legacy notification calls removed — log this event as critical
+            PDF_Builder_Logger::get_instance()->critical('Problème d\'intégrité système détecté: ' . implode("\n", $issues), ['issues' => $issues]);
         }
 
         return [

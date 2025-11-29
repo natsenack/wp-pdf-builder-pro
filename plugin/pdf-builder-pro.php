@@ -10,13 +10,6 @@
  * License: GPL v2 or later
  * Text Domain: pdf-builder-pro
  * Domain Path: /languages
- */
-
-// Empêcher l'accès direct
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
-}
-
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
@@ -78,6 +71,7 @@ function pdf_builder_activate()
     // Vérifier et créer les tables manquantes pour les mises à jour
     pdf_builder_check_tables();
 }
+
 
 /**
  * Vérifier et créer les tables manquantes
@@ -904,7 +898,6 @@ function pdf_builder_save_settings_ajax() {
         case 'licence':
             // Sauvegarder les paramètres licence
             $settings = array(
-                'license_enable_notifications' => isset($_POST['enable_expiration_notifications']) ? '1' : '0',
             );
 
             foreach ($settings as $key => $value) {
@@ -2216,7 +2209,6 @@ function pdf_builder_check_advanced_systems_status() {
         'security_validator' => class_exists('PDF_Builder_Security_Validator') && PDF_Builder_Security_Validator::get_instance() !== null,
         'error_handler' => class_exists('PDF_Builder_Error_Handler') && PDF_Builder_Error_Handler::get_instance() !== null,
         'task_scheduler' => class_exists('PDF_Builder_Task_Scheduler') && PDF_Builder_Task_Scheduler::get_instance() !== null,
-        // 'notification_manager' => class_exists('PDF_Builder_Notification_Manager') && PDF_Builder_Notification_Manager::get_instance() !== null,
         'diagnostic_tool' => class_exists('PDF_Builder_Diagnostic_Tool') && PDF_Builder_Diagnostic_Tool::get_instance() !== null,
         'analytics_manager' => class_exists('PDF_Builder_Analytics_Manager') && PDF_Builder_Analytics_Manager::get_instance() !== null,
         'backup_recovery' => class_exists('PDF_Builder_Backup_Recovery') && PDF_Builder_Backup_Recovery::get_instance() !== null,

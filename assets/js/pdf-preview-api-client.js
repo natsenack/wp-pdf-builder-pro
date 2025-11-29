@@ -485,12 +485,8 @@ class PDFPreviewAPI {
      * Affiche un message d'erreur
      */
     showError(message) {
-        // Notifications supprimées - système retiré
-        // if (typeof toastr !== 'undefined') {
-        //     toastr.error(message);
-        // } else {
-        //     alert(message);
-        // }
+        // Notification system removed - log to console instead
+        console.error('PDF Preview Error:', message);
     }
 }
 

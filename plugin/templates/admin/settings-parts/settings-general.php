@@ -224,28 +224,16 @@
                                 button: submitBtn[0],
                                 context: 'General Settings',
                                 successCallback: (result, originalData) => {
-                                    // Afficher une notification de succès - supprimé
-                                    // if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                    //     PDF_Builder_Notification_Manager.show_toast('Paramètres sauvegardés avec succès !', 'success');
-                                    // } else {
-                                    //     alert('Paramètres sauvegardés avec succès !');
-                                    // }
+                                    // Log success
+                                    console.log('Paramètres sauvegardés avec succès !');
                                 },
                                 errorCallback: (result, originalData) => {
-                                    // Afficher une notification d'erreur - supprimé
-                                    // if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                    //     PDF_Builder_Notification_Manager.show_toast('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'), 'error');
-                                    // } else {
-                                    //     alert('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'));
-                                    // }
+                                    // Log error
+                                    console.error('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'));
                                 }
                             }).catch(error => {
                                 console.error('Erreur AJAX:', error);
-                                // if (typeof PDF_Builder_Notification_Manager !== 'undefined') {
-                                //     PDF_Builder_Notification_Manager.show_toast('Erreur réseau lors de la sauvegarde', 'error');
-                                // } else {
-                                //     alert('Erreur réseau lors de la sauvegarde');
-                                // }
+                                console.error('Erreur réseau lors de la sauvegarde');
                             });
                         } else {
                             // Fallback si le gestionnaire AJAX n'est pas disponible
@@ -294,4 +282,138 @@
                         box-shadow: 0 0 0 1px #28a745, 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
                     }
                </style>
-            </section>
+           </section>
+
+           <!-- Section Notifications -->
+           <section class="general-section">
+               <h3>🔔 Système de Notifications</h3>
+
+               <article style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                   <h4 style="margin-top: 0; color: #155724; font-size: 16px;">⚙️ Configuration des Notifications</h4>
+                   <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
+                   Personnalisez l'apparence et le comportement des notifications dans l'éditeur PDF Builder.
+                   </p>
+
+                   <table class="form-table">
+                       <tr>
+                           <th scope="row"><label for="notifications_enabled">Activer les notifications</label></th>
+                           <td>
+                               <label class="toggle-switch">
+                                   <input type="checkbox" id="notifications_enabled" name="notifications_enabled"
+                                       value="1" <?php checked(get_option('pdf_builder_notifications_enabled', '1'), '1'); ?> />
+                                   <span class="toggle-slider"></span>
+                               </label>
+                               <p class="description">Active ou désactive le système de notifications</p>
+                           </td>
+                       </tr>
+                       <tr>
+                           <th scope="row"><label for="notifications_position">Position des notifications</label></th>
+                           <td>
+                               <select id="notifications_position" name="notifications_position">
+                                   <option value="top-right" <?php selected(get_option('pdf_builder_notifications_position', 'top-right'), 'top-right'); ?>>En haut à droite</option>
+                                   <option value="top-left" <?php selected(get_option('pdf_builder_notifications_position', 'top-right'), 'top-left'); ?>>En haut à gauche</option>
+                                   <option value="bottom-right" <?php selected(get_option('pdf_builder_notifications_position', 'top-right'), 'bottom-right'); ?>>En bas à droite</option>
+                                   <option value="bottom-left" <?php selected(get_option('pdf_builder_notifications_position', 'top-right'), 'bottom-left'); ?>>En bas à gauche</option>
+                                   <option value="top-center" <?php selected(get_option('pdf_builder_notifications_position', 'top-right'), 'top-center'); ?>>En haut centré</option>
+                                   <option value="bottom-center" <?php selected(get_option('pdf_builder_notifications_position', 'top-right'), 'bottom-center'); ?>>En bas centré</option>
+                               </select>
+                               <p class="description">Choisissez où afficher les notifications</p>
+                           </td>
+                       </tr>
+                       <tr>
+                           <th scope="row"><label for="notifications_duration">Durée d'affichage (ms)</label></th>
+                           <td>
+                               <input type="number" id="notifications_duration" name="notifications_duration"
+                                   value="<?php echo esc_attr(get_option('pdf_builder_notifications_duration', '5000')); ?>"
+                                   min="1000" max="30000" step="500" />
+                               <p class="description">Durée en millisecondes avant que la notification se ferme automatiquement (1000-30000ms)</p>
+                           </td>
+                       </tr>
+                   </table>
+
+                   <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px;">
+                       <h5 style="margin: 0 0 10px 0; color: #495057;">🧪 Tester les notifications</h5>
+                       <p style="margin: 0 0 15px 0; font-size: 13px; color: #666;">
+                       Cliquez sur les boutons ci-dessous pour tester chaque type de notification :
+                       </p>
+                       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                           <button type="button" class="button button-secondary" onclick="testNotification('success')">
+                               ✅ Test Succès
+                           </button>
+                           <button type="button" class="button button-secondary" onclick="testNotification('error')">
+                               ❌ Test Erreur
+                           </button>
+                           <button type="button" class="button button-secondary" onclick="testNotification('warning')">
+                               ⚠️ Test Avertissement
+                           </button>
+                           <button type="button" class="button button-secondary" onclick="testNotification('info')">
+                               ℹ️ Test Information
+                           </button>
+                       </div>
+                   </div>
+               </article>
+
+               <script>
+               function testNotification(type) {
+                   const messages = {
+                       'success': '✅ Test réussi ! Les notifications fonctionnent correctement.',
+                       'error': '❌ Test d\'erreur ! Vérifiez la configuration.',
+                       'warning': '⚠️ Test d\'avertissement ! Attention requise.',
+                       'info': 'ℹ️ Test d\'information ! Voici un message informatif.'
+                   };
+
+                   if (window.PDFBuilderNotifications) {
+                       window.PDFBuilderNotifications.show(messages[type], type);
+                   } else {
+                       alert('Le système de notifications n\'est pas chargé. Actualisez la page.');
+                   }
+               }
+               </script>
+
+               <style>
+               .toggle-switch {
+                   position: relative;
+                   display: inline-block;
+                   width: 50px;
+                   height: 24px;
+               }
+
+               .toggle-switch input {
+                   opacity: 0;
+                   width: 0;
+                   height: 0;
+               }
+
+               .toggle-slider {
+                   position: absolute;
+                   cursor: pointer;
+                   top: 0;
+                   left: 0;
+                   right: 0;
+                   bottom: 0;
+                   background-color: #ccc;
+                   transition: 0.3s;
+                   border-radius: 24px;
+               }
+
+               .toggle-slider:before {
+                   position: absolute;
+                   content: "";
+                   height: 18px;
+                   width: 18px;
+                   left: 3px;
+                   bottom: 3px;
+                   background-color: white;
+                   transition: 0.3s;
+                   border-radius: 50%;
+               }
+
+               input:checked + .toggle-slider {
+                   background-color: #2563eb;
+               }
+
+               input:checked + .toggle-slider:before {
+                   transform: translateX(26px);
+               }
+               </style>
+           </section>

@@ -1081,17 +1081,17 @@ class PDF_Builder_Advanced_Reporting {
     }
 
     /**
-     * Affiche les notifications de rapport
+     * Affiche les messages de rapport (succès/erreur)
      */
     public function display_report_notices() {
-        // Notifications de génération de rapport
+        // Message de génération de rapport
         if (isset($_GET['report_generated'])) {
             echo '<div class="notice notice-success is-dismissible">';
             echo '<p>' . pdf_builder_translate('Rapport généré avec succès.', 'reporting') . '</p>';
             echo '</div>';
         }
 
-        // Notifications d'erreur de rapport
+        // Message d'erreur de rapport
         if (isset($_GET['report_error'])) {
             echo '<div class="notice notice-error is-dismissible">';
             echo '<p>' . pdf_builder_translate('Erreur lors de la génération du rapport.', 'reporting') . '</p>';

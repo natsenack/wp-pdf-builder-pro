@@ -737,12 +737,26 @@ class PDF_Builder_Health_Monitor {
 
         $this->alerts_sent[$alert_key] = time();
 
-        // Envoyer via le système de notifications
-        pdf_builder_notify($level, 'Alerte de santé système', $message, [], $details);
-
-        // Logger l'alerte
+        // Legacy notification calls removed — send events to the logger only
         if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->log($level, "Health alert: $message", $details);
+            $logger = PDF_Builder_Logger::get_instance();
+            switch ($level) {
+                case 'critical':
+                    $logger->critical("Alerte de santé système: $message", $details);
+                    break;
+                case 'high':
+                case 'error':
+                    $logger->error("Alerte de santé système: $message", $details);
+                    break;
+                case 'warning':
+                case 'medium':
+                    $logger->warning("Alerte de santé système: $message", $details);
+                    break;
+                default:
+                    $logger->info("Alerte de santé système: $message", $details);
+            }
+        } else {
+            error_log("[PDF Builder Health] $level: $message");
         }
     }
 

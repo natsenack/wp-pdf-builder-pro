@@ -2352,15 +2352,15 @@ window.toggleRGPDControls = toggleRGPDControls;
                     button: floatingSaveBtn,
                     context: 'PDF Builder',
                     successCallback: (result, originalData) => {
-                        // Show success notification if available
+                        // Log success
                         console.log('Paramètres sauvegardés avec succès !');
                     },
                     errorCallback: (result, originalData) => {
-                        // Show error notification if available
+                        // Log error
                         console.error('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'));
                     }
                 }).catch(error => {
-                    // Show error notification if available
+                    // Log network error
                     console.error('Erreur réseau lors de la sauvegarde');
                     console.error('Floating save error:', error);
                 });

@@ -960,12 +960,10 @@ class PDFPreviewAPI {
      * Affiche un message d'erreur
      */
     showError(message) {
-        // Notifications supprimées - système retiré
-        // if (typeof toastr !== 'undefined') {
-        //     toastr.error(message);
-        // } else {
-        //     alert(message);
-        // }
+        // No UI notification: log error to console
+        if (typeof console !== 'undefined' && console.error) {
+            console.error(message);
+        }
     }
 }
 

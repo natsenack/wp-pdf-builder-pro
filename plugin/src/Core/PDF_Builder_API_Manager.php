@@ -48,7 +48,7 @@ class PDF_Builder_API_Manager {
         // Actions d'intégration
         add_action('pdf_builder_api_sync', [$this, 'sync_with_external_services']);
         add_action('pdf_builder_api_backup', [$this, 'backup_to_external_services']);
-        add_action('pdf_builder_api_notification', [$this, 'send_external_notifications']);
+        // External notifications removed - no action registered
 
         // Nettoyage des tokens expirés
         add_action('pdf_builder_hourly_cleanup', [$this, 'cleanup_expired_tokens']);
@@ -380,37 +380,7 @@ class PDF_Builder_API_Manager {
         return $results;
     }
 
-    /**
-     * Envoie des notifications vers les services externes
-     */
-    public function send_external_notifications($message, $level = 'info', $services = null) {
-        $services = $services ?: array_keys($this->connections);
-        $results = [];
-
-        foreach ($services as $service) {
-            if (!isset($this->connections[$service])) {
-                continue;
-            }
-
-            try {
-                $client = $this->get_api_client($service, $this->decrypt_credentials($this->connections[$service]['credentials']));
-                $result = $client->send_notification($message, $level);
-
-                $results[$service] = [
-                    'success' => true,
-                    'result' => $result
-                ];
-
-            } catch (Exception $e) {
-                $results[$service] = [
-                    'success' => false,
-                    'error' => $e->getMessage()
-                ];
-            }
-        }
-
-        return $results;
-    }
+    // External notification function removed
 
     /**
      * Gère les webhooks entrants
@@ -496,10 +466,8 @@ class PDF_Builder_API_Manager {
             $this->save_connections();
 
             // Notifier
-            pdf_builder_notify('warning', 'Tokens API expirés',
-                'Les tokens suivants ont expiré: ' . implode(', ', $expired), [], [
-                'expired_services' => $expired
-            ]);
+                // Legacy notification calls removed — write a warning to the logger instead
+                PDF_Builder_Logger::get_instance()->warning('Tokens API expirés: Les tokens suivants ont expiré: ' . implode(', ', $expired));
         }
     }
 
@@ -821,9 +789,7 @@ function pdf_builder_backup_external($path, $services = null) {
     return PDF_Builder_API_Manager::get_instance()->backup_to_external_services($path, $services);
 }
 
-function pdf_builder_notify_external($message, $level = 'info', $services = null) {
-    return PDF_Builder_API_Manager::get_instance()->send_external_notifications($message, $level, $services);
-}
+// pdf_builder_notify_external removed - external notifications disabled
 
 // Initialiser le gestionnaire d'APIs
 add_action('plugins_loaded', function() {

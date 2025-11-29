@@ -27,9 +27,7 @@
                     $test_mode_enabled = get_option('pdf_builder_license_test_mode_enabled', false);
                     $test_key = get_option('pdf_builder_license_test_key', '');
                     $test_key_expires = get_option('pdf_builder_license_test_key_expires', '');
-                    // Email notifications
-                    $notification_email = get_option('pdf_builder_license_notification_email', get_option('admin_email'));
-                    $enable_expiration_notifications = get_option('pdf_builder_license_enable_notifications', true);
+                    // Email notifications removed — no UI or settings for license expiration notifications
                     // is_premium si vraie licence OU si clé de test existe
                     $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
                     // is_test_mode si clé de test existe
@@ -817,45 +815,5 @@
                         </div>
                     </section>
 
-                    <!-- Section Notifications par Email (intégrée au système unifié) -->
-                    <section class="licence-section" style="background: linear-gradient(135deg, #e7f5ff 0%, #f0f9ff 100%); border: none; color: #343a40; box-shadow: 0 4px 12px rgba(0,102,204,0.15); margin-top: 30px;">
-                        <h3 style="color: #003d7a; display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
-                            📧 Notifications par Email
-                        </h3>
-
-                        <p style="color: #003d7a; margin: 0 0 25px 0; line-height: 1.6; font-size: 14px;">
-                            Recevez une notification par email quand votre licence expire bientôt. C'est une excellente façon de ne jamais oublier de renouveler votre licence.
-                        </p>
-
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start;">
-                            <!-- Toggle Notifications -->
-                            <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
-                                <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: 600; color: #003d7a;">
-                                    <input type="checkbox" name="enable_expiration_notifications" value="1" <?php checked($enable_expiration_notifications, 1); ?> style="width: 20px; height: 20px; cursor: pointer; margin-top: 2px; accent-color: #0066cc; flex-shrink: 0;">
-                                    <span style="line-height: 1.4;">
-                                        Activer les notifications d'expiration<br>
-                                        <span style="font-weight: 400; color: #666; font-size: 12px; display: block; margin-top: 6px;">
-                                            ✓ 30 jours avant l'expiration<br>
-                                            ✓ 7 jours avant l'expiration
-                                        </span>
-                                    </span>
-                                </label>
-                            </div>
-
-                            <!-- Email Input -->
-                            <div style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
-                                <label for="notification_email" style="display: block; font-weight: 600; color: #003d7a; margin-bottom: 10px; font-size: 14px;">
-                                    Email pour les notifications :
-                                </label>
-                                <input type="email" name="notification_email" id="notification_email" value="<?php echo esc_attr($notification_email); ?>"
-                                    placeholder="admin@example.com"
-                                    style="width: 100%; padding: 10px 12px; border: 2px solid #0066cc; border-radius: 6px; font-size: 13px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05);"
-                                    onfocus="this.style.borderColor='#003d7a'; this.style.boxShadow='0 0 0 3px rgba(0,102,204,0.1)';"
-                                    onblur="this.style.borderColor='#0066cc'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.05)';">
-                                <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">
-                                    Défaut : adresse administrateur du site
-                                </p>
-                            </div>
-                        </div>
-                    </section>
+                    <!-- Section Notifications removed -->
             </form>

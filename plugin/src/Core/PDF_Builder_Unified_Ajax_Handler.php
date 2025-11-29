@@ -195,6 +195,11 @@ class PDF_Builder_Unified_Ajax_Handler {
             'gdpr_consent_analytics' => !empty($_POST['gdpr_consent_analytics']) ? '1' : '0',
             'gdpr_consent_templates' => !empty($_POST['gdpr_consent_templates']) ? '1' : '0',
             'gdpr_consent_marketing' => !empty($_POST['gdpr_consent_marketing']) ? '1' : '0',
+
+            // Notifications
+            'notifications_enabled' => !empty($_POST['notifications_enabled']) ? '1' : '0',
+            'notifications_position' => sanitize_text_field($_POST['notifications_position'] ?? 'top-right'),
+            'notifications_duration' => intval($_POST['notifications_duration'] ?? 5000),
         ];
 
         $saved_count = 0;
@@ -425,15 +430,11 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Sauvegarde des paramètres licence
      */
     private function save_license_settings() {
-        $settings = [
-            'license_enable_notifications' => isset($_POST['enable_expiration_notifications']) ? '1' : '0',
-        ];
+        // Notifications removed from the license settings — ensure any old option is deleted
+        delete_option('pdf_builder_license_enable_notifications');
 
-        foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
-        }
-
-        return count($settings);
+        // No license settings are handled here anymore
+        return 0;
     }
 
     /**

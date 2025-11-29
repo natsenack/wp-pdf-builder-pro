@@ -550,7 +550,7 @@ class PDF_Builder_License_Manager {
             $days_until_expiry = floor(($expires_at - time()) / (60 * 60 * 24));
 
             if ($days_until_expiry <= 7 && $days_until_expiry > 0) {
-                // Programmer une notification d'expiration
+                // Programmer un rappel d'expiration
                 if (!wp_next_scheduled('pdf_builder_license_expiring_soon')) {
                     wp_schedule_single_event(time() + 3600, 'pdf_builder_license_expiring_soon');
                 }
@@ -581,7 +581,7 @@ class PDF_Builder_License_Manager {
     }
 
     /**
-     * Affiche les notifications de licence
+    * Affiche les messages de licence
      */
     public function display_license_notices() {
         $status = $this->get_activation_status();
@@ -615,7 +615,7 @@ class PDF_Builder_License_Manager {
                 break;
         }
 
-        // Notification d'expiration prochaine
+        // Message d'expiration prochaine
         if ($this->is_license_active()) {
             $data = $this->get_license_data();
 

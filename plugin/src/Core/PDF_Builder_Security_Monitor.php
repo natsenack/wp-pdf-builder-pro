@@ -319,11 +319,8 @@ class PDF_Builder_Security_Monitor {
         // Bloquer immédiatement l'IP
         $this->block_ip($ip, 'Menace critique détectée: ' . $threat['description']);
 
-        // Notifier l'administrateur
-        pdf_builder_notify('critical', 'Menace de sécurité critique détectée', $threat['description'], [], [
-            'threat' => $threat,
-            'action_taken' => 'IP bloquée automatiquement'
-        ]);
+        // Legacy notification calls removed — log as critical
+        PDF_Builder_Logger::get_instance()->critical('Menace de sécurité critique détectée: ' . $threat['description'], ['threat' => $threat, 'action_taken' => 'IP bloquée automatiquement']);
 
         // Créer une sauvegarde d'urgence
         if (class_exists('PDF_Builder_Backup_Recovery_System')) {
@@ -337,10 +334,8 @@ class PDF_Builder_Security_Monitor {
     private function handle_high_threat($threat) {
         $ip = $threat['data']['ip'];
 
-        // Journaliser et notifier
-        pdf_builder_notify('high', 'Menace de sécurité élevée détectée', $threat['description'], [], [
-            'threat' => $threat
-        ]);
+        // Journaliser (ancienne UI) — log as error
+        PDF_Builder_Logger::get_instance()->error('Menace de sécurité élevée détectée: ' . $threat['description'], ['threat' => $threat]);
 
         // Temporiser l'IP si c'est une attaque par force brute
         if ($threat['type'] === self::THREAT_TYPE_BRUTE_FORCE) {
@@ -352,10 +347,8 @@ class PDF_Builder_Security_Monitor {
      * Gère les menaces moyennes
      */
     private function handle_medium_threat($threat) {
-        // Juste journaliser et notifier
-        pdf_builder_notify('medium', 'Menace de sécurité moyenne détectée', $threat['description'], [], [
-            'threat' => $threat
-        ]);
+        // Journaliser (ancienne UI) — log warning
+        PDF_Builder_Logger::get_instance()->warning('Menace de sécurité moyenne détectée: ' . $threat['description'], ['threat' => $threat]);
     }
 
     /**
@@ -466,8 +459,8 @@ class PDF_Builder_Security_Monitor {
         $issues = array_merge($issues, $suspicious_accounts);
 
         if (!empty($issues)) {
-            pdf_builder_notify('medium', 'Problèmes de sécurité détectés lors du scan horaire',
-                implode("\n", $issues), [], ['issues' => $issues]);
+            // Legacy notification calls removed — log as warning
+            PDF_Builder_Logger::get_instance()->warning('Problèmes de sécurité détectés lors du scan horaire: ' . implode("\n", $issues), ['issues' => $issues]);
         }
     }
 
@@ -486,8 +479,8 @@ class PDF_Builder_Security_Monitor {
         $issues = array_merge($issues, $security_updates);
 
         if (!empty($issues)) {
-            pdf_builder_notify('high', 'Rapport de sécurité quotidien',
-                implode("\n", $issues), [], ['issues' => $issues]);
+            // Legacy notification calls removed — log as error
+            PDF_Builder_Logger::get_instance()->error('Rapport de sécurité quotidien: ' . implode("\n", $issues), ['issues' => $issues]);
         }
     }
 

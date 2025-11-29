@@ -10,6 +10,16 @@ import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas
 import { injectResponsiveUtils } from '../utils/responsive.ts';
 import { useIsMobile, useIsTablet } from '../hooks/useResponsive.ts';
 
+// Déclaration des types pour les fonctions de notification globales
+declare global {
+  interface Window {
+    showSuccessNotification?: (message: string, duration?: number) => void;
+    showErrorNotification?: (message: string, duration?: number) => void;
+    showWarningNotification?: (message: string, duration?: number) => void;
+    showInfoNotification?: (message: string, duration?: number) => void;
+  }
+}
+
 // ✅ Add spin animation
 const spinStyles = `
   @keyframes spin {
@@ -89,87 +99,26 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
       // Effectuer la sauvegarde manuelle
       await saveTemplate();
       console.log('[PDF_BUILDER] Manual save successful');
-      
-      // Afficher l'indicateur de succès temporaire
-      setManualSaveSuccess(true);
-      setTimeout(() => setManualSaveSuccess(false), 3000); // Disparaît après 3 secondes
-      
+
+      // Afficher une notification de succès
+      if (typeof window !== 'undefined' && window.showSuccessNotification) {
+        window.showSuccessNotification('Template sauvegardé avec succès !');
+      }
+
     } catch (manualSaveError) {
       console.error('[PDF_BUILDER] Manual save failed:', manualSaveError);
+
+      // Afficher une notification d'erreur
+      if (typeof window !== 'undefined' && window.showErrorNotification) {
+        window.showErrorNotification('Erreur lors de la sauvegarde du template');
+      }
+
       throw manualSaveError; // Re-throw pour que l'UI montre l'erreur
     }
   }, [saveTemplate]);
 
   return (
     <>
-      {/* Indicateur de succès manuel temporaire */}
-      {manualSaveSuccess && (
-        <div
-          style={{
-            position: 'fixed',
-            top: '50px',
-            right: '20px',
-            padding: '14px 20px',
-            WebkitBorderRadius: '6px',
-            MozBorderRadius: '6px',
-            msBorderRadius: '6px',
-            OBorderRadius: '6px',
-            borderRadius: '6px',
-            background: '#4CAF50',
-            border: '2px solid #388E3C',
-            WebkitBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-            MozBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-            msBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-            OBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            fontFamily: 'Arial, sans-serif',
-            color: '#fff',
-            zIndex: 999999,
-            display: '-webkit-box',
-            display: '-webkit-flex',
-            display: '-moz-box',
-            display: '-ms-flexbox',
-            display: 'flex',
-            WebkitBoxAlign: 'center',
-            WebkitAlignItems: 'center',
-            MozBoxAlign: 'center',
-            msFlexAlign: 'center',
-            alignItems: 'center',
-            WebkitGap: '12px',
-            MozGap: '12px',
-            gap: '12px',
-            minWidth: '200px',
-            animation: 'slideIn 0.3s ease-out'
-          }}
-        >
-          <span style={{ fontSize: '16px' }}>✓</span>
-          <span>Template sauvegardé !</span>
-        </div>
-      )}
-
-      {/* Styles pour les animations des notifications */}
-      <style>{`
-        @keyframes slideIn {
-          from {
-            -webkit-transform: translateX(100px);
-            -moz-transform: translateX(100px);
-            -ms-transform: translateX(100px);
-            -o-transform: translateX(100px);
-            transform: translateX(100px);
-            opacity: 0;
-          }
-          to {
-            -webkit-transform: translateX(0);
-            -moz-transform: translateX(0);
-            -ms-transform: translateX(0);
-            -o-transform: translateX(0);
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-      `}</style>
 
       <div
         className={`pdf-builder ${className || ''}`}

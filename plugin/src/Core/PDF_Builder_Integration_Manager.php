@@ -63,7 +63,7 @@ class PDF_Builder_Integration_Manager {
         ],
         self::SERVICE_SLACK => [
             'name' => 'Slack',
-            'description' => 'Notifications et intégrations Slack',
+            'description' => 'Intégrations Slack et Webhook',
             'auth_type' => 'oauth2',
             'scopes' => ['chat:write', 'files:write'],
             'bot_token_required' => true,
@@ -143,7 +143,7 @@ class PDF_Builder_Integration_Manager {
 
         // Filtres
         add_filter('pdf_builder_storage_backends', [$this, 'add_cloud_storage_backends']);
-        add_filter('pdf_builder_notification_channels', [$this, 'add_notification_channels']);
+        // Notification channels filter removed - notification system deleted
 
         // Nettoyage
         add_action('pdf_builder_monthly_cleanup', [$this, 'cleanup_integration_data']);
@@ -917,26 +917,7 @@ class PDF_Builder_Integration_Manager {
         return $backends;
     }
 
-    /**
-     * Ajoute les canaux de notification
-     */
-    public function add_notification_channels($channels) {
-        if ($this->get_connection_status(self::SERVICE_SLACK) === self::STATUS_CONNECTED) {
-            $channels['slack'] = [
-                'name' => 'Slack',
-                'handler' => [$this, 'send_slack_notification']
-            ];
-        }
-
-        if ($this->get_connection_status(self::SERVICE_WEBHOOK) === self::STATUS_CONNECTED) {
-            $channels['webhook'] = [
-                'name' => 'Webhook',
-                'handler' => [$this, 'send_webhook_notification']
-            ];
-        }
-
-        return $channels;
-    }
+    // Notification channels handler removed — notification system deleted
 
     /**
      * Nettoie les données d'intégration
