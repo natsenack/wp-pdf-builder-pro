@@ -2408,6 +2408,12 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Log success
                         console.log('Paramètres sauvegardés avec succès !');
 
+                        // Recharger la page pour refléter les nouvelles valeurs sauvegardées
+                        console.log('🔄 [PDF Builder] Rechargement de la page pour mettre à jour l\'interface...');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000); // Attendre 1 seconde pour que l'utilisateur voie le message de succès
+
                         // Notification gérée par le système centralisé
                     },
                     errorCallback: (result, originalData) => {
