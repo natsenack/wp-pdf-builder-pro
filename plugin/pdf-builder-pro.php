@@ -624,7 +624,7 @@ function pdf_builder_save_settings_ajax() {
     // }
 
     // if (!$nonce_valid) {
-    //     wp_send_json_error('Nonce invalide');
+    //     wp_send_json_error('Nonce check disabled for debugging');
     //     return;
     // }
 
