@@ -269,6 +269,18 @@ function pdf_builder_load_core()
         }
     }
 
+    // Charger les managers Admin depuis src/Admin/Managers/
+    $admin_managers = array(
+        'SettingsManager.php',
+        'TemplateManager.php'
+    );
+    foreach ($admin_managers as $manager) {
+        $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Managers/' . $manager;
+        if (file_exists($manager_path)) {
+            require_once $manager_path;
+        }
+    }
+
     // Charger les utilitaires essentiels depuis src/utilities/
     $utilities = array(
         'PDF_Builder_Onboarding_Manager.php',
