@@ -518,10 +518,26 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         }
 
         $result = update_option('pdf_builder_settings', $new_settings);
+
+        // Sauvegarder aussi les paramètres canvas si fournis (pour le bouton flottant)
+        if (isset($_POST['canvas_settings']) && !empty($_POST['canvas_settings'])) {
+            $canvas_settings = json_decode(stripslashes($_POST['canvas_settings']), true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($canvas_settings)) {
+                update_option('pdf_builder_canvas_settings', $canvas_settings);
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('PDF Builder: Canvas settings saved via floating button: ' . count($canvas_settings) . ' settings');
+                }
+            } else {
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('PDF Builder: Invalid canvas settings JSON: ' . json_last_error_msg());
+                }
+            }
+        }
+
         try {
             // Debug: Always log the result for troubleshooting
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                
+
             }
 
             // Simplified success logic: if no exception was thrown, consider it successful
@@ -532,7 +548,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             }
         } catch (Exception $e) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                
+
             }
             if ($is_ajax) {
                 send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres: ' . $e->getMessage());
@@ -2605,12 +2621,21 @@ window.toggleRGPDControls = toggleRGPDControls;
                 formData.append('action', 'pdf_builder_save_settings');
                 formData.append('tab', 'all'); // Toujours sauvegarder tous les onglets
 
+                // Inclure aussi les paramètres canvas depuis window.pdfBuilderCanvasSettings
+                if (window.pdfBuilderCanvasSettings) {
+                    formData.append('canvas_settings', JSON.stringify(window.pdfBuilderCanvasSettings));
+                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        console.log('📤 [PDF Builder] Paramètres canvas inclus:', window.pdfBuilderCanvasSettings);
+                    }
+                }
+
                 if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                     console.log('📤 [PDF Builder] Envoi des données du formulaire:', {
                         tab: tabId,
                         action: 'pdf_builder_save_settings',
                         dataCount: Array.from(formData.entries()).length,
-                        collectedData: collectedData
+                        collectedData: collectedData,
+                        canvasSettingsIncluded: !!window.pdfBuilderCanvasSettings
                     });
                 }
 
@@ -2663,6 +2688,8 @@ window.toggleRGPDControls = toggleRGPDControls;
                                 }
                             }
                         });
+
+                        // Les paramètres canvas sont déjà dans window.pdfBuilderCanvasSettings et ont été sauvegardés
 
                         // Notification gérée par le système centralisé
 
