@@ -327,7 +327,7 @@ function pdf_builder_ajax_handler_dispatch() {
                 wp_send_json_error('Handler not implemented - use settings-ajax.php');
                 break;
             case 'pdf_builder_test_routes':
-                pdf_builder_test_routes_handler();
+                wp_send_json_error('Handler not implemented - use settings-ajax.php');
                 break;
             case 'pdf_builder_export_diagnostic':
                 pdf_builder_export_diagnostic_handler();
@@ -2327,29 +2327,6 @@ function pdf_builder_get_cache_metrics_handler() {
 function pdf_builder_save_all_settings_handler() {
     // Utiliser la même logique que pdf_builder_save_settings_ajax
     pdf_builder_save_settings_ajax();
-}
-
-/**
- * Handler pour tester les routes (dispatcher)
- */
-function pdf_builder_test_routes_handler() {
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    // Test simple des routes
-    wp_send_json_success(array(
-        'routes_working' => true,
-        'message' => 'Routes fonctionnelles'
-    ));
 }
 
 /**
