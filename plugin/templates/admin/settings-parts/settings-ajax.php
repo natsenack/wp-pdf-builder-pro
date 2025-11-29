@@ -704,11 +704,6 @@ function pdf_builder_save_settings_handler() {
 // Canvas settings AJAX handler
 function pdf_builder_save_canvas_settings_handler() {
 
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        send_ajax_response(false, 'Erreur de sécurité - nonce invalide.');
-        return;
-    }
-
     $category = PDF_Builder_Sanitizer::text($_POST['category'] ?? 'dimensions');
 
     try {
@@ -1063,12 +1058,6 @@ function pdf_builder_save_canvas_settings_handler() {
 // Handler pour récupérer les paramètres canvas
 function pdf_builder_get_canvas_settings_handler() {
     try {
-        // Vérifier le nonce - utiliser le même que PDF_Builder_Admin
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-            send_ajax_response(false, 'Nonce invalide');
-            return;
-        }
-
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
             send_ajax_response(false, 'Permissions insuffisantes.');
@@ -1247,12 +1236,6 @@ function pdf_builder_get_canvas_settings_handler() {
  */
 function pdf_builder_get_all_canvas_settings_handler() {
     try {
-        // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-            send_ajax_response(false, 'Nonce invalide');
-            return;
-        }
-
         // Get all canvas settings in the same format as settings-canvas-params.php
         $canvas_settings = [
             'default_canvas_format' => get_option('pdf_builder_canvas_format', 'A4'),
@@ -1457,12 +1440,6 @@ function pdf_builder_save_all_settings_handler() {
  * AJAX handler for saving cache settings
  */
 function pdf_builder_save_cache_settings_handler() {
-    // Verify nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -1508,12 +1485,6 @@ function pdf_builder_save_cache_settings_handler() {
  * AJAX handler for clearing cache
  */
 function pdf_builder_clear_cache_handler() {
-    // Verify nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
     // Check permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
@@ -1561,13 +1532,7 @@ function pdf_builder_clear_cache_handler() {
  * AJAX handler for getting cache metrics
  */
 function pdf_builder_get_cache_metrics_handler() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
-
-    // Check permissions
+    // Vérifier les permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
         return;
