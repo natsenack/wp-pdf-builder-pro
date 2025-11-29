@@ -310,4 +310,5 @@ class PDF_Builder_UI_Notification_Manager {
 // Alias pour maintenir la compatibilité avec le code existant
 class_alias('PDF_Builder\\Utilities\\PDF_Builder_UI_Notification_Manager', 'PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager');
 / /   F o r c e   d e p l o y  
+ / /   F o r c e   d e p l o y   2  
  
