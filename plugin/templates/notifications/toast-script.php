@@ -26,6 +26,7 @@ $escaped_json = str_replace('</script>', '<\/script>', $json_toasts);
 $escaped_json = str_replace('<!--', '<\!--', $escaped_json);
 $escaped_json = str_replace('-->', '--\>', $escaped_json);
 ?>
+<!-- Script d'injection des données toast -->
 <script>
 try {
     window.pdfBuilderToasts = <?php echo $escaped_json; ?>;
