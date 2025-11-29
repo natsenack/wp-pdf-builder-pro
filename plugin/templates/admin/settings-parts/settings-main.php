@@ -2810,7 +2810,26 @@ window.toggleRGPDControls = toggleRGPDControls;
                             }
                         });
 
-                        // Les paramètres canvas sont déjà dans window.pdfBuilderCanvasSettings et ont été sauvegardés
+                        // Mettre à jour les données JavaScript avec les valeurs sauvegardées depuis le serveur
+                        if (originalData && originalData.data) {
+                            // Mettre à jour window.pdfBuilderSavedSettings avec les nouvelles valeurs
+                            if (typeof window.pdfBuilderSavedSettings === 'object') {
+                                // Fusionner les nouvelles valeurs sauvegardées
+                                Object.assign(window.pdfBuilderSavedSettings, originalData.data);
+                            }
+
+                            // Mettre à jour window.pdfBuilderCanvasSettings si des paramètres canvas ont été sauvegardés
+                            if (originalData.data.canvas_settings) {
+                                window.pdfBuilderCanvasSettings = originalData.data.canvas_settings;
+                            }
+                        }
+
+                        // Recharger les previews avec les nouvelles données
+                        if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeAllPreviews === 'function') {
+                            setTimeout(() => {
+                                window.PDF_Builder_Preview_Manager.initializeAllPreviews();
+                            }, 500);
+                        }
 
                         // Notification gérée par le système centralisé
 
