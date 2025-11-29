@@ -303,6 +303,17 @@ function pdf_builder_load_core()
         }
     }
 
+    // Charger les processors Admin depuis src/Admin/Processors/
+    $admin_processors = array(
+        'TemplateProcessor.php'
+    );
+    foreach ($admin_processors as $processor) {
+        $processor_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Processors/' . $processor;
+        if (file_exists($processor_path)) {
+            require_once $processor_path;
+        }
+    }
+
     // Charger les utilitaires essentiels depuis src/utilities/
     $utilities = array(
         'PDF_Builder_Onboarding_Manager.php',
