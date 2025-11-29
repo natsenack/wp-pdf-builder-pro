@@ -49,6 +49,7 @@ class PDF_Builder_UI_Notification_Manager {
     private function __construct() {
         add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action('wp_ajax_pdf_builder_dismiss_notification', [$this, 'ajax_dismiss_notification']);
+        add_action('wp_ajax_pdf_builder_show_toast', [$this, 'ajax_show_toast']);
         add_action('admin_notices', [$this, 'render_admin_notices']);
         add_action('wp_footer', [$this, 'render_toast_container']);
         add_action('admin_footer', [$this, 'render_toast_container']);
@@ -196,6 +197,24 @@ class PDF_Builder_UI_Notification_Manager {
     }
 
     /**
+     * AJAX handler pour afficher un toast depuis JavaScript
+     */
+    public function ajax_show_toast() {
+        check_ajax_referer('pdf_builder_notifications', 'nonce');
+
+        $message = sanitize_text_field($_POST['message'] ?? '');
+        $type = sanitize_text_field($_POST['type'] ?? self::TYPE_SUCCESS);
+        $duration = intval($_POST['duration'] ?? 4000);
+
+        if ($message) {
+            $this->add_toast($message, $type, $duration);
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Message manquant');
+        }
+    }
+
+    /**
      * Rendre toutes les notifications en attente
      */
     public function render_all() {
@@ -278,4 +297,15 @@ class PDF_Builder_UI_Notification_Manager {
             $instance->add_inline($message, self::TYPE_INFO);
         }
     }
+
+    /**
+     * Méthode statique pour afficher un toast (compatibilité JavaScript)
+     */
+    public static function show_toast($message, $type = self::TYPE_SUCCESS, $duration = 4000) {
+        $instance = self::get_instance();
+        $instance->add_toast($message, $type, $duration);
+    }
 }
+
+// Alias pour maintenir la compatibilité avec le code existant
+class_alias('PDF_Builder\\Utilities\\PDF_Builder_UI_Notification_Manager', 'PDF_Builder\\Utilities\\PDF_Builder_Notification_Manager');

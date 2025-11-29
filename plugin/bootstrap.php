@@ -948,7 +948,10 @@ function pdf_builder_load_core_on_demand()
             'pdf_builder_save_freemium_mode',
             'pdf_builder_update_onboarding_step',
             'pdf_builder_save_template_assignment',
-            'pdf_builder_mark_onboarding_complete'
+            'pdf_builder_mark_onboarding_complete',
+            // Actions AJAX du Notification Manager
+            'pdf_builder_show_toast',
+            'pdf_builder_dismiss_notification'
         ];
         if (in_array($_REQUEST['action'], $pdf_builder_ajax_actions)) {
             $load_core = true;
