@@ -32,7 +32,9 @@ jQuery(document).ready(function($) {
      * @param {...any} args - Arguments à logger
      */
     function debugLog(...args) {
-        // Debug logging disabled
+        if (isDebugEnabled('javascript')) {
+            console.log('[PDF Builder Debug]', ...args);
+        }
     }
 
     /**
@@ -40,7 +42,9 @@ jQuery(document).ready(function($) {
      * @param {...any} args - Arguments à logger
      */
     function debugLogVerbose(...args) {
-        // Verbose debug logging disabled
+        if (isDebugEnabled('javascript') && isDebugEnabled('verbose')) {
+            console.log('[PDF Builder Debug Verbose]', ...args);
+        }
     }
 
     /**
@@ -48,7 +52,9 @@ jQuery(document).ready(function($) {
      * @param {...any} args - Arguments à logger
      */
     function debugLogAjax(...args) {
-        // AJAX debug logging disabled
+        if (isDebugEnabled('ajax')) {
+            console.log('[PDF Builder AJAX]', ...args);
+        }
     }
 
     /**
@@ -56,7 +62,9 @@ jQuery(document).ready(function($) {
      * @param {...any} args - Arguments à logger
      */
     function debugLogPerformance(...args) {
-        // Performance debug logging disabled
+        if (isDebugEnabled('performance')) {
+            console.log('[PDF Builder Performance]', ...args);
+        }
     }
 
     // ==========================================

@@ -6,22 +6,26 @@
 
 // Fonctions de debug conditionnel - RÉACTIVÉES pour mesurer les FPS
 function isDebugEnabled() {
-    // Debug activé seulement si explicitement forcé
-    return window.location.search.includes('debug=force');
+    // Debug activé si explicitement forcé ou si activé dans les paramètres
+    return window.location.search.includes('debug=force') || (typeof window.pdfBuilderCanvasSettings !== 'undefined' && window.pdfBuilderCanvasSettings?.debug?.javascript);
 }
 
 function debugLog(...args) {
     if (isDebugEnabled()) {
-        window.PDFBuilderLogger.debug(...args);
+        console.log(...args);
     }
 }
 
 function debugError(...args) {
-    // Error logging disabled
+    if (isDebugEnabled()) {
+        console.error(...args);
+    }
 }
 
 function debugWarn(...args) {
-    // Warning logging disabled
+    if (isDebugEnabled()) {
+        console.warn(...args);
+    }
 }
 
 class PDFPreviewAPI {
@@ -961,9 +965,7 @@ class PDFPreviewAPI {
      */
     showError(message) {
         // No UI notification: log error to console
-        if (typeof console !== 'undefined' && console.error) {
-            console.error(message);
-        }
+        debugError(message);
     }
 }
 

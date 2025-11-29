@@ -5,7 +5,7 @@
  * Updated: 2025-11-29
  */
 
-const PDF_BUILDER_DEBUG = (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax.debug) || false;
+const PDF_BUILDER_DEBUG = (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax.debug) || (typeof window.pdfBuilderCanvasSettings !== 'undefined' && window.pdfBuilderCanvasSettings?.debug?.javascript) || false;
 
 (function($) {
     'use strict';
@@ -407,7 +407,7 @@ const PDF_BUILDER_DEBUG = (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAj
                     }
                 })
                 .fail((error) => {
-                    console.error('Failed to send AJAX notification:', error);
+                    if (PDF_BUILDER_DEBUG) console.error('Failed to send AJAX notification:', error);
                 });
         }
 

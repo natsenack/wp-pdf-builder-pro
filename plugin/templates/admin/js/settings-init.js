@@ -27,11 +27,15 @@
 
             // Fonction de debug sécurisée
             window.pdfBuilderDebug = function(...args) {
-                // Debug function disabled
+                if (PDF_BUILDER_DEBUG_ENABLED) {
+                    console.log('[PDF Builder Debug]', ...args);
+                }
             };
 
             window.pdfBuilderError = function(...args) {
-                // Error function disabled
+                if (PDF_BUILDER_DEBUG_ENABLED) {
+                    console.error('[PDF Builder Error]', ...args);
+                }
             };
 
             // Ici nous pourrons ajouter toute la logique d'initialisation

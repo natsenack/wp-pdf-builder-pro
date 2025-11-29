@@ -512,7 +512,7 @@ export const Header = memo(function Header({
         <button
           onClick={async () => {
             const startTime = performance.now();
-            console.log('🚀 [PDF Builder] Bouton Enregistrer cliqué', {
+            debugLog('🚀 [PDF Builder] Bouton Enregistrer cliqué', {
               templateName,
               isModified: deferredIsModified,
               isSaving: deferredIsSaving,
@@ -552,12 +552,12 @@ export const Header = memo(function Header({
             });
 
             try {
-              console.log('⏳ [PDF Builder] Début de la sauvegarde...');
+              debugLog('⏳ [PDF Builder] Début de la sauvegarde...');
               await onSave();
               const endTime = performance.now();
               const saveDuration = endTime - startTime;
 
-              console.log('✅ [PDF Builder] Sauvegarde réussie', {
+              debugLog('✅ [PDF Builder] Sauvegarde réussie', {
                 templateName,
                 timestamp: new Date().toISOString(),
                 duration: `${saveDuration.toFixed(2)}ms`,
@@ -575,7 +575,7 @@ export const Header = memo(function Header({
               });
 
               // Log des métriques de performance
-              console.log('📊 [PDF Builder] Métriques de sauvegarde', {
+              debugLog('📊 [PDF Builder] Métriques de sauvegarde', {
                 duration: saveDuration,
                 avgTimePerElement: state.elements?.length ? saveDuration / state.elements.length : 0,
                 memoryUsage: performance.memory ? {
@@ -589,7 +589,7 @@ export const Header = memo(function Header({
               const endTime = performance.now();
               const failedDuration = endTime - startTime;
 
-              console.error('❌ [PDF Builder] Erreur lors de la sauvegarde:', {
+              debugError('❌ [PDF Builder] Erreur lors de la sauvegarde:', {
                 error: error instanceof Error ? {
                   message: error.message,
                   stack: error.stack,
@@ -609,7 +609,7 @@ export const Header = memo(function Header({
           }}
           disabled={deferredIsSaving || !deferredIsModified || deferredIsLoading}
           onMouseEnter={() => {
-            console.log('👆 [PDF Builder] Souris sur bouton Enregistrer', {
+            debugLog('👆 [PDF Builder] Souris sur bouton Enregistrer', {
               templateName,
               buttonState: {
                 disabled: deferredIsSaving || !deferredIsModified || deferredIsLoading,
@@ -622,7 +622,7 @@ export const Header = memo(function Header({
             setHoveredButton('save');
           }}
           onMouseLeave={() => {
-            console.log('👋 [PDF Builder] Souris quitte bouton Enregistrer', {
+            debugLog('👋 [PDF Builder] Souris quitte bouton Enregistrer', {
               templateName,
               timestamp: new Date().toISOString()
             });

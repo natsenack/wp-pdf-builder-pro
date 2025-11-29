@@ -6,25 +6,25 @@
 
 // Fonctions de debug conditionnel
 function isDebugEnabled() {
-    // Debug activé seulement si explicitement forcé
-    return window.location.search.includes('debug=force');
+    // Debug activé si explicitement forcé ou si activé dans les paramètres
+    return window.location.search.includes('debug=force') || (typeof window.pdfBuilderCanvasSettings !== 'undefined' && window.pdfBuilderCanvasSettings?.debug?.javascript);
 }
 
 function debugLog(...args) {
     if (isDebugEnabled()) {
-
+        console.log(...args);
     }
 }
 
 function debugError(...args) {
     if (isDebugEnabled()) {
-
+        console.error(...args);
     }
 }
 
 function debugWarn(...args) {
     if (isDebugEnabled()) {
-
+        console.warn(...args);
     }
 }
 
@@ -486,7 +486,7 @@ class PDFPreviewAPI {
      */
     showError(message) {
         // Notification system removed - log to console instead
-        console.error('PDF Preview Error:', message);
+        debugError('PDF Preview Error:', message);
     }
 }
 
