@@ -249,25 +249,13 @@
         }
 
         /**
-         * Mettre à jour le bouton "Tout fermer"
+         * Mettre à jour le bouton "Tout fermer" - Désactivé
          */
         updateDismissAllButton() {
+            // Fonctionnalité "Tout fermer" désactivée
             const existingButton = this.container.querySelector('.notifications-dismiss-all');
-            const notificationCount = this.container.querySelectorAll('.pdf-builder-notification:not(.dismissing)').length;
-
-            if (notificationCount > 1) {
-                if (!existingButton) {
-                    const button = document.createElement('button');
-                    button.className = 'notifications-dismiss-all';
-                    button.innerHTML = `<span class="dashicons dashicons-dismiss"></span> ${this.strings.dismiss_all || 'Tout fermer'}`;
-                    button.setAttribute('aria-label', this.strings.dismiss_all || 'Fermer toutes les notifications');
-
-                    this.container.insertBefore(button, this.container.firstChild);
-                }
-            } else {
-                if (existingButton) {
-                    existingButton.remove();
-                }
+            if (existingButton) {
+                existingButton.remove();
             }
         }
 
