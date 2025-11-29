@@ -2358,7 +2358,6 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                             // Collecter manuellement tous les champs pour s'assurer que les checkboxes non cochées sont incluses
                             const allInputs = tabForm.querySelectorAll('input, select, textarea');
-                            console.log(`📋 [PDF Builder] Onglet ${tab}: ${allInputs.length} champs trouvés`);
                             allInputs.forEach(input => {
                                 const name = input.name;
                                 if (name) {
@@ -2368,12 +2367,6 @@ window.toggleRGPDControls = toggleRGPDControls;
                                         value = input.checked ? '1' : '0';
                                         formData.append(name, value);
                                         collectedData[name] = value;
-                                        console.log(`📋 [PDF Builder] Collecté checkbox ${name}: ${value} (checked: ${input.checked})`);
-
-                                        // Log spécial pour developer_enabled
-                                        if (name === 'developer_enabled') {
-                                            console.log(`🔍 [PDF Builder] DEVELOPER_ENABLED: trouvé dans onglet ${tab}, valeur=${value}, checked=${input.checked}`);
-                                        }
                                     } else if (input.type === 'radio') {
                                         // Pour les radios, seulement si coché
                                         if (input.checked) {
@@ -2433,22 +2426,9 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                                 // Déclencher les fonctions de toggle si nécessaire
                                 if (fieldName === 'developer_enabled') {
-                                    console.log('🔄 [PDF Builder] Mise à jour des sections développeur...');
-                                    console.log('🔍 [PDF Builder] developer_enabled fieldElement:', fieldElement);
-                                    console.log('🔍 [PDF Builder] developer_enabled checked:', fieldElement ? fieldElement.checked : 'N/A');
-
                                     // Mettre à jour les sections développeur
                                     if (window.updateDeveloperSections) {
-                                        console.log('🔄 [PDF Builder] Appel de updateDeveloperSections...');
                                         window.updateDeveloperSections();
-                                        console.log('✅ [PDF Builder] Sections développeur mises à jour');
-
-                                        // Vérifier l'indicateur après mise à jour
-                                        const statusIndicator = document.querySelector('.developer-status-indicator');
-                                        console.log('🔍 [PDF Builder] Status indicator après mise à jour:', statusIndicator ? statusIndicator.textContent : 'Non trouvé');
-                                    } else {
-                                        console.error('❌ [PDF Builder] Fonction updateDeveloperSections non trouvée');
-                                        console.log('🔍 [PDF Builder] window.updateDeveloperSections:', typeof window.updateDeveloperSections);
                                     }
                                 }
                             } else if (fieldElement) {
