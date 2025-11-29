@@ -292,6 +292,17 @@ function pdf_builder_load_core()
         }
     }
 
+    // Charger les renderers Admin depuis src/Admin/Renderers/
+    $admin_renderers = array(
+        'HTMLRenderer.php'
+    );
+    foreach ($admin_renderers as $renderer) {
+        $renderer_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Renderers/' . $renderer;
+        if (file_exists($renderer_path)) {
+            require_once $renderer_path;
+        }
+    }
+
     // Charger les utilitaires essentiels depuis src/utilities/
     $utilities = array(
         'PDF_Builder_Onboarding_Manager.php',
