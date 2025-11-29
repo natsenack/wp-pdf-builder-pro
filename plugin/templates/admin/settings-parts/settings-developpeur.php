@@ -837,8 +837,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Appliquer l'état initial
         window.updateDeveloperSections();
 
-        // Écouter les changements
-        developerEnabledToggle.addEventListener('change', window.updateDeveloperSections);
+        // NE PAS écouter les changements du toggle - les indicateurs ne changent qu'à la sauvegarde
+        // developerEnabledToggle.addEventListener('change', window.updateDeveloperSections);
     }
 
     // Gestion du nettoyage complet de la licence
