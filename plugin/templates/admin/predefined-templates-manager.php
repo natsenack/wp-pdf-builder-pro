@@ -83,16 +83,16 @@ class PDF_Builder_Predefined_Templates_Manager
             ]
         ]);
 // Script pour gérer les paramètres URL (pour création automatique de template)
-        wp_add_inline_script('pdf-builder-predefined-templates', '
+        $inline_script = <<<JS
             jQuery(document).ready(function($) {
                 // Vérifier si des paramètres URL sont présents pour création automatique
                 const urlParams = new URLSearchParams(window.location.search);
-                const slug = urlParams.get(\'slug\');
-                const name = urlParams.get(\'name\');
-                const category = urlParams.get(\'category\');
-                const description = urlParams.get(\'description\');
-                const icon = urlParams.get(\'icon\');
-                const json = urlParams.get(\'json\');
+                const slug = urlParams.get('slug');
+                const name = urlParams.get('name');
+                const category = urlParams.get('category');
+                const description = urlParams.get('description');
+                const icon = urlParams.get('icon');
+                const json = urlParams.get('json');
                 if (slug && name && category && json) {
                     // Remplir automatiquement le formulaire
                     $("#template-slug").val(slug);
@@ -100,7 +100,7 @@ class PDF_Builder_Predefined_Templates_Manager
                     $("#template-category").val(category);
                     $("#template-description").val(description);
                     $("#template-icon").val(icon || "📄");
-                    // Décoder le JSON depuis l\'URL
+                    // Décoder le JSON depuis l'URL
                     try {
                         const decodedJson = decodeURIComponent(json);
                         $("#template-json").val(decodedJson);
@@ -113,9 +113,9 @@ class PDF_Builder_Predefined_Templates_Manager
                     }
                 }
                 // Gestion de la déconnexion développeur
-                $(\'#developer-logout-btn\').on(\'click\', function(e) {
+                $('#developer-logout-btn').on('click', function(e) {
                     e.preventDefault();
-                    if (confirm(\'Êtes-vous sûr de vouloir vous déconnecter du mode développeur ?\')) {
+                    if (confirm('Êtes-vous sûr de vouloir vous déconnecter du mode développeur ?')) {
                         $.ajax({
                             url: ajaxurl,
                             type: "POST",
@@ -136,7 +136,8 @@ class PDF_Builder_Predefined_Templates_Manager
                     }
                 });
             });
-        ');
+JS;
+        wp_add_inline_script('pdf-builder-predefined-templates', $inline_script);
     }
     /**
      * Enregistrer les paramètres développeur
