@@ -449,7 +449,7 @@ function pdf_builder_init()
     require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Unified_Ajax_Handler.php';
 
     // Initialiser le système de nonce unifié
-    $nonce_manager = new PDF_Builder_Nonce_Manager();
+    $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
     $unified_handler = new PDF_Builder_Unified_Ajax_Handler($nonce_manager);
 
     // Vérifier et créer les tables manquantes
