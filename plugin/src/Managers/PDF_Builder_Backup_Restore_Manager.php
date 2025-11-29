@@ -89,7 +89,11 @@ class PdfBuilderBackupRestoreManager
 
             // Sauvegarder les templates
             if (!isset($options['exclude_templates']) || !$options['exclude_templates']) {
-                $backup_data['data']['templates'] = $this->exportAllTemplates();
+                $templates = $this->exportAllTemplates();
+                if (is_wp_error($templates)) {
+                    throw new \Exception('Erreur lors de l\'export des templates: ' . $templates->get_error_message());
+                }
+                $backup_data['data']['templates'] = $templates;
             }
 
             // Sauvegarder la configuration
@@ -228,30 +232,44 @@ class PdfBuilderBackupRestoreManager
     {
         $templates = [];
 
-        // Récupérer tous les templates depuis la base de données
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'pdf_builder_templates';
+        try {
+            // Récupérer tous les templates depuis la base de données
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'pdf_builder_templates';
 
-        $results = $wpdb->get_results(
-            "SELECT * FROM $table_name ORDER BY created_at DESC",
-            ARRAY_A
-        );
+            // Vérifier si la table existe
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+                // La table n'existe pas, retourner un tableau vide
+                return $templates;
+            }
 
-        foreach ($results as $template) {
-            $templates[] = [
-                'id' => $template['id'],
-                'name' => $template['name'],
-                'description' => $template['description'],
-                'data' => json_decode($template['data'], true),
-                'user_id' => $template['user_id'],
-                'is_premium' => $template['is_premium'] ?? false,
-                'created_at' => $template['created_at'],
-                'updated_at' => $template['updated_at'],
-                'metadata' => json_decode($template['metadata'] ?? '{}', true)
-            ];
+            $results = $wpdb->get_results(
+                "SELECT * FROM $table_name ORDER BY created_at DESC",
+                ARRAY_A
+            );
+
+            if ($wpdb->last_error) {
+                return new \WP_Error('db_error', 'Erreur base de données: ' . $wpdb->last_error);
+            }
+
+            foreach ($results as $template) {
+                $templates[] = [
+                    'id' => $template['id'],
+                    'name' => $template['name'],
+                    'description' => $template['description'],
+                    'data' => json_decode($template['data'], true),
+                    'user_id' => $template['user_id'],
+                    'is_premium' => $template['is_premium'] ?? false,
+                    'created_at' => $template['created_at'],
+                    'updated_at' => $template['updated_at'],
+                    'metadata' => json_decode($template['metadata'] ?? '{}', true)
+                ];
+            }
+
+            return $templates;
+        } catch (\Exception $e) {
+            return new \WP_Error('export_error', 'Erreur lors de l\'export des templates: ' . $e->getMessage());
         }
-
-        return $templates;
     }
 
     /**
