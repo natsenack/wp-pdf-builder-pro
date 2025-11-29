@@ -410,4 +410,130 @@ class WooCommerceDataProvider implements DataProviderInterface
     {
         return $this->context;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function validateAndSanitizeData(array $data): array
+    {
+        $sanitized = [];
+        foreach ($data as $key => $value) {
+            $type = $this->guessDataType($key);
+            $sanitized[$key] = $this->validateAndSanitizeValue($value, $type);
+        }
+        return $sanitized;
+    }
+
+    /**
+     * Valide et sanitise une valeur individuelle selon le type
+     *
+     * @param mixed $value La valeur à valider
+     * @param string $type Le type de données attendu
+     * @return mixed La valeur validée et sanitizée
+     */
+    private function validateAndSanitizeValue($value, string $type = 'string')
+    {
+        switch ($type) {
+            case 'email':
+                return $this->sanitizeEmail($value);
+            case 'url':
+                return $this->sanitizeUrl($value);
+            case 'html':
+                return $this->sanitizeHtml($value);
+            case 'float':
+                return floatval($value);
+            case 'int':
+                return intval($value);
+            case 'string':
+            default:
+                return $this->sanitizeText($value);
+        }
+    }
+
+    /**
+     * Sanitise une adresse email
+     *
+     * @param mixed $value Valeur à sanitiser
+     * @return string Email sanitizé ou chaîne vide
+     */
+    private function sanitizeEmail($value): string
+    {
+        if (function_exists('is_email') && function_exists('sanitize_email')) {
+            return is_email($value) ? sanitize_email($value) : '';
+        }
+        // Fallback PHP
+        $value = filter_var($value, FILTER_SANITIZE_EMAIL);
+        return filter_var($value, FILTER_VALIDATE_EMAIL) ? $value : '';
+    }
+
+    /**
+     * Sanitise une URL
+     *
+     * @param mixed $value Valeur à sanitiser
+     * @return string URL sanitizée
+     */
+    private function sanitizeUrl($value): string
+    {
+        if (function_exists('esc_url_raw')) {
+            return esc_url_raw($value);
+        }
+        // Fallback PHP
+        return filter_var($value, FILTER_SANITIZE_URL);
+    }
+
+    /**
+     * Sanitise du HTML
+     *
+     * @param mixed $value Valeur à sanitiser
+     * @return string HTML sanitizé
+     */
+    private function sanitizeHtml($value): string
+    {
+        if (function_exists('wp_kses_post')) {
+            return wp_kses_post($value);
+        }
+        // Fallback PHP basique
+        return strip_tags($value, '<p><br><strong><em><a><ul><ol><li>');
+    }
+
+    /**
+     * Sanitise un texte
+     *
+     * @param mixed $value Valeur à sanitiser
+     * @return string Texte sanitizé
+     */
+    private function sanitizeText($value): string
+    {
+        if (function_exists('sanitize_text_field')) {
+            return sanitize_text_field($value);
+        }
+        // Fallback PHP
+        return htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Détermine le type de données d'après la clé
+     *
+     * @param string $key Clé de la donnée
+     * @return string Type de données
+     */
+    private function guessDataType(string $key): string
+    {
+        if (strpos($key, 'email') !== false) {
+            return 'email';
+        }
+        if (strpos($key, 'url') !== false || strpos($key, 'website') !== false) {
+            return 'url';
+        }
+        if (strpos($key, 'price') !== false || strpos($key, 'total') !== false || strpos($key, 'tax') !== false) {
+            return 'float';
+        }
+        if (strpos($key, 'quantity') !== false || strpos($key, 'count') !== false) {
+            return 'int';
+        }
+        if (strpos($key, 'notes') !== false || strpos($key, 'description') !== false) {
+            return 'html';
+        }
+        return 'string';
+    }
 }
