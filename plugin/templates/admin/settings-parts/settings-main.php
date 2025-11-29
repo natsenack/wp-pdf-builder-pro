@@ -2339,10 +2339,35 @@ window.toggleRGPDControls = toggleRGPDControls;
                     return;
                 }
 
-                console.log('📝 [PDF Builder] Formulaire trouvé pour l\'onglet:', tabId);
+                console.log('📝 [PDF Builder] Collecte des données de tous les onglets...');
 
-                // Collect form data - sauvegarder tous les onglets
-                const formData = new FormData(form);
+                // Collect form data from ALL tabs - sauvegarder tous les onglets
+                const formData = new FormData();
+
+                // Liste des onglets à traiter
+                const allTabs = ['general', 'licence', 'systeme', 'acces', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
+
+                // Parcourir tous les onglets et collecter leurs données
+                allTabs.forEach(tab => {
+                    const tabContent = document.getElementById(tab);
+                    if (tabContent) {
+                        const tabForm = tabContent.querySelector('form');
+                        if (tabForm) {
+                            console.log('📝 [PDF Builder] Collecte données onglet:', tab);
+                            // Ajouter les données du formulaire à formData
+                            const tabFormData = new FormData(tabForm);
+                            for (let [key, value] of tabFormData.entries()) {
+                                // Préfixer les clés pour éviter les conflits
+                                formData.append(key, value);
+                            }
+                        } else {
+                            console.log('⚠️ [PDF Builder] Aucun formulaire trouvé pour l\'onglet:', tab);
+                        }
+                    } else {
+                        console.log('⚠️ [PDF Builder] Contenu non trouvé pour l\'onglet:', tab);
+                    }
+                });
+
                 formData.append('action', 'pdf_builder_save_settings');
                 formData.append('tab', 'all'); // Toujours sauvegarder tous les onglets
 
