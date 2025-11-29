@@ -180,31 +180,44 @@ if ($Mode -eq "test") {
         }
     }
 
-    # Fonction optimisée pour créer un répertoire (sans récursion lente)
-    function New-FtpDirectoryFast {
+    # Ajouter tous les répertoires parents nécessaires (récursif)
+    $allDirs = @{}
+    foreach ($dir in $dirs.Keys) {
+        $currentDir = $dir
+        while ($currentDir -and $currentDir -ne "." -and $currentDir -ne "plugin") {
+            if (!$allDirs.ContainsKey($currentDir)) {
+                $allDirs[$currentDir] = $true
+            }
+            $currentDir = Split-Path $currentDir -Parent
+        }
+    }
+
+    # Fonction pour créer récursivement tous les répertoires nécessaires
+    function New-FtpDirectoryRecursive {
         param([string]$ftpPath)
 
         try {
+            # Créer le répertoire directement (FTP gère la récursion automatiquement)
             $ftpUri = "ftp://$FtpUser`:$FtpPass@$FtpHost$ftpPath/"
             $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
             $ftpRequest.UseBinary = $true
             $ftpRequest.UsePassive = $true
-            $ftpRequest.Timeout = 3000  # 3 secondes par répertoire
+            $ftpRequest.Timeout = 5000  # Augmenté pour la création récursive
             $ftpRequest.KeepAlive = $false
             $response = $ftpRequest.GetResponse()
             $response.Close()
             return $true
         } catch {
-            # Dossier existe probablement déjà
+            # Le répertoire existe probablement déjà, ou il y a eu une erreur
             return $false
         }
     }
 
-    # Créer tous les répertoires en parallèle
+    # Créer tous les répertoires en parallèle avec gestion récursive
     $createdDirs = 0
     $dirJobs = @()
-    foreach ($dir in $dirs.Keys) {
+    foreach ($dir in $allDirs.Keys) {
         # Corriger le calcul du chemin FTP
         if ($dir.StartsWith("plugin/")) {
             $ftpDir = $dir.Substring(7)
@@ -220,40 +233,47 @@ if ($Mode -eq "test") {
             $job = Start-Job -ScriptBlock {
                 param($ftpHost, $ftpUser, $ftpPass, $fullPath)
                 try {
+                    # Créer le répertoire récursivement
                     $ftpUri = "ftp://$using:FtpUser`:$using:FtpPass@$using:FtpHost$fullPath/"
                     $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
                     $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
                     $ftpRequest.UseBinary = $true
                     $ftpRequest.UsePassive = $true
-                    $ftpRequest.Timeout = 3000
+                    $ftpRequest.Timeout = 5000
                     $ftpRequest.KeepAlive = $false
                     $response = $ftpRequest.GetResponse()
                     $response.Close()
-                    return $true
+                    return @{ Success = $true; Path = $fullPath }
                 } catch {
-                    return $false
+                    return @{ Success = $false; Path = $fullPath; Error = $_.Exception.Message }
                 }
             } -ArgumentList $FtpHost, $FtpUser, $FtpPass, $fullPath
             $dirJobs += $job
         }
     }
 
-    # Attendre la fin de la création des répertoires (max 10 secondes)
-    $dirTimeout = 10
+    # Attendre la fin de la création des répertoires (max 15 secondes pour la récursion)
+    $dirTimeout = 15
     $dirStartTime = Get-Date
     while ($dirJobs.Count -gt 0 -and ((Get-Date) - $dirStartTime).TotalSeconds -lt $dirTimeout) {
         $completedDirJobs = $dirJobs | Where-Object { $_.State -eq 'Completed' }
         foreach ($job in $completedDirJobs) {
             $result = Receive-Job $job
-            if ($result) { $createdDirs++ }
+            if ($result.Success) {
+                $createdDirs++
+                Write-Host "   Repertoire cree: $($result.Path)" -ForegroundColor Green
+            } else {
+                Write-Host "   Repertoire existe deja ou erreur: $($result.Path)" -ForegroundColor Gray
+            }
             Remove-Job $job
         }
         $dirJobs = $dirJobs | Where-Object { $_.State -ne 'Completed' }
-        Start-Sleep -Milliseconds 100
+        Start-Sleep -Milliseconds 200  # Augmenté pour la création récursive
     }
 
     # Nettoyer les jobs restants
     foreach ($job in $dirJobs) {
+        Write-Host "   Timeout creation repertoire: $($job.Name)" -ForegroundColor Yellow
         Stop-Job $job
         Remove-Job $job
     }
