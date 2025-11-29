@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
 import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
-import { debugError } from '../utils/debug';
+import { debugError, debugWarn } from '../utils/debug';
 import { normalizeElementsBeforeSave, normalizeElementsAfterLoad, debugElementState } from '../utils/elementNormalization';
 
 export function useTemplate() {
@@ -182,7 +182,7 @@ export function useTemplate() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('[useTemplate] Response error text:', errorText);
+        debugError('[useTemplate] Response error text:', errorText);
         throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
       }
 
@@ -340,8 +340,8 @@ export function useTemplate() {
         !/Chrome/.test(navigator.userAgent) &&
         !/Chromium/.test(navigator.userAgent);
 
-      console.error(`❌ [LOAD TEMPLATE] Échec du chargement sur ${isChrome ? 'Chrome' : isFirefox ? 'Firefox' : isSafari ? 'Safari' : 'navigateur inconnu'}`);
-      console.error('❌ [LOAD TEMPLATE] Détails de l\'erreur:', {
+      debugError(`❌ [LOAD TEMPLATE] Échec du chargement sur ${isChrome ? 'Chrome' : isFirefox ? 'Firefox' : isSafari ? 'Safari' : 'navigateur inconnu'}`);
+      debugError('❌ [LOAD TEMPLATE] Détails de l\'erreur:', {
         message: error.message,
         stack: error.stack,
         name: error.name,
@@ -352,7 +352,7 @@ export function useTemplate() {
 
       // Tentative de fallback pour Chrome
       if (isChrome && error.message.includes('fetch')) {
-        console.warn('🔄 [LOAD TEMPLATE] Tentative de fallback pour Chrome - Nouvelle tentative avec options différentes');
+        debugWarn('🔄 [LOAD TEMPLATE] Tentative de fallback pour Chrome - Nouvelle tentative avec options différentes');
 
         try {
           // Attendre un peu avant retry
@@ -378,7 +378,7 @@ export function useTemplate() {
             return true;
           }
         } catch (fallbackError) {
-          console.error('❌ [LOAD TEMPLATE] Échec du fallback:', fallbackError);
+          debugError('❌ [LOAD TEMPLATE] Échec du fallback:', fallbackError);
         }
       }
 
@@ -515,7 +515,7 @@ export function useTemplate() {
       // console.log('[PDF_BUILDER_FRONTEND] Server response:', result);
 
       if (!result.success) {
-        console.error('[PDF_BUILDER_FRONTEND] Server returned error:', result.data);
+        debugError('[PDF_BUILDER_FRONTEND] Server returned error:', result.data);
         const errorMessage = result.data || 'Unknown error during save';
         throw new Error(errorMessage);
       }
@@ -531,8 +531,8 @@ export function useTemplate() {
       });
 
     } catch (error) {
-      console.error('[PDF_BUILDER_FRONTEND] Save failed:', error);
-      console.error('[useTemplate] SAVE - Error:', error);
+      debugError('[PDF_BUILDER_FRONTEND] Save failed:', error);
+      debugError('[useTemplate] SAVE - Error:', error);
       throw error;
     } finally {
       dispatch({ type: 'SET_TEMPLATE_SAVING', payload: false });

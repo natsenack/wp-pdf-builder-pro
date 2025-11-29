@@ -1271,13 +1271,6 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
         });
     }
 
-    // Add section to dev sections array for toggle
-    devSections.push('dev-notifications-test-section');
-
-    // Initial log
-    logToConsole('info', 'Notification test system initialized');
-    addNotificationLog('🚀 Système de test des notifications initialisé', 'system');
-
     // Function to test all notification types sequentially
     function testAllNotifications() {
         logToConsole('info', 'Testing all notification types sequentially');
@@ -1299,6 +1292,13 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
 
         testNext();
     }
+
+    // Add section to dev sections array for toggle
+    devSections.push('dev-notifications-test-section');
+
+    // Initial log
+    logToConsole('info', 'Notification test system initialized');
+    addNotificationLog('🚀 Système de test des notifications initialisé', 'system');
 
     // Delay the test execution until all scripts are loaded
     window.addEventListener('load', function() {
