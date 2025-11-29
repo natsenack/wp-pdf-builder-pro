@@ -16,14 +16,14 @@
 
 /* Positionnements */
 .pdf-builder-notifications-container[data-position="top-left"] {
-    top: 20px;
+    top: 30px;
     left: 20px;
     right: auto;
     bottom: auto;
 }
 
 .pdf-builder-notifications-container[data-position="top-right"] {
-    top: 20px;
+    top: 30px;
     right: 20px;
     left: auto;
     bottom: auto;
