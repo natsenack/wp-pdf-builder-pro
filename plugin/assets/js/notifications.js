@@ -521,6 +521,52 @@
         return originalInfo.call(this, message, options);
     };
 
+    // BLOQUER COMPLETEMENT LES NOTIFICATIONS DE TEST - Override global ultime
+    function isTestNotificationGlobal(message) {
+        if (!message) return false;
+
+        const testPatterns = [
+            /Test success/i,
+            /Test error/i,
+            /Test warning/i,
+            /Test info/i,
+            /Opération réussie/i,
+            /Erreur critique/i,
+            /Attention requise/i,
+            /Information importante/i,
+            /tous les types testés/i,
+            /notification affichée/i,
+            /Système de test/i,
+            /Page complètement chargée/i,
+            /Démarrage des tests/i
+        ];
+
+        return testPatterns.some(pattern => pattern.test(message));
+    }
+
+    const originalCreateElement = document.createElement;
+    document.createElement = function(tagName) {
+        const element = originalCreateElement.call(this, tagName);
+
+        // Si c'est une div, surveiller pour les notifications de test
+        if (tagName === 'div') {
+            // Délai pour permettre au contenu d'être ajouté
+            setTimeout(() => {
+                if (element && element.classList && element.classList.contains('pdf-builder-notification')) {
+                    const textContent = element.textContent || '';
+                    if (isTestNotificationGlobal(textContent)) {
+                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            console.log('PDF Builder: Blocking test notification at DOM creation:', textContent);
+                        }
+                        element.remove();
+                    }
+                }
+            }, 1);
+        }
+
+        return element;
+    };
+
     // Instance globale
     window.PDF_Builder_Notifications = PDF_Builder_Notifications;
 
