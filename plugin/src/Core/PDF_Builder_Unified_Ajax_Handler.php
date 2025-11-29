@@ -154,12 +154,17 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_all_settings() {
         $settings = [
-            // Général
+            // Général - Informations entreprise
             'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
             'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
             'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
             'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
             'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
+
+            // Général - Notifications
+            'notifications_enabled' => !empty($_POST['notifications_enabled']) ? '1' : '0',
+            'notifications_position' => sanitize_text_field($_POST['notifications_position'] ?? 'top-right'),
+            'notifications_duration' => intval($_POST['notifications_duration'] ?? 5000),
 
             // Licence
             'license_test_mode' => isset($_POST['license_test_mode']) ? '1' : '0',
@@ -196,10 +201,39 @@ class PDF_Builder_Unified_Ajax_Handler {
             'gdpr_consent_templates' => !empty($_POST['gdpr_consent_templates']) ? '1' : '0',
             'gdpr_consent_marketing' => !empty($_POST['gdpr_consent_marketing']) ? '1' : '0',
 
-            // Notifications
-            'notifications_enabled' => !empty($_POST['notifications_enabled']) ? '1' : '0',
-            'notifications_position' => sanitize_text_field($_POST['notifications_position'] ?? 'top-right'),
-            'notifications_duration' => intval($_POST['notifications_duration'] ?? 5000),
+            // Développeur - Contrôle d'accès
+            'developer_enabled' => !empty($_POST['developer_enabled']) ? '1' : '0',
+            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
+
+            // Développeur - Debug
+            'debug_php_errors' => !empty($_POST['debug_php_errors']) ? '1' : '0',
+            'debug_javascript' => !empty($_POST['debug_javascript']) ? '1' : '0',
+            'debug_javascript_verbose' => !empty($_POST['debug_javascript_verbose']) ? '1' : '0',
+            'debug_ajax' => !empty($_POST['debug_ajax']) ? '1' : '0',
+            'debug_performance' => !empty($_POST['debug_performance']) ? '1' : '0',
+            'debug_database' => !empty($_POST['debug_database']) ? '1' : '0',
+
+            // Développeur - Logs
+            'log_level' => intval($_POST['log_level'] ?? 3),
+            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
+            'log_retention' => intval($_POST['log_retention'] ?? 30),
+
+            // Développeur - Optimisations
+            'force_https' => !empty($_POST['force_https']) ? '1' : '0',
+            'performance_monitoring' => !empty($_POST['performance_monitoring']) ? '1' : '0',
+
+            // PDF - Paramètres
+            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+            'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
+            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+            'pdf_cache_enabled' => !empty($_POST['pdf_cache_enabled']) ? '1' : '0',
+            'pdf_compression' => sanitize_text_field($_POST['pdf_compression'] ?? 'medium'),
+            'pdf_metadata_enabled' => !empty($_POST['pdf_metadata_enabled']) ? '1' : '0',
+            'pdf_print_optimized' => !empty($_POST['pdf_print_optimized']) ? '1' : '0',
+
+            // Contenu - Templates
+            'template_library_enabled' => !empty($_POST['template_library_enabled']) ? '1' : '0',
+            'default_template' => sanitize_text_field($_POST['default_template'] ?? 'blank'),
         ];
 
         $saved_count = 0;

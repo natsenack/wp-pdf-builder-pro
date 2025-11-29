@@ -2341,10 +2341,10 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                 console.log('📝 [PDF Builder] Formulaire trouvé pour l\'onglet:', tabId);
 
-                // Collect form data
+                // Collect form data - sauvegarder tous les onglets
                 const formData = new FormData(form);
                 formData.append('action', 'pdf_builder_save_settings');
-                formData.append('tab', tabId);
+                formData.append('tab', 'all'); // Toujours sauvegarder tous les onglets
 
                 console.log('📤 [PDF Builder] Envoi des données du formulaire:', {
                     tab: tabId,
