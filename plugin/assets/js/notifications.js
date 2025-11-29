@@ -68,13 +68,13 @@
             // Styles CSS pour le positionnement
             const styles = {
                 'top-left': {
-                    top: '20px',
+                    top: '35px',
                     left: '20px',
                     right: 'auto',
                     bottom: 'auto'
                 },
                 'top-right': {
-                    top: '20px',
+                    top: '35px',
                     right: '20px',
                     left: 'auto',
                     bottom: 'auto'
