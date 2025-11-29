@@ -615,7 +615,7 @@ function pdf_builder_save_settings_ajax() {
         return;
     }
 
-    $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'all');
+    $current_tab = sanitize_text_field($_POST['tab'] ?? 'all');
     $saved_count = 0;
 
     // Si current_tab est 'all', sauvegarder tous les paramètres
