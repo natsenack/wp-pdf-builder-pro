@@ -1850,7 +1850,11 @@ window.toggleRGPDControls = toggleRGPDControls;
                                 this.setButtonState(opts.button, 'success');
                             }
                             if (opts.successCallback) {
-                                opts.successCallback(data, data);
+                                // Assurer que l'instance de notifications existe
+                                if (!window.pdfBuilderNotificationsInstance) {
+                                    window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                                }
+                                opts.successCallback.call(window.pdfBuilderNotificationsInstance, data, data);
                             }
                             resolve(data);
                         } else {
@@ -1876,7 +1880,11 @@ window.toggleRGPDControls = toggleRGPDControls;
                                             this.setButtonState(opts.button, 'error');
                                         }
                                         if (opts.errorCallback) {
-                                            opts.errorCallback(data, data);
+                                            // Assurer que l'instance de notifications existe
+                                            if (!window.pdfBuilderNotificationsInstance) {
+                                                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                                            }
+                                            opts.errorCallback.call(window.pdfBuilderNotificationsInstance, data, data);
                                         }
                                         reject(new Error(errorMessage));
                                     });
@@ -1889,7 +1897,11 @@ window.toggleRGPDControls = toggleRGPDControls;
                                 this.setButtonState(opts.button, 'error');
                             }
                             if (opts.errorCallback) {
-                                opts.errorCallback(data, data);
+                                // Assurer que l'instance de notifications existe
+                                if (!window.pdfBuilderNotificationsInstance) {
+                                    window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                                }
+                                opts.errorCallback.call(window.pdfBuilderNotificationsInstance, data, data);
                             }
                             reject(new Error(errorMessage));
                         }
@@ -1903,7 +1915,11 @@ window.toggleRGPDControls = toggleRGPDControls;
                             this.setButtonState(opts.button, 'error');
                         }
                         if (opts.errorCallback) {
-                            opts.errorCallback({error: error.message}, {error: error.message});
+                            // Assurer que l'instance de notifications existe
+                            if (!window.pdfBuilderNotificationsInstance) {
+                                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                            }
+                            opts.errorCallback.call(window.pdfBuilderNotificationsInstance, {error: error.message}, {error: error.message});
                         }
                         reject(error);
                     });
