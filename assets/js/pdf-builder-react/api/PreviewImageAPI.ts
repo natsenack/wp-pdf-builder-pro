@@ -103,7 +103,7 @@ export class PreviewImageAPI {
       }
 
       const response = await fetch(
-        window.ajaxurl || '/wp-admin/admin-ajax.php',
+        window.ajaxurl,
         {
           method: 'POST',
           body: formData,

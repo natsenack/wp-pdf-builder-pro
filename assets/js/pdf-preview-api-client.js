@@ -30,7 +30,7 @@ function debugWarn(...args) {
 
 class PDFPreviewAPI {
     constructor() {
-        this.endpoint = pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php';
+        this.endpoint = pdfBuilderAjax.ajaxurl;
         this.nonce = pdfBuilderAjax?.nonce || '';
         this.isGenerating = false;
         this.cache = new Map();

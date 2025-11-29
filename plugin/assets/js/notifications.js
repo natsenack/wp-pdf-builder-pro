@@ -19,7 +19,7 @@
 
         createToastContainer() {
             if (!$('#pdf-builder-toast-container').length) {
-                this.toastContainer = $('<div id="pdf-builder-toast-container" style="position: fixed; top: 40px; right: 20px; z-index: 10000; pointer-events: none;"></div>');
+                this.toastContainer = $('<div id="pdf-builder-toast-container"></div>');
                 $('body').append(this.toastContainer);
             } else {
                 this.toastContainer = $('#pdf-builder-toast-container');
@@ -50,10 +50,10 @@
             const toastId = 'toast_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
             const toast = $(`
-                <div class="pdf-builder-notification pdf-builder-notification-${type}" id="${toastId}" style="pointer-events: auto;">
+                <div class="pdf-builder-notification pdf-builder-notification-${type}" id="${toastId}">
                     <span class="pdf-builder-notification-icon"></span>
                     <span class="pdf-builder-notification-message">${this.escapeHtml(message)}</span>
-                    <span class="pdf-builder-notification-close" style="cursor: pointer; font-size: 16px; font-weight: bold; opacity: 0.7; transition: opacity 0.2s; flex-shrink: 0; margin-left: 4px;">×</span>
+                    <span class="pdf-builder-notification-close">×</span>
                 </div>
             `);
 
