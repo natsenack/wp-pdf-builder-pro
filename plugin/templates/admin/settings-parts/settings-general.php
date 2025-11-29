@@ -301,24 +301,28 @@
            <section class="general-section">
                <h3>🔔 Système de Notifications</h3>
 
-               <article style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                   <h4 style="margin-top: 0; color: #155724; font-size: 16px;">⚙️ Configuration des Notifications</h4>
-                   <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
-                   Personnalisez l'apparence et le comportement des notifications dans l'éditeur PDF Builder.
-                   </p>
+               <form id="notifications-settings-form" method="post" action="">
+                   <?php wp_nonce_field('pdf_builder_save_settings', 'pdf_builder_notifications_nonce'); ?>
+                   <input type="hidden" name="current_tab" value="general">
 
-                   <table class="form-table">
-                       <tr>
-                           <th scope="row"><label for="notifications_enabled">Activer les notifications</label></th>
-                           <td>
-                               <label class="toggle-switch">
-                                   <input type="checkbox" id="notifications_enabled" name="notifications_enabled"
-                                       value="1" <?php checked(get_option('pdf_builder_notifications_enabled', '1'), '1'); ?> />
-                                   <span class="toggle-slider"></span>
-                               </label>
-                               <p class="description">Active ou désactive le système de notifications</p>
-                           </td>
-                       </tr>
+                   <article style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                       <h4 style="margin-top: 0; color: #155724; font-size: 16px;">⚙️ Configuration des Notifications</h4>
+                       <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
+                       Personnalisez l'apparence et le comportement des notifications dans l'éditeur PDF Builder.
+                       </p>
+
+                       <table class="form-table">
+                           <tr>
+                               <th scope="row"><label for="notifications_enabled">Activer les notifications</label></th>
+                               <td>
+                                   <label class="toggle-switch">
+                                       <input type="checkbox" id="notifications_enabled" name="notifications_enabled"
+                                           value="1" <?php checked(get_option('pdf_builder_notifications_enabled', '0'), '1'); ?> />
+                                       <span class="toggle-slider"></span>
+                                   </label>
+                                   <p class="description">Active ou désactive le système de notifications</p>
+                               </td>
+                           </tr>
                        <tr>
                            <th scope="row"><label for="notifications_position">Position des notifications</label></th>
                            <td>
@@ -367,6 +371,70 @@
                </article>
 
                <script>
+               jQuery(document).ready(function($) {
+                   // Gestionnaire AJAX pour la soumission du formulaire notifications
+                   $('#notifications-settings-form').on('submit', function(e) {
+                       e.preventDefault();
+
+                       // Trouver le bouton d'enregistrement dans ce formulaire
+                       const form = $(this);
+                       const submitBtn = form.find('input[type="submit"], button[type="submit"]');
+
+                       // Désactiver le bouton et montrer l'état de chargement
+                       if (submitBtn.length > 0) {
+                           const originalText = submitBtn.val() || submitBtn.text();
+                           submitBtn.prop('disabled', true);
+                           submitBtn.val('Enregistrement...');
+                           submitBtn.text('Enregistrement...');
+                           submitBtn.css('opacity', '0.7');
+                       }
+
+                       // Collecter les données du formulaire
+                       const formData = new FormData(this);
+                       formData.append('action', 'pdf_builder_save_settings');
+                       formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+                       formData.append('tab', 'general');
+
+                       // Faire la requête AJAX
+                       if (window.PDF_Builder_Ajax_Handler) {
+                           window.PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                               button: submitBtn[0],
+                               context: 'Notifications Settings',
+                               successCallback: (result, originalData) => {
+                                   // Log success
+                                   if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                       console.log('Paramètres notifications sauvegardés avec succès !');
+                                   }
+
+                                   // Afficher une notification de succès
+                                   if (window.showSuccessNotification) {
+                                       window.showSuccessNotification('Paramètres notifications sauvegardés avec succès !');
+                                   }
+                               },
+                               errorCallback: (result, originalData) => {
+                                   // Log error
+                                   if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                       console.error('Erreur lors de la sauvegarde notifications: ' + (result.errorMessage || 'Erreur inconnue'));
+                                   }
+                               }
+                           }).catch(error => {
+                               if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                   console.error('Erreur AJAX notifications:', error);
+                                   console.error('Erreur réseau lors de la sauvegarde notifications');
+                               }
+                           });
+                       } else {
+                           // Fallback si le gestionnaire AJAX n'est pas disponible
+                           if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                               console.warn('PDF_Builder_Ajax_Handler not available for notifications, using fallback');
+                           }
+                           this.submit();
+                       }
+
+                       return false;
+                   });
+               });
+
                function testNotification(type) {
                    const messages = {
                        'success': '✅ Test réussi ! Les notifications fonctionnent correctement.',
@@ -382,6 +450,7 @@
                    }
                }
                </script>
+               </form>
 
                <style>
                .toggle-switch {
