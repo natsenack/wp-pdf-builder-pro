@@ -226,6 +226,11 @@
                                 successCallback: (result, originalData) => {
                                     // Log success
                                     console.log('Paramètres sauvegardés avec succès !');
+
+                                    // Afficher une notification de succès
+                                    if (window.showSuccessNotification) {
+                                        window.showSuccessNotification('Paramètres sauvegardés avec succès !');
+                                    }
                                 },
                                 errorCallback: (result, originalData) => {
                                     // Log error
