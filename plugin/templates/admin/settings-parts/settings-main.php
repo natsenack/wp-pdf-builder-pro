@@ -2354,12 +2354,26 @@ window.toggleRGPDControls = toggleRGPDControls;
                         const tabForm = tabContent.querySelector('form');
                         if (tabForm) {
                             console.log('📝 [PDF Builder] Collecte données onglet:', tab);
-                            // Ajouter les données du formulaire à formData
-                            const tabFormData = new FormData(tabForm);
-                            for (let [key, value] of tabFormData.entries()) {
-                                // Préfixer les clés pour éviter les conflits
-                                formData.append(key, value);
-                            }
+
+                            // Collecter manuellement tous les champs pour s'assurer que les checkboxes non cochées sont incluses
+                            const allInputs = tabForm.querySelectorAll('input, select, textarea');
+                            allInputs.forEach(input => {
+                                const name = input.name;
+                                if (name) {
+                                    if (input.type === 'checkbox') {
+                                        // Pour les checkboxes, inclure toujours la valeur (0 ou 1)
+                                        formData.append(name, input.checked ? '1' : '0');
+                                    } else if (input.type === 'radio') {
+                                        // Pour les radios, seulement si coché
+                                        if (input.checked) {
+                                            formData.append(name, input.value);
+                                        }
+                                    } else {
+                                        // Pour les autres champs
+                                        formData.append(name, input.value);
+                                    }
+                                }
+                            });
                         } else {
                             console.log('⚠️ [PDF Builder] Aucun formulaire trouvé pour l\'onglet:', tab);
                         }
