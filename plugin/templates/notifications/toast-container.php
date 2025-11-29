@@ -12,4 +12,4 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <!-- Conteneur pour les notifications toast -->
-<div id="pdf-builder-toast-container" style="position: fixed; top: 40px; right: 20px; z-index: 10000; pointer-events: none;"></div>
+<div id="pdf-builder-toast-container"></div>

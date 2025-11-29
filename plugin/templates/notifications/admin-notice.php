@@ -36,6 +36,6 @@ $allowed_html = [
 ];
 ?>
 <!-- Template de notice d'administration WordPress -->
-<div class="<?php echo esc_attr($class); ?>">
+<div class="<?php echo esc_attr($class); ?> pdf-builder-notice">
     <p><?php echo wp_kses($notification['message'], $allowed_html); ?></p>
 </div>
