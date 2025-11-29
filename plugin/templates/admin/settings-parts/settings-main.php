@@ -2666,10 +2666,15 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                         // Notification gérée par le système centralisé
 
-                        // Handle button state for floating save button
-                        PDF_Builder_Ajax_Handler.setButtonState(floatingSaveBtn, 'success');
+                        // Handle button state for floating save button directly
+                        floatingSaveBtn.innerHTML = '<span class="dashicons dashicons-yes"></span> Succès';
+                        floatingSaveBtn.disabled = false;
+                        floatingSaveBtn.style.opacity = '1';
+
                         setTimeout(() => {
-                            PDF_Builder_Ajax_Handler.setButtonState(floatingSaveBtn, 'reset');
+                            floatingSaveBtn.innerHTML = '<span class="save-icon" style="font-size: 16px; line-height: 1;">💾</span><span class="save-text" style="font-weight: 600;">Enregistrer</span>';
+                            floatingSaveBtn.disabled = false;
+                            floatingSaveBtn.style.opacity = '1';
                         }, 2000);
                     },
                     errorCallback: (result, originalData) => {
