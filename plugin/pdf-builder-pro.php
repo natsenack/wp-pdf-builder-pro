@@ -607,6 +607,7 @@ function pdf_builder_handle_pdf_downloads()
 
 /**
  * Handler AJAX pour sauvegarder les paramètres
+ * DEBUG: Nonce check temporarily disabled for debugging
  */
 function pdf_builder_save_settings_ajax() {
     // Vérifier les permissions
