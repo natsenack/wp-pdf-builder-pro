@@ -450,7 +450,7 @@ function pdf_builder_init()
 
     // Initialiser le système de nonce unifié
     $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
-    $unified_handler = new PDF_Builder_Unified_Ajax_Handler($nonce_manager);
+    $unified_handler = PDF_Builder_Unified_Ajax_Handler::get_instance();
 
     // Vérifier et créer les tables manquantes
     pdf_builder_check_tables();
