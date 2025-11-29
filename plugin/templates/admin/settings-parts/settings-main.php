@@ -2802,10 +2802,203 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Ré-attacher l'événement
                         newBtn.addEventListener('click', function(event) {
                             event.preventDefault();
+
                             if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                console.log('🔄 [PDF Builder] Bouton flottant recréé cliqué');
+                                console.log('🔄 [PDF Builder] Bouton flottant "Enregistrer" cliqué');
                             }
-                            alert('Bouton Enregistrer cliqué ! Fonctionnalité à implémenter.');
+
+                            // Disable button and show loading state
+                            newBtn.disabled = true;
+                            const originalHTML = newBtn.innerHTML;
+                            newBtn.innerHTML = '<span class="dashicons dashicons-update spin"></span> Enregistrement...';
+                            newBtn.style.opacity = '0.7';
+
+                            // Get active tab
+                            const activeTab = document.querySelector('.nav-tab.nav-tab-active');
+                            if (!activeTab) {
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.error('No active tab found');
+                                }
+                                newBtn.disabled = false;
+                                newBtn.innerHTML = originalHTML;
+                                newBtn.style.opacity = '1';
+                                return;
+                            }
+
+                            const tabId = activeTab.getAttribute('data-tab') || activeTab.getAttribute('href')?.substring(1);
+                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                console.log('📋 [PDF Builder] Onglet actif détecté:', tabId);
+                            }
+
+                            if (!tabId) {
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.error('No tab ID found');
+                                }
+                                newBtn.disabled = false;
+                                newBtn.innerHTML = originalHTML;
+                                newBtn.style.opacity = '1';
+                                return;
+                            }
+
+                            // Get form for active tab
+                            const activeContent = document.getElementById(tabId);
+                            if (!activeContent) {
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.error('No active content found for tab:', tabId);
+                                }
+                                newBtn.disabled = false;
+                                newBtn.innerHTML = originalHTML;
+                                newBtn.style.opacity = '1';
+                                return;
+                            }
+
+                            const form = activeContent.querySelector('form');
+                            if (!form) {
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.error('No form found in active tab:', tabId);
+                                }
+                                newBtn.disabled = false;
+                                newBtn.innerHTML = originalHTML;
+                                newBtn.style.opacity = '1';
+                                return;
+                            }
+
+                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                console.log('📝 [PDF Builder] Collecte des données de tous les onglets...');
+                            }
+
+                            // Collect form data from ALL tabs - sauvegarder tous les onglets
+                            const formData = new FormData();
+                            const collectedData = {};
+
+                            // Liste des onglets à traiter
+                            const allTabs = ['general', 'licence', 'systeme', 'acces', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
+
+                            // Parcourir tous les onglets et collecter leurs données
+                            allTabs.forEach(tab => {
+                                const tabContent = document.getElementById(tab);
+                                if (tabContent) {
+                                    const tabForm = tabContent.querySelector('form');
+                                    if (tabForm) {
+                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                            console.log('📝 [PDF Builder] Collecte données onglet:', tab);
+                                        }
+
+                                        // Collecter manuellement tous les champs pour s'assurer que les checkboxes non cochées sont incluses
+                                        const allInputs = tabForm.querySelectorAll('input, select, textarea');
+                                        allInputs.forEach(input => {
+                                            const name = input.name;
+                                            if (name) {
+                                                let value;
+                                                if (input.type === 'checkbox') {
+                                                    // Pour les checkboxes, inclure toujours la valeur (0 ou 1)
+                                                    value = input.checked ? '1' : '0';
+                                                    formData.append(name, value);
+                                                    collectedData[name] = value;
+                                                } else if (input.type === 'radio') {
+                                                    // Pour les radios, seulement si coché
+                                                    if (input.checked) {
+                                                        value = input.value;
+                                                        formData.append(name, value);
+                                                        collectedData[name] = value;
+                                                    }
+                                                } else {
+                                                    // Pour les autres champs
+                                                    value = input.value;
+                                                    formData.append(name, value);
+                                                    collectedData[name] = value;
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                            console.log('⚠️ [PDF Builder] Aucun formulaire trouvé pour l\'onglet:', tab);
+                                        }
+                                    }
+                                } else {
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.log('⚠️ [PDF Builder] Contenu non trouvé pour l\'onglet:', tab);
+                                    }
+                                }
+                            });
+
+                            formData.append('action', 'pdf_builder_save_settings');
+                            formData.append('tab', 'all'); // Toujours sauvegarder tous les onglets
+
+                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                console.log('📤 [PDF Builder] Envoi des données du formulaire:', {
+                                    tab: tabId,
+                                    action: 'pdf_builder_save_settings',
+                                    dataCount: Array.from(formData.entries()).length,
+                                    collectedData: collectedData
+                                });
+                            }
+
+                            // Make AJAX request using centralized handler
+                            PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                                button: newBtn,
+                                context: 'PDF Builder',
+                                successCallback: (result, originalData) => {
+                                    // Log success
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.log('Paramètres sauvegardés avec succès !');
+                                    }
+
+                                    // Mettre à jour l'interface avec les nouvelles valeurs sauvegardées
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.log('🔄 [PDF Builder] Mise à jour de l\'interface avec les nouvelles valeurs...');
+                                    }
+
+                                    // Mettre à jour les checkboxes avec les valeurs sauvegardées
+                                    Object.keys(collectedData).forEach(fieldName => {
+                                        const fieldValue = collectedData[fieldName];
+                                        const fieldElement = document.querySelector(`[name="${fieldName}"]`);
+
+                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                            console.log(`🔍 [PDF Builder] Mise à jour champ ${fieldName}: valeur=${fieldValue}, élément trouvé=${!!fieldElement}`);
+                                        }
+
+                                        if (fieldElement && fieldElement.type === 'checkbox') {
+                                            // Pour les checkboxes, mettre à jour l'état checked
+                                            const oldChecked = fieldElement.checked;
+                                            fieldElement.checked = fieldValue === '1';
+                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${fieldElement.checked}`);
+                                            }
+
+                                            // Déclencher les fonctions de toggle si nécessaire
+                                            if (fieldName === 'developer_enabled') {
+                                                // Mettre à jour les sections développeur
+                                                if (window.updateDeveloperSections) {
+                                                    window.updateDeveloperSections();
+                                                }
+                                            }
+                                        } else if (fieldElement) {
+                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                console.log(`ℹ️ [PDF Builder] Champ ${fieldName} trouvé mais pas checkbox (type: ${fieldElement.type})`);
+                                            }
+                                        } else {
+                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                console.warn(`⚠️ [PDF Builder] Champ ${fieldName} non trouvé dans le DOM`);
+                                            }
+                                        }
+                                    });
+
+                                    // Notification gérée par le système centralisé
+                                },
+                                errorCallback: (result, originalData) => {
+                                    // Log error
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.error('Erreur lors de la sauvegarde: ' + (result.errorMessage || 'Erreur inconnue'));
+                                    }
+                                }
+                            }).catch(error => {
+                                // Log network error
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.error('Erreur réseau lors de la sauvegarde');
+                                    console.error('Floating save error:', error);
+                                }
+                            });
                         });
                     }
                 }
