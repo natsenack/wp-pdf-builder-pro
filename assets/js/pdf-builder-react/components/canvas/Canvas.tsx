@@ -8,6 +8,7 @@ import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts.ts';
 import { Element, ShapeElementProperties, TextElementProperties, LineElementProperties, ProductTableElementProperties, CustomerInfoElementProperties, CompanyInfoElementProperties, ImageElementProperties, OrderNumberElementProperties, MentionsElementProperties, DocumentTypeElementProperties, BuilderState } from '../../types/elements';
 import { wooCommerceManager } from '../../utils/WooCommerceElementsManager';
 import { elementChangeTracker } from '../../utils/ElementChangeTracker';
+import { debugWarn, debugError } from '../../utils/debug';
 
 // Déclaration pour l'API Performance
 declare const performance: {
@@ -176,7 +177,7 @@ const drawImage = (ctx: CanvasRenderingContext2D, element: Element, imageCache: 
     };
 
     img.onerror = () => {
-      console.warn(`[Canvas] Failed to load image: ${imageUrl}`);
+      debugWarn(`[Canvas] Failed to load image: ${imageUrl}`);
     };
 
     // Retourner temporairement pour éviter les erreurs
@@ -1321,7 +1322,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
       // Si le navigateur approche sa limite, être plus agressif
       if (browserMemoryUsage > browserLimit * 0.8) {
-        console.warn(`[Canvas Memory] Browser memory usage high: ${browserMemoryUsage.toFixed(1)}MB / ${browserLimit.toFixed(1)}MB`);
+        debugWarn(`[Canvas Memory] Browser memory usage high: ${browserMemoryUsage.toFixed(1)}MB / ${browserLimit.toFixed(1)}MB`);
         return true;
       }
     }
@@ -1417,7 +1418,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
         // Nettoyage d'urgence si mémoire critique
         if (browserMemoryUsage > browserLimit * 0.9) {
-          console.warn(`[Canvas Memory] Critical memory usage! Forcing cache cleanup...`);
+          debugWarn(`[Canvas Memory] Critical memory usage! Forcing cache cleanup...`);
           cleanupImageCache();
         }
       }
@@ -1527,7 +1528,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
         // Gérer les erreurs de chargement
         img.onerror = () => {
-          console.error('❌ [LOGO] Image failed to load:', logoUrl);
+          debugError('❌ [LOGO] Image failed to load:', logoUrl);
         };
 
         // ✅ CRITICAL: Quand l'image se charge, redessiner le canvas
@@ -1713,7 +1714,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
 
         } catch (error) {
-          console.error(`❌ [LOGO] Error rendering image ${logoUrl}:`, error);
+          debugError(`❌ [LOGO] Error rendering image ${logoUrl}:`, error);
           // En cas d'erreur, dessiner un placeholder
           drawLogoPlaceholder(ctx, element, alignment, 'Erreur de chargement');
         }

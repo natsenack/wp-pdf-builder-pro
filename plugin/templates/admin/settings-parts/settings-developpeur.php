@@ -1278,6 +1278,28 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
     logToConsole('info', 'Notification test system initialized');
     addNotificationLog('🚀 Système de test des notifications initialisé', 'system');
 
+    // Function to test all notification types sequentially
+    function testAllNotifications() {
+        logToConsole('info', 'Testing all notification types sequentially');
+        addNotificationLog('🎯 Démarrage test de tous les types', 'system');
+
+        const types = ['success', 'error', 'warning', 'info'];
+        let index = 0;
+
+        const testNext = () => {
+            if (index < types.length) {
+                testNotification(types[index]);
+                index++;
+                setTimeout(testNext, 1000); // 1 second delay between tests
+            } else {
+                logToConsole('success', 'All notification types tested successfully');
+                addNotificationLog('✅ Tous les types testés avec succès', 'success');
+            }
+        };
+
+        testNext();
+    }
+
     // Delay the test execution until all scripts are loaded
     window.addEventListener('load', function() {
         logToConsole('info', 'Window fully loaded, starting notification tests');

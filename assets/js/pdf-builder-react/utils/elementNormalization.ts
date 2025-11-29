@@ -3,6 +3,8 @@
  * C'est LE système central qui garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
  */
 
+import { debugWarn, debugError } from './debug';
+
 export interface Element {
   [key: string]: unknown;
   id: string;
@@ -23,13 +25,13 @@ export interface Element {
  */
 export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
   if (!Array.isArray(elements)) {
-    console.warn('❌ [NORMALIZE] Elements n\'est pas un array:', typeof elements);
+    debugWarn('❌ [NORMALIZE] Elements n\'est pas un array:', typeof elements);
     return [];
   }
 
   return elements.map((el, idx) => {
     if (!el || typeof el !== 'object') {
-      console.warn(`❌ [NORMALIZE] Element ${idx} invalide:`, el);
+      debugWarn(`❌ [NORMALIZE] Element ${idx} invalide:`, el);
       return {} as Element;
     }
 
@@ -56,13 +58,13 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
  */
 export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
   if (!Array.isArray(elements)) {
-    console.warn('❌ [SAVE NORMALIZE] Elements n\'est pas un array');
+    debugWarn('❌ [SAVE NORMALIZE] Elements n\'est pas un array');
     return [];
   }
 
   return elements.map((el, idx) => {
     if (!el || typeof el !== 'object') {
-      console.warn(`❌ [SAVE NORMALIZE] Element ${idx} invalide`);
+      debugWarn(`❌ [SAVE NORMALIZE] Element ${idx} invalide`);
       return {} as Element;
     }
 
@@ -111,11 +113,11 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
           JSON.stringify(value);
           serializable[key] = value;
         } catch {
-          console.warn(`⚠️  [SAVE NORMALIZE] Propriété non sérialisable ${key} skippée`, value);
+          debugWarn(`⚠️  [SAVE NORMALIZE] Propriété non sérialisable ${key} skippée`, value);
         }
       } else {
         // Propriétés rejetées (functions, etc.)
-        console.warn(`⚠️  [SAVE NORMALIZE] Propriété rejetée: ${key} (type: ${type})`);
+        debugWarn(`⚠️  [SAVE NORMALIZE] Propriété rejetée: ${key} (type: ${type})`);
       }
     });
 
@@ -139,7 +141,7 @@ export function validateElementIntegrity(elements: Element[], elementType: strin
     const missing = required.filter(key => !(key in el));
 
     if (missing.length > 0) {
-      console.error(`❌ [VALIDATE] Element ${idx} missing: ${missing.join(', ')}`);
+      debugError(`❌ [VALIDATE] Element ${idx} missing: ${missing.join(', ')}`);
       allValid = false;
     }
 
