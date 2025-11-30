@@ -234,13 +234,8 @@ jQuery(document).ready(function($) {
     });
 
     // Gestion des toggles avec confirmation pour les paramètres critiques
-    // UNIQUEMENT dans l'onglet système et pas dans les modales
-    $('#systeme input[name="cache_enabled"]:not(.cache-modal input[name="cache_enabled"])').on('change', function() {
-        // Vérifier que nous sommes bien dans l'onglet système actif
-        if (!$('#systeme').hasClass('active')) {
-            return; // Ne pas appliquer la confirmation si pas dans l'onglet système
-        }
-
+    // UNIQUEMENT dans l'onglet système quand il est actif
+    $(document).on('change', '#systeme.active input[name="cache_enabled"]:not(.cache-modal input[name="cache_enabled"])', function() {
         const isEnabled = $(this).is(':checked');
         if (!isEnabled) {
             if (!confirm('Désactiver le cache peut ralentir les performances. Continuer ?')) {
