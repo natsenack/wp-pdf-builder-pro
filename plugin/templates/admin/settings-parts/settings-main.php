@@ -3238,15 +3238,42 @@ window.toggleRGPDControls = toggleRGPDControls;
                                         const savedData = originalData.data.result_data;
                                         const activeTabContent = document.getElementById(tabId);
 
+                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                            console.log('🔄 [PDF Builder] Mise à jour des champs avec données sauvegardées:', savedData);
+                                            console.log(`🔄 [PDF Builder] activeTabContent trouvé: ${!!activeTabContent}, savedData keys: ${Object.keys(savedData).length}`);
+                                        }
+
                                         if (activeTabContent) {
                                             Object.keys(savedData).forEach(fieldName => {
                                                 const fieldValue = savedData[fieldName];
                                                 const fieldElement = activeTabContent.querySelector(`[name="${fieldName}"]`);
 
+                                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                    console.log(`🔄 [PDF Builder] Mise à jour champ ${fieldName}: valeur=${fieldValue}, élément trouvé=${!!fieldElement}`);
+                                                }
+
                                                 if (fieldElement && fieldElement.type === 'checkbox') {
-                                                    // Mettre à jour l'état checked
                                                     const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
+                                                    const wasChecked = fieldElement.checked;
+
                                                     fieldElement.checked = shouldBeChecked;
+
+                                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                        console.log(`🔄 [PDF Builder] Checkbox ${fieldName}: ${wasChecked} → ${shouldBeChecked}`);
+                                                    }
+
+                                                    // Synchroniser la classe .checked sur le container toggle-switch pour forcer la mise à jour visuelle
+                                                    const toggleContainer = fieldElement.closest('.toggle-switch');
+                                                    if (toggleContainer) {
+                                                        if (shouldBeChecked) {
+                                                            toggleContainer.classList.add('checked');
+                                                        } else {
+                                                            toggleContainer.classList.remove('checked');
+                                                        }
+                                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                            console.log(`🔄 [PDF Builder] Toggle container class updated: ${toggleContainer.classList.contains('checked') ? 'checked' : 'unchecked'}`);
+                                                        }
+                                                    }
 
                                                     // Forcer la mise à jour visuelle du toggle
                                                     const changeEvent = new Event('change', { bubbles: true });
@@ -3254,7 +3281,6 @@ window.toggleRGPDControls = toggleRGPDControls;
                                                     fieldElement.offsetHeight; // Force reflow
 
                                                     // Animation CSS
-                                                    const toggleContainer = fieldElement.closest('.toggle-switch');
                                                     if (toggleContainer) {
                                                         toggleContainer.classList.add('toggle-updated');
                                                         setTimeout(() => {
@@ -3268,6 +3294,9 @@ window.toggleRGPDControls = toggleRGPDControls;
                                                             window.updateDeveloperSections();
                                                         }
                                                     }
+                                                } else if (fieldElement) {
+                                                    // Pour les autres types de champs, mettre à jour la valeur
+                                                    fieldElement.value = fieldValue;
                                                 }
                                             });
                                         }
