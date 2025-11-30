@@ -87,13 +87,6 @@ jQuery(document).ready(function($) {
     // Récupérer un nonce frais depuis le serveur via l'action dispatcher
     function fetchFreshAjaxNonce() {
         return new Promise(function(resolve, reject) {
-            // If we already have a recent ajaxNonce, resolve immediately
-            var current = getAjaxNonce();
-            if (current) {
-                debugLogAjax('fetchFreshAjaxNonce: using cached nonce', current);
-                resolve(current);
-                return;
-            }
             debugLogAjax('fetchFreshAjaxNonce: requesting fresh nonce from server');
             $.ajax({
                 url: (typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax.ajaxurl : (window.pdf_builder_ajax && window.pdf_builder_ajax.ajax_url) ? window.pdf_builder_ajax.ajax_url : '/wp-admin/admin-ajax.php'),

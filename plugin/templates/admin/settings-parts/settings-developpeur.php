@@ -914,15 +914,23 @@ document.addEventListener('DOMContentLoaded', function() {
         button.disabled = true;
         button.textContent = '⏳ Chargement...';
 
+        // Always request a fresh nonce to avoid stale nonce problems
         fetch(ajaxUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: new URLSearchParams({
-                action: action,
-                nonce: window.pdfBuilderAjax?.nonce || ''
-            })
+            body: new URLSearchParams({ action: 'pdf_builder_get_fresh_nonce' })
+        })
+        .then(resp => resp.json())
+        .then(nonceData => {
+            const nonce = (nonceData && nonceData.success && nonceData.data && nonceData.data.nonce) ? nonceData.data.nonce : (window.pdfBuilderAjax?.nonce || '');
+
+            return fetch(ajaxUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ action: action, nonce: nonce })
+            });
         })
         .then(response => response.json())
         .then(data => {
