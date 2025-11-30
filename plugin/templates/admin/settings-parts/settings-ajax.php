@@ -205,6 +205,7 @@ class PDF_Builder_Options_Manager {
         'pdf_builder_debug_ajax' => ['type' => 'boolean', 'sanitize' => 'intval'],
         'pdf_builder_debug_performance' => ['type' => 'boolean', 'sanitize' => 'intval'],
         'pdf_builder_debug_database' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_debug_settings_page' => ['type' => 'boolean', 'sanitize' => 'intval'],
         'pdf_builder_log_level' => ['type' => 'int', 'sanitize' => 'intval'],
         'pdf_builder_log_file_size' => ['type' => 'int', 'sanitize' => 'intval'],
         'pdf_builder_log_retention' => ['type' => 'int', 'sanitize' => 'intval'],
@@ -1075,7 +1076,8 @@ function pdf_builder_save_canvas_settings_handler() {
                     $debug_mappings = [
                         'canvas_debug_enabled' => 'pdf_builder_canvas_debug_enabled',
                         'canvas_performance_monitoring' => 'pdf_builder_canvas_performance_monitoring',
-                        'canvas_error_reporting' => 'pdf_builder_canvas_error_reporting'
+                        'canvas_error_reporting' => 'pdf_builder_canvas_error_reporting',
+                        'debug_settings_page' => 'pdf_builder_debug_settings_page'
                     ];
 
                     foreach ($debug_mappings as $post_key => $option_key) {

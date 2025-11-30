@@ -2821,49 +2821,53 @@ window.toggleRGPDControls = toggleRGPDControls;
                         }
 
                                     // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
+                                    // UNIQUEMENT pour l'onglet actif pour éviter les conflits entre onglets
                                     if (originalData && originalData.data && originalData.data.result_data) {
                                         const savedData = originalData.data.result_data;
-                                        console.log('🔄 MISE À JOUR CHAMPS - Données reçues:', savedData);
+                                        console.log('🔄 MISE À JOUR CHAMPS - Données reçues pour onglet:', tabId);
 
-                                        Object.keys(savedData).forEach(fieldName => {
-                                            const fieldValue = savedData[fieldName];
-                                            const fieldElement = document.querySelector(`[name="${fieldName}"]`);
-                                            console.log(`🔍 Traitement ${fieldName} = "${fieldValue}", élément trouvé:`, !!fieldElement);
+                                        // Obtenir le conteneur de l'onglet actif
+                                        const activeTabContent = document.getElementById(tabId);
+                                        if (!activeTabContent) {
+                                            console.error('❌ Conteneur de l\'onglet actif non trouvé:', tabId);
+                                        } else {
+                                            Object.keys(savedData).forEach(fieldName => {
+                                                const fieldValue = savedData[fieldName];
 
-                                            if (fieldElement && fieldElement.type === 'checkbox') {
-                                                const oldChecked = fieldElement.checked;
-                                                const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
-                                                fieldElement.checked = shouldBeChecked;
-                                                console.log(`📝 Checkbox ${fieldName}: ${oldChecked} -> ${shouldBeChecked} (valeur: "${fieldValue}")`);
+                                                // Chercher le champ DANS L'ONGLET ACTIF uniquement
+                                                const fieldElement = activeTabContent.querySelector(`[name="${fieldName}"]`);
 
-                                                // Forcer la mise à jour visuelle du toggle
-                                                const changeEvent = new Event('change', { bubbles: true });
-                                                fieldElement.dispatchEvent(changeEvent);
-                                                fieldElement.offsetHeight; // Force reflow
+                                                if (fieldElement && fieldElement.type === 'checkbox') {
+                                                    const oldChecked = fieldElement.checked;
+                                                    const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
+                                                    fieldElement.checked = shouldBeChecked;
 
-                                                // Animation CSS
-                                                const toggleContainer = fieldElement.closest('.toggle-switch');
-                                                if (toggleContainer) {
-                                                    toggleContainer.classList.add('toggle-updated');
-                                                    setTimeout(() => {
-                                                        toggleContainer.classList.remove('toggle-updated');
-                                                    }, 50);
-                                                }
+                                                    // Forcer la mise à jour visuelle du toggle
+                                                    const changeEvent = new Event('change', { bubbles: true });
+                                                    fieldElement.dispatchEvent(changeEvent);
+                                                    fieldElement.offsetHeight; // Force reflow
 
-                                                // Mettre à jour les sections développeur si nécessaire
-                                                if (fieldName === 'pdf_builder_developer_enabled') {
-                                                    if (window.updateDeveloperSections) {
-                                                        window.updateDeveloperSections();
+                                                    // Animation CSS
+                                                    const toggleContainer = fieldElement.closest('.toggle-switch');
+                                                    if (toggleContainer) {
+                                                        toggleContainer.classList.add('toggle-updated');
+                                                        setTimeout(() => {
+                                                            toggleContainer.classList.remove('toggle-updated');
+                                                        }, 50);
                                                     }
+
+                                                    // Mettre à jour les sections développeur si nécessaire
+                                                    if (fieldName === 'pdf_builder_developer_enabled') {
+                                                        if (window.updateDeveloperSections) {
+                                                            window.updateDeveloperSections();
+                                                        }
+                                                    }
+                                                } else if (fieldElement) {
+                                                    // Pour les autres types de champs, mettre à jour la valeur
+                                                    fieldElement.value = fieldValue;
                                                 }
-                                            } else if (fieldElement) {
-                                                console.log(`ℹ️ Champ ${fieldName} trouvé mais pas checkbox (type: ${fieldElement.type})`);
-                                            } else {
-                                                console.warn(`⚠️ Champ ${fieldName} non trouvé dans le DOM`);
-                                            }
-                                        });
-                                    } else {
-                                        console.error('❌ Aucune donnée result_data reçue du serveur');
+                                            });
+                                        }
                                     }
 
                         // Recharger les previews avec les nouvelles données
@@ -3214,40 +3218,44 @@ window.toggleRGPDControls = toggleRGPDControls;
                                     }
 
                                     // Mettre à jour les checkboxes avec les valeurs sauvegardées depuis le serveur
+                                    // UNIQUEMENT dans l'onglet actif pour éviter les conflits
                                     if (originalData && originalData.data && originalData.data.result_data) {
                                         const savedData = originalData.data.result_data;
+                                        const activeTabContent = document.getElementById(tabId);
 
-                                        Object.keys(savedData).forEach(fieldName => {
-                                            const fieldValue = savedData[fieldName];
-                                            const fieldElement = document.querySelector(`[name="${fieldName}"]`);
+                                        if (activeTabContent) {
+                                            Object.keys(savedData).forEach(fieldName => {
+                                                const fieldValue = savedData[fieldName];
+                                                const fieldElement = activeTabContent.querySelector(`[name="${fieldName}"]`);
 
-                                            if (fieldElement && fieldElement.type === 'checkbox') {
-                                                // Mettre à jour l'état checked
-                                                const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
-                                                fieldElement.checked = shouldBeChecked;
+                                                if (fieldElement && fieldElement.type === 'checkbox') {
+                                                    // Mettre à jour l'état checked
+                                                    const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
+                                                    fieldElement.checked = shouldBeChecked;
 
-                                                // Forcer la mise à jour visuelle du toggle
-                                                const changeEvent = new Event('change', { bubbles: true });
-                                                fieldElement.dispatchEvent(changeEvent);
-                                                fieldElement.offsetHeight; // Force reflow
+                                                    // Forcer la mise à jour visuelle du toggle
+                                                    const changeEvent = new Event('change', { bubbles: true });
+                                                    fieldElement.dispatchEvent(changeEvent);
+                                                    fieldElement.offsetHeight; // Force reflow
 
-                                                // Animation CSS
-                                                const toggleContainer = fieldElement.closest('.toggle-switch');
-                                                if (toggleContainer) {
-                                                    toggleContainer.classList.add('toggle-updated');
-                                                    setTimeout(() => {
-                                                        toggleContainer.classList.remove('toggle-updated');
-                                                    }, 50);
-                                                }
+                                                    // Animation CSS
+                                                    const toggleContainer = fieldElement.closest('.toggle-switch');
+                                                    if (toggleContainer) {
+                                                        toggleContainer.classList.add('toggle-updated');
+                                                        setTimeout(() => {
+                                                            toggleContainer.classList.remove('toggle-updated');
+                                                        }, 50);
+                                                    }
 
-                                                // Mettre à jour les sections développeur si nécessaire
-                                                if (fieldName === 'pdf_builder_developer_enabled') {
-                                                    if (window.updateDeveloperSections) {
-                                                        window.updateDeveloperSections();
+                                                    // Mettre à jour les sections développeur si nécessaire
+                                                    if (fieldName === 'pdf_builder_developer_enabled') {
+                                                        if (window.updateDeveloperSections) {
+                                                            window.updateDeveloperSections();
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        });
+                                            });
+                                        }
                                     }
 
                                     // Notification gérée par le système centralisé

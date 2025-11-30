@@ -5,6 +5,14 @@ function isPDFEditorPage(): boolean {
          document.querySelector('.pdf-builder') !== null;
 }
 
+// Fonction pour vérifier si on est sur la page des paramètres
+function isSettingsPage(): boolean {
+  // Vérifier si on est sur la page des paramètres (admin.php?page=pdf-builder-settings)
+  return typeof window !== 'undefined' &&
+         typeof window.location !== 'undefined' &&
+         window.location.href.indexOf('pdf-builder-settings') !== -1;
+}
+
 // Fonction pour vérifier si le debug est activé
 function isDebugEnabled(): boolean {
   // Debug activé si explicitement forcé
@@ -29,6 +37,10 @@ function isDebugEnabled(): boolean {
     // Si le debug PDF editor est activé, vérifier qu'on est sur la page appropriée
     if (debugSettings.pdf_editor === true) {
       return isPDFEditorPage();
+    }
+    // Si le debug settings page est activé, vérifier qu'on est sur la page appropriée
+    if (debugSettings.settings_page === true) {
+      return isSettingsPage();
     }
     // Sinon, debug général activé
     return true;

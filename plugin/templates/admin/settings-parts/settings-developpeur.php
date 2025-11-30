@@ -158,6 +158,19 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row"><label for="debug_settings_page">Debug Page Paramètres</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_settings_page" name="pdf_builder_debug_settings_page" value="1" <?php echo isset($settings['pdf_builder_debug_settings_page']) && $settings['pdf_builder_debug_settings_page'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug Page Paramètres</span>
+                        </div>
+                        <div class="toggle-description">Isole les logs JavaScript exclusivement à la page des paramètres</div>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row"><label for="debug_javascript_verbose">Logs Verbeux JS</label></th>
                     <td>
                         <div class="toggle-container">
@@ -824,6 +837,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const developerEnabledToggle = document.getElementById('developer_enabled');
     const debugJavascriptToggle = document.getElementById('debug_javascript');
     const debugPdfEditorRow = document.getElementById('debug_pdf_editor').closest('tr');
+    const debugSettingsPageRow = document.getElementById('debug_settings_page').closest('tr');
     const devSections = [
         'dev-license-section',
         'dev-debug-section',
@@ -857,6 +871,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Fonction pour mettre à jour la visibilité du toggle Debug Page Paramètres
+    function updateSettingsPageToggleVisibility() {
+        if (!debugJavascriptToggle || !debugSettingsPageRow) return;
+
+        const isJavascriptDebugEnabled = debugJavascriptToggle.checked;
+        debugSettingsPageRow.style.display = isJavascriptDebugEnabled ? 'table-row' : 'none';
+
+        // Désactiver le toggle si Debug JavaScript est désactivé
+        const settingsPageToggle = document.getElementById('debug_settings_page');
+        if (settingsPageToggle) {
+            settingsPageToggle.disabled = !isJavascriptDebugEnabled;
+            if (!isJavascriptDebugEnabled) {
+                settingsPageToggle.checked = false;
+            }
+        }
+
+        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            console.log(`🔧 [DEBUG SETTINGS PAGE] Toggle ${isJavascriptDebugEnabled ? 'AFFICHÉ' : 'MASQUÉ'} (dépend de Debug JavaScript)`);
+        }
+    }
+
     // Fonction globale pour mettre à jour les sections développeur
     window.updateDeveloperSections = function() {
         if (!developerEnabledToggle) return;
@@ -882,6 +917,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Mettre à jour la visibilité du toggle Debug Éditeur PDF
         updatePdfEditorToggleVisibility();
+
+        // Mettre à jour la visibilité du toggle Debug Page Paramètres
+        updateSettingsPageToggleVisibility();
     };
 
     // Fonction pour mettre à jour l'indicateur de statut du mode développeur (basé sur la valeur sauvegardée)
@@ -913,6 +951,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Appliquer l'état initial du toggle Debug Éditeur PDF
         updatePdfEditorToggleVisibility();
+
+        // Appliquer l'état initial du toggle Debug Page Paramètres
+        updateSettingsPageToggleVisibility();
 
         // Fonction pour basculer l'état du toggle
         function toggleDeveloperMode() {
@@ -951,6 +992,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('🔧 [DEBUG JAVASCRIPT] Valeur du toggle:', event.target.checked);
                 }
                 updatePdfEditorToggleVisibility();
+                updateSettingsPageToggleVisibility();
             });
         }
 
