@@ -1761,3 +1761,46 @@ add_action('wp_ajax_pdf_builder_validate_test_license_key', 'pdf_builder_validat
 add_action('wp_ajax_pdf_builder_clear_temp', 'pdf_builder_clear_temp_handler');
 add_action('wp_ajax_pdf_builder_refresh_logs', 'pdf_builder_refresh_logs_handler');
 add_action('wp_ajax_pdf_builder_clear_logs', 'pdf_builder_clear_logs_handler');
+
+// Handler ultra-simple pour sauvegarder l'onglet développeur
+function pdf_builder_save_developpeur_handler() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        send_ajax_response(false, 'Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
+    if (!wp_verify_nonce($nonce, 'pdf_builder_settings')) {
+        send_ajax_response(false, 'Nonce invalide');
+        return;
+    }
+
+    try {
+        $saved_count = 0;
+
+        // Sauvegarder tous les champs reçus (ultra-simple)
+        foreach ($_POST as $key => $value) {
+            if (in_array($key, ['action', 'nonce'])) {
+                continue;
+            }
+
+            // Préfixer avec pdf_builder_ si nécessaire
+            $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
+
+            // Sauvegarder directement
+            update_option($option_key, sanitize_text_field($value));
+            $saved_count++;
+        }
+
+        send_ajax_response(true, "$saved_count paramètres sauvegardés.", [
+            'saved_count' => $saved_count
+        ]);
+
+    } catch (Exception $e) {
+        send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+    }
+}
+
+add_action('wp_ajax_pdf_builder_save_developpeur', 'pdf_builder_save_developpeur_handler');
