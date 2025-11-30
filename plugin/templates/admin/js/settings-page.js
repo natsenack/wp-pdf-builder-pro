@@ -251,7 +251,7 @@ jQuery(document).ready(function($) {
         updateCacheStatus(isEnabled);
     });
 
-    });    // Fonction pour cacher/afficher les options de cache
+    // Fonction pour cacher/afficher les options de cache
     function toggleCacheOptions(isEnabled) {
         // Sélectionner toutes les lignes de la table sauf la première (Cache activé)
         const $cacheTable = $('#systeme input[name="cache_enabled"]').closest('table.form-table');
