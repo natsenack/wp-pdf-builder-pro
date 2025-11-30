@@ -1340,7 +1340,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
          */
         initialize: function() {
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('🔐 [PDF Builder] Initialisation du système de nonce avancé');
+                console.log('[PDF Builder] Initialisation du système de nonce avancé');
             }
 
             // Initialiser avec le nonce actuel
@@ -1357,7 +1357,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
             this.preloadNonces();
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('🔐 [PDF Builder] Système de nonce initialisé:', {
+                console.log('[PDF Builder] Système de nonce initialisé:', {
                     current: this.nonceState.current ? '***' : null,
                     expires: new Date(this.nonceState.expires).toLocaleTimeString(),
                     proactiveRefresh: this.config.enableProactiveRefresh
@@ -1377,7 +1377,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
 
             this.nonceState.refreshTimer = setTimeout(() => {
                 if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.log('🔄 [PDF Builder] Rafraîchissement proactif du nonce');
+                    console.log('[PDF Builder] Rafraîchissement proactif du nonce');
                 }
                 this.refreshNonce().then(() => {
                     // Redémarrer le timer pour le prochain rafraîchissement
@@ -1392,7 +1392,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
             }, timeUntilRefresh);
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log(`⏰ [PDF Builder] Prochain rafraîchissement dans ${Math.round(timeUntilRefresh / 1000 / 60)} minutes`);
+                console.log('[PDF Builder] Prochain rafraîchissement dans ' + Math.round(timeUntilRefresh / 1000 / 60) + ' minutes');
             }
         },
 
@@ -1405,7 +1405,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
             }
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log(`📦 [PDF Builder] Préchargement de ${this.config.preloadCount - this.nonceState.preloadQueue.length} nonces`);
+                console.log('[PDF Builder] Préchargement de ' + this.config.preloadCount - this.nonceState.preloadQueue.length + ' nonces');
             }
 
             // Faire une requête simple pour obtenir un nouveau nonce
@@ -1432,7 +1432,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     );
 
                     if (window.pdfBuilderDebugSettings?.javascript) {
-                        console.log(`📦 [PDF Builder] Nonce préchargé (${this.nonceState.preloadQueue.length}/${this.config.preloadCount})`);
+                        console.log('[PDF Builder] Nonce préchargé (' + this.nonceState.preloadQueue.length + '/' + this.config.preloadCount + ')');
                     }
 
                     // Continuer le préchargement si nécessaire
@@ -1459,7 +1459,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     this.setCurrentNonce(freshNonce.nonce, freshNonce.created);
                     this.nonceState.stats.refreshes++;
                     if (window.pdfBuilderDebugSettings?.javascript) {
-                        console.log('🔄 [PDF Builder] Nonce rafraîchi depuis le cache');
+                        console.log('[PDF Builder] Nonce rafraîchi depuis le cache');
                     }
                     resolve();
                     return;
@@ -1480,7 +1480,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         this.setCurrentNonce(data.data.nonce, Date.now());
                         this.nonceState.stats.refreshes++;
                         if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.log('🔄 [PDF Builder] Nonce rafraîchi depuis le serveur');
+                            console.log('[PDF Builder] Nonce rafraîchi depuis le serveur');
                         }
                         resolve();
                     } else {
@@ -1528,7 +1528,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
          */
         forceRefresh: function() {
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('🔄 [PDF Builder] Rafraîchissement forcé du nonce');
+                console.log('[PDF Builder] Rafraîchissement forcé du nonce');
             }
             return this.refreshNonce();
         },
@@ -1539,7 +1539,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
         configure: function(newConfig) {
             Object.assign(this.config, newConfig);
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('⚙️ [PDF Builder] Configuration du système de nonce mise à jour:', this.config);
+                console.log('[PDF Builder] Configuration du système de nonce mise à jour:', this.config);
             }
         },
 
@@ -1575,7 +1575,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     }
 
                     if (window.pdfBuilderDebugSettings?.javascript) {
-                        console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Making request with nonce:`, this.nonceState.current ? this.nonceState.current.substring(0, 10) + '...' : 'NULL');
+                        console.log('[PDF Builder AJAX] ' + opts.context + ' - Making request with nonce: ' + (this.nonceState.current ? this.nonceState.current.substring(0, 10) + '...' : 'NULL'));
                     }
 
                     // Faire la requête
@@ -1589,7 +1589,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     })
                     .then(response => {
                         if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Response status: ${response.status}`);
+                            console.log('[PDF Builder AJAX] ' + opts.context + ' - Response status: ' + response.status);
                         }
                         return response.json().catch(() => {
                             // Si la réponse n'est pas du JSON valide, créer une erreur
@@ -1598,7 +1598,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     })
                     .then(data => {
                         if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Response:`, data);
+                            console.log('[PDF Builder AJAX] ' + opts.context + ' - Response:', data);
                         }
 
                         if (data.success) {
@@ -1625,7 +1625,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                                 // Essayer de rafraîchir le nonce et réessayer
                                 if (opts.retryCount < this.config.maxRetries) {
                                     if (window.pdfBuilderDebugSettings?.javascript) {
-                                        console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Nonce error, retrying (${opts.retryCount + 1}/${this.config.maxRetries})`);
+                                        console.log('[PDF Builder AJAX] ' + opts.context + ' - Nonce error, retrying (' + (opts.retryCount + 1) + '/' + this.config.maxRetries + ')');
                                     }
                                     opts.retryCount++;
                                     this.forceRefresh().then(() => {
@@ -1667,7 +1667,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     })
                     .catch(error => {
                         if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.error(`🔄 [PDF Builder AJAX] ${opts.context} - Network error:`, error);
+                            console.error('[PDF Builder AJAX] ' + opts.context + ' - Network error:', error);
                         }
                         this.nonceState.stats.requests++;
 
@@ -1686,7 +1686,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     });
                 }).catch(error => {
                     if (window.pdfBuilderDebugSettings?.javascript) {
-                        console.error(`🔄 [PDF Builder AJAX] ${opts.context} - Nonce validation failed:`, error);
+                        console.error('[PDF Builder AJAX] ' + opts.context + ' - Nonce validation failed:', error);
                     }
                     if (opts.button) {
                         this.setButtonState(opts.button, 'error');
@@ -1805,38 +1805,6 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
         if (window.pdfBuilderNotificationsInstance && window.pdfBuilderNotificationsInstance.show) {
             window.pdfBuilderNotificationsInstance.show(message, 'info');
         }
-    };
-
-    // Basic modal functionality
-    function safeQuerySelector(selector) {
-        try {
-            return document.querySelector(selector);
-        } catch (e) {
-            return null;
-        }
-    }
-
-    function safeQuerySelectorAll(selector) {
-        try {
-            return document.querySelectorAll(selector);
-        } catch (e) {
-            return [];
-        }
-    }
-
-    // Initialiser le système de nonce avancé au chargement
-    document.addEventListener('DOMContentLoaded', function() {
-        PDF_Builder_Ajax_Handler.initialize();
-    });
-
-    // Nettoyer à la fermeture de la page
-    window.addEventListener('beforeunload', function() {
-        PDF_Builder_Ajax_Handler.cleanup();
-    });
-
-    // Exposer les statistiques globalement pour le debug
-    window.pdfBuilderNonceStats = function() {
-        return PDF_Builder_Ajax_Handler.getStats();
     };
 
     // Basic modal functionality
@@ -2190,7 +2158,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     if (input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log')) {
                         developerFields++;
                         if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.log(`[FLOATING SAVE] Developer checkbox: ${input.name} = ${input.checked ? '1' : '0'}`);
+                            console.log('[FLOATING SAVE] Developer checkbox: ' + input.name + ' = ' + (input.checked ? '1' : '0'));
                         }
                     }
                 } else if (input.type === 'radio') {
@@ -2204,16 +2172,16 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     if (input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log')) {
                         developerFields++;
                         if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.log(`[FLOATING SAVE] Developer field: ${input.name} = ${input.value || ''}`);
+                            console.log('[FLOATING SAVE] Developer field: ' + input.name + ' = ' + (input.value || ''));
                         }
                     }
                 }
             });
 
             if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log(`[FLOATING SAVE] Total inputs collected: ${collectedCount}`);
-                console.log(`[FLOATING SAVE] Developer fields collected: ${developerFields}`);
-                console.log(`[FLOATING SAVE] Current tab: ${currentTab}`);
+                console.log('[FLOATING SAVE] Total inputs collected: ' + collectedCount);
+                console.log('[FLOATING SAVE] Developer fields collected: ' + developerFields);
+                console.log('[FLOATING SAVE] Current tab: ' + currentTab);
             }
 
             // Make AJAX request using centralized handler
@@ -2277,7 +2245,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
         btnTextSpan.textContent = newText;
 
         if (window.pdfBuilderDebugSettings?.javascript) {
-            console.log(`[FLOATING SAVE] Button text updated to: "${newText}" for tab: ${activeTabId}`);
+            console.log('[FLOATING SAVE] Button text updated to: "' + newText + '" for tab: ' + activeTabId);
         }
     }
 })();

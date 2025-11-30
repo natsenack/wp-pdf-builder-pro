@@ -4,27 +4,27 @@
     <div class="cache-modal-overlay">
         <div class="cache-modal-content">
             <div class="cache-modal-header">
-                <h3>📊 Détails de la taille du cache</h3>
+                <h3>[DETAILS CACHE] Détails de la taille du cache</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
             </div>
             <div class="cache-modal-body">
                 <div class="cache-modal-info">
                     <p>
-                        <strong>💡 Informations sur la taille du cache :</strong> Cette section affiche la taille totale des fichiers en cache du plugin PDF Builder.
+                        <strong>[INFO] Informations sur la taille du cache :</strong> Cette section affiche la taille totale des fichiers en cache du plugin PDF Builder.
                         Le cache inclut les aperçus PDF générés et les données temporaires.
                     </p>
                 </div>
                 <div id="cache-size-details">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
                         <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                            <h4 style="margin-top: 0; color: #495057;">📁 Dossier des aperçus</h4>
+                            <h4 style="margin-top: 0; color: #495057;">[DOSSIER APERCUS] Dossier des aperçus</h4>
                             <div style="font-size: 18px; font-weight: bold; color: #28a745;" id="previews-cache-size">
                                 Calcul en cours...
                             </div>
                             <div style="color: #666; font-size: 12px;">wp-content/cache/wp-pdf-builder-previews/</div>
                         </div>
                         <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                            <h4 style="margin-top: 0; color: #495057;">📦 Dossier principal</h4>
+                            <h4 style="margin-top: 0; color: #495057;">[DOSSIER PRINCIPAL] Dossier principal</h4>
                             <div style="font-size: 18px; font-weight: bold; color: #28a745;" id="main-cache-size">
                                 Calcul en cours...
                             </div>
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px; padding: 15px; background: #e7f5e9; border: 1px solid #28a745; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #155724;">💡 Recommandations</h4>
+                        <h4 style="margin-top: 0; color: #155724;">[RECOMMANDATIONS] Recommandations</h4>
                         <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #155724;">
                             <li>Une taille de cache normale est inférieure à 100 Mo</li>
                             <li>Si la taille dépasse 500 Mo, considérez un nettoyage manuel</li>
@@ -43,7 +43,7 @@
             </div>
             <div class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
-                <button type="button" class="button button-primary" id="clear-cache-from-modal">🗑️ Vider le cache</button>
+                <button type="button" class="button button-primary" id="clear-cache-from-modal">[VIDER] Vider le cache</button>
             </div>
         </div>
     </div>
@@ -54,20 +54,20 @@
     <div class="cache-modal-overlay">
         <div class="cache-modal-content">
             <div class="cache-modal-header">
-                <h3>🔄 Détails des transients actifs</h3>
+                <h3>[TRANSIENTS] Détails des transients actifs</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
             </div>
             <div class="cache-modal-body">
                 <div class="cache-modal-info">
                     <p>
-                        <strong>💡 Informations sur les transients :</strong> Les transients sont des données temporaires stockées dans la base de données WordPress.
+                        <strong>[INFO] Informations sur les transients :</strong> Les transients sont des données temporaires stockées dans la base de données WordPress.
                         Ils expirent automatiquement et améliorent les performances en évitant les recalculs.
                     </p>
                 </div>
                 <div id="cache-transients-details">
                     <div style="margin-top: 20px;">
                         <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                            <h4 style="margin-top: 0; color: #495057;">📊 Statistiques des transients</h4>
+                            <h4 style="margin-top: 0; color: #495057;">[STATISTIQUES] Statistiques des transients</h4>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
                                 <div style="text-align: center;">
                                     <div style="font-size: 24px; font-weight: bold; color: #28a745;" id="total-transients-count">0</div>
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                         <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 8px;">
-                            <h4 style="margin-top: 0; color: #8b4513;">⚠️ Note importante</h4>
+                            <h4 style="margin-top: 0; color: #8b4513;">[ATTENTION] Note importante</h4>
                             <p style="margin: 10px 0 0 0; color: #5d4e37;">
                                 Les transients expirent automatiquement. Un nombre élevé de transients n'est généralement pas préoccupant,
                                 mais si vous remarquez des problèmes de performance, vous pouvez les vider manuellement.
@@ -95,7 +95,7 @@
             </div>
             <div class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
-                <button type="button" class="button button-warning" id="clear-transients-from-modal">🗑️ Vider les transients</button>
+                <button type="button" class="button button-warning" id="clear-transients-from-modal">[VIDER] Vider les transients</button>
             </div>
         </div>
     </div>
@@ -106,13 +106,13 @@
     <div class="cache-modal-overlay">
         <div class="cache-modal-content">
             <div class="cache-modal-header">
-                <h3>⚙️ Configuration du cache</h3>
+                <h3>[CONFIG] Configuration du cache</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
             </div>
             <div class="cache-modal-body">
                 <div class="cache-modal-info">
                     <p>
-                        <strong>💡 Configuration du système de cache :</strong> Gérez les paramètres de cache pour optimiser les performances du plugin PDF Builder.
+                        <strong>[INFO] Configuration du système de cache :</strong> Gérez les paramètres de cache pour optimiser les performances du plugin PDF Builder.
                         Le cache améliore considérablement les temps de chargement en stockant les données temporaires.
                     </p>
                 </div>
@@ -178,19 +178,19 @@
     <div class="cache-modal-overlay">
         <div class="cache-modal-content">
             <div class="cache-modal-header">
-                <h3>🧹 Nettoyage du cache</h3>
+                <h3>[NETTOYAGE] Nettoyage du cache</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
             </div>
             <div class="cache-modal-body">
                 <div class="cache-modal-info">
                     <p>
-                        <strong>💡 Nettoyage du cache :</strong> Supprimez les fichiers cache obsolètes et les données temporaires pour libérer de l'espace disque
+                        <strong>[INFO] Nettoyage du cache :</strong> Supprimez les fichiers cache obsolètes et les données temporaires pour libérer de l'espace disque
                         et améliorer les performances. Cette opération est sûre et peut être effectuée à tout moment.
                     </p>
                 </div>
                 <div style="margin-top: 20px;">
                     <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                        <h4 style="margin-top: 0; color: #495057;">📋 Derniers nettoyages</h4>
+                        <h4 style="margin-top: 0; color: #495057;">[DERNIERS NETTOYAGES] Derniers nettoyages</h4>
                         <div style="margin-top: 10px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #dee2e6;">
                                 <span>Dernier nettoyage automatique:</span>
@@ -213,7 +213,7 @@
                         </div>
                     </div>
                     <div style="margin-top: 20px; padding: 15px; background: #d1ecf1; border: 1px solid #17a2b8; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #0c5460;">🧽 Actions de nettoyage disponibles</h4>
+                        <h4 style="margin-top: 0; color: #0c5460;">[ACTIONS NETTOYAGE] Actions de nettoyage disponibles</h4>
                         <div style="margin-top: 15px; display: grid; gap: 10px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <input type="checkbox" id="cleanup_files" checked>
@@ -233,7 +233,7 @@
             </div>
             <div class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Annuler</button>
-                <button type="button" class="button button-primary" id="perform-cleanup-btn">🧹 Nettoyer maintenant</button>
+                <button type="button" class="button button-primary" id="perform-cleanup-btn">[NETTOYER] Nettoyer maintenant</button>
             </div>
         </div>
     </div>
@@ -242,13 +242,13 @@
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
-                <h3>📐 Dimensions & Format</h3>
+                <h3>[DIMENSIONS] Dimensions & Format</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p>
-                        <strong>💡 Comment ça marche :</strong> Ces paramètres définissent la taille, l'orientation et la qualité du document PDF généré. 
+                        <strong>[INFO] Comment ça marche :</strong> Ces paramètres définissent la taille, l'orientation et la qualité du document PDF généré. 
                         Le format A4 est actuellement supporté, d'autres formats arrivent bientôt.
                     </p>
                 </div>
@@ -272,7 +272,7 @@
                             <th scope="row"><label>Orientation</label></th>
                             <td>
                                 <div style="background: #f0f8ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 10px; margin: 5px 0;">
-                                    <strong>📄 Portrait uniquement (v1.0)</strong><br>
+                                    <strong>[PORTRAIT] Portrait uniquement (v1.0)</strong><br>
                                     <small style="color: #666;">
                                         L'orientation paysage sera disponible dans la version 2.0 avec recalcul automatique des dimensions.
                                         Actuellement, tous les documents sont générés en format portrait pour garantir la stabilité.
@@ -338,18 +338,18 @@
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
-                <h3>🔍 Zoom</h3>
+                <h3>[ZOOM] Zoom</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p>
-                        <strong>💡 Comment ça marche :</strong> Contrôlez les niveaux de zoom et les options de navigation du canvas.
+                        <strong>[INFO] Comment ça marche :</strong> Contrôlez les niveaux de zoom et les options de navigation du canvas.
                         Le zoom avec la molette de souris peut être activé/désactivé, et la navigation au clavier permet de se déplacer dans le canvas.
                     </p>
                 </div>
                 <form id="zoom-form">
-                    <h4 class="canvas-modal-section-title">🔍 Zoom</h4>
+                    <h4 class="canvas-modal-section-title">[ZOOM] Zoom</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="zoom_min">Zoom minimum (%)</label></th>
@@ -394,13 +394,13 @@
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
-                <h3 >🎨 Apparence</h3>
+                <h3 >[APPARENCE] Apparence</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p >
-                        <strong>💡 Comment ça marche :</strong> Ces paramètres contrôlent l'apparence visuelle du canvas de conception et de l'interface d'édition. 
+                        <strong>[INFO] Comment ça marche :</strong> Ces paramètres contrôlent l'apparence visuelle du canvas de conception et de l'interface d'édition. 
                         Personnalisez les couleurs et les effets pour un meilleur confort de travail.
                     </p>
                 </div>
@@ -414,7 +414,7 @@
             ?>
 
                 <form id="canvas-apparence-form">
-                    <h4 class="canvas-modal-section-title">🎨 Canvas</h4>
+                    <h4 class="canvas-modal-section-title">[CANVAS] Canvas</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_bg_color">Couleur de fond du canvas</label></th>
@@ -449,7 +449,7 @@
                         </tr>
                     </table>
                     
-                    <h4 class="canvas-modal-section-title spaced">📦 Éditeur</h4>
+                    <h4 class="canvas-modal-section-title spaced">[EDITEUR] Éditeur</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_container_bg_color">Arrière-plan de l'éditeur</label></th>
@@ -473,13 +473,13 @@
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
-                <h3 >📏 Grille & Guides</h3>
+                <h3 >[GRILLE] Grille & Guides</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p >
-                        <strong>💡 Comment ça marche :</strong> Activez la grille pour afficher un quadrillage sur le canvas. 
+                        <strong>[INFO] Comment ça marche :</strong> Activez la grille pour afficher un quadrillage sur le canvas. 
                         Les éléments s'aligneront automatiquement sur les lignes de la grille si l'accrochage est activé.
                     </p>
                 </div>
@@ -537,18 +537,18 @@
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
-                <h3 >🎯 Interactions & Comportement</h3>
+                <h3 >[INTERACTIONS] Interactions & Comportement</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p >
-                        <strong>💡 Comment ça marche :</strong> Ces paramètres contrôlent les interactions disponibles sur le canvas pour manipuler les éléments,
+                        <strong>[INFO] Comment ça marche :</strong> Ces paramètres contrôlent les interactions disponibles sur le canvas pour manipuler les éléments,
                         ainsi que le comportement général de sélection et les raccourcis clavier.
                     </p>
                 </div>
                 <form id="canvas-interactions-form">
-                    <h4 class="canvas-modal-section-title">🎯 Interactions</h4>
+                    <h4 class="canvas-modal-section-title">[INTERACTIONS] Interactions</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_drag_enabled">Glisser-déposer activé</label></th>
@@ -603,7 +603,7 @@
                         </tr>
                     </table>
 
-                    <h4 class="canvas-modal-section-title spaced">⚙️ Comportement</h4>
+                    <h4 class="canvas-modal-section-title spaced">[COMPORTEMENT] Comportement</h4>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_keyboard_shortcuts">Raccourcis clavier</label></th>
@@ -630,7 +630,7 @@
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
-                <h3 >📤 Export & Qualité</h3>
+                <h3 >[EXPORT] Export & Qualité</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
@@ -676,20 +676,20 @@
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
-                <h3 >⚡ Performance</h3>
+                <h3 >[PERFORMANCE] Performance</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p >
-                        <strong>💡 Optimisation :</strong> Ces paramètres améliorent les performances de l'éditeur et du plugin pour une expérience plus fluide.
+                        <strong>[OPTIMISATION] Optimisation :</strong> Ces paramètres améliorent les performances de l'éditeur et du plugin pour une expérience plus fluide.
                     </p>
                 </div>
                 <form id="canvas-performance-form">
                     <!-- Section Éditeur PDF -->
                     <h4 class="canvas-modal-section-title margin-25">
                         <span class="canvas-modal-inline-flex">
-                            🎨 Éditeur PDF
+                            [EDITEUR PDF] Éditeur PDF
                         </span>
                     </h4>
                     <p class="canvas-modal-sub-description">Paramètres de performance pour l'interface de conception</p>
@@ -745,7 +745,7 @@
                     <!-- Section Plugin WordPress -->
                     <h4 class="canvas-modal-section-title margin-35">
                         <span class="canvas-modal-inline-flex">
-                            🔧 Plugin WordPress
+                            [PLUGIN] Plugin WordPress
                         </span>
                     </h4>
                     <p class="canvas-modal-sub-description">Paramètres de performance pour le backend et génération PDF</p>
@@ -799,7 +799,7 @@
     <div class="canvas-modal-overlay">
         <div class="canvas-modal-content">
             <div class="canvas-modal-header">
-                <h3 >🐛 Debug</h3>
+                <h3 >[DEBUG] Debug</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
             </div>
             <div class="canvas-modal-body">
