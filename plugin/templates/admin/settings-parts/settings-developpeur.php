@@ -712,20 +712,31 @@ document.addEventListener('DOMContentLoaded', function() {
         'dev-notifications-test-section'
     ];
 
+    // Debug: Vérifier que les éléments sont trouvés
+    console.log('🔧 [DEBUG] Éléments DOM trouvés:', {
+        developerEnabledToggle: !!developerEnabledToggle,
+        debugJavascriptToggle: !!debugJavascriptToggle,
+        debugPdfEditorRow: !!debugPdfEditorRow,
+        debugSettingsPageRow: !!debugSettingsPageRow
+    });
+
     // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
     function updatePdfEditorToggleVisibility() {
+        console.log('🔧 [DEBUG PDF EDITOR] Fonction appelée');
+
         if (!debugJavascriptToggle || !debugPdfEditorRow) {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('🔧 [DEBUG PDF EDITOR] Éléments manquants:', {
-                    debugJavascriptToggle: !!debugJavascriptToggle,
-                    debugPdfEditorRow: !!debugPdfEditorRow
-                });
-            }
+            console.log('🔧 [DEBUG PDF EDITOR] Éléments manquants:', {
+                debugJavascriptToggle: !!debugJavascriptToggle,
+                debugPdfEditorRow: !!debugPdfEditorRow
+            });
             return;
         }
 
         const isJavascriptDebugEnabled = debugJavascriptToggle.checked;
+        console.log('🔧 [DEBUG PDF EDITOR] État debug_javascript:', isJavascriptDebugEnabled);
+
         debugPdfEditorRow.style.display = isJavascriptDebugEnabled ? 'table-row' : 'none';
+        console.log('🔧 [DEBUG PDF EDITOR] Style display appliqué:', debugPdfEditorRow.style.display);
 
         // Désactiver le toggle si Debug JavaScript est désactivé
         const pdfEditorToggle = document.getElementById('debug_pdf_editor');
@@ -734,11 +745,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!isJavascriptDebugEnabled) {
                 pdfEditorToggle.checked = false;
             }
+            console.log('🔧 [DEBUG PDF EDITOR] Toggle disabled:', pdfEditorToggle.disabled, 'checked:', pdfEditorToggle.checked);
         }
 
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log(`🔧 [DEBUG PDF EDITOR] Toggle ${isJavascriptDebugEnabled ? 'AFFICHÉ' : 'MASQUÉ'} (dépend de Debug JavaScript)`);
-        }
+        console.log(`🔧 [DEBUG PDF EDITOR] Toggle ${isJavascriptDebugEnabled ? 'AFFICHÉ' : 'MASQUÉ'} (dépend de Debug JavaScript)`);
     }
 
     // Fonction pour mettre à jour la visibilité du toggle Debug Page Paramètres
@@ -865,10 +875,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Écouter les changements du toggle Debug JavaScript pour mettre à jour la visibilité du toggle Debug Éditeur PDF
         if (debugJavascriptToggle) {
             debugJavascriptToggle.addEventListener('change', function(event) {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('🔧 [DEBUG JAVASCRIPT] Événement change déclenché');
-                    console.log('🔧 [DEBUG JAVASCRIPT] Valeur du toggle:', event.target.checked);
-                }
+                console.log('🔧 [DEBUG JAVASCRIPT] Événement change déclenché');
+                console.log('🔧 [DEBUG JAVASCRIPT] Valeur du toggle:', event.target.checked);
                 updatePdfEditorToggleVisibility();
                 updateSettingsPageToggleVisibility();
             });
