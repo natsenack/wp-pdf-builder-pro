@@ -471,7 +471,7 @@ if (!empty($_POST)) {
 }
 
 // Process form - handle both regular form submissions and AJAX requests
-if (((isset($_POST['submit']) || isset($_POST['submit_developpeur'])) && isset($_POST['pdf_builder_settings_nonce'])) || (isset($_POST['action']) && $_POST['action'] === 'pdf_builder_save_settings')) {
+if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || (isset($_POST['action']) && $_POST['action'] === 'pdf_builder_save_settings')) {
     if ($is_ajax) {
         if (defined('WP_DEBUG') && WP_DEBUG) {
 
@@ -524,7 +524,7 @@ if (((isset($_POST['submit']) || isset($_POST['submit_developpeur'])) && isset($
         // Process all POST data dynamically
         foreach ($_POST as $key => $value) {
             // Skip WordPress internal fields and security fields
-            if (in_array($key, ['submit', 'submit_developpeur', 'pdf_builder_settings_nonce', 'action', 'tab', 'canvas_settings', '_wp_http_referer'])) {
+            if (in_array($key, ['submit', 'pdf_builder_settings_nonce', 'action', 'tab', 'canvas_settings', '_wp_http_referer'])) {
                 continue;
             }
 
@@ -850,18 +850,6 @@ if (
 <!-- Modals - COMPLETEMENT HORS du conteneur principal -->
 <?php require_once 'settings-modals.php'; ?>
 
-<!-- Floating Save Button - HORS du conteneur principal -->
-<div id="floating-save-button" style="position: fixed !important; bottom: 24px !important; right: 24px !important; z-index: 999999 !important; border-radius: 16px; padding: 0; display: block !important; visibility: visible !important; opacity: 1 !important; background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%); backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.2);">
-    <button type="button" class="floating-save-btn" id="floating-save-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white !important; border: none; border-radius: 12px; padding: 12px 20px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex !important; align-items: center; gap: 6px; visibility: visible !important; opacity: 1 !important; letter-spacing: 0.025em; text-transform: none;">
-        <span class="save-icon" style="font-size: 16px; line-height: 1;">💾</span>
-        <span class="save-text" style="font-weight: 600;">Enregistrer</span>
-    </button>
-    <div class="floating-tooltip" style="position: absolute; bottom: 60px; right: 0; background: rgba(0,0,0,0.9); color: white; padding: 10px 14px; border-radius: 8px; font-size: 13px; white-space: nowrap; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 8px 24px rgba(0,0,0,0.15); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1);">
-        💡 Cliquez pour sauvegarder
-        <div style="position: absolute; top: 100%; right: 16px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid rgba(0,0,0,0.9);"></div>
-    </div>
-</div>
-
 <!-- Bouton de secours sans JavaScript -->
 <noscript>
     <div style="position: fixed; bottom: 80px; right: 20px; z-index: 999999; background: #fff; border: 2px solid #007cba; border-radius: 8px; padding: 10px;">
@@ -869,368 +857,6 @@ if (
         <small>JavaScript désactivé - Utilisez les boutons de chaque onglet</small>
     </div>
 </noscript>
-
-<!-- Script de secours pour le bouton flottant -->
-<script>
-(function() {
-    'use strict';
-
-    // Fonction de secours exécutée immédiatement
-    function ensureFloatingButton() {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('🔧 [PDF Builder] Vérification du bouton flottant...');
-        }
-
-        let floatingBtn = document.getElementById('floating-save-btn');
-        let floatingContainer = document.getElementById('floating-save-button');
-
-        // Si le bouton n'existe pas, le créer
-        if (!floatingContainer) {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('🔧 [PDF Builder] Création du conteneur bouton flottant...');
-            }
-
-            floatingContainer = document.createElement('div');
-            floatingContainer.id = 'floating-save-button';
-            floatingContainer.style.cssText = `
-                position: fixed !important;
-                bottom: 20px !important;
-                right: 20px !important;
-                z-index: 999999 !important;
-                border-radius: 10px;
-                padding: 5px;
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                background: rgba(255,255,255,0.9);
-                border: 1px solid #007cba;
-            `;
-
-            floatingBtn = document.createElement('button');
-            floatingBtn.id = 'floating-save-btn';
-            floatingBtn.type = 'button';
-            floatingBtn.className = 'floating-save-btn';
-            floatingBtn.style.cssText = `
-                background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
-                color: white !important;
-                border: none;
-                border-radius: 50px;
-                padding: 15px 25px;
-                font-size: 16px;
-                font-weight: bold;
-                cursor: pointer;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                transition: all 0.3s ease;
-                display: flex !important;
-                align-items: center;
-                gap: 8px;
-                visibility: visible !important;
-                opacity: 1 !important;
-            `;
-            floatingBtn.innerHTML = '<span class="save-icon">💾</span><span class="save-text">Enregistrer</span>';
-
-            floatingContainer.appendChild(floatingBtn);
-            document.body.appendChild(floatingContainer);
-
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('✅ [PDF Builder] Bouton flottant créé avec succès');
-            }
-        } else {
-            // S'assurer que le bouton existant est visible
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('🔧 [PDF Builder] Forçage de la visibilité du bouton flottant existant...');
-            }
-
-            floatingContainer.style.setProperty('display', 'block', 'important');
-            floatingContainer.style.setProperty('visibility', 'visible', 'important');
-            floatingContainer.style.setProperty('opacity', '1', 'important');
-            floatingContainer.style.setProperty('position', 'fixed', 'important');
-            floatingContainer.style.setProperty('bottom', '20px', 'important');
-            floatingContainer.style.setProperty('right', '20px', 'important');
-            floatingContainer.style.setProperty('z-index', '999999', 'important');
-
-            if (floatingBtn) {
-                floatingBtn.style.setProperty('display', 'flex', 'important');
-                floatingBtn.style.setProperty('visibility', 'visible', 'important');
-                floatingBtn.style.setProperty('opacity', '1', 'important');
-            }
-        }
-
-        // Attacher l'événement de clic de secours
-        if (floatingBtn && !floatingBtn.hasAttribute('data-event-attached')) {
-            floatingBtn.setAttribute('data-event-attached', 'true');
-
-            floatingBtn.addEventListener('click', function(event) {
-                event.preventDefault();
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('🔄 [PDF Builder] Bouton flottant cliqué (fonction de secours)');
-                }
-
-                // Animation de chargement
-                const originalHTML = floatingBtn.innerHTML;
-                floatingBtn.disabled = true;
-                floatingBtn.innerHTML = '<span class="dashicons dashicons-update spin"></span> Enregistrement...';
-                floatingBtn.style.opacity = '0.7';
-
-                // Essayer de trouver le formulaire actif
-                const activeTab = document.querySelector('.nav-tab.nav-tab-active');
-                if (activeTab) {
-                    const tabId = activeTab.getAttribute('data-tab') || activeTab.getAttribute('href')?.substring(1);
-                    if (tabId) {
-                        const activeContent = document.getElementById(tabId);
-                        if (activeContent) {
-                            const form = activeContent.querySelector('form');
-                            if (form) {
-                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                    console.log('📝 [PDF Builder] Formulaire trouvé, tentative de soumission AJAX...');
-                                }
-
-                        // Utiliser AJAX pour la sauvegarde des paramètres
-                        const formData = new FormData(form);
-                        formData.append('action', 'pdf_builder_save_settings');
-                        formData.append('tab', tabId);                                PDF_Builder_Ajax_Handler.makeRequest(formData, {
-                                    button: floatingBtn,
-                                    context: 'Paramètres sauvegarde',
-                                    successCallback: (result, originalData) => {
-                                        console.log('✅ [PDF Builder] Paramètres sauvegardés avec succès');
-
-                                        // Afficher une notification de succès
-                                        if (window.showSuccessNotification) {
-                                            window.showSuccessNotification('Paramètres sauvegardés avec succès !');
-                                        }
-                                    },
-                                    errorCallback: (result, originalData) => {
-                                        console.error('❌ [PDF Builder] Erreur lors de la sauvegarde des paramètres:', result);
-                                    }
-                                }).catch(error => {
-                                    console.error('❌ [PDF Builder] Erreur réseau lors de la sauvegarde:', error);
-                                });
-                                return;
-                            }
-                        }
-                    }
-                }
-
-                // Fallback: recharger la page avec les paramètres actuels
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('🔄 [PDF Builder] Fallback: rechargement de la page');
-                }
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            });
-
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('✅ [PDF Builder] Événement de clic attaché au bouton flottant');
-            }
-        }
-
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('✅ [PDF Builder] Bouton flottant opérationnel');
-        }
-    }
-
-    // Exécuter immédiatement
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', ensureFloatingButton);
-    } else {
-        ensureFloatingButton();
-    }
-
-    // Exécuter aussi après un court délai pour s'assurer que tout est chargé
-    setTimeout(ensureFloatingButton, 1000);
-    setTimeout(ensureFloatingButton, 3000);
-})();
-</script>
-
-<style>
-/* Styles pour le bouton flottant moderne */
-#floating-save-button {
-    position: fixed !important;
-    bottom: 24px !important;
-    right: 24px !important;
-    z-index: 999999 !important;
-    border-radius: 16px;
-    padding: 0;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
-    border: 1px solid rgba(255,255,255,0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.floating-save-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white !important;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex !important;
-    align-items: center;
-    gap: 6px;
-    visibility: visible !important;
-    opacity: 1 !important;
-    letter-spacing: 0.025em;
-    text-transform: none;
-    position: relative;
-    overflow: hidden;
-}
-
-.floating-save-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s;
-}
-
-.floating-save-btn:hover::before {
-    left: 100%;
-}
-
-.floating-save-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-}
-
-.floating-save-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-}
-
-.floating-save-btn.saving {
-    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-    animation: pulse 1.5s infinite;
-    transform: scale(0.98);
-}
-
-.floating-save-btn.saved {
-    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-    animation: bounce 0.6s ease;
-}
-
-.floating-save-btn.error {
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    animation: shake 0.5s ease;
-}
-
-.floating-tooltip {
-    position: absolute;
-    bottom: 60px;
-    right: 0;
-    background: rgba(0,0,0,0.9);
-    color: white;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-.floating-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    right: 16px;
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid rgba(0,0,0,0.9);
-}
-
-.floating-save-btn:hover + .floating-tooltip,
-.floating-tooltip:hover {
-    opacity: 1;
-    transform: translateY(-2px);
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(0.98); }
-    50% { transform: scale(1.02); }
-}
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-4px); }
-    60% { transform: translateY(-2px); }
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
-    20%, 40%, 60%, 80% { transform: translateX(2px); }
-}
-
-/* Responsive design pour mobile */
-@media (max-width: 768px) {
-    #floating-save-button {
-        bottom: 20px;
-        right: 20px;
-    }
-
-    .floating-save-btn {
-        padding: 10px 16px;
-        font-size: 13px;
-    }
-
-    .floating-tooltip {
-        display: none; /* Masquer le tooltip sur mobile */
-    }
-}
-
-/* Styles pour les contrôles RGPD désactivés */
-.gdpr-disabled {
-    opacity: 0.5;
-    pointer-events: none;
-    cursor: not-allowed;
-}
-
-.gdpr-disabled-section {
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-.gdpr-disabled-section * {
-    pointer-events: none !important;
-}
-
-.gdpr-disabled + span.toggle-slider {
-    background: #ccc !important;
-    cursor: not-allowed;
-}
-
-.gdpr-disabled + span.toggle-slider:before {
-    background: #999 !important;
-}
-
-/* Styles pour les onglets */
-.tab-content {
-    display: none !important;
-}
-
-.tab-content.active {
-    display: block !important;
-}
-</style>
-
 
 <script>
 // Update zoom card preview
@@ -2227,7 +1853,7 @@ window.toggleRGPDControls = toggleRGPDControls;
         },
 
         /**
-         * Définit l'état d'un bouton
+         * Définit l'état d'un bouton - VERSION SIMPLIFIÉE
          */
         setButtonState: function(button, state) {
             if (!button) return;
@@ -2242,16 +1868,18 @@ window.toggleRGPDControls = toggleRGPDControls;
                     button.style.opacity = '0.7';
                     break;
                 case 'success':
+                    // Suppression de l'état "succès" - retour direct au texte original
                     button.disabled = false;
-                    button.innerHTML = '<span class="dashicons dashicons-yes"></span> Succès';
+                    button.innerHTML = originalText;
                     button.style.opacity = '1';
-                    setTimeout(() => this.setButtonState(button, 'reset'), 2000);
+                    button.removeAttribute('data-original-text');
                     break;
                 case 'error':
                     button.disabled = false;
                     button.innerHTML = '<span class="dashicons dashicons-no"></span> Erreur';
                     button.style.opacity = '1';
-                    setTimeout(() => this.setButtonState(button, 'reset'), 3000);
+                    // Reset après 2 secondes au lieu de 3
+                    setTimeout(() => this.setButtonState(button, 'reset'), 2000);
                     break;
                 case 'reset':
                 default:
@@ -2619,77 +2247,6 @@ window.toggleRGPDControls = toggleRGPDControls;
                 visibleModals.forEach(hideModal);
             }
         });
-
-        // Handle floating save button - VERSION ULTRA SIMPLE
-        const floatingSaveBtn = document.getElementById('floating-save-btn');
-        if (floatingSaveBtn) {
-            floatingSaveBtn.addEventListener('click', function(event) {
-                event.preventDefault();
-
-                // Vérifier si on est sur l'onglet développeur
-                const activeTab = document.querySelector('.nav-tab.nav-tab-active');
-                if (!activeTab || !activeTab.getAttribute('href')?.includes('#developpeur')) {
-                    alert('Cette fonction ne fonctionne que sur l\'onglet Développeur');
-                    return;
-                }
-
-                // Désactiver le bouton
-                floatingSaveBtn.disabled = true;
-                floatingSaveBtn.innerHTML = '⏳ Sauvegarde...';
-
-                // Collecter les données de l'onglet développeur
-                const developpeurTab = document.getElementById('developpeur');
-                if (!developpeurTab) {
-                    alert('Onglet développeur non trouvé');
-                    floatingSaveBtn.disabled = false;
-                    floatingSaveBtn.innerHTML = '💾 Enregistrer';
-                    return;
-                }
-
-                const formData = new FormData();
-                formData.append('action', 'pdf_builder_save_developpeur');
-
-                // Collecter tous les inputs de l'onglet développeur
-                const inputs = developpeurTab.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => {
-                    if (input.name) {
-                        if (input.type === 'checkbox') {
-                            formData.append(input.name, input.checked ? '1' : '0');
-                        } else {
-                            formData.append(input.name, input.value);
-                        }
-                    }
-                });
-
-                // Ajouter le nonce
-                formData.append('nonce', window.pdfBuilderSettingsNonce || '');
-
-                // Envoyer via fetch simple
-                fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        floatingSaveBtn.innerHTML = '✅ Sauvegardé';
-                        setTimeout(() => {
-                            floatingSaveBtn.innerHTML = '💾 Enregistrer';
-                            floatingSaveBtn.disabled = false;
-                        }, 2000);
-                    } else {
-                        alert('Erreur: ' + (data.data?.message || 'Erreur inconnue'));
-                        floatingSaveBtn.innerHTML = '💾 Enregistrer';
-                        floatingSaveBtn.disabled = false;
-                    }
-                })
-                .catch(error => {
-                    alert('Erreur réseau');
-                    floatingSaveBtn.innerHTML = '💾 Enregistrer';
-                    floatingSaveBtn.disabled = false;
-                });
-            });
-        }
     }
 
     // Basic preview update functions

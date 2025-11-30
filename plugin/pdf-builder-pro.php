@@ -1014,30 +1014,6 @@ function pdf_builder_save_settings_ajax() {
             $saved_count++;
             break;
 
-        case 'developpeur':
-            // Sauvegarder les paramètres développeur
-            $settings = array(
-                'pdf_builder_developer_enabled' => $_POST['pdf_builder_developer_enabled'] ?? '0',
-                'pdf_builder_developer_password' => sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''),
-                'pdf_builder_debug_php_errors' => isset($_POST['pdf_builder_debug_php_errors']) ? '1' : '0',
-                'debug_javascript' => isset($_POST['debug_javascript']) ? '1' : '0',
-                'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']) ? '1' : '0',
-                'debug_ajax' => isset($_POST['debug_ajax']) ? '1' : '0',
-                'debug_performance' => isset($_POST['debug_performance']) ? '1' : '0',
-                'debug_database' => isset($_POST['debug_database']) ? '1' : '0',
-                'log_level' => intval($_POST['log_level'] ?? 3),
-                'log_file_size' => intval($_POST['log_file_size'] ?? 10),
-                'log_retention' => intval($_POST['log_retention'] ?? 30),
-                'license_test_mode' => isset($_POST['license_test_mode']) ? '1' : '0',
-                'force_https' => isset($_POST['force_https']) ? '1' : '0',
-            );
-
-            foreach ($settings as $key => $value) {
-                update_option('pdf_builder_' . $key, $value);
-            }
-            $saved_count++;
-            break;
-
         case 'systeme':
             // Sauvegarder les paramètres système (performance + maintenance + sauvegarde)
             $settings = array(
