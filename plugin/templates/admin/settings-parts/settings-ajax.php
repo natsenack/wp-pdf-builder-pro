@@ -1520,7 +1520,7 @@ function pdf_builder_save_all_settings_handler() {
                 }
 
                 // Traiter selon le type de champ
-                if (strpos($key, '_enabled') !== false || strpos($key, '_debug') !== false) {
+                if (strpos($key, '_enabled') !== false || strpos($key, '_debug') !== false || in_array($key, ['debug_javascript', 'debug_pdf_editor', 'debug_settings_page'])) {
                     // Champs booléens
                     $sanitized_value = $value === '1' || $value === 'true' ? 1 : 0;
                 } elseif (is_array($value)) {
@@ -1548,7 +1548,10 @@ function pdf_builder_save_all_settings_handler() {
             'pdf_metadata_enabled',
             'pdf_print_optimized',
             'template_library_enabled',
-            'developer_enabled'
+            'developer_enabled',
+            'debug_javascript',
+            'debug_pdf_editor',
+            'debug_settings_page'
         ];
 
         foreach ($checkbox_fields as $field) {
