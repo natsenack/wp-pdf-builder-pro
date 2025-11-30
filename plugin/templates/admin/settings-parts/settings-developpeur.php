@@ -720,6 +720,13 @@ document.addEventListener('DOMContentLoaded', function() {
         debugSettingsPageRow: !!debugSettingsPageRow
     });
 
+    // Debug: Vérifier les valeurs sauvegardées
+    console.log('🔧 [DEBUG] Valeurs sauvegardées:', {
+        debug_javascript: '<?php echo isset($settings['pdf_builder_debug_javascript']) ? $settings['pdf_builder_debug_javascript'] : 'NOT_SET'; ?>',
+        debug_pdf_editor: '<?php echo isset($settings['pdf_builder_debug_pdf_editor']) ? $settings['pdf_builder_debug_pdf_editor'] : 'NOT_SET'; ?>',
+        debug_settings_page: '<?php echo isset($settings['pdf_builder_debug_settings_page']) ? $settings['pdf_builder_debug_settings_page'] : 'NOT_SET'; ?>'
+    });
+
     // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
     function updatePdfEditorToggleVisibility() {
         console.log('🔧 [DEBUG PDF EDITOR] Fonction appelée');
@@ -840,6 +847,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Appliquer l'état initial du toggle Debug Éditeur PDF
         updatePdfEditorToggleVisibility();
 
+        // Debug: Vérifier l'état initial des toggles
+        const pdfEditorToggle = document.getElementById('debug_pdf_editor');
+        const settingsPageToggle = document.getElementById('debug_settings_page');
+        console.log('🔧 [DEBUG] État initial des toggles:', {
+            pdfEditorToggle: {
+                exists: !!pdfEditorToggle,
+                checked: pdfEditorToggle ? pdfEditorToggle.checked : 'N/A',
+                disabled: pdfEditorToggle ? pdfEditorToggle.disabled : 'N/A'
+            },
+            settingsPageToggle: {
+                exists: !!settingsPageToggle,
+                checked: settingsPageToggle ? settingsPageToggle.checked : 'N/A',
+                disabled: settingsPageToggle ? settingsPageToggle.disabled : 'N/A'
+            }
+        });
+
         // Appliquer l'état initial du toggle Debug Page Paramètres
         updateSettingsPageToggleVisibility();
 
@@ -879,6 +902,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('🔧 [DEBUG JAVASCRIPT] Valeur du toggle:', event.target.checked);
                 updatePdfEditorToggleVisibility();
                 updateSettingsPageToggleVisibility();
+            });
+
+            // Ajouter aussi un écouteur de clic pour debug
+            debugJavascriptToggle.addEventListener('click', function(event) {
+                console.log('🔧 [DEBUG JAVASCRIPT] Clic détecté sur toggle');
             });
         }
 
