@@ -2806,29 +2806,36 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                         // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
                         if (originalData && originalData.data && originalData.data.saved_options) {
+                            console.log('💾 [PDF Builder] Mise à jour des champs - données reçues:', originalData.data.saved_options);
+                            console.log('🔍 [PDF Builder] Liste des champs dans saved_options:', Object.keys(originalData.data.saved_options));
+
                             // Parcourir toutes les données sauvegardées et mettre à jour les champs correspondants
                             Object.keys(originalData.data.saved_options).forEach(fieldName => {
                                 const fieldValue = originalData.data.saved_options[fieldName];
+                                console.log(`🔍 [PDF Builder] Traitement champ ${fieldName} = ${fieldValue}`);
+
                                 // Chercher le champ dans le formulaire (avec ou sans préfixe pdf_builder_)
                                 let fieldElement = document.querySelector(`[name="${fieldName}"]`);
                                 if (!fieldElement && fieldName.startsWith('pdf_builder_')) {
                                     // Essayer sans le préfixe
                                     const shortName = fieldName.replace('pdf_builder_', '');
                                     fieldElement = document.querySelector(`[name="${shortName}"]`);
+                                    console.log(`🔄 [PDF Builder] Champ ${fieldName} non trouvé, essai avec ${shortName}:`, !!fieldElement);
                                 }
 
                                 if (fieldElement) {
+                                    console.log(`✅ [PDF Builder] Champ ${fieldName} trouvé dans DOM:`, fieldElement, 'type:', fieldElement.type);
+
                                     if (fieldElement.type === 'checkbox') {
                                         // Pour les checkboxes, mettre à jour l'état checked
                                         const oldChecked = fieldElement.checked;
                                         const newChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
                                         fieldElement.checked = newChecked;
-                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                            console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${newChecked}`);
-                                        }
+                                        console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${newChecked} (valeur: ${fieldValue})`);
 
                                         // Déclencher les fonctions de toggle si nécessaire
                                         if (fieldName === 'pdf_builder_developer_enabled' || fieldName === 'developer_enabled') {
+                                            console.log('🔧 [PDF Builder] Déclenchement des fonctions développeur');
                                             // Mettre à jour les sections développeur
                                             if (window.updateDeveloperSections) {
                                                 window.updateDeveloperSections();
@@ -2852,24 +2859,24 @@ window.toggleRGPDControls = toggleRGPDControls;
                                         // Pour les radios, cocher la bonne option
                                         if (fieldElement.value == fieldValue) { // Utiliser == pour comparaison lâche
                                             fieldElement.checked = true;
-                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                                console.log(`📝 [PDF Builder] Radio ${fieldName} coché: ${fieldValue}`);
-                                            }
+                                            console.log(`📝 [PDF Builder] Radio ${fieldName} coché: ${fieldValue}`);
                                         }
                                     } else {
                                         // Pour les autres champs (text, select, etc.)
                                         const oldValue = fieldElement.value;
                                         fieldElement.value = fieldValue;
-                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                            console.log(`📝 [PDF Builder] Champ ${fieldName} mis à jour: "${oldValue}" -> "${fieldValue}"`);
-                                        }
+                                        console.log(`📝 [PDF Builder] Champ ${fieldName} mis à jour: "${oldValue}" -> "${fieldValue}"`);
                                     }
                                 } else {
-                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                        console.log(`⚠️ [PDF Builder] Champ ${fieldName} non trouvé dans le DOM pour mise à jour`);
-                                    }
+                                    console.log(`⚠️ [PDF Builder] Champ ${fieldName} non trouvé dans le DOM pour mise à jour`);
+                                    // Lister tous les champs input/select/textarea pour debug
+                                    const allFields = document.querySelectorAll('input[name], select[name], textarea[name]');
+                                    const fieldNames = Array.from(allFields).map(f => f.name);
+                                    console.log('📋 [PDF Builder] Champs disponibles dans le DOM:', fieldNames);
                                 }
                             });
+                        } else {
+                            console.log('❌ [PDF Builder] Aucune donnée saved_options reçue:', originalData);
                         }
 
                         // Recharger les previews avec les nouvelles données

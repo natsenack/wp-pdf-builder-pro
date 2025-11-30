@@ -269,6 +269,18 @@ function pdf_builder_load_core()
         }
     }
 
+    // Charger les classes de cache essentielles depuis src/Cache/
+    $cache_classes = array(
+        'RendererCache.php',
+        'WooCommerceCache.php'
+    );
+    foreach ($cache_classes as $cache_class) {
+        $cache_path = PDF_BUILDER_PLUGIN_DIR . 'src/Cache/' . $cache_class;
+        if (file_exists($cache_path)) {
+            require_once $cache_path;
+        }
+    }
+
     // Charger les managers Admin depuis src/Admin/Managers/
     $admin_managers = array(
         'SettingsManager.php',
@@ -347,7 +359,9 @@ function pdf_builder_load_core()
     // Charger les classes Core essentielles
     $core_classes = array(
         'PDF_Builder_Security_Validator.php',
-        'PDF_Builder_MU_Plugin_Blocker.php'
+        'PDF_Builder_MU_Plugin_Blocker.php',
+        'PDF_Builder_Nonce_Manager.php',
+        'PDF_Builder_Unified_Ajax_Handler.php'
     );
     foreach ($core_classes as $core_class) {
         $core_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/' . $core_class;
