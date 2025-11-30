@@ -418,16 +418,22 @@ jQuery(document).ready(function($) {
     $('#optimize-db-btn').on('click', function(e) {
         e.preventDefault();
 
+        console.log('[PDF Builder] 🗃️ Bouton "Optimiser la base" cliqué');
+
         const $button = $(this);
         const $results = $('#maintenance-results');
 
+        console.log('[PDF Builder] 🔄 Désactivation du bouton et changement du texte');
         // Désactiver le bouton pendant l'opération
         $button.prop('disabled', true).text('🗃️ Optimisation en cours...');
 
-
+        console.log('[PDF Builder] 🔑 Récupération d\'un nonce frais...');
         // Faire l'appel AJAX (récupérer un nonce frais si besoin)
         fetchFreshAjaxNonce().then(function(nonce) {
+            console.log('[PDF Builder] ✅ Nonce frais obtenu:', nonce ? nonce.substring(0, 12) + '...' : 'null');
             debugLogAjax('pdf_builder_optimize_database', { action: 'pdf_builder_optimize_database', nonce: nonce, url: pdfBuilderAjax.ajaxurl });
+
+            console.log('[PDF Builder] 📡 Envoi de la requête AJAX pour optimiser la base...');
             $.ajax({
                 url: pdfBuilderAjax.ajaxurl,
                 type: 'POST',
@@ -437,25 +443,31 @@ jQuery(document).ready(function($) {
                 },
                 timeout: 60000, // 60 secondes timeout
                 success: function(response) {
+                    console.log('[PDF Builder] ✅ Réponse AJAX reçue:', response);
                     debugLogAjax('pdf_builder_optimize_database success', response);
-                if (response.success) {
-                    $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Base de données optimisée</div>');
-                } else {
-                    var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de l\'optimisation';
-                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ ' + msg + '</div>');
+                    if (response.success) {
+                        console.log('[PDF Builder] 🎉 Optimisation réussie');
+                        $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Base de données optimisée</div>');
+                    } else {
+                        console.log('[PDF Builder] ❌ Optimisation échouée:', response);
+                        var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de l\'optimisation';
+                        $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ ' + msg + '</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('[PDF Builder] ❌ Erreur AJAX:', { status: status, error: error, xhr: xhr });
+                    debugLogAjax('pdf_builder_optimize_database error', status, error, xhr && xhr.responseText);
+                    var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
+                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
+                },
+                complete: function() {
+                    console.log('[PDF Builder] 🔄 Réactivation du bouton');
+                    // Réactiver le bouton
+                    $button.prop('disabled', false).text('🗃️ Optimiser la base');
                 }
-            },
-            error: function(xhr, status, error) {
-                debugLogAjax('pdf_builder_optimize_database error', status, error, xhr && xhr.responseText);
-                var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
-                $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
-            },
-            complete: function() {
-                // Réactiver le bouton
-                $button.prop('disabled', false).text('🗃️ Optimiser la base');
-            }
             });
         }).catch(function(err){
+            console.log('[PDF Builder] ❌ Impossible d\'obtenir le nonce:', err);
             $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Impossible d\'obtenir nonce</div>');
             $button.prop('disabled', false).text('🗃️ Optimiser la base');
         });
