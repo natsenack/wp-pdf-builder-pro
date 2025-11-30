@@ -2462,9 +2462,9 @@ window.toggleRGPDControls = toggleRGPDControls;
                     context: 'Canvas Modal',
                     successCallback: (result, originalData) => {
                         // Update canvas settings in window object
-                        if (originalData.data && originalData.data.saved_values) {
+                        if (originalData.data && originalData.data.result_data) {
                             // Update window.pdfBuilderCanvasSettings with new values
-                            Object.assign(window.pdfBuilderCanvasSettings, originalData.data.saved_values);
+                            Object.assign(window.pdfBuilderCanvasSettings, originalData.data.result_data);
 
                             // Update previews
                             if (typeof window.updateCanvasPreviews === 'function') {
@@ -2776,7 +2776,7 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                         console.log('🔄 [PDF Builder] AJAX Success - Raw response:', originalData);
                         console.log('🔄 [PDF Builder] AJAX Success - Response data keys:', originalData && originalData.data ? Object.keys(originalData.data) : 'NO DATA');
-                        console.log('🔄 [PDF Builder] AJAX Success - Has saved:', originalData && originalData.data && originalData.data.saved ? 'YES' : 'NO');
+                        console.log('🔄 [PDF Builder] AJAX Success - Has result_data:', originalData && originalData.data && originalData.data.result_data ? 'YES' : 'NO');
 
                         // Log success
                         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
@@ -2791,9 +2791,9 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Mettre à jour les données JavaScript avec les valeurs sauvegardées depuis le serveur
                         if (originalData && originalData.data) {
                             // Mettre à jour window.pdfBuilderSavedSettings avec les nouvelles valeurs
-                            if (typeof window.pdfBuilderSavedSettings === 'object' && originalData.data.saved_values) {
+                            if (typeof window.pdfBuilderSavedSettings === 'object' && originalData.data.result_data) {
                                 // Fusionner les nouvelles valeurs sauvegardées
-                                Object.assign(window.pdfBuilderSavedSettings, originalData.data.saved_values);
+                                Object.assign(window.pdfBuilderSavedSettings, originalData.data.result_data);
                                 if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                     console.log('✅ [PDF Builder] window.pdfBuilderSavedSettings mis à jour');
                                 }
@@ -2809,10 +2809,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                         }
 
                         // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
-                        if (originalData && originalData.data && originalData.data.saved_values) {
-                            const options = originalData.data.saved_values;
+                        if (originalData && originalData.data && originalData.data.result_data) {
+                            const options = originalData.data.result_data;
                             console.log('💾 [PDF Builder] Mise à jour des champs - données reçues:', options);
-                            console.log('🔍 [PDF Builder] Liste des champs dans saved_values:', Object.keys(options));
+                            console.log('🔍 [PDF Builder] Liste des champs dans result_data:', Object.keys(options));
 
                             // Parcourir toutes les données sauvegardées et mettre à jour les champs correspondants
                             Object.keys(options).forEach(fieldName => {
@@ -2881,7 +2881,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                                 }
                             });
                         } else {
-                            console.log('❌ [PDF Builder] Aucune donnée saved_values reçue:', originalData);
+                            console.log('❌ [PDF Builder] Aucune donnée result_data reçue:', originalData);
                         }
 
                         // Recharger les previews avec les nouvelles données
