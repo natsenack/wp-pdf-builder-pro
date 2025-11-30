@@ -1528,8 +1528,11 @@ function pdf_builder_get_cache_metrics_handler() {
  * AJAX handler for getting a fresh nonce
  */
 function pdf_builder_get_fresh_nonce_handler() {
+    error_log('PDF Builder Get Fresh Nonce: Handler appelé');
+
     // Check permissions
     if (!current_user_can('manage_options')) {
+        error_log('PDF Builder Get Fresh Nonce: Permissions insuffisantes');
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
@@ -1537,12 +1540,14 @@ function pdf_builder_get_fresh_nonce_handler() {
     try {
         // Generate a fresh nonce for cache actions
         $fresh_nonce = wp_create_nonce('pdf_builder_cache_actions');
+        error_log('PDF Builder Get Fresh Nonce: Nonce généré: ' . substr($fresh_nonce, 0, 12) . '...');
 
         wp_send_json_success(array(
             'nonce' => $fresh_nonce
         ));
 
     } catch (Exception $e) {
+        error_log('PDF Builder Get Fresh Nonce: Exception - ' . $e->getMessage());
         wp_send_json_error('Erreur lors de la génération du nonce: ' . $e->getMessage());
     }
 }
