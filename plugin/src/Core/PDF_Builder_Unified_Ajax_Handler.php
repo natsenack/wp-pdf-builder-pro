@@ -38,10 +38,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Actions de cache
         add_action('wp_ajax_pdf_builder_get_cache_metrics', [$this, 'handle_get_cache_metrics']);
         add_action('wp_ajax_pdf_builder_clear_all_cache', [$this, 'handle_clear_cache']);
+        add_action('wp_ajax_pdf_builder_clear_cache', [$this, 'handle_clear_cache']);
 
         // Actions de maintenance
         add_action('wp_ajax_pdf_builder_optimize_database', [$this, 'handle_optimize_database']);
         add_action('wp_ajax_pdf_builder_remove_temp_files', [$this, 'handle_remove_temp_files']);
+        add_action('wp_ajax_pdf_builder_clear_temp', [$this, 'handle_clear_temp_files']);
 
         // Actions de sauvegarde
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'handle_create_backup']);
@@ -52,14 +54,24 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Actions de licence
         add_action('wp_ajax_pdf_builder_test_license', [$this, 'handle_test_license']);
+        add_action('wp_ajax_pdf_builder_toggle_test_mode', [$this, 'handle_toggle_test_mode']);
+        add_action('wp_ajax_pdf_builder_generate_test_license_key', [$this, 'handle_generate_test_license_key']);
+        add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_license_key']);
+        add_action('wp_ajax_pdf_builder_cleanup_license', [$this, 'handle_cleanup_license']);
 
         // Actions de diagnostic
         add_action('wp_ajax_pdf_builder_export_diagnostic', [$this, 'handle_export_diagnostic']);
         add_action('wp_ajax_pdf_builder_view_logs', [$this, 'handle_view_logs']);
+        add_action('wp_ajax_pdf_builder_refresh_logs', [$this, 'handle_refresh_logs']);
+        add_action('wp_ajax_pdf_builder_clear_logs', [$this, 'handle_clear_logs']);
 
         // Actions de test
         add_action('wp_ajax_pdf_builder_test_ajax', [$this, 'handle_test_ajax']);
         add_action('wp_ajax_test_ajax', [$this, 'handle_test_ajax']);
+        add_action('wp_ajax_pdf_builder_test_routes', [$this, 'handle_test_routes']);
+
+        // Actions développeur
+        add_action('wp_ajax_pdf_builder_get_fresh_nonce', [$this, 'handle_get_fresh_nonce']);
     }
 
     /**
@@ -1009,48 +1021,359 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Handler pour télécharger une sauvegarde
      */
-    public function handle_download_backup() {
-        if (!$this->nonce_manager->validate_ajax_request()) {
-            return;
-        }
+     public function handle_download_backup() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
 
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
-            return;
-        }
+         if (!current_user_can('manage_options')) {
+             wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+             return;
+         }
 
-        $filename = $_POST['filename'] ?? '';
+         $filename = $_POST['filename'] ?? '';
 
-        if (empty($filename)) {
-            wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
-            return;
-        }
+         if (empty($filename)) {
+             wp_send_json_error(['message' => __('Nom de fichier manquant.', 'pdf-builder-pro')]);
+             return;
+         }
 
-        try {
-            $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
-            $filepath = $backup_manager->backup_dir . $filename;
+         try {
+             $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+             $filepath = $backup_manager->backup_dir . $filename;
 
-            if (!file_exists($filepath)) {
-                wp_send_json_error(['message' => __('Fichier de sauvegarde introuvable.', 'pdf-builder-pro')]);
-                return;
-            }
+             if (!file_exists($filepath)) {
+                 wp_send_json_error(['message' => __('Fichier de sauvegarde introuvable.', 'pdf-builder-pro')]);
+                 return;
+             }
 
-            // Générer l'URL de téléchargement
-            $upload_dir = wp_upload_dir();
-            $relative_path = str_replace($upload_dir['basedir'], '', $filepath);
-            $download_url = $upload_dir['baseurl'] . $relative_path;
+             // Générer l'URL de téléchargement
+             $upload_dir = wp_upload_dir();
+             $relative_path = str_replace($upload_dir['basedir'], '', $filepath);
+             $download_url = $upload_dir['baseurl'] . $relative_path;
 
-            wp_send_json_success([
-                'download_url' => $download_url,
-                'filename' => $filename
-            ]);
+             wp_send_json_success([
+                 'download_url' => $download_url,
+                 'filename' => $filename
+             ]);
 
-        } catch (Exception $e) {
-            error_log('[PDF Builder AJAX] Erreur téléchargement sauvegarde: ' . $e->getMessage());
-            wp_send_json_error(['message' => 'Erreur interne du serveur']);
-        }
-    }
-}
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur téléchargement sauvegarde: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+
+     /**
+      * Handler pour basculer le mode test de licence
+      */
+     public function handle_toggle_test_mode() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             $current_mode = get_option('pdf_builder_license_test_mode_enabled', '0');
+             $new_mode = $current_mode === '1' ? '0' : '1';
+
+             update_option('pdf_builder_license_test_mode_enabled', $new_mode);
+
+             wp_send_json_success([
+                 'message' => 'Mode test ' . ($new_mode === '1' ? 'activé' : 'désactivé') . ' avec succès.',
+                 'test_mode' => $new_mode
+             ]);
+
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur toggle test mode: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+
+     /**
+      * Handler pour générer une clé de licence de test
+      */
+     public function handle_generate_test_license_key() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
+             update_option('pdf_builder_license_test_key', $test_key);
+
+             wp_send_json_success([
+                 'message' => 'Clé de test générée avec succès.',
+                 'license_key' => $test_key
+             ]);
+
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur génération clé test: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+
+     /**
+      * Handler pour supprimer la clé de licence de test
+      */
+     public function handle_delete_test_license_key() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             delete_option('pdf_builder_license_test_key');
+
+             wp_send_json_success([
+                 'message' => 'Clé de test supprimée avec succès.'
+             ]);
+
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur suppression clé test: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+
+     /**
+      * Handler pour nettoyer complètement la licence
+      */
+     public function handle_cleanup_license() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             $license_options = [
+                 'pdf_builder_license_key',
+                 'pdf_builder_license_status',
+                 'pdf_builder_license_expires',
+                 'pdf_builder_license_test_key',
+                 'pdf_builder_license_test_mode_enabled',
+                 'pdf_builder_license_data'
+             ];
+
+             foreach ($license_options as $option) {
+                 delete_option($option);
+             }
+
+             // Clear license transients
+             global $wpdb;
+             $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_license_%'");
+             $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_license_%'");
+
+             wp_send_json_success([
+                 'message' => 'Licence complètement nettoyée. Le plugin est maintenant en mode gratuit.',
+                 'reset_complete' => true
+             ]);
+
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur nettoyage licence: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+
+     /**
+      * Handler pour nettoyer les fichiers temporaires
+      */
+     public function handle_clear_temp_files() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             $temp_dirs = [
+                 WP_CONTENT_DIR . '/pdf-builder-temp/',
+                 get_temp_dir() . '/pdf-builder/'
+             ];
+
+             $cleared_files = 0;
+             $total_size = 0;
+
+             foreach ($temp_dirs as $temp_dir) {
+                 if (is_dir($temp_dir)) {
+                     $files = glob($temp_dir . '*');
+                     foreach ($files as $file) {
+                         if (is_file($file)) {
+                             $file_size = filesize($file);
+                             if (unlink($file)) {
+                                 $cleared_files++;
+                                 $total_size += $file_size;
+                             }
+                         }
+                     }
+                 }
+             }
+
+             // Clear old temp files (older than 24 hours)
+             $upload_dir = wp_upload_dir();
+             $temp_pattern = $upload_dir['basedir'] . '/pdf-builder-temp-*';
+             $temp_files = glob($temp_pattern);
+
+             foreach ($temp_files as $temp_file) {
+                 if (is_file($temp_file) && (time() - filemtime($temp_file)) > 86400) {
+                     $file_size = filesize($temp_file);
+                     if (unlink($temp_file)) {
+                         $cleared_files++;
+                         $total_size += $file_size;
+                     }
+                 }
+             }
+
+             wp_send_json_success([
+                 'message' => "Fichiers temporaires nettoyés: $cleared_files fichier(s) supprimé(s), " . size_format($total_size) . ' libéré(s).'
+             ]);
+
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur nettoyage temp: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+
+     /**
+      * Handler pour tester les routes
+      */
+     public function handle_test_routes() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         $routes_tested = [];
+         $failed_routes = [];
+
+         $admin_routes = [
+             'admin.php?page=pdf-builder-settings' => 'Page principale des paramètres',
+             'admin-ajax.php' => 'Endpoint AJAX WordPress'
+         ];
+
+         foreach ($admin_routes as $route => $description) {
+             $url = admin_url($route);
+             $response = wp_remote_head($url, ['timeout' => 5]);
+
+             if (is_wp_error($response)) {
+                 $failed_routes[] = $route . ' (' . $response->get_error_message() . ')';
+             } else {
+                 $routes_tested[] = $route . ' (OK)';
+             }
+         }
+
+         if (empty($failed_routes)) {
+             wp_send_json_success([
+                 'message' => 'Toutes les routes sont accessibles.',
+                 'routes_tested' => $routes_tested
+             ]);
+         } else {
+             wp_send_json_error([
+                 'message' => 'Routes inaccessibles détectées.',
+                 'routes_tested' => $routes_tested,
+                 'failed_routes' => $failed_routes
+             ]);
+         }
+     }
+
+     /**
+      * Handler pour actualiser les logs
+      */
+     public function handle_refresh_logs() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             $log_files = [];
+             $log_dirs = [
+                 WP_CONTENT_DIR . '/pdf-builder-logs/',
+                 wp_upload_dir()['basedir'] . '/pdf-builder-logs/'
+             ];
+
+             $logs_content = '';
+             $max_lines = 100;
+
+             foreach ($log_dirs as $log_dir) {
+                 if (is_dir($log_dir)) {
+                     $files = glob($log_dir . '*.log');
+                     foreach ($files as $file) {
+                         if (is_file($file) && filesize($file) > 0) {
+                             $lines = file($file);
+                             $recent_lines = array_slice($lines, -$max_lines);
+                             $logs_content .= "=== " . basename($file) . " ===\n";
+                             $logs_content .= implode('', $recent_lines);
+                             $logs_content .= "\n\n";
+                         }
+                     }
+                 }
+             }
+
+             if (empty($logs_content)) {
+                 $logs_content = "Aucun log trouvé ou les logs sont vides.";
+             }
+
+             wp_send_json_success([
+                 'message' => 'Logs actualisés avec succès.',
+                 'logs_content' => $logs_content
+             ]);
+
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur actualisation logs: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+
+     /**
+      * Handler pour vider les logs
+      */
+     public function handle_clear_logs() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             $log_dirs = [
+                 WP_CONTENT_DIR . '/pdf-builder-logs/',
+                 wp_upload_dir()['basedir'] . '/pdf-builder-logs/'
+             ];
+
+             $cleared_files = 0;
+
+             foreach ($log_dirs as $log_dir) {
+                 if (is_dir($log_dir)) {
+                     $files = glob($log_dir . '*.log');
+                     foreach ($files as $file) {
+                         if (is_file($file) && unlink($file)) {
+                             $cleared_files++;
+                         }
+                     }
+                 }
+             }
+
+             wp_send_json_success([
+                 'message' => "$cleared_files fichier(s) de log supprimé(s) avec succès."
+             ]);
+
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur nettoyage logs: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+
+     /**
+      * Handler pour obtenir un nonce frais
+      */
+     public function handle_get_fresh_nonce() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             $fresh_nonce = $this->nonce_manager->generate_nonce();
+
+             wp_send_json_success([
+                 'nonce' => $fresh_nonce
+             ]);
+
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur génération nonce: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+ }
 
 // Initialiser le handler unifié
 PDF_Builder_Unified_Ajax_Handler::get_instance();
