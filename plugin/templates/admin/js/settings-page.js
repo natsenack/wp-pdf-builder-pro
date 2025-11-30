@@ -428,6 +428,20 @@ jQuery(document).ready(function($) {
         $button.prop('disabled', true).text('🗃️ Optimisation en cours...');
 
         console.log('[PDF Builder] 🔑 Récupération d\'un nonce frais...');
+        // Vider le cache OPcache avant la requête
+        console.log('[PDF Builder] 🧹 Vidage du cache OPcache...');
+        $.ajax({
+            url: pdfBuilderAjax.ajaxurl.replace('admin-ajax.php', '../wp-content/plugins/wp-pdf-builder-pro/clear_opcache.php'),
+            type: 'GET',
+            timeout: 5000,
+            success: function() {
+                console.log('[PDF Builder] ✅ Cache OPcache vidé');
+            },
+            error: function() {
+                console.log('[PDF Builder] ⚠️ Impossible de vider le cache OPcache (normal si pas activé)');
+            }
+        });
+
         // Faire l'appel AJAX (récupérer un nonce frais si besoin)
         fetchFreshAjaxNonce().then(function(nonce) {
             console.log('[PDF Builder] ✅ Nonce frais obtenu:', nonce ? nonce.substring(0, 12) + '...' : 'null');

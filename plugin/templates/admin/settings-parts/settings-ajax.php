@@ -1524,6 +1524,29 @@ function pdf_builder_get_cache_metrics_handler() {
     }
 }
 
+/**
+ * AJAX handler for getting a fresh nonce
+ */
+function pdf_builder_get_fresh_nonce_handler() {
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        // Generate a fresh nonce for cache actions
+        $fresh_nonce = wp_create_nonce('pdf_builder_cache_actions');
+
+        wp_send_json_success(array(
+            'nonce' => $fresh_nonce
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la génération du nonce: ' . $e->getMessage());
+    }
+}
+
 // Register AJAX actions for canvas settings
 add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
 add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
@@ -1535,3 +1558,4 @@ add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_get_cache_metri
 add_action('wp_ajax_pdf_builder_export_diagnostic', 'pdf_builder_export_diagnostic_handler');
 add_action('wp_ajax_pdf_builder_view_logs', 'pdf_builder_view_logs_handler');
 add_action('wp_ajax_pdf_builder_optimize_database', 'pdf_builder_optimize_database_handler');
+add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce_handler');
