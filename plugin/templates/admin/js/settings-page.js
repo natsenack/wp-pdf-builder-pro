@@ -481,19 +481,19 @@ jQuery(document).ready(function($) {
 
         // Faire l'appel AJAX (récupérer un nonce frais si besoin)
         fetchFreshAjaxNonce().then(function(nonce) {
-            debugLogAjax('pdf_builder_remove_temp_files', { action: 'pdf_builder_remove_temp_files', nonce: nonce, url: pdfBuilderAjax.ajaxurl });
+            debugLogAjax('pdf_builder_repair_templates', { action: 'pdf_builder_repair_templates', nonce: nonce, url: pdfBuilderAjax.ajaxurl });
             $.ajax({
                 url: pdfBuilderAjax.ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'pdf_builder_remove_temp_files',
+                    action: 'pdf_builder_repair_templates',
                     nonce: nonce
                 },
                 timeout: 30000, // 30 secondes timeout
                 success: function(response) {
-                    debugLogAjax('pdf_builder_remove_temp_files success', response);
+                    debugLogAjax('pdf_builder_repair_templates success', response);
                     if (response.success) {
-                        var msg = (response && response.data && response.data.message) ? response.data.message : 'Fichiers temporaires supprimés';
+                        var msg = (response && response.data && response.data.message) ? response.data.message : 'Templates réparés';
                         $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ ' + msg + '</div>');
                     } else {
                         var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de la suppression';
@@ -501,20 +501,18 @@ jQuery(document).ready(function($) {
                     }
                 },
                 error: function(xhr, status, error) {
-                    debugLogAjax('pdf_builder_remove_temp_files error', status, error, xhr && xhr.responseText);
+                    debugLogAjax('pdf_builder_repair_templates error', status, error, xhr && xhr.responseText);
                     var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
                     $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
                 },
                 complete: function() {
                     // Réactiver le bouton
-                    $button.prop('disabled', false).text('🗂️ Supprimer fichiers temp');
+                    $button.prop('disabled', false).text('🔧 Réparer les templates');
                 }
             });
         }).catch(function(err){
             $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Impossible d\'obtenir nonce</div>');
-            $button.prop('disabled', false).text('🗂️ Supprimer fichiers temp');
-        });
-            }
+            $button.prop('disabled', false).text('🔧 Réparer les templates');
         });
     });
 
@@ -536,19 +534,21 @@ jQuery(document).ready(function($) {
 
         // Faire l'appel AJAX (récupérer un nonce frais si besoin)
         fetchFreshAjaxNonce().then(function(nonce) {
+            debugLogAjax('pdf_builder_remove_temp_files', { action: 'pdf_builder_remove_temp_files', nonce: nonce, url: pdfBuilderAjax.ajaxurl });
             $.ajax({
                 url: pdfBuilderAjax.ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'pdf_builder_repair_templates',
+                    action: 'pdf_builder_remove_temp_files',
                     nonce: nonce
                 },
                 timeout: 30000, // 30 secondes timeout
                 success: function(response) {
                     if (response.success) {
-                        $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Templates réparés</div>');
+                        var msg = (response && response.data && response.data.message) ? response.data.message : 'Fichiers temporaires supprimés';
+                        $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ ' + msg + '</div>');
                     } else {
-                        var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de la réparation';
+                        var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de la suppression';
                         $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ ' + msg + '</div>');
                     }
                 },
@@ -558,16 +558,14 @@ jQuery(document).ready(function($) {
                 },
                 complete: function() {
                     // Réactiver le bouton
-                    $button.prop('disabled', false).text('🔧 Réparer les templates');
+                    $button.prop('disabled', false).text('🗂️ Supprimer fichiers temp');
                 }
             });
         }).catch(function(err){
             $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Impossible d\'obtenir nonce</div>');
             $button.prop('disabled', false).text('🔧 Réparer les templates');
         });
-                $button.prop('disabled', false).text('🗂️ Supprimer fichiers temp');
-            }
-        });
+        
     });
 
     // Créer une sauvegarde
