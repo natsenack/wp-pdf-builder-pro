@@ -1766,7 +1766,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     }
 
                     if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                        console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Making request`);
+                        console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Making request with nonce:`, this.nonceState.current ? this.nonceState.current.substring(0, 10) + '...' : 'NULL');
                     }
 
                     // Faire la requête
