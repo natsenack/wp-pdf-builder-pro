@@ -848,8 +848,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updatePdfEditorToggleVisibility();
 
         // Debug: Vérifier l'état initial des toggles
-        const pdfEditorToggle = document.getElementById('debug_pdf_editor');
-        const settingsPageToggle = document.getElementById('debug_settings_page');
         console.log('🔧 [DEBUG] État initial des toggles:', {
             pdfEditorToggle: {
                 exists: !!pdfEditorToggle,
@@ -907,6 +905,29 @@ document.addEventListener('DOMContentLoaded', function() {
             // Ajouter aussi un écouteur de clic pour debug
             debugJavascriptToggle.addEventListener('click', function(event) {
                 console.log('🔧 [DEBUG JAVASCRIPT] Clic détecté sur toggle');
+            });
+        }
+
+        // Attacher les écouteurs d'événements aux toggles enfants pour permettre l'interaction
+        if (pdfEditorToggle) {
+            pdfEditorToggle.addEventListener('change', function(event) {
+                console.log('🔧 [DEBUG PDF EDITOR] Toggle changé:', event.target.checked);
+                // Le toggle peut être changé programmatiquement ou par l'utilisateur
+            });
+
+            pdfEditorToggle.addEventListener('click', function(event) {
+                console.log('🔧 [DEBUG PDF EDITOR] Clic détecté sur toggle enfant');
+            });
+        }
+
+        if (settingsPageToggle) {
+            settingsPageToggle.addEventListener('change', function(event) {
+                console.log('🔧 [DEBUG SETTINGS PAGE] Toggle changé:', event.target.checked);
+                // Le toggle peut être changé programmatiquement ou par l'utilisateur
+            });
+
+            settingsPageToggle.addEventListener('click', function(event) {
+                console.log('🔧 [DEBUG SETTINGS PAGE] Clic détecté sur toggle enfant');
             });
         }
 
