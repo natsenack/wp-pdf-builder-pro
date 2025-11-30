@@ -725,10 +725,6 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
 
             </div>
 
-            <!-- Bouton de sauvegarde -->
-            <p class="submit" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6;">
-                <input type="submit" name="submit" id="submit" class="button button-primary" value="Enregistrer les modifications" style="font-size: 16px; padding: 12px 24px;">
-            </p>
          </form>
 
 <script>

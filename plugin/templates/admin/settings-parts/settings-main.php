@@ -845,6 +845,14 @@ if (
         <?php require_once 'settings-developpeur.php'; ?>
     </div>
 
+<!-- Bouton flottant de sauvegarde universelle -->
+<div id="floating-save-container">
+    <button id="floating-save-btn" class="floating-save-btn" type="button">
+        <span class="dashicons dashicons-cloud-upload"></span>
+        <span class="btn-text">Enregistrer Tout</span>
+    </button>
+</div>
+
 </div>
 
 <!-- Modals - COMPLETEMENT HORS du conteneur principal -->
@@ -2279,9 +2287,88 @@ window.toggleRGPDControls = toggleRGPDControls;
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             initializeModals();
+            initializeFloatingSaveButton();
         });
     } else {
         initializeModals();
+        initializeFloatingSaveButton();
+    }
+
+    // Initialize floating save button
+    function initializeFloatingSaveButton() {
+        const floatingSaveBtn = document.getElementById('floating-save-btn');
+        if (!floatingSaveBtn) return;
+
+        floatingSaveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Collect all form data from all tabs
+            const formData = new FormData();
+
+            // Add action and nonce
+            formData.append('action', 'pdf_builder_save_settings');
+            formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+
+            // Get current active tab to determine context
+            const activeTab = document.querySelector('.nav-tab-active');
+            const currentTab = activeTab ? activeTab.getAttribute('href').substring(1) : 'general';
+            formData.append('current_tab', currentTab);
+
+            // Collect data from all visible forms and inputs across all tabs
+            // This ensures we save data from all tabs, not just the active one
+            const allInputs = document.querySelectorAll('input, select, textarea');
+            allInputs.forEach(input => {
+                // Skip buttons, hidden fields we don't want, and disabled inputs
+                if (input.type === 'button' || input.type === 'submit' || input.type === 'reset' ||
+                    input.name === '' || input.disabled) {
+                    return;
+                }
+
+                // Handle different input types
+                if (input.type === 'checkbox') {
+                    formData.append(input.name, input.checked ? '1' : '0');
+                } else if (input.type === 'radio') {
+                    if (input.checked) {
+                        formData.append(input.name, input.value);
+                    }
+                } else {
+                    formData.append(input.name, input.value || '');
+                }
+            });
+
+            // Make AJAX request using centralized handler
+            PDF_Builder_Ajax_Handler.makeRequest(formData, {
+                button: floatingSaveBtn,
+                context: 'Floating Save Button',
+                successCallback: function(result, originalData) {
+                    // Update previews after successful save
+                    if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeAllPreviews === 'function') {
+                        window.PDF_Builder_Preview_Manager.initializeAllPreviews();
+                    }
+
+                    // Update canvas previews if on contenu tab
+                    if (currentTab === 'contenu' && typeof window.updateCanvasPreviews === 'function') {
+                        window.updateCanvasPreviews('all');
+                    }
+
+                    // Update status indicators
+                    if (typeof window.updateSecurityStatusIndicators === 'function') {
+                        window.updateSecurityStatusIndicators();
+                    }
+                    if (typeof window.updateTemplateStatusIndicators === 'function') {
+                        window.updateTemplateStatusIndicators();
+                    }
+                    if (typeof window.updateSystemStatusIndicators === 'function') {
+                        window.updateSystemStatusIndicators();
+                    }
+                    if (typeof window.updateTemplateLibraryIndicator === 'function') {
+                        window.updateTemplateLibraryIndicator();
+                    }
+                }
+            }).catch(error => {
+                console.error('Floating save error:', error);
+            });
+        });
     }
 })();
 </script>

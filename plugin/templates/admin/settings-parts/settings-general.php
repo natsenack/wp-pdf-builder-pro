@@ -86,11 +86,6 @@
                             </tr>
                         </table>
                     </article>
-
-                    <!-- Bouton de sauvegarde -->
-                    <p class="submit">
-                        <input type="submit" name="submit" id="submit" class="button button-primary" value="Enregistrer les modifications">
-                    </p>
                 </form>
 
                <script>

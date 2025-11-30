@@ -446,7 +446,6 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                     <button type="button" class="button button-secondary" onclick="resetTemplatesStatus()">
                         🔄 Réinitialiser
                     </button>
-                    <input type="submit" name="submit" id="submit" class="button button-primary" value="Enregistrer les modifications" style="font-size: 14px; padding: 8px 16px;">
                 </div>
             </form>
 
