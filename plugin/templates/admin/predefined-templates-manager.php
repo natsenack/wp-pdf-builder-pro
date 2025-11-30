@@ -237,7 +237,7 @@ JS;
 
             // Récupérer et sanitizer le mot de passe
             $password = isset($_POST['password']) ? sanitize_text_field($_POST['password']) : '';
-            $stored_password = isset($settings['developer_password']) ? $settings['developer_password'] : '';
+            $stored_password = isset($settings['pdf_builder_developer_password']) ? $settings['pdf_builder_developer_password'] : '';
 
             // Fallback: si aucun mot de passe n'est stocké, utiliser une clé par défaut
             if (empty($stored_password)) {

@@ -200,7 +200,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     // Développeur
                     'developer_enabled' => get_option('pdf_builder_developer_enabled', '0'),
                     'developer_password' => get_option('pdf_builder_developer_password', ''),
-                    'pdf_builder_debug_php_errors' => get_option('pdf_builder_debug_php_errors', '0'),
+                    'debug_php_errors' => get_option('pdf_builder_debug_php_errors', '0'),
                     'pdf_builder_debug_javascript' => get_option('pdf_builder_debug_javascript', '0'),
                     'pdf_builder_debug_javascript_verbose' => get_option('pdf_builder_debug_javascript_verbose', '0'),
                     'pdf_builder_debug_ajax' => get_option('pdf_builder_debug_ajax', '0'),
@@ -251,7 +251,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $saved_options = [
                     'developer_enabled' => get_option('pdf_builder_developer_enabled', '0'),
                     'developer_password' => get_option('pdf_builder_developer_password', ''),
-                    'pdf_builder_debug_php_errors' => get_option('pdf_builder_debug_php_errors', '0'),
+                    'debug_php_errors' => get_option('pdf_builder_debug_php_errors', '0'),
                     'pdf_builder_debug_javascript' => get_option('pdf_builder_debug_javascript', '0'),
                     'pdf_builder_debug_javascript_verbose' => get_option('pdf_builder_debug_javascript_verbose', '0'),
                     'pdf_builder_debug_ajax' => get_option('pdf_builder_debug_ajax', '0'),
@@ -408,8 +408,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             'gdpr_consent_marketing' => !empty($_POST['gdpr_consent_marketing']) ? '1' : '0',
 
             // Développeur - Contrôle d'accès
-            'developer_enabled' => isset($_POST['developer_enabled']) ? '1' : '0',
-            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
+            'pdf_builder_developer_enabled' => isset($_POST['pdf_builder_developer_enabled']) ? '1' : '0',
+            'pdf_builder_developer_password' => sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''),
 
             // Développeur - Debug
             'debug_php_errors' => !empty($_POST['debug_php_errors']) ? '1' : '0',
@@ -699,9 +699,9 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_developer_settings() {
         $settings = [
-            'developer_enabled' => $_POST['developer_enabled'] ?? '0',
-            'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
-            'debug_php_errors' => isset($_POST['debug_php_errors']) ? '1' : '0',
+            'pdf_builder_developer_enabled' => $_POST['pdf_builder_developer_enabled'] ?? '0',
+            'pdf_builder_developer_password' => sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''),
+            'pdf_builder_debug_php_errors' => isset($_POST['pdf_builder_debug_php_errors']) ? '1' : '0',
             'debug_javascript' => isset($_POST['debug_javascript']) ? '1' : '0',
             'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']) ? '1' : '0',
             'debug_ajax' => isset($_POST['debug_ajax']) ? '1' : '0',

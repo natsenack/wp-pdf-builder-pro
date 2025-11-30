@@ -1017,9 +1017,9 @@ function pdf_builder_save_settings_ajax() {
         case 'developpeur':
             // Sauvegarder les paramètres développeur
             $settings = array(
-                'developer_enabled' => $_POST['developer_enabled'] ?? '0',
-                'developer_password' => sanitize_text_field($_POST['developer_password'] ?? ''),
-                'debug_php_errors' => isset($_POST['debug_php_errors']) ? '1' : '0',
+                'pdf_builder_developer_enabled' => $_POST['pdf_builder_developer_enabled'] ?? '0',
+                'pdf_builder_developer_password' => sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''),
+                'pdf_builder_debug_php_errors' => isset($_POST['pdf_builder_debug_php_errors']) ? '1' : '0',
                 'debug_javascript' => isset($_POST['debug_javascript']) ? '1' : '0',
                 'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']) ? '1' : '0',
                 'debug_ajax' => isset($_POST['debug_ajax']) ? '1' : '0',
