@@ -2687,63 +2687,53 @@ window.toggleRGPDControls = toggleRGPDControls;
                 }
 
                 if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('📝 [PDF Builder] Collecte des données de tous les onglets...');
+                    console.log('📝 [PDF Builder] Collecte des données de l\'onglet actif uniquement...');
                 }
 
-                // Collect form data from ALL tabs - sauvegarder tous les onglets
+                // Collect form data from ACTIVE tab only - éviter les conflits entre onglets
                 const formData = new FormData();
                 const collectedData = {};
 
-                // Liste des onglets à traiter
-                const allTabs = ['general', 'licence', 'systeme', 'acces', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
+                // Collecter UNIQUEMENT les données de l'onglet actif
+                const activeTabContent = document.getElementById(tabId);
+                if (activeTabContent) {
+                    const activeTabForm = activeTabContent.querySelector('form');
+                    if (activeTabForm) {
+                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            console.log('📝 [PDF Builder] Collecte données onglet actif:', tabId);
+                        }
 
-                // Parcourir tous les onglets et collecter leurs données
-                allTabs.forEach(tab => {
-                    const tabContent = document.getElementById(tab);
-                    if (tabContent) {
-                        const tabForm = tabContent.querySelector('form');
-                        if (tabForm) {
-                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                console.log('📝 [PDF Builder] Collecte données onglet:', tab);
-                            }
-
-                            // Collecter manuellement tous les champs pour s'assurer que les checkboxes non cochées sont incluses
-                            const allInputs = tabForm.querySelectorAll('input, select, textarea');
-                            allInputs.forEach(input => {
-                                const name = input.name;
-                                if (name) {
-                                    let value;
-                                    if (input.type === 'checkbox') {
-                                        // Pour les checkboxes, inclure toujours la valeur (0 ou 1)
-                                        value = input.checked ? '1' : '0';
-                                        formData.append(name, value);
-                                        collectedData[name] = value;
-                                    } else if (input.type === 'radio') {
-                                        // Pour les radios, seulement si coché
-                                        if (input.checked) {
-                                            value = input.value;
-                                            formData.append(name, value);
-                                            collectedData[name] = value;
-                                        }
-                                    } else {
-                                        // Pour les autres champs
+                        // Collecter manuellement tous les champs de l'onglet actif
+                        const allInputs = activeTabForm.querySelectorAll('input, select, textarea');
+                        allInputs.forEach(input => {
+                            const name = input.name;
+                            if (name && name !== 'action' && name !== 'nonce') {
+                                let value;
+                                if (input.type === 'checkbox') {
+                                    // Pour les checkboxes, inclure toujours la valeur (0 ou 1)
+                                    value = input.checked ? '1' : '0';
+                                    formData.append(name, value);
+                                    collectedData[name] = value;
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.log(`📝 [PDF Builder] Checkbox ${name}: ${value}`);
+                                    }
+                                } else if (input.type === 'radio') {
+                                    // Pour les radios, seulement si coché
+                                    if (input.checked) {
                                         value = input.value;
                                         formData.append(name, value);
                                         collectedData[name] = value;
                                     }
+                                } else {
+                                    // Pour les autres champs
+                                    value = input.value;
+                                    formData.append(name, value);
+                                    collectedData[name] = value;
                                 }
-                            });
-                        } else {
-                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                console.log('⚠️ [PDF Builder] Aucun formulaire trouvé pour l\'onglet:', tab);
                             }
-                        }
-                    } else {
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                            console.log('⚠️ [PDF Builder] Contenu non trouvé pour l\'onglet:', tab);
-                        }
+                        });
                     }
-                });
+                }
 
                 formData.append('action', 'pdf_builder_save_settings');
                 formData.append('pdf_builder_settings_nonce', window.pdfBuilderSettingsNonce);
@@ -2818,12 +2808,39 @@ window.toggleRGPDControls = toggleRGPDControls;
                                     console.log('✅ [PDF Builder] window.pdfBuilderCanvasSettings mis à jour');
                                 }
                             }
+    
+                            // Mettre à jour les paramètres debug depuis les données sauvegardées
+                            if (originalData.data.result_data && window.pdfBuilderCanvasSettings) {
+                                // Synchroniser les paramètres debug développeur avec canvas settings
+                                if (!window.pdfBuilderCanvasSettings.debug) {
+                                    window.pdfBuilderCanvasSettings.debug = {};
+                                }
+    
+                                // Mettre à jour les paramètres debug individuels
+                                if (typeof originalData.data.result_data.pdf_builder_debug_javascript !== 'undefined') {
+                                    window.pdfBuilderCanvasSettings.debug.javascript = originalData.data.result_data.pdf_builder_debug_javascript === '1';
+                                }
+                                if (typeof originalData.data.result_data.pdf_builder_debug_pdf_editor !== 'undefined') {
+                                    window.pdfBuilderCanvasSettings.debug.pdf_editor = originalData.data.result_data.pdf_builder_debug_pdf_editor === '1';
+                                }
+                                if (typeof originalData.data.result_data.pdf_builder_debug_settings_page !== 'undefined') {
+                                    window.pdfBuilderCanvasSettings.debug.settings_page = originalData.data.result_data.pdf_builder_debug_settings_page === '1';
+                                }
+    
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.log('✅ [PDF Builder] Paramètres debug synchronisés:', window.pdfBuilderCanvasSettings.debug);
+                                }
+                            }
                         }
 
                                     // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
                                     // UNIQUEMENT pour l'onglet actif pour éviter les conflits entre onglets
                                     if (originalData && originalData.data && originalData.data.result_data) {
                                         const savedData = originalData.data.result_data;
+
+                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                            console.log('🔄 [PDF Builder] Mise à jour des champs avec données sauvegardées:', savedData);
+                                        }
 
                                         // Obtenir le conteneur de l'onglet actif
                                         const activeTabContent = document.getElementById(tabId);
@@ -2834,9 +2851,19 @@ window.toggleRGPDControls = toggleRGPDControls;
                                                 // Chercher le champ DANS L'ONGLET ACTIF uniquement
                                                 const fieldElement = activeTabContent.querySelector(`[name="${fieldName}"]`);
 
+                                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                    console.log(`🔄 [PDF Builder] Mise à jour champ ${fieldName}: valeur=${fieldValue}, élément trouvé=${!!fieldElement}`);
+                                                }
+
                                                 if (fieldElement && fieldElement.type === 'checkbox') {
                                                     const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
+                                                    const wasChecked = fieldElement.checked;
+
                                                     fieldElement.checked = shouldBeChecked;
+
+                                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                        console.log(`🔄 [PDF Builder] Checkbox ${fieldName}: ${wasChecked} → ${shouldBeChecked}`);
+                                                    }
 
                                                     // Forcer la mise à jour visuelle du toggle
                                                     const changeEvent = new Event('change', { bubbles: true });

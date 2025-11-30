@@ -72,11 +72,11 @@ $canvas_settings_js = [
     'canvas_performance_monitoring' => get_option('pdf_builder_canvas_performance_monitoring', '0') === '1',
     'canvas_error_reporting' => get_option('pdf_builder_canvas_error_reporting', '0') === '1',
     
-    // Debug structure for JavaScript (mapped from canvas_debug_enabled)
+    // Debug structure for JavaScript (mapped from debug settings)
     'debug' => [
-        'javascript' => get_option('pdf_builder_canvas_debug_enabled', '0') === '1',
+        'javascript' => get_option('pdf_builder_debug_javascript', '0') === '1',
         'performance' => get_option('pdf_builder_canvas_performance_monitoring', '0') === '1',
-        'ajax' => get_option('pdf_builder_canvas_debug_enabled', '0') === '1',
+        'ajax' => get_option('pdf_builder_debug_javascript', '0') === '1',
         'pdf_editor' => get_option('pdf_builder_debug_pdf_editor', '0') === '1',
         'settings_page' => get_option('pdf_builder_debug_settings_page', '0') === '1'
     ]
