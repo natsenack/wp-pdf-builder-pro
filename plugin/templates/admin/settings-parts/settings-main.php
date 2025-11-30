@@ -2155,6 +2155,11 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     return;
                 }
 
+                // Special debug for our problematic fields
+                if (input.name === 'pdf_builder_debug_pdf_editor' || input.name === 'pdf_builder_debug_settings_page') {
+                    console.log('[DEBUG FIELDS] Found field:', input.name, 'checked:', input.checked, 'disabled:', input.disabled, 'type:', input.type);
+                }
+
                 // Handle different input types
                 if (input.type === 'checkbox') {
                     formData.append(input.name, input.checked ? '1' : '0');
