@@ -84,6 +84,45 @@ jQuery(document).ready(function($) {
         return pdfBuilderAjax.ajaxNonce || pdfBuilderAjax.cacheNonce || pdfBuilderAjax.nonce || null;
     }
 
+    // Récupérer un nonce frais depuis le serveur via l'action dispatcher
+    function fetchFreshAjaxNonce() {
+        return new Promise(function(resolve, reject) {
+            // If we already have a recent ajaxNonce, resolve immediately
+            var current = getAjaxNonce();
+            if (current) {
+                debugLogAjax('fetchFreshAjaxNonce: using cached nonce', current);
+                resolve(current);
+                return;
+            }
+            debugLogAjax('fetchFreshAjaxNonce: requesting fresh nonce from server');
+            $.ajax({
+                url: (typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax.ajaxurl : (window.pdf_builder_ajax && window.pdf_builder_ajax.ajax_url) ? window.pdf_builder_ajax.ajax_url : '/wp-admin/admin-ajax.php'),
+                type: 'POST',
+                data: { action: 'pdf_builder_get_fresh_nonce' },
+                success: function(resp) {
+                    debugLogAjax('fetchFreshAjaxNonce response', resp);
+                    if (resp && resp.success && resp.data && resp.data.nonce) {
+                        // store into pdfBuilderAjax if available
+                        if (typeof pdfBuilderAjax !== 'undefined') {
+                            pdfBuilderAjax.ajaxNonce = resp.data.nonce;
+                        }
+                        if (typeof window.pdf_builder_ajax !== 'undefined') {
+                            window.pdf_builder_ajax.nonce = resp.data.nonce;
+                        }
+                        debugLogAjax('fetchFreshAjaxNonce: received nonce', resp.data.nonce);
+                        resolve(resp.data.nonce);
+                    } else {
+                        reject(new Error('Impossible de récupérer le nonce'));
+                    }
+                },
+                error: function(xhr, status, err) {
+                    debugLogAjax('fetchFreshAjaxNonce error', status, err, xhr && xhr.responseText);
+                    reject(err || status);
+                }
+            });
+        });
+    }
+
     // ==========================================
     // FIN FONCTIONS DE DEBUG
     // ==========================================
@@ -103,16 +142,19 @@ jQuery(document).ready(function($) {
         $results.html('<span style="color: #007cba;">Test en cours...</span>');
         $output.hide();
 
-        // Faire l'appel AJAX
-        $.ajax({
-            url: pdfBuilderAjax.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_test_cache_integration',
-                nonce: getAjaxNonce()
-            },
-            timeout: 30000, // 30 secondes timeout
-            success: function(response) {
+        // Faire l'appel AJAX (récupérer un nonce frais si besoin)
+        fetchFreshAjaxNonce().then(function(nonce) {
+            debugLogAjax('pdf_builder_test_cache_integration', { action: 'pdf_builder_test_cache_integration', nonce: nonce, url: pdfBuilderAjax.ajaxurl });
+            $.ajax({
+                url: pdfBuilderAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_test_cache_integration',
+                    nonce: nonce
+                },
+                timeout: 30000, // 30 secondes timeout
+                success: function(response) {
+                    debugLogAjax('pdf_builder_test_cache_integration success', response);
                 if (response.success) {
                     $results.html('<span style="color: #28a745;">✅ Test réussi</span>');
                     $output.html('<pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px;">' +
@@ -123,6 +165,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
+                debugLogAjax('pdf_builder_test_cache_integration error', status, error, xhr && xhr.responseText);
                 $results.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
                 $output.html('<div style="color: #dc3545;">Erreur AJAX: ' + error + '</div>').show();
             },
@@ -130,6 +173,11 @@ jQuery(document).ready(function($) {
                 // Réactiver le bouton
                 $button.prop('disabled', false).text('🧪 Tester l\'intégration du cache');
             }
+            });
+        }).catch(function(err){
+            $results.html('<span style="color: #dc3545;">❌ Impossible d\'obtenir nonce</span>');
+            $output.html('<div style="color: #dc3545;">Erreur: ' + (err && err.message ? err.message : err) + '</div>').show();
+            $button.prop('disabled', false).text('🧪 Tester l\'intégration du cache');
         });
     });
 
@@ -149,16 +197,19 @@ jQuery(document).ready(function($) {
         $button.prop('disabled', true).text('🗑️ Nettoyage en cours...');
         $results.html('<span style="color: #007cba;">Nettoyage en cours...</span>');
 
-        // Faire l'appel AJAX
-        $.ajax({
-            url: pdfBuilderAjax.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_clear_cache',
-                nonce: getAjaxNonce()
-            },
-            timeout: 60000, // 60 secondes timeout pour le nettoyage
-            success: function(response) {
+        // Faire l'appel AJAX (récupérer un nonce frais si besoin)
+        fetchFreshAjaxNonce().then(function(nonce) {
+            debugLogAjax('pdf_builder_clear_cache', { action: 'pdf_builder_clear_cache', nonce: nonce, url: pdfBuilderAjax.ajaxurl });
+            $.ajax({
+                url: pdfBuilderAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_clear_cache',
+                    nonce: nonce
+                },
+                timeout: 60000, // 60 secondes timeout pour le nettoyage
+                success: function(response) {
+                    debugLogAjax('pdf_builder_clear_cache success', response);
                 if (response.success) {
                     $results.html('<span style="color: #28a745;">✅ Cache vidé avec succès</span>');
 
@@ -173,6 +224,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
+                debugLogAjax('pdf_builder_clear_cache error', status, error, xhr && xhr.responseText);
                 $results.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
                 alert('Erreur AJAX lors du nettoyage: ' + error);
             },
@@ -180,6 +232,11 @@ jQuery(document).ready(function($) {
                 // Réactiver le bouton
                 $button.prop('disabled', false).text('🗑️ Vider tout le cache');
             }
+            });
+        }).catch(function(err){
+            $results.html('<span style="color: #dc3545;">❌ Impossible d\'obtenir nonce</span>');
+            alert('Erreur: ' + (err && err.message ? err.message : err));
+            $button.prop('disabled', false).text('🗑️ Vider tout le cache');
         });
     });
 
@@ -375,16 +432,19 @@ jQuery(document).ready(function($) {
         $button.prop('disabled', true).text('🗃️ Optimisation en cours...');
 
 
-        // Faire l'appel AJAX
-        $.ajax({
-            url: pdfBuilderAjax.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_optimize_database',
-                nonce: getAjaxNonce()
-            },
-            timeout: 60000, // 60 secondes timeout
-            success: function(response) {
+        // Faire l'appel AJAX (récupérer un nonce frais si besoin)
+        fetchFreshAjaxNonce().then(function(nonce) {
+            debugLogAjax('pdf_builder_optimize_database', { action: 'pdf_builder_optimize_database', nonce: nonce, url: pdfBuilderAjax.ajaxurl });
+            $.ajax({
+                url: pdfBuilderAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_optimize_database',
+                    nonce: nonce
+                },
+                timeout: 60000, // 60 secondes timeout
+                success: function(response) {
+                    debugLogAjax('pdf_builder_optimize_database success', response);
                 if (response.success) {
                     $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Base de données optimisée</div>');
                 } else {
@@ -393,6 +453,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
+                debugLogAjax('pdf_builder_optimize_database error', status, error, xhr && xhr.responseText);
                 var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
                 $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
             },
@@ -400,6 +461,10 @@ jQuery(document).ready(function($) {
                 // Réactiver le bouton
                 $button.prop('disabled', false).text('🗃️ Optimiser la base');
             }
+            });
+        }).catch(function(err){
+            $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Impossible d\'obtenir nonce</div>');
+            $button.prop('disabled', false).text('🗃️ Optimiser la base');
         });
     });
 
@@ -414,30 +479,41 @@ jQuery(document).ready(function($) {
         $button.prop('disabled', true).text('🔧 Réparation en cours...');
 
 
-        // Faire l'appel AJAX
-        $.ajax({
-            url: pdfBuilderAjax.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_repair_templates',
-                nonce: getAjaxNonce()
-            },
-            timeout: 30000, // 30 secondes timeout
-            success: function(response) {
-                if (response.success) {
-                    $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Templates réparés</div>');
-                } else {
-                    var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de la réparation';
-                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ ' + msg + '</div>');
+        // Faire l'appel AJAX (récupérer un nonce frais si besoin)
+        fetchFreshAjaxNonce().then(function(nonce) {
+            debugLogAjax('pdf_builder_remove_temp_files', { action: 'pdf_builder_remove_temp_files', nonce: nonce, url: pdfBuilderAjax.ajaxurl });
+            $.ajax({
+                url: pdfBuilderAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_remove_temp_files',
+                    nonce: nonce
+                },
+                timeout: 30000, // 30 secondes timeout
+                success: function(response) {
+                    debugLogAjax('pdf_builder_remove_temp_files success', response);
+                    if (response.success) {
+                        var msg = (response && response.data && response.data.message) ? response.data.message : 'Fichiers temporaires supprimés';
+                        $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ ' + msg + '</div>');
+                    } else {
+                        var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de la suppression';
+                        $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ ' + msg + '</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    debugLogAjax('pdf_builder_remove_temp_files error', status, error, xhr && xhr.responseText);
+                    var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
+                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
+                },
+                complete: function() {
+                    // Réactiver le bouton
+                    $button.prop('disabled', false).text('🗂️ Supprimer fichiers temp');
                 }
-            },
-            error: function(xhr, status, error) {
-                var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
-                $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
-            },
-            complete: function() {
-                // Réactiver le bouton
-                $button.prop('disabled', false).text('🔧 Réparer les templates');
+            });
+        }).catch(function(err){
+            $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Impossible d\'obtenir nonce</div>');
+            $button.prop('disabled', false).text('🗂️ Supprimer fichiers temp');
+        });
             }
         });
     });
@@ -458,30 +534,37 @@ jQuery(document).ready(function($) {
         $button.prop('disabled', true).text('🗂️ Suppression en cours...');
 
 
-        // Faire l'appel AJAX
-        $.ajax({
-            url: pdfBuilderAjax.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_remove_temp_files',
-                nonce: getAjaxNonce()
-            },
-            timeout: 30000, // 30 secondes timeout
-            success: function(response) {
-                if (response.success) {
-                    var msg = (response && response.data && response.data.message) ? response.data.message : 'Fichiers temporaires supprimés';
-                    $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ ' + msg + '</div>');
-                } else {
-                    var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de la suppression';
-                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ ' + msg + '</div>');
+        // Faire l'appel AJAX (récupérer un nonce frais si besoin)
+        fetchFreshAjaxNonce().then(function(nonce) {
+            $.ajax({
+                url: pdfBuilderAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_repair_templates',
+                    nonce: nonce
+                },
+                timeout: 30000, // 30 secondes timeout
+                success: function(response) {
+                    if (response.success) {
+                        $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Templates réparés</div>');
+                    } else {
+                        var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de la réparation';
+                        $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ ' + msg + '</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
+                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
+                },
+                complete: function() {
+                    // Réactiver le bouton
+                    $button.prop('disabled', false).text('🔧 Réparer les templates');
                 }
-            },
-            error: function(xhr, status, error) {
-                var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
-                $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
-            },
-            complete: function() {
-                // Réactiver le bouton
+            });
+        }).catch(function(err){
+            $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Impossible d\'obtenir nonce</div>');
+            $button.prop('disabled', false).text('🔧 Réparer les templates');
+        });
                 $button.prop('disabled', false).text('🗂️ Supprimer fichiers temp');
             }
         });
@@ -508,6 +591,7 @@ jQuery(document).ready(function($) {
             },
             timeout: 120000, // 2 minutes timeout pour les sauvegardes
             success: function(response) {
+                debugLogAjax('pdf_builder_create_backup success', response);
                 if (response.success) {
                     $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Sauvegarde créée avec succès</div>');
                 } else {
@@ -515,6 +599,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
+                debugLogAjax('pdf_builder_create_backup error', status, error, xhr && xhr.responseText);
                 $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur de connexion</div>');
             },
             complete: function() {
@@ -545,6 +630,7 @@ jQuery(document).ready(function($) {
             },
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
+                debugLogAjax('pdf_builder_list_backups success', response);
                 if (response.success && response.data.backups && response.data.backups.length > 0) {
 
                     // Créer la liste des sauvegardes
@@ -579,6 +665,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
+                debugLogAjax('pdf_builder_list_backups error', status, error, xhr && xhr.responseText);
                 $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur de connexion</div>');
             },
             complete: function() {
@@ -644,6 +731,7 @@ jQuery(document).ready(function($) {
                         filename: filename
                     },
                     success: function(response) {
+                        debugLogAjax('pdf_builder_restore_backup success', response, { filename: filename });
                         if (response.success) {
                             // Recharger la page après 2 secondes
                             setTimeout(function() {
@@ -653,6 +741,7 @@ jQuery(document).ready(function($) {
                         }
                     },
                     error: function(xhr, status, error) {
+                        debugLogAjax('pdf_builder_restore_backup error', status, error, xhr && xhr.responseText, { filename: filename });
                     },
                     complete: function() {
                         $button.prop('disabled', false).html('<span>🔄</span>');
@@ -679,6 +768,7 @@ jQuery(document).ready(function($) {
                         filename: filename
                     },
                     success: function(response) {
+                        debugLogAjax('pdf_builder_delete_backup success', response, { filename: filename });
                         if (response.success) {
                             // Recharger la liste des sauvegardes
                             $('#list-backups-btn').trigger('click');
@@ -686,6 +776,7 @@ jQuery(document).ready(function($) {
                         }
                     },
                     error: function(xhr, status, error) {
+                        debugLogAjax('pdf_builder_delete_backup error', status, error, xhr && xhr.responseText, { filename: filename });
                     },
                     complete: function() {
                         $button.prop('disabled', false).html('<span>🗑️</span>');

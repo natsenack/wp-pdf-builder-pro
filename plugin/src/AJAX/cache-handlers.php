@@ -457,11 +457,12 @@ function pdf_builder_remove_temp_files_ajax() {
         return;
     }
 
-    // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
-        wp_send_json_error('Nonce invalide');
-        return;
-    }
+        // Vérifier le nonce (supporte aussi pdf_builder_ajax)
+        if (empty($_POST['nonce']) || !pdf_builder_verify_maintenance_nonce($_POST['nonce'])) {
+            $provided = isset($_POST['nonce']) ? $_POST['nonce'] : null;
+            wp_send_json_error(array('message' => 'Nonce invalide', 'received_nonce' => $provided));
+            return;
+        }
 
     try {
         $removed_items = [];
