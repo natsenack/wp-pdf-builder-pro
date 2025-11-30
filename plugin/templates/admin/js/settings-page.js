@@ -249,6 +249,9 @@ jQuery(document).ready(function($) {
 
         // Mettre à jour l'état du cache en temps réel
         updateCacheStatus(isEnabled);
+
+        // Sauvegarder immédiatement la nouvelle valeur
+        saveCacheSetting(isEnabled);
     });
 
     // Fonction pour cacher/afficher les options de cache
@@ -289,6 +292,50 @@ jQuery(document).ready(function($) {
                 }
             }
         }
+    }
+
+    // Fonction pour sauvegarder le paramètre cache_enabled via AJAX
+    function saveCacheSetting(isEnabled) {
+        debugLogAjax('saveCacheSetting called with isEnabled:', isEnabled);
+
+        // Récupérer un nonce frais si nécessaire
+        fetchFreshAjaxNonce().then(function(nonce) {
+            debugLogAjax('saveCacheSetting: making AJAX call', {
+                action: 'pdf_builder_save_cache_settings',
+                cache_enabled: isEnabled ? '1' : '0',
+                nonce: nonce
+            });
+
+            $.ajax({
+                url: pdfBuilderAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_cache_settings',
+                    cache_enabled: isEnabled ? '1' : '0',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    debugLogAjax('saveCacheSetting success', response);
+                    if (response.success) {
+                        debugLog('Cache setting saved successfully');
+                        // Mettre à jour les métriques après la sauvegarde
+                        setTimeout(function() {
+                            updateCacheMetrics();
+                        }, 500);
+                    } else {
+                        debugLogAjax('saveCacheSetting failed', response);
+                        alert('Erreur lors de la sauvegarde du paramètre cache: ' + (response.data || 'Erreur inconnue'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    debugLogAjax('saveCacheSetting error', status, error, xhr && xhr.responseText);
+                    alert('Erreur de connexion lors de la sauvegarde du cache: ' + error);
+                }
+            });
+        }).catch(function(err) {
+            debugLogAjax('saveCacheSetting nonce error', err);
+            alert('Erreur lors de l\'obtention du nonce: ' + (err && err.message ? err.message : err));
+        });
     }
 
     // Validation des champs numériques
