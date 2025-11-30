@@ -2836,6 +2836,11 @@ window.toggleRGPDControls = toggleRGPDControls;
                                         const oldChecked = fieldElement.checked;
                                         const newChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
                                         fieldElement.checked = newChecked;
+
+                                        // Déclencher un événement change pour forcer la mise à jour visuelle des toggles
+                                        const changeEvent = new Event('change', { bubbles: true });
+                                        fieldElement.dispatchEvent(changeEvent);
+
                                         console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${newChecked} (valeur: ${fieldValue})`);
 
                                         // Déclencher les fonctions de toggle si nécessaire
