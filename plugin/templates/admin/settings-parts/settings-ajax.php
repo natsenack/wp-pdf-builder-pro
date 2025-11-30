@@ -1806,47 +1806,6 @@ function pdf_builder_cleanup_license_handler() {
     }
 }
 
-/**
- * AJAX handler for database optimization
- */
-function pdf_builder_optimize_database_handler() {
-    // Vérifier les permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    try {
-        global $wpdb;
-
-        // Optimize database tables
-        $tables = [
-            $wpdb->posts,
-            $wpdb->postmeta,
-            $wpdb->options,
-            $wpdb->usermeta
-        ];
-
-        $optimized_tables = 0;
-        foreach ($tables as $table) {
-            if ($wpdb->query("OPTIMIZE TABLE $table")) {
-                $optimized_tables++;
-            }
-        }
-
-        // Clean up orphaned data
-        $wpdb->query("DELETE pm FROM {$wpdb->postmeta} pm LEFT JOIN {$wpdb->posts} p ON pm.post_id = p.ID WHERE p.ID IS NULL");
-        $wpdb->query("DELETE um FROM {$wpdb->usermeta} um LEFT JOIN {$wpdb->users} u ON um.user_id = u.ID WHERE u.ID IS NULL");
-
-        send_ajax_response(true, "$optimized_tables tables optimisées avec succès.", [
-            'optimized_tables' => $optimized_tables
-        ]);
-
-    } catch (Exception $e) {
-        send_ajax_response(false, 'Erreur lors de l\'optimisation de la base de données: ' . $e->getMessage());
-    }
-}
-
 // Register AJAX actions for canvas settings
 add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
 add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
