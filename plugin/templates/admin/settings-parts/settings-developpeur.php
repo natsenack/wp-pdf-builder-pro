@@ -1039,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (successCallback) successCallback(data);
             } else {
                 if (errorCallback) errorCallback(data);
-                alert('❌ Erreur: ' + (data.data?.message || 'Erreur inconnue'));
+                alert('[ERROR] Erreur: ' + (data.data?.message || 'Erreur inconnue'));
             }
         })
         .catch(error => {
@@ -1048,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             button.disabled = false;
             button.textContent = originalText;
-            alert('❌ Erreur de connexion');
+            alert('[ERROR] Erreur de connexion');
         });
     }
 
@@ -1138,7 +1138,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             makeAjaxCall('pdf_builder_clear_cache', clearCacheBtn,
                 function(data) {
-                    alert('✅ ' + data.data.message + '\nNouvelle taille du cache: ' + (data.data.new_cache_size || '0 Ko'));
+                    alert('[SUCCESS] ' + data.data.message + '\nNouvelle taille du cache: ' + (data.data.new_cache_size || '0 Ko'));
                     // Refresh cache metrics if available
                     if (typeof updateCacheMetrics === 'function') {
                         updateCacheMetrics();
@@ -1154,7 +1154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         reloadCacheBtn.addEventListener('click', function() {
             makeAjaxCall('pdf_builder_clear_cache', reloadCacheBtn,
                 function(data) {
-                    alert('✅ Cache rechargé avec succès\n' + data.data.message);
+                    alert('[SUCCESS] Cache rechargé avec succès\n' + data.data.message);
                     // Refresh cache metrics if available
                     if (typeof updateCacheMetrics === 'function') {
                         updateCacheMetrics();
@@ -1174,10 +1174,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             makeAjaxCall('pdf_builder_clear_temp', clearTempBtn,
                 function(data) {
-                    alert('✅ ' + data.data.message);
+                    alert('[SUCCESS] ' + data.data.message);
                 },
                 function(data) {
-                    alert('❌ ' + data.data.message);
+                    alert('[ERROR] ' + data.data.message);
                 }
             );
         });
@@ -1188,7 +1188,7 @@ document.addEventListener('DOMContentLoaded', function() {
         testRoutesBtn.addEventListener('click', function() {
             makeAjaxCall('pdf_builder_test_routes', testRoutesBtn,
                 function(data) {
-                    let message = '✅ ' + data.data.message + '\n\nRoutes testées:\n';
+                    let message = '[SUCCESS] ' + data.data.message + '\n\nRoutes testées:\n';
                     data.data.routes_tested.forEach(route => {
                         message += '• ' + route + '\n';
                     });
@@ -1209,7 +1209,7 @@ document.addEventListener('DOMContentLoaded', function() {
         exportDiagnosticBtn.addEventListener('click', function() {
             makeAjaxCall('pdf_builder_export_diagnostic', exportDiagnosticBtn,
                 function(data) {
-                    alert('✅ ' + data.data.message + '\n\nFichier créé: ' + data.data.file_url);
+                    alert('[SUCCESS] ' + data.data.message + '\n\nFichier créé: ' + data.data.file_url);
                     // Open download link in new tab
                     window.open(data.data.file_url, '_blank');
                 }
@@ -1222,14 +1222,14 @@ document.addEventListener('DOMContentLoaded', function() {
         viewLogsBtn.addEventListener('click', function() {
             makeAjaxCall('pdf_builder_view_logs', viewLogsBtn,
                 function(data) {
-                    let message = '📋 ' + data.data.message + '\n\n';
+                    let message = '[LOGS] ' + data.data.message + '\n\n';
                     data.data.log_files.forEach(log => {
                         message += `• ${log.name} (${log.size} octets) - Modifié: ${log.modified}\n`;
                     });
                     alert(message);
                 },
                 function(data) {
-                    alert('❌ ' + data.data.message);
+                    alert('[ERROR] ' + data.data.message);
                 }
             );
         });
@@ -1245,10 +1245,10 @@ document.addEventListener('DOMContentLoaded', function() {
             makeAjaxCall('pdf_builder_refresh_logs', refreshLogsBtn,
                 function(data) {
                     logsContainer.innerHTML = '<pre>' + data.data.logs_content + '</pre>';
-                    alert('✅ Logs actualisés');
+                    alert('[SUCCESS] Logs actualisés');
                 },
                 function(data) {
-                    alert('❌ Erreur lors de l\'actualisation des logs: ' + data.data.message);
+                    alert('[ERROR] Erreur lors de l\'actualisation des logs: ' + data.data.message);
                 }
             );
         });
@@ -1263,10 +1263,10 @@ document.addEventListener('DOMContentLoaded', function() {
             makeAjaxCall('pdf_builder_clear_logs', clearLogsBtn,
                 function(data) {
                     logsContainer.innerHTML = '<em style="color: #666;">Cliquez sur "Actualiser Logs" pour charger les logs récents...</em>';
-                    alert('✅ ' + data.data.message);
+                    alert('[SUCCESS] ' + data.data.message);
                 },
                 function(data) {
-                    alert('❌ ' + data.data.message);
+                    alert('[ERROR] ' + data.data.message);
                 }
             );
         });
@@ -1335,13 +1335,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.info(`${prefix} ${timestamp} - ${message}`, data || '');
                 break;
             case 'success':
-                console.log(`${prefix} ✅ ${timestamp} - ${message}`, data || '');
+                console.log(`${prefix} [SUCCESS] ${timestamp} - ${message}`, data || '');
                 break;
             case 'error':
-                console.error(`${prefix} ❌ ${timestamp} - ${message}`, data || '');
+                console.error(`${prefix} [ERROR] ${timestamp} - ${message}`, data || '');
                 break;
             case 'warning':
-                console.warn(`${prefix} ⚠️ ${timestamp} - ${message}`, data || '');
+                console.warn(`${prefix} [WARNING] ${timestamp} - ${message}`, data || '');
                 break;
             default:
                 console.log(`${prefix} ${timestamp} - ${message}`, data || '');
@@ -1382,7 +1382,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         stats: notificationStats
                     });
 
-                    addNotificationLog(`✅ ${type} notification affichée (ID: ${result})`, 'success');
+                    addNotificationLog(`[SUCCESS] ${type} notification affichée (ID: ${result})`, 'success');
                 } else if (typeof window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`] === 'function') {
                     // Fallback to old global functions
                     const showFunction = window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`];
@@ -1395,7 +1395,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         stats: notificationStats
                     });
 
-                    addNotificationLog(`✅ ${type} notification affichée (ID: ${result})`, 'success');
+                    addNotificationLog(`[SUCCESS] ${type} notification affichée (ID: ${result})`, 'success');
                 } else {
                     // Retry up to 10 times with increasing delay (up to ~3 seconds total)
                     if (retryCount < 10) {
@@ -1407,7 +1407,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } catch (error) {
                 logToConsole('error', `Failed to show ${type} notification`, error);
-                addNotificationLog(`❌ Erreur ${type}: ${error.message}`, 'error');
+                addNotificationLog(`[ERROR] ${type}: ${error.message}`, 'error');
             }
         }
 
@@ -1437,7 +1437,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (testAllBtn) {
         testAllBtn.addEventListener('click', function() {
             logToConsole('info', 'Testing all notification types sequentially');
-            addNotificationLog('🎯 Démarrage test de tous les types', 'system');
+            addNotificationLog('[START] Démarrage test de tous les types', 'system');
 
             const types = ['success', 'error', 'warning', 'info'];
             let index = 0;
@@ -1449,7 +1449,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(testNext, 1000); // 1 second delay between tests
                 } else {
                     logToConsole('success', 'All notification types tested successfully');
-                    addNotificationLog('✅ Tous les types testés avec succès', 'success');
+                    addNotificationLog('[SUCCESS] Tous les types testés avec succès', 'success');
                 }
             };
 
@@ -1462,19 +1462,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (clearAllBtn) {
         clearAllBtn.addEventListener('click', function() {
             logToConsole('info', 'Clearing all notifications');
-            addNotificationLog('🗑️ Suppression de toutes les notifications', 'system');
+            addNotificationLog('[CLEAR] Suppression de toutes les notifications', 'system');
 
             try {
                 if (window.pdfBuilderNotificationsInstance && window.pdfBuilderNotificationsInstance.closeAll) {
                     window.pdfBuilderNotificationsInstance.closeAll();
                     logToConsole('success', 'All notifications cleared successfully');
-                    addNotificationLog('✅ Toutes les notifications supprimées', 'success');
+                    addNotificationLog('[SUCCESS] Toutes les notifications supprimées', 'success');
                 } else {
                     throw new Error('Notification instance not available');
                 }
             } catch (error) {
                 logToConsole('error', 'Failed to clear notifications', error);
-                addNotificationLog(`❌ Erreur suppression: ${error.message}`, 'error');
+                addNotificationLog(`[ERROR] Suppression: ${error.message}`, 'error');
             }
         });
     }
@@ -1484,10 +1484,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (statsBtn) {
         statsBtn.addEventListener('click', function() {
             logToConsole('info', 'Showing notification statistics', notificationStats);
-            addNotificationLog('📊 Statistiques des notifications', 'system');
+            addNotificationLog('[STATS] Statistiques des notifications', 'system');
 
             const statsMessage = `
-📊 STATISTIQUES DES TESTS
+[STATS] STATISTIQUES DES TESTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 • Total tests: ${notificationTestCount}
 • Succès: ${notificationStats.success}
@@ -1511,14 +1511,14 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
                 console.log(statsMessage);
             }
 
-            addNotificationLog(`📊 Stats: ${notificationTestCount} tests (${notificationStats.success}✓ ${notificationStats.error}✗ ${notificationStats.warning}⚠ ${notificationStats.info}ℹ)`, 'info');
+            addNotificationLog(`[STATS] ${notificationTestCount} tests (${notificationStats.success}[OK] ${notificationStats.error}[ERR] ${notificationStats.warning}[WARN] ${notificationStats.info}[INFO])`, 'info');
         });
     }
 
     // Function to test all notification types sequentially
     function testAllNotifications() {
         logToConsole('info', 'Testing all notification types sequentially');
-        addNotificationLog('🎯 Démarrage test de tous les types', 'system');
+        addNotificationLog('[START] Démarrage test de tous les types', 'system');
 
         const types = ['success', 'error', 'warning', 'info'];
         let index = 0;
@@ -1530,7 +1530,7 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
                 setTimeout(testNext, 1000); // 1 second delay between tests
             } else {
                 logToConsole('success', 'All notification types tested successfully');
-                addNotificationLog('✅ Tous les types testés avec succès', 'success');
+                addNotificationLog('[SUCCESS] Tous les types testés avec succès', 'success');
             }
         };
 
@@ -1572,7 +1572,7 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
                 transition: all 0.3s ease;
             `;
 
-            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            const icon = type === 'success' ? '[OK]' : type === 'error' ? '[ERROR]' : type === 'warning' ? '[WARNING]' : '[INFO]';
             notification.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 16px;">${icon}</span>
@@ -1660,9 +1660,10 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
 
     // Initial log
     logToConsole('info', 'Notification test system initialized');
-    addNotificationLog('🚀 Système de test des notifications initialisé', 'system');
+    addNotificationLog('[INIT] Système de test des notifications initialisé', 'system');
 
     // Manual testing only - no automatic execution on page load
     // Tests are triggered manually via buttons only
 });
 </script>
+
