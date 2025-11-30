@@ -2838,12 +2838,17 @@ window.toggleRGPDControls = toggleRGPDControls;
                                     if (originalData && originalData.data && originalData.data.result_data) {
                                         const savedData = originalData.data.result_data;
 
+                                        console.log('🔍 [PDF Builder] Updating fields for tab: ' + tabId);
+                                        console.log('🔍 [PDF Builder] savedData keys count: ' + Object.keys(savedData).length);
+
                                         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                             console.log('🔄 [PDF Builder] Mise à jour des champs avec données sauvegardées:', savedData);
                                         }
 
                                         // Obtenir le conteneur de l'onglet actif
                                         const activeTabContent = document.getElementById(tabId);
+                                        console.log('🔍 [PDF Builder] activeTabContent found: ' + !!activeTabContent);
+
                                         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                             console.log(`🔄 [PDF Builder] activeTabContent trouvé: ${!!activeTabContent}, savedData keys: ${Object.keys(savedData).length}`);
                                         }
@@ -2851,8 +2856,12 @@ window.toggleRGPDControls = toggleRGPDControls;
                                             Object.keys(savedData).forEach(fieldName => {
                                                 const fieldValue = savedData[fieldName];
 
+                                                console.log('🔍 [PDF Builder] Updating field: ' + fieldName + ' to ' + fieldValue);
+
                                                 // Chercher le champ DANS L'ONGLET ACTIF uniquement
                                                 const fieldElement = activeTabContent.querySelector(`[name="${fieldName}"]`);
+
+                                                console.log('🔍 [PDF Builder] Field element found for ' + fieldName + ': ' + !!fieldElement);
 
                                                 if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                                     console.log(`🔄 [PDF Builder] Mise à jour champ ${fieldName}: valeur=${fieldValue}, élément trouvé=${!!fieldElement}`);
@@ -2862,6 +2871,8 @@ window.toggleRGPDControls = toggleRGPDControls;
                                                     const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
                                                     const wasChecked = fieldElement.checked;
 
+                                                    console.log('🔍 [PDF Builder] Setting checkbox ' + fieldName + ' from ' + wasChecked + ' to ' + shouldBeChecked);
+
                                                     fieldElement.checked = shouldBeChecked;
 
                                                     if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
@@ -2870,12 +2881,18 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                                                     // Synchroniser la classe .checked sur le container toggle-switch pour forcer la mise à jour visuelle
                                                     const toggleContainer = fieldElement.closest('.toggle-switch');
+
+                                                    console.log('🔍 [PDF Builder] Toggle container found for ' + fieldName + ': ' + !!toggleContainer);
+
                                                     if (toggleContainer) {
                                                         if (shouldBeChecked) {
                                                             toggleContainer.classList.add('checked');
                                                         } else {
                                                             toggleContainer.classList.remove('checked');
                                                         }
+
+                                                        console.log('🔍 [PDF Builder] Toggle container class set to: ' + (shouldBeChecked ? 'checked' : 'unchecked'));
+
                                                         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                                             console.log(`🔄 [PDF Builder] Toggle container class updated: ${toggleContainer.classList.contains('checked') ? 'checked' : 'unchecked'}`);
                                                         }
