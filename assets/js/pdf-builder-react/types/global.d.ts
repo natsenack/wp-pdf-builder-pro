@@ -20,10 +20,7 @@ declare global {
       };
       auto_save_interval?: number;
     };
-    pdfBuilderCanvasSettings?: Record<string, unknown> | {
-      auto_save_interval?: number;
-      auto_save_enabled?: boolean;
-    };
+    pdfBuilderCanvasSettings?: Record<string, unknown>;
   }
 }
 

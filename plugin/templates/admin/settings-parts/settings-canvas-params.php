@@ -76,7 +76,8 @@ $canvas_settings_js = [
     'debug' => [
         'javascript' => get_option('pdf_builder_canvas_debug_enabled', '0') === '1',
         'performance' => get_option('pdf_builder_canvas_performance_monitoring', '0') === '1',
-        'ajax' => get_option('pdf_builder_canvas_debug_enabled', '0') === '1'
+        'ajax' => get_option('pdf_builder_canvas_debug_enabled', '0') === '1',
+        'pdf_editor' => get_option('pdf_builder_debug_pdf_editor', '0') === '1'
     ]
 ];
 

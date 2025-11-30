@@ -145,6 +145,19 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row"><label for="debug_pdf_editor">Debug Éditeur PDF</label></th>
+                    <td>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="debug_pdf_editor" name="pdf_builder_debug_pdf_editor" value="1" <?php echo isset($settings['pdf_builder_debug_pdf_editor']) && $settings['pdf_builder_debug_pdf_editor'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Debug Éditeur PDF</span>
+                        </div>
+                        <div class="toggle-description">Isole les logs JavaScript exclusivement à la page de l'éditeur PDF</div>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row"><label for="debug_javascript_verbose">Logs Verbeux JS</label></th>
                     <td>
                         <div class="toggle-container">

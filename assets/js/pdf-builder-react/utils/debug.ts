@@ -1,10 +1,40 @@
+// Fonction pour vérifier si on est sur la page de l'éditeur PDF
+function isPDFEditorPage(): boolean {
+  // Vérifier si l'élément avec la classe 'pdf-builder' existe (composant PDFBuilderContent)
+  return typeof document !== 'undefined' &&
+         document.querySelector('.pdf-builder') !== null;
+}
+
 // Fonction pour vérifier si le debug est activé
 function isDebugEnabled(): boolean {
-  // Debug activé si explicitement forcé ou si activé dans les paramètres
-  return window.location?.search?.includes('debug=force') ||
-         (typeof window.pdfBuilderCanvasSettings !== 'undefined' &&
-          window.pdfBuilderCanvasSettings?.debug?.javascript === true) ||
-         false;
+  // Debug activé si explicitement forcé
+  if (window.location?.search?.includes('debug=force')) {
+    return true;
+  }
+
+  // Vérifier les paramètres de debug
+  if (typeof window.pdfBuilderCanvasSettings === 'undefined' ||
+      !window.pdfBuilderCanvasSettings ||
+      typeof window.pdfBuilderCanvasSettings !== 'object') {
+    return false;
+  }
+
+  const debugSettings = (window.pdfBuilderCanvasSettings as any).debug;
+  if (!debugSettings || typeof debugSettings !== 'object') {
+    return false;
+  }
+
+  // Si le debug JavaScript général est activé
+  if (debugSettings.javascript === true) {
+    // Si le debug PDF editor est activé, vérifier qu'on est sur la page appropriée
+    if (debugSettings.pdf_editor === true) {
+      return isPDFEditorPage();
+    }
+    // Sinon, debug général activé
+    return true;
+  }
+
+  return false;
 }
 
 // Extension de Window pour le debug
@@ -12,12 +42,6 @@ declare global {
   interface Window {
     PDF_BUILDER_VERBOSE?: boolean; // Set to true/false to control debug logging
     PDF_BUILDER_DEBUG_SAVE?: boolean; // Set to true to debug save operations
-    pdfBuilderCanvasSettings?: {
-      debug?: {
-        javascript?: boolean;
-        javascript_verbose?: boolean;
-      };
-    };
   }
 }
 
