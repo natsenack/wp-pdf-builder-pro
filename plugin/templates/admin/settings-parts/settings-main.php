@@ -2822,115 +2822,39 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                         // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
                         if (originalData && originalData.data && originalData.data.result_data) {
-                            const options = originalData.data.result_data;
-                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                console.log('💾 [PDF Builder] Mise à jour des champs - données reçues:', options);
-                                console.log('🔍 [PDF Builder] Liste des champs dans result_data:', Object.keys(options));
-                            }
+                            const savedData = originalData.data.result_data;
 
-                            // Parcourir toutes les données sauvegardées et mettre à jour les champs correspondants
-                            Object.keys(options).forEach(fieldName => {
-                                const fieldValue = options[fieldName];
-                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                    console.log(`🔍 [PDF Builder] Traitement champ ${fieldName} = ${fieldValue}`);
-                                }
+                            Object.keys(savedData).forEach(fieldName => {
+                                const fieldValue = savedData[fieldName];
+                                const fieldElement = document.querySelector(`[name="${fieldName}"]`);
 
-                                // Chercher le champ dans le formulaire (avec ou sans préfixe pdf_builder_)
-                                let fieldElement = document.querySelector(`[name="${fieldName}"]`);
-                                if (!fieldElement && fieldName.startsWith('pdf_builder_')) {
-                                    // Essayer sans le préfixe
-                                    const shortName = fieldName.replace('pdf_builder_', '');
-                                    fieldElement = document.querySelector(`[name="${shortName}"]`);
-                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                        console.log(`🔄 [PDF Builder] Champ ${fieldName} non trouvé, essai avec ${shortName}:`, !!fieldElement);
-                                    }
-                                }
+                                if (fieldElement && fieldElement.type === 'checkbox') {
+                                    // Mettre à jour l'état checked des checkboxes
+                                    const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
+                                    fieldElement.checked = shouldBeChecked;
 
-                                if (fieldElement) {
-                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                        console.log(`✅ [PDF Builder] Champ ${fieldName} trouvé dans DOM:`, fieldElement, 'type:', fieldElement.type);
+                                    // Forcer la mise à jour visuelle du toggle
+                                    const changeEvent = new Event('change', { bubbles: true });
+                                    fieldElement.dispatchEvent(changeEvent);
+                                    fieldElement.offsetHeight; // Force reflow
+
+                                    // Animation CSS
+                                    const toggleContainer = fieldElement.closest('.toggle-switch');
+                                    if (toggleContainer) {
+                                        toggleContainer.classList.add('toggle-updated');
+                                        setTimeout(() => {
+                                            toggleContainer.classList.remove('toggle-updated');
+                                        }, 50);
                                     }
 
-                                    if (fieldElement.type === 'checkbox') {
-                                        // Pour les checkboxes, mettre à jour l'état checked
-                                        const oldChecked = fieldElement.checked;
-                                        const newChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
-                                        fieldElement.checked = newChecked;
-
-                                        // Forcer la mise à jour visuelle du toggle en déclenchant change + forçant un reflow
-                                        const changeEvent = new Event('change', { bubbles: true });
-                                        fieldElement.dispatchEvent(changeEvent);
-
-                                        // Forcer un reflow pour s'assurer que le CSS :checked est mis à jour
-                                        fieldElement.offsetHeight; // Force reflow
-
-                                        // Ajouter/retirer temporairement une classe pour déclencher l'animation CSS
-                                        const toggleContainer = fieldElement.closest('.toggle-switch');
-                                        if (toggleContainer) {
-                                            toggleContainer.classList.add('toggle-updated');
-                                            setTimeout(() => {
-                                                toggleContainer.classList.remove('toggle-updated');
-                                            }, 50);
+                                    // Mettre à jour les sections développeur si nécessaire
+                                    if (fieldName === 'pdf_builder_developer_enabled') {
+                                        if (window.updateDeveloperSections) {
+                                            window.updateDeveloperSections();
                                         }
-
-                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                            console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${newChecked} (valeur: ${fieldValue})`);
-                                        }
-
-                                        // Déclencher les fonctions de toggle si nécessaire
-                                        if (fieldName === 'pdf_builder_developer_enabled' || fieldName === 'developer_enabled') {
-                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                                console.log('🔧 [PDF Builder] Déclenchement des fonctions développeur');
-                                            }
-                                            // Mettre à jour les sections développeur
-                                            if (window.updateDeveloperSections) {
-                                                window.updateDeveloperSections();
-                                            }
-                                            // Mettre à jour les indicateurs développeur
-                                            if (window.updateDeveloperPreview) {
-                                                window.updateDeveloperPreview();
-                                            }
-                                        } else if (fieldName === 'pdf_builder_cache_enabled' || fieldName === 'cache_enabled') {
-                                            // Mettre à jour les indicateurs cache
-                                            if (window.updateCachePreview) {
-                                                window.updateCachePreview();
-                                            }
-                                        } else if (fieldName === 'pdf_builder_template_library_enabled' || fieldName === 'template_library_enabled') {
-                                            // Mettre à jour les indicateurs templates
-                                            if (window.updateTemplateLibraryIndicator) {
-                                                window.updateTemplateLibraryIndicator();
-                                            }
-                                        }
-                                    } else if (fieldElement.type === 'radio') {
-                                        // Pour les radios, cocher la bonne option
-                                        if (fieldElement.value == fieldValue) { // Utiliser == pour comparaison lâche
-                                            fieldElement.checked = true;
-                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                                console.log(`📝 [PDF Builder] Radio ${fieldName} coché: ${fieldValue}`);
-                                            }
-                                        }
-                                    } else {
-                                        // Pour les autres champs (text, select, etc.)
-                                        const oldValue = fieldElement.value;
-                                        fieldElement.value = fieldValue;
-                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                            console.log(`📝 [PDF Builder] Champ ${fieldName} mis à jour: "${oldValue}" -> "${fieldValue}"`);
-                                        }
-                                    }
-                                } else {
-                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                        console.log(`⚠️ [PDF Builder] Champ ${fieldName} non trouvé dans le DOM pour mise à jour`);
-                                        // Lister tous les champs input/select/textarea pour debug
-                                        const allFields = document.querySelectorAll('input[name], select[name], textarea[name]');
-                                        const fieldNames = Array.from(allFields).map(f => f.name);
-                                        console.log('📋 [PDF Builder] Champs disponibles dans le DOM:', fieldNames);
                                     }
                                 }
                             });
-                        } else {
-                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                console.log('❌ [PDF Builder] Aucune donnée result_data reçue:', originalData);
-                            }
                         }
 
                         // Recharger les previews avec les nouvelles données
@@ -3280,54 +3204,42 @@ window.toggleRGPDControls = toggleRGPDControls;
                                         console.log('🔄 [PDF Builder] Mise à jour de l\'interface avec les nouvelles valeurs...');
                                     }
 
-                                    // Mettre à jour les checkboxes avec les valeurs sauvegardées
-                                    Object.keys(collectedData).forEach(fieldName => {
-                                        const fieldValue = collectedData[fieldName];
-                                        const fieldElement = document.querySelector(`[name="${fieldName}"]`);
+                                    // Mettre à jour les checkboxes avec les valeurs sauvegardées depuis le serveur
+                                    if (originalData && originalData.data && originalData.data.result_data) {
+                                        const savedData = originalData.data.result_data;
 
-                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                            console.log(`🔍 [PDF Builder] Mise à jour champ ${fieldName}: valeur=${fieldValue}, élément trouvé=${!!fieldElement}`);
-                                        }
+                                        Object.keys(savedData).forEach(fieldName => {
+                                            const fieldValue = savedData[fieldName];
+                                            const fieldElement = document.querySelector(`[name="${fieldName}"]`);
 
-                                        if (fieldElement && fieldElement.type === 'checkbox') {
-                                            // Pour les checkboxes, mettre à jour l'état checked
-                                            const oldChecked = fieldElement.checked;
-                                            fieldElement.checked = fieldValue === '1';
-                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                                console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${fieldElement.checked}`);
-                                            }
+                                            if (fieldElement && fieldElement.type === 'checkbox') {
+                                                // Mettre à jour l'état checked
+                                                const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
+                                                fieldElement.checked = shouldBeChecked;
 
-                                            // Forcer la mise à jour visuelle du toggle
-                                            const changeEvent = new Event('change', { bubbles: true });
-                                            fieldElement.dispatchEvent(changeEvent);
-                                            fieldElement.offsetHeight; // Force reflow
+                                                // Forcer la mise à jour visuelle du toggle
+                                                const changeEvent = new Event('change', { bubbles: true });
+                                                fieldElement.dispatchEvent(changeEvent);
+                                                fieldElement.offsetHeight; // Force reflow
 
-                                            // Ajouter/retirer temporairement une classe pour déclencher l'animation CSS
-                                            const toggleContainer = fieldElement.closest('.toggle-switch');
-                                            if (toggleContainer) {
-                                                toggleContainer.classList.add('toggle-updated');
-                                                setTimeout(() => {
-                                                    toggleContainer.classList.remove('toggle-updated');
-                                                }, 50);
-                                            }
+                                                // Animation CSS
+                                                const toggleContainer = fieldElement.closest('.toggle-switch');
+                                                if (toggleContainer) {
+                                                    toggleContainer.classList.add('toggle-updated');
+                                                    setTimeout(() => {
+                                                        toggleContainer.classList.remove('toggle-updated');
+                                                    }, 50);
+                                                }
 
-                                            // Déclencher les fonctions de toggle si nécessaire
-                                            if (fieldName === 'developer_enabled') {
-                                                // Mettre à jour les sections développeur
-                                                if (window.updateDeveloperSections) {
-                                                    window.updateDeveloperSections();
+                                                // Mettre à jour les sections développeur si nécessaire
+                                                if (fieldName === 'pdf_builder_developer_enabled') {
+                                                    if (window.updateDeveloperSections) {
+                                                        window.updateDeveloperSections();
+                                                    }
                                                 }
                                             }
-                                        } else if (fieldElement) {
-                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                                console.log(`ℹ️ [PDF Builder] Champ ${fieldName} trouvé mais pas checkbox (type: ${fieldElement.type})`);
-                                            }
-                                        } else {
-                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                                console.warn(`⚠️ [PDF Builder] Champ ${fieldName} non trouvé dans le DOM`);
-                                            }
-                                        }
-                                    });
+                                        });
+                                    }
 
                                     // Notification gérée par le système centralisé
                                 },
