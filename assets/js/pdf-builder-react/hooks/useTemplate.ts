@@ -176,6 +176,7 @@ export function useTemplate() {
         fetchOptions.mode = 'cors';
       }
 
+      const cacheBreaker = Date.now();
       const url = `${window.pdfBuilderData?.ajaxUrl}?action=pdf_builder_get_template&template_id=${templateId}&nonce=${window.pdfBuilderData?.nonce}&t=${cacheBreaker}`;
 
       const response = await fetch(url, fetchOptions);
@@ -403,8 +404,26 @@ export function useTemplate() {
     const templateId = getTemplateIdFromUrl();
 
     if (templateId) {
-      loadExistingTemplate(templateId);
+      // Timeout de sécurité : forcer isLoading à false après 10 secondes si le chargement échoue
+      const loadingTimeout = setTimeout(() => {
+        debugError('[useTemplate] Loading timeout reached, forcing isLoading to false');
+        dispatch({ type: 'SET_TEMPLATE_LOADING', payload: false });
+      }, 10000);
+
+      // Charger le template avec gestion d'erreur améliorée
+      loadExistingTemplate(templateId)
+        .then(() => {
+          clearTimeout(loadingTimeout);
+        })
+        .catch((error) => {
+          clearTimeout(loadingTimeout);
+          debugError('[useTemplate] Template loading failed:', error);
+          // Force isLoading to false on error
+          dispatch({ type: 'SET_TEMPLATE_LOADING', payload: false });
+        });
     } else {
+      // Si pas de template ID, forcer isLoading à false pour nouveau template
+      dispatch({ type: 'NEW_TEMPLATE' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

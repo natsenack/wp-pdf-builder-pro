@@ -2,12 +2,13 @@
 declare global {
   interface Window {
     pdfBuilderData?: {
-      templateId?: string | null;
+      templateId?: string | number | null;
       isEditing?: boolean;
       ajaxUrl?: string;
       nonce?: string;
       auto_save_interval?: number;
       existingTemplate?: unknown;
+      hasExistingData?: boolean;
     };
     pdfBuilderNonce?: string;
     pdfBuilderReactData?: {

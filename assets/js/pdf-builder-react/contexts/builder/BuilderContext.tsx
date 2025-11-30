@@ -429,6 +429,15 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
         }
       };
 
+    case 'SET_TEMPLATE_LOADING':
+      return {
+        ...state,
+        template: {
+          ...state.template,
+          isLoading: action.payload
+        }
+      };
+
     case 'TOGGLE_GUIDES':
       return {
         ...state,
