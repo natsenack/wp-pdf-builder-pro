@@ -205,6 +205,7 @@ class PDF_Builder_Options_Manager {
         'pdf_builder_debug_ajax' => ['type' => 'boolean', 'sanitize' => 'intval'],
         'pdf_builder_debug_performance' => ['type' => 'boolean', 'sanitize' => 'intval'],
         'pdf_builder_debug_database' => ['type' => 'boolean', 'sanitize' => 'intval'],
+        'pdf_builder_debug_pdf_editor' => ['type' => 'boolean', 'sanitize' => 'intval'],
         'pdf_builder_debug_settings_page' => ['type' => 'boolean', 'sanitize' => 'intval'],
         'pdf_builder_log_level' => ['type' => 'int', 'sanitize' => 'intval'],
         'pdf_builder_log_file_size' => ['type' => 'int', 'sanitize' => 'intval'],
