@@ -1073,6 +1073,9 @@ function initializeTabs() {
                 console.log('PDF Builder: Updating URL hash to:', '#' + target);
             }
             history.replaceState(null, null, '#' + target);
+
+            // Update floating save button text
+            updateFloatingSaveButtonText(target);
         });
     });
 
@@ -1202,6 +1205,9 @@ function initializeTabs() {
                 console.log('PDF Builder: currentTabText element not found');
             }
         }
+
+        // Update floating save button text
+        updateFloatingSaveButtonText(targetTab);
 
         // Log final state after initialization
         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
@@ -2398,6 +2404,36 @@ window.toggleRGPDControls = toggleRGPDControls;
                 console.error('Floating save error:', error);
             });
         });
+    }
+
+    // Update floating save button text based on active tab
+    function updateFloatingSaveButtonText(activeTabId) {
+        const floatingSaveBtn = document.getElementById('floating-save-btn');
+        if (!floatingSaveBtn) return;
+
+        const btnTextSpan = floatingSaveBtn.querySelector('.btn-text');
+        if (!btnTextSpan) return;
+
+        // Map tab IDs to button text
+        const tabTextMap = {
+            'general': 'Enregistrer Général',
+            'licence': 'Enregistrer Licence',
+            'systeme': 'Enregistrer Système',
+            'acces': 'Enregistrer Accès',
+            'securite': 'Enregistrer Sécurité',
+            'pdf': 'Enregistrer PDF',
+            'contenu': 'Enregistrer Canvas',
+            'templates': 'Enregistrer Templates',
+            'developpeur': 'Enregistrer Développeur'
+        };
+
+        // Update button text
+        const newText = tabTextMap[activeTabId] || 'Enregistrer Tout';
+        btnTextSpan.textContent = newText;
+
+        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            console.log(`[FLOATING SAVE] Button text updated to: "${newText}" for tab: ${activeTabId}`);
+        }
     }
 })();
 </script>
