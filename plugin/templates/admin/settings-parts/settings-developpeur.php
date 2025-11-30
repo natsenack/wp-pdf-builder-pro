@@ -679,6 +679,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+// Envelopper toute l'initialisation dans DOMContentLoaded pour s'assurer que les éléments existent
+document.addEventListener('DOMContentLoaded', function() {
     // Toggle mot de passe
     const togglePasswordBtn = document.getElementById('toggle_password');
     const passwordField = document.getElementById('developer_password');
