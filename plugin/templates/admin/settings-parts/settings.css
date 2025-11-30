@@ -34,6 +34,7 @@
     display: inline-block;
     width: 50px;
     height: 24px;
+    cursor: pointer;
 }
 
 .switch input, .toggle-switch input {
@@ -1026,7 +1027,6 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     font-size: 11px;
     color: #646970;
     font-weight: 500;
-}
 }
 
 .interaction-preview {

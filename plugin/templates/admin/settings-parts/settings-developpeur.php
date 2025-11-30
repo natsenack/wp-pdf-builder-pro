@@ -45,7 +45,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                             </button>
                         </div>
                         <p class="description">Protège les outils développeur avec un mot de passe (optionnel)</p>
-                        <?php if (!empty($settings['developer_password'])) :
+                        <?php if (!empty($settings['pdf_builder_developer_password'])) :
                             ?>
                         <p class="description" style="color: #28a745;">✓ Mot de passe configuré et sauvegardé</p>
                             <?php
@@ -829,7 +829,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
             console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Changement détecté - État:', isEnabled ? 'ACTIVÉ' : 'DÉSACTIVÉ');
         }
-        
+
         devSections.forEach(sectionId => {
             const section = document.getElementById(sectionId);
             if (section) {
@@ -864,9 +864,28 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
             console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Élément toggle trouvé, initialisation...');
         }
-        
+
         // Appliquer l'état initial
         window.updateDeveloperSections();
+
+        // Fonction pour basculer l'état du toggle
+        function toggleDeveloperMode() {
+            developerEnabledToggle.checked = !developerEnabledToggle.checked;
+            // Déclencher l'événement change manuellement
+            const changeEvent = new Event('change', { bubbles: true });
+            developerEnabledToggle.dispatchEvent(changeEvent);
+        }
+
+        // Écouter les clics sur le label du toggle
+        const toggleLabel = developerEnabledToggle.closest('.toggle-switch');
+        if (toggleLabel) {
+            toggleLabel.addEventListener('click', function(event) {
+                // Ne pas déclencher si on clique directement sur l'input
+                if (event.target === developerEnabledToggle) return;
+                event.preventDefault();
+                toggleDeveloperMode();
+            });
+        }
 
         // Écouter les changements du toggle pour mettre à jour l'interface en temps réel
         developerEnabledToggle.addEventListener('change', function(event) {
@@ -877,7 +896,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             window.updateDeveloperSections();
         });
-        
+
         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
             console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Écouteur d\'événements attaché avec succès');
         }
