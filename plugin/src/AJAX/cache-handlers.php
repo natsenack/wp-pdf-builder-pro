@@ -25,7 +25,8 @@ function pdf_builder_test_cache_integration_ajax() {
     }
 
     // Vérifier le nonce
-    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_cache_actions')) {
+        error_log('PDF Builder Optimize DB: Nonce invalide ou manquant - Nonce reçu: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT'));
         wp_send_json_error('Nonce invalide');
         return;
     }
@@ -286,16 +287,25 @@ function pdf_builder_optimize_database_ajax() {
         ];
 
         foreach ($tables_to_optimize as $table) {
-            if ($wpdb->get_var("SHOW TABLES LIKE '$table'") == $table) {
+            $exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table));
+            if ($exists == $table) {
                 $result = $wpdb->query("OPTIMIZE TABLE $table");
                 if ($result !== false) {
                     $optimized_tables[] = $table;
+                } else {
+                    error_log('PDF Builder Optimize DB: Échec OPTIMIZE TABLE ' . $table . ' - WP Error: ' . $wpdb->last_error);
                 }
+            } else {
+                error_log('PDF Builder Optimize DB: Table non trouvée: ' . $table);
             }
         }
 
         // Nettoyer les options orphelines
         $cleaned_options = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_%' AND option_value = ''");
+        if ($cleaned_options === false) {
+            error_log('PDF Builder Optimize DB: Échec nettoyage options - WP Error: ' . $wpdb->last_error);
+            $cleaned_options = 0;
+        }
 
         if (empty($optimized_tables) && $cleaned_options == 0) {
             $message = 'Aucune optimisation nécessaire.';

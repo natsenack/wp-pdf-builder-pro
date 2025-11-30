@@ -73,6 +73,12 @@ jQuery(document).ready(function($) {
         }
     }
 
+    // Utilitaire pour obtenir le nonce AJAX (priorité à cacheNonce)
+    function getAjaxNonce() {
+        if (typeof pdfBuilderAjax === 'undefined') return null;
+        return pdfBuilderAjax.cacheNonce || pdfBuilderAjax.nonce || null;
+    }
+
     // ==========================================
     // FIN FONCTIONS DE DEBUG
     // ==========================================
@@ -98,7 +104,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_test_cache_integration',
-                nonce: pdfBuilderAjax.cacheNonce
+                nonce: getAjaxNonce()
             },
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
@@ -144,7 +150,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_clear_cache',
-                nonce: pdfBuilderAjax.cacheNonce
+                nonce: getAjaxNonce()
             },
             timeout: 60000, // 60 secondes timeout pour le nettoyage
             success: function(response) {
@@ -296,7 +302,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_get_cache_metrics',
-                nonce: pdfBuilderAjax.cacheNonce
+                nonce: getAjaxNonce()
             },
             success: function(response) {
                 debugLogAjax('updateCacheMetrics success', response);
@@ -370,7 +376,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_optimize_database',
-                nonce: pdfBuilderAjax.cacheNonce
+                nonce: getAjaxNonce()
             },
             timeout: 60000, // 60 secondes timeout
             success: function(response) {
@@ -407,7 +413,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_repair_templates',
-                nonce: pdfBuilderAjax.cacheNonce
+                nonce: getAjaxNonce()
             },
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
@@ -449,7 +455,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_remove_temp_files',
-                nonce: pdfBuilderAjax.cacheNonce
+                nonce: getAjaxNonce()
             },
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
