@@ -234,7 +234,7 @@ jQuery(document).ready(function($) {
     });
 
     // Gestion des toggles avec confirmation pour les paramètres critiques
-    $('#systeme input[name="cache_enabled"]').on('change', function() {
+    $('#systeme input[name="cache_enabled"]:not(.cache-modal input[name="cache_enabled"])').on('change', function() {
         const isEnabled = $(this).is(':checked');
         if (!isEnabled) {
             if (!confirm('Désactiver le cache peut ralentir les performances. Continuer ?')) {
