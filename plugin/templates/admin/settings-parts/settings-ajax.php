@@ -1261,7 +1261,8 @@ function pdf_builder_save_all_settings_handler() {
         return;
     }
 
-    $saved_count = 0;
+    try {
+        $saved_count = 0;
         $errors = [];
         $processed_fields = [];
         $ignored_fields = [];
@@ -1270,7 +1271,6 @@ function pdf_builder_save_all_settings_handler() {
         // Debug: Log tous les champs POST reçus
         error_log('PDF Builder DEBUG - Tous les champs POST reçus: ' . implode(', ', array_keys($_POST)));
 
-        try {
         // Traiter tous les champs soumis
         foreach ($_POST as $key => $value) {
             // Ignorer les champs spéciaux
@@ -1360,14 +1360,14 @@ function pdf_builder_save_all_settings_handler() {
         error_log('  Sauvegardés: ' . $saved_count);
         error_log('  Erreurs: ' . count($errors));
 
-        } catch (Exception $e) {
-            // Debug: Log the exception
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('PDF Builder: Exception in save_settings: ' . $e->getMessage());
-                error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
-            }
-            send_ajax_response(false, 'Error during saving: ' . $e->getMessage());
+    } catch (Exception $e) {
+        // Debug: Log the exception
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('PDF Builder: Exception in save_settings: ' . $e->getMessage());
+            error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
         }
+        send_ajax_response(false, 'Error during saving: ' . $e->getMessage());
+    }
 }
 
 /**
