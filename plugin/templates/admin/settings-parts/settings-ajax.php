@@ -2,7 +2,7 @@
 /**
  * PDF Builder Pro - AJAX Handlers
  * All AJAX request processing for settings page
- * Updated: 2025-11-19 02:10:00
+ * Updated: 2025-11-30 14:20:00
  */
 
 if (!defined('ABSPATH')) {
