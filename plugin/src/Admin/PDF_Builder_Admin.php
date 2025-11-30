@@ -1355,6 +1355,8 @@ class PdfBuilderAdmin
                 'nonce' => wp_create_nonce('pdf_builder_settings'),
                 // Nonce spécifique pour les actions de cache/maintenance
                 'cacheNonce' => wp_create_nonce('pdf_builder_cache_actions'),
+                // Nonce global AJAX utilisé par le dispatcher central
+                'ajaxNonce' => wp_create_nonce('pdf_builder_ajax'),
                 'debug' => [
                     'php_errors' => get_option('pdf_builder_debug_php_errors', false),
                     'javascript' => get_option('pdf_builder_debug_javascript', false),

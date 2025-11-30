@@ -76,7 +76,8 @@ jQuery(document).ready(function($) {
     // Utilitaire pour obtenir le nonce AJAX (priorité à cacheNonce)
     function getAjaxNonce() {
         if (typeof pdfBuilderAjax === 'undefined') return null;
-        return pdfBuilderAjax.cacheNonce || pdfBuilderAjax.nonce || null;
+        // Priorité: ajaxNonce (dispatcher), puis cacheNonce (maintenance), puis generic nonce
+        return pdfBuilderAjax.ajaxNonce || pdfBuilderAjax.cacheNonce || pdfBuilderAjax.nonce || null;
     }
 
     // ==========================================
