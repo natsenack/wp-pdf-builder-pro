@@ -524,7 +524,7 @@ if (((isset($_POST['submit']) || isset($_POST['submit_developpeur'])) && isset($
         // Process all POST data dynamically
         foreach ($_POST as $key => $value) {
             // Skip WordPress internal fields and security fields
-            if (in_array($key, ['submit', 'pdf_builder_settings_nonce', 'action', 'tab', 'canvas_settings', '_wp_http_referer'])) {
+            if (in_array($key, ['submit', 'submit_developpeur', 'pdf_builder_settings_nonce', 'action', 'tab', 'canvas_settings', '_wp_http_referer'])) {
                 continue;
             }
 
