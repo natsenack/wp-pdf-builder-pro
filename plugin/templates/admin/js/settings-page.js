@@ -384,11 +384,13 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Base de données optimisée</div>');
                 } else {
-                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Échec de l\'optimisation</div>');
+                    var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de l\'optimisation';
+                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ ' + msg + '</div>');
                 }
             },
             error: function(xhr, status, error) {
-                $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur de connexion</div>');
+                var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
+                $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
             },
             complete: function() {
                 // Réactiver le bouton
@@ -421,11 +423,13 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Templates réparés</div>');
                 } else {
-                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Échec de la réparation</div>');
+                    var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de la réparation';
+                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ ' + msg + '</div>');
                 }
             },
             error: function(xhr, status, error) {
-                $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur de connexion</div>');
+                var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
+                $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
             },
             complete: function() {
                 // Réactiver le bouton
@@ -461,13 +465,16 @@ jQuery(document).ready(function($) {
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
                 if (response.success) {
-                    $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ Fichiers temporaires supprimés</div>');
+                    var msg = (response && response.data && response.data.message) ? response.data.message : 'Fichiers temporaires supprimés';
+                    $results.html('<div style="color: #28a745; padding: 10px; background: #d4edda; border-radius: 4px; margin-top: 10px;">✅ ' + msg + '</div>');
                 } else {
-                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Échec de la suppression</div>');
+                    var msg = (response && response.data && response.data.message) ? response.data.message : 'Échec de la suppression';
+                    $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ ' + msg + '</div>');
                 }
             },
             error: function(xhr, status, error) {
-                $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur de connexion</div>');
+                var serverMsg = xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message ? xhr.responseJSON.data.message : (xhr.responseText || error);
+                $results.html('<div style="color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; margin-top: 10px;">❌ Erreur: ' + serverMsg + '</div>');
             },
             complete: function() {
                 // Réactiver le bouton
