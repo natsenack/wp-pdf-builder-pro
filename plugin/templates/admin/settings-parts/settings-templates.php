@@ -369,21 +369,21 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
 ?>
 <div class="templates-status-wrapper">
             <h2 style="display: flex; justify-content: space-between; align-items: center;">
-                <span>📋 Templates par Statut de Commande</span>
+                <span>[TEMPLATES] Templates par Statut de Commande</span>
                 <?php if (!empty($custom_status_plugins)): ?>
                 <span style="font-size: 14px; font-weight: normal; color: #666;">
-                    🔌 Plugins détectés: <?php echo esc_html(implode(', ', $custom_status_plugins)); ?>
+                    [PLUGINS] Plugins détectés: <?php echo esc_html(implode(', ', $custom_status_plugins)); ?>
                 </span>
                 <?php elseif ($woocommerce_active && !empty($order_statuses)): ?>
                 <span style="font-size: 14px; font-weight: normal; color: #28a745;">
-                    ✅ Statuts WooCommerce standards uniquement
+                    [CHECK] Statuts WooCommerce standards uniquement
                 </span>
                 <?php endif; ?>
             </h2>
 
             <?php if (!$woocommerce_active): ?>
             <div class="notice notice-warning">
-                <p><strong>⚠️ WooCommerce n'est pas actif</strong></p>
+                <p><strong>[WARNING] WooCommerce n'est pas actif</strong></p>
                 <p>Cette fonctionnalité nécessite WooCommerce pour fonctionner. Veuillez installer et activer WooCommerce.</p>
             </div>
             <?php else: ?>
@@ -409,7 +409,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                             $detected_plugin = isset($status_plugins[$status_key]) ? $status_plugins[$status_key] : 'Plugin inconnu';
                             $tooltip_text = "Slug personnalisé détecté - ajouté par: {$detected_plugin}";
                             ?>
-                            <span class="custom-status-indicator" data-tooltip="<?php echo esc_attr($tooltip_text); ?>" style="font-family: Arial, sans-serif;">🔍</span>
+                            <span class="custom-status-indicator" data-tooltip="<?php echo esc_attr($tooltip_text); ?>" style="font-family: Arial, sans-serif;">[SEARCH]</span>
                             <?php endif; ?>
                         </h4>
                         <div class="template-selector">
@@ -432,7 +432,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                             <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>
                             <p class="current-template">
                                 <strong>Assigné :</strong> <?php echo esc_html($templates[$current_mappings[$status_key]]); ?>
-                                <span class="assigned-badge">✓</span>
+                                <span class="assigned-badge">[CHECK]</span>
                             </p>
                             <?php else: ?>
                             <p class="no-template">Aucun template assigné</p>
@@ -444,7 +444,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
 
                 <div class="templates-status-actions">
                     <button type="button" class="button button-secondary" onclick="resetTemplatesStatus()">
-                        🔄 Réinitialiser
+                        [RESET] Réinitialiser
                     </button>
                 </div>
             </form>

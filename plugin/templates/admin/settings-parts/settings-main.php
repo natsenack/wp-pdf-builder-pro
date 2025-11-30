@@ -250,10 +250,10 @@ window.pdfBuilderNotifications = {
         'animation' => get_option('pdf_builder_notifications_animation', 'slide'),
         'sound_enabled' => get_option('pdf_builder_notifications_sound', false),
         'types' => [
-            'success' => ['icon' => '✅', 'color' => '#28a745', 'bg' => '#d4edda'],
-            'error' => ['icon' => '❌', 'color' => '#dc3545', 'bg' => '#f8d7da'],
-            'warning' => ['icon' => '⚠️', 'color' => '#ffc107', 'bg' => '#fff3cd'],
-            'info' => ['icon' => 'ℹ️', 'color' => '#17a2b8', 'bg' => '#d1ecf1']
+            'success' => ['icon' => '[SUCCESS]', 'color' => '#28a745', 'bg' => '#d4edda'],
+            'error' => ['icon' => '[ERROR]', 'color' => '#dc3545', 'bg' => '#f8d7da'],
+            'warning' => ['icon' => '[WARNING]', 'color' => '#ffc107', 'bg' => '#fff3cd'],
+            'info' => ['icon' => '[INFO]', 'color' => '#17a2b8', 'bg' => '#d1ecf1']
         ]
     ]); ?>,
     ajax_url: '<?php echo admin_url('admin-ajax.php'); ?>',
@@ -507,7 +507,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
         // Check for max_input_vars limit
         $max_input_vars = ini_get('max_input_vars');
         if ($max_input_vars && count($_POST) >= $max_input_vars) {
-            $notices[] = '<div class="notice notice-error"><p><strong>⚠️</strong> Trop de paramètres soumis (' . count($_POST) . '). Limite PHP max_input_vars: ' . $max_input_vars . '. Certains paramètres n\'ont pas été sauvegardés.</p></div>';
+            $notices[] = '<div class="notice notice-error"><p><strong>[WARNING]</strong> Trop de paramètres soumis (' . count($_POST) . '). Limite PHP max_input_vars: ' . $max_input_vars . '. Certains paramètres n\'ont pas été sauvegardés.</p></div>';
         }
         // Collect all form data from all tabs - comprehensive field processing
         // Process ALL fields dynamically since floating button sends data from all tabs
@@ -656,7 +656,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
             if ($is_ajax) {
                 send_ajax_response(true, 'Paramètres enregistrés avec succès.');
             } else {
-                $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Paramètres enregistrés avec succès.</p></div>';
+                $notices[] = '<div class="notice notice-success"><p><strong>[CHECK]</strong> Paramètres enregistrés avec succès.</p></div>';
             }
         } catch (Exception $e) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -665,7 +665,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
             if ($is_ajax) {
                 send_ajax_response(false, 'Erreur lors de la sauvegarde des paramètres: ' . $e->getMessage());
             } else {
-                $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur lors de la sauvegarde des paramètres: ' . esc_html($e->getMessage()) . '</p></div>';
+                $notices[] = '<div class="notice notice-error"><p><strong>[CROSS]</strong> Erreur lors de la sauvegarde des paramètres: ' . esc_html($e->getMessage()) . '</p></div>';
             }
         }
         $settings = get_option('pdf_builder_settings', []);
@@ -726,7 +726,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
             update_option('pdf_builder_order_status_templates', array_map('sanitize_text_field', $_POST['order_status_templates']));
         }
     } else {
-        $notices[] = '<div class="notice notice-error"><p><strong>✗</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
+        $notices[] = '<div class="notice notice-error"><p><strong>[CROSS]</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
     }
 }
 
@@ -756,7 +756,7 @@ if (
         if ($is_ajax) {
             send_ajax_response(true, 'Cache vidé avec succès.');
         } else {
-            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Cache vidé avec succès.</p></div>';
+            $notices[] = '<div class="notice notice-success"><p><strong>[CHECK]</strong> Cache vidé avec succès.</p></div>';
         }
     }
 }
@@ -767,7 +767,7 @@ if (
 ?>
 <div class="wrap">
     <div class="pdf-builder-header">
-        <h1><?php _e('⚙️ PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
+        <h1><?php _e('[SETTINGS] PDF Builder Pro Settings', 'pdf-builder-pro'); ?></h1>
     </div>
 
     <?php foreach ($notices as $notice) {
@@ -785,39 +785,39 @@ if (
         </div>
         <div class="nav-tabs-container">
             <a href="#general" class="nav-tab" data-tab="general">
-                <span class="tab-icon">⚙️</span>
+                <span class="tab-icon">[GENERAL]</span>
                 <span class="tab-text">Général</span>
             </a>
             <a href="#licence" class="nav-tab" data-tab="licence">
-                <span class="tab-icon">🔑</span>
+                <span class="tab-icon">[LICENSE]</span>
                 <span class="tab-text">Licence</span>
             </a>
             <a href="#systeme" class="nav-tab" data-tab="systeme">
-                <span class="tab-icon">🔧</span>
+                <span class="tab-icon">[SYSTEM]</span>
                 <span class="tab-text">Système</span>
             </a>
             <a href="#acces" class="nav-tab" data-tab="acces">
-                <span class="tab-icon">👥</span>
+                <span class="tab-icon">[ACCESS]</span>
                 <span class="tab-text">Accès</span>
             </a>
             <a href="#securite" class="nav-tab" data-tab="securite">
-                <span class="tab-icon">🔒</span>
+                <span class="tab-icon">[SECURITY]</span>
                 <span class="tab-text">Sécurité & Conformité</span>
             </a>
             <a href="#pdf" class="nav-tab" data-tab="pdf">
-                <span class="tab-icon">📄</span>
+                <span class="tab-icon">[PDF]</span>
                 <span class="tab-text">Configuration PDF</span>
             </a>
             <a href="#contenu" class="nav-tab" data-tab="contenu">
-                <span class="tab-icon">🎨</span>
+                <span class="tab-icon">[CONTENT]</span>
                 <span class="tab-text">Contenu & Design</span>
             </a>
             <a href="#templates" class="nav-tab" data-tab="templates">
-                <span class="tab-icon">📋</span>
+                <span class="tab-icon">[TEMPLATES]</span>
                 <span class="tab-text">Templates par statut</span>
             </a>
             <a href="#developpeur" class="nav-tab" data-tab="developpeur">
-                <span class="tab-icon">👨‍💻</span>
+                <span class="tab-icon">[DEVELOPER]</span>
                 <span class="tab-text">Développeur</span>
             </a>
         </div>
@@ -880,7 +880,7 @@ if (
 <!-- Bouton de secours sans JavaScript -->
 <noscript>
     <div style="position: fixed; bottom: 80px; right: 20px; z-index: 999999; background: #fff; border: 2px solid #007cba; border-radius: 8px; padding: 10px;">
-        <strong>💾 Sauvegarde manuelle</strong><br>
+        <strong>[SAVE] Sauvegarde manuelle</strong><br>
         <small>JavaScript désactivé - Utilisez les boutons de chaque onglet</small>
     </div>
 </noscript>
@@ -1149,7 +1149,7 @@ function updateTemplateStatusIndicators() {
             const selectedOption = select.querySelector('option[value="' + selectValue.replace(/"/g, '\\"') + '"]');
             const templateName = selectedOption ? selectedOption.textContent.trim() : 'Template inconnu';
             
-            previewDiv.innerHTML = '<p class="current-template"><strong>Assigné :</strong> ' + templateName.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '<span class="assigned-badge">✓</span></p>';
+            previewDiv.innerHTML = '<p class="current-template"><strong>Assigné :</strong> ' + templateName.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '<span class="assigned-badge">[CHECK]</span></p>';
         } else {
             // Aucun template assigné
             previewDiv.innerHTML = '<p class="no-template">Aucun template assigné</p>';
