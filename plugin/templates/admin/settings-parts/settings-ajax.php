@@ -989,10 +989,9 @@ function pdf_builder_save_canvas_settings_handler() {
             error_log('data to send: ' . json_encode(['saved' => $saved_values, 'category' => $category]));
 
             send_ajax_response(true, 'Paramètres ' . $category . ' sauvegardés avec succès.', ['saved' => $saved_values, 'category' => $category]);
-
-    } catch (Exception $e) {
-        send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
-    }
+        } catch (Exception $e) {
+            send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+        }
 }
 
 // Handler pour récupérer les paramètres canvas
