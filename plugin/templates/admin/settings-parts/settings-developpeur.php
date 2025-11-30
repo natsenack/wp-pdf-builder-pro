@@ -613,7 +613,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Simuler un test FPS (en réalité, cela nécessiterait l'accès au canvas)
             setTimeout(function() {
-                const targetFps = <?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?>;
+                const targetFps = 60; // Valeur par défaut, sera remplacée par PHP
                 const simulatedFps = Math.max(10, Math.min(targetFps + (Math.random() * 10 - 5), targetFps + 15));
 
                 if (simulatedFps >= targetFps - 5) {
@@ -1573,13 +1573,29 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
             `;
 
             const icon = type === 'success' ? '[OK]' : type === 'error' ? '[ERROR]' : type === 'warning' ? '[WARNING]' : '[INFO]';
-            notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 16px;">${icon}</span>
-                    <span>${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" style="margin-left: auto; background: none; border: none; cursor: pointer; font-size: 18px; opacity: 0.7;">×</button>
-                </div>
-            `;
+
+            // Create the inner content
+            const contentDiv = document.createElement('div');
+            contentDiv.style.cssText = 'display: flex; align-items: center; gap: 8px;';
+
+            const iconSpan = document.createElement('span');
+            iconSpan.style.cssText = 'font-size: 16px;';
+            iconSpan.textContent = icon;
+
+            const messageSpan = document.createElement('span');
+            messageSpan.textContent = message;
+
+            const closeButton = document.createElement('button');
+            closeButton.style.cssText = 'margin-left: auto; background: none; border: none; cursor: pointer; font-size: 18px; opacity: 0.7;';
+            closeButton.textContent = '×';
+            closeButton.onclick = function() {
+                this.parentElement.parentElement.remove();
+            };
+
+            contentDiv.appendChild(iconSpan);
+            contentDiv.appendChild(messageSpan);
+            contentDiv.appendChild(closeButton);
+            notification.appendChild(contentDiv);
 
             // Ajouter à la liste des notifications
             this.notifications.push(notification);
