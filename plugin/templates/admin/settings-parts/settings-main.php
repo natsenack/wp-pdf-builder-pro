@@ -2774,6 +2774,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Log TOUJOURS l'onglet actif lors de la sauvegarde
                         console.log('💾 [PDF Builder] SAVE: Enregistrement depuis l\'onglet "' + tabId + '"');
 
+                        console.log('🔄 [PDF Builder] AJAX Success - Raw response:', originalData);
+                        console.log('🔄 [PDF Builder] AJAX Success - Response data keys:', originalData && originalData.data ? Object.keys(originalData.data) : 'NO DATA');
+                        console.log('🔄 [PDF Builder] AJAX Success - Has saved_options:', originalData && originalData.data && originalData.data.saved_options ? 'YES' : 'NO');
+
                         // Log success
                         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                             console.log('Paramètres sauvegardés avec succès !');

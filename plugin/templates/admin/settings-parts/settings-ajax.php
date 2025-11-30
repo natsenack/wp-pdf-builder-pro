@@ -626,7 +626,11 @@ function pdf_builder_save_settings_handler() {
                     $saved_options[$field] = get_option('pdf_builder_' . $field, 0) ? '1' : '0';
                 }
 
-                send_ajax_response(true, $message, [
+                // Log détaillé pour debug
+                error_log('[PDF Builder] SAVE RESPONSE - saved_options keys: ' . implode(', ', array_keys($saved_options)));
+                error_log('[PDF Builder] SAVE RESPONSE - saved_options sample: ' . json_encode(array_slice($saved_options, 0, 5, true)));
+
+                $response_data = [
                     'saved_count' => $saved_count,
                     'errors' => $errors,
                     'saved_options' => $saved_options,
@@ -637,7 +641,11 @@ function pdf_builder_save_settings_handler() {
                         'saved' => $saved_count,
                         'missing_fields' => implode(', ', array_diff($js_collected, array_keys($_POST)))
                     ]
-                ]);
+                ];
+
+                error_log('[PDF Builder] SAVE RESPONSE - Final response data keys: ' . implode(', ', array_keys($response_data)));
+
+                send_ajax_response(true, $message, $response_data);
                 break;
 
             default:
