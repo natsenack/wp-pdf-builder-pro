@@ -2844,6 +2844,9 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                                         // Obtenir le conteneur de l'onglet actif
                                         const activeTabContent = document.getElementById(tabId);
+                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                            console.log(`🔄 [PDF Builder] activeTabContent trouvé: ${!!activeTabContent}, savedData keys: ${Object.keys(savedData).length}`);
+                                        }
                                         if (activeTabContent) {
                                             Object.keys(savedData).forEach(fieldName => {
                                                 const fieldValue = savedData[fieldName];
