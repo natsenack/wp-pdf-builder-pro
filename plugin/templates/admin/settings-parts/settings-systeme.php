@@ -36,7 +36,7 @@ function pdf_builder_get_directory_size($directory) {
                             <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="general_cache_enabled" name="cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
+                                    <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Améliore les performances en mettant en cache les données</p>

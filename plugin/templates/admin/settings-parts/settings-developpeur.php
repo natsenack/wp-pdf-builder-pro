@@ -19,7 +19,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                     <td>
                         <div class="toggle-container">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="developer_enabled" name="developer_enabled" value="1" <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="developer_enabled" name="pdf_builder_developer_enabled" value="1" <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
                             <span class="toggle-label">Activer le mode développeur</span>
@@ -36,7 +36,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         <!-- Champ username caché pour l'accessibilité -->
                         <input type="text" autocomplete="username" style="display: none;" />
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="password" id="developer_password" name="developer_password"
+                            <input type="password" id="developer_password" name="pdf_builder_developer_password"
                                    placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
                                    style="width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
                                    value="<?php echo esc_attr($settings['pdf_builder_developer_password'] ?? ''); ?>" />
@@ -206,7 +206,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 <tr>
                   <th scope="row"><label for="log_level">Niveau de Log</label></th>
                     <td>
-                        <select id="log_level" name="log_level" style="width: 200px;">
+                        <select id="log_level" name="pdf_builder_log_level" style="width: 200px;">
                             <option value="0" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 0) ? 'selected' : ''; ?>>Aucun log</option>
                             <option value="1" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 1) ? 'selected' : ''; ?>>Erreurs uniquement</option>
                             <option value="2" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 2) ? 'selected' : ''; ?>>Erreurs + Avertissements</option>
@@ -219,14 +219,14 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 <tr>
                     <th scope="row"><label for="log_file_size">Taille Max Log</label></th>
                     <td>
-                        <input type="number" id="log_file_size" name="log_file_size" value="<?php echo isset($settings['pdf_builder_log_file_size']) ? intval($settings['pdf_builder_log_file_size']) : '10'; ?>" min="1" max="100" /> MB
+                        <input type="number" id="log_file_size" name="pdf_builder_log_file_size" value="<?php echo isset($settings['pdf_builder_log_file_size']) ? intval($settings['pdf_builder_log_file_size']) : '10'; ?>" min="1" max="100" /> MB
                         <p class="description">Rotation automatique quand le log dépasse cette taille</p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="log_retention">Retention Logs</label></th>
                     <td>
-                        <input type="number" id="log_retention" name="log_retention" value="<?php echo isset($settings['pdf_builder_log_retention']) ? intval($settings['pdf_builder_log_retention']) : '30'; ?>" min="1" max="365" /> jours
+                        <input type="number" id="log_retention" name="pdf_builder_log_retention" value="<?php echo isset($settings['pdf_builder_log_retention']) ? intval($settings['pdf_builder_log_retention']) : '30'; ?>" min="1" max="365" /> jours
                         <p class="description">Supprime automatiquement les logs plus vieux que ce délai</p>
                     </td>
                 </tr>

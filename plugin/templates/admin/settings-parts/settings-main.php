@@ -506,7 +506,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
             ],
             // Boolean/checkbox fields (isset check)
             'bool_fields' => [
-                'cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
+                'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
                 'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
                 'pdf_builder_developer_enabled', 'pdf_builder_debug_php_errors', 'pdf_builder_debug_javascript',
                 'pdf_builder_debug_javascript_verbose', 'pdf_builder_debug_ajax', 'pdf_builder_debug_performance',
@@ -660,7 +660,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
         update_option('pdf_builder_default_orientation', sanitize_text_field($_POST['default_orientation'] ?? 'portrait'));
 
         // Cache settings
-        update_option('pdf_builder_cache_enabled', isset($_POST['cache_enabled']) ? 1 : 0);
+        update_option('pdf_builder_cache_enabled', isset($_POST['pdf_builder_cache_enabled']) ? 1 : 0);
         update_option('pdf_builder_cache_compression', isset($_POST['cache_compression']) ? 1 : 0);
         update_option('pdf_builder_cache_auto_cleanup', isset($_POST['cache_auto_cleanup']) ? 1 : 0);
         update_option('pdf_builder_cache_max_size', intval($_POST['cache_max_size'] ?? 100));
