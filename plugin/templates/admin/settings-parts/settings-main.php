@@ -466,13 +466,15 @@ if (!empty($_POST)) {
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
     if ($is_ajax) {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            
+
         }
     }
     if (defined('WP_DEBUG') && WP_DEBUG) {
-        
+
     }
-    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+    // Check nonce from POST data or AJAX header
+    $nonce_to_check = $_POST['pdf_builder_settings_nonce'] ?? $_SERVER['HTTP_X_WP_NONCE'] ?? '';
+    if (wp_verify_nonce($nonce_to_check, 'pdf_builder_settings')) {
         if (defined('WP_DEBUG') && WP_DEBUG) {
             
         }
