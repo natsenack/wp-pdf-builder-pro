@@ -109,7 +109,7 @@ class PDF_Builder_Predefined_Templates_Manager
                             $("#save-template-btn").trigger("click");
                         }, 500);
                     } catch (e) {
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        if (window.pdfBuilderDebugSettings?.javascript) {
                             console.error('Erreur lors du décodage du JSON depuis l\'URL:', e.message);
                         }
                     }
@@ -128,13 +128,13 @@ class PDF_Builder_Predefined_Templates_Manager
                                 if (response.success) {
                                     location.reload();
                                 } else {
-                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    if (window.pdfBuilderDebugSettings?.javascript) {
                                         console.error('Erreur de déconnexion');
                                     }
                                 }
                             },
                             error: function() {
-                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                if (window.pdfBuilderDebugSettings?.javascript) {
                                     console.error('Erreur de déconnexion');
                                 }
                             }
@@ -748,14 +748,14 @@ JS;
 
                 // Validation côté client
                 if (!password) {
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    if (window.pdfBuilderDebugSettings?.javascript) {
                         console.error('Veuillez entrer un mot de passe');
                     }
                     return;
                 }
 
                 // Log: vérification du mot de passe
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                if (window.pdfBuilderDebugSettings?.javascript) {
                     console.log('Vérification du mot de passe...');
                 }
 
@@ -773,7 +773,7 @@ JS;
                     success: function(response) {
                         if (response.success) {
                             // Log success
-                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            if (window.pdfBuilderDebugSettings?.javascript) {
                                 console.log('Authentification réussie ! Redirection en cours...');
                             }
                             
@@ -784,7 +784,7 @@ JS;
                             const errorMsg = response.data || response.data.message || '<?php _e('Erreur de connexion', 'pdf-builder-pro'); ?>';
                             
                             // Log error
-                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            if (window.pdfBuilderDebugSettings?.javascript) {
                                 console.error('Erreur: ' + errorMsg);
                             }
                             
@@ -792,13 +792,13 @@ JS;
                         }
                     },
                     error: function(xhr, status, error) {
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        if (window.pdfBuilderDebugSettings?.javascript) {
                             console.error('Developer auth error:', error, xhr.responseText);
                         }
                         const errorMsg = '<?php _e('Erreur de connexion au serveur', 'pdf-builder-pro'); ?>';
                         
                         // Log network error
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        if (window.pdfBuilderDebugSettings?.javascript) {
                             console.error('Erreur réseau: ' + errorMsg);
                         }
                         

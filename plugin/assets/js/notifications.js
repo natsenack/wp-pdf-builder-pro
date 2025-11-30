@@ -36,7 +36,7 @@
             this.clear(); // Clear any existing notifications on init
             this.initialized = true;
 
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) console.log('PDF Builder Notifications: Initialized', this.settings);
+            if (window.pdfBuilderDebugSettings?.javascript) console.log('PDF Builder Notifications: Initialized', this.settings);
         }
 
         /**
@@ -403,11 +403,11 @@
             $.post(this.ajaxUrl, data)
                 .done((response) => {
                     if (response.success) {
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) console.log('Notification AJAX sent successfully');
+                        if (window.pdfBuilderDebugSettings?.javascript) console.log('Notification AJAX sent successfully');
                     }
                 })
                 .fail((error) => {
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) console.error('Failed to send AJAX notification:', error);
+                    if (window.pdfBuilderDebugSettings?.javascript) console.error('Failed to send AJAX notification:', error);
                 });
         }
 

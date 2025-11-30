@@ -7,7 +7,7 @@
 // Fonctions de debug conditionnel - RÉACTIVÉES pour mesurer les FPS
 function isDebugEnabled() {
     // Debug activé si explicitement forcé ou si activé dans les paramètres
-    return window.location.search.includes('debug=force') || (typeof window.pdfBuilderCanvasSettings !== 'undefined' && window.pdfBuilderCanvasSettings?.debug?.javascript);
+    return window.location.search.includes('debug=force') || (typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript);
 }
 
 function debugLog(...args) {

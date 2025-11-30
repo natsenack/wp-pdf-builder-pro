@@ -21,7 +21,7 @@
             window.testLicenseToggle = () => this.testToggleLicenseMode();
             window.pdfBuilderDeveloper = this;
 
-            console.log('🚀 [PDF Builder Developer] Module initialisé');
+            // Module initialized - no unconditional logging
         }
 
         bindEvents() {
@@ -77,7 +77,7 @@
             this.updateDeveloperSectionsVisibility(developerEnabled);
             this.updateDeveloperStatusIndicator();
 
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('🔧 [MODE DÉVELOPPEUR] Initialisation terminée - État:', developerEnabled ? 'ACTIF' : 'INACTIF');
             }
         }
@@ -87,7 +87,7 @@
             this.updateDeveloperSectionsVisibility(isEnabled);
             this.updateDeveloperStatusIndicator();
 
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('🔧 [MODE DÉVELOPPEUR] Changement détecté - État:', isEnabled ? 'ACTIVÉ' : 'DÉSACTIVÉ');
             }
         }
@@ -112,7 +112,7 @@
                 const section = $(`#${sectionId}`);
                 if (section.length) {
                     section.toggle(isEnabled);
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    if (window.pdfBuilderDebugSettings?.javascript) {
                         console.log(`🔧 [SECTION ${sectionId.toUpperCase()}] ${isEnabled ? 'AFFICHÉE' : 'MASQUÉE'}`);
                     }
                 }
@@ -131,7 +131,7 @@
                     'color': 'white'
                 });
 
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                if (window.pdfBuilderDebugSettings?.javascript) {
                     console.log(`🔧 [INDICATEUR STATUT] Mis à jour: ${status}`);
                 }
             }
@@ -360,7 +360,7 @@
             try {
                 const result = eval(code);
                 $('#code_result').text('✅ Exécuté avec succès - Résultat: ' + JSON.stringify(result)).css('color', '#28a745');
-                console.log('📝 [CONSOLE CODE] Exécution réussie:', result);
+                // Execution result logged to UI only
             } catch (error) {
                 $('#code_result').text('❌ Erreur: ' + error.message).css('color', '#dc3545');
                 console.error('📝 [CONSOLE CODE] Erreur:', error);
@@ -521,7 +521,7 @@ Notifications actives: ${activeNotifications}
             }
 
             console.table(stats);
-            console.log(message);
+            // Statistics message displayed via notification only
 
             this.addNotificationLog(`📊 Stats: ${stats.total} tests (${stats.success}✓ ${stats.error}✗ ${stats.warning}⚠ ${stats.info}ℹ)`, 'info');
         }

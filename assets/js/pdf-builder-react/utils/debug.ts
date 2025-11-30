@@ -20,30 +20,21 @@ function isDebugEnabled(): boolean {
     return true;
   }
 
-  // Vérifier les paramètres de debug
-  if (typeof window.pdfBuilderCanvasSettings === 'undefined' ||
-      !window.pdfBuilderCanvasSettings ||
-      typeof window.pdfBuilderCanvasSettings !== 'object') {
-    return false;
+  // Vérifier les paramètres de debug centralisés
+  if (typeof window.pdfBuilderDebugSettings !== 'undefined' &&
+      window.pdfBuilderDebugSettings &&
+      typeof window.pdfBuilderDebugSettings === 'object') {
+    return !!window.pdfBuilderDebugSettings.javascript;
   }
 
-  const debugSettings = (window.pdfBuilderCanvasSettings as any).debug;
-  if (!debugSettings || typeof debugSettings !== 'object') {
-    return false;
-  }
-
-  // Si le debug JavaScript général est activé
-  if (debugSettings.javascript === true) {
-    // Si le debug PDF editor est activé, vérifier qu'on est sur la page appropriée
-    if (debugSettings.pdf_editor === true) {
-      return isPDFEditorPage();
+  // Fallback vers pdfBuilderCanvasSettings pour la compatibilité
+  if (typeof window.pdfBuilderCanvasSettings !== 'undefined' &&
+      window.pdfBuilderCanvasSettings &&
+      typeof window.pdfBuilderCanvasSettings === 'object') {
+    const debugSettings = (window.pdfBuilderCanvasSettings as any).debug;
+    if (debugSettings && typeof debugSettings === 'object') {
+      return !!debugSettings.javascript;
     }
-    // Si le debug settings page est activé, vérifier qu'on est sur la page appropriée
-    if (debugSettings.settings_page === true) {
-      return isSettingsPage();
-    }
-    // Sinon, debug général activé
-    return true;
   }
 
   return false;
@@ -54,6 +45,15 @@ declare global {
   interface Window {
     PDF_BUILDER_VERBOSE?: boolean; // Set to true/false to control debug logging
     PDF_BUILDER_DEBUG_SAVE?: boolean; // Set to true to debug save operations
+    pdfBuilderDebugSettings?: {
+      javascript?: boolean;
+      ajax?: boolean;
+      performance?: boolean;
+      settings_page?: boolean;
+      pdf_editor?: boolean;
+      javascript_verbose?: boolean;
+    };
+    pdfBuilderCanvasSettings?: any;
   }
 }
 

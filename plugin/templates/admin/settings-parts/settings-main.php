@@ -220,6 +220,17 @@ $default_orientation = $preview_data['default_orientation'];
 window.pdfBuilderSavedSettings = <?php echo wp_json_encode($preview_data); ?>;
 window.pdfBuilderCanvasSettings = <?php echo wp_json_encode($canvas_settings); ?>;
 
+// Paramètres de debug pour le JavaScript
+window.pdfBuilderDebugSettings = {
+    javascript: <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'true' : 'false'; ?>,
+    javascript_verbose: <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'true' : 'false'; ?>,
+    ajax: <?php echo isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax'] ? 'true' : 'false'; ?>,
+    performance: <?php echo isset($settings['pdf_builder_debug_performance']) && $settings['pdf_builder_debug_performance'] ? 'true' : 'false'; ?>,
+    settings_page: <?php echo isset($settings['pdf_builder_debug_settings_page']) && $settings['pdf_builder_debug_settings_page'] ? 'true' : 'false'; ?>,
+    pdf_editor: <?php echo isset($settings['pdf_builder_debug_pdf_editor']) && $settings['pdf_builder_debug_pdf_editor'] ? 'true' : 'false'; ?>,
+    database: <?php echo isset($settings['pdf_builder_debug_database']) && $settings['pdf_builder_debug_database'] ? 'true' : 'false'; ?>
+};
+
 // Variables AJAX globales pour les requêtes AJAX
 window.pdfBuilderAjax = {
     nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>',
@@ -877,9 +888,6 @@ if (
 <script>
 // Update zoom card preview
 window.updateZoomCardPreview = function() {
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: updateZoomCardPreview function called');
-    }
     pdfBuilderDebug('updateZoomCardPreview called');
     try {
         // Try to get values from modal inputs first (real-time), then from settings
@@ -921,52 +929,19 @@ window.updateZoomCardPreview = function() {
 
 // Tab switching functionality
 function initializeTabs() {
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: initializeTabs() function called');
-    }
-
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
 
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: Found tabs count:', tabs.length);
-        console.log('PDF Builder: Found contents count:', contents.length);
-        console.log('PDF Builder: Tabs elements:', Array.from(tabs).map(tab => ({
-            href: tab.getAttribute('href'),
-            dataTab: tab.getAttribute('data-tab'),
-            text: tab.textContent.trim(),
-            classList: tab.classList.toString()
-        })));
-        console.log('PDF Builder: Contents elements:', Array.from(contents).map(content => ({
-            id: content.id,
-            classList: content.classList.toString(),
-            display: window.getComputedStyle(content).display,
-            visibility: window.getComputedStyle(content).visibility
-        })));
-    }
-
     // First, hide ALL tab contents
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: Hiding all tab contents initially');
-    }
     contents.forEach(function(content) {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Hiding content:', content.id);
-        }
         content.classList.remove('active');
         content.style.display = 'none';
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: After hiding, content display:', window.getComputedStyle(content).display);
-        }
     });
 
     // Add click listeners to tabs
     tabs.forEach(function(tab) {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Adding click listener to tab:', tab, 'href:', tab.getAttribute('href'));
-        }
         tab.addEventListener('click', function(e) {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.settings_page) {
                 console.log('PDF Builder: ===== TAB CLICK START =====');
                 console.log('PDF Builder: Tab clicked - event:', e);
                 console.log('PDF Builder: Tab element:', this);
@@ -974,78 +949,48 @@ function initializeTabs() {
             }
 
             e.preventDefault();
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.settings_page) {
                 console.log('PDF Builder: preventDefault() called');
                 console.log('PDF Builder: Removing nav-tab-active from all tabs');
             }
-            // Remove active class from all tabs
-            tabs.forEach(function(t) {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('PDF Builder: Processing tab for removal:', t, 'current classList:', t.classList.toString());
-                }
-                t.classList.remove('nav-tab-active');
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('PDF Builder: After removal, classList:', t.classList.toString());
-                }
-            });
 
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.settings_page) {
                 console.log('PDF Builder: Adding nav-tab-active to clicked tab');
                 console.log('PDF Builder: Before adding class, clicked tab classList:', this.classList.toString());
             }
             // Add active class to clicked tab
             this.classList.add('nav-tab-active');
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.settings_page) {
                 console.log('PDF Builder: After adding class, clicked tab classList:', this.classList.toString());
                 console.log('PDF Builder: Processing tab contents');
             }
             // Hide all tab contents
             contents.forEach(function(c) {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('PDF Builder: Processing content for removal:', c.id, 'current classList:', c.classList.toString());
-                }
                 c.classList.remove('active');
                 c.style.display = 'none';
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('PDF Builder: After removal, content classList:', c.classList.toString());
-                }
             });
 
             // Show corresponding tab content
             const target = this.getAttribute('href').substring(1);
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: Target content id:', target);
-            }
-
             const targetContent = document.getElementById(target);
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: Target content element found?', !!targetContent, 'Element:', targetContent);
-            }
 
             if (targetContent) {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('PDF Builder: Before adding active class, targetContent classList:', targetContent.classList.toString());
-                }
                 targetContent.classList.add('active');
                 targetContent.style.display = 'block';
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('PDF Builder: After adding active class, targetContent classList:', targetContent.classList.toString());
-                    console.log('PDF Builder: Content should now be visible');
-                }
             } else {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                if (window.pdfBuilderDebugSettings?.settings_page) {
                     console.error('PDF Builder: Target content not found for id:', target);
                     console.log('PDF Builder: Available content IDs:', Array.from(contents).map(c => c.id));
                 }
             }
 
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.settings_page) {
                 console.log('PDF Builder: ===== TAB CLICK END =====');
             }
 
             // Update canvas previews when switching to contenu tab
             if (target === 'contenu') {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                if (window.pdfBuilderDebugSettings?.settings_page) {
                     console.log('PDF Builder: Switching to contenu tab, updating canvas previews');
                 }
                 try {
@@ -1065,14 +1010,14 @@ function initializeTabs() {
                         }, 200);
                     }
                 } catch (error) {
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    if (window.pdfBuilderDebugSettings?.settings_page) {
                         console.error('PDF Builder: Error updating canvas previews on tab switch:', error);
                     }
                 }
             }
 
             // Update URL hash without scrolling
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.settings_page) {
                 console.log('PDF Builder: Updating URL hash to:', '#' + target);
             }
             history.replaceState(null, null, '#' + target);
@@ -1083,129 +1028,45 @@ function initializeTabs() {
     });
 
     // Check hash on load and initialize tabs properly
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: Checking URL hash for initial tab');
-    }
     const hash = window.location.hash.substring(1);
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: Current hash:', hash);
-    }
-
     let targetTab = 'general'; // Default tab
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: Default targetTab set to:', targetTab);
-    }
 
     if (hash) {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Hash found, checking if tab exists for:', hash);
-        }
         const tabExists = document.querySelector('.nav-tab[href="#' + hash + '"]');
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Tab exists for hash?', !!tabExists, 'Element:', tabExists);
-        }
         if (tabExists) {
             targetTab = hash;
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: targetTab updated to hash value:', targetTab);
-            }
-        } else {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: Hash tab does not exist, keeping default:', targetTab);
-            }
         }
-    } else {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: No hash found, using default tab');
-        }
-    }
-
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: Final targetTab:', targetTab);
     }
 
     // Set active tab and content without triggering click events
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: Looking for activeTab element with selector:', '.nav-tab[href="#' + targetTab + '"]');
-    }
     const activeTab = document.querySelector('.nav-tab[href="#' + targetTab + '"]');
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: activeTab found?', !!activeTab, 'Element:', activeTab);
-    }
-
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: Looking for activeContent element with id:', targetTab);
-    }
     const activeContent = document.getElementById(targetTab);
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: activeContent found?', !!activeContent, 'Element:', activeContent);
-    }
 
     if (activeTab && activeContent) {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Both activeTab and activeContent found, proceeding with initialization');
-        }
-
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Removing active classes from all tabs and contents');
-        }
         // Remove active classes from all tabs and contents
         document.querySelectorAll('.nav-tab').forEach(tab => {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: Removing nav-tab-active from tab:', tab);
-            }
             tab.classList.remove('nav-tab-active');
         });
         document.querySelectorAll('.tab-content').forEach(content => {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: Removing active from content:', content.id);
-            }
             content.classList.remove('active');
             content.style.display = 'none';
         });
 
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Adding active classes to target elements');
-            console.log('PDF Builder: Adding nav-tab-active to activeTab:', activeTab);
-        }
         // Add active classes to target tab and content
         activeTab.classList.add('nav-tab-active');
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Adding active to activeContent:', activeContent);
-        }
         activeContent.classList.add('active');
         activeContent.style.display = 'block';
 
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.settings_page) {
             console.log('PDF Builder: Tab initialization completed successfully');
         }
 
         // Update mobile menu text
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Updating mobile menu text');
-        }
         const currentTabText = document.querySelector('.current-tab-text');
         if (currentTabText) {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: currentTabText element found:', currentTabText);
-            }
             const tabText = activeTab.querySelector('.tab-text');
             if (tabText) {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('PDF Builder: tabText found:', tabText, 'textContent:', tabText.textContent);
-                }
                 currentTabText.textContent = tabText.textContent;
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('PDF Builder: Mobile menu text updated to:', tabText.textContent);
-                }
-            } else {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                    console.log('PDF Builder: tabText not found in activeTab');
-                }
-            }
-        } else {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log('PDF Builder: currentTabText element not found');
             }
         }
 
@@ -1213,7 +1074,7 @@ function initializeTabs() {
         updateFloatingSaveButtonText(targetTab);
 
         // Log final state after initialization
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.settings_page) {
             console.log('PDF Builder: ===== INITIALIZATION COMPLETE =====');
             console.log('PDF Builder: Active tab after init:', document.querySelector('.nav-tab-active'));
             console.log('PDF Builder: Active content after init:', document.querySelector('.tab-content.active'));
@@ -1231,64 +1092,12 @@ function initializeTabs() {
             })));
             console.log('PDF Builder: ===== END INITIALIZATION =====');
         }
-    } else {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.error('PDF Builder: Could not find activeTab or activeContent for targetTab:', targetTab);
-            console.log('PDF Builder: Available tabs:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({href: tab.getAttribute('href'), element: tab})));
-            console.log('PDF Builder: Available contents:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({id: content.id, element: content})));
-        }
-    }
-
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: Tabs initialization completed');
-        console.log('PDF Builder: ===== FINAL STATE CHECK =====');
-        console.log('PDF Builder: Final state - active tabs:', Array.from(document.querySelectorAll('.nav-tab-active')).map(tab => ({href: tab.getAttribute('href'), element: tab})));
-        console.log('PDF Builder: Final state - active contents:', Array.from(document.querySelectorAll('.tab-content.active')).map(content => ({id: content.id, element: content})));
-        console.log('PDF Builder: Final state - all tabs:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({href: tab.getAttribute('href'), classes: tab.classList.toString()})));
-        console.log('PDF Builder: Final state - all contents:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({id: content.id, classes: content.classList.toString()})));
-        console.log('PDF Builder: ===== END FINAL STATE CHECK =====');
-    }
 }
 
-if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+if (window.pdfBuilderDebugSettings?.javascript) {
     console.log('PDF Builder: About to add DOMContentLoaded listener');
     console.log('PDF Builder: Document readyState:', document.readyState);
     console.log('PDF Builder: Window loaded:', window.loaded);
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: ===== DOMContentLoaded FIRED =====');
-        console.log('PDF Builder: DOMContentLoaded fired - starting tab initialization');
-    }
-
-    // Add a delay to ensure all content is loaded
-    setTimeout(function() {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Timeout fired - now initializing tabs');
-        }
-        initializeTabs();
-    }, 100);
-});
-
-// Also try to initialize immediately if DOM is already ready
-if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-    console.log('PDF Builder: Checking if DOM is already ready');
-}
-if (document.readyState === 'loading') {
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: DOM still loading, waiting for DOMContentLoaded');
-    }
-} else {
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-        console.log('PDF Builder: DOM already ready, initializing immediately');
-    }
-    setTimeout(function() {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-            console.log('PDF Builder: Immediate timeout fired - initializing tabs');
-        }
-        initializeTabs();
-    }, 100);
 }
 
 // Make initializeTabs globally accessible
@@ -1482,7 +1291,7 @@ function updateFloatingSaveButtonText(activeTabId) {
     const newText = tabTextMap[activeTabId] || 'Enregistrer Tout';
     btnTextSpan.textContent = newText;
 
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+    if (window.pdfBuilderDebugSettings?.javascript) {
         console.log(`[FLOATING SAVE] Button text updated to: "${newText}" for tab: ${activeTabId}`);
     }
 }
@@ -1530,7 +1339,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
          * Initialise le système de nonce avancé
          */
         initialize: function() {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('🔐 [PDF Builder] Initialisation du système de nonce avancé');
             }
 
@@ -1547,7 +1356,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
             // Précharger des nonces
             this.preloadNonces();
 
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('🔐 [PDF Builder] Système de nonce initialisé:', {
                     current: this.nonceState.current ? '***' : null,
                     expires: new Date(this.nonceState.expires).toLocaleTimeString(),
@@ -1567,14 +1376,14 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
             const timeUntilRefresh = Math.max(0, this.nonceState.expires - Date.now() - this.config.refreshThreshold);
 
             this.nonceState.refreshTimer = setTimeout(() => {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                if (window.pdfBuilderDebugSettings?.javascript) {
                     console.log('🔄 [PDF Builder] Rafraîchissement proactif du nonce');
                 }
                 this.refreshNonce().then(() => {
                     // Redémarrer le timer pour le prochain rafraîchissement
                     this.startProactiveRefresh();
                 }).catch(error => {
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    if (window.pdfBuilderDebugSettings?.javascript) {
                         console.error('Erreur lors du rafraîchissement proactif:', error);
                     }
                     // Redémarrer quand même
@@ -1582,7 +1391,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 });
             }, timeUntilRefresh);
 
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log(`⏰ [PDF Builder] Prochain rafraîchissement dans ${Math.round(timeUntilRefresh / 1000 / 60)} minutes`);
             }
         },
@@ -1595,7 +1404,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 return; // Déjà assez de nonces
             }
 
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log(`📦 [PDF Builder] Préchargement de ${this.config.preloadCount - this.nonceState.preloadQueue.length} nonces`);
             }
 
@@ -1622,7 +1431,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         n.expires > Date.now()
                     );
 
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    if (window.pdfBuilderDebugSettings?.javascript) {
                         console.log(`📦 [PDF Builder] Nonce préchargé (${this.nonceState.preloadQueue.length}/${this.config.preloadCount})`);
                     }
 
@@ -1633,7 +1442,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 }
             })
             .catch(error => {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                if (window.pdfBuilderDebugSettings?.javascript) {
                     console.warn('Erreur lors du préchargement de nonce:', error);
                 }
             });
@@ -1649,7 +1458,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     const freshNonce = this.nonceState.preloadQueue.shift();
                     this.setCurrentNonce(freshNonce.nonce, freshNonce.created);
                     this.nonceState.stats.refreshes++;
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    if (window.pdfBuilderDebugSettings?.javascript) {
                         console.log('🔄 [PDF Builder] Nonce rafraîchi depuis le cache');
                     }
                     resolve();
@@ -1670,7 +1479,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     if (data.success && data.data && data.data.nonce) {
                         this.setCurrentNonce(data.data.nonce, Date.now());
                         this.nonceState.stats.refreshes++;
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        if (window.pdfBuilderDebugSettings?.javascript) {
                             console.log('🔄 [PDF Builder] Nonce rafraîchi depuis le serveur');
                         }
                         resolve();
@@ -1718,7 +1527,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
          * Force un rafraîchissement immédiat du nonce
          */
         forceRefresh: function() {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('🔄 [PDF Builder] Rafraîchissement forcé du nonce');
             }
             return this.refreshNonce();
@@ -1729,7 +1538,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
          */
         configure: function(newConfig) {
             Object.assign(this.config, newConfig);
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('⚙️ [PDF Builder] Configuration du système de nonce mise à jour:', this.config);
             }
         },
@@ -1765,7 +1574,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         formData.nonce = this.nonceState.current;
                     }
 
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    if (window.pdfBuilderDebugSettings?.javascript) {
                         console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Making request with nonce:`, this.nonceState.current ? this.nonceState.current.substring(0, 10) + '...' : 'NULL');
                     }
 
@@ -1779,7 +1588,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         }
                     })
                     .then(response => {
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        if (window.pdfBuilderDebugSettings?.javascript) {
                             console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Response status: ${response.status}`);
                         }
                         return response.json().catch(() => {
@@ -1788,7 +1597,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         });
                     })
                     .then(data => {
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        if (window.pdfBuilderDebugSettings?.javascript) {
                             console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Response:`, data);
                         }
 
@@ -1815,7 +1624,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
 
                                 // Essayer de rafraîchir le nonce et réessayer
                                 if (opts.retryCount < this.config.maxRetries) {
-                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    if (window.pdfBuilderDebugSettings?.javascript) {
                                         console.log(`🔄 [PDF Builder AJAX] ${opts.context} - Nonce error, retrying (${opts.retryCount + 1}/${this.config.maxRetries})`);
                                     }
                                     opts.retryCount++;
@@ -1857,7 +1666,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         }
                     })
                     .catch(error => {
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        if (window.pdfBuilderDebugSettings?.javascript) {
                             console.error(`🔄 [PDF Builder AJAX] ${opts.context} - Network error:`, error);
                         }
                         this.nonceState.stats.requests++;
@@ -1876,7 +1685,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         reject(error);
                     });
                 }).catch(error => {
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    if (window.pdfBuilderDebugSettings?.javascript) {
                         console.error(`🔄 [PDF Builder AJAX] ${opts.context} - Nonce validation failed:`, error);
                     }
                     if (opts.button) {
@@ -2130,7 +1939,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 // Collect form data
                 const form = modal.querySelector('form');
                 if (!form) {
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    if (window.pdfBuilderDebugSettings?.javascript) {
                         console.error('No form found in modal for category:', category);
                     }
                     saveButton.disabled = false;
@@ -2198,7 +2007,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 // Collect form data
                 const form = modal.querySelector('form');
                 if (!form) {
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    if (window.pdfBuilderDebugSettings?.javascript) {
                         console.error('No form found in cache modal');
                     }
                     saveButton.disabled = false;
@@ -2380,7 +2189,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     collectedCount++;
                     if (input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log')) {
                         developerFields++;
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        if (window.pdfBuilderDebugSettings?.javascript) {
                             console.log(`[FLOATING SAVE] Developer checkbox: ${input.name} = ${input.checked ? '1' : '0'}`);
                         }
                     }
@@ -2394,14 +2203,14 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     collectedCount++;
                     if (input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log')) {
                         developerFields++;
-                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        if (window.pdfBuilderDebugSettings?.javascript) {
                             console.log(`[FLOATING SAVE] Developer field: ${input.name} = ${input.value || ''}`);
                         }
                     }
                 }
             });
 
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log(`[FLOATING SAVE] Total inputs collected: ${collectedCount}`);
                 console.log(`[FLOATING SAVE] Developer fields collected: ${developerFields}`);
                 console.log(`[FLOATING SAVE] Current tab: ${currentTab}`);
@@ -2467,7 +2276,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
         const newText = tabTextMap[activeTabId] || 'Enregistrer Tout';
         btnTextSpan.textContent = newText;
 
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.log(`[FLOATING SAVE] Button text updated to: "${newText}" for tab: ${activeTabId}`);
         }
     }

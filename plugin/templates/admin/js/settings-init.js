@@ -22,8 +22,8 @@
             }
 
             // Constantes de debug
-            const PDF_BUILDER_DEBUG_ENABLED = window.pdfBuilderCanvasSettings?.debug?.javascript || false;
-            const PDF_BUILDER_DEBUG_VERBOSE = window.pdfBuilderCanvasSettings?.debug?.javascript_verbose || false;
+            const PDF_BUILDER_DEBUG_ENABLED = window.pdfBuilderDebugSettings?.javascript || false;
+            const PDF_BUILDER_DEBUG_VERBOSE = window.pdfBuilderDebugSettings?.javascript || false;
 
             // Fonction de debug sécurisée
             window.pdfBuilderDebug = function(...args) {

@@ -1,7 +1,7 @@
 // Diagnostic de compatibilité navigateur pour PDF Builder
 
 // Debug function
-const debugEnabled = typeof window !== 'undefined' && window.pdfBuilderCanvasSettings?.debug?.javascript;
+const debugEnabled = typeof window !== 'undefined' && window.pdfBuilderDebugSettings?.javascript;
 const debugLog = (...args) => debugEnabled && console.log(...args);
 const debugError = (...args) => debugEnabled && console.error(...args);
 const debugWarn = (...args) => debugEnabled && console.warn(...args);

@@ -763,7 +763,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction pour mettre à jour la visibilité du toggle Debug Page Paramètres
     function updateSettingsPageToggleVisibility() {
         if (!debugJavascriptToggle || !debugSettingsPageRow) {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('🔧 [DEBUG SETTINGS PAGE] Éléments manquants:', {
                     debugJavascriptToggle: !!debugJavascriptToggle,
                     debugSettingsPageRow: !!debugSettingsPageRow
@@ -784,7 +784,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.log(`🔧 [DEBUG SETTINGS PAGE] Toggle ${isJavascriptDebugEnabled ? 'AFFICHÉ' : 'MASQUÉ'} (dépend de Debug JavaScript)`);
         }
     }
@@ -794,7 +794,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!developerEnabledToggle) return;
 
         const isEnabled = developerEnabledToggle.checked;
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Changement détecté - État:', isEnabled ? 'ACTIVÉ' : 'DÉSACTIVÉ');
         }
 
@@ -802,11 +802,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const section = document.getElementById(sectionId);
             if (section) {
                 section.style.display = isEnabled ? 'block' : 'none';
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                if (window.pdfBuilderDebugSettings?.javascript) {
                     console.log(`🔧 [TOGGLE MODE DÉVELOPPEUR] Section ${sectionId}: ${isEnabled ? 'AFFICHÉE' : 'MASQUÉE'}`);
                 }
             } else {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                if (window.pdfBuilderDebugSettings?.javascript) {
                     console.warn(`⚠️ [TOGGLE MODE DÉVELOPPEUR] Section ${sectionId} introuvable dans le DOM`);
                 }
             }
@@ -828,18 +828,18 @@ document.addEventListener('DOMContentLoaded', function() {
             statusIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
             statusIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
             statusIndicator.style.color = 'white';
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log(`🔧 [INDICATEUR STATUT] Mis à jour: ${statusIndicator.textContent} (valeur sauvegardée: ${isEnabled})`);
             }
         } else {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.error('❌ [INDICATEUR STATUT] Indicateur introuvable dans le DOM');
             }
         }
     };
 
     if (developerEnabledToggle) {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Élément toggle trouvé, initialisation...');
         }
 
@@ -884,7 +884,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Écouter les changements du toggle pour mettre à jour l'interface en temps réel
         developerEnabledToggle.addEventListener('change', function(event) {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Événement change déclenché');
                 console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Valeur du toggle:', event.target.checked);
                 console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] ID de l\'élément:', event.target.id);
@@ -930,11 +930,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Écouteur d\'événements attaché avec succès');
         }
     } else {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.error('❌ [TOGGLE MODE DÉVELOPPEUR] Élément toggle introuvable dans le DOM');
         }
     }
@@ -985,7 +985,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                if (window.pdfBuilderDebugSettings?.javascript) {
                     console.error('Erreur AJAX cleanup license:', error);
                 }
                 cleanupStatus.textContent = '❌ Erreur de connexion';
@@ -1043,7 +1043,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.error('Erreur AJAX:', error);
             }
             button.disabled = false;
@@ -1323,7 +1323,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Console logging helper
     function logToConsole(level, message, data = null) {
-        if (!window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (!window.pdfBuilderDebugSettings?.javascript) {
             return;
         }
         
@@ -1506,7 +1506,7 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
             }
 
             // Log detailed stats
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.table(notificationStats);
                 console.log(statsMessage);
             }
@@ -1543,7 +1543,7 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
         nextTop: 50,
 
         show: function(message, type = 'info') {
-            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log(`[NOTIFICATION ${type.toUpperCase()}] ${message}`);
             }
 

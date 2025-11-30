@@ -6,8 +6,9 @@
 
 // Fonctions de debug conditionnel - ACTIVÉES pour le système d'aperçu
 function isDebugEnabled() {
-    // Debug activé seulement si explicitement forcé
-    return window.location.search.includes('debug=force');
+    // Debug activé si explicitement forcé ou si activé dans les paramètres
+    return window.location.search.includes('debug=force') ||
+           (typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript);
 }
 
 function debugLog(...args) {

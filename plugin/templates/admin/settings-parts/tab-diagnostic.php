@@ -8,23 +8,23 @@ echo "<!-- PDF Builder Tab Diagnostic Loaded -->";
 
 <script>
 // Diagnostic for tab functionality
-if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+if (window.pdfBuilderDebugSettings?.javascript) {
     console.log('=== PDF BUILDER TAB DIAGNOSTIC ===');
 }
 
 // Check if DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+    if (window.pdfBuilderDebugSettings?.javascript) {
         console.log('DOM loaded, running diagnostic...');
     }
 
     // Check navigation tabs
     const navTabs = document.querySelectorAll('.nav-tab');
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+    if (window.pdfBuilderDebugSettings?.javascript) {
         console.log('Found nav tabs:', navTabs.length);
     }
     navTabs.forEach((tab, index) => {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.log(`Tab ${index}:`, {
                 href: tab.getAttribute('href'),
                 text: tab.textContent.trim(),
@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check tab contents
     const tabContents = document.querySelectorAll('.tab-content');
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+    if (window.pdfBuilderDebugSettings?.javascript) {
         console.log('Found tab contents:', tabContents.length);
     }
     tabContents.forEach((content, index) => {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.log(`Content ${index}:`, {
                 id: content.id,
                 classes: content.className,
@@ -53,19 +53,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Check if initializeTabs function exists
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+    if (window.pdfBuilderDebugSettings?.javascript) {
         console.log('initializeTabs function exists:', typeof window.initializeTabs === 'function');
     }
 
     // Test manual tab switching
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+    if (window.pdfBuilderDebugSettings?.javascript) {
         console.log('Testing manual tab switch to "general"...');
     }
     const generalTab = document.querySelector('.nav-tab[href="#general"]');
     const generalContent = document.getElementById('general');
 
     if (generalTab && generalContent) {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.log('Found general tab and content, simulating click...');
         }
 
@@ -83,20 +83,20 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('nav-tab-active'));
         generalTab.classList.add('nav-tab-active');
 
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.log('Manual switch completed. General content should now be visible.');
             console.log('General content display:', window.getComputedStyle(generalContent).display);
             console.log('General tab active:', generalTab.classList.contains('nav-tab-active'));
         }
     } else {
-        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+        if (window.pdfBuilderDebugSettings?.javascript) {
             console.log('ERROR: Could not find general tab or content');
             console.log('General tab found:', !!generalTab);
             console.log('General content found:', !!generalContent);
         }
     }
 
-    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+    if (window.pdfBuilderDebugSettings?.javascript) {
         console.log('=== DIAGNOSTIC COMPLETE ===');
     }
 });
