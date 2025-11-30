@@ -376,7 +376,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                 </span>
                 <?php elseif ($woocommerce_active && !empty($order_statuses)): ?>
                 <span style="font-size: 14px; font-weight: normal; color: #28a745;">
-                    [CHECK] Statuts WooCommerce standards uniquement
+                    ✅ Statuts WooCommerce standards uniquement
                 </span>
                 <?php endif; ?>
             </h2>
@@ -432,7 +432,7 @@ if (!empty($current_mappings) && !empty($order_statuses)) {
                             <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>
                             <p class="current-template">
                                 <strong>Assigné :</strong> <?php echo esc_html($templates[$current_mappings[$status_key]]); ?>
-                                <span class="assigned-badge">[CHECK]</span>
+                                <span class="assigned-badge">✅</span>
                             </p>
                             <?php else: ?>
                             <p class="no-template">Aucun template assigné</p>

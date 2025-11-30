@@ -52,7 +52,7 @@ var pdfBuilderAjax = {
 </script>
 
 <div class="wrap">
-    <h1><?php _e('[DOC] Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
+    <h1><?php _e('📄 Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
 
     <!-- Debug section removed for production: API debug UI and tests have been stripped -->
 
@@ -456,7 +456,7 @@ var pdfBuilderAjax = {
         </div>
 
         <div id="no-templates" style="display: none; text-align: center; padding: 40px; color: #666;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">[DOC]</div>
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
             <h3><?php _e('Aucun template trouvé', 'pdf-builder-pro'); ?></h3>
             <p><?php _e('Créez votre premier template pour commencer à concevoir des PDF personnalisés.', 'pdf-builder-pro'); ?></p>
         </div>
