@@ -2824,13 +2824,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                                     // UNIQUEMENT pour l'onglet actif pour éviter les conflits entre onglets
                                     if (originalData && originalData.data && originalData.data.result_data) {
                                         const savedData = originalData.data.result_data;
-                                        console.log('🔄 MISE À JOUR CHAMPS - Données reçues pour onglet:', tabId);
 
                                         // Obtenir le conteneur de l'onglet actif
                                         const activeTabContent = document.getElementById(tabId);
-                                        if (!activeTabContent) {
-                                            console.error('❌ Conteneur de l\'onglet actif non trouvé:', tabId);
-                                        } else {
+                                        if (activeTabContent) {
                                             Object.keys(savedData).forEach(fieldName => {
                                                 const fieldValue = savedData[fieldName];
 
@@ -2838,7 +2835,6 @@ window.toggleRGPDControls = toggleRGPDControls;
                                                 const fieldElement = activeTabContent.querySelector(`[name="${fieldName}"]`);
 
                                                 if (fieldElement && fieldElement.type === 'checkbox') {
-                                                    const oldChecked = fieldElement.checked;
                                                     const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
                                                     fieldElement.checked = shouldBeChecked;
 
@@ -3129,69 +3125,56 @@ window.toggleRGPDControls = toggleRGPDControls;
                             }
 
                             if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                console.log('📝 [PDF Builder] Collecte des données de tous les onglets...');
+                                console.log('📝 [PDF Builder] Collecte des données de l\'onglet actif uniquement...');
                             }
 
-                            // Collect form data from ALL tabs - sauvegarder tous les onglets
+                            // Collect form data from ACTIVE tab only - éviter les conflits entre onglets
                             const formData = new FormData();
                             const collectedData = {};
 
-                            // Liste des onglets à traiter
-                            const allTabs = ['general', 'licence', 'systeme', 'acces', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
+                            // Collecter UNIQUEMENT les données de l'onglet actif
+                            const activeTabContent = document.getElementById(tabId);
+                            if (activeTabContent) {
+                                const activeTabForm = activeTabContent.querySelector('form');
+                                if (activeTabForm) {
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.log('📝 [PDF Builder] Collecte données onglet actif:', tabId);
+                                    }
 
-                            // Parcourir tous les onglets et collecter leurs données
-                            allTabs.forEach(tab => {
-                                const tabContent = document.getElementById(tab);
-                                if (tabContent) {
-                                    const tabForm = tabContent.querySelector('form');
-                                    if (tabForm) {
-                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                            console.log('📝 [PDF Builder] Collecte données onglet:', tab);
-                                        }
-
-                                        // Collecter manuellement tous les champs pour s'assurer que les checkboxes non cochées sont incluses
-                                        const allInputs = tabForm.querySelectorAll('input, select, textarea');
-                                        allInputs.forEach(input => {
-                                            const name = input.name;
-                                            if (name) {
-                                                let value;
-                                                if (input.type === 'checkbox') {
-                                                    // Pour les checkboxes, inclure toujours la valeur (0 ou 1)
-                                                    value = input.checked ? '1' : '0';
-                                                    formData.append(name, value);
-                                                    collectedData[name] = value;
-                                                } else if (input.type === 'radio') {
-                                                    // Pour les radios, seulement si coché
-                                                    if (input.checked) {
-                                                        value = input.value;
-                                                        formData.append(name, value);
-                                                        collectedData[name] = value;
-                                                    }
-                                                } else {
-                                                    // Pour les autres champs
+                                    // Collecter manuellement tous les champs de l'onglet actif
+                                    const allInputs = activeTabForm.querySelectorAll('input, select, textarea');
+                                    allInputs.forEach(input => {
+                                        const name = input.name;
+                                        if (name) {
+                                            let value;
+                                            if (input.type === 'checkbox') {
+                                                // Pour les checkboxes, inclure toujours la valeur (0 ou 1)
+                                                value = input.checked ? '1' : '0';
+                                                formData.append(name, value);
+                                                collectedData[name] = value;
+                                            } else if (input.type === 'radio') {
+                                                // Pour les radios, seulement si coché
+                                                if (input.checked) {
                                                     value = input.value;
                                                     formData.append(name, value);
                                                     collectedData[name] = value;
                                                 }
+                                            } else {
+                                                // Pour les autres champs
+                                                value = input.value;
+                                                formData.append(name, value);
+                                                collectedData[name] = value;
                                             }
-                                        });
-                                    } else {
-                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                            console.log('⚠️ [PDF Builder] Aucun formulaire trouvé pour l\'onglet:', tab);
                                         }
-                                    }
-                                } else {
-                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                        console.log('⚠️ [PDF Builder] Contenu non trouvé pour l\'onglet:', tab);
-                                    }
+                                    });
                                 }
-                            });
+                            }
 
                             formData.append('action', 'pdf_builder_save_settings');
                             formData.append('current_tab', tabId); // Ajouter l'onglet actif pour le logging côté PHP
 
                             if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                console.log('📤 [PDF Builder] Envoi des données du formulaire:', {
+                                console.log('📤 [PDF Builder] Envoi des données de l\'onglet actif:', {
                                     tab: tabId,
                                     action: 'pdf_builder_save_settings',
                                     dataCount: Array.from(formData.entries()).length,
@@ -3207,17 +3190,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                                     // Log TOUJOURS l'onglet actif lors de la sauvegarde
                                     console.log('💾 [PDF Builder] SAVE: Enregistrement depuis l\'onglet "' + tabId + '"');
 
-                                    // Log success
-                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                        console.log('Paramètres sauvegardés avec succès !');
-                                    }
-
                                     // Mettre à jour l'interface avec les nouvelles valeurs sauvegardées
-                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                        console.log('🔄 [PDF Builder] Mise à jour de l\'interface avec les nouvelles valeurs...');
-                                    }
-
-                                    // Mettre à jour les checkboxes avec les valeurs sauvegardées depuis le serveur
                                     // UNIQUEMENT dans l'onglet actif pour éviter les conflits
                                     if (originalData && originalData.data && originalData.data.result_data) {
                                         const savedData = originalData.data.result_data;
