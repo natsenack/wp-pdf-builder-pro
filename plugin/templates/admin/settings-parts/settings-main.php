@@ -2776,7 +2776,7 @@ window.toggleRGPDControls = toggleRGPDControls;
 
                         console.log('🔄 [PDF Builder] AJAX Success - Raw response:', originalData);
                         console.log('🔄 [PDF Builder] AJAX Success - Response data keys:', originalData && originalData.data ? Object.keys(originalData.data) : 'NO DATA');
-                        console.log('🔄 [PDF Builder] AJAX Success - Has saved_options or new_nonce:', originalData && originalData.data && (originalData.data.saved_options || originalData.data.new_nonce) ? 'YES' : 'NO');
+                        console.log('🔄 [PDF Builder] AJAX Success - Has saved_options:', originalData && originalData.data && originalData.data.saved_options ? 'YES' : 'NO');
 
                         // Log success
                         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
@@ -2809,10 +2809,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                         }
 
                         // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
-                        if (originalData && originalData.data && (originalData.data.saved_options || originalData.data.new_nonce)) {
-                            const options = originalData.data.saved_options || originalData.data.new_nonce;
+                        if (originalData && originalData.data && originalData.data.saved_options) {
+                            const options = originalData.data.saved_options;
                             console.log('💾 [PDF Builder] Mise à jour des champs - données reçues:', options);
-                            console.log('🔍 [PDF Builder] Liste des champs dans options:', Object.keys(options));
+                            console.log('🔍 [PDF Builder] Liste des champs dans saved_options:', Object.keys(options));
 
                             // Parcourir toutes les données sauvegardées et mettre à jour les champs correspondants
                             Object.keys(options).forEach(fieldName => {
@@ -2881,7 +2881,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                                 }
                             });
                         } else {
-                            console.log('❌ [PDF Builder] Aucune donnée saved_options ou new_nonce reçue:', originalData);
+                            console.log('❌ [PDF Builder] Aucune donnée saved_options reçue:', originalData);
                         }
 
                         // Recharger les previews avec les nouvelles données
