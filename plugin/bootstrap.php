@@ -314,6 +314,17 @@ function pdf_builder_load_core()
         }
     }
 
+    // Charger les utilitaires de données Admin depuis src/Admin/Data/
+    $admin_data_utils = array(
+        'DataUtils.php'
+    );
+    foreach ($admin_data_utils as $data_util) {
+        $data_util_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Data/' . $data_util;
+        if (file_exists($data_util_path)) {
+            require_once $data_util_path;
+        }
+    }
+
     // Forcer le déploiement - marqueur de test
 
     // Charger les utilitaires essentiels depuis src/utilities/

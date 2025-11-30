@@ -181,35 +181,57 @@ export function useSaveStateV2({
 
       // Faire la requête
       const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+      debugLog('[PDF Builder] useSaveStateV2 - URL AJAX:', ajaxUrl);
+
       const templateStructure = {
         elements: cleanElements,
         canvasWidth: 794, // Default A4 width in pixels
         canvasHeight: 1123, // Default A4 height in pixels
         version: '1.0'
       };
+
+      const requestBody = new URLSearchParams({
+        'action': 'pdf_builder_save_template',
+        'nonce': nonce,
+        'template_id': templateId.toString(),
+        'template_data': JSON.stringify(templateStructure),
+        'template_name': `Template ${templateId.toString()}`
+      });
+
+      debugLog('[PDF Builder] useSaveStateV2 - Corps de la requête:', {
+        action: 'pdf_builder_save_template',
+        nonce: nonce ? 'DEFINED' : 'UNDEFINED',
+        template_id: templateId.toString(),
+        template_data_length: JSON.stringify(templateStructure).length,
+        template_name: `Template ${templateId.toString()}`
+      });
+
       const response = await fetch(ajaxUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'X-Requested-With': 'XMLHttpRequest'
         },
-        body: new URLSearchParams({
-          'action': 'pdf_builder_save_template',
-          'nonce': nonce,
-          'template_id': templateId.toString(),
-          'template_data': JSON.stringify(templateStructure),
-          'template_name': `Template ${templateId.toString()}`
-        })
+        body: requestBody
       });
 
       debugLog('[PDF Builder] useSaveStateV2 - Réponse HTTP:', {
         status: response.status,
         statusText: response.statusText,
-        ok: response.ok
+        ok: response.ok,
+        headers: Object.fromEntries(response.headers.entries())
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        debugError('[PDF Builder] useSaveStateV2 - Erreur HTTP:', response.status, response.statusText);
+        // Try to get error response body
+        try {
+          const errorText = await response.text();
+          debugError('[PDF Builder] useSaveStateV2 - Corps erreur HTTP:', errorText);
+        } catch (e) {
+          debugError('[PDF Builder] useSaveStateV2 - Impossible de lire le corps erreur:', e);
+        }
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -325,7 +347,9 @@ export function useSaveStateV2({
       previousHash: elementsHashRef.current ? elementsHashRef.current.substring(0, 20) + '...' : 'null',
       hashChanged: currentHash !== elementsHashRef.current,
       elementsCount: elements.length,
-      state
+      state,
+      templateId,
+      nonce: nonce ? 'DEFINED' : 'UNDEFINED'
     });
 
     // Si les éléments n'ont pas changé, ne rien faire
