@@ -1600,12 +1600,127 @@ function pdf_builder_get_fresh_nonce_handler() {
     }
 }
 
+/**
+ * AJAX handler for saving developer settings
+ */
+function pdf_builder_save_developer_settings_handler() {
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        // Get form data - can be a single field or all fields
+        $field_name = sanitize_text_field($_POST['field_name'] ?? '');
+        $field_value = sanitize_text_field($_POST['field_value'] ?? '');
+
+        // If single field update
+        if (!empty($field_name)) {
+            // Validate field name
+            $allowed_fields = [
+                'developer_enabled', 'developer_password', 'debug_php_errors', 'debug_javascript',
+                'debug_javascript_verbose', 'debug_ajax', 'debug_performance', 'debug_database',
+                'log_level', 'log_file_size', 'log_retention', 'force_https', 'performance_monitoring'
+            ];
+
+            if (!in_array($field_name, $allowed_fields)) {
+                wp_send_json_error('Champ non autorisé: ' . $field_name);
+                return;
+            }
+
+            // Validate and convert value based on field type
+            $processed_value = $field_value;
+            if (in_array($field_name, ['developer_enabled', 'debug_php_errors', 'debug_javascript', 'debug_javascript_verbose', 'debug_ajax', 'debug_performance', 'debug_database', 'force_https', 'performance_monitoring'])) {
+                $processed_value = $field_value === '1' ? '1' : '0';
+            } elseif ($field_name === 'log_level') {
+                $processed_value = max(0, min(4, intval($field_value)));
+            } elseif (in_array($field_name, ['log_file_size', 'log_retention'])) {
+                if ($field_name === 'log_file_size') {
+                    $processed_value = max(1, min(100, intval($field_value)));
+                } elseif ($field_name === 'log_retention') {
+                    $processed_value = max(1, min(365, intval($field_value)));
+                }
+            }
+
+            // Save single setting
+            update_option('pdf_builder_' . $field_name, $processed_value);
+
+            wp_send_json_success(array(
+                'message' => 'Paramètre développeur sauvegardé avec succès',
+                'data' => array(
+                    $field_name => $processed_value
+                )
+            ));
+            return;
+        }
+
+        // Full settings update (fallback for compatibility)
+        $developer_enabled = !empty($_POST['developer_enabled']) ? '1' : '0';
+        $developer_password = sanitize_text_field($_POST['developer_password'] ?? '');
+        $debug_php_errors = !empty($_POST['debug_php_errors']) ? '1' : '0';
+        $debug_javascript = !empty($_POST['debug_javascript']) ? '1' : '0';
+        $debug_javascript_verbose = !empty($_POST['debug_javascript_verbose']) ? '1' : '0';
+        $debug_ajax = !empty($_POST['debug_ajax']) ? '1' : '0';
+        $debug_performance = !empty($_POST['debug_performance']) ? '1' : '0';
+        $debug_database = !empty($_POST['debug_database']) ? '1' : '0';
+        $log_level = intval($_POST['log_level'] ?? 0);
+        $log_file_size = intval($_POST['log_file_size'] ?? 10);
+        $log_retention = intval($_POST['log_retention'] ?? 30);
+        $force_https = !empty($_POST['force_https']) ? '1' : '0';
+        $performance_monitoring = !empty($_POST['performance_monitoring']) ? '1' : '0';
+
+        // Validate values
+        $log_level = max(0, min(4, $log_level)); // 0-4 range
+        $log_file_size = max(1, min(100, $log_file_size)); // 1-100 MB
+        $log_retention = max(1, min(365, $log_retention)); // 1-365 days
+
+        // Save settings
+        update_option('pdf_builder_developer_enabled', $developer_enabled);
+        update_option('pdf_builder_developer_password', $developer_password);
+        update_option('pdf_builder_debug_php_errors', $debug_php_errors);
+        update_option('pdf_builder_debug_javascript', $debug_javascript);
+        update_option('pdf_builder_debug_javascript_verbose', $debug_javascript_verbose);
+        update_option('pdf_builder_debug_ajax', $debug_ajax);
+        update_option('pdf_builder_debug_performance', $debug_performance);
+        update_option('pdf_builder_debug_database', $debug_database);
+        update_option('pdf_builder_log_level', $log_level);
+        update_option('pdf_builder_log_file_size', $log_file_size);
+        update_option('pdf_builder_log_retention', $log_retention);
+        update_option('pdf_builder_force_https', $force_https);
+        update_option('pdf_builder_performance_monitoring', $performance_monitoring);
+
+        wp_send_json_success(array(
+            'message' => 'Paramètres développeur sauvegardés avec succès',
+            'data' => array(
+                'developer_enabled' => $developer_enabled,
+                'developer_password' => !empty($developer_password) ? '***' : '', // Don't send actual password
+                'debug_php_errors' => $debug_php_errors,
+                'debug_javascript' => $debug_javascript,
+                'debug_javascript_verbose' => $debug_javascript_verbose,
+                'debug_ajax' => $debug_ajax,
+                'debug_performance' => $debug_performance,
+                'debug_database' => $debug_database,
+                'log_level' => $log_level,
+                'log_file_size' => $log_file_size,
+                'log_retention' => $log_retention,
+                'force_https' => $force_https,
+                'performance_monitoring' => $performance_monitoring
+            )
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+    }
+}
+
 // Register AJAX actions for canvas settings
 add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
 add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
 add_action('wp_ajax_pdf_builder_get_all_canvas_settings', 'pdf_builder_get_all_canvas_settings_handler');
 add_action('wp_ajax_pdf_builder_save_all_settings', 'pdf_builder_save_all_settings_handler');
 add_action('wp_ajax_pdf_builder_save_cache_settings', 'pdf_builder_save_cache_settings_handler');
+add_action('wp_ajax_pdf_builder_save_developer_settings', 'pdf_builder_save_developer_settings_handler');
 add_action('wp_ajax_pdf_builder_clear_cache', 'pdf_builder_clear_cache_handler');
 add_action('wp_ajax_pdf_builder_get_cache_metrics', 'pdf_builder_get_cache_metrics_handler');
 add_action('wp_ajax_pdf_builder_export_diagnostic', 'pdf_builder_export_diagnostic_handler');

@@ -250,11 +250,21 @@ jQuery(document).ready(function($) {
         // Mettre à jour l'état du cache en temps réel
         updateCacheStatus(isEnabled);
 
-        // Sauvegarder immédiatement la nouvelle valeur
-        saveCacheSetting(isEnabled);
+    // Sauvegarder immédiatement la nouvelle valeur
+    saveCacheSetting(isEnabled);
     });
 
-    // Fonction pour cacher/afficher les options de cache
+    // Gestion des toggles développeur avec sauvegarde automatique
+    // UNIQUEMENT dans l'onglet développeur quand il est actif
+    $(document).on('change', '#developpeur.active input[name="developer_enabled"], #developpeur.active input[name="debug_php_errors"], #developpeur.active input[name="debug_javascript"], #developpeur.active input[name="debug_javascript_verbose"], #developpeur.active input[name="debug_ajax"], #developpeur.active input[name="debug_performance"], #developpeur.active input[name="debug_database"], #developpeur.active input[name="performance_monitoring"]', function() {
+        const fieldName = $(this).attr('name');
+        const isEnabled = $(this).is(':checked');
+
+        debugLogAjax('Developer toggle changed:', fieldName, 'value:', isEnabled);
+
+        // Sauvegarder immédiatement la nouvelle valeur
+        saveDeveloperSetting(fieldName, isEnabled);
+    });    // Fonction pour cacher/afficher les options de cache
     function toggleCacheOptions(isEnabled) {
         // Sélectionner toutes les lignes de la table sauf la première (Cache activé)
         const $cacheTable = $('#systeme input[name="cache_enabled"]').closest('table.form-table');
@@ -334,6 +344,55 @@ jQuery(document).ready(function($) {
             });
         }).catch(function(err) {
             debugLogAjax('saveCacheSetting nonce error', err);
+            alert('Erreur lors de l\'obtention du nonce: ' + (err && err.message ? err.message : err));
+        });
+    }
+
+    // Fonction pour sauvegarder les paramètres développeur via AJAX
+    function saveDeveloperSetting(fieldName, isEnabled) {
+        debugLogAjax('saveDeveloperSetting called with fieldName:', fieldName, 'isEnabled:', isEnabled);
+
+        // Récupérer un nonce frais si nécessaire
+        fetchFreshAjaxNonce().then(function(nonce) {
+            debugLogAjax('saveDeveloperSetting: making AJAX call', {
+                action: 'pdf_builder_save_developer_settings',
+                field_name: fieldName,
+                field_value: isEnabled ? '1' : '0',
+                nonce: nonce
+            });
+
+            $.ajax({
+                url: pdfBuilderAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_developer_settings',
+                    field_name: fieldName,
+                    field_value: isEnabled ? '1' : '0',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    debugLogAjax('saveDeveloperSetting success', response);
+                    if (response.success) {
+                        debugLog('Developer setting saved successfully:', fieldName);
+                        // Mettre à jour l'interface si nécessaire
+                        if (fieldName === 'developer_enabled') {
+                            // Mettre à jour les sections développeur
+                            if (window.updateDeveloperSections) {
+                                window.updateDeveloperSections();
+                            }
+                        }
+                    } else {
+                        debugLogAjax('saveDeveloperSetting failed', response);
+                        alert('Erreur lors de la sauvegarde du paramètre développeur: ' + (response.data || 'Erreur inconnue'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    debugLogAjax('saveDeveloperSetting error', status, error, xhr && xhr.responseText);
+                    alert('Erreur de connexion lors de la sauvegarde du paramètre développeur: ' + error);
+                }
+            });
+        }).catch(function(err) {
+            debugLogAjax('saveDeveloperSetting nonce error', err);
             alert('Erreur lors de l\'obtention du nonce: ' + (err && err.message ? err.message : err));
         });
     }
