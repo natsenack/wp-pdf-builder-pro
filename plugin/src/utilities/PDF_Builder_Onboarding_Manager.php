@@ -41,11 +41,6 @@ class PDF_Builder_Onboarding_Manager {
      */
     public static function get_instance() {
         if (self::$instance === null) {
-            // Vérification avant instanciation
-            if (!class_exists('PDF_Builder_Onboarding_Manager')) {
-                PDF_Builder_Security_Manager::debug_log('php_errors', 'Classe non trouvée lors de get_instance()');
-                return null;
-            }
             try {
                 self::$instance = new self();
             } catch (Exception $e) {
@@ -394,8 +389,9 @@ class PDF_Builder_Onboarding_Manager {
             case 'assign_template':
                 // Récupérer les statuts WooCommerce si disponibles
                 $order_statuses = [];
-                if (function_exists('wc_get_order_statuses')) {
-                    $order_statuses = wc_get_order_statuses();
+                if (function_exists('\wc_get_order_statuses')) {
+                    // @phpstan-ignore-next-line
+                    $order_statuses = \wc_get_order_statuses();
                 }
                 $status_options = '';
                 foreach ($order_statuses as $status_key => $status_label) {

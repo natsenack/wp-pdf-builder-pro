@@ -1469,6 +1469,12 @@ function pdf_builder_get_all_canvas_settings_handler() {
  * Handler AJAX pour sauvegarder tous les paramètres depuis le bouton flottant
  */
 function pdf_builder_save_all_settings_handler() {
+    // Vérifier le nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        send_ajax_response(false, 'Nonce invalide');
+        return;
+    }
+
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
         send_ajax_response(false, 'Permissions insuffisantes.');

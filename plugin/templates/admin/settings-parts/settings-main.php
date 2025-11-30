@@ -2353,7 +2353,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
             const formData = new FormData();
 
             // Add action and nonce
-            formData.append('action', 'pdf_builder_save_settings');
+            formData.append('action', 'pdf_builder_save_all_settings');
             formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
 
             // Get current active tab to determine context
