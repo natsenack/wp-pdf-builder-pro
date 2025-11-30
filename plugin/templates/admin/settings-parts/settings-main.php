@@ -2772,11 +2772,15 @@ window.toggleRGPDControls = toggleRGPDControls;
                     context: 'PDF Builder',
                     successCallback: (result, originalData) => {
                         // Log TOUJOURS l'onglet actif lors de la sauvegarde
-                        console.log('💾 [PDF Builder] SAVE: Enregistrement depuis l\'onglet "' + tabId + '"');
+                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            console.log('💾 [PDF Builder] SAVE: Enregistrement depuis l\'onglet "' + tabId + '"');
+                        }
 
-                        console.log('🔄 [PDF Builder] AJAX Success - Raw response:', originalData);
-                        console.log('🔄 [PDF Builder] AJAX Success - Response data keys:', originalData && originalData.data ? Object.keys(originalData.data) : 'NO DATA');
-                        console.log('🔄 [PDF Builder] AJAX Success - Has result_data:', originalData && originalData.data && originalData.data.result_data ? 'YES' : 'NO');
+                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            console.log('🔄 [PDF Builder] AJAX Success - Raw response:', originalData);
+                            console.log('🔄 [PDF Builder] AJAX Success - Response data keys:', originalData && originalData.data ? Object.keys(originalData.data) : 'NO DATA');
+                            console.log('🔄 [PDF Builder] AJAX Success - Has result_data:', originalData && originalData.data && originalData.data.result_data ? 'YES' : 'NO');
+                        }
 
                         // Log success
                         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
@@ -2811,13 +2815,17 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
                         if (originalData && originalData.data && originalData.data.result_data) {
                             const options = originalData.data.result_data;
-                            console.log('💾 [PDF Builder] Mise à jour des champs - données reçues:', options);
-                            console.log('🔍 [PDF Builder] Liste des champs dans result_data:', Object.keys(options));
+                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                console.log('💾 [PDF Builder] Mise à jour des champs - données reçues:', options);
+                                console.log('🔍 [PDF Builder] Liste des champs dans result_data:', Object.keys(options));
+                            }
 
                             // Parcourir toutes les données sauvegardées et mettre à jour les champs correspondants
                             Object.keys(options).forEach(fieldName => {
                                 const fieldValue = options[fieldName];
-                                console.log(`🔍 [PDF Builder] Traitement champ ${fieldName} = ${fieldValue}`);
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.log(`🔍 [PDF Builder] Traitement champ ${fieldName} = ${fieldValue}`);
+                                }
 
                                 // Chercher le champ dans le formulaire (avec ou sans préfixe pdf_builder_)
                                 let fieldElement = document.querySelector(`[name="${fieldName}"]`);
@@ -2825,11 +2833,15 @@ window.toggleRGPDControls = toggleRGPDControls;
                                     // Essayer sans le préfixe
                                     const shortName = fieldName.replace('pdf_builder_', '');
                                     fieldElement = document.querySelector(`[name="${shortName}"]`);
-                                    console.log(`🔄 [PDF Builder] Champ ${fieldName} non trouvé, essai avec ${shortName}:`, !!fieldElement);
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.log(`🔄 [PDF Builder] Champ ${fieldName} non trouvé, essai avec ${shortName}:`, !!fieldElement);
+                                    }
                                 }
 
                                 if (fieldElement) {
-                                    console.log(`✅ [PDF Builder] Champ ${fieldName} trouvé dans DOM:`, fieldElement, 'type:', fieldElement.type);
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.log(`✅ [PDF Builder] Champ ${fieldName} trouvé dans DOM:`, fieldElement, 'type:', fieldElement.type);
+                                    }
 
                                     if (fieldElement.type === 'checkbox') {
                                         // Pour les checkboxes, mettre à jour l'état checked
@@ -2853,11 +2865,15 @@ window.toggleRGPDControls = toggleRGPDControls;
                                             }, 50);
                                         }
 
-                                        console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${newChecked} (valeur: ${fieldValue})`);
+                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                            console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${newChecked} (valeur: ${fieldValue})`);
+                                        }
 
                                         // Déclencher les fonctions de toggle si nécessaire
                                         if (fieldName === 'pdf_builder_developer_enabled' || fieldName === 'developer_enabled') {
-                                            console.log('🔧 [PDF Builder] Déclenchement des fonctions développeur');
+                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                console.log('🔧 [PDF Builder] Déclenchement des fonctions développeur');
+                                            }
                                             // Mettre à jour les sections développeur
                                             if (window.updateDeveloperSections) {
                                                 window.updateDeveloperSections();
@@ -2881,24 +2897,32 @@ window.toggleRGPDControls = toggleRGPDControls;
                                         // Pour les radios, cocher la bonne option
                                         if (fieldElement.value == fieldValue) { // Utiliser == pour comparaison lâche
                                             fieldElement.checked = true;
-                                            console.log(`📝 [PDF Builder] Radio ${fieldName} coché: ${fieldValue}`);
+                                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                console.log(`📝 [PDF Builder] Radio ${fieldName} coché: ${fieldValue}`);
+                                            }
                                         }
                                     } else {
                                         // Pour les autres champs (text, select, etc.)
                                         const oldValue = fieldElement.value;
                                         fieldElement.value = fieldValue;
-                                        console.log(`📝 [PDF Builder] Champ ${fieldName} mis à jour: "${oldValue}" -> "${fieldValue}"`);
+                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                            console.log(`📝 [PDF Builder] Champ ${fieldName} mis à jour: "${oldValue}" -> "${fieldValue}"`);
+                                        }
                                     }
                                 } else {
-                                    console.log(`⚠️ [PDF Builder] Champ ${fieldName} non trouvé dans le DOM pour mise à jour`);
-                                    // Lister tous les champs input/select/textarea pour debug
-                                    const allFields = document.querySelectorAll('input[name], select[name], textarea[name]');
-                                    const fieldNames = Array.from(allFields).map(f => f.name);
-                                    console.log('📋 [PDF Builder] Champs disponibles dans le DOM:', fieldNames);
+                                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                        console.log(`⚠️ [PDF Builder] Champ ${fieldName} non trouvé dans le DOM pour mise à jour`);
+                                        // Lister tous les champs input/select/textarea pour debug
+                                        const allFields = document.querySelectorAll('input[name], select[name], textarea[name]');
+                                        const fieldNames = Array.from(allFields).map(f => f.name);
+                                        console.log('📋 [PDF Builder] Champs disponibles dans le DOM:', fieldNames);
+                                    }
                                 }
                             });
                         } else {
-                            console.log('❌ [PDF Builder] Aucune donnée result_data reçue:', originalData);
+                            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                console.log('❌ [PDF Builder] Aucune donnée result_data reçue:', originalData);
+                            }
                         }
 
                         // Recharger les previews avec les nouvelles données
