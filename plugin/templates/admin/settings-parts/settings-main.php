@@ -2837,9 +2837,21 @@ window.toggleRGPDControls = toggleRGPDControls;
                                         const newChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
                                         fieldElement.checked = newChecked;
 
-                                        // Déclencher un événement change pour forcer la mise à jour visuelle des toggles
+                                        // Forcer la mise à jour visuelle du toggle en déclenchant change + forçant un reflow
                                         const changeEvent = new Event('change', { bubbles: true });
                                         fieldElement.dispatchEvent(changeEvent);
+
+                                        // Forcer un reflow pour s'assurer que le CSS :checked est mis à jour
+                                        fieldElement.offsetHeight; // Force reflow
+
+                                        // Ajouter/retirer temporairement une classe pour déclencher l'animation CSS
+                                        const toggleContainer = fieldElement.closest('.toggle-switch');
+                                        if (toggleContainer) {
+                                            toggleContainer.classList.add('toggle-updated');
+                                            setTimeout(() => {
+                                                toggleContainer.classList.remove('toggle-updated');
+                                            }, 50);
+                                        }
 
                                         console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${newChecked} (valeur: ${fieldValue})`);
 
@@ -3248,6 +3260,20 @@ window.toggleRGPDControls = toggleRGPDControls;
                                             fieldElement.checked = fieldValue === '1';
                                             if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                                 console.log(`📝 [PDF Builder] Checkbox ${fieldName} mis à jour: ${oldChecked} -> ${fieldElement.checked}`);
+                                            }
+
+                                            // Forcer la mise à jour visuelle du toggle
+                                            const changeEvent = new Event('change', { bubbles: true });
+                                            fieldElement.dispatchEvent(changeEvent);
+                                            fieldElement.offsetHeight; // Force reflow
+
+                                            // Ajouter/retirer temporairement une classe pour déclencher l'animation CSS
+                                            const toggleContainer = fieldElement.closest('.toggle-switch');
+                                            if (toggleContainer) {
+                                                toggleContainer.classList.add('toggle-updated');
+                                                setTimeout(() => {
+                                                    toggleContainer.classList.remove('toggle-updated');
+                                                }, 50);
                                             }
 
                                             // Déclencher les fonctions de toggle si nécessaire

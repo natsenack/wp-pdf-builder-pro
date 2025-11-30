@@ -2644,3 +2644,14 @@ input:checked + .toggle-slider:before {
         order: 1;
     }
 }
+
+/* Animation pour forcer la mise à jour visuelle des toggles après changement programmatique */
+.toggle-updated .toggle-slider {
+    animation: toggle-refresh 0.05s ease-in-out;
+}
+
+@keyframes toggle-refresh {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(1px); }
+    100% { transform: translateX(0); }
+}
