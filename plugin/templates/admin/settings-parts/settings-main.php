@@ -2868,13 +2868,25 @@ window.toggleRGPDControls = toggleRGPDControls;
                                                         console.log(`🔄 [PDF Builder] Checkbox ${fieldName}: ${wasChecked} → ${shouldBeChecked}`);
                                                     }
 
+                                                    // Synchroniser la classe .checked sur le container toggle-switch pour forcer la mise à jour visuelle
+                                                    const toggleContainer = fieldElement.closest('.toggle-switch');
+                                                    if (toggleContainer) {
+                                                        if (shouldBeChecked) {
+                                                            toggleContainer.classList.add('checked');
+                                                        } else {
+                                                            toggleContainer.classList.remove('checked');
+                                                        }
+                                                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                                            console.log(`🔄 [PDF Builder] Toggle container class updated: ${toggleContainer.classList.contains('checked') ? 'checked' : 'unchecked'}`);
+                                                        }
+                                                    }
+
                                                     // Forcer la mise à jour visuelle du toggle
                                                     const changeEvent = new Event('change', { bubbles: true });
                                                     fieldElement.dispatchEvent(changeEvent);
                                                     fieldElement.offsetHeight; // Force reflow
 
                                                     // Animation CSS
-                                                    const toggleContainer = fieldElement.closest('.toggle-switch');
                                                     if (toggleContainer) {
                                                         toggleContainer.classList.add('toggle-updated');
                                                         setTimeout(() => {
