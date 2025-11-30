@@ -663,6 +663,7 @@ function pdf_builder_save_settings_handler() {
 }
 
 // Canvas settings AJAX handler
+// Fixed syntax error - forced redeploy 2025-11-30
 function pdf_builder_save_canvas_settings_handler() {
 
     $category = PDF_Builder_Sanitizer::text($_POST['category'] ?? 'dimensions');
