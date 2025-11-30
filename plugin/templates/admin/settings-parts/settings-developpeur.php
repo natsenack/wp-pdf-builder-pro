@@ -822,6 +822,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gestion du toggle Mode Développeur
     const developerEnabledToggle = document.getElementById('developer_enabled');
+    const debugJavascriptToggle = document.getElementById('debug_javascript');
+    const debugPdfEditorRow = document.getElementById('debug_pdf_editor').closest('tr');
     const devSections = [
         'dev-license-section',
         'dev-debug-section',
@@ -833,6 +835,27 @@ document.addEventListener('DOMContentLoaded', function() {
         'dev-todo-section',
         'dev-notifications-test-section'
     ];
+
+    // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
+    function updatePdfEditorToggleVisibility() {
+        if (!debugJavascriptToggle || !debugPdfEditorRow) return;
+
+        const isJavascriptDebugEnabled = debugJavascriptToggle.checked;
+        debugPdfEditorRow.style.display = isJavascriptDebugEnabled ? 'table-row' : 'none';
+
+        // Désactiver le toggle si Debug JavaScript est désactivé
+        const pdfEditorToggle = document.getElementById('debug_pdf_editor');
+        if (pdfEditorToggle) {
+            pdfEditorToggle.disabled = !isJavascriptDebugEnabled;
+            if (!isJavascriptDebugEnabled) {
+                pdfEditorToggle.checked = false;
+            }
+        }
+
+        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            console.log(`🔧 [DEBUG PDF EDITOR] Toggle ${isJavascriptDebugEnabled ? 'AFFICHÉ' : 'MASQUÉ'} (dépend de Debug JavaScript)`);
+        }
+    }
 
     // Fonction globale pour mettre à jour les sections développeur
     window.updateDeveloperSections = function() {
@@ -856,6 +879,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+
+        // Mettre à jour la visibilité du toggle Debug Éditeur PDF
+        updatePdfEditorToggleVisibility();
     };
 
     // Fonction pour mettre à jour l'indicateur de statut du mode développeur (basé sur la valeur sauvegardée)
@@ -885,6 +911,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Appliquer l'état initial
         window.updateDeveloperSections();
 
+        // Appliquer l'état initial du toggle Debug Éditeur PDF
+        updatePdfEditorToggleVisibility();
+
         // Fonction pour basculer l'état du toggle
         function toggleDeveloperMode() {
             developerEnabledToggle.checked = !developerEnabledToggle.checked;
@@ -913,6 +942,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             window.updateDeveloperSections();
         });
+
+        // Écouter les changements du toggle Debug JavaScript pour mettre à jour la visibilité du toggle Debug Éditeur PDF
+        if (debugJavascriptToggle) {
+            debugJavascriptToggle.addEventListener('change', function(event) {
+                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    console.log('🔧 [DEBUG JAVASCRIPT] Événement change déclenché');
+                    console.log('🔧 [DEBUG JAVASCRIPT] Valeur du toggle:', event.target.checked);
+                }
+                updatePdfEditorToggleVisibility();
+            });
+        }
 
         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
             console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Écouteur d\'événements attaché avec succès');
