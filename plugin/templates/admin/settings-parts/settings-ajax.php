@@ -433,6 +433,16 @@ function pdf_builder_export_diagnostic_handler() {
         return;
     }
 
+    // Diagnostic nonce check - log received value and verification results to help debugging
+    $received_nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
+    $verify_ajax = $received_nonce ? wp_verify_nonce($received_nonce, 'pdf_builder_ajax') : false;
+    $verify_cache = $received_nonce ? wp_verify_nonce($received_nonce, 'pdf_builder_cache_actions') : false;
+    if (!$verify_ajax && !$verify_cache) {
+        error_log('[PDF Builder Nonce] DEBUG EXPORT: Invalid nonce received: ' . substr($received_nonce, 0, 12) . '..., verify_ajax=' . intval($verify_ajax) . ', verify_cache=' . intval($verify_cache));
+        send_ajax_response(false, 'Nonce invalide', ['received_nonce' => $received_nonce, 'verify_ajax' => $verify_ajax ? 1 : 0, 'verify_cache_actions' => $verify_cache ? 1 : 0]);
+        return;
+    }
+
     $diagnostic_data = [
         'timestamp' => current_time('Y-m-d H:i:s'),
         'wordpress' => [
@@ -481,6 +491,16 @@ function pdf_builder_view_logs_handler() {
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Diagnostic nonce check - log received value and verification results to help debugging
+    $received_nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
+    $verify_ajax = $received_nonce ? wp_verify_nonce($received_nonce, 'pdf_builder_ajax') : false;
+    $verify_cache = $received_nonce ? wp_verify_nonce($received_nonce, 'pdf_builder_cache_actions') : false;
+    if (!$verify_ajax && !$verify_cache) {
+        error_log('[PDF Builder Nonce] DEBUG VIEW_LOGS: Invalid nonce received: ' . substr($received_nonce, 0, 12) . '..., verify_ajax=' . intval($verify_ajax) . ', verify_cache=' . intval($verify_cache));
+        send_ajax_response(false, 'Nonce invalide', ['received_nonce' => $received_nonce, 'verify_ajax' => $verify_ajax ? 1 : 0, 'verify_cache_actions' => $verify_cache ? 1 : 0]);
         return;
     }
 
