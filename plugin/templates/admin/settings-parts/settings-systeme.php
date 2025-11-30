@@ -312,8 +312,13 @@ function pdf_builder_get_directory_size($directory) {
                 <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 2px solid #f39c12; border-radius: 12px;">
                     <h4 style="margin: 0 0 10px 0; color: #8b4513;">💡 Comment sauvegarder les paramètres ?</h4>
                     <p style="margin: 0; color: #5d4e37; font-size: 14px;">
-                        Utilisez le bouton <strong style="color: #007cba;">"💾 Enregistrer"</strong> flottant en bas à droite de l'écran pour sauvegarder tous les paramètres système.
+                        Utilisez le bouton <strong style="color: #007cba;">"Enregistrer les modifications"</strong> ci-dessous pour sauvegarder tous les paramètres système.
                         Les modifications ne sont appliquées que lorsque vous cliquez sur ce bouton.
                     </p>
                 </div>
+
+                <!-- Bouton de sauvegarde -->
+                <p class="submit" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+                    <input type="submit" name="submit" id="submit" class="button button-primary" value="Enregistrer les modifications" style="font-size: 16px; padding: 12px 24px;">
+                </p>
             </form>
