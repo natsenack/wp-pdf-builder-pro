@@ -9,6 +9,11 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
+// Hooks AJAX pour les actions de maintenance
+add_action('wp_ajax_pdf_builder_optimize_database', 'pdf_builder_optimize_database_ajax');
+add_action('wp_ajax_pdf_builder_repair_templates', 'pdf_builder_repair_templates_ajax');
+add_action('wp_ajax_pdf_builder_remove_temp_files', 'pdf_builder_remove_temp_files_ajax');
+
 /**
  * AJAX Handler - Test de l'intégration du cache
  */
