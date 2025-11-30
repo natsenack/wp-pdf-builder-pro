@@ -700,6 +700,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const debugJavascriptToggle = document.getElementById('debug_javascript');
     const debugPdfEditorRow = document.getElementById('debug_pdf_editor_row');
     const debugSettingsPageRow = document.getElementById('debug_settings_page_row');
+    const pdfEditorToggle = document.getElementById('debug_pdf_editor');
+    const settingsPageToggle = document.getElementById('debug_settings_page');
     const devSections = [
         'dev-license-section',
         'dev-debug-section',
@@ -860,9 +862,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 disabled: settingsPageToggle ? settingsPageToggle.disabled : 'N/A'
             }
         });
-
-        // Appliquer l'état initial du toggle Debug Page Paramètres
-        updateSettingsPageToggleVisibility();
 
         // Fonction pour basculer l'état du toggle
         function toggleDeveloperMode() {
