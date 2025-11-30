@@ -297,12 +297,16 @@ function pdf_builder_optimize_database_ajax() {
         // Nettoyer les options orphelines
         $cleaned_options = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_%' AND option_value = ''");
 
-        $message = 'Base de données optimisée avec succès';
-        if (!empty($optimized_tables)) {
-            $message .= ' (' . count($optimized_tables) . ' tables optimisées)';
-        }
-        if ($cleaned_options > 0) {
-            $message .= ", $cleaned_options options nettoyées";
+        if (empty($optimized_tables) && $cleaned_options == 0) {
+            $message = 'Aucune optimisation nécessaire.';
+        } else {
+            $message = 'Base de données optimisée avec succès';
+            if (!empty($optimized_tables)) {
+                $message .= ' (' . count($optimized_tables) . ' tables optimisées)';
+            }
+            if ($cleaned_options > 0) {
+                $message .= ", $cleaned_options options nettoyées";
+            }
         }
 
         wp_send_json_success([
@@ -441,11 +445,8 @@ function pdf_builder_remove_temp_files_ajax() {
             $files = glob($temp_dir . '/*');
             foreach ($files as $file) {
                 if (is_file($file)) {
-                    // Vérifier si le fichier a plus de 24h
-                    if (filemtime($file) < (time() - 86400)) {
-                        if (unlink($file)) {
-                            $temp_files_deleted++;
-                        }
+                    if (unlink($file)) {
+                        $temp_files_deleted++;
                     }
                 }
             }
@@ -453,6 +454,8 @@ function pdf_builder_remove_temp_files_ajax() {
 
         if ($temp_files_deleted > 0) {
             $removed_items[] = "$temp_files_deleted fichiers temporaires supprimés";
+        } else {
+            $removed_items[] = "Aucun fichier temporaire à supprimer";
         }
 
         // 2. Nettoyer les transients expirés
