@@ -1469,11 +1469,17 @@ function pdf_builder_get_all_canvas_settings_handler() {
  * Handler AJAX pour sauvegarder tous les paramètres depuis le bouton flottant
  */
 function pdf_builder_save_all_settings_handler() {
+    // Debug: Log the nonce received
+    error_log('PDF Builder SAVE ALL: Received nonce: ' . ($_POST['nonce'] ?? 'NOT SET'));
+    error_log('PDF Builder SAVE ALL: All POST keys: ' . implode(', ', array_keys($_POST)));
+
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        error_log('PDF Builder SAVE ALL: Nonce verification FAILED');
         send_ajax_response(false, 'Nonce invalide');
         return;
     }
+    error_log('PDF Builder SAVE ALL: Nonce verification SUCCESS');
 
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
