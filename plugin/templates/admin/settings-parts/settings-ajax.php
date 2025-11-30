@@ -1741,6 +1741,112 @@ function pdf_builder_get_fresh_nonce_handler() {
     }
 }
 
+/**
+ * AJAX handler for toggling license test mode
+ */
+function pdf_builder_toggle_test_mode_handler() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        // Toggle the test mode setting
+        $current_mode = get_option('pdf_builder_license_test_mode', 0);
+        $new_mode = $current_mode ? 0 : 1;
+
+        update_option('pdf_builder_license_test_mode', $new_mode);
+
+        send_ajax_response(true, 'Mode test ' . ($new_mode ? 'activé' : 'désactivé') . ' avec succès.', [
+            'test_mode' => $new_mode
+        ]);
+
+    } catch (Exception $e) {
+        send_ajax_response(false, 'Erreur lors du changement du mode test: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler for cleanup license (complete reset)
+ */
+function pdf_builder_cleanup_license_handler() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        // Delete all license-related options
+        $license_options = [
+            'pdf_builder_license_key',
+            'pdf_builder_license_status',
+            'pdf_builder_license_expires',
+            'pdf_builder_license_test_key',
+            'pdf_builder_license_test_mode',
+            'pdf_builder_license_data'
+        ];
+
+        foreach ($license_options as $option) {
+            delete_option($option);
+        }
+
+        // Clear any license transients
+        global $wpdb;
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_license_%'");
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_license_%'");
+
+        send_ajax_response(true, 'Licence complètement nettoyée. Le plugin est maintenant en mode gratuit.', [
+            'reset_complete' => true
+        ]);
+
+    } catch (Exception $e) {
+        send_ajax_response(false, 'Erreur lors du nettoyage de la licence: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler for database optimization
+ */
+function pdf_builder_optimize_database_handler() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        global $wpdb;
+
+        // Optimize database tables
+        $tables = [
+            $wpdb->posts,
+            $wpdb->postmeta,
+            $wpdb->options,
+            $wpdb->usermeta
+        ];
+
+        $optimized_tables = 0;
+        foreach ($tables as $table) {
+            if ($wpdb->query("OPTIMIZE TABLE $table")) {
+                $optimized_tables++;
+            }
+        }
+
+        // Clean up orphaned data
+        $wpdb->query("DELETE pm FROM {$wpdb->postmeta} pm LEFT JOIN {$wpdb->posts} p ON pm.post_id = p.ID WHERE p.ID IS NULL");
+        $wpdb->query("DELETE um FROM {$wpdb->usermeta} um LEFT JOIN {$wpdb->users} u ON um.user_id = u.ID WHERE u.ID IS NULL");
+
+        send_ajax_response(true, "$optimized_tables tables optimisées avec succès.", [
+            'optimized_tables' => $optimized_tables
+        ]);
+
+    } catch (Exception $e) {
+        send_ajax_response(false, 'Erreur lors de l\'optimisation de la base de données: ' . $e->getMessage());
+    }
+}
+
 // Register AJAX actions for canvas settings
 add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
 add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
@@ -1761,3 +1867,4 @@ add_action('wp_ajax_pdf_builder_validate_test_license_key', 'pdf_builder_validat
 add_action('wp_ajax_pdf_builder_clear_temp', 'pdf_builder_clear_temp_handler');
 add_action('wp_ajax_pdf_builder_refresh_logs', 'pdf_builder_refresh_logs_handler');
 add_action('wp_ajax_pdf_builder_clear_logs', 'pdf_builder_clear_logs_handler');
+add_action('wp_ajax_pdf_builder_toggle_test_mode', 'pdf_builder_toggle_test_mode_handler');
