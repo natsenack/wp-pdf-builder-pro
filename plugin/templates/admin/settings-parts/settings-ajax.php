@@ -614,9 +614,22 @@ function pdf_builder_save_settings_handler() {
                     $message .= ' ' . count($errors) . ' erreurs.';
                 }
 
+                // Préparer les options sauvegardées pour la réponse (sans préfixe pour correspondre aux noms de champs du formulaire)
+                $saved_options = [];
+                foreach ($processed_fields as $field) {
+                    $option_key = strpos($field, 'pdf_builder_') === 0 ? $field : 'pdf_builder_' . $field;
+                    $saved_options[$field] = get_option($option_key, '');
+                }
+
+                // Ajouter les champs checkbox traités séparément
+                foreach ($checkbox_fields as $field) {
+                    $saved_options[$field] = get_option('pdf_builder_' . $field, 0) ? '1' : '0';
+                }
+
                 send_ajax_response(true, $message, [
                     'saved_count' => $saved_count,
                     'errors' => $errors,
+                    'saved_options' => $saved_options,
                     'debug_info' => [
                         'total_post' => count($_POST),
                         'ignored' => $ignored_fields,
