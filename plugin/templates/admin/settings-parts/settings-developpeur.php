@@ -823,23 +823,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction globale pour mettre à jour les sections développeur
     window.updateDeveloperSections = function() {
-        console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] updateDeveloperSections appelée');
-        
-        if (!developerEnabledToggle) {
-            console.error('❌ [TOGGLE MODE DÉVELOPPEUR] developerEnabledToggle est null');
-            return;
-        }
+        if (!developerEnabledToggle) return;
 
         const isEnabled = developerEnabledToggle.checked;
-        console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] État du toggle:', isEnabled ? 'ACTIVÉ' : 'DÉSACTIVÉ');
+        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Changement détecté - État:', isEnabled ? 'ACTIVÉ' : 'DÉSACTIVÉ');
+        }
         
         devSections.forEach(sectionId => {
             const section = document.getElementById(sectionId);
             if (section) {
                 section.style.display = isEnabled ? 'block' : 'none';
-                console.log(`🔧 [TOGGLE MODE DÉVELOPPEUR] Section ${sectionId}: ${isEnabled ? 'AFFICHÉE' : 'MASQUÉE'}`);
+                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    console.log(`🔧 [TOGGLE MODE DÉVELOPPEUR] Section ${sectionId}: ${isEnabled ? 'AFFICHÉE' : 'MASQUÉE'}`);
+                }
             } else {
-                console.warn(`⚠️ [TOGGLE MODE DÉVELOPPEUR] Section ${sectionId} introuvable dans le DOM`);
+                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    console.warn(`⚠️ [TOGGLE MODE DÉVELOPPEUR] Section ${sectionId} introuvable dans le DOM`);
+                }
             }
         });
 
@@ -849,37 +850,40 @@ document.addEventListener('DOMContentLoaded', function() {
             statusIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
             statusIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
             statusIndicator.style.color = 'white';
-            console.log(`🔧 [TOGGLE MODE DÉVELOPPEUR] Indicateur de statut mis à jour: ${statusIndicator.textContent}`);
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.log(`🔧 [TOGGLE MODE DÉVELOPPEUR] Indicateur de statut mis à jour: ${statusIndicator.textContent}`);
+            }
         } else {
-            console.error('❌ [TOGGLE MODE DÉVELOPPEUR] Indicateur de statut introuvable');
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.error('❌ [TOGGLE MODE DÉVELOPPEUR] Indicateur de statut introuvable');
+            }
         }
     };
 
     if (developerEnabledToggle) {
-        console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Élément toggle trouvé, initialisation...');
-        console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Valeur initiale:', developerEnabledToggle.checked);
-        console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] ID de l\'élément:', developerEnabledToggle.id);
+        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Élément toggle trouvé, initialisation...');
+        }
         
         // Appliquer l'état initial
         window.updateDeveloperSections();
 
         // Écouter les changements du toggle pour mettre à jour l'interface en temps réel
         developerEnabledToggle.addEventListener('change', function(event) {
-            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Événement change déclenché');
-            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Valeur du toggle:', event.target.checked);
-            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] ID de l\'élément:', event.target.id);
-            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Type d\'événement:', event.type);
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Événement change déclenché');
+                console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Valeur du toggle:', event.target.checked);
+                console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] ID de l\'élément:', event.target.id);
+            }
             window.updateDeveloperSections();
         });
         
-        console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Écouteur d\'événements attaché avec succès');
+        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Écouteur d\'événements attaché avec succès');
+        }
     } else {
-        console.error('❌ [TOGGLE MODE DÉVELOPPEUR] Élément toggle introuvable dans le DOM');
-        console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Recherche de l\'élément avec querySelector...');
-        const toggleByQuery = document.querySelector('#developer_enabled');
-        console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Trouvé avec querySelector:', !!toggleByQuery);
-        if (toggleByQuery) {
-            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Élément trouvé:', toggleByQuery);
+        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            console.error('❌ [TOGGLE MODE DÉVELOPPEUR] Élément toggle introuvable dans le DOM');
         }
     }
 
