@@ -2787,9 +2787,9 @@ window.toggleRGPDControls = toggleRGPDControls;
                         // Mettre à jour les données JavaScript avec les valeurs sauvegardées depuis le serveur
                         if (originalData && originalData.data) {
                             // Mettre à jour window.pdfBuilderSavedSettings avec les nouvelles valeurs
-                            if (typeof window.pdfBuilderSavedSettings === 'object') {
+                            if (typeof window.pdfBuilderSavedSettings === 'object' && originalData.data.saved_options) {
                                 // Fusionner les nouvelles valeurs sauvegardées
-                                Object.assign(window.pdfBuilderSavedSettings, originalData.data);
+                                Object.assign(window.pdfBuilderSavedSettings, originalData.data.saved_options);
                                 if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                     console.log('✅ [PDF Builder] window.pdfBuilderSavedSettings mis à jour');
                                 }
@@ -2805,10 +2805,10 @@ window.toggleRGPDControls = toggleRGPDControls;
                         }
 
                         // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
-                        if (originalData && originalData.data) {
+                        if (originalData && originalData.data && originalData.data.saved_options) {
                             // Parcourir toutes les données sauvegardées et mettre à jour les champs correspondants
-                            Object.keys(originalData.data).forEach(fieldName => {
-                                const fieldValue = originalData.data[fieldName];
+                            Object.keys(originalData.data.saved_options).forEach(fieldName => {
+                                const fieldValue = originalData.data.saved_options[fieldName];
                                 // Chercher le champ dans le formulaire (avec ou sans préfixe pdf_builder_)
                                 let fieldElement = document.querySelector(`[name="${fieldName}"]`);
                                 if (!fieldElement && fieldName.startsWith('pdf_builder_')) {
