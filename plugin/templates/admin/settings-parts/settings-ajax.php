@@ -571,6 +571,7 @@ function pdf_builder_save_settings_handler() {
     // Traiter directement selon l'onglet
     try {
         switch ($current_tab) {
+            case 'developpeur':
             case 'all':
                 $saved_count = 0;
                 $errors = [];
