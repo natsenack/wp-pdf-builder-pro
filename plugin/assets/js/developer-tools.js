@@ -726,7 +726,7 @@ Notifications actives: ${activeNotifications}
             if (window.pdfBuilderNotify?.success) {
                 window.pdfBuilderNotify.success(message);
             } else {
-                alert('✅ ' + message);
+                alert('[SUCCESS] ' + message);
             }
         }
 
@@ -734,7 +734,7 @@ Notifications actives: ${activeNotifications}
             if (window.pdfBuilderNotify?.error) {
                 window.pdfBuilderNotify.error(message);
             } else {
-                alert('❌ ' + message);
+                alert('[ERROR] ' + message);
             }
         }
     }
