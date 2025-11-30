@@ -2767,6 +2767,9 @@ window.toggleRGPDControls = toggleRGPDControls;
                     button: floatingSaveBtn,
                     context: 'PDF Builder',
                     successCallback: (result, originalData) => {
+                        // Log TOUJOURS l'onglet actif lors de la sauvegarde
+                        console.log('💾 [PDF Builder] SAVE: Enregistrement depuis l\'onglet "' + tabId + '"');
+
                         // Log success
                         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                             console.log('Paramètres sauvegardés avec succès !');
@@ -3190,6 +3193,9 @@ window.toggleRGPDControls = toggleRGPDControls;
                                 button: newBtn,
                                 context: 'PDF Builder',
                                 successCallback: (result, originalData) => {
+                                    // Log TOUJOURS l'onglet actif lors de la sauvegarde
+                                    console.log('💾 [PDF Builder] SAVE: Enregistrement depuis l\'onglet "' + tabId + '"');
+
                                     // Log success
                                     if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                         console.log('Paramètres sauvegardés avec succès !');
