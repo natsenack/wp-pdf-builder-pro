@@ -2112,10 +2112,12 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
+            initializeTabs();
             initializeModals();
             initializeFloatingSaveButton();
         });
     } else {
+        initializeTabs();
         initializeModals();
         initializeFloatingSaveButton();
     }
