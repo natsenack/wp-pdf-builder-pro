@@ -474,11 +474,16 @@ if (!empty($_POST)) {
 if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || (isset($_POST['action']) && $_POST['action'] === 'pdf_builder_save_settings')) {
     if ($is_ajax) {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-
+            error_log('PDF Builder: AJAX save request detected');
+            error_log('PDF Builder: POST data count: ' . count($_POST));
+            error_log('PDF Builder: Current tab: ' . ($_POST['current_tab'] ?? 'not set'));
         }
     }
     if (defined('WP_DEBUG') && WP_DEBUG) {
-
+        error_log('PDF Builder: Processing save request');
+        error_log('PDF Builder: Action: ' . ($_POST['action'] ?? 'not set'));
+        error_log('PDF Builder: Current tab: ' . ($_POST['current_tab'] ?? 'not set'));
+        error_log('PDF Builder: Developer enabled: ' . ($_POST['pdf_builder_developer_enabled'] ?? 'not set'));
     }
     // Check nonce from POST data or AJAX header
     $nonce_to_check = $_POST['pdf_builder_settings_nonce'] ?? $_SERVER['HTTP_X_WP_NONCE'] ?? '';
@@ -2317,6 +2322,9 @@ window.toggleRGPDControls = toggleRGPDControls;
             // Collect data from all visible forms and inputs across all tabs
             // This ensures we save data from all tabs, not just the active one
             const allInputs = document.querySelectorAll('input, select, textarea');
+            let collectedCount = 0;
+            let developerFields = 0;
+
             allInputs.forEach(input => {
                 // Skip buttons, hidden fields we don't want, and disabled inputs
                 if (input.type === 'button' || input.type === 'submit' || input.type === 'reset' ||
@@ -2327,14 +2335,35 @@ window.toggleRGPDControls = toggleRGPDControls;
                 // Handle different input types
                 if (input.type === 'checkbox') {
                     formData.append(input.name, input.checked ? '1' : '0');
+                    collectedCount++;
+                    if (input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log')) {
+                        developerFields++;
+                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            console.log(`[FLOATING SAVE] Developer checkbox: ${input.name} = ${input.checked ? '1' : '0'}`);
+                        }
+                    }
                 } else if (input.type === 'radio') {
                     if (input.checked) {
                         formData.append(input.name, input.value);
+                        collectedCount++;
                     }
                 } else {
                     formData.append(input.name, input.value || '');
+                    collectedCount++;
+                    if (input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log')) {
+                        developerFields++;
+                        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                            console.log(`[FLOATING SAVE] Developer field: ${input.name} = ${input.value || ''}`);
+                        }
+                    }
                 }
             });
+
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.log(`[FLOATING SAVE] Total inputs collected: ${collectedCount}`);
+                console.log(`[FLOATING SAVE] Developer fields collected: ${developerFields}`);
+                console.log(`[FLOATING SAVE] Current tab: ${currentTab}`);
+            }
 
             // Make AJAX request using centralized handler
             PDF_Builder_Ajax_Handler.makeRequest(formData, {

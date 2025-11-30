@@ -131,8 +131,16 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $saved_options = $this->get_saved_options_for_tab('contenu');
                     break;
                 case 'developpeur':
+                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                        error_log('PDF Builder: Processing developer tab save');
+                        error_log('PDF Builder: Developer enabled POST: ' . ($_POST['pdf_builder_developer_enabled'] ?? 'not set'));
+                        error_log('PDF Builder: Debug PHP errors POST: ' . ($_POST['debug_php_errors'] ?? 'not set'));
+                    }
                     $saved_count = $this->save_developer_settings();
                     $saved_options = $this->get_saved_options_for_tab('developpeur');
+                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                        error_log('PDF Builder: Developer settings saved, count: ' . $saved_count);
+                    }
                     break;
                 case 'licence':
                     $saved_count = $this->save_license_settings();
@@ -424,12 +432,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             'pdf_builder_developer_password' => sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''),
 
             // Développeur - Debug
-            'debug_php_errors' => !empty($_POST['debug_php_errors']) ? '1' : '0',
-            'debug_javascript' => !empty($_POST['debug_javascript']) ? '1' : '0',
-            'debug_javascript_verbose' => !empty($_POST['debug_javascript_verbose']) ? '1' : '0',
-            'debug_ajax' => !empty($_POST['debug_ajax']) ? '1' : '0',
-            'debug_performance' => !empty($_POST['debug_performance']) ? '1' : '0',
-            'debug_database' => !empty($_POST['debug_database']) ? '1' : '0',
+            'debug_php_errors' => !empty($_POST['pdf_builder_debug_php_errors']) ? '1' : '0',
+            'debug_javascript' => !empty($_POST['pdf_builder_debug_javascript']) ? '1' : '0',
+            'debug_javascript_verbose' => !empty($_POST['pdf_builder_debug_javascript_verbose']) ? '1' : '0',
+            'debug_ajax' => !empty($_POST['pdf_builder_debug_ajax']) ? '1' : '0',
+            'debug_performance' => !empty($_POST['pdf_builder_debug_performance']) ? '1' : '0',
+            'debug_database' => !empty($_POST['pdf_builder_debug_database']) ? '1' : '0',
 
             // Développeur - Logs
             'log_level' => intval($_POST['log_level'] ?? 3),
@@ -710,6 +718,11 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Sauvegarde des paramètres développeur
      */
     private function save_developer_settings() {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('PDF Builder: Starting save_developer_settings');
+            error_log('PDF Builder: POST data keys: ' . implode(', ', array_keys($_POST)));
+        }
+
         $settings = [
             'pdf_builder_developer_enabled' => isset($_POST['pdf_builder_developer_enabled']) ? '1' : '0',
             'pdf_builder_developer_password' => sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''),
@@ -726,8 +739,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             'pdf_builder_force_https' => isset($_POST['force_https']) ? '1' : '0',
         ];
 
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('PDF Builder: Settings to save: ' . json_encode($settings));
+        }
+
         foreach ($settings as $key => $value) {
             update_option($key, $value);
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('PDF Builder: Saved option ' . $key . ' = ' . $value);
+            }
         }
 
         return count($settings);
