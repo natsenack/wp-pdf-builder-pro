@@ -643,7 +643,7 @@ function pdf_builder_save_settings_handler() {
                 $response_data = [
                     'saved_count' => $saved_count,
                     'errors' => $errors,
-                    'saved' => $saved_options,
+                    'saved_values' => $saved_options,
                     'debug_info' => [
                         'total_post' => count($_POST),
                         'ignored' => $ignored_fields,
