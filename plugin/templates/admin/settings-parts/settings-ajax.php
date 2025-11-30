@@ -541,50 +541,36 @@ function pdf_builder_save_settings_handler() {
     $log_file = WP_CONTENT_DIR . '/pdf-builder-debug.log';
     file_put_contents($log_file, date('Y-m-d H:i:s') . " - Handler called\n", FILE_APPEND);
 
-    // Initialize variables
-    $js_collected = [];
-
-    // Debug: Log that function is called
-    PDF_Builder_Security_Manager::debug_log('php_errors', 'pdf_builder_save_settings_handler called with current_tab: ' . ($_POST['current_tab'] ?? 'not set'));
-    PDF_Builder_Security_Manager::debug_log('php_errors', 'POST data: ' . print_r($_POST, true));
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        send_ajax_response(false, 'Permissions insuffisantes');
+        return;
+    }
 
     $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
 
     // Extraire la liste des champs collectés côté JS pour comparaison (si présente)
     $js_collected = [];
-    if (isset($_POST['js_collected_fields'])) {
-        $decoded = json_decode($_POST['js_collected_fields'], true);
+    if (!empty($_POST['js_collected_fields'])) {
+        $decoded = json_decode(stripslashes($_POST['js_collected_fields']), true);
         if (is_array($decoded)) {
             $js_collected = $decoded;
-        } else {
-            error_log('PDF Builder ERROR - js_collected_fields is not valid JSON array: ' . $_POST['js_collected_fields']);
         }
-    }
-    if (isset($_POST['js_collected_fields'])) {
         unset($_POST['js_collected_fields']);
     }
 
-    // Debug: Log after nonce verification
-    file_put_contents($log_file, date('Y-m-d H:i:s') . " - Nonce verified, current_tab = $current_tab\n", FILE_APPEND);
-    PDF_Builder_Security_Manager::debug_log('php_errors', 'AJAX: Handler started, current_tab = ' . $current_tab);
-
     // Traiter directement selon l'onglet
-    switch ($current_tab) {
-        case 'all':
-            try {
-                // Processing all settings from the floating save button                // Initialize variables
+    try {
+        switch ($current_tab) {
+            case 'all':
                 $saved_count = 0;
                 $errors = [];
                 $processed_fields = [];
                 $ignored_fields = [];
-                $js_collected = isset($_POST['collectedFields']) ? json_decode(stripslashes($_POST['collectedFields']), true) : [];
 
-                // Debug: Log all received POST fields
                 error_log('PDF Builder DEBUG - All received POST fields: ' . implode(', ', array_keys($_POST)));
 
-                // Process all submitted fields
                 foreach ($_POST as $key => $value) {
-                    // Ignore special fields
                     if (in_array($key, ['action', 'nonce', 'current_tab'])) {
                         $ignored_fields[] = $key;
                         continue;
@@ -593,55 +579,39 @@ function pdf_builder_save_settings_handler() {
                     $processed_fields[] = $key;
 
                     try {
-                        // Prefix key with pdf_builder_ if it doesn't already have it
                         $option_key = $key;
                         if (strpos($key, 'pdf_builder_') !== 0) {
                             $option_key = 'pdf_builder_' . $key;
                         }
 
-                        // Process according to field type
                         if (strpos($key, '_enabled') !== false || strpos($key, '_debug') !== false) {
-                            // Boolean fields
-                            $sanitized_value = $value === '1' || $value === 'true' ? 1 : 0;
+                            $sanitized_value = ($value === '1' || $value === 'true') ? 1 : 0;
                         } elseif (is_array($value)) {
-                            // Arrays
                             $sanitized_value = array_map('sanitize_text_field', $value);
                         } else {
-                            // Normal text
                             $sanitized_value = sanitize_text_field($value);
                         }
 
-                        // Save the option
                         update_option($option_key, $sanitized_value);
                         $saved_count++;
-
                     } catch (Exception $e) {
-                        $errors[] = "Error saving $key: " . $e->getMessage();
+                        $errors[] = "Erreur lors de la sauvegarde de $key: " . $e->getMessage();
                     }
                 }
 
-                // Process unchecked checkbox fields (which are not sent)
+                // Handle some known checkboxes not sent
                 $checkbox_fields = [
-                    'debug_mode',
-                    'log_level',
-                    'pdf_cache_enabled',
-                    'pdf_metadata_enabled',
-                    'pdf_print_optimized',
-                    'template_library_enabled',
-                    'developer_enabled'
+                    'debug_mode', 'log_level', 'pdf_cache_enabled', 'pdf_metadata_enabled', 'pdf_print_optimized', 'template_library_enabled', 'developer_enabled'
                 ];
-
                 foreach ($checkbox_fields as $field) {
                     if (!isset($_POST[$field])) {
                         update_option('pdf_builder_' . $field, 0);
-                        $saved_count++;
                     }
                 }
 
-                // Success message
-                $message = "✅ $saved_count settings saved successfully.";
+                $message = sprintf('%d paramètres sauvegardés.', $saved_count);
                 if (!empty($errors)) {
-                    $message .= " ⚠️ " . count($errors) . " errors ignored.";
+                    $message .= ' ' . count($errors) . ' erreurs.';
                 }
 
                 send_ajax_response(true, $message, [
@@ -652,36 +622,22 @@ function pdf_builder_save_settings_handler() {
                         'ignored' => $ignored_fields,
                         'processed' => count($processed_fields),
                         'saved' => $saved_count,
-                        'error_count' => count($errors),
-                        'comparison' => [
-                            'js_collected' => count($js_collected),
-                            'php_received' => count($_POST),
-                            'php_processed' => count($processed_fields),
-                            'saved' => $saved_count
-                        ],
                         'missing_fields' => implode(', ', array_diff($js_collected, array_keys($_POST)))
                     ]
                 ]);
+                break;
 
-                // Detailed debug log
-                error_log('PDF Builder DEBUG - Detailed analysis:');
-                error_log('  Total POST: ' . count($_POST));
-                error_log('  Ignored: ' . count($ignored_fields) . ' - ' . implode(', ', $ignored_fields));
-                error_log('  Processed: ' . count($processed_fields));
-                error_log('  Saved: ' . $saved_count);
-                error_log('  Errors: ' . count($errors));
-
-        } catch (Exception $e) {
-            // Debug: Log the exception
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('PDF Builder: Exception in save_settings: ' . $e->getMessage());
-                error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
-            }
-            send_ajax_response(false, 'Error during saving: ' . $e->getMessage());
-        break;
-
-
+            default:
+                send_ajax_response(false, 'Onglet non supporté: ' . $current_tab);
+                break;
         }
+
+    } catch (Exception $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('PDF Builder: Exception in save_settings: ' . $e->getMessage());
+            error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
+        }
+        send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
     }
 }
 
