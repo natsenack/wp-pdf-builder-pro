@@ -2820,42 +2820,51 @@ window.toggleRGPDControls = toggleRGPDControls;
                             }
                         }
 
-                        // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
-                        if (originalData && originalData.data && originalData.data.result_data) {
-                            const savedData = originalData.data.result_data;
+                                    // Mettre à jour les champs du formulaire avec les valeurs sauvegardées depuis le serveur
+                                    if (originalData && originalData.data && originalData.data.result_data) {
+                                        const savedData = originalData.data.result_data;
+                                        console.log('🔄 MISE À JOUR CHAMPS - Données reçues:', savedData);
 
-                            Object.keys(savedData).forEach(fieldName => {
-                                const fieldValue = savedData[fieldName];
-                                const fieldElement = document.querySelector(`[name="${fieldName}"]`);
+                                        Object.keys(savedData).forEach(fieldName => {
+                                            const fieldValue = savedData[fieldName];
+                                            const fieldElement = document.querySelector(`[name="${fieldName}"]`);
+                                            console.log(`🔍 Traitement ${fieldName} = "${fieldValue}", élément trouvé:`, !!fieldElement);
 
-                                if (fieldElement && fieldElement.type === 'checkbox') {
-                                    // Mettre à jour l'état checked des checkboxes
-                                    const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
-                                    fieldElement.checked = shouldBeChecked;
+                                            if (fieldElement && fieldElement.type === 'checkbox') {
+                                                const oldChecked = fieldElement.checked;
+                                                const shouldBeChecked = fieldValue === '1' || fieldValue === 1 || fieldValue === true;
+                                                fieldElement.checked = shouldBeChecked;
+                                                console.log(`📝 Checkbox ${fieldName}: ${oldChecked} -> ${shouldBeChecked} (valeur: "${fieldValue}")`);
 
-                                    // Forcer la mise à jour visuelle du toggle
-                                    const changeEvent = new Event('change', { bubbles: true });
-                                    fieldElement.dispatchEvent(changeEvent);
-                                    fieldElement.offsetHeight; // Force reflow
+                                                // Forcer la mise à jour visuelle du toggle
+                                                const changeEvent = new Event('change', { bubbles: true });
+                                                fieldElement.dispatchEvent(changeEvent);
+                                                fieldElement.offsetHeight; // Force reflow
 
-                                    // Animation CSS
-                                    const toggleContainer = fieldElement.closest('.toggle-switch');
-                                    if (toggleContainer) {
-                                        toggleContainer.classList.add('toggle-updated');
-                                        setTimeout(() => {
-                                            toggleContainer.classList.remove('toggle-updated');
-                                        }, 50);
+                                                // Animation CSS
+                                                const toggleContainer = fieldElement.closest('.toggle-switch');
+                                                if (toggleContainer) {
+                                                    toggleContainer.classList.add('toggle-updated');
+                                                    setTimeout(() => {
+                                                        toggleContainer.classList.remove('toggle-updated');
+                                                    }, 50);
+                                                }
+
+                                                // Mettre à jour les sections développeur si nécessaire
+                                                if (fieldName === 'pdf_builder_developer_enabled') {
+                                                    if (window.updateDeveloperSections) {
+                                                        window.updateDeveloperSections();
+                                                    }
+                                                }
+                                            } else if (fieldElement) {
+                                                console.log(`ℹ️ Champ ${fieldName} trouvé mais pas checkbox (type: ${fieldElement.type})`);
+                                            } else {
+                                                console.warn(`⚠️ Champ ${fieldName} non trouvé dans le DOM`);
+                                            }
+                                        });
+                                    } else {
+                                        console.error('❌ Aucune donnée result_data reçue du serveur');
                                     }
-
-                                    // Mettre à jour les sections développeur si nécessaire
-                                    if (fieldName === 'pdf_builder_developer_enabled') {
-                                        if (window.updateDeveloperSections) {
-                                            window.updateDeveloperSections();
-                                        }
-                                    }
-                                }
-                            });
-                        }
 
                         // Recharger les previews avec les nouvelles données
                         if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeAllPreviews === 'function') {

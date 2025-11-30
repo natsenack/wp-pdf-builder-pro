@@ -811,6 +811,8 @@ function pdf_builder_save_settings_handler() {
                 $saved_count = 0;
                 $saved_options = [];
 
+                error_log('PHP SAVE DEBUG - POST data received: ' . print_r($_POST, true));
+
                 foreach ($_POST as $key => $value) {
                     if (in_array($key, ['action', 'nonce', 'current_tab', 'js_collected_fields'])) {
                         continue;
@@ -818,9 +820,14 @@ function pdf_builder_save_settings_handler() {
 
                     $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     update_option($option_key, sanitize_text_field($value));
-                    $saved_options[$key] = get_option($option_key, '');
+                    $saved_value = get_option($option_key, '');
+                    $saved_options[$key] = $saved_value;
                     $saved_count++;
+
+                    error_log("PHP SAVE DEBUG - Saved {$key} -> {$option_key} = '{$saved_value}'");
                 }
+
+                error_log('PHP SAVE DEBUG - Returning result_data: ' . print_r($saved_options, true));
 
                 $message = sprintf('%d paramètres sauvegardés.', $saved_count);
 
