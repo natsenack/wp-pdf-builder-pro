@@ -7,8 +7,8 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
             <h2>Paramètres Développeur</h2>
             <p style="color: #666;">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
-         <form method="post" id="developpeur-form">
-                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_developpeur_nonce'); ?>
+         <form method="post" id="settings-developpeur-form">
+                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
                 <input type="hidden" name="submit_developpeur" value="1">
 
                 <h3 class="section-title">🔐 Contrôle d'Accès</h3>
@@ -908,7 +908,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Boutons d'outils de développement
-    const testLicenseBtn = document.getElementById('test_license_btn');
+    const toggleLicenseTestModeBtn = document.getElementById('toggle_license_test_mode_btn');
     const clearCacheBtn = document.getElementById('clear_cache_btn');
     const testRoutesBtn = document.getElementById('test_routes_btn');
     const exportDiagnosticBtn = document.getElementById('export_diagnostic_btn');
@@ -964,21 +964,77 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Test License Button
-    if (testLicenseBtn) {
-        testLicenseBtn.addEventListener('click', function() {
-            makeAjaxCall('pdf_builder_test_license', testLicenseBtn,
+    if (toggleLicenseTestModeBtn) {
+        toggleLicenseTestModeBtn.addEventListener('click', function() {
+            // This button toggles test mode, not tests license
+            // The actual license testing is done via generate_license_key_btn
+        });
+    }
+
+    // Generate License Key Button
+    const generateLicenseKeyBtn = document.getElementById('generate_license_key_btn');
+    const copyLicenseKeyBtn = document.getElementById('copy_license_key_btn');
+    const deleteLicenseKeyBtn = document.getElementById('delete_license_key_btn');
+    const licenseKeyField = document.getElementById('license_test_key');
+    const licenseKeyStatus = document.getElementById('license_key_status');
+
+    if (generateLicenseKeyBtn && licenseKeyField && licenseKeyStatus) {
+        generateLicenseKeyBtn.addEventListener('click', function() {
+            makeAjaxCall('pdf_builder_generate_test_license_key', generateLicenseKeyBtn,
                 function(data) {
-                    let message = '✅ ' + data.data.message;
-                    if (data.data.license_key) {
-                        message += '\nClé: ' + data.data.license_key;
+                    licenseKeyField.value = data.data.license_key;
+                    licenseKeyStatus.textContent = '✅ Clé générée avec succès';
+                    licenseKeyStatus.style.color = '#28a745';
+                    // Show delete button
+                    if (deleteLicenseKeyBtn) {
+                        deleteLicenseKeyBtn.style.display = 'inline-block';
                     }
-                    if (data.data.expires) {
-                        message += '\nExpire: ' + data.data.expires;
-                    }
-                    alert(message);
                 },
                 function(data) {
-                    alert('❌ ' + data.data.message);
+                    licenseKeyStatus.textContent = '❌ ' + data.data.message;
+                    licenseKeyStatus.style.color = '#dc3545';
+                }
+            );
+        });
+    }
+
+    if (copyLicenseKeyBtn && licenseKeyField) {
+        copyLicenseKeyBtn.addEventListener('click', function() {
+            if (licenseKeyField.value) {
+                navigator.clipboard.writeText(licenseKeyField.value).then(function() {
+                    licenseKeyStatus.textContent = '📋 Clé copiée dans le presse-papiers';
+                    licenseKeyStatus.style.color = '#17a2b8';
+                    setTimeout(function() {
+                        licenseKeyStatus.textContent = '';
+                    }, 3000);
+                }).catch(function(err) {
+                    licenseKeyStatus.textContent = '❌ Erreur lors de la copie';
+                    licenseKeyStatus.style.color = '#dc3545';
+                });
+            } else {
+                licenseKeyStatus.textContent = '❌ Aucune clé à copier';
+                licenseKeyStatus.style.color = '#dc3545';
+            }
+        });
+    }
+
+    if (deleteLicenseKeyBtn && licenseKeyField && licenseKeyStatus) {
+        deleteLicenseKeyBtn.addEventListener('click', function() {
+            if (!confirm('Voulez-vous vraiment supprimer cette clé de test ?')) {
+                return;
+            }
+
+            makeAjaxCall('pdf_builder_delete_test_license_key', deleteLicenseKeyBtn,
+                function(data) {
+                    licenseKeyField.value = '';
+                    licenseKeyStatus.textContent = '🗑️ Clé supprimée';
+                    licenseKeyStatus.style.color = '#28a745';
+                    // Hide delete button
+                    deleteLicenseKeyBtn.style.display = 'none';
+                },
+                function(data) {
+                    licenseKeyStatus.textContent = '❌ ' + data.data.message;
+                    licenseKeyStatus.style.color = '#dc3545';
                 }
             );
         });
@@ -998,6 +1054,41 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (typeof updateCacheMetrics === 'function') {
                         updateCacheMetrics();
                     }
+                }
+            );
+        });
+    }
+
+    // Reload Cache Button
+    const reloadCacheBtn = document.getElementById('reload_cache_btn');
+    if (reloadCacheBtn) {
+        reloadCacheBtn.addEventListener('click', function() {
+            makeAjaxCall('pdf_builder_clear_cache', reloadCacheBtn,
+                function(data) {
+                    alert('✅ Cache rechargé avec succès\n' + data.data.message);
+                    // Refresh cache metrics if available
+                    if (typeof updateCacheMetrics === 'function') {
+                        updateCacheMetrics();
+                    }
+                }
+            );
+        });
+    }
+
+    // Clear Temp Button
+    const clearTempBtn = document.getElementById('clear_temp_btn');
+    if (clearTempBtn) {
+        clearTempBtn.addEventListener('click', function() {
+            if (!confirm('Voulez-vous vider tous les fichiers temporaires ?')) {
+                return;
+            }
+
+            makeAjaxCall('pdf_builder_clear_temp', clearTempBtn,
+                function(data) {
+                    alert('✅ ' + data.data.message);
+                },
+                function(data) {
+                    alert('❌ ' + data.data.message);
                 }
             );
         });
@@ -1047,6 +1138,43 @@ document.addEventListener('DOMContentLoaded', function() {
                         message += `• ${log.name} (${log.size} octets) - Modifié: ${log.modified}\n`;
                     });
                     alert(message);
+                },
+                function(data) {
+                    alert('❌ ' + data.data.message);
+                }
+            );
+        });
+    }
+
+    // Refresh Logs Button
+    const refreshLogsBtn = document.getElementById('refresh_logs_btn');
+    const clearLogsBtn = document.getElementById('clear_logs_btn');
+    const logsContainer = document.getElementById('logs_content');
+
+    if (refreshLogsBtn && logsContainer) {
+        refreshLogsBtn.addEventListener('click', function() {
+            makeAjaxCall('pdf_builder_refresh_logs', refreshLogsBtn,
+                function(data) {
+                    logsContainer.innerHTML = '<pre>' + data.data.logs_content + '</pre>';
+                    alert('✅ Logs actualisés');
+                },
+                function(data) {
+                    alert('❌ Erreur lors de l\'actualisation des logs: ' + data.data.message);
+                }
+            );
+        });
+    }
+
+    if (clearLogsBtn && logsContainer) {
+        clearLogsBtn.addEventListener('click', function() {
+            if (!confirm('Voulez-vous vraiment vider tous les logs ?')) {
+                return;
+            }
+
+            makeAjaxCall('pdf_builder_clear_logs', clearLogsBtn,
+                function(data) {
+                    logsContainer.innerHTML = '<em style="color: #666;">Cliquez sur "Actualiser Logs" pour charger les logs récents...</em>';
+                    alert('✅ ' + data.data.message);
                 },
                 function(data) {
                     alert('❌ ' + data.data.message);
