@@ -2435,6 +2435,11 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     if (typeof window.updateTemplateLibraryIndicator === 'function') {
                         window.updateTemplateLibraryIndicator();
                     }
+
+                    // Update developer toggle states after save
+                    if (typeof window.updateDeveloperToggleStates === 'function') {
+                        window.updateDeveloperToggleStates();
+                    }
                 }
             }).catch(error => {
                 console.error('Floating save error:', error);

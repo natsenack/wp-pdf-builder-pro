@@ -838,6 +838,63 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    // Fonction pour mettre à jour les états des toggles Debug Éditeur PDF et Debug Page Paramètres (basé sur les valeurs sauvegardées)
+    window.updateDeveloperToggleStates = function() {
+        // Récupérer les éléments des toggles
+        const pdfEditorToggle = document.getElementById('pdf_builder_debug_pdf_editor');
+        const settingsPageToggle = document.getElementById('pdf_builder_debug_settings_page');
+
+        // Récupérer les valeurs sauvegardées depuis window.pdfBuilderSavedSettings
+        const pdfEditorValue = window.pdfBuilderSavedSettings?.pdf_builder_debug_pdf_editor || false;
+        const settingsPageValue = window.pdfBuilderSavedSettings?.pdf_builder_debug_settings_page || false;
+
+        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            console.log('🔧 [MISE À JOUR TOGGLES] Mise à jour des états des toggles développeur');
+            console.log('🔧 [MISE À JOUR TOGGLES] Valeurs sauvegardées:', {
+                pdf_builder_debug_pdf_editor: pdfEditorValue,
+                pdf_builder_debug_settings_page: settingsPageValue
+            });
+        }
+
+        // Mettre à jour l'état du toggle Debug Éditeur PDF
+        if (pdfEditorToggle) {
+            const newCheckedState = Boolean(pdfEditorValue);
+            if (pdfEditorToggle.checked !== newCheckedState) {
+                pdfEditorToggle.checked = newCheckedState;
+                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    console.log(`🔧 [MISE À JOUR TOGGLES] Toggle Debug Éditeur PDF mis à jour: ${newCheckedState}`);
+                }
+            }
+        } else {
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.error('❌ [MISE À JOUR TOGGLES] Toggle Debug Éditeur PDF introuvable dans le DOM');
+            }
+        }
+
+        // Mettre à jour l'état du toggle Debug Page Paramètres
+        if (settingsPageToggle) {
+            const newCheckedState = Boolean(settingsPageValue);
+            if (settingsPageToggle.checked !== newCheckedState) {
+                settingsPageToggle.checked = newCheckedState;
+                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    console.log(`🔧 [MISE À JOUR TOGGLES] Toggle Debug Page Paramètres mis à jour: ${newCheckedState}`);
+                }
+            }
+        } else {
+            if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                console.error('❌ [MISE À JOUR TOGGLES] Toggle Debug Page Paramètres introuvable dans le DOM');
+            }
+        }
+
+        // Mettre à jour la visibilité des toggles si nécessaire
+        updatePdfEditorToggleVisibility();
+        updateSettingsPageToggleVisibility();
+
+        if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+            console.log('🔧 [MISE À JOUR TOGGLES] Mise à jour terminée');
+        }
+    };
+
     if (developerEnabledToggle) {
         if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
             console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Élément toggle trouvé, initialisation...');
