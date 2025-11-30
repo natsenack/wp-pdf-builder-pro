@@ -1524,60 +1524,6 @@ function pdf_builder_get_cache_metrics_handler() {
     }
 }
 
-/**
- * AJAX handler for database optimization
- */
-function pdf_builder_optimize_database_handler() {
-    // Check permissions
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    try {
-        global $wpdb;
-
-        // Get database optimization results
-        $results = [];
-
-        // Optimize all tables
-        $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}%'", ARRAY_N);
-        $optimized_count = 0;
-
-        foreach ($tables as $table) {
-            $table_name = $table[0];
-            $wpdb->query("OPTIMIZE TABLE {$table_name}");
-            $optimized_count++;
-        }
-
-        // Clean up orphaned data
-        $cleanup_queries = [
-            "DELETE pm FROM {$wpdb->postmeta} pm LEFT JOIN {$wpdb->posts} p ON pm.post_id = p.ID WHERE p.ID IS NULL",
-            "DELETE tr FROM {$wpdb->term_relationships} tr LEFT JOIN {$wpdb->posts} p ON tr.object_id = p.ID WHERE p.ID IS NULL",
-            "DELETE tt FROM {$wpdb->term_taxonomy} tt LEFT JOIN {$wpdb->terms} t ON tt.term_id = t.term_id WHERE t.term_id IS NULL"
-        ];
-
-        $cleanup_count = 0;
-        foreach ($cleanup_queries as $query) {
-            $result = $wpdb->query($query);
-            if ($result !== false) {
-                $cleanup_count += $result;
-            }
-        }
-
-        wp_send_json_success(array(
-            'message' => 'Base de données optimisée avec succès',
-            'data' => array(
-                'tables_optimized' => $optimized_count,
-                'records_cleaned' => $cleanup_count
-            )
-        ));
-
-    } catch (Exception $e) {
-        wp_send_json_error('Erreur lors de l\'optimisation: ' . $e->getMessage());
-    }
-}
-
 // Register AJAX actions for canvas settings
 add_action('wp_ajax_pdf_builder_save_canvas_settings', 'pdf_builder_save_canvas_settings_handler');
 add_action('wp_ajax_pdf_builder_get_canvas_settings', 'pdf_builder_get_canvas_settings_handler');
