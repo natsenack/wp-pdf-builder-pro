@@ -726,9 +726,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Debug: Vérifier les valeurs sauvegardées
     console.log('🔧 [DEBUG] Valeurs sauvegardées:', {
-        debug_javascript: '<?php echo isset($settings['pdf_builder_debug_javascript']) ? $settings['pdf_builder_debug_javascript'] : 'NOT_SET'; ?>',
-        debug_pdf_editor: '<?php echo isset($settings['pdf_builder_debug_pdf_editor']) ? $settings['pdf_builder_debug_pdf_editor'] : 'NOT_SET'; ?>',
-        debug_settings_page: '<?php echo isset($settings['pdf_builder_debug_settings_page']) ? $settings['pdf_builder_debug_settings_page'] : 'NOT_SET'; ?>'
+        debug_javascript: window.pdfBuilderSavedSettings?.pdf_builder_debug_javascript || 'NOT_SET',
+        debug_pdf_editor: window.pdfBuilderSavedSettings?.pdf_builder_debug_pdf_editor || 'NOT_SET',
+        debug_settings_page: window.pdfBuilderSavedSettings?.pdf_builder_debug_settings_page || 'NOT_SET'
     });
 
     // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
@@ -1682,6 +1682,7 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
 
     // Manual testing only - no automatic execution on page load
     // Tests are triggered manually via buttons only
+});
 });
 </script>
 
