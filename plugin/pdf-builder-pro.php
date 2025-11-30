@@ -10,6 +10,8 @@
  * License: GPL v2 or later
  * Text Domain: pdf-builder-pro
  * Domain Path: /languages
+ */
+
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
