@@ -728,7 +728,6 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 <h3 style="margin-top: 0; color: #495057;">💾 Sauvegarde des Paramètres Développeur</h3>
                 <p style="margin-bottom: 15px; color: #666;">Sauvegardez uniquement les paramètres de cette section développeur.</p>
                 <button type="submit" class="button button-primary" style="background: #007cba; border-color: #007cba; color: white; padding: 10px 20px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer;">
-                    💾 Sauvegarder les Paramètres Développeur
                 </button>
             </div>
 
