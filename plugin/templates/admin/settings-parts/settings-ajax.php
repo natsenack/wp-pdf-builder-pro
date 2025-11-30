@@ -547,6 +547,15 @@ function pdf_builder_save_settings_handler() {
         return;
     }
 
+    // Vérifier le nonce pour la sécurité
+    $received_nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
+    $verify_ajax = $received_nonce ? wp_verify_nonce($received_nonce, 'pdf_builder_ajax') : false;
+    if (!$verify_ajax) {
+        error_log('[PDF Builder Nonce] ERROR: {"message":"Nonce invalide","context":"save_settings","timestamp":"' . current_time('Y-m-d H:i:s') . '","user_id":' . get_current_user_id() . ',"extra":{"provided_nonce":"' . substr($received_nonce, 0, 12) . '...","expected_action":"pdf_builder_ajax"}}');
+        send_ajax_response(false, 'Nonce invalide', ['received_nonce' => $received_nonce, 'verify_ajax' => $verify_ajax ? 1 : 0]);
+        return;
+    }
+
     $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
 
     // Extraire la liste des champs collectés côté JS pour comparaison (si présente)
