@@ -234,7 +234,7 @@ jQuery(document).ready(function($) {
     });
 
     // Gestion des toggles avec confirmation pour les paramètres critiques
-    $('input[name="cache_enabled"]').on('change', function() {
+    $('#systeme input[name="cache_enabled"]').on('change', function() {
         const isEnabled = $(this).is(':checked');
         if (!isEnabled) {
             if (!confirm('Désactiver le cache peut ralentir les performances. Continuer ?')) {
@@ -253,7 +253,7 @@ jQuery(document).ready(function($) {
     // Fonction pour cacher/afficher les options de cache
     function toggleCacheOptions(isEnabled) {
         // Sélectionner toutes les lignes de la table sauf la première (Cache activé)
-        const $cacheTable = $('input[name="cache_enabled"]').closest('table.form-table');
+        const $cacheTable = $('#systeme input[name="cache_enabled"]').closest('table.form-table');
         const $allRows = $cacheTable.find('tr');
         const $cacheEnabledRow = $allRows.first();
 
@@ -305,7 +305,7 @@ jQuery(document).ready(function($) {
     });
 
     // État initial au chargement de la page
-    const initialCacheEnabled = $('input[name="cache_enabled"]').is(':checked');
+    const initialCacheEnabled = $('#systeme input[name="cache_enabled"]').is(':checked');
     toggleCacheOptions(initialCacheEnabled);
     updateCacheStatus(initialCacheEnabled);
 
