@@ -2149,9 +2149,9 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
             let developerFields = 0;
 
             allInputs.forEach(input => {
-                // Skip buttons, hidden fields we don't want, and disabled inputs
+                // Skip buttons and hidden fields we don't want, but include disabled inputs as they may have values
                 if (input.type === 'button' || input.type === 'submit' || input.type === 'reset' ||
-                    input.name === '' || input.disabled) {
+                    input.name === '' || input.type === 'hidden') {
                     return;
                 }
 
@@ -2162,7 +2162,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     if (input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log')) {
                         developerFields++;
                         if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.log('[FLOATING SAVE] Developer checkbox: ' + input.name + ' = ' + (input.checked ? '1' : '0'));
+                            console.log('[FLOATING SAVE] Developer checkbox: ' + input.name + ' = ' + (input.checked ? '1' : '0') + (input.disabled ? ' (disabled)' : ''));
                         }
                     }
                 } else if (input.type === 'radio') {
@@ -2176,7 +2176,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     if (input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log')) {
                         developerFields++;
                         if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.log('[FLOATING SAVE] Developer field: ' + input.name + ' = ' + (input.value || ''));
+                            console.log('[FLOATING SAVE] Developer field: ' + input.name + ' = ' + (input.value || '') + (input.disabled ? ' (disabled)' : ''));
                         }
                     }
                 }
