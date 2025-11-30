@@ -471,7 +471,7 @@ if (!empty($_POST)) {
 }
 
 // Process form - handle both regular form submissions and AJAX requests
-if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || (isset($_POST['action']) && $_POST['action'] === 'pdf_builder_save_settings')) {
+if (((isset($_POST['submit']) || isset($_POST['submit_developpeur'])) && isset($_POST['pdf_builder_settings_nonce'])) || (isset($_POST['action']) && $_POST['action'] === 'pdf_builder_save_settings')) {
     if ($is_ajax) {
         if (defined('WP_DEBUG') && WP_DEBUG) {
 
