@@ -249,20 +249,20 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             case 'developpeur':
                 $saved_options = [
-                    'developer_enabled' => get_option('pdf_builder_developer_enabled', '0'),
-                    'developer_password' => get_option('pdf_builder_developer_password', ''),
-                    'debug_php_errors' => get_option('pdf_builder_debug_php_errors', '0'),
+                    'pdf_builder_developer_enabled' => get_option('pdf_builder_developer_enabled', '0'),
+                    'pdf_builder_developer_password' => get_option('pdf_builder_developer_password', ''),
+                    'pdf_builder_debug_php_errors' => get_option('pdf_builder_debug_php_errors', '0'),
                     'pdf_builder_debug_javascript' => get_option('pdf_builder_debug_javascript', '0'),
                     'pdf_builder_debug_javascript_verbose' => get_option('pdf_builder_debug_javascript_verbose', '0'),
                     'pdf_builder_debug_ajax' => get_option('pdf_builder_debug_ajax', '0'),
                     'pdf_builder_debug_performance' => get_option('pdf_builder_debug_performance', '0'),
                     'pdf_builder_debug_database' => get_option('pdf_builder_debug_database', '0'),
-                    'log_level' => get_option('pdf_builder_log_level', 3),
-                    'log_file_size' => get_option('pdf_builder_log_file_size', 10),
-                    'log_retention' => get_option('pdf_builder_log_retention', 30),
-                    'force_https' => get_option('pdf_builder_force_https', '0'),
-                    'performance_monitoring' => get_option('pdf_builder_performance_monitoring', '0'),
-                    'license_test_mode' => get_option('pdf_builder_license_test_mode_enabled', '0'),
+                    'pdf_builder_log_level' => get_option('pdf_builder_log_level', 3),
+                    'pdf_builder_log_file_size' => get_option('pdf_builder_log_file_size', 10),
+                    'pdf_builder_log_retention' => get_option('pdf_builder_log_retention', 30),
+                    'pdf_builder_force_https' => get_option('pdf_builder_force_https', '0'),
+                    'pdf_builder_performance_monitoring' => get_option('pdf_builder_performance_monitoring', '0'),
+                    'pdf_builder_license_test_mode_enabled' => get_option('pdf_builder_license_test_mode_enabled', '0'),
                 ];
                 break;
 
@@ -699,23 +699,23 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_developer_settings() {
         $settings = [
-            'pdf_builder_developer_enabled' => $_POST['pdf_builder_developer_enabled'] ?? '0',
+            'pdf_builder_developer_enabled' => isset($_POST['pdf_builder_developer_enabled']) ? '1' : '0',
             'pdf_builder_developer_password' => sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''),
             'pdf_builder_debug_php_errors' => isset($_POST['pdf_builder_debug_php_errors']) ? '1' : '0',
-            'debug_javascript' => isset($_POST['debug_javascript']) ? '1' : '0',
-            'debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']) ? '1' : '0',
-            'debug_ajax' => isset($_POST['debug_ajax']) ? '1' : '0',
-            'debug_performance' => isset($_POST['debug_performance']) ? '1' : '0',
-            'debug_database' => isset($_POST['debug_database']) ? '1' : '0',
-            'log_level' => intval($_POST['log_level'] ?? 3),
-            'log_file_size' => intval($_POST['log_file_size'] ?? 10),
-            'log_retention' => intval($_POST['log_retention'] ?? 30),
-            'license_test_mode' => isset($_POST['license_test_mode']) ? '1' : '0',
-            'force_https' => isset($_POST['force_https']) ? '1' : '0',
+            'pdf_builder_debug_javascript' => isset($_POST['debug_javascript']) ? '1' : '0',
+            'pdf_builder_debug_javascript_verbose' => isset($_POST['debug_javascript_verbose']) ? '1' : '0',
+            'pdf_builder_debug_ajax' => isset($_POST['debug_ajax']) ? '1' : '0',
+            'pdf_builder_debug_performance' => isset($_POST['debug_performance']) ? '1' : '0',
+            'pdf_builder_debug_database' => isset($_POST['debug_database']) ? '1' : '0',
+            'pdf_builder_log_level' => intval($_POST['log_level'] ?? 3),
+            'pdf_builder_log_file_size' => intval($_POST['log_file_size'] ?? 10),
+            'pdf_builder_log_retention' => intval($_POST['log_retention'] ?? 30),
+            'pdf_builder_license_test_mode_enabled' => isset($_POST['license_test_mode']) ? '1' : '0',
+            'pdf_builder_force_https' => isset($_POST['force_https']) ? '1' : '0',
         ];
 
         foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
+            update_option($key, $value);
         }
 
         return count($settings);

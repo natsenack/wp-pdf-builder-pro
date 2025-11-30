@@ -850,7 +850,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const statusIndicator = document.querySelector('.developer-status-indicator');
         if (statusIndicator) {
             // Utiliser la valeur sauvegardée depuis window.pdfBuilderSavedSettings
-            const isEnabled = window.pdfBuilderSavedSettings?.developer_enabled || false;
+            const isEnabled = window.pdfBuilderSavedSettings?.pdf_builder_developer_enabled || false;
             statusIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
             statusIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
             statusIndicator.style.color = 'white';
