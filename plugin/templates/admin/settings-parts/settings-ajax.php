@@ -1260,6 +1260,10 @@ function pdf_builder_save_all_settings_handler() {
         return;
     }
 
+    // Log de l'onglet en cours d'enregistrement
+    $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
+    error_log('[PDF Builder] SAVE: Enregistrement depuis l\'onglet "' . $current_tab . '"');
+
     try {
         $saved_count = 0;
         $errors = [];

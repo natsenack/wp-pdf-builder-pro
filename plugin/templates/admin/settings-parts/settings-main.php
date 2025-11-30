@@ -2735,7 +2735,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                 });
 
                 formData.append('action', 'pdf_builder_save_settings');
-                formData.append('tab', 'all'); // Toujours sauvegarder tous les onglets
+                formData.append('current_tab', tabId); // Ajouter l'onglet actif pour le logging côté PHP
 
                 // Inclure aussi les paramètres canvas depuis window.pdfBuilderCanvasSettings
                 if (window.pdfBuilderCanvasSettings) {
@@ -3174,7 +3174,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                             });
 
                             formData.append('action', 'pdf_builder_save_settings');
-                            formData.append('tab', 'all'); // Toujours sauvegarder tous les onglets
+                            formData.append('current_tab', tabId); // Ajouter l'onglet actif pour le logging côté PHP
 
                             if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                 console.log('📤 [PDF Builder] Envoi des données du formulaire:', {
