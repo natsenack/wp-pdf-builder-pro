@@ -53,7 +53,12 @@ class PDF_Builder_Nonce_Manager {
             return false;
         }
 
+        // Debug: Log the nonce validation attempt
+        error_log('[PDF Builder Nonce DEBUG] Validating nonce: ' . substr($nonce, 0, 10) . '... for action: ' . $this->nonce_action . ' in context: ' . $context);
+
         $is_valid = wp_verify_nonce($nonce, $this->nonce_action);
+
+        error_log('[PDF Builder Nonce DEBUG] Validation result: ' . ($is_valid ? 'VALID' : 'INVALID'));
 
         if (!$is_valid) {
             $this->log_error('Nonce invalide', $context, [
