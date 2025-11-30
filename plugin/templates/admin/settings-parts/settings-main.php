@@ -2859,7 +2859,13 @@ window.toggleRGPDControls = toggleRGPDControls;
                                                 console.log('🔍 [PDF Builder] Updating field: ' + fieldName + ' to ' + fieldValue);
 
                                                 // Chercher le champ DANS L'ONGLET ACTIF uniquement
-                                                const fieldElement = activeTabContent.querySelector(`[name="${fieldName}"]`);
+                                                let fieldElement = activeTabContent.querySelector(`[name="${fieldName}"]`);
+
+                                                // Si non trouvé et que le nom ne commence pas par pdf_builder_, essayer avec le préfixe
+                                                if (!fieldElement && !fieldName.startsWith('pdf_builder_')) {
+                                                    fieldElement = activeTabContent.querySelector(`[name="pdf_builder_${fieldName}"]`);
+                                                    console.log('🔍 [PDF Builder] Tried with prefix: pdf_builder_' + fieldName);
+                                                }
 
                                                 console.log('🔍 [PDF Builder] Field element found for ' + fieldName + ': ' + !!fieldElement);
 
