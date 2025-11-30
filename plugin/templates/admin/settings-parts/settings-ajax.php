@@ -822,7 +822,7 @@ function pdf_builder_save_settings_handler() {
                     $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
                     update_option($option_key, sanitize_text_field($value));
                     $saved_value = get_option($option_key, '');
-                    $saved_options[$key] = $saved_value;
+                    $saved_options[$option_key] = $saved_value;
                     $saved_count++;
 
                     error_log("PHP SAVE DEBUG - Saved {$key} -> {$option_key} = '{$saved_value}'");
