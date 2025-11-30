@@ -637,13 +637,13 @@ function pdf_builder_save_settings_handler() {
                 }
 
                 // Log détaillé pour debug
-                error_log('[PDF Builder] SAVE RESPONSE - saved_options keys: ' . implode(', ', array_keys($saved_options)));
-                error_log('[PDF Builder] SAVE RESPONSE - saved_options sample: ' . json_encode(array_slice($saved_options, 0, 5, true)));
+                error_log('[PDF Builder] SAVE RESPONSE - saved keys: ' . implode(', ', array_keys($saved_options)));
+                error_log('[PDF Builder] SAVE RESPONSE - saved sample: ' . json_encode(array_slice($saved_options, 0, 5, true)));
 
                 $response_data = [
                     'saved_count' => $saved_count,
                     'errors' => $errors,
-                    'saved_options' => $saved_options,
+                    'saved' => $saved_options,
                     'debug_info' => [
                         'total_post' => count($_POST),
                         'ignored' => $ignored_fields,
