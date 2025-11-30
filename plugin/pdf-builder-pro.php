@@ -16,6 +16,11 @@
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 
+// Premium features constant (set to false for free version)
+if (!defined('PDF_BUILDER_PREMIUM')) {
+    define('PDF_BUILDER_PREMIUM', false);
+}
+
 // VERSION ULTRA-SIMPLE - ne charger que l'essentiel
 if (function_exists('add_action')) {
     add_action('plugins_loaded', function() {
@@ -254,6 +259,164 @@ function pdf_builder_register_ajax_handlers() {
 }
 
 /**
+ * AJAX handler for optimizing database
+ */
+function pdf_builder_optimize_database_handler() {
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        global $wpdb;
+        $tables = [
+            $wpdb->posts,
+            $wpdb->postmeta,
+            $wpdb->prefix . 'woocommerce_order_items',
+            $wpdb->prefix . 'woocommerce_order_itemmeta'
+        ];
+
+        $optimized_count = 0;
+        foreach ($tables as $table) {
+            if ($wpdb->query("OPTIMIZE TABLE {$table}")) {
+                $optimized_count++;
+            }
+        }
+
+        wp_send_json_success(array(
+            'message' => 'Base de données optimisée avec succès',
+            'tables_optimized' => $optimized_count
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de l\'optimisation: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler for repairing templates
+ */
+function pdf_builder_repair_templates_handler() {
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        global $wpdb;
+
+        // Check and repair template tables
+        $tables = ['pdf_builder_templates', 'pdf_builder_pdfs'];
+        $repaired_count = 0;
+
+        foreach ($tables as $table) {
+            $result = $wpdb->get_row("CHECK TABLE {$wpdb->prefix}{$table}");
+            if ($result && $result->Msg_text !== 'OK') {
+                if ($wpdb->query("REPAIR TABLE {$wpdb->prefix}{$table}")) {
+                    $repaired_count++;
+                }
+            }
+        }
+
+        // Check settings
+        $settings = get_option('pdf_builder_settings', []);
+        if (!is_array($settings)) {
+            update_option('pdf_builder_settings', []);
+        }
+
+        wp_send_json_success(array(
+            'message' => 'Templates réparés avec succès',
+            'tables_repaired' => $repaired_count
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la réparation: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler for removing temporary files
+ */
+function pdf_builder_remove_temp_files_handler() {
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        $upload_dir = wp_upload_dir();
+        $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+
+        $deleted_count = 0;
+        if (file_exists($temp_dir) && is_dir($temp_dir)) {
+            $files = glob($temp_dir . '/*');
+            $now = current_time('timestamp');
+
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    $file_age = $now - filemtime($file);
+                    if ($file_age > 86400) { // 24 hours
+                        if (unlink($file)) {
+                            $deleted_count++;
+                        }
+                    }
+                }
+            }
+        }
+
+        wp_send_json_success(array(
+            'message' => 'Fichiers temporaires supprimés avec succès',
+            'files_deleted' => $deleted_count
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX handler for deleting backups
+ */
+function pdf_builder_delete_backup_handler() {
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    try {
+        $filename = sanitize_file_name($_POST['filename'] ?? '');
+
+        if (empty($filename)) {
+            wp_send_json_error('Nom de fichier manquant');
+            return;
+        }
+
+        $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups';
+        $filepath = $backup_dir . '/' . $filename;
+
+        if (!file_exists($filepath)) {
+            wp_send_json_error('Fichier de sauvegarde introuvable');
+            return;
+        }
+
+        if (unlink($filepath)) {
+            wp_send_json_success(array(
+                'message' => 'Sauvegarde supprimée avec succès'
+            ));
+        } else {
+            wp_send_json_error('Erreur lors de la suppression du fichier');
+        }
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
+    }
+}
+
+/**
  * Dispatcher pour les nouveaux handlers AJAX
  */
 function pdf_builder_ajax_handler_dispatch() {
@@ -292,19 +455,16 @@ function pdf_builder_ajax_handler_dispatch() {
                 pdf_builder_get_cache_metrics_handler();
                 break;
             case 'pdf_builder_update_cache_metrics':
-                wp_send_json_error('Handler not implemented - use settings-ajax.php');
+                pdf_builder_update_cache_metrics_handler();
                 break;
             case 'pdf_builder_optimize_database':
-                // This function doesn't exist, let's create a simple fallback
-                wp_send_json_error('Handler not implemented');
+                pdf_builder_optimize_database_handler();
                 break;
             case 'pdf_builder_repair_templates':
-                // This function doesn't exist, let's create a simple fallback
-                wp_send_json_error('Handler not implemented');
+                pdf_builder_repair_templates_handler();
                 break;
             case 'pdf_builder_remove_temp_files':
-                // This function doesn't exist, let's create a simple fallback
-                wp_send_json_error('Handler not implemented');
+                pdf_builder_remove_temp_files_handler();
                 break;
             case 'pdf_builder_create_backup':
                 pdf_builder_create_backup_ajax();
@@ -316,14 +476,13 @@ function pdf_builder_ajax_handler_dispatch() {
                 pdf_builder_restore_backup_ajax();
                 break;
             case 'pdf_builder_delete_backup':
-                // This function doesn't exist, let's create a simple fallback
-                wp_send_json_error('Handler not implemented');
+                pdf_builder_delete_backup_handler();
                 break;
             case 'pdf_builder_test_license':
-                wp_send_json_error('Handler not implemented - use settings-ajax.php');
+                pdf_builder_test_license_handler();
                 break;
             case 'pdf_builder_test_routes':
-                wp_send_json_error('Handler not implemented - use settings-ajax.php');
+                pdf_builder_test_routes_handler();
                 break;
             case 'pdf_builder_export_diagnostic':
                 pdf_builder_export_diagnostic_handler();
