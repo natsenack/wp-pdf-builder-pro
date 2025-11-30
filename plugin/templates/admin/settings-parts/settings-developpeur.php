@@ -841,8 +841,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction pour mettre à jour les états des toggles Debug Éditeur PDF et Debug Page Paramètres (basé sur les valeurs sauvegardées)
     window.updateDeveloperToggleStates = function() {
         // Récupérer les éléments des toggles
-        const pdfEditorToggle = document.getElementById('pdf_builder_debug_pdf_editor');
-        const settingsPageToggle = document.getElementById('pdf_builder_debug_settings_page');
+        const pdfEditorToggle = document.getElementById('debug_pdf_editor');
+        const settingsPageToggle = document.getElementById('debug_settings_page');
 
         // Récupérer les valeurs sauvegardées depuis window.pdfBuilderSavedSettings
         const pdfEditorValue = window.pdfBuilderSavedSettings?.pdf_builder_debug_pdf_editor || false;
