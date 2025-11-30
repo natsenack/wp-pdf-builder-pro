@@ -843,19 +843,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    };
 
-        // Mettre à jour l'indicateur de statut
+    // Fonction pour mettre à jour l'indicateur de statut du mode développeur (basé sur la valeur sauvegardée)
+    window.updateDeveloperStatusIndicator = function() {
         const statusIndicator = document.querySelector('.developer-status-indicator');
         if (statusIndicator) {
+            // Utiliser la valeur sauvegardée depuis window.pdfBuilderSavedSettings
+            const isEnabled = window.pdfBuilderSavedSettings?.developer_enabled || false;
             statusIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
             statusIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
             statusIndicator.style.color = 'white';
             if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.log(`🔧 [TOGGLE MODE DÉVELOPPEUR] Indicateur de statut mis à jour: ${statusIndicator.textContent}`);
+                console.log(`🔧 [INDICATEUR STATUT] Mis à jour: ${statusIndicator.textContent} (valeur sauvegardée: ${isEnabled})`);
             }
         } else {
             if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                console.error('❌ [TOGGLE MODE DÉVELOPPEUR] Indicateur de statut introuvable');
+                console.error('❌ [INDICATEUR STATUT] Indicateur introuvable dans le DOM');
             }
         }
     };

@@ -407,6 +407,11 @@ window.PDF_Builder_Preview_Manager = {
             developerEnabledIndicator.textContent = data.developer_enabled ? 'Activé' : 'Désactivé';
         }
 
+        // Mettre à jour l'indicateur de statut du mode développeur
+        if (window.updateDeveloperStatusIndicator) {
+            window.updateDeveloperStatusIndicator();
+        }
+
         pdfBuilderDebug('Developer preview initialized');
     },
 
@@ -2948,6 +2953,9 @@ window.toggleRGPDControls = toggleRGPDControls;
                             }
                             if (window.updateTemplateLibraryIndicator) {
                                 window.updateTemplateLibraryIndicator();
+                            }
+                            if (window.updateDeveloperStatusIndicator) {
+                                window.updateDeveloperStatusIndicator();
                             }
                         }, 600);
 
