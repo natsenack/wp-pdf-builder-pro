@@ -807,87 +807,27 @@ function pdf_builder_save_settings_handler() {
         switch ($current_tab) {
             case 'developpeur':
             case 'all':
+                // Simplified save logic
                 $saved_count = 0;
-                $errors = [];
-                $processed_fields = [];
-                $ignored_fields = [];
-
-                error_log('PDF Builder DEBUG - All received POST fields: ' . implode(', ', array_keys($_POST)));
+                $saved_options = [];
 
                 foreach ($_POST as $key => $value) {
-                    if (in_array($key, ['action', 'nonce', 'current_tab'])) {
-                        $ignored_fields[] = $key;
+                    if (in_array($key, ['action', 'nonce', 'current_tab', 'js_collected_fields'])) {
                         continue;
                     }
 
-                    $processed_fields[] = $key;
-
-                    try {
-                        $option_key = $key;
-                        if (strpos($key, 'pdf_builder_') !== 0) {
-                            $option_key = 'pdf_builder_' . $key;
-                        }
-
-                        if (strpos($key, '_enabled') !== false || strpos($key, '_debug') !== false) {
-                            $sanitized_value = ($value === '1' || $value === 'true') ? 1 : 0;
-                        } elseif (is_array($value)) {
-                            $sanitized_value = array_map('sanitize_text_field', $value);
-                        } else {
-                            $sanitized_value = sanitize_text_field($value);
-                        }
-
-                        update_option($option_key, $sanitized_value);
-                        $saved_count++;
-                    } catch (Exception $e) {
-                        $errors[] = "Erreur lors de la sauvegarde de $key: " . $e->getMessage();
-                    }
-                }
-
-                // Handle some known checkboxes not sent
-                $checkbox_fields = [
-                    'debug_mode', 'log_level', 'pdf_cache_enabled', 'pdf_metadata_enabled', 'pdf_print_optimized', 'template_library_enabled', 'developer_enabled'
-                ];
-                foreach ($checkbox_fields as $field) {
-                    if (!isset($_POST[$field])) {
-                        update_option('pdf_builder_' . $field, 0);
-                    }
+                    $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
+                    update_option($option_key, sanitize_text_field($value));
+                    $saved_options[$key] = get_option($option_key, '');
+                    $saved_count++;
                 }
 
                 $message = sprintf('%d paramètres sauvegardés.', $saved_count);
-                if (!empty($errors)) {
-                    $message .= ' ' . count($errors) . ' erreurs.';
-                }
-
-                // Préparer les options sauvegardées pour la réponse (avec préfixe pour correspondre aux noms de champs du formulaire)
-                $saved_options = [];
-                foreach ($processed_fields as $field) {
-                    $option_key = strpos($field, 'pdf_builder_') === 0 ? $field : 'pdf_builder_' . $field;
-                    $saved_options[$field] = get_option($option_key, '');
-                }
-
-                // Ajouter les champs checkbox traités séparément
-                foreach ($checkbox_fields as $field) {
-                    $saved_options[$field] = get_option('pdf_builder_' . $field, 0) ? '1' : '0';
-                }
-
-                // Log détaillé pour debug
-                error_log('[PDF Builder] SAVE RESPONSE - saved keys: ' . implode(', ', array_keys($saved_options)));
-                error_log('[PDF Builder] SAVE RESPONSE - saved sample: ' . json_encode(array_slice($saved_options, 0, 5, true)));
 
                 $response_data = [
                     'saved_count' => $saved_count,
-                    'errors' => $errors,
-                    'result_data' => $saved_options,
-                    'debug_info' => [
-                        'total_post' => count($_POST),
-                        'ignored' => $ignored_fields,
-                        'processed' => count($processed_fields),
-                        'saved' => $saved_count,
-                        'missing_fields' => implode(', ', array_diff($js_collected, array_keys($_POST)))
-                    ]
+                    'result_data' => $saved_options
                 ];
-
-                error_log('[PDF Builder] SAVE RESPONSE - Final response data keys: ' . implode(', ', array_keys($response_data)));
 
                 send_ajax_response(true, $message, $response_data);
                 break;
