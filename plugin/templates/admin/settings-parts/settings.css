@@ -1794,6 +1794,7 @@ select option:disabled {
     background-color: #ccc;
     transition: 0.3s;
     border-radius: 24px;
+    pointer-events: none;
 }
 
 .toggle-slider:before {
