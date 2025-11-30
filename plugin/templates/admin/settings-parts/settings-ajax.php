@@ -858,7 +858,7 @@ function pdf_builder_save_settings_handler() {
                     $message .= ' ' . count($errors) . ' erreurs.';
                 }
 
-                // Préparer les options sauvegardées pour la réponse (sans préfixe pour correspondre aux noms de champs du formulaire)
+                // Préparer les options sauvegardées pour la réponse (avec préfixe pour correspondre aux noms de champs du formulaire)
                 $saved_options = [];
                 foreach ($processed_fields as $field) {
                     $option_key = strpos($field, 'pdf_builder_') === 0 ? $field : 'pdf_builder_' . $field;
