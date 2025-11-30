@@ -224,6 +224,9 @@ window.pdfBuilderAjax = {
     ajaxurl: '<?php echo admin_url('admin-ajax.php'); ?>'
 };
 
+// Nonce spécifique pour les paramètres
+window.pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
+
 // Paramètres de notifications pour le JavaScript
 window.pdfBuilderNotifications = {
     settings: <?php echo wp_json_encode([
@@ -2735,6 +2738,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                 });
 
                 formData.append('action', 'pdf_builder_save_settings');
+                formData.append('pdf_builder_settings_nonce', window.pdfBuilderSettingsNonce);
                 formData.append('current_tab', tabId); // Ajouter l'onglet actif pour le logging côté PHP
 
                 // Inclure aussi les paramètres canvas depuis window.pdfBuilderCanvasSettings
@@ -2805,7 +2809,13 @@ window.toggleRGPDControls = toggleRGPDControls;
                             // Parcourir toutes les données sauvegardées et mettre à jour les champs correspondants
                             Object.keys(originalData.data).forEach(fieldName => {
                                 const fieldValue = originalData.data[fieldName];
-                                const fieldElement = document.querySelector(`[name="${fieldName}"]`);
+                                // Chercher le champ dans le formulaire (avec ou sans préfixe pdf_builder_)
+                                let fieldElement = document.querySelector(`[name="${fieldName}"]`);
+                                if (!fieldElement && fieldName.startsWith('pdf_builder_')) {
+                                    // Essayer sans le préfixe
+                                    const shortName = fieldName.replace('pdf_builder_', '');
+                                    fieldElement = document.querySelector(`[name="${shortName}"]`);
+                                }
 
                                 if (fieldElement) {
                                     if (fieldElement.type === 'checkbox') {
@@ -2818,7 +2828,7 @@ window.toggleRGPDControls = toggleRGPDControls;
                                         }
 
                                         // Déclencher les fonctions de toggle si nécessaire
-                                        if (fieldName === 'developer_enabled') {
+                                        if (fieldName === 'pdf_builder_developer_enabled' || fieldName === 'developer_enabled') {
                                             // Mettre à jour les sections développeur
                                             if (window.updateDeveloperSections) {
                                                 window.updateDeveloperSections();
@@ -2827,12 +2837,12 @@ window.toggleRGPDControls = toggleRGPDControls;
                                             if (window.updateDeveloperPreview) {
                                                 window.updateDeveloperPreview();
                                             }
-                                        } else if (fieldName === 'cache_enabled') {
+                                        } else if (fieldName === 'pdf_builder_cache_enabled' || fieldName === 'cache_enabled') {
                                             // Mettre à jour les indicateurs cache
                                             if (window.updateCachePreview) {
                                                 window.updateCachePreview();
                                             }
-                                        } else if (fieldName === 'template_library_enabled') {
+                                        } else if (fieldName === 'pdf_builder_template_library_enabled' || fieldName === 'template_library_enabled') {
                                             // Mettre à jour les indicateurs templates
                                             if (window.updateTemplateLibraryIndicator) {
                                                 window.updateTemplateLibraryIndicator();
