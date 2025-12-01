@@ -196,8 +196,8 @@ $notices = [];
 // Charger TOUS les paramètres sauvegardés de manière centralisée
 $all_settings = PDF_Builder_Settings_Loader::load_all_settings();
 
-// Les paramètres sont déjà dans $all_settings avec leurs clés complètes
-$settings = $all_settings;
+// IMPORTANT: Pour éviter les incohérences, utiliser la même source que les sauvegardes AJAX
+$settings = get_option('pdf_builder_settings', []);
 $canvas_settings = $all_settings['pdf_builder_canvas_settings'];
 
 // Préparer les données pour les previews
@@ -217,7 +217,8 @@ $default_orientation = $preview_data['default_orientation'];
 ?>
 <script>
 // Données centralisées chargées depuis la base de données
-window.pdfBuilderSavedSettings = <?php echo json_encode($all_settings); ?>;
+// IMPORTANT: Charger depuis la même source que les sauvegardes AJAX pour éviter les incohérences
+window.pdfBuilderSavedSettings = <?php echo json_encode(get_option('pdf_builder_settings', [])); ?>;
 window.pdfBuilderCanvasSettings = {};
 
 // Paramètres de debug pour le JavaScript
