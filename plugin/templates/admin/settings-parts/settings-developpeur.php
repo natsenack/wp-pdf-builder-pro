@@ -215,7 +215,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                     <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
                                         <div class="toggle-container">
                                             <label class="toggle-switch">
-                                                <input type="checkbox" id="debug_javascript_general" name="pdf_builder_debug_javascript" value="1" <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'checked' : ''; ?> />
+                                                <input type="checkbox" id="debug_javascript" name="pdf_builder_debug_javascript" value="1" <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'checked' : ''; ?> />
                                                 <span class="toggle-slider"></span>
                                             </label>
                                             <span class="toggle-label" style="margin-left: 10px;">🔧 Debug JavaScript</span>
@@ -228,7 +228,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                     <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
                                         <div class="toggle-container">
                                             <label class="toggle-switch">
-                                                <input type="checkbox" id="debug_javascript_verbose_general" name="pdf_builder_debug_javascript_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'checked' : ''; ?> />
+                                                <input type="checkbox" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'checked' : ''; ?> />
                                                 <span class="toggle-slider"></span>
                                             </label>
                                             <span class="toggle-label" style="margin-left: 10px;">📝 Debug JavaScript Verbeux</span>
@@ -890,8 +890,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configurer la mise à jour automatique de window.pdfBuilderSavedSettings pour tous les toggles
     updateSavedSettingsForToggle('developer_enabled', 'pdf_builder_developer_enabled');
     updateSavedSettingsForToggle('debug_php_errors', 'pdf_builder_debug_php_errors');
-    updateSavedSettingsForToggle('debug_javascript_general', 'pdf_builder_debug_javascript');
-    updateSavedSettingsForToggle('debug_javascript_verbose_general', 'pdf_builder_debug_javascript_verbose');
+    updateSavedSettingsForToggle('debug_javascript', 'pdf_builder_debug_javascript');
+    updateSavedSettingsForToggle('debug_javascript_verbose', 'pdf_builder_debug_javascript_verbose');
     updateSavedSettingsForToggle('debug_pdf_editor', 'pdf_builder_debug_pdf_editor');
     updateSavedSettingsForToggle('debug_settings_page', 'pdf_builder_debug_settings_page');
     updateSavedSettingsForToggle('debug_page_template', 'pdf_builder_debug_page_template');
