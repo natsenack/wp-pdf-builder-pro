@@ -23,6 +23,7 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
     $toggle_values = [
         'pdf_builder_developer_enabled' => $settings['pdf_builder_developer_enabled'] ?? 'NON DÉFINI',
         'pdf_builder_debug_php_errors' => $settings['pdf_builder_debug_php_errors'] ?? 'NON DÉFINI',
+        'pdf_builder_debug_javascript' => $settings['pdf_builder_debug_javascript'] ?? 'NON DÉFINI',
         'pdf_builder_debug_javascript_verbose' => $settings['pdf_builder_debug_javascript_verbose'] ?? 'NON DÉFINI',
         'pdf_builder_debug_ajax' => $settings['pdf_builder_debug_ajax'] ?? 'NON DÉFINI',
         'pdf_builder_debug_pdf_editor' => $settings['pdf_builder_debug_pdf_editor'] ?? 'NON DÉFINI',
@@ -165,52 +166,43 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                             <div class="toggle-description">Affiche les erreurs/warnings PHP du plugin</div>
                         </td>
                     </tr>
-
-                    <!-- Section Logs JavaScript par page -->
                     <tr>
-                        <td colspan="2" style="background: #f8f9fa; border-top: 2px solid #dee2e6; border-bottom: 1px solid #dee2e6; padding: 8px 12px;">
-                            <strong style="color: #495057; font-size: 13px;">📋 Logs JavaScript par page</strong>
-                            <span style="color: #6c757d; font-size: 12px; margin-left: 10px;">(Isolation des logs JS selon la page visitée)</span>
-                        </td>
-                    </tr>
-
-                    <tr id="debug_pdf_editor_row">
-                        <th scope="row"><label for="debug_pdf_editor">Debug Éditeur PDF (JS)</label></th>
+                        <th scope="row"><label for="debug_javascript">Debug JavaScript</label></th>
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_pdf_editor" name="pdf_builder_debug_pdf_editor" value="1" <?php echo isset($settings['pdf_builder_debug_pdf_editor']) && $settings['pdf_builder_debug_pdf_editor'] ? 'checked' : ''; ?> />
+                                    <input type="checkbox" id="debug_javascript" name="pdf_builder_debug_javascript" value="1" <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <span class="toggle-label">Debug Éditeur PDF (JS)</span>
+                                <span class="toggle-label">Debug JS</span>
+                            </div>
+                            <div class="toggle-description">Active les logs détaillés en console (emojis: 🚀 start, ✅ success, ❌ error, ⚠️ warn)</div>
+                        </td>
+                    </tr>
+                    <tr id="debug_pdf_editor_row" style="<?php echo (!isset($settings['pdf_builder_debug_javascript']) || !$settings['pdf_builder_debug_javascript']) ? 'display: none;' : ''; ?>">
+                        <th scope="row"><label for="debug_pdf_editor">Debug Éditeur PDF</label></th>
+                        <td>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="debug_pdf_editor" name="pdf_builder_debug_pdf_editor" value="1" <?php echo isset($settings['pdf_builder_debug_pdf_editor']) && $settings['pdf_builder_debug_pdf_editor'] ? 'checked' : ''; ?> <?php echo (!isset($settings['pdf_builder_debug_javascript']) || !$settings['pdf_builder_debug_javascript']) ? 'disabled' : ''; ?> />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Debug Éditeur PDF</span>
                             </div>
                             <div class="toggle-description">Isole les logs JavaScript exclusivement à la page de l'éditeur PDF</div>
                         </td>
                     </tr>
-                    <tr id="debug_settings_page_row">
-                        <th scope="row"><label for="debug_settings_page">Debug Page Paramètres (JS)</label></th>
+                    <tr id="debug_settings_page_row" style="<?php echo (!isset($settings['pdf_builder_debug_javascript']) || !$settings['pdf_builder_debug_javascript']) ? 'display: none;' : ''; ?>">
+                        <th scope="row"><label for="debug_settings_page">Debug Page Paramètres</label></th>
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_settings_page" name="pdf_builder_debug_settings_page" value="1" <?php echo isset($settings['pdf_builder_debug_settings_page']) && $settings['pdf_builder_debug_settings_page'] ? 'checked' : ''; ?> />
+                                    <input type="checkbox" id="debug_settings_page" name="pdf_builder_debug_settings_page" value="1" <?php echo isset($settings['pdf_builder_debug_settings_page']) && $settings['pdf_builder_debug_settings_page'] ? 'checked' : ''; ?> <?php echo (!isset($settings['pdf_builder_debug_javascript']) || !$settings['pdf_builder_debug_javascript']) ? 'disabled' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <span class="toggle-label">Debug Page Paramètres (JS)</span>
+                                <span class="toggle-label">Debug Page Paramètres</span>
                             </div>
                             <div class="toggle-description">Isole les logs JavaScript exclusivement à la page des paramètres</div>
-                        </td>
-                    </tr>
-                    <tr id="debug_templates_page_row">
-                        <th scope="row"><label for="debug_templates_page">Debug Page Templates (JS)</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_templates_page" name="pdf_builder_debug_templates_page" value="1" <?php echo isset($settings['pdf_builder_debug_templates_page']) && $settings['pdf_builder_debug_templates_page'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug Page Templates (JS)</span>
-                            </div>
-                            <div class="toggle-description">Isole les logs JavaScript exclusivement à la page des templates</div>
                         </td>
                     </tr>
                     <tr>
@@ -634,7 +626,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 <div style="background: #f3e5f5; border-left: 4px solid #7b1fa2; border-radius: 4px; padding: 20px; margin-top: 20px;">
                     <h3 style="margin-top: 0; color: #4a148c;">💻 Conseils Développement</h3>
                     <ul style="margin: 0; padding-left: 20px; color: #4a148c;">
-                        <li>Activez les toggles de debug spécifiques aux pages pour isoler les logs JavaScript</li>
+                        <li>Activez Debug JavaScript pour déboguer les interactions client</li>
                         <li>Utilisez Debug AJAX pour vérifier les requêtes serveur</li>
                         <li>Consultez Debug Performance pour optimiser les opérations lentes</li>
                         <li>Lisez les logs détaillés (niveau 4) pour comprendre le flux</li>
@@ -747,12 +739,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gestion du toggle Mode Développeur
     const developerEnabledToggle = document.getElementById('developer_enabled');
+    const debugJavascriptToggle = document.getElementById('debug_javascript');
     const debugPdfEditorRow = document.getElementById('debug_pdf_editor_row');
     const debugSettingsPageRow = document.getElementById('debug_settings_page_row');
-    const debugTemplatesPageRow = document.getElementById('debug_templates_page_row');
     const pdfEditorToggle = document.getElementById('debug_pdf_editor');
     const settingsPageToggle = document.getElementById('debug_settings_page');
-    const templatesPageToggle = document.getElementById('debug_templates_page');
     const devSections = [
         'dev-license-section',
         'dev-debug-section',
@@ -768,32 +759,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Debug: Vérifier que les éléments sont trouvés
     console.log('🔧 [DEBUG] Éléments DOM trouvés:', {
         developerEnabledToggle: !!developerEnabledToggle,
+        debugJavascriptToggle: !!debugJavascriptToggle,
         debugPdfEditorRow: !!debugPdfEditorRow,
-        debugSettingsPageRow: !!debugSettingsPageRow,
-        debugTemplatesPageRow: !!debugTemplatesPageRow
+        debugSettingsPageRow: !!debugSettingsPageRow
     });
 
     // Fonction pour synchroniser l'état des checkboxes avec les valeurs sauvegardées
     function syncCheckboxesWithSavedSettings() {
-        console.log('🔧 [SYNC] Début de syncCheckboxesWithSavedSettings');
-        console.log('🔧 [SYNC] window.pdfBuilderSavedSettings existe:', !!window.pdfBuilderSavedSettings);
-
-        if (!window.pdfBuilderSavedSettings) {
-            console.warn('🔧 [SYNC] window.pdfBuilderSavedSettings non disponible');
-            return;
-        }
-
-        console.log('🔧 [SYNC] Contenu de window.pdfBuilderSavedSettings:', window.pdfBuilderSavedSettings);
+        if (!window.pdfBuilderSavedSettings) return;
 
         // Liste des checkboxes à synchroniser avec leurs IDs correspondants
         const checkboxMapping = {
             'pdf_builder_developer_enabled': 'developer_enabled',
             'pdf_builder_debug_php_errors': 'debug_php_errors',
-            'pdf_builder_debug_pdf_editor': 'debug_pdf_editor',
-            'pdf_builder_debug_settings_page': 'debug_settings_page',
-            'pdf_builder_debug_templates_page': 'debug_templates_page',
+            'pdf_builder_debug_javascript': 'debug_javascript',
             'pdf_builder_debug_javascript_verbose': 'debug_javascript_verbose',
             'pdf_builder_debug_ajax': 'debug_ajax',
+            'pdf_builder_debug_pdf_editor': 'debug_pdf_editor',
+            'pdf_builder_debug_settings_page': 'debug_settings_page',
             'pdf_builder_debug_performance': 'debug_performance',
             'pdf_builder_debug_database': 'debug_database',
             'pdf_builder_performance_monitoring': 'performance_monitoring'
@@ -806,63 +789,78 @@ document.addEventListener('DOMContentLoaded', function() {
                 const savedValue = window.pdfBuilderSavedSettings[key];
                 const shouldBeChecked = savedValue && savedValue !== '0' && savedValue !== 0;
                 checkbox.checked = shouldBeChecked;
-                console.log(`🔧 [SYNC] ${key} -> ${checkboxId}: ${shouldBeChecked} (saved: ${savedValue}, type: ${typeof savedValue})`);
+                if (window.pdfBuilderDebugSettings?.javascript) {
+                    console.log(`🔧 [SYNC] ${key} -> ${checkboxId}: ${shouldBeChecked} (saved: ${savedValue})`);
+                }
             } else {
-                console.warn(`🔧 [SYNC] Checkbox ${checkboxId} not found for key ${key}`);
+                if (window.pdfBuilderDebugSettings?.javascript) {
+                    console.warn(`🔧 [SYNC] Checkbox ${checkboxId} not found for key ${key}`);
+                }
             }
         });
-
-        console.log('🔧 [SYNC] Fin de syncCheckboxesWithSavedSettings');
     }
 
-    // Synchroniser les checkboxes au chargement (avec délai pour s'assurer que window.pdfBuilderSavedSettings est disponible)
-    function initializeCheckboxSync() {
-        console.log('🔧 [INIT SYNC] initializeCheckboxSync appelée');
-        console.log('🔧 [INIT SYNC] window.pdfBuilderSavedSettings existe au départ:', !!window.pdfBuilderSavedSettings);
-
-        if (window.pdfBuilderSavedSettings) {
-            console.log('🔧 [INIT SYNC] window.pdfBuilderSavedSettings disponible immédiatement');
-            syncCheckboxesWithSavedSettings();
-        } else {
-            console.log('🔧 [INIT SYNC] window.pdfBuilderSavedSettings pas encore disponible, attente...');
-            // Attendre que window.pdfBuilderSavedSettings soit disponible
-            const checkInterval = setInterval(() => {
-                console.log('🔧 [INIT SYNC] Vérification périodique - window.pdfBuilderSavedSettings existe:', !!window.pdfBuilderSavedSettings);
-                if (window.pdfBuilderSavedSettings) {
-                    console.log('🔧 [INIT SYNC] window.pdfBuilderSavedSettings maintenant disponible !');
-                    clearInterval(checkInterval);
-                    syncCheckboxesWithSavedSettings();
-                }
-            }, 50); // Vérifier toutes les 50ms
-
-            // Timeout après 5 secondes pour éviter une boucle infinie
-            setTimeout(() => {
-                console.log('🔧 [INIT SYNC] Timeout atteint - arrêt de l\'attente');
-                clearInterval(checkInterval);
-                console.warn('🔧 [INIT SYNC] Timeout: window.pdfBuilderSavedSettings non disponible après 5 secondes');
-            }, 5000);
-        }
-    }
-
-    // Appeler initializeCheckboxSync immédiatement après sa définition
-    initializeCheckboxSync();
+    // Synchroniser les checkboxes au chargement
+    syncCheckboxesWithSavedSettings();
 
     // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
     function updatePdfEditorToggleVisibility() {
-        // Ces toggles sont maintenant toujours visibles (dépendance supprimée)
-        console.log('🔧 [DEBUG PDF EDITOR] Toggles toujours visibles');
+        console.log('🔧 [DEBUG PDF EDITOR] Fonction appelée');
+
+        if (!debugJavascriptToggle || !debugPdfEditorRow) {
+            console.log('🔧 [DEBUG PDF EDITOR] Éléments manquants:', {
+                debugJavascriptToggle: !!debugJavascriptToggle,
+                debugPdfEditorRow: !!debugPdfEditorRow
+            });
+            return;
+        }
+
+        const isJavascriptDebugEnabled = debugJavascriptToggle.checked;
+        console.log('🔧 [DEBUG PDF EDITOR] État debug_javascript:', isJavascriptDebugEnabled);
+
+        debugPdfEditorRow.style.display = isJavascriptDebugEnabled ? 'table-row' : 'none';
+        console.log('🔧 [DEBUG PDF EDITOR] Style display appliqué:', debugPdfEditorRow.style.display);
+
+        // Désactiver le toggle si Debug JavaScript est désactivé
+        const pdfEditorToggle = document.getElementById('debug_pdf_editor');
+        if (pdfEditorToggle) {
+            pdfEditorToggle.disabled = !isJavascriptDebugEnabled;
+            if (!isJavascriptDebugEnabled) {
+                pdfEditorToggle.checked = false;
+            }
+            console.log('🔧 [DEBUG PDF EDITOR] Toggle disabled:', pdfEditorToggle.disabled, 'checked:', pdfEditorToggle.checked);
+        }
+
+        console.log(`🔧 [DEBUG PDF EDITOR] Toggle ${isJavascriptDebugEnabled ? 'AFFICHÉ' : 'MASQUÉ'} (dépend de Debug JavaScript)`);
     }
 
     // Fonction pour mettre à jour la visibilité du toggle Debug Page Paramètres
     function updateSettingsPageToggleVisibility() {
-        // Ces toggles sont maintenant toujours visibles (dépendance supprimée)
-        console.log('🔧 [DEBUG SETTINGS PAGE] Toggles toujours visibles');
-    }
+        if (!debugJavascriptToggle || !debugSettingsPageRow) {
+            if (window.pdfBuilderDebugSettings?.javascript) {
+                console.log('🔧 [DEBUG SETTINGS PAGE] Éléments manquants:', {
+                    debugJavascriptToggle: !!debugJavascriptToggle,
+                    debugSettingsPageRow: !!debugSettingsPageRow
+                });
+            }
+            return;
+        }
 
-    // Fonction pour mettre à jour la visibilité du toggle Debug Page Templates
-    function updateTemplatesPageToggleVisibility() {
-        // Ce toggle est maintenant toujours visible (dépendance supprimée)
-        console.log('🔧 [DEBUG TEMPLATES PAGE] Toggle toujours visible');
+        const isJavascriptDebugEnabled = debugJavascriptToggle.checked;
+        debugSettingsPageRow.style.display = isJavascriptDebugEnabled ? 'table-row' : 'none';
+
+        // Désactiver le toggle si Debug JavaScript est désactivé
+        const settingsPageToggle = document.getElementById('debug_settings_page');
+        if (settingsPageToggle) {
+            settingsPageToggle.disabled = !isJavascriptDebugEnabled;
+            if (!isJavascriptDebugEnabled) {
+                settingsPageToggle.checked = false;
+            }
+        }
+
+        if (window.pdfBuilderDebugSettings?.javascript) {
+            console.log(`🔧 [DEBUG SETTINGS PAGE] Toggle ${isJavascriptDebugEnabled ? 'AFFICHÉ' : 'MASQUÉ'} (dépend de Debug JavaScript)`);
+        }
     }
 
     // Fonction globale pour mettre à jour les sections développeur
@@ -888,8 +886,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Plus besoin de mettre à jour la visibilité des toggles Debug Éditeur PDF et Debug Page Paramètres
-        // puisqu'ils sont maintenant toujours visibles
+        // Mettre à jour la visibilité du toggle Debug Éditeur PDF
+        updatePdfEditorToggleVisibility();
+
+        // Mettre à jour la visibilité du toggle Debug Page Paramètres
+        updateSettingsPageToggleVisibility();
     };
 
     // Fonction pour mettre à jour l'indicateur de statut du mode développeur (basé sur la valeur sauvegardée)
@@ -919,8 +920,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Appliquer l'état initial
         window.updateDeveloperSections();
 
-        // Plus besoin d'appliquer l'état initial des toggles Debug Éditeur PDF, Debug Page Paramètres et Debug Page Templates
-        // puisqu'ils sont maintenant toujours visibles et activés
+        // Appliquer l'état initial du toggle Debug Éditeur PDF
+        updatePdfEditorToggleVisibility();
 
         // Debug: Vérifier l'état initial des toggles
         console.log('🔧 [DEBUG] État initial des toggles:', {
@@ -933,11 +934,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 exists: !!settingsPageToggle,
                 checked: settingsPageToggle ? settingsPageToggle.checked : 'N/A',
                 disabled: settingsPageToggle ? settingsPageToggle.disabled : 'N/A'
-            },
-            templatesPageToggle: {
-                exists: !!templatesPageToggle,
-                checked: templatesPageToggle ? templatesPageToggle.checked : 'N/A',
-                disabled: templatesPageToggle ? templatesPageToggle.disabled : 'N/A'
             }
         });
 
@@ -970,6 +966,21 @@ document.addEventListener('DOMContentLoaded', function() {
             window.updateDeveloperSections();
         });
 
+        // Écouter les changements du toggle Debug JavaScript pour mettre à jour la visibilité du toggle Debug Éditeur PDF
+        if (debugJavascriptToggle) {
+            debugJavascriptToggle.addEventListener('change', function(event) {
+                console.log('🔧 [DEBUG JAVASCRIPT] Événement change déclenché');
+                console.log('🔧 [DEBUG JAVASCRIPT] Valeur du toggle:', event.target.checked);
+                updatePdfEditorToggleVisibility();
+                updateSettingsPageToggleVisibility();
+            });
+
+            // Ajouter aussi un écouteur de clic pour debug
+            debugJavascriptToggle.addEventListener('click', function(event) {
+                console.log('🔧 [DEBUG JAVASCRIPT] Clic détecté sur toggle');
+            });
+        }
+
         // Attacher les écouteurs d'événements aux toggles enfants pour permettre l'interaction
         if (pdfEditorToggle) {
             pdfEditorToggle.addEventListener('change', function(event) {
@@ -990,17 +1001,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             settingsPageToggle.addEventListener('click', function(event) {
                 console.log('🔧 [DEBUG SETTINGS PAGE] Clic détecté sur toggle enfant');
-            });
-        }
-
-        if (templatesPageToggle) {
-            templatesPageToggle.addEventListener('change', function(event) {
-                console.log('🔧 [DEBUG TEMPLATES PAGE] Toggle changé:', event.target.checked);
-                // Le toggle peut être changé programmatiquement ou par l'utilisateur
-            });
-
-            templatesPageToggle.addEventListener('click', function(event) {
-                console.log('🔧 [DEBUG TEMPLATES PAGE] Clic détecté sur toggle enfant');
             });
         }
 

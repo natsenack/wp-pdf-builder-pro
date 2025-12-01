@@ -69,6 +69,7 @@ class PDF_Builder_Settings_Loader {
         'pdf_builder_developer_enabled' => false,
         'pdf_builder_developer_password' => '',
         'pdf_builder_debug_php_errors' => false,
+        'pdf_builder_debug_javascript' => false,
         'pdf_builder_debug_javascript_verbose' => false,
         'pdf_builder_debug_ajax' => false,
         'pdf_builder_debug_pdf_editor' => false,
@@ -201,6 +202,7 @@ $saved_settings = get_option('pdf_builder_settings', []);
 $default_settings = [
     'pdf_builder_developer_enabled' => false,
     'pdf_builder_debug_php_errors' => false,
+    'pdf_builder_debug_javascript' => false,
     'pdf_builder_debug_javascript_verbose' => false,
     'pdf_builder_debug_ajax' => false,
     'pdf_builder_debug_pdf_editor' => false,
@@ -214,25 +216,7 @@ $default_settings = [
     'pdf_builder_license_test_mode_enabled' => false,
     // Ajouter d'autres valeurs par défaut si nécessaire
 ];
-
-// Charger les paramètres développeur depuis les options individuelles (car ils sont sauvegardés individuellement)
-$developer_settings = [
-    'pdf_builder_developer_enabled' => get_option('pdf_builder_developer_enabled', false),
-    'pdf_builder_developer_password' => get_option('pdf_builder_developer_password', ''),
-    'pdf_builder_debug_php_errors' => get_option('pdf_builder_debug_php_errors', false),
-    'pdf_builder_debug_javascript_verbose' => get_option('pdf_builder_debug_javascript_verbose', false),
-    'pdf_builder_debug_ajax' => get_option('pdf_builder_debug_ajax', false),
-    'pdf_builder_debug_pdf_editor' => get_option('pdf_builder_debug_pdf_editor', false),
-    'pdf_builder_debug_settings_page' => get_option('pdf_builder_debug_settings_page', false),
-    'pdf_builder_debug_performance' => get_option('pdf_builder_debug_performance', false),
-    'pdf_builder_debug_database' => get_option('pdf_builder_debug_database', false),
-    'pdf_builder_log_level' => get_option('pdf_builder_log_level', 'info'),
-    'pdf_builder_log_file_size' => get_option('pdf_builder_log_file_size', 10),
-    'pdf_builder_log_retention' => get_option('pdf_builder_log_retention', 30),
-    'pdf_builder_force_https' => get_option('pdf_builder_force_https', false),
-];
-
-$settings = array_merge($default_settings, $saved_settings, $developer_settings);
+$settings = array_merge($default_settings, $saved_settings);
 $canvas_settings = $all_settings['pdf_builder_canvas_settings'];
 
 // Préparer les données pour les previews
@@ -249,14 +233,11 @@ $default_format = $preview_data['default_format'];
 $default_orientation = $preview_data['default_orientation'];
 
 // Passer les données sauvegardées au JavaScript pour les previews
-// FILTRER les paramètres obsolètes avant de les envoyer au JavaScript
-$filtered_settings = $settings;
-unset($filtered_settings['pdf_builder_debug_javascript']); // Supprimer l'option obsolète
 ?>
 <script>
 // Données centralisées chargées depuis la base de données
 // IMPORTANT: Charger depuis la même source que les sauvegardes AJAX pour éviter les incohérences
-window.pdfBuilderSavedSettings = <?php echo json_encode($filtered_settings); ?>;
+window.pdfBuilderSavedSettings = <?php echo json_encode($settings); ?>;
 window.pdfBuilderCanvasSettings = {};
 
 // Paramètres de debug pour le JavaScript
@@ -576,7 +557,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
             'bool_fields' => [
                 'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
                 'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
-                'pdf_builder_developer_enabled', 'pdf_builder_debug_php_errors',
+                'pdf_builder_developer_enabled', 'pdf_builder_debug_php_errors', 'pdf_builder_debug_javascript',
                 'pdf_builder_debug_javascript_verbose', 'pdf_builder_debug_ajax', 'pdf_builder_debug_performance',
                 'pdf_builder_debug_database', 'pdf_builder_debug_pdf_editor', 'pdf_builder_debug_settings_page', 'pdf_builder_force_https', 'pdf_builder_license_test_mode_enabled'
             ],
@@ -753,6 +734,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
         update_option('pdf_builder_developer_enabled', isset($_POST['pdf_builder_developer_enabled']) ? 1 : 0);
         update_option('pdf_builder_developer_password', sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''));
         update_option('pdf_builder_debug_php_errors', isset($_POST['pdf_builder_debug_php_errors']) ? 1 : 0);
+        update_option('pdf_builder_debug_javascript', isset($_POST['pdf_builder_debug_javascript']) ? 1 : 0);
         update_option('pdf_builder_debug_javascript_verbose', isset($_POST['pdf_builder_debug_javascript_verbose']) ? 1 : 0);
         update_option('pdf_builder_debug_ajax', isset($_POST['pdf_builder_debug_ajax']) ? 1 : 0);
         update_option('pdf_builder_debug_pdf_editor', isset($_POST['pdf_builder_debug_pdf_editor']) ? 1 : 0);

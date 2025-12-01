@@ -863,353 +863,349 @@ function pdf_builder_save_canvas_settings_handler() {
     $category = sanitize_text_field($_POST['category'] ?? 'dimensions');
 
     try {
-        $saved_values = [];
+            $saved_values = [];
 
-        switch ($category) {
-            case 'dimensions':
-                // Sauvegarder les paramètres de dimensions
-                $dimensions_mappings = [
-                    'canvas_format' => 'pdf_builder_canvas_format',
-                    'canvas_orientation' => 'pdf_builder_canvas_orientation',
-                    'canvas_dpi' => 'pdf_builder_canvas_dpi'
-                ];
+            switch ($category) {
+                case 'dimensions':
+                    // Sauvegarder les paramètres de dimensions
+                    $dimensions_mappings = [
+                        'canvas_format' => 'pdf_builder_canvas_format',
+                        'canvas_orientation' => 'pdf_builder_canvas_orientation',
+                        'canvas_dpi' => 'pdf_builder_canvas_dpi'
+                    ];
 
-                foreach ($dimensions_mappings as $post_key => $option_key) {
-                    if (isset($_POST[$post_key])) {
-                        $value = sanitize_text_field($_POST[$post_key]);
-                        update_option($option_key, $value);
-                        $saved_values[$post_key] = $value;
-                    }
-                }
-
-                // Calculer et sauvegarder les dimensions en pixels
-                $format = get_option('pdf_builder_canvas_format', 'A4');
-                $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
-                $dpi = intval(get_option('pdf_builder_canvas_dpi', 96));
-
-                // Utiliser les dimensions standard centralisées
-                $formatDimensionsMM = \PDF_Builder\PAPER_FORMATS;
-
-                $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
-
-                // Appliquer l'orientation
-                if ($orientation === 'landscape') {
-                    $temp = $dimensions['width'];
-                    $dimensions['width'] = $dimensions['height'];
-                    $dimensions['height'] = $temp;
-                }
-
-                // Convertir mm en pixels (1mm = dpi/25.4 pixels)
-                $width_px = round(($dimensions['width'] / 25.4) * $dpi);
-                $height_px = round(($dimensions['height'] / 25.4) * $dpi);
-
-                update_option('pdf_builder_canvas_width', $width_px);
-                update_option('pdf_builder_canvas_height', $height_px);
-
-                $saved_values['canvas_width'] = $width_px;
-                $saved_values['canvas_height'] = $height_px;
-                break;
-
-            case 'zoom':
-                // Sauvegarder les paramètres de zoom
-                $zoom_mappings = [
-                    'canvas_zoom_min' => 'pdf_builder_canvas_zoom_min',
-                    'canvas_zoom_max' => 'pdf_builder_canvas_zoom_max',
-                    'canvas_zoom_default' => 'pdf_builder_canvas_zoom_default',
-                    'canvas_zoom_step' => 'pdf_builder_canvas_zoom_step'
-                ];
-
-                foreach ($zoom_mappings as $post_key => $option_key) {
-                    if (isset($_POST[$post_key])) {
-                        $value = floatval($_POST[$post_key]);
-                        update_option($option_key, $value);
-                        $saved_values[$post_key] = $value;
-                    }
-                }
-                break;
-
-            case 'apparence':
-                // Sauvegarder les paramètres d'apparence
-                
-                $apparence_mappings = [
-                    'canvas_bg_color' => 'pdf_builder_canvas_bg_color',
-                    'canvas_container_bg_color' => 'pdf_builder_canvas_container_bg_color',
-                    'canvas_border_color' => 'pdf_builder_canvas_border_color',
-                    'canvas_border_width' => 'pdf_builder_canvas_border_width',
-                    'canvas_shadow_enabled' => 'pdf_builder_canvas_shadow_enabled'
-                ];
-
-                foreach ($apparence_mappings as $post_key => $option_key) {
-                    if (isset($_POST[$post_key])) {
-                        $value = $_POST[$post_key];
-                        if ($post_key === 'canvas_shadow_enabled') {
-                            $value = $value === '1';
-                        } else if ($post_key === 'canvas_border_width') {
-                            $value = intval($value);
+                    foreach ($dimensions_mappings as $post_key => $option_key) {
+                        if (isset($_POST[$post_key])) {
+                            $value = sanitize_text_field($_POST[$post_key]);
+                            update_option($option_key, $value);
+                            $saved_values[$post_key] = $value;
                         }
-                        update_option($option_key, $value);
-                        $saved_values[$post_key] = $value;
-                        
                     }
-                    if ($post_key === 'canvas_shadow_enabled' && !isset($_POST[$post_key])) {
-                        // Checkbox non cochée
-                        update_option($option_key, false);
-                        $saved_values[$post_key] = false;
-                        
+
+                    // Calculer et sauvegarder les dimensions en pixels
+                    $format = get_option('pdf_builder_canvas_format', 'A4');
+                    $orientation = get_option('pdf_builder_canvas_orientation', 'portrait');
+                    $dpi = intval(get_option('pdf_builder_canvas_dpi', 96));
+
+                    // Utiliser les dimensions standard centralisées
+                    $formatDimensionsMM = \PDF_Builder\PAPER_FORMATS;
+
+                    $dimensions = isset($formatDimensionsMM[$format]) ? $formatDimensionsMM[$format] : $formatDimensionsMM['A4'];
+
+                    // Appliquer l'orientation
+                    if ($orientation === 'landscape') {
+                        $temp = $dimensions['width'];
+                        $dimensions['width'] = $dimensions['height'];
+                        $dimensions['height'] = $temp;
                     }
-                }
-                break;
 
-            case 'grille':
-                // Sauvegarder les paramètres de grille
-                $grille_mappings = [
-                    'canvas_guides_enabled' => 'pdf_builder_canvas_guides_enabled',
-                    'canvas_grid_enabled' => 'pdf_builder_canvas_grid_enabled',
-                    'canvas_grid_size' => 'pdf_builder_canvas_grid_size',
-                    'canvas_snap_to_grid' => 'pdf_builder_canvas_snap_to_grid'
-                ];
+                    // Convertir mm en pixels (1mm = dpi/25.4 pixels)
+                    $width_px = round(($dimensions['width'] / 25.4) * $dpi);
+                    $height_px = round(($dimensions['height'] / 25.4) * $dpi);
 
-                foreach ($grille_mappings as $post_key => $option_key) {
-                    if (isset($_POST[$post_key])) {
-                        $value = $_POST[$post_key];
-                        if (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid'])) {
-                            $value = $value === '1';
-                        } else if ($post_key === 'canvas_grid_size') {
-                            $value = intval($value);
+                    update_option('pdf_builder_canvas_width', $width_px);
+                    update_option('pdf_builder_canvas_height', $height_px);
+
+                    $saved_values['canvas_width'] = $width_px;
+                    $saved_values['canvas_height'] = $height_px;
+                    break;
+
+                case 'zoom':
+                    // Sauvegarder les paramètres de zoom
+                    $zoom_mappings = [
+                        'canvas_zoom_min' => 'pdf_builder_canvas_zoom_min',
+                        'canvas_zoom_max' => 'pdf_builder_canvas_zoom_max',
+                        'canvas_zoom_default' => 'pdf_builder_canvas_zoom_default',
+                        'canvas_zoom_step' => 'pdf_builder_canvas_zoom_step'
+                    ];
+
+                    foreach ($zoom_mappings as $post_key => $option_key) {
+                        if (isset($_POST[$post_key])) {
+                            $value = floatval($_POST[$post_key]);
+                            update_option($option_key, $value);
+                            $saved_values[$post_key] = $value;
                         }
-                        update_option($option_key, $value);
-                        $saved_values[$post_key] = $value;
                     }
-                    if (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid']) && !isset($_POST[$post_key])) {
-                        // Checkbox non cochée
-                        update_option($option_key, false);
-                        $saved_values[$post_key] = false;
-                    }
-                }
-                break;
+                    break;
 
-            case 'interactions':
-                // Sauvegarder les paramètres d'interactions
-                $interactions_mappings = [
-                    'canvas_selection_mode' => 'pdf_builder_canvas_selection_mode',
-                    'canvas_multi_select' => 'pdf_builder_canvas_multi_select',
-                    'canvas_drag_enabled' => 'pdf_builder_canvas_drag_enabled',
-                    'canvas_resize_enabled' => 'pdf_builder_canvas_resize_enabled',
-                    'canvas_rotate_enabled' => 'pdf_builder_canvas_rotate_enabled',
-                    'canvas_keyboard_shortcuts' => 'pdf_builder_canvas_keyboard_shortcuts'
-                ];
+                case 'apparence':
+                    // Sauvegarder les paramètres d'apparence
+                    
+                    $apparence_mappings = [
+                        'canvas_bg_color' => 'pdf_builder_canvas_bg_color',
+                        'canvas_container_bg_color' => 'pdf_builder_canvas_container_bg_color',
+                        'canvas_border_color' => 'pdf_builder_canvas_border_color',
+                        'canvas_border_width' => 'pdf_builder_canvas_border_width',
+                        'canvas_shadow_enabled' => 'pdf_builder_canvas_shadow_enabled'
+                    ];
 
-                foreach ($interactions_mappings as $post_key => $option_key) {
-                    if (isset($_POST[$post_key])) {
-                        $value = $_POST[$post_key];
-                        if (in_array($post_key, ['canvas_multi_select', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_keyboard_shortcuts'])) {
-                            $value = $value === '1';
+                    foreach ($apparence_mappings as $post_key => $option_key) {
+                        if (isset($_POST[$post_key])) {
+                            $value = $_POST[$post_key];
+                            if ($post_key === 'canvas_shadow_enabled') {
+                                $value = $value === '1';
+                            } else if ($post_key === 'canvas_border_width') {
+                                $value = intval($value);
+                            }
+                            update_option($option_key, $value);
+                            $saved_values[$post_key] = $value;
+                            
                         }
-                        update_option($option_key, $value);
-                        $saved_values[$post_key] = $value;
-                    }
-                    if (in_array($post_key, ['canvas_multi_select', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_keyboard_shortcuts']) && !isset($_POST[$post_key])) {
-                        // Checkbox non cochée
-                        update_option($option_key, false);
-                        $saved_values[$post_key] = false;
-                    }
-                }
-                break;
-
-            case 'export':
-                // Sauvegarder les paramètres d'export
-                $export_mappings = [
-                    'canvas_export_format' => 'pdf_builder_canvas_export_format',
-                    'canvas_export_quality' => 'pdf_builder_canvas_export_quality',
-                    'canvas_export_transparent' => 'pdf_builder_canvas_export_transparent'
-                ];
-
-                foreach ($export_mappings as $post_key => $option_key) {
-                    if (isset($_POST[$post_key])) {
-                        $value = $_POST[$post_key];
-                        if ($post_key === 'canvas_export_transparent') {
-                            $value = $value === '1';
-                        } else if ($post_key === 'canvas_export_quality') {
-                            $value = intval($value);
+                        if ($post_key === 'canvas_shadow_enabled' && !isset($_POST[$post_key])) {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
+                            
                         }
-                        update_option($option_key, $value);
-                        $saved_values[$post_key] = $value;
                     }
-                    if ($post_key === 'canvas_export_transparent' && !isset($_POST[$post_key])) {
-                        // Checkbox non cochée
-                        update_option($option_key, false);
-                        $saved_values[$post_key] = false;
-                    }
-                }
-                break;
+                    break;
 
-            case 'performance':
-                // Sauvegarder les paramètres de performance (code existant)
-                $performance_mappings = [
-                    'canvas_fps_target' => 'pdf_builder_canvas_fps_target',
-                    'canvas_memory_limit_js' => 'pdf_builder_canvas_memory_limit_js',
-                    'canvas_memory_limit_php' => 'pdf_builder_canvas_memory_limit_php',
-                    'canvas_response_timeout' => 'pdf_builder_canvas_response_timeout',
-                    'canvas_lazy_loading_editor' => 'pdf_builder_canvas_lazy_loading_editor',
-                    'canvas_preload_critical' => 'pdf_builder_canvas_preload_critical',
-                    'canvas_lazy_loading_plugin' => 'pdf_builder_canvas_lazy_loading_plugin'
-                ];
+                case 'grille':
+                    // Sauvegarder les paramètres de grille
+                    $grille_mappings = [
+                        'canvas_guides_enabled' => 'pdf_builder_canvas_guides_enabled',
+                        'canvas_grid_enabled' => 'pdf_builder_canvas_grid_enabled',
+                        'canvas_grid_size' => 'pdf_builder_canvas_grid_size',
+                        'canvas_snap_to_grid' => 'pdf_builder_canvas_snap_to_grid'
+                    ];
 
-                foreach ($performance_mappings as $post_key => $option_key) {
-                    if (isset($_POST[$post_key])) {
-                        $value = $_POST[$post_key];
-                        // Convertir les checkboxes en boolean
-                        if (in_array($post_key, ['canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin'])) {
-                            $value = $value === '1';
+                    foreach ($grille_mappings as $post_key => $option_key) {
+                        if (isset($_POST[$post_key])) {
+                            $value = $_POST[$post_key];
+                            if (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid'])) {
+                                $value = $value === '1';
+                            } else if ($post_key === 'canvas_grid_size') {
+                                $value = intval($value);
+                            }
+                            update_option($option_key, $value);
+                            $saved_values[$post_key] = $value;
                         }
-                        update_option($option_key, $value);
-                        $saved_values[$post_key] = $value;
+                        if (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid']) && !isset($_POST[$post_key])) {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
+                        }
                     }
-                    if (in_array($post_key, ['canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin']) && !isset($_POST[$post_key])) {
-                        // Checkbox non cochée
-                        update_option($option_key, false);
-                        $saved_values[$post_key] = false;
+                    break;
+
+                case 'interactions':
+                    // Sauvegarder les paramètres d'interactions
+                    $interactions_mappings = [
+                        'canvas_selection_mode' => 'pdf_builder_canvas_selection_mode',
+                        'canvas_multi_select' => 'pdf_builder_canvas_multi_select',
+                        'canvas_drag_enabled' => 'pdf_builder_canvas_drag_enabled',
+                        'canvas_resize_enabled' => 'pdf_builder_canvas_resize_enabled',
+                        'canvas_rotate_enabled' => 'pdf_builder_canvas_rotate_enabled',
+                        'canvas_keyboard_shortcuts' => 'pdf_builder_canvas_keyboard_shortcuts'
+                    ];
+
+                    foreach ($interactions_mappings as $post_key => $option_key) {
+                        if (isset($_POST[$post_key])) {
+                            $value = $_POST[$post_key];
+                            if (in_array($post_key, ['canvas_multi_select', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_keyboard_shortcuts'])) {
+                                $value = $value === '1';
+                            }
+                            update_option($option_key, $value);
+                            $saved_values[$post_key] = $value;
+                        }
+                        if (in_array($post_key, ['canvas_multi_select', 'canvas_drag_enabled', 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_keyboard_shortcuts']) && !isset($_POST[$post_key])) {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
+                        }
                     }
-                }
-                break;
+                    break;
 
-            case 'debug':
-                // Sauvegarder les paramètres de debug
-                $debug_mappings = [
-                    'canvas_debug_enabled' => 'pdf_builder_canvas_debug_enabled',
-                    'canvas_performance_monitoring' => 'pdf_builder_canvas_performance_monitoring',
-                    'canvas_error_reporting' => 'pdf_builder_canvas_error_reporting',
-                    'debug_settings_page' => 'pdf_builder_debug_settings_page'
-                ];
+                case 'export':
+                    // Sauvegarder les paramètres d'export
+                    $export_mappings = [
+                        'canvas_export_format' => 'pdf_builder_canvas_export_format',
+                        'canvas_export_quality' => 'pdf_builder_canvas_export_quality',
+                        'canvas_export_transparent' => 'pdf_builder_canvas_export_transparent'
+                    ];
 
-                foreach ($debug_mappings as $post_key => $option_key) {
-                    if (isset($_POST[$post_key])) {
-                        $value = $_POST[$post_key] === '1';
-                        update_option($option_key, $value);
-                        $saved_values[$post_key] = $value;
-                    } else {
-                        // Checkbox non cochée
-                        update_option($option_key, false);
-                        $saved_values[$post_key] = false;
+                    foreach ($export_mappings as $post_key => $option_key) {
+                        if (isset($_POST[$post_key])) {
+                            $value = $_POST[$post_key];
+                            if ($post_key === 'canvas_export_transparent') {
+                                $value = $value === '1';
+                            } else if ($post_key === 'canvas_export_quality') {
+                                $value = intval($value);
+                            }
+                            update_option($option_key, $value);
+                            $saved_values[$post_key] = $value;
+                        }
+                        if ($post_key === 'canvas_export_transparent' && !isset($_POST[$post_key])) {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
+                        }
                     }
-                }
-                break;
+                    break;
 
-            default:
-                send_ajax_response(false, "Catégorie de paramètres non reconnue: " . $category);
-                return;
-        }
+                case 'performance':
+                    // Sauvegarder les paramètres de performance (code existant)
+                    $performance_mappings = [
+                        'canvas_fps_target' => 'pdf_builder_canvas_fps_target',
+                        'canvas_memory_limit_js' => 'pdf_builder_canvas_memory_limit_js',
+                        'canvas_memory_limit_php' => 'pdf_builder_canvas_memory_limit_php',
+                        'canvas_response_timeout' => 'pdf_builder_canvas_response_timeout',
+                        'canvas_lazy_loading_editor' => 'pdf_builder_canvas_lazy_loading_editor',
+                        'canvas_preload_critical' => 'pdf_builder_canvas_preload_critical',
+                        'canvas_lazy_loading_plugin' => 'pdf_builder_canvas_lazy_loading_plugin'
+                    ];
 
-        // Update the combined canvas settings option for consistency
-        $combined_settings = get_option('pdf_builder_canvas_settings', []);
-        
-        // Map saved values to combined settings keys
-        $mappings = [
-            'dimensions' => [
-                'canvas_format' => 'default_canvas_format',
-                'canvas_orientation' => 'default_canvas_orientation', 
-                'canvas_dpi' => 'default_canvas_dpi',
-                'canvas_width' => 'canvas_width',
-                'canvas_height' => 'canvas_height',
-            ],
-            'apparence' => [
-                'canvas_background_color' => 'canvas_background_color',
-                'canvas_container_bg_color' => 'container_background_color',
-                'canvas_border_color' => 'border_color',
-                'canvas_border_width' => 'border_width',
-                'canvas_shadow_enabled' => 'shadow_enabled',
-            ],
-            'zoom' => [
-                'canvas_zoom_default' => 'default_zoom',
-                'canvas_zoom_min' => 'min_zoom',
-                'canvas_zoom_max' => 'max_zoom',
-                'canvas_zoom_step' => 'zoom_step',
-                'canvas_zoom_with_wheel' => 'zoom_with_wheel',
-                'canvas_pan_enabled' => 'pan_with_mouse',
-            ],
-            'marges' => [
-                'canvas_margin_top' => 'margin_top',
-                'canvas_margin_right' => 'margin_right',
-                'canvas_margin_bottom' => 'margin_bottom',
-                'canvas_margin_left' => 'margin_left',
-                'canvas_show_margins' => 'show_margins',
-            ],
-            'grille' => [
-                'canvas_grid_enabled' => 'show_grid',
-                'canvas_grid_size' => 'grid_size',
-                'canvas_grid_color' => 'grid_color',
-                'canvas_snap_to_grid' => 'snap_to_grid',
-                'canvas_guides_enabled' => 'show_guides',
-                'canvas_snap_to_elements' => 'snap_to_elements',
-                'canvas_snap_tolerance' => 'snap_tolerance',
-            ],
-            'interactions' => [
-                'canvas_drag_enabled' => 'drag_enabled',
-                'canvas_resize_enabled' => 'resize_enabled',
-                'canvas_rotate_enabled' => 'rotate_enabled',
-                'canvas_multi_select' => 'multi_select',
-                'canvas_selection_mode' => 'selection_mode',
-                'canvas_keyboard_shortcuts' => 'keyboard_shortcuts',
-                'canvas_copy_paste_enabled' => 'copy_paste_enabled',
-                'canvas_show_resize_handles' => 'show_resize_handles',
-                'canvas_handle_size' => 'handle_size',
-                'canvas_handle_color' => 'handle_color',
-                'canvas_rotation_step' => 'rotation_step',
-            ],
-            'export' => [
-                'canvas_export_format' => 'export_format',
-                'canvas_export_quality' => 'export_quality',
-                'canvas_compress_images' => 'compress_images',
-                'canvas_image_quality' => 'image_quality',
-                'canvas_max_image_size' => 'max_image_size',
-                'canvas_include_metadata' => 'include_metadata',
-                'canvas_pdf_author' => 'pdf_author',
-                'canvas_pdf_subject' => 'pdf_subject',
-                'canvas_auto_crop' => 'auto_crop',
-                'canvas_embed_fonts' => 'embed_fonts',
-                'canvas_optimize_for_web' => 'optimize_for_web',
-            ],
-            'performance' => [
-                'canvas_fps_target' => 'max_fps',
-                'canvas_memory_limit_js' => 'memory_limit_js',
-                'canvas_memory_limit_php' => 'memory_limit_php',
-                'canvas_response_timeout' => 'response_timeout',
-                'canvas_lazy_loading_editor' => 'lazy_loading_editor',
-                'canvas_preload_critical' => 'preload_critical',
-                'canvas_lazy_loading_plugin' => 'lazy_loading_plugin',
-            ],
-            'debug' => [
-                'canvas_debug_enabled' => 'debug_enabled',
-                'canvas_performance_monitoring' => 'performance_monitoring',
-                'canvas_error_reporting' => 'error_reporting',
-            ],
-        ];
-        
-        // Define field type mappings
-        $int_fields = ['default_canvas_dpi', 'canvas_width', 'canvas_height', 'border_width', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left', 'grid_size', 'snap_tolerance', 'handle_size', 'rotation_step', 'export_quality', 'image_quality', 'max_image_size', 'auto_save_interval', 'auto_save_versions', 'max_fps'];
-        $bool_fields = ['shadow_enabled', 'show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 'show_guides', 'multi_select', 'copy_paste_enabled', 'show_resize_handles', 'enable_rotation', 'compress_images', 'include_metadata', 'auto_crop', 'embed_fonts', 'optimize_for_web', 'auto_save_enabled', 'lazy_loading_editor', 'preload_critical', 'lazy_loading_plugin', 'debug_enabled', 'performance_monitoring', 'error_reporting'];
-        
-        if (isset($mappings[$category])) {
-            foreach ($mappings[$category] as $saved_key => $combined_key) {
-                if (isset($saved_values[$saved_key])) {
-                    // Convert types appropriately
-                    $value = $saved_values[$saved_key];
-                    if (in_array($combined_key, $int_fields)) {
-                        $value = intval($value);
-                    } elseif (in_array($combined_key, $bool_fields)) {
-                        $value = (bool)$value;
+                    foreach ($performance_mappings as $post_key => $option_key) {
+                        if (isset($_POST[$post_key])) {
+                            $value = $_POST[$post_key];
+                            // Convertir les checkboxes en boolean
+                            if (in_array($post_key, ['canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin'])) {
+                                $value = $value === '1';
+                            }
+                            update_option($option_key, $value);
+                            $saved_values[$post_key] = $value;
+                        }
+                        if (in_array($post_key, ['canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin']) && !isset($_POST[$post_key])) {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
+                        }
                     }
-                    $combined_settings[$combined_key] = $value;
-                }
+                    break;
+
+                case 'debug':
+                    // Sauvegarder les paramètres de debug
+                    $debug_mappings = [
+                        'canvas_debug_enabled' => 'pdf_builder_canvas_debug_enabled',
+                        'canvas_performance_monitoring' => 'pdf_builder_canvas_performance_monitoring',
+                        'canvas_error_reporting' => 'pdf_builder_canvas_error_reporting',
+                        'debug_settings_page' => 'pdf_builder_debug_settings_page'
+                    ];
+
+                    foreach ($debug_mappings as $post_key => $option_key) {
+                        if (isset($_POST[$post_key])) {
+                            $value = $_POST[$post_key] === '1';
+                            update_option($option_key, $value);
+                            $saved_values[$post_key] = $value;
+                        } else {
+                            // Checkbox non cochée
+                            update_option($option_key, false);
+                            $saved_values[$post_key] = false;
+                        }
+                    }
+                    break;
+
+                default:
+                    send_ajax_response(false, "Catégorie de paramètres non reconnue: " . $category);
+                    return;
             }
-            update_option('pdf_builder_canvas_settings', $combined_settings);
-        }
 
-        // Debug log
-        error_log('AJAX save - category: ' . $category . ', saved_values: ' . json_encode($saved_values));
-        error_log('data to send: ' . json_encode(['saved' => $saved_values, 'category' => $category]));
+            // Update the combined canvas settings option for consistency
+            $combined_settings = get_option('pdf_builder_canvas_settings', []);
+            
+            // Map saved values to combined settings keys
+            $mappings = [
+                'dimensions' => [
+                    'canvas_format' => 'default_canvas_format',
+                    'canvas_orientation' => 'default_canvas_orientation', 
+                    'canvas_dpi' => 'default_canvas_dpi',
+                    'canvas_width' => 'canvas_width',
+                    'canvas_height' => 'canvas_height',
+                ],
+                'apparence' => [
+                    'canvas_background_color' => 'canvas_background_color',
+                    'canvas_container_bg_color' => 'container_background_color',
+                    'canvas_border_color' => 'border_color',
+                    'canvas_border_width' => 'border_width',
+                    'canvas_shadow_enabled' => 'shadow_enabled',
+                ],
+                'zoom' => [
+                    'canvas_zoom_default' => 'default_zoom',
+                    'canvas_zoom_min' => 'min_zoom',
+                    'canvas_zoom_max' => 'max_zoom',
+                    'canvas_zoom_step' => 'zoom_step',
+                    'canvas_zoom_with_wheel' => 'zoom_with_wheel',
+                    'canvas_pan_enabled' => 'pan_with_mouse',
+                ],
+                'marges' => [
+                    'canvas_margin_top' => 'margin_top',
+                    'canvas_margin_right' => 'margin_right',
+                    'canvas_margin_bottom' => 'margin_bottom',
+                    'canvas_margin_left' => 'margin_left',
+                    'canvas_show_margins' => 'show_margins',
+                ],
+                'grille' => [
+                    'canvas_grid_enabled' => 'show_grid',
+                    'canvas_grid_size' => 'grid_size',
+                    'canvas_grid_color' => 'grid_color',
+                    'canvas_snap_to_grid' => 'snap_to_grid',
+                    'canvas_guides_enabled' => 'show_guides',
+                    'canvas_snap_to_elements' => 'snap_to_elements',
+                    'canvas_snap_tolerance' => 'snap_tolerance',
+                ],
+                'interactions' => [
+                    'canvas_drag_enabled' => 'drag_enabled',
+                    'canvas_resize_enabled' => 'resize_enabled',
+                    'canvas_rotate_enabled' => 'rotate_enabled',
+                    'canvas_multi_select' => 'multi_select',
+                    'canvas_selection_mode' => 'selection_mode',
+                    'canvas_keyboard_shortcuts' => 'keyboard_shortcuts',
+                    'canvas_copy_paste_enabled' => 'copy_paste_enabled',
+                    'canvas_show_resize_handles' => 'show_resize_handles',
+                    'canvas_handle_size' => 'handle_size',
+                    'canvas_handle_color' => 'handle_color',
+                    'canvas_rotation_step' => 'rotation_step',
+                ],
+                'export' => [
+                    'canvas_export_format' => 'export_format',
+                    'canvas_export_quality' => 'export_quality',
+                    'canvas_compress_images' => 'compress_images',
+                    'canvas_image_quality' => 'image_quality',
+                    'canvas_max_image_size' => 'max_image_size',
+                    'canvas_include_metadata' => 'include_metadata',
+                    'canvas_pdf_author' => 'pdf_author',
+                    'canvas_pdf_subject' => 'pdf_subject',
+                    'canvas_auto_crop' => 'auto_crop',
+                    'canvas_embed_fonts' => 'embed_fonts',
+                    'canvas_optimize_for_web' => 'optimize_for_web',
+                ],
+                'performance' => [
+                    'canvas_fps_target' => 'max_fps',
+                    'canvas_memory_limit_js' => 'memory_limit_js',
+                    'canvas_memory_limit_php' => 'memory_limit_php',
+                    'canvas_response_timeout' => 'response_timeout',
+                    'canvas_lazy_loading_editor' => 'lazy_loading_editor',
+                    'canvas_preload_critical' => 'preload_critical',
+                    'canvas_lazy_loading_plugin' => 'lazy_loading_plugin',
+                ],
+                'debug' => [
+                    'canvas_debug_enabled' => 'debug_enabled',
+                    'canvas_performance_monitoring' => 'performance_monitoring',
+                    'canvas_error_reporting' => 'error_reporting',
+                ],
+            ];
+            
+            if (isset($mappings[$category])) {
+                foreach ($mappings[$category] as $saved_key => $combined_key) {
+                    if (isset($saved_values[$saved_key])) {
+                        // Convert types appropriately
+                        $value = $saved_values[$saved_key];
+                        if (in_array($combined_key, ['default_canvas_dpi', 'canvas_width', 'canvas_height', 'border_width', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left', 'grid_size', 'snap_tolerance', 'handle_size', 'rotation_step', 'export_quality', 'image_quality', 'max_image_size', 'auto_save_interval', 'auto_save_versions', 'max_fps'])) {
+                            $value = intval($value);
+                        } elseif (in_array($combined_key, ['shadow_enabled', 'show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 'show_guides', 'multi_select', 'copy_paste_enabled', 'show_resize_handles', 'enable_rotation', 'compress_images', 'include_metadata', 'auto_crop', 'embed_fonts', 'optimize_for_web', 'auto_save_enabled', 'lazy_loading_editor', 'preload_critical', 'lazy_loading_plugin', 'debug_enabled', 'performance_monitoring', 'error_reporting'])) {
+                            $value = (bool)$value;
+                        }
+                        $combined_settings[$combined_key] = $value;
+                    }
+                }
+                update_option('pdf_builder_canvas_settings', $combined_settings);
+            }
 
-        send_ajax_response(true, 'Paramètres ' . $category . ' sauvegardés avec succès.', ['saved' => $saved_values, 'category' => $category]);
+            // Debug log
+            error_log('AJAX save - category: ' . $category . ', saved_values: ' . json_encode($saved_values));
+            error_log('data to send: ' . json_encode(['saved' => $saved_values, 'category' => $category]));
+
+            send_ajax_response(true, 'Paramètres ' . $category . ' sauvegardés avec succès.', ['saved' => $saved_values, 'category' => $category]);
     } catch (Exception $e) {
         send_ajax_response(false, 'Erreur lors de la sauvegarde: ' . $e->getMessage());
     }
@@ -1499,12 +1495,6 @@ function pdf_builder_save_all_settings_handler() {
         error_log("CRITICAL FIELD [{$field}]: {$value}");
     }
 
-    // LOG DES CHAMPS AVEC PRÉFIXE
-    error_log('CRITICAL PREFIXED FIELDS:');
-    error_log('pdf_builder_developer_enabled = ' . (isset($_POST['pdf_builder_developer_enabled']) ? $_POST['pdf_builder_developer_enabled'] : 'NOT_SET'));
-    error_log('pdf_builder_debug_javascript = ' . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
-    error_log('pdf_builder_debug_settings_page = ' . (isset($_POST['pdf_builder_debug_settings_page']) ? $_POST['pdf_builder_debug_settings_page'] : 'NOT_SET'));
-
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         error_log('PDF Builder SAVE ALL: ❌ NONCE VERIFICATION FAILED');
@@ -1590,23 +1580,23 @@ function pdf_builder_save_all_settings_handler() {
 
         // Traiter les champs checkbox non cochés (qui ne sont pas envoyés)
         $checkbox_fields = [
-            'pdf_builder_debug_mode',
-            'pdf_builder_log_level',
-            'pdf_builder_pdf_cache_enabled',
-            'pdf_builder_pdf_metadata_enabled',
-            'pdf_builder_pdf_print_optimized',
-            'pdf_builder_template_library_enabled',
-            'pdf_builder_developer_enabled',
-            'pdf_builder_debug_javascript',
-            'pdf_builder_debug_pdf_editor',
-            'pdf_builder_debug_settings_page'
+            'debug_mode',
+            'log_level',
+            'pdf_cache_enabled',
+            'pdf_metadata_enabled',
+            'pdf_print_optimized',
+            'template_library_enabled',
+            'developer_enabled',
+            'debug_javascript',
+            'debug_pdf_editor',
+            'debug_settings_page'
         ];
 
         error_log('===== TRAITEMENT CHAMPS CHECKBOX NON COCHÉS =====');
         foreach ($checkbox_fields as $field) {
             if (!isset($_POST[$field])) {
-                $old_value = get_option($field, 'NOT_SET');
-                update_option($field, 0);
+                $old_value = get_option('pdf_builder_' . $field, 'NOT_SET');
+                update_option('pdf_builder_' . $field, 0);
                 $saved_count++;
                 error_log("UNCHECKED CHECKBOX [{$field}]: old_value='{$old_value}' -> set to '0'");
             } else {
@@ -1615,48 +1605,11 @@ function pdf_builder_save_all_settings_handler() {
         }
         error_log('===== FIN TRAITEMENT CHECKBOX =====');
 
-        // MISE À JOUR DE L'OPTION pdf_builder_settings POUR SYNCHRONISATION
-        error_log('===== MISE À JOUR OPTION pdf_builder_settings =====');
-        $current_settings = get_option('pdf_builder_settings', []);
-        $updated_settings = $current_settings;
-
-        // Mettre à jour les paramètres traités dans l'option globale
-        foreach ($processed_fields as $field) {
-            $option_key = strpos($field, 'pdf_builder_') === 0 ? $field : 'pdf_builder_' . $field;
-            $saved_value = get_option($option_key, '');
-
-            // Convertir en boolean pour les champs debug
-            if (strpos($field, '_debug') !== false || strpos($field, '_enabled') !== false) {
-                $saved_value = $saved_value ? true : false;
-            }
-
-            $updated_settings[$option_key] = $saved_value;
-            error_log("UPDATED pdf_builder_settings [{$option_key}] = " . (is_bool($saved_value) ? ($saved_value ? 'true' : 'false') : $saved_value));
-        }
-
-        // Mettre à jour les checkboxes non cochées
-        foreach ($checkbox_fields as $field) {
-            $saved_value = get_option($field, 0) ? true : false;
-            $updated_settings[$field] = $saved_value;
-            error_log("UPDATED pdf_builder_settings [{$field}] = " . ($saved_value ? 'true' : 'false'));
-        }
-
-        // Sauvegarder l'option globale mise à jour
-        $update_result = update_option('pdf_builder_settings', $updated_settings);
-        error_log('pdf_builder_settings UPDATE RESULT: ' . ($update_result ? 'SUCCESS' : 'NO_CHANGE'));
-        error_log('===== FIN MISE À JOUR pdf_builder_settings =====');
-
         // VÉRIFICATION FINALE DES VALEURS SAUVEGARDÉES
         error_log('===== VÉRIFICATION VALEURS SAUVEGARDÉES EN BASE =====');
         foreach ($critical_fields as $field) {
             $saved_value = get_option('pdf_builder_' . $field, 'NOT_FOUND');
             error_log("DB CHECK [pdf_builder_{$field}] = '{$saved_value}'");
-        }
-        // Vérification des champs avec préfixe
-        $prefixed_fields = ['pdf_builder_developer_enabled', 'pdf_builder_debug_javascript', 'pdf_builder_debug_settings_page'];
-        foreach ($prefixed_fields as $field) {
-            $saved_value = get_option($field, 'NOT_FOUND');
-            error_log("DB CHECK [{$field}] = '{$saved_value}'");
         }
         error_log('===== FIN VÉRIFICATION DB =====');
 
@@ -1676,8 +1629,7 @@ function pdf_builder_save_all_settings_handler() {
 
             // Ajouter les champs checkbox traités séparément
             foreach ($checkbox_fields as $field) {
-                $short_field = str_replace('pdf_builder_', '', $field);
-                $saved_options[$short_field] = get_option($field, 0) ? '1' : '0';
+                $saved_options[$field] = get_option('pdf_builder_' . $field, 0) ? '1' : '0';
             }
 
             error_log('PDF Builder SAVE ALL - Final saved_options count: ' . count($saved_options));
