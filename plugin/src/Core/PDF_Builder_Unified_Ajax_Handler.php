@@ -372,12 +372,11 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Also update the single pdf_builder_settings option for JavaScript loading
             $settings_to_serialize = [];
             foreach ($saved_options as $key => $value) {
-                // Convert keys without pdf_builder_ prefix for the serialized option
+                // Convert keys to have pdf_builder_ prefix for the serialized option
                 if (strpos($key, 'pdf_builder_') === 0) {
-                    $short_key = substr($key, 12); // Remove 'pdf_builder_' prefix
-                    $settings_to_serialize[$short_key] = $value;
-                } else {
                     $settings_to_serialize[$key] = $value;
+                } else {
+                    $settings_to_serialize['pdf_builder_' . $key] = $value;
                 }
             }
             update_option('pdf_builder_settings', $settings_to_serialize);
