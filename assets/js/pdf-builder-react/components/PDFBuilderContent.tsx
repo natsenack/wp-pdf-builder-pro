@@ -47,13 +47,19 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   height = DEFAULT_CANVAS_HEIGHT,
   className
 }: PDFBuilderContentProps) {
+  console.log('🏗️ PDFBuilderContent: Component initialized with props:', { width, height, className });
+
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [isPropertiesPanelOpen, setIsPropertiesPanelOpen] = useState(false);
   const [manualSaveSuccess, setManualSaveSuccess] = useState(false);
 
+  console.log('📱 PDFBuilderContent: Initial state set:', { isHeaderFixed, isPropertiesPanelOpen, manualSaveSuccess });
+
   // Hooks responsives
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+
+  console.log('📱 PDFBuilderContent: Responsive hooks:', { isMobile, isTablet });
 
   const {
     templateName,
@@ -75,42 +81,78 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     updateTemplateSettings
   } = useTemplate();
 
+  console.log('📋 PDFBuilderContent: useTemplate hook values:', {
+    templateName,
+    templateDescription,
+    canvasWidth,
+    canvasHeight,
+    marginTop,
+    marginBottom,
+    showGuides,
+    snapToGrid,
+    isNewTemplate,
+    isModified,
+    isSaving,
+    isLoading,
+    isEditingExistingTemplate
+  });
+
   // Hook pour les paramètres du canvas
   const canvasSettings = useCanvasSettings();
 
+  console.log('🎨 PDFBuilderContent: Canvas settings:', canvasSettings);
+
   // Injection des utilitaires responsives
   useEffect(() => {
+    console.log('🔧 PDFBuilderContent: Injecting responsive utils');
     injectResponsiveUtils();
+    console.log('✅ PDFBuilderContent: Responsive utils injected');
   }, []);
 
   // Effet pour gérer le scroll et ajuster le padding
   useEffect(() => {
+    console.log('📜 PDFBuilderContent: Setting up scroll handler');
+
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      setIsHeaderFixed(scrollTop > 100);
+      const newIsHeaderFixed = scrollTop > 100;
+      console.log('📜 PDFBuilderContent: Scroll detected, scrollTop:', scrollTop, 'isHeaderFixed:', newIsHeaderFixed);
+      setIsHeaderFixed(newIsHeaderFixed);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    console.log('✅ PDFBuilderContent: Scroll handler added');
+
+    return () => {
+      console.log('🧹 PDFBuilderContent: Cleaning up scroll handler');
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   // Wrapper pour sauvegarder
   const saveTemplateWithAutoSave = useCallback(async () => {
+    console.log('💾 PDFBuilderContent: Manual save initiated');
+
     try {
       // Effectuer la sauvegarde manuelle
+      console.log('🔄 PDFBuilderContent: Calling saveTemplate...');
       await saveTemplate();
+      console.log('✅ PDFBuilderContent: Manual save successful');
       debugLog('[PDF_BUILDER] Manual save successful');
 
       // Afficher une notification de succès
       if (typeof window !== 'undefined' && window.showSuccessNotification) {
+        console.log('🔔 PDFBuilderContent: Showing success notification');
         window.showSuccessNotification('Template sauvegardé avec succès !');
       }
 
     } catch (manualSaveError) {
+      console.error('❌ PDFBuilderContent: Manual save failed:', manualSaveError);
       debugError('[PDF_BUILDER] Manual save failed:', manualSaveError);
 
       // Afficher une notification d'erreur
       if (typeof window !== 'undefined' && window.showErrorNotification) {
+        console.log('🔔 PDFBuilderContent: Showing error notification');
         window.showErrorNotification('Erreur lors de la sauvegarde du template');
       }
 
@@ -265,12 +307,21 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               )}
               
               {/* ✅ ONLY render Canvas when template is loaded OR it's a new template */}
-              {!isLoading && <Canvas width={width} height={height} />}
+              {!isLoading && (
+                <>
+                  {console.log('🎨 PDFBuilderContent: Rendering Canvas component')}
+                  <Canvas width={width} height={height} />
+                </>
+              )}
             </div>
 
             {/* Bouton toggle pour le panneau de propriétés */}
             <button
-              onClick={() => setIsPropertiesPanelOpen(!isPropertiesPanelOpen)}
+              onClick={() => {
+                console.log('🔘 PDFBuilderContent: Properties panel toggle clicked, current state:', isPropertiesPanelOpen);
+                setIsPropertiesPanelOpen(!isPropertiesPanelOpen);
+                console.log('🔄 PDFBuilderContent: Properties panel state changed to:', !isPropertiesPanelOpen);
+              }}
               style={{
                 position: 'absolute',
                 top: '50%',

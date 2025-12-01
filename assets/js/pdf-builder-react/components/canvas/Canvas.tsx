@@ -1193,6 +1193,9 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
+  console.log('🎨 Canvas: Component initialized with props:', { width, height, className });
+  console.log('📊 Canvas: Initial state:', { elements: state.elements.length, selection: state.selection.selectedElements.length, zoom: state.canvas.zoom });
+
   debugLog(`[Canvas] Component initialized - Dimensions: ${width}x${height}, Settings loaded: ${!!canvasSettings}`);
 
   // Force re-render when canvas settings change (commenté pour éviter les boucles)
@@ -2627,8 +2630,10 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // Gestionnaire de clic droit pour le canvas
   const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     event.preventDefault();
+    console.log(`👆 Canvas: Context menu triggered at (${event.clientX}, ${event.clientY})`);
     debugLog(`[Canvas] Context menu triggered at (${event.clientX}, ${event.clientY})`);
     handleContextMenu(event, (x, y, elementId) => {
+      console.log(`📋 Canvas: Context menu callback - Element: ${elementId || 'canvas'}, Position: (${x}, ${y})`);
       debugLog(`[Canvas] Context menu callback - Element: ${elementId || 'canvas'}, Position: (${x}, ${y})`);
       showContextMenu(x, y, elementId);
     });
@@ -2639,22 +2644,27 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     const startTime = Date.now();
     renderCountRef.current += 1;
 
+    console.log(`🎨 Canvas: Render #${renderCountRef.current} started - Elements: ${state.elements.length}, Zoom: ${state.canvas.zoom}%, Selection: ${state.selection.selectedElements.length} items`);
+
     debugLog(`[Canvas] Render #${renderCountRef.current} started - Elements: ${state.elements.length}, Zoom: ${state.canvas.zoom}%, Pan: (${state.canvas.pan.x.toFixed(1)}, ${state.canvas.pan.y.toFixed(1)}), Selection: ${state.selection.selectedElements.length} items`);
 
     const canvas = canvasRef.current;
     if (!canvas) {
+      console.log('❌ Canvas: Render cancelled - canvas ref is null');
       debugLog('[Canvas] Render cancelled - canvas ref is null');
       return;
     }
 
     const ctx = canvas.getContext('2d');
     if (!ctx) {
+      console.log('❌ Canvas: Render cancelled - canvas context unavailable');
       debugLog('[Canvas] Render cancelled - canvas context unavailable');
       return;
     }
 
     // Clear canvas with background color from settings (matching PDF background)
     const canvasBgColor = normalizeColor(canvasSettings?.canvasBackgroundColor || '#ffffff');
+    console.log(`🖌️ Canvas: Clearing canvas with background color: ${canvasBgColor}`);
     debugLog(`[Canvas] Clearing canvas with background color: ${canvasBgColor}`);
     ctx.fillStyle = canvasBgColor;
     ctx.fillRect(0, 0, width, height);
@@ -2694,8 +2704,10 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     }
 
     // Dessiner les éléments
+    console.log(`📝 Canvas: Rendering ${visibleElementsList.length} visible elements (lazy loading: ${lazyLoadingEnabled})`);
     debugLog(`[Canvas] Rendering ${visibleElementsList.length} visible elements (lazy loading: ${lazyLoadingEnabled})`);
     visibleElementsList.forEach((element) => {
+      console.log(`🎯 Canvas: Drawing element: ${element.type} (${element.id}) at (${element.x}, ${element.y}) ${element.width}x${element.height}`);
       debugLog(`[Canvas] Drawing element: ${element.type} (${element.id}) at (${element.x}, ${element.y}) ${element.width}x${element.height}`);
       drawElement(ctx, element, state);  // ✅ BUGFIX-001/004: Pass state as parameter
     });
@@ -2744,16 +2756,19 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // Log rendu terminé avec métriques de performance
     const renderTime = Date.now() - startTime;
+    console.log(`✅ Canvas: Render #${renderCountRef.current} completed in ${renderTime}ms - ${state.elements.length} elements rendered`);
     debugLog(`[Canvas] Render #${renderCountRef.current} completed in ${renderTime}ms - ${state.elements.length} elements rendered`);
 
     // Log avertissement si le rendu prend trop de temps
     if (renderTime > 100) {
+      console.warn(`⚠️ Canvas: Slow render detected: ${renderTime}ms for ${state.elements.length} elements`);
       debugWarn(`[Canvas] Slow render detected: ${renderTime}ms for ${state.elements.length} elements`);
     }
   }, [width, height, canvasSettings, state, drawElement, drawGrid, drawGuides, selectionState, drawSelection, visibleElementsList]);  // ✅ Include memoized drawGrid and drawGuides
 
   // Redessiner quand l'état change - CORRECTION: Supprimer renderCanvas des dépendances pour éviter les boucles
   useEffect(() => {
+    console.log(`🔄 Canvas: State change detected - triggering render. Elements: ${state.elements.length}, Selection: ${state.selection.selectedElements.length}, Zoom: ${state.canvas.zoom}%`);
     debugLog(`[Canvas] State change detected - triggering render. Elements: ${state.elements.length}, Selection: ${state.selection.selectedElements.length}, Zoom: ${state.canvas.zoom}%`);
     renderCanvas();
   }, [state, canvasSettings, imageLoadCount, selectionState?.updateTrigger, visibleElementsList]); // Dépendances directes au lieu de renderCanvas

@@ -15,24 +15,36 @@ export function PDFBuilder({
   height: initialHeight = DEFAULT_CANVAS_HEIGHT,
   className
 }: PDFBuilderProps) {
+  console.log('🔧 PDFBuilder: Component initialized with props:', { initialWidth, initialHeight, className });
+
   const [dimensions, setDimensions] = useState({
     width: initialWidth,
     height: initialHeight
   });
 
+  console.log('📏 PDFBuilder: Initial dimensions set:', dimensions);
+
   // Écouter les changements de dimensions depuis l'API globale
   useEffect(() => {
+    console.log('🎧 PDFBuilder: Setting up dimension change listener');
+
     const handleUpdateDimensions = (event: CustomEvent) => {
+      console.log('📡 PDFBuilder: Received dimension update event:', event.detail);
       const { width, height } = event.detail;
+      console.log('🔄 PDFBuilder: Updating dimensions to:', { width, height });
       setDimensions({ width, height });
     };
 
     document.addEventListener('pdfBuilderUpdateCanvasDimensions', handleUpdateDimensions as EventListener);
+    console.log('✅ PDFBuilder: Dimension change listener added');
 
     return () => {
+      console.log('🧹 PDFBuilder: Cleaning up dimension change listener');
       document.removeEventListener('pdfBuilderUpdateCanvasDimensions', handleUpdateDimensions as EventListener);
     };
   }, []);
+
+  console.log('🎨 PDFBuilder: Rendering with dimensions:', dimensions);
 
   return (
     <CanvasSettingsProvider>
