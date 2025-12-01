@@ -1627,7 +1627,7 @@ function pdf_builder_save_all_settings_handler() {
         send_ajax_response(true, $message, [
             'saved_count' => $saved_count,
             'errors' => $errors,
-            'saved_options' => $saved_options,
+            'saved_settings' => $saved_options,
             'debug_info' => [
                 'total_post' => count($_POST),
                 'ignored' => $ignored_fields,
