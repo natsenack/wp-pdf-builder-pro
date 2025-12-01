@@ -90,7 +90,7 @@
 
 
 
-                <style>
+               <style>
                     /* Classe commune pour les sections de l'onglet général */
                     .general-section {
                         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -106,24 +106,6 @@
                         border-bottom: 2px solid #e9ecef;
                         padding-bottom: 8px;
                         font-size: 18px;
-                    }
-                    .form-table input.error {
-                        border-color: #dc3545 !important;
-                        box-shadow: 0 0 0 1px #dc3545 !important;
-                        background-color: #fff5f5 !important;
-                    }
-                    .form-table input.error:focus {
-                        border-color: #dc3545 !important;
-                        box-shadow: 0 0 0 1px #dc3545, 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
-                    }
-                    .form-table input.valid {
-                        border-color: #28a745 !important;
-                        box-shadow: 0 0 0 1px #28a745 !important;
-                        background-color: #f8fff8 !important;
-                    }
-                    .form-table input.valid:focus {
-                        border-color: #28a745 !important;
-                        box-shadow: 0 0 0 1px #28a745, 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
                     }
                </style>
            </section>
