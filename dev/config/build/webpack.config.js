@@ -83,9 +83,9 @@ module.exports = {
       new TerserPlugin({
         terserOptions: {
           compress: {
-            drop_console: true,  // ✅ Supprimer les logs en production
+            drop_console: false,  // ❌ Garder les logs pour le debug
             drop_debugger: true,
-            pure_funcs: ['console.log', 'console.info', 'console.debug'],
+            pure_funcs: [],  // ❌ Ne pas supprimer les fonctions console
             pure_getters: true,
             unsafe: true,
             unsafe_comps: true,
