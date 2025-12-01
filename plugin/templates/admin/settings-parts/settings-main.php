@@ -2286,8 +2286,8 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 context: 'Floating Save Button',
                 successCallback: function(result, originalData) {
                     // Update window.pdfBuilderSavedSettings with new values
-                    if (originalData.saved_settings) {
-                        window.pdfBuilderSavedSettings = Object.assign({}, window.pdfBuilderSavedSettings, originalData.saved_settings);
+                    if (originalData.data && originalData.data.saved_settings) {
+                        window.pdfBuilderSavedSettings = Object.assign({}, window.pdfBuilderSavedSettings, originalData.data.saved_settings);
                         if (window.pdfBuilderDebugSettings?.javascript) {
                             console.log('[FLOATING SAVE] Updated window.pdfBuilderSavedSettings with new values');
                         }
