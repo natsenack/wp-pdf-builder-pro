@@ -390,7 +390,7 @@
         <div class="dev-section collapsed" id="license-section">
             <div class="dev-section-header" role="button" tabindex="0" aria-expanded="false">
                 <h3>🔑 Licence de Test</h3>
-                <span class="dev-section-toggle">▼</span>
+                <span class="dev-section-toggle">▶️</span>
             </div>
             <div class="dev-section-content" aria-hidden="true">
                 <table class="form-table">
@@ -498,7 +498,7 @@
         <div class="dev-section collapsed" id="debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
             <div class="dev-section-header" role="button" tabindex="0" aria-expanded="false">
                 <h3>🔍 Paramètres de Debug</h3>
-                <span class="dev-section-toggle">▼</span>
+                <span class="dev-section-toggle">▶️</span>
             </div>
             <div class="dev-section-content" aria-hidden="true">
                 <div class="dev-grid">
@@ -597,7 +597,7 @@
         <div class="dev-section collapsed" id="logs-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
             <div class="dev-section-header" role="button" tabindex="0" aria-expanded="false">
                 <h3>📝 Configuration des Logs</h3>
-                <span class="dev-section-toggle">▼</span>
+                <span class="dev-section-toggle">▶️</span>
             </div>
             <div class="dev-section-content" aria-hidden="true">
                 <div class="dev-grid">
@@ -660,7 +660,7 @@
         <div class="dev-section collapsed" id="todo-section">
             <div class="dev-section-header" role="button" tabindex="0" aria-expanded="false">
                 <h3>📋 À Faire</h3>
-                <span class="dev-section-toggle">▼</span>
+                <span class="dev-section-toggle">▶️</span>
             </div>
             <div class="dev-section-content" aria-hidden="true">
                 <div style="margin-bottom: 20px;">
