@@ -2027,7 +2027,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
         drawCompanyLogo(ctx, element);
         break;
-      case 'order_number':
+      case 'order-number':
         drawOrderNumber(ctx, element, currentState);
         break;
       case 'document_type':
@@ -2285,7 +2285,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
             customer_info: { width: 300, height: 80 },
             company_info: { width: 300, height: 120 },
             company_logo: { width: 150, height: 80 },
-            order_number: { width: 200, height: 40 },
+            'order-number': { width: 200, height: 40 },
             document_type: { width: 150, height: 30 },
             'dynamic-text': { width: 200, height: 60 },
             mentions: { width: 400, height: 80 }
