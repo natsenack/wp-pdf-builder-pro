@@ -8,7 +8,7 @@ import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts.ts';
 import { Element, ShapeElementProperties, TextElementProperties, LineElementProperties, ProductTableElementProperties, CustomerInfoElementProperties, CompanyInfoElementProperties, ImageElementProperties, OrderNumberElementProperties, MentionsElementProperties, DocumentTypeElementProperties, BuilderState } from '../../types/elements';
 import { wooCommerceManager } from '../../utils/WooCommerceElementsManager';
 import { elementChangeTracker } from '../../utils/ElementChangeTracker';
-import { debugWarn, debugError } from '../../utils/debug';
+import { debugWarn, debugError, debugLog } from '../../utils/debug';
 
 // Déclaration pour l'API Performance
 declare const performance: {
@@ -1336,7 +1336,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     const currentMemoryUsage = calculateCacheMemoryUsage();
     const memoryLimit = memoryLimitJs;
 
-    
+    debugLog(`[Canvas Memory] Starting cache cleanup - Current usage: ${currentMemoryUsage.toFixed(2)}MB, Limit: ${memoryLimit}MB, Items: ${cache.size}`);
 
     // Nettoyer si limite dépassée ou trop d'éléments
     if (isMemoryLimitExceeded() || cache.size > MAX_CACHE_ITEMS) {
@@ -1358,10 +1358,12 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         memoryFreed += data.size / (1024 * 1024); // MB
         removed++;
 
-        
+        debugLog(`[Canvas Memory] Removed image from cache: ${url.split('/').pop()}, Freed: ${(data.size / (1024 * 1024)).toFixed(2)}MB`);
       }
 
-      
+      debugLog(`[Canvas Memory] Cache cleanup completed - Removed ${removed} items, Freed ${memoryFreed.toFixed(2)}MB, New usage: ${(currentMemoryUsage - memoryFreed).toFixed(2)}MB`);
+    } else {
+      debugLog(`[Canvas Memory] Cache cleanup not needed - Usage within limits`);
     }
   }, [calculateCacheMemoryUsage, memoryLimitJs, isMemoryLimitExceeded]);
 
@@ -2055,7 +2057,12 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // Fonction pour dessiner la sélection
   const drawSelection = useCallback((ctx: CanvasRenderingContext2D, selectedIds: string[], elements: Element[]) => {
     const selectedElements = elements.filter(el => selectedIds.includes(el.id));
-    if (selectedElements.length === 0) return;
+    if (selectedElements.length === 0) {
+      debugLog('[Canvas] Selection cleared - no elements selected');
+      return;
+    }
+
+    debugLog(`[Canvas] Drawing selection for ${selectedElements.length} element(s):`, selectedIds);
 
     // Calculer les bounds de sélection
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -2599,17 +2606,20 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // Fonction de rendu du canvas
   const renderCanvas = useCallback(() => {
+    const startTime = Date.now();
+    renderCountRef.current += 1;
 
+    debugLog(`[Canvas] Render #${renderCountRef.current} started - Elements: ${state.elements.length}, Zoom: ${state.canvas.zoom}%, Pan: (${state.canvas.pan.x.toFixed(1)}, ${state.canvas.pan.y.toFixed(1)})`);
 
     const canvas = canvasRef.current;
     if (!canvas) {
-
+      debugLog('[Canvas] Render cancelled - canvas ref is null');
       return;
     }
 
     const ctx = canvas.getContext('2d');
     if (!ctx) {
-
+      debugLog('[Canvas] Render cancelled - canvas context unavailable');
       return;
     }
 
@@ -2694,11 +2704,19 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // Dessiner la sélection
     if (state.selection.selectedElements.length > 0) {
-
       drawSelection(ctx, state.selection.selectedElements, state.elements);
     }
 
     ctx.restore();
+
+    // Log rendu terminé avec métriques de performance
+    const renderTime = Date.now() - startTime;
+    debugLog(`[Canvas] Render #${renderCountRef.current} completed in ${renderTime}ms - ${state.elements.length} elements rendered`);
+
+    // Log avertissement si le rendu prend trop de temps
+    if (renderTime > 100) {
+      debugWarn(`[Canvas] Slow render detected: ${renderTime}ms for ${state.elements.length} elements`);
+    }
   }, [width, height, canvasSettings, state, drawElement, drawGrid, drawGuides, selectionState, drawSelection, visibleElementsList]);  // ✅ Include memoized drawGrid and drawGuides
 
   // Redessiner quand l'état change

@@ -72,6 +72,8 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Actions développeur
         add_action('wp_ajax_pdf_builder_get_fresh_nonce', [$this, 'handle_get_fresh_nonce']);
+        add_action('wp_ajax_pdf_builder_system_info', [$this, 'handle_system_info']);
+        add_action('wp_ajax_pdf_builder_reset_dev_settings', [$this, 'handle_reset_dev_settings']);
     }
 
     /**
@@ -1357,6 +1359,107 @@ class PDF_Builder_Unified_Ajax_Handler {
              error_log('[PDF Builder AJAX] Erreur génération nonce: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
+     }
+
+     /**
+      * Handler pour afficher les informations système
+      */
+     public function handle_system_info() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             global $wpdb, $wp_version;
+
+             $system_info = [
+                 'wordpress' => [
+                     'version' => $wp_version,
+                     'site_url' => get_site_url(),
+                     'admin_email' => get_option('admin_email'),
+                     'debug_mode' => defined('WP_DEBUG') && WP_DEBUG,
+                     'multisite' => is_multisite()
+                 ],
+                 'server' => [
+                     'php_version' => PHP_VERSION,
+                     'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+                     'memory_limit' => ini_get('memory_limit'),
+                     'max_execution_time' => ini_get('max_execution_time'),
+                     'upload_max_filesize' => ini_get('upload_max_filesize')
+                 ],
+                 'database' => [
+                     'version' => $wpdb->db_version(),
+                     'size' => $this->get_database_size(),
+                     'tables_count' => count($wpdb->get_results("SHOW TABLES"))
+                 ],
+                 'plugin' => [
+                     'version' => get_option('pdf_builder_version', 'Unknown'),
+                     'cache_enabled' => get_option('pdf_builder_cache_enabled', '0') === '1',
+                     'developer_mode' => get_option('pdf_builder_developer_enabled', '0') === '1',
+                     'license_status' => get_option('pdf_builder_license_status', 'inactive')
+                 ]
+             ];
+
+             wp_send_json_success([
+                 'message' => 'Informations système récupérées avec succès.',
+                 'system_info' => $system_info
+             ]);
+
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur récupération info système: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+
+     /**
+      * Handler pour remettre à zéro les paramètres développeur
+      */
+     public function handle_reset_dev_settings() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             return;
+         }
+
+         try {
+             $dev_options = [
+                 'pdf_builder_developer_enabled',
+                 'pdf_builder_developer_password',
+                 'pdf_builder_performance_monitoring',
+                 'pdf_builder_license_test_mode_enabled',
+                 'pdf_builder_license_test_key',
+                 'pdf_builder_license_test_key_expires'
+             ];
+
+             $reset_count = 0;
+             foreach ($dev_options as $option) {
+                 if (delete_option($option)) {
+                     $reset_count++;
+                 }
+             }
+
+             wp_send_json_success([
+                 'message' => "$reset_count paramètre(s) développeur remis à zéro avec succès."
+             ]);
+
+         } catch (Exception $e) {
+             error_log('[PDF Builder AJAX] Erreur reset paramètres dev: ' . $e->getMessage());
+             wp_send_json_error(['message' => 'Erreur interne du serveur']);
+         }
+     }
+
+     /**
+      * Obtenir la taille de la base de données
+      */
+     private function get_database_size() {
+         global $wpdb;
+
+         $result = $wpdb->get_row("
+             SELECT
+                 ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) as size_mb
+             FROM information_schema.tables
+             WHERE table_schema = DATABASE()
+         ");
+
+         return $result ? $result->size_mb . ' MB' : 'Unknown';
      }
  }
 

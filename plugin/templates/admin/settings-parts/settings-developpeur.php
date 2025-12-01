@@ -797,13 +797,13 @@
 
         const tools = {
             view_logs_js_btn: { action: 'view_logs_js', confirm: false, desc: 'Ouvrir les logs JavaScript' },
-            clear_cache_btn: { action: 'pdf_builder_clear_cache', confirm: 'Vider le cache du plugin ?', desc: 'Vider le cache' },
-            clear_temp_btn: { action: 'pdf_builder_clear_temp', confirm: 'Vider les fichiers temporaires ?', desc: 'Vider les fichiers temporaires' },
+            clear_cache_btn: { action: 'pdf_builder_clear_all_cache', confirm: 'Vider le cache du plugin ?', desc: 'Vider le cache' },
+            clear_temp_btn: { action: 'pdf_builder_remove_temp_files', confirm: 'Vider les fichiers temporaires ?', desc: 'Vider les fichiers temporaires' },
             clear_logs_btn: { action: 'pdf_builder_clear_logs', confirm: 'Vider tous les logs ?', desc: 'Vider les logs' },
             system_info_btn: { action: 'pdf_builder_system_info', confirm: false, desc: 'Afficher les informations système' },
-            test_connections_btn: { action: 'pdf_builder_test_connections', confirm: false, desc: 'Tester les connexions' },
+            test_connections_btn: { action: 'pdf_builder_test_routes', confirm: false, desc: 'Tester les connexions' },
             reset_settings_btn: { action: 'pdf_builder_reset_dev_settings', confirm: 'Remettre à zéro tous les paramètres développeur ?', desc: 'Reset des paramètres' },
-            backup_config_btn: { action: 'pdf_builder_backup_config', confirm: false, desc: 'Créer une sauvegarde' }
+            backup_config_btn: { action: 'pdf_builder_create_backup', confirm: false, desc: 'Créer une sauvegarde' }
         };
 
         Object.entries(tools).forEach(([btnId, config]) => {
