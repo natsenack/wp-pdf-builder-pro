@@ -420,20 +420,28 @@ function pdf_builder_delete_backup_handler() {
  * Dispatcher pour les nouveaux handlers AJAX
  */
 function pdf_builder_ajax_handler_dispatch() {
+    // LOG POUR DEBUG: Vérifier que le dispatcher est appelé
+    error_log('PDF BUILDER AJAX DISPATCHER: Called with action: ' . ($_REQUEST['action'] ?? 'NO_ACTION'));
+    
     try {
         $action = isset($_REQUEST['action']) ? sanitize_text_field($_REQUEST['action']) : '';
 
         if (empty($action)) {
+            error_log('PDF BUILDER AJAX DISPATCHER: No action provided');
             wp_send_json_error('Action manquante');
             return;
         }
 
+        error_log('PDF BUILDER AJAX DISPATCHER: Processing action: ' . $action);
+
         // Dispatcher vers le handler approprié selon l'action
         switch ($action) {
             case 'pdf_builder_save_settings':
+                error_log('PDF BUILDER AJAX DISPATCHER: Routing to pdf_builder_save_settings_ajax');
                 pdf_builder_save_settings_ajax();
                 break;
             case 'pdf_builder_save_all_settings':
+                error_log('PDF BUILDER AJAX DISPATCHER: Routing to pdf_builder_save_all_settings_handler');
                 pdf_builder_save_all_settings_handler();
                 break;
             case 'pdf_builder_get_fresh_nonce':
