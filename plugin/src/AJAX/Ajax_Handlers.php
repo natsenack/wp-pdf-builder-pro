@@ -111,11 +111,12 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             $this->validate_request();
 
             // Traiter tous les paramètres envoyés
-            $saved_count = $this->process_all_settings();
+            $result = $this->process_all_settings();
 
-            if ($saved_count > 0) {
+            if ($result['saved_count'] > 0) {
                 $this->send_success([
-                    'saved_count' => $saved_count,
+                    'saved_count' => $result['saved_count'],
+                    'saved_settings' => $result['saved_settings'],
                     'new_nonce' => wp_create_nonce($this->nonce_action)
                 ], 'Paramètres sauvegardés avec succès');
             } else {
@@ -130,6 +131,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
 
     private function process_all_settings() {
         $saved_count = 0;
+        $saved_settings = [];
 
         // Définir les règles de validation des champs (même que dans settings-main.php)
         $field_rules = [
@@ -171,72 +173,101 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 continue;
             }
 
+            $option_key = '';
+            $option_value = null;
+
             if (in_array($key, $field_rules['text_fields'])) {
                 // Special handling for canvas fields
                 if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
-                    update_option('pdf_builder_canvas_' . $key, sanitize_text_field($value ?? ''));
+                    $option_key = 'pdf_builder_canvas_' . $key;
+                    $option_value = sanitize_text_field($value ?? '');
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
-                    update_option($key, sanitize_text_field($value ?? ''));
+                    $option_key = $key;
+                    $option_value = sanitize_text_field($value ?? '');
                 } else {
-                    update_option('pdf_builder_' . $key, sanitize_text_field($value ?? ''));
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = sanitize_text_field($value ?? '');
                 }
+                update_option($option_key, $option_value);
                 $saved_count++;
             } elseif (in_array($key, $field_rules['int_fields'])) {
                 // Special handling for canvas fields
                 if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
-                    update_option('pdf_builder_canvas_' . $key, intval($value ?? 0));
+                    $option_key = 'pdf_builder_canvas_' . $key;
+                    $option_value = intval($value ?? 0);
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
-                    update_option($key, intval($value ?? 0));
+                    $option_key = $key;
+                    $option_value = intval($value ?? 0);
                 } else {
-                    update_option('pdf_builder_' . $key, intval($value ?? 0));
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = intval($value ?? 0);
                 }
+                update_option($option_key, $option_value);
                 $saved_count++;
             } elseif (in_array($key, $field_rules['bool_fields'])) {
                 // Special handling for canvas fields
                 if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
-                    update_option('pdf_builder_canvas_' . $key, isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0);
+                    $option_key = 'pdf_builder_canvas_' . $key;
+                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
-                    update_option($key, isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0);
+                    $option_key = $key;
+                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
                 } else {
-                    update_option('pdf_builder_' . $key, isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0);
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
                 }
+                update_option($option_key, $option_value);
                 $saved_count++;
             } elseif (in_array($key, $field_rules['array_fields'])) {
                 if (is_array($value)) {
-                    update_option('pdf_builder_' . $key, array_map('sanitize_text_field', $value));
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = array_map('sanitize_text_field', $value);
                 } else {
-                    update_option('pdf_builder_' . $key, []);
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = [];
                 }
+                update_option($option_key, $option_value);
                 $saved_count++;
             } else {
                 // Pour les champs non définis, essayer de deviner le type
                 if (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
+                    $option_key = $key;
                     if (is_numeric($value)) {
-                        update_option($key, intval($value));
+                        $option_value = intval($value);
                     } elseif (is_array($value)) {
-                        update_option($key, array_map('sanitize_text_field', $value));
+                        $option_value = array_map('sanitize_text_field', $value);
                     } else {
-                        update_option($key, sanitize_text_field($value ?? ''));
+                        $option_value = sanitize_text_field($value ?? '');
                     }
                 } else {
                     // Add prefix
+                    $option_key = 'pdf_builder_' . $key;
                     if (is_numeric($value)) {
-                        update_option('pdf_builder_' . $key, intval($value));
+                        $option_value = intval($value);
                     } elseif (is_array($value)) {
-                        update_option('pdf_builder_' . $key, array_map('sanitize_text_field', $value));
+                        $option_value = array_map('sanitize_text_field', $value);
                     } else {
-                        update_option('pdf_builder_' . $key, sanitize_text_field($value ?? ''));
+                        $option_value = sanitize_text_field($value ?? '');
                     }
                 }
+                update_option($option_key, $option_value);
                 $saved_count++;
+            }
+
+            // Ajouter à saved_settings si une clé a été définie
+            if (!empty($option_key)) {
+                $saved_settings[$option_key] = $option_value;
             }
         }
 
-        return $saved_count;
+        return [
+            'saved_count' => $saved_count,
+            'saved_settings' => $saved_settings
+        ];
     }
 }
 

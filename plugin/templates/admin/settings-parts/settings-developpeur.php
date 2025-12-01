@@ -728,28 +728,33 @@ document.addEventListener('DOMContentLoaded', function() {
     function syncCheckboxesWithSavedSettings() {
         if (!window.pdfBuilderSavedSettings) return;
 
-        // Liste des checkboxes à synchroniser
-        const checkboxesToSync = [
-            'pdf_builder_developer_enabled',
-            'pdf_builder_debug_php_errors',
-            'pdf_builder_debug_javascript',
-            'pdf_builder_debug_javascript_verbose',
-            'pdf_builder_debug_ajax',
-            'pdf_builder_debug_pdf_editor',
-            'pdf_builder_debug_settings_page',
-            'pdf_builder_debug_performance',
-            'pdf_builder_debug_database',
-            'pdf_builder_performance_monitoring'
-        ];
+        // Liste des checkboxes à synchroniser avec leurs IDs correspondants
+        const checkboxMapping = {
+            'pdf_builder_developer_enabled': 'developer_enabled',
+            'pdf_builder_debug_php_errors': 'debug_php_errors',
+            'pdf_builder_debug_javascript': 'debug_javascript',
+            'pdf_builder_debug_javascript_verbose': 'debug_javascript_verbose',
+            'pdf_builder_debug_ajax': 'debug_ajax',
+            'pdf_builder_debug_pdf_editor': 'debug_pdf_editor',
+            'pdf_builder_debug_settings_page': 'debug_settings_page',
+            'pdf_builder_debug_performance': 'debug_performance',
+            'pdf_builder_debug_database': 'debug_database',
+            'pdf_builder_performance_monitoring': 'performance_monitoring'
+        };
 
-        checkboxesToSync.forEach(key => {
-            const checkbox = document.getElementById(key.replace('pdf_builder_', '').replace(/_([a-z])/g, (match, letter) => letter.toUpperCase()));
+        Object.keys(checkboxMapping).forEach(key => {
+            const checkboxId = checkboxMapping[key];
+            const checkbox = document.getElementById(checkboxId);
             if (checkbox) {
                 const savedValue = window.pdfBuilderSavedSettings[key];
                 const shouldBeChecked = savedValue && savedValue !== '0' && savedValue !== 0;
                 checkbox.checked = shouldBeChecked;
                 if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.log(`🔧 [SYNC] ${key}: ${shouldBeChecked} (saved: ${savedValue})`);
+                    console.log(`🔧 [SYNC] ${key} -> ${checkboxId}: ${shouldBeChecked} (saved: ${savedValue})`);
+                }
+            } else {
+                if (window.pdfBuilderDebugSettings?.javascript) {
+                    console.warn(`🔧 [SYNC] Checkbox ${checkboxId} not found for key ${key}`);
                 }
             }
         });

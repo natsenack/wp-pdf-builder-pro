@@ -2285,6 +2285,14 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 button: floatingSaveBtn,
                 context: 'Floating Save Button',
                 successCallback: function(result, originalData) {
+                    // Update window.pdfBuilderSavedSettings with new values
+                    if (originalData.saved_settings) {
+                        window.pdfBuilderSavedSettings = Object.assign({}, window.pdfBuilderSavedSettings, originalData.saved_settings);
+                        if (window.pdfBuilderDebugSettings?.javascript) {
+                            console.log('[FLOATING SAVE] Updated window.pdfBuilderSavedSettings with new values');
+                        }
+                    }
+
                     // Update previews after successful save
                     if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeAllPreviews === 'function') {
                         window.PDF_Builder_Preview_Manager.initializeAllPreviews();
@@ -2307,6 +2315,11 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     }
                     if (typeof window.updateTemplateLibraryIndicator === 'function') {
                         window.updateTemplateLibraryIndicator();
+                    }
+
+                    // Re-sync checkboxes after settings update
+                    if (typeof window.syncCheckboxesWithSavedSettings === 'function') {
+                        window.syncCheckboxesWithSavedSettings();
                     }
                 }
             }).catch(error => {
