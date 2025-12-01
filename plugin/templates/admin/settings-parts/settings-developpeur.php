@@ -253,14 +253,16 @@ document.addEventListener('DOMContentLoaded', function() {
             statusBanner.className = 'dev-status-banner ' + (isEnabled ? 'active' : 'inactive');
         }
 
-        // Sauvegarde automatique AJAX
+        // Sauvegarde automatique AJAX - Utiliser la même méthode que le bouton flottant
         if (window.pdfBuilderAjax && window.ajaxurl) {
             const formData = new FormData();
-            formData.append('action', 'pdf_builder_save_settings');
+            formData.append('action', 'pdf_builder_save_all_settings');
             formData.append('pdf_builder_developer_enabled', isEnabled ? '1' : '0');
-            formData.append('tab', 'developpeur');
+            formData.append('pdf_builder_canvas_debug_enabled', document.getElementById('dev_canvas_debug_enabled')?.checked ? '1' : '0');
+            formData.append('pdf_builder_developer_password', document.getElementById('developer_password')?.value || '');
 
             if (window.pdfBuilderAjax.nonce) {
+                formData.append('_wpnonce', window.pdfBuilderAjax.nonce);
                 formData.append('nonce', window.pdfBuilderAjax.nonce);
             }
 
@@ -269,9 +271,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: formData
             }).then(response => response.json())
             .then(data => {
-                console.log('[DEV MODE] Saved via AJAX');
-                if (window.pdfBuilderSavedSettings) {
-                    window.pdfBuilderSavedSettings.pdf_builder_developer_enabled = isEnabled ? '1' : '0';
+                console.log('[DEV MODE] Saved via AJAX - Full settings');
+
+                if (data.success && data.data && data.data.saved_settings) {
+                    if (window.pdfBuilderSavedSettings) {
+                        window.pdfBuilderSavedSettings.pdf_builder_developer_enabled = isEnabled ? '1' : '0';
+                        window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled = document.getElementById('dev_canvas_debug_enabled')?.checked ? '1' : '0';
+                        window.pdfBuilderSavedSettings.pdf_builder_developer_password = document.getElementById('developer_password')?.value || '';
+                    }
+                    console.log('[DEV MODE] Settings updated in window object');
+                } else {
+                    console.warn('[DEV MODE] AJAX response format unexpected:', data);
                 }
             }).catch(err => console.warn('[DEV MODE] AJAX save failed:', err));
         }
