@@ -572,12 +572,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showNotification('Paramètre sauvegardé', 'success');
                 console.log('[DEV] Setting saved:', setting, '=', value);
 
-                // Refresh the page to update PHP variables with new values
-                setTimeout(() => {
-                    console.log('[DEV] Refreshing page to reflect new database values');
-                    window.location.reload();
-                }, 100);
-
+                // Note: No page reload needed - form will be refreshed on next page load
                 return data;
             } else {
                 console.error('[DEV] Save failed:', data);
