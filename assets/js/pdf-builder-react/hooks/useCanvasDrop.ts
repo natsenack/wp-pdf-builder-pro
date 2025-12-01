@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useBuilder } from '../contexts/builder/BuilderContext';
 import { Element } from '../types/elements';
+import { debugLog, debugError, debugWarn } from '../utils/debug';
 
 interface UseCanvasDropProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -119,10 +120,15 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
   }, [generateElementId]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
-    if (!dragEnabled) return;
+    if (!dragEnabled) {
+      debugLog('[CanvasDrop] Drop ignored - drag disabled');
+      return;
+    }
     
     e.preventDefault();
     setIsDragOver(false);
+
+    debugLog('[CanvasDrop] Processing drop event');
 
     try {
 
@@ -133,6 +139,7 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
       }
 
       const dragData = JSON.parse(rawData);
+      debugLog(`[CanvasDrop] Parsed drag data: ${dragData.type} (${dragData.label})`);
 
       // Validation des données
       if (!validateDragData(dragData)) {
@@ -144,51 +151,54 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
       const elementHeight = (dragData.defaultProps.height as number) || 50;
 
       const position = calculateDropPosition(e.clientX, e.clientY, elementWidth, elementHeight);
+      debugLog(`[CanvasDrop] Calculated drop position: (${position.x}, ${position.y}) from client coords (${e.clientX}, ${e.clientY})`);
 
       // Création de l'élément
       const newElement = createElementFromDragData(dragData, position);
+      debugLog(`[CanvasDrop] Created element: ${newElement.id} (${newElement.type})`);
 
       // Vérification des conflits d'ID
       const existingElement = elements.find(el => el.id === newElement.id);
       if (existingElement) {
         newElement.id = generateElementId(dragData.type);
+        debugWarn(`[CanvasDrop] ID conflict resolved, new ID: ${newElement.id}`);
       }
 
       // Ajout au state
       dispatch({ type: 'ADD_ELEMENT', payload: newElement });
-
-      // Notification de succès (optionnel - retiré pour éviter les erreurs de type)
-      // if (window.pdfBuilder?.showNotification) {
-      //   window.pdfBuilder.showNotification(`Élément "${dragData.label}" ajouté`, 'success');
-      // }
+      debugLog(`[CanvasDrop] Element added to canvas successfully`);
 
     } catch (error) {
+      debugError(`[CanvasDrop] Drop failed:`, error);
 
-
-      // Notification d'erreur (optionnel - retiré pour éviter les erreurs de type)
-      // if (window.pdfBuilder?.showNotification) {
-      //   window.pdfBuilder.showNotification('Erreur lors de l\'ajout de l\'élément', 'error');
-      // }
     }
-  }, [validateDragData, calculateDropPosition, createElementFromDragData, elements, dispatch, generateElementId]);
+  }, [validateDragData, calculateDropPosition, createElementFromDragData, elements, dispatch, generateElementId, dragEnabled]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
-    if (!dragEnabled) return;
+    if (!dragEnabled) {
+      debugLog('[CanvasDrop] Drag over ignored - drag disabled');
+      return;
+    }
     
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
 
     if (!isDragOver) {
+      debugLog('[CanvasDrop] Drag over started');
       setIsDragOver(true);
     }
   }, [isDragOver, dragEnabled]);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
-    if (!dragEnabled) return;
+    if (!dragEnabled) {
+      debugLog('[CanvasDrop] Drag leave ignored - drag disabled');
+      return;
+    }
     
     // Simple check - if we have a relatedTarget, assume drag is leaving
     // This is a simplified approach to avoid DOM type issues
     if (e.relatedTarget) {
+      debugLog('[CanvasDrop] Drag leave detected');
       setIsDragOver(false);
     }
   }, [dragEnabled]);

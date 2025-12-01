@@ -1193,6 +1193,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
+  debugLog(`[Canvas] Component initialized - Dimensions: ${width}x${height}, Settings loaded: ${!!canvasSettings}`);
+
   // Force re-render when canvas settings change (commenté pour éviter les boucles)
   // const [, forceUpdate] = useState({});
   // useEffect(() => {
@@ -1431,7 +1433,9 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // Écouter les changements de couleur de fond depuis les paramètres
   useEffect(() => {
+    debugLog(`[Canvas] Background color change detected: ${canvasSettings?.canvasBackgroundColor}`);
     const handleBgColorChange = (event: CustomEvent) => {
+      debugLog(`[Canvas] Custom background color change event received:`, event.detail);
       // Forcer le re-rendu du canvas avec la nouvelle couleur
       renderCountRef.current += 1;
       // Le canvas se re-rendra automatiquement grâce aux dépendances du useEffect principal
@@ -1442,7 +1446,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     return () => {
       window.removeEventListener('pdfBuilderCanvasBgColorChanged', handleBgColorChange as EventListener);
     };
-  }, []);
+  }, [canvasSettings?.canvasBackgroundColor]);
 
   // Utiliser les hooks pour les interactions
   const { handleDrop, handleDragOver, handleDragLeave, isDragOver } = useCanvasDrop({
@@ -1981,11 +1985,11 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // Vérifier si l'élément est visible
     if (element.visible === false) {
-
+      debugLog(`[Canvas] Skipping invisible element: ${element.type} (${element.id})`);
       return;
     }
 
-
+    debugLog(`[Canvas] Drawing element: ${element.type} (${element.id}) - Position: (${element.x}, ${element.y}), Size: ${element.width}x${element.height}, Rotation: ${element.rotation || 0}°`);
 
     ctx.save();
 
@@ -2005,48 +2009,60 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     // Dessiner selon le type d'élément
     switch (element.type) {
       case 'rectangle':
+        debugLog(`[Canvas] Rendering rectangle element: ${element.id}`);
         drawRectangle(ctx, element);
         break;
       case 'circle':
+        debugLog(`[Canvas] Rendering circle element: ${element.id}`);
         drawCircle(ctx, element);
         break;
       case 'text':
+        debugLog(`[Canvas] Rendering text element: ${element.id}`);
         drawText(ctx, element);
         break;
       case 'line':
+        debugLog(`[Canvas] Rendering line element: ${element.id}`);
         drawLine(ctx, element);
         break;
       case 'product_table':
+        debugLog(`[Canvas] Rendering product table element: ${element.id}`);
         drawProductTable(ctx, element, currentState);
         break;
       case 'customer_info':
+        debugLog(`[Canvas] Rendering customer info element: ${element.id}`);
         drawCustomerInfo(ctx, element, currentState);
         break;
       case 'company_info':
+        debugLog(`[Canvas] Rendering company info element: ${element.id}`);
         drawCompanyInfo(ctx, element, canvasSettings);
         break;
       case 'company_logo':
-
+        debugLog(`[Canvas] Rendering company logo element: ${element.id}`);
         drawCompanyLogo(ctx, element);
         break;
       case 'order-number':
+        debugLog(`[Canvas] Rendering order number element: ${element.id}`);
         drawOrderNumber(ctx, element, currentState);
         break;
       case 'document_type':
+        debugLog(`[Canvas] Rendering document type element: ${element.id}`);
         drawDocumentType(ctx, element, currentState);
         break;
       case 'dynamic-text':
+        debugLog(`[Canvas] Rendering dynamic text element: ${element.id}`);
         drawDynamicText(ctx, element);
         break;
       case 'mentions':
+        debugLog(`[Canvas] Rendering mentions element: ${element.id}`);
         drawMentions(ctx, element);
         break;
       case 'image':
+        debugLog(`[Canvas] Rendering image element: ${element.id}`);
         drawImage(ctx, element, imageCache);
         break;
       default:
+        debugWarn(`[Canvas] Unknown element type: ${element.type} for element ${element.id}`);
         // Élément générique - dessiner un rectangle simple
-
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, element.width, element.height);
@@ -2191,10 +2207,12 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   }, []);
 
   const handleContextMenuAction = useCallback((action: string, elementId?: string) => {
+    debugLog(`[Canvas] Context menu action: ${action} on element ${elementId || 'none'}`);
     if (!elementId) return;
 
     switch (action) {
       case 'bring-to-front': {
+        debugLog(`[Canvas] Bringing element ${elementId} to front`);
         // Déplacer l'élément à la fin du tableau (devant tous les autres)
         const elementIndex = state.elements.findIndex(el => el.id === elementId);
         if (elementIndex !== -1) {
@@ -2209,6 +2227,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         break;
       }
       case 'send-to-back': {
+        debugLog(`[Canvas] Sending element ${elementId} to back`);
         // Déplacer l'élément au début du tableau (derrière tous les autres)
         const elementIndex = state.elements.findIndex(el => el.id === elementId);
         if (elementIndex !== -1) {
@@ -2223,6 +2242,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         break;
       }
       case 'bring-forward': {
+        debugLog(`[Canvas] Bringing element ${elementId} forward`);
         // Déplacer l'élément d'une position vers l'avant
         const elementIndex = state.elements.findIndex(el => el.id === elementId);
         if (elementIndex !== -1 && elementIndex < state.elements.length - 1) {
@@ -2234,6 +2254,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         break;
       }
       case 'send-backward': {
+        debugLog(`[Canvas] Sending element ${elementId} backward`);
         // Déplacer l'élément d'une position vers l'arrière
         const elementIndex = state.elements.findIndex(el => el.id === elementId);
         if (elementIndex > 0) {
@@ -2245,6 +2266,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         break;
       }
       case 'duplicate': {
+        debugLog(`[Canvas] Duplicating element ${elementId}`);
         // Dupliquer l'élément avec un nouvel ID et un léger décalage
         const element = state.elements.find(el => el.id === elementId);
         if (element) {
@@ -2261,6 +2283,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         break;
       }
       case 'copy': {
+        debugLog(`[Canvas] Copying element ${elementId}`);
         // Copier l'élément dans le presse-papiers interne
         const element = state.elements.find(el => el.id === elementId);
         if (element) {
@@ -2270,6 +2293,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         break;
       }
       case 'cut': {
+        debugLog(`[Canvas] Cutting element ${elementId}`);
         // Couper l'élément (copier puis supprimer)
         const element = state.elements.find(el => el.id === elementId);
         if (element) {
@@ -2280,6 +2304,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         break;
       }
       case 'reset-size': {
+        debugLog(`[Canvas] Resetting size for element ${elementId}`);
         // Réinitialiser la taille de l'élément à ses dimensions par défaut
         const element = state.elements.find(el => el.id === elementId);
         if (element) {
@@ -2310,6 +2335,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         break;
       }
       case 'fit-to-content': {
+        debugLog(`[Canvas] Fitting element ${elementId} to content`);
         // Ajuster la taille de l'élément à son contenu (pour le texte principalement)
         const element = state.elements.find(el => el.id === elementId);
         if (element && (element.type === 'text' || element.type === 'dynamic-text')) {
@@ -2342,9 +2368,11 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         break;
       }
       case 'delete':
+        debugLog(`[Canvas] Deleting element ${elementId}`);
         dispatch({ type: 'REMOVE_ELEMENT', payload: elementId });
         break;
       case 'lock': {
+        debugLog(`[Canvas] Toggling lock for element ${elementId}`);
         // Basculer l'état verrouillé de l'élément
         const element = state.elements.find(el => el.id === elementId);
         if (element) {
@@ -2599,7 +2627,9 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // Gestionnaire de clic droit pour le canvas
   const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     event.preventDefault();
+    debugLog(`[Canvas] Context menu triggered at (${event.clientX}, ${event.clientY})`);
     handleContextMenu(event, (x, y, elementId) => {
+      debugLog(`[Canvas] Context menu callback - Element: ${elementId || 'canvas'}, Position: (${x}, ${y})`);
       showContextMenu(x, y, elementId);
     });
   }, [handleContextMenu, showContextMenu]);
@@ -2609,7 +2639,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     const startTime = Date.now();
     renderCountRef.current += 1;
 
-    debugLog(`[Canvas] Render #${renderCountRef.current} started - Elements: ${state.elements.length}, Zoom: ${state.canvas.zoom}%, Pan: (${state.canvas.pan.x.toFixed(1)}, ${state.canvas.pan.y.toFixed(1)})`);
+    debugLog(`[Canvas] Render #${renderCountRef.current} started - Elements: ${state.elements.length}, Zoom: ${state.canvas.zoom}%, Pan: (${state.canvas.pan.x.toFixed(1)}, ${state.canvas.pan.y.toFixed(1)}), Selection: ${state.selection.selectedElements.length} items`);
 
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -2625,6 +2655,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
     // Clear canvas with background color from settings (matching PDF background)
     const canvasBgColor = normalizeColor(canvasSettings?.canvasBackgroundColor || '#ffffff');
+    debugLog(`[Canvas] Clearing canvas with background color: ${canvasBgColor}`);
     ctx.fillStyle = canvasBgColor;
     ctx.fillRect(0, 0, width, height);
 
@@ -2663,7 +2694,9 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     }
 
     // Dessiner les éléments
+    debugLog(`[Canvas] Rendering ${visibleElementsList.length} visible elements (lazy loading: ${lazyLoadingEnabled})`);
     visibleElementsList.forEach((element) => {
+      debugLog(`[Canvas] Drawing element: ${element.type} (${element.id}) at (${element.x}, ${element.y}) ${element.width}x${element.height}`);
       drawElement(ctx, element, state);  // ✅ BUGFIX-001/004: Pass state as parameter
     });
 
@@ -2721,6 +2754,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // Redessiner quand l'état change - CORRECTION: Supprimer renderCanvas des dépendances pour éviter les boucles
   useEffect(() => {
+    debugLog(`[Canvas] State change detected - triggering render. Elements: ${state.elements.length}, Selection: ${state.selection.selectedElements.length}, Zoom: ${state.canvas.zoom}%`);
     renderCanvas();
   }, [state, canvasSettings, imageLoadCount, selectionState?.updateTrigger, visibleElementsList]); // Dépendances directes au lieu de renderCanvas
 
@@ -2729,23 +2763,28 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   // ✅ Force initial render when elements first load (for cached images)
   useEffect(() => {
     if (state.elements.length > 0 && !initialImageCheckDoneRef.current) {
+      debugLog(`[Canvas] Initial elements loaded (${state.elements.length} elements) - scheduling image loading checks`);
       initialImageCheckDoneRef.current = true;
 
       // Force multiple renders to ensure images are displayed
       const timer1 = setTimeout(() => {
+        debugLog(`[Canvas] Image loading check #1`);
         setImageLoadCount(prev => prev + 1);
       }, 100);
 
       const timer2 = setTimeout(() => {
+        debugLog(`[Canvas] Image loading check #2`);
         setImageLoadCount(prev => prev + 1);
       }, 500);
 
       const timer3 = setTimeout(() => {
+        debugLog(`[Canvas] Image loading check #3`);
         setImageLoadCount(prev => prev + 1);
       }, 1000);
 
       // Add longer timeout for slow-loading images
       const timer4 = setTimeout(() => {
+        debugLog(`[Canvas] Image loading check #4 (final)`);
         setImageLoadCount(prev => prev + 1);
       }, 2000);
 
@@ -2788,6 +2827,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   const zoomScale = state.canvas.zoom / 100;
   const displayWidth = width * zoomScale;
   const displayHeight = height * zoomScale;
+
+  debugLog(`[Canvas] Rendering canvas element - Display size: ${displayWidth}x${displayHeight}, Border: ${borderStyle}, Drag over: ${isDragOver}`);
 
   return (
     <>
