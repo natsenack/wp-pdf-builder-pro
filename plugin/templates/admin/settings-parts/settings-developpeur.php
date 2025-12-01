@@ -1082,7 +1082,7 @@ wp_localize_script('pdf-builder-developer-js', 'pdfBuilderDeveloperConfig', $aja
         saveSetting: function(key, value) {
             console.log(`[PDF Builder Developer] Saving setting: ${key} = ${value}`);
 
-            const formData = new URLSearchParams();
+            const formData = new FormData();
             formData.append('action', this.config.action);
             formData.append('nonce', this.config.nonce);
             formData.append('setting_key', key);
@@ -1091,10 +1091,9 @@ wp_localize_script('pdf-builder-developer-js', 'pdfBuilderDeveloperConfig', $aja
             return fetch(this.config.ajax_url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: formData.toString()
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
