@@ -807,6 +807,64 @@ add_action('wp_ajax_pdf_builder_deactivate_license', function() {
         wp_send_json_error(['message' => $e->getMessage()]);
     }
 });
+
+// Developer Settings AJAX Handler
+add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
+    try {
+        // Verify nonce
+        if (!wp_verify_nonce(sanitize_text_field($_POST['nonce'] ?? ''), 'pdf_builder_developer_settings')) {
+            wp_send_json_error(['message' => 'Security check failed']);
+            return;
+        }
+
+        // Check user capability
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Insufficient permissions']);
+            return;
+        }
+
+        // Get the setting key and value
+        $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
+        $setting_value = sanitize_text_field($_POST['setting_value'] ?? '');
+
+        // Validate setting key (only allow developer settings)
+        $allowed_keys = [
+            'pdf_builder_developer_enabled',
+            'pdf_builder_canvas_debug_enabled',
+            'pdf_builder_developer_password'
+        ];
+
+        if (!in_array($setting_key, $allowed_keys)) {
+            wp_send_json_error(['message' => 'Invalid setting key']);
+            return;
+        }
+
+        // Get existing settings
+        $settings = get_option('pdf_builder_settings', []);
+
+        // Update the specific setting
+        $settings[$setting_key] = $setting_value;
+
+        // Save back to database
+        $updated = update_option('pdf_builder_settings', $settings);
+
+        if ($updated) {
+            error_log("PDF Builder Developer: Setting saved - {$setting_key} = {$setting_value}");
+
+            wp_send_json_success([
+                'message' => 'Developer setting saved successfully',
+                'setting' => $setting_key,
+                'value' => $setting_value
+            ]);
+        } else {
+            wp_send_json_error(['message' => 'Failed to save setting']);
+        }
+
+    } catch (Exception $e) {
+        error_log('PDF Builder Developer: AJAX Error - ' . $e->getMessage());
+        wp_send_json_error(['message' => $e->getMessage()]);
+    }
+});
 ?>
 
 <?php require_once __DIR__ . '/settings-modals.php'; ?>
