@@ -134,11 +134,7 @@ class PdfBuilderCacheManager
             return;
         }
 
-        // WordPress gère automatiquement la suppression des transients expirés
-        // Cette méthode peut être utilisée pour un nettoyage manuel si nécessaire
-        if (function_exists('pdf_builder_log')) {
-            pdf_builder_log("Expired cache cleanup completed", 2);
-        }
+        PDF_Builder_Logger::get_instance()->info("Expired cache cleanup completed", ['context' => 'cache_manager']);
     }
 
     /**
@@ -175,11 +171,7 @@ class PdfBuilderCacheManager
 
         foreach ($keys as $key) {
             if (!$this->exists($key)) {
-                // Ici, vous pouvez implémenter la logique pour charger les données
-                // Par exemple, charger des templates, des configurations, etc.
-                if (function_exists('pdf_builder_log')) {
-                    pdf_builder_log("Preloading cache for: $key", 3);
-                }
+                PDF_Builder_Logger::get_instance()->debug("Preloading cache for: $key", ['context' => 'cache_manager']);
             }
         }
     }

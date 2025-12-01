@@ -264,27 +264,24 @@ class PdfBuilderStatusManager
      */
     private function logStatusDetection($status_key, $status_name, $action)
     {
-        // Utiliser la classe avec le bon espace de noms
-        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $message = sprintf(
             'Nouveau statut détecté: %s (%s) - Action: %s',
             $status_key,
             $status_name,
             $action
         );
-        $logger->log($message, 'info', 'status_manager');
+        PDF_Builder_Logger::get_instance()->info($message, ['context' => 'status_manager']);
     }
     /**
      * Logger l'utilisation d'un statut inconnu
      */
     private function logUnknownStatusUsage($status_key)
     {
-        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
         $message = sprintf(
             'Statut inconnu utilisé: %s - Template par défaut appliqué',
             $status_key
         );
-        $logger->log($message, 'warning', 'status_manager');
+        PDF_Builder_Logger::get_instance()->warning($message, ['context' => 'status_manager']);
     }
 
     /**

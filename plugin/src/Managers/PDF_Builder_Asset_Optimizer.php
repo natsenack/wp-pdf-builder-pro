@@ -593,8 +593,6 @@ class PdfBuilderAssetOptimizer
      */
     private function logOptimizationResults($results)
     {
-        $logger = \PDF_Builder\Managers\PDF_Builder_Logger::getInstance();
-
         $total_savings = 0;
         $total_original = 0;
 
@@ -617,7 +615,7 @@ class PdfBuilderAssetOptimizer
             round($compression_ratio, 1)
         );
 
-        $logger->log($message, 'info', 'asset_optimizer');
+        PDF_Builder_Logger::get_instance()->info($message, ['context' => 'asset_optimizer']);
     }
 
     /**

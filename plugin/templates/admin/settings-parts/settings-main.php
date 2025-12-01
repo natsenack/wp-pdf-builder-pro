@@ -226,7 +226,7 @@ window.pdfBuilderDebugSettings = {
     javascript_verbose: false,
     ajax: false,
     performance: false,
-    settings_page: false,
+    settings_page: true,  // ACTIVÉ pour déboguer la persistance des onglets
     pdf_editor: false,
     database: false
 };
@@ -509,6 +509,12 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
         if ($max_input_vars && count($_POST) >= $max_input_vars) {
             $notices[] = '<div class="notice notice-error"><p><strong>⚠️</strong> Trop de paramètres soumis (' . count($_POST) . '). Limite PHP max_input_vars: ' . $max_input_vars . '. Certains paramètres n\'ont pas été sauvegardés.</p></div>';
         }
+
+        // Debug: Log the received debug fields
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('PDF Builder: Received debug fields - pdf_builder_debug_pdf_editor: ' . (isset($_POST['pdf_builder_debug_pdf_editor']) ? $_POST['pdf_builder_debug_pdf_editor'] : 'NOT_SET'));
+            error_log('PDF Builder: Received debug fields - pdf_builder_debug_settings_page: ' . (isset($_POST['pdf_builder_debug_settings_page']) ? $_POST['pdf_builder_debug_settings_page'] : 'NOT_SET'));
+        }
         // Collect all form data from all tabs - comprehensive field processing
         // Process ALL fields dynamically since floating button sends data from all tabs
         $to_save = [];
@@ -725,6 +731,58 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
         if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
             update_option('pdf_builder_order_status_templates', array_map('sanitize_text_field', $_POST['order_status_templates']));
         }
+
+        // Build settings array from individual options for template compatibility
+        $settings = [
+            // Company info
+            'pdf_builder_company_phone_manual' => get_option('pdf_builder_company_phone_manual', ''),
+            'pdf_builder_company_siret' => get_option('pdf_builder_company_siret', ''),
+            'pdf_builder_company_vat' => get_option('pdf_builder_company_vat', ''),
+            'pdf_builder_company_rcs' => get_option('pdf_builder_company_rcs', ''),
+            'pdf_builder_company_capital' => get_option('pdf_builder_company_capital', ''),
+
+            // PDF settings
+            'pdf_builder_pdf_quality' => get_option('pdf_builder_pdf_quality', 'high'),
+            'pdf_builder_default_format' => get_option('pdf_builder_default_format', 'A4'),
+            'pdf_builder_default_orientation' => get_option('pdf_builder_default_orientation', 'portrait'),
+
+            // Cache settings
+            'pdf_builder_cache_enabled' => get_option('pdf_builder_cache_enabled', 1),
+            'cache_compression' => get_option('pdf_builder_cache_compression', 0),
+            'cache_auto_cleanup' => get_option('pdf_builder_cache_auto_cleanup', 0),
+            'cache_max_size' => get_option('pdf_builder_cache_max_size', 100),
+            'cache_ttl' => get_option('pdf_builder_cache_ttl', 3600),
+
+            // System settings
+            'performance_auto_optimization' => get_option('pdf_builder_performance_auto_optimization', 0),
+            'pdf_builder_auto_maintenance' => get_option('pdf_builder_auto_maintenance', 1),
+            'pdf_builder_auto_backup' => get_option('pdf_builder_auto_backup', 1),
+            'systeme_auto_backup_frequency' => get_option('pdf_builder_auto_backup_frequency', 'daily'),
+            'systeme_backup_retention' => get_option('pdf_builder_backup_retention', 30),
+
+            // Template settings
+            'default_template' => get_option('pdf_builder_default_template', 'blank'),
+            'template_library_enabled' => get_option('pdf_builder_template_library_enabled', 0),
+
+            // Developer settings
+            'pdf_builder_developer_enabled' => get_option('pdf_builder_developer_enabled', 0),
+            'pdf_builder_developer_password' => get_option('pdf_builder_developer_password', ''),
+            'pdf_builder_debug_php_errors' => get_option('pdf_builder_debug_php_errors', 0),
+            'pdf_builder_debug_javascript' => get_option('pdf_builder_debug_javascript', 0),
+            'pdf_builder_debug_javascript_verbose' => get_option('pdf_builder_debug_javascript_verbose', 0),
+            'pdf_builder_debug_ajax' => get_option('pdf_builder_debug_ajax', 0),
+            'pdf_builder_debug_pdf_editor' => get_option('pdf_builder_debug_pdf_editor', 0),
+            'pdf_builder_debug_settings_page' => get_option('pdf_builder_debug_settings_page', 0),
+            'pdf_builder_debug_performance' => get_option('pdf_builder_debug_performance', 0),
+            'pdf_builder_debug_database' => get_option('pdf_builder_debug_database', 0),
+            'pdf_builder_log_level' => get_option('pdf_builder_log_level', 'info'),
+            'pdf_builder_log_file_size' => get_option('pdf_builder_log_file_size', 10),
+            'pdf_builder_log_retention' => get_option('pdf_builder_log_retention', 30),
+            'pdf_builder_force_https' => get_option('pdf_builder_force_https', 0),
+
+            // License settings
+            'pdf_builder_license_test_mode_enabled' => get_option('pdf_builder_license_test_mode_enabled', 0),
+        ];
     } else {
         $notices[] = '<div class="notice notice-error"><p><strong>❌</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
     }
@@ -927,7 +985,7 @@ window.updateZoomCardPreview = function() {
     }
 };
 
-// Tab switching functionality
+// Tab switching functionality - VERSION AMÉLIORÉE avec persistance renforcée
 function initializeTabs() {
     const tabs = document.querySelectorAll('.nav-tab');
     const contents = document.querySelectorAll('.tab-content');
@@ -949,47 +1007,54 @@ function initializeTabs() {
             }
 
             e.preventDefault();
-            if (window.pdfBuilderDebugSettings?.settings_page) {
-                console.log('PDF Builder: preventDefault() called');
-                console.log('PDF Builder: Removing nav-tab-active from all tabs');
-            }
-
-            if (window.pdfBuilderDebugSettings?.settings_page) {
-                console.log('PDF Builder: Adding nav-tab-active to clicked tab');
-                console.log('PDF Builder: Before adding class, clicked tab classList:', this.classList.toString());
-            }
-            // Add active class to clicked tab
-            this.classList.add('nav-tab-active');
-            if (window.pdfBuilderDebugSettings?.settings_page) {
-                console.log('PDF Builder: After adding class, clicked tab classList:', this.classList.toString());
-                console.log('PDF Builder: Processing tab contents');
-            }
-            // Hide all tab contents
-            contents.forEach(function(c) {
-                c.classList.remove('active');
-                c.style.display = 'none';
-            });
-
-            // Show corresponding tab content
+            
             const target = this.getAttribute('href').substring(1);
-            const targetContent = document.getElementById(target);
-
-            if (targetContent) {
-                targetContent.classList.add('active');
-                targetContent.style.display = 'block';
-            } else {
-                if (window.pdfBuilderDebugSettings?.settings_page) {
-                    console.error('PDF Builder: Target content not found for id:', target);
-                    console.log('PDF Builder: Available content IDs:', Array.from(contents).map(c => c.id));
-                }
-            }
+            
+            // Switch to target tab
+            setActiveTab(target);
 
             if (window.pdfBuilderDebugSettings?.settings_page) {
                 console.log('PDF Builder: ===== TAB CLICK END =====');
             }
+        });
+    });
 
-            // Update canvas previews when switching to contenu tab
-            if (target === 'contenu') {
+    // Fonction pour activer un onglet spécifique
+    function setActiveTab(targetTab, saveToStorage = true) {
+        // Remove active classes from all tabs and contents
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('nav-tab-active');
+        });
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+            content.style.display = 'none';
+        });
+
+        // Find target tab and content
+        const activeTab = document.querySelector('.nav-tab[href="#' + targetTab + '"]');
+        const activeContent = document.getElementById(targetTab);
+
+        if (activeTab && activeContent) {
+            // Add active classes to target tab and content
+            activeTab.classList.add('nav-tab-active');
+            activeContent.classList.add('active');
+            activeContent.style.display = 'block';
+
+            // Update URL hash to match the active tab (without triggering scroll)
+            if (window.location.hash.substring(1) !== targetTab) {
+                history.replaceState(null, null, '#' + targetTab);
+            }
+
+                    // Save active tab to localStorage for persistence across reloads
+                    if (saveToStorage) {
+                        localStorage.setItem('pdf-builder-active-tab', targetTab);
+                        // Also save timestamp for debugging
+                        localStorage.setItem('pdf-builder-active-tab-time', Date.now());
+                        if (window.pdfBuilderDebugSettings?.settings_page) {
+                            console.log('PDF Builder: [SAVE] Tab saved to localStorage:', targetTab, 'at', new Date().toLocaleTimeString());
+                        }
+                    }            // Update canvas previews when switching to contenu tab
+            if (targetTab === 'contenu') {
                 if (window.pdfBuilderDebugSettings?.settings_page) {
                     console.log('PDF Builder: Switching to contenu tab, updating canvas previews');
                 }
@@ -1016,82 +1081,105 @@ function initializeTabs() {
                 }
             }
 
-            // Update URL hash without scrolling
-            if (window.pdfBuilderDebugSettings?.settings_page) {
-                console.log('PDF Builder: Updating URL hash to:', '#' + target);
+            // Update mobile menu text
+            const currentTabText = document.querySelector('.current-tab-text');
+            if (currentTabText) {
+                const tabText = activeTab.querySelector('.tab-text');
+                if (tabText) {
+                    currentTabText.textContent = tabText.textContent;
+                }
             }
-            history.replaceState(null, null, '#' + target);
 
             // Update floating save button text
-            updateFloatingSaveButtonText(target);
-        });
-    });
+            updateFloatingSaveButtonText(targetTab);
 
-    // Check hash on load and initialize tabs properly
-    const hash = window.location.hash.substring(1);
-    let targetTab = 'general'; // Default tab
+            if (window.pdfBuilderDebugSettings?.settings_page) {
+                console.log('PDF Builder: Tab switched to:', targetTab);
+            }
 
-    if (hash) {
-        const tabExists = document.querySelector('.nav-tab[href="#' + hash + '"]');
-        if (tabExists) {
-            targetTab = hash;
+            return true;
+        } else {
+            if (window.pdfBuilderDebugSettings?.settings_page) {
+                console.error('PDF Builder: Could not find tab or content for target:', targetTab);
+            }
+            return false;
         }
     }
 
-    // Set active tab and content without triggering click events
-    const activeTab = document.querySelector('.nav-tab[href="#' + targetTab + '"]');
-    const activeContent = document.getElementById(targetTab);
+    // Exposer la fonction setActiveTab globalement
+    window.setActiveTab = setActiveTab;
 
-    if (activeTab && activeContent) {
-        // Remove active classes from all tabs and contents
-        document.querySelectorAll('.nav-tab').forEach(tab => {
-            tab.classList.remove('nav-tab-active');
-        });
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
-            content.style.display = 'none';
-        });
-
-        // Add active classes to target tab and content
-        activeTab.classList.add('nav-tab-active');
-        activeContent.classList.add('active');
-        activeContent.style.display = 'block';
-
-        if (window.pdfBuilderDebugSettings?.settings_page) {
-            console.log('PDF Builder: Tab initialization completed successfully');
-        }
-
-        // Update mobile menu text
-        const currentTabText = document.querySelector('.current-tab-text');
-        if (currentTabText) {
-            const tabText = activeTab.querySelector('.tab-text');
-            if (tabText) {
-                currentTabText.textContent = tabText.textContent;
+    // Déterminer l'onglet à activer au chargement
+    const hash = window.location.hash.substring(1);
+    let targetTab = 'general'; // Default tab
+    
+            // Priority order: localStorage > hash > default (pour rester sur l'onglet actif après rechargement)
+            const savedTab = localStorage.getItem('pdf-builder-active-tab');
+            if (savedTab) {
+                // Validate that the saved tab corresponds to an existing tab
+                const tabExists = document.querySelector('.nav-tab[href="#' + savedTab + '"]');
+                if (tabExists) {
+                    targetTab = savedTab;
+                    if (window.pdfBuilderDebugSettings?.settings_page) {
+                        console.log('PDF Builder: [LOAD] Using saved tab from localStorage:', targetTab, 'saved at', localStorage.getItem('pdf-builder-active-tab-time') ? new Date(parseInt(localStorage.getItem('pdf-builder-active-tab-time'))).toLocaleTimeString() : 'unknown');
+                    }
+                } else {
+                    if (window.pdfBuilderDebugSettings?.settings_page) {
+                        console.warn('PDF Builder: [LOAD] Saved tab not found:', savedTab, '- checking hash');
+                    }
+                }
+            } else {
+                if (window.pdfBuilderDebugSettings?.settings_page) {
+                    console.log('PDF Builder: [LOAD] No saved tab in localStorage, will check hash or use default');
+                }
+            }    // Si pas de localStorage valide, essayer le hash (pour les liens directs)
+    if (targetTab === 'general' && hash) {
+        const tabExists = document.querySelector('.nav-tab[href="#' + hash + '"]');
+        if (tabExists) {
+            targetTab = hash;
+            if (window.pdfBuilderDebugSettings?.settings_page) {
+                console.log('PDF Builder: Using hash from URL:', targetTab);
+            }
+        } else {
+            if (window.pdfBuilderDebugSettings?.settings_page) {
+                console.warn('PDF Builder: Hash not found for tab:', hash, '- using default');
             }
         }
+    }
 
-        // Update floating save button text
-        updateFloatingSaveButtonText(targetTab);
+    // Activer l'onglet déterminé (sans sauvegarder dans localStorage pour éviter la boucle)
+    setActiveTab(targetTab, false);
 
-        // Log final state after initialization
-        if (window.pdfBuilderDebugSettings?.settings_page) {
-            console.log('PDF Builder: ===== INITIALIZATION COMPLETE =====');
-            console.log('PDF Builder: Active tab after init:', document.querySelector('.nav-tab-active'));
-            console.log('PDF Builder: Active content after init:', document.querySelector('.tab-content.active'));
-            console.log('PDF Builder: All tabs after init:', Array.from(document.querySelectorAll('.nav-tab')).map(tab => ({
-                href: tab.getAttribute('href'),
-                classes: tab.classList.toString(),
-                isActive: tab.classList.contains('nav-tab-active')
-            })));
-            console.log('PDF Builder: All contents after init:', Array.from(document.querySelectorAll('.tab-content')).map(content => ({
-                id: content.id,
-                classes: content.classList.toString(),
-                isActive: content.classList.contains('active'),
-                display: window.getComputedStyle(content).display,
-                visibility: window.getComputedStyle(content).visibility
-            })));
-            console.log('PDF Builder: ===== END INITIALIZATION =====');
+    // Écouter les changements de hash dans l'URL (navigation backwards/forwards)
+    window.addEventListener('hashchange', function() {
+        const newHash = window.location.hash.substring(1);
+        if (newHash && newHash !== targetTab) {
+            const tabExists = document.querySelector('.nav-tab[href="#' + newHash + '"]');
+            if (tabExists) {
+                targetTab = newHash;
+                setActiveTab(targetTab);
+            }
         }
+    });
+
+    // Log final state after initialization
+    if (window.pdfBuilderDebugSettings?.settings_page) {
+        console.log('PDF Builder: ===== INITIALIZATION COMPLETE =====');
+        console.log('PDF Builder: Active tab after init:', targetTab);
+        console.log('PDF Builder: Active content after init:', document.querySelector('.tab-content.active'));
+        console.log('PDF Builder: Hash in URL:', window.location.hash);
+        console.log('PDF Builder: Saved in localStorage:', localStorage.getItem('pdf-builder-active-tab'));
+        console.log('PDF Builder: ===== END INITIALIZATION =====');
+    }
+
+    // Debug: Force log current state every 5 seconds
+    if (window.pdfBuilderDebugSettings?.settings_page) {
+        setInterval(() => {
+            console.log('PDF Builder: [DEBUG] Current state - Active tab:', document.querySelector('.nav-tab-active')?.getAttribute('href')?.substring(1));
+            console.log('PDF Builder: [DEBUG] Current state - localStorage:', localStorage.getItem('pdf-builder-active-tab'));
+            console.log('PDF Builder: [DEBUG] Current state - URL hash:', window.location.hash);
+        }, 5000);
+    }
 }
 
 if (window.pdfBuilderDebugSettings?.javascript) {
@@ -1298,7 +1386,6 @@ function updateFloatingSaveButtonText(activeTabId) {
 
 // Make updateFloatingSaveButtonText globally accessible
 window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
-}
 </script>
 
 <script>
@@ -2228,35 +2315,6 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
         });
     }
 
-    // Update floating save button text based on active tab
-    function updateFloatingSaveButtonText(activeTabId) {
-        const floatingSaveBtn = document.getElementById('floating-save-btn');
-        if (!floatingSaveBtn) return;
-
-        const btnTextSpan = floatingSaveBtn.querySelector('.btn-text');
-        if (!btnTextSpan) return;
-
-        // Map tab IDs to button text
-        const tabTextMap = {
-            'general': 'Enregistrer Général',
-            'licence': 'Enregistrer Licence',
-            'systeme': 'Enregistrer Système',
-            'acces': 'Enregistrer Accès',
-            'securite': 'Enregistrer Sécurité',
-            'pdf': 'Enregistrer PDF',
-            'contenu': 'Enregistrer Canvas',
-            'templates': 'Enregistrer Templates',
-            'developpeur': 'Enregistrer Développeur'
-        };
-
-        // Update button text
-        const newText = tabTextMap[activeTabId] || 'Enregistrer Tout';
-        btnTextSpan.textContent = newText;
-
-        if (window.pdfBuilderDebugSettings?.javascript) {
-            console.log('[FLOATING SAVE] Button text updated to: "' + newText + '" for tab: ' + activeTabId);
-        }
-    }
 })();
 </script>
 

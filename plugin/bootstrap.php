@@ -664,13 +664,6 @@ function pdf_builder_load_bootstrap()
         \PDF_Builder\Core\PDF_Builder_Security_Validator::get_instance()->init();
     }
 
-    // CHARGER ET INITIALISER LA LOCALISATION AVANCÉE
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/PDF_Builder_Advanced_Localization.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/PDF_Builder_Advanced_Localization.php';
-        // Initialiser l'instance
-        \PDF_Builder\Src\PdfBuilderAdvancedLocalization::getInstance();
-    }
-
     // CHARGER ET INITIALISER LE GESTIONNAIRE DE CANVAS
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Canvas/Canvas_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Canvas/Canvas_Manager.php';
