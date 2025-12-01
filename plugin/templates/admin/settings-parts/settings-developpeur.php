@@ -546,10 +546,10 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('pdf_builder_canvas_debug_enabled', debugToggle.checked ? '1' : '0');
         formData.append('pdf_builder_developer_password', passwordField ? passwordField.value : '');
 
-        console.log('[DEV] Sending AJAX request to:', PDF_BUILDER_CONFIG.ajax_url);
+        console.log('[DEV] Sending AJAX request to:', PDF_BUILDER_CONFIG.ajaxurl);
         console.log('[DEV] FormData:', Object.fromEntries(formData));
 
-        return fetch(PDF_BUILDER_CONFIG.ajax_url, {
+        return fetch(PDF_BUILDER_CONFIG.ajaxurl, {
             method: 'POST',
             body: formData
         })
