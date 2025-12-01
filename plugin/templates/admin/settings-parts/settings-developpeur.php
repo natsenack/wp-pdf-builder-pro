@@ -451,6 +451,12 @@ $show_tools = $dev_mode === '1';
 document.addEventListener('DOMContentLoaded', function() {
     console.log('[PDF Builder] Developer tab initialized');
 
+    // Get the same nonce configuration as the main settings system
+    const PDF_BUILDER_CONFIG = window.PDF_BUILDER_CONFIG || {
+        ajax_url: window.ajaxurl || '<?php echo admin_url('admin-ajax.php'); ?>',
+        nonce: '<?php echo wp_create_nonce('pdf_builder_settings_ajax'); ?>'
+    };
+
     // Elements
     const devModeToggle = document.getElementById('pdf-builder-dev-mode');
     const devModeToggleContainer = devModeToggle.closest('.dev-toggle');
@@ -501,27 +507,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Auto-save setting via existing AJAX system
     function saveSetting(setting, value) {
-        if (!window.pdfBuilderAjax || !window.ajaxurl) {
-            console.error('[DEV] AJAX not available');
-            return Promise.reject('AJAX not available');
-        }
-
         const formData = new FormData();
         formData.append('action', 'pdf_builder_save_all_settings');
+        formData.append('nonce', PDF_BUILDER_CONFIG.nonce);
         formData.append(setting, value);
 
         // Include all developer settings to ensure consistency
         formData.append('pdf_builder_developer_enabled', devModeToggle.checked ? '1' : '0');
         formData.append('pdf_builder_canvas_debug_enabled', debugToggle.checked ? '1' : '0');
-        formData.append('pdf_builder_developer_password', passwordField.value);
+        formData.append('pdf_builder_developer_password', passwordField ? passwordField.value : '');
 
-        // Use existing nonce
-        if (window.pdfBuilderAjax.nonce) {
-            formData.append('nonce', window.pdfBuilderAjax.nonce);
-            formData.append('_wpnonce', window.pdfBuilderAjax.nonce);
-        }
-
-        return fetch(window.ajaxurl, {
+        return fetch(PDF_BUILDER_CONFIG.ajax_url, {
             method: 'POST',
             body: formData
         })
