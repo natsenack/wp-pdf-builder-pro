@@ -175,6 +175,9 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 // Special handling for canvas fields
                 if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
                     update_option('pdf_builder_canvas_' . $key, sanitize_text_field($value ?? ''));
+                } elseif (strpos($key, 'pdf_builder_') === 0) {
+                    // Already prefixed, save as-is
+                    update_option($key, sanitize_text_field($value ?? ''));
                 } else {
                     update_option('pdf_builder_' . $key, sanitize_text_field($value ?? ''));
                 }
@@ -183,6 +186,9 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 // Special handling for canvas fields
                 if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
                     update_option('pdf_builder_canvas_' . $key, intval($value ?? 0));
+                } elseif (strpos($key, 'pdf_builder_') === 0) {
+                    // Already prefixed, save as-is
+                    update_option($key, intval($value ?? 0));
                 } else {
                     update_option('pdf_builder_' . $key, intval($value ?? 0));
                 }
@@ -191,8 +197,11 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 // Special handling for canvas fields
                 if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
                     update_option('pdf_builder_canvas_' . $key, isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0);
+                } elseif (strpos($key, 'pdf_builder_') === 0) {
+                    // Already prefixed, save as-is
+                    update_option($key, isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0);
                 } else {
-                    update_option('pdf_builder_canvas_' . $key, isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0);
+                    update_option('pdf_builder_' . $key, isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0);
                 }
                 $saved_count++;
             } elseif (in_array($key, $field_rules['array_fields'])) {
@@ -204,12 +213,24 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 $saved_count++;
             } else {
                 // Pour les champs non définis, essayer de deviner le type
-                if (is_numeric($value)) {
-                    update_option('pdf_builder_' . $key, intval($value));
-                } elseif (is_array($value)) {
-                    update_option('pdf_builder_' . $key, array_map('sanitize_text_field', $value));
+                if (strpos($key, 'pdf_builder_') === 0) {
+                    // Already prefixed, save as-is
+                    if (is_numeric($value)) {
+                        update_option($key, intval($value));
+                    } elseif (is_array($value)) {
+                        update_option($key, array_map('sanitize_text_field', $value));
+                    } else {
+                        update_option($key, sanitize_text_field($value ?? ''));
+                    }
                 } else {
-                    update_option('pdf_builder_' . $key, sanitize_text_field($value ?? ''));
+                    // Add prefix
+                    if (is_numeric($value)) {
+                        update_option('pdf_builder_' . $key, intval($value));
+                    } elseif (is_array($value)) {
+                        update_option('pdf_builder_' . $key, array_map('sanitize_text_field', $value));
+                    } else {
+                        update_option('pdf_builder_' . $key, sanitize_text_field($value ?? ''));
+                    }
                 }
                 $saved_count++;
             }
