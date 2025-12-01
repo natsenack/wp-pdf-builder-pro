@@ -278,7 +278,9 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 'processed_fields' => array_keys($saved_settings),
                 'total_processed' => count($saved_settings),
                 'pdf_builder_canvas_debug_enabled_present' => isset($saved_settings['pdf_builder_canvas_debug_enabled']),
-                'pdf_builder_canvas_debug_enabled_value' => $saved_settings['pdf_builder_canvas_debug_enabled'] ?? 'not_set'
+                'pdf_builder_canvas_debug_enabled_value' => $saved_settings['pdf_builder_canvas_debug_enabled'] ?? 'not_set',
+                'all_post_fields' => array_keys($_POST),
+                'handler_executed' => true
             ]
         ];
     }
