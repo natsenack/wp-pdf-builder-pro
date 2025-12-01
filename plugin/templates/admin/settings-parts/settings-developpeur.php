@@ -239,8 +239,8 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                 </div>
 
                                 <p style="margin-top: 15px; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les pages pour les logs détaillés :</p>
-                                
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+
+                                <div class="debug-pages-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
                                     <!-- Toggle 1: Éditeur PDF -->
                                     <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
                                         <div class="toggle-container">
@@ -699,10 +699,421 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
          </form>
 
 <script>
-// Monitoring des performances
-document.addEventListener('DOMContentLoaded', function() {
+// ============================================
+// SYSTÈME CENTRALISÉ DE GESTION DES TOGGLES DÉVELOPPEUR
+// ============================================
 
-    // Bouton Test FPS
+// Définition centralisée de tous les toggles développeur
+const PDF_BUILDER_DEVELOPER_TOGGLES = {
+    // Toggle principal
+    developer_enabled: {
+        id: 'developer_enabled',
+        setting: 'pdf_builder_developer_enabled',
+        label: 'Mode Développeur',
+        description: 'Active le mode développeur avec logs détaillés',
+        default: false,
+        controls: ['dev-license-section', 'dev-debug-section', 'dev-logs-section', 'dev-optimizations-section', 'dev-logs-viewer-section', 'dev-tools-section', 'dev-shortcuts-section', 'dev-todo-section', 'dev-notifications-test-section']
+    },
+
+    // Section Debug PHP
+    debug_php_errors: {
+        id: 'debug_php_errors',
+        setting: 'pdf_builder_debug_php_errors',
+        label: 'Debug PHP',
+        description: 'Affiche les erreurs/warnings PHP',
+        default: false,
+        category: 'php'
+    },
+
+    // Section Debug JavaScript (parent)
+    debug_javascript: {
+        id: 'debug_javascript',
+        setting: 'pdf_builder_debug_javascript',
+        label: 'Debug JavaScript',
+        description: 'Logs JavaScript détaillés',
+        default: false,
+        category: 'javascript',
+        children: ['debug_javascript_verbose', 'debug_pdf_editor', 'debug_settings_page', 'debug_page_template']
+    },
+
+    // Enfants de Debug JavaScript
+    debug_javascript_verbose: {
+        id: 'debug_javascript_verbose',
+        setting: 'pdf_builder_debug_javascript_verbose',
+        label: 'Debug JavaScript Verbeux',
+        description: 'Logs JavaScript ultra-détaillés',
+        default: false,
+        category: 'javascript',
+        parent: 'debug_javascript'
+    },
+
+    // Section Debug AJAX
+    debug_ajax: {
+        id: 'debug_ajax',
+        setting: 'pdf_builder_debug_ajax',
+        label: 'Debug AJAX',
+        description: 'Enregistre requêtes/réponses AJAX',
+        default: false,
+        category: 'ajax'
+    },
+
+    // Section Debug Verbeux
+    debug_verbose: {
+        id: 'debug_verbose',
+        setting: 'pdf_builder_debug_verbose',
+        label: 'Logs Verbeux',
+        description: 'Détails complets de tous les événements',
+        default: false,
+        category: 'verbose'
+    },
+
+    // Pages pour logs détaillés (enfants de debug_javascript)
+    debug_pdf_editor: {
+        id: 'debug_pdf_editor',
+        setting: 'pdf_builder_debug_pdf_editor',
+        label: 'Éditeur PDF',
+        description: 'Page éditeur',
+        default: false,
+        category: 'pages',
+        parent: 'debug_javascript'
+    },
+
+    debug_settings_page: {
+        id: 'debug_settings_page',
+        setting: 'pdf_builder_debug_settings_page',
+        label: 'Page Paramètres',
+        description: 'Page paramètres',
+        default: false,
+        category: 'pages',
+        parent: 'debug_javascript'
+    },
+
+    debug_page_template: {
+        id: 'debug_page_template',
+        setting: 'pdf_builder_debug_page_template',
+        label: 'Page Template',
+        description: 'Page template',
+        default: false,
+        category: 'pages',
+        parent: 'debug_javascript'
+    },
+
+    // Section Performance
+    debug_performance: {
+        id: 'debug_performance',
+        setting: 'pdf_builder_debug_performance',
+        label: 'Performance',
+        description: 'Temps d\'exécution et mémoire',
+        default: false,
+        category: 'performance'
+    },
+
+    debug_database: {
+        id: 'debug_database',
+        setting: 'pdf_builder_debug_database',
+        label: 'Requêtes BD',
+        description: 'Requêtes SQL exécutées',
+        default: false,
+        category: 'database'
+    },
+
+    performance_monitoring: {
+        id: 'performance_monitoring',
+        setting: 'pdf_builder_performance_monitoring',
+        label: 'Monitoring',
+        description: 'Collecte de métriques',
+        default: false,
+        category: 'monitoring'
+    },
+
+    // Section Optimisations
+    force_https: {
+        id: 'force_https',
+        setting: 'pdf_builder_force_https',
+        label: 'HTTPS forcé',
+        description: 'Force les appels API externes en HTTPS',
+        default: false,
+        category: 'security'
+    }
+};
+
+// Classe centralisée pour gérer les toggles développeur
+class PDF_Builder_DeveloperTogglesManager {
+    constructor() {
+        this.toggles = PDF_BUILDER_DEVELOPER_TOGGLES;
+        this.initialized = false;
+        this.syncInProgress = false;
+    }
+
+    /**
+     * Initialise le système de toggles
+     */
+    initialize() {
+        if (this.initialized) return;
+
+        console.log('🔧 [TOGGLES MANAGER] Initialisation du système centralisé...');
+
+        // Attendre que le DOM soit prêt
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this._init());
+        } else {
+            this._init();
+        }
+    }
+
+    /**
+     * Initialisation privée
+     */
+    _init() {
+        // Synchroniser tous les toggles avec les paramètres sauvegardés
+        this.syncAllToggles();
+
+        // Attacher les gestionnaires d'événements
+        this.attachEventListeners();
+
+        // Mettre à jour les visibilités initiales
+        this.updateVisibility();
+
+        // Initialiser les sections développeur
+        this.updateDeveloperSections();
+
+        this.initialized = true;
+        console.log('🔧 [TOGGLES MANAGER] Système initialisé avec succès');
+    }
+
+    /**
+     * Synchronise tous les toggles avec window.pdfBuilderSavedSettings
+     */
+    syncAllToggles() {
+        if (this.syncInProgress) return;
+        this.syncInProgress = true;
+
+        console.log('🔄 [TOGGLES MANAGER] Synchronisation de tous les toggles...');
+
+        if (!window.pdfBuilderSavedSettings) {
+            console.warn('⚠️ [TOGGLES MANAGER] window.pdfBuilderSavedSettings non disponible');
+            this.syncInProgress = false;
+            return;
+        }
+
+        let syncedCount = 0;
+        let skippedCount = 0;
+
+        Object.values(this.toggles).forEach(toggle => {
+            const element = document.getElementById(toggle.id);
+            if (element) {
+                const savedValue = window.pdfBuilderSavedSettings[toggle.setting];
+                const shouldBeChecked = this._normalizeBoolean(savedValue);
+                const wasChecked = element.checked;
+
+                if (wasChecked !== shouldBeChecked) {
+                    element.checked = shouldBeChecked;
+                    console.log(`🔄 [TOGGLES MANAGER] ${toggle.setting} -> #${toggle.id}: ${wasChecked} → ${shouldBeChecked}`);
+                    syncedCount++;
+                } else {
+                    console.log(`✅ [TOGGLES MANAGER] ${toggle.setting} -> #${toggle.id}: déjà synchronisé (${shouldBeChecked})`);
+                }
+            } else {
+                console.warn(`⚠️ [TOGGLES MANAGER] Élément #${toggle.id} non trouvé dans le DOM`);
+                skippedCount++;
+            }
+        });
+
+        console.log(`✅ [TOGGLES MANAGER] Synchronisation terminée: ${syncedCount} mis à jour, ${skippedCount} ignorés`);
+        this.syncInProgress = false;
+    }
+
+    /**
+     * Attache les gestionnaires d'événements à tous les toggles
+     */
+    attachEventListeners() {
+        console.log('🔧 [TOGGLES MANAGER] Attachement des gestionnaires d\'événements...');
+
+        Object.values(this.toggles).forEach(toggle => {
+            const element = document.getElementById(toggle.id);
+            if (element) {
+                element.addEventListener('change', (event) => {
+                    this.handleToggleChange(toggle, event.target.checked);
+                });
+                console.log(`✅ [TOGGLES MANAGER] Écouteur attaché à #${toggle.id}`);
+            } else {
+                console.warn(`⚠️ [TOGGLES MANAGER] Impossible d\'attacher l\'écouteur à #${toggle.id} (élément non trouvé)`);
+            }
+        });
+    }
+
+    /**
+     * Gère le changement d'état d'un toggle
+     */
+    handleToggleChange(toggle, isChecked) {
+        console.log(`🔄 [TOGGLES MANAGER] Changement détecté: ${toggle.setting} = ${isChecked}`);
+
+        // Mettre à jour window.pdfBuilderSavedSettings
+        if (window.pdfBuilderSavedSettings) {
+            window.pdfBuilderSavedSettings[toggle.setting] = isChecked ? '1' : '0';
+            console.log(`💾 [TOGGLES MANAGER] ${toggle.setting} sauvegardé dans window.pdfBuilderSavedSettings`);
+        }
+
+        // Gérer les dépendances parent/enfant
+        if (toggle.children && toggle.children.length > 0) {
+            this.handleParentToggleChange(toggle, isChecked);
+        }
+
+        // Mettre à jour les visibilités
+        this.updateVisibility();
+
+        // Actions spéciales selon le toggle
+        this.handleSpecialActions(toggle, isChecked);
+    }
+
+    /**
+     * Gère les changements de toggles parents (avec enfants)
+     */
+    handleParentToggleChange(parentToggle, isChecked) {
+        console.log(`👨‍👩‍👧‍👦 [TOGGLES MANAGER] Gestion des enfants pour ${parentToggle.id}`);
+
+        parentToggle.children.forEach(childId => {
+            const childToggle = this.toggles[childId];
+            if (childToggle) {
+                const childElement = document.getElementById(childToggle.id);
+                if (childElement) {
+                    // Désactiver/activer l'enfant selon l'état du parent
+                    childElement.disabled = !isChecked;
+                    console.log(`🔧 [TOGGLES MANAGER] Enfant ${childToggle.id}: ${isChecked ? 'activé' : 'désactivé'}`);
+                }
+            }
+        });
+    }
+
+    /**
+     * Met à jour les visibilités des éléments selon les dépendances
+     */
+    updateVisibility() {
+        // Masquer/afficher les sections de pages selon debug_javascript
+        const debugJavascriptEnabled = this.getToggleState('debug_javascript');
+        const pageTogglesSection = document.querySelector('.debug-pages-section');
+        if (pageTogglesSection) {
+            pageTogglesSection.style.display = debugJavascriptEnabled ? 'block' : 'none';
+        }
+
+        console.log(`👁️ [TOGGLES MANAGER] Visibilité mise à jour (Debug JS: ${debugJavascriptEnabled})`);
+    }
+
+    /**
+     * Actions spéciales selon le toggle modifié
+     */
+    handleSpecialActions(toggle, isChecked) {
+        switch (toggle.id) {
+            case 'developer_enabled':
+                this.updateDeveloperSections();
+                this.updateDeveloperStatusIndicator();
+                break;
+            case 'debug_javascript':
+                // Mettre à jour la visibilité des toggles de pages
+                this.updateVisibility();
+                break;
+        }
+    }
+
+    /**
+     * Met à jour les sections développeur selon l'état du mode développeur
+     */
+    updateDeveloperSections() {
+        const developerEnabled = this.getToggleState('developer_enabled');
+        const devSections = [
+            'dev-license-section', 'dev-debug-section', 'dev-logs-section',
+            'dev-optimizations-section', 'dev-logs-viewer-section', 'dev-tools-section',
+            'dev-shortcuts-section', 'dev-todo-section', 'dev-notifications-test-section'
+        ];
+
+        devSections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.style.display = developerEnabled ? 'block' : 'none';
+            }
+        });
+
+        console.log(`🏗️ [TOGGLES MANAGER] Sections développeur ${developerEnabled ? 'affichées' : 'masquées'}`);
+    }
+
+    /**
+     * Met à jour l'indicateur de statut du mode développeur
+     */
+    updateDeveloperStatusIndicator() {
+        const statusIndicator = document.querySelector('.developer-status-indicator');
+        if (statusIndicator) {
+            const isEnabled = this.getToggleState('developer_enabled');
+            statusIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
+            statusIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
+            statusIndicator.style.color = 'white';
+            console.log(`📊 [TOGGLES MANAGER] Indicateur de statut mis à jour: ${statusIndicator.textContent}`);
+        }
+    }
+
+    /**
+     * Obtient l'état d'un toggle
+     */
+    getToggleState(toggleId) {
+        const toggle = this.toggles[toggleId];
+        if (!toggle) return false;
+
+        const element = document.getElementById(toggle.id);
+        return element ? element.checked : false;
+    }
+
+    /**
+     * Normalise une valeur en boolean
+     */
+    _normalizeBoolean(value) {
+        return value && value !== '0' && value !== 0 && value !== false;
+    }
+
+    /**
+     * Force une resynchronisation complète
+     */
+    forceSync() {
+        console.log('🔄 [TOGGLES MANAGER] Resynchronisation forcée demandée');
+        this.syncAllToggles();
+        this.updateVisibility();
+        this.updateDeveloperSections();
+    }
+
+    /**
+     * Obtient les statistiques des toggles
+     */
+    getStats() {
+        const stats = {
+            total: Object.keys(this.toggles).length,
+            active: 0,
+            inactive: 0,
+            byCategory: {}
+        };
+
+        Object.values(this.toggles).forEach(toggle => {
+            const isActive = this.getToggleState(toggle.id);
+            if (isActive) stats.active++;
+            else stats.inactive++;
+
+            const category = toggle.category || 'other';
+            if (!stats.byCategory[category]) {
+                stats.byCategory[category] = { active: 0, total: 0 };
+            }
+            stats.byCategory[category].total++;
+            if (isActive) stats.byCategory[category].active++;
+        });
+
+        return stats;
+    }
+}
+
+// Instance globale du gestionnaire de toggles
+window.pdfBuilderDeveloperToggles = new PDF_Builder_DeveloperTogglesManager();
+
+// Initialiser le système au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    window.pdfBuilderDeveloperToggles.initialize();
+
+    // Monitoring des performances (boutons existants)
     const testFpsBtn = document.getElementById('test_fps_btn');
     const fpsResult = document.getElementById('fps_test_result');
     const fpsDetails = document.getElementById('fps_test_details');
@@ -713,9 +1124,8 @@ document.addEventListener('DOMContentLoaded', function() {
             fpsResult.style.color = '#17a2b8';
             fpsDetails.style.display = 'block';
 
-            // Simuler un test FPS (en réalité, cela nécessiterait l'accès au canvas)
             setTimeout(function() {
-                const targetFps = 60; // Valeur par défaut, sera remplacée par PHP
+                const targetFps = 60;
                 const simulatedFps = Math.max(10, Math.min(targetFps + (Math.random() * 10 - 5), targetFps + 15));
 
                 if (simulatedFps >= targetFps - 5) {
@@ -772,11 +1182,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Bouton raccourci Infos Système (dans la section développeur)
+    // Bouton raccourci Infos Système
     const systemInfoShortcutBtn = document.getElementById('system_info_shortcut_btn');
     if (systemInfoShortcutBtn && systemInfoBtn) {
         systemInfoShortcutBtn.addEventListener('click', function() {
-            // Simule un clic sur le bouton principal
             systemInfoBtn.click();
         });
     }
@@ -797,397 +1206,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Gestion du toggle Mode Développeur
-    const developerEnabledToggle = document.getElementById('developer_enabled');
-    const debugJavascriptToggle = document.getElementById('debug_javascript');
-    const debugJavascriptFiltersSection = document.getElementById('debug_javascript_filters_section');
-    const pdfEditorToggle = document.getElementById('debug_pdf_editor');
-    const settingsPageToggle = document.getElementById('debug_settings_page');
-    const devSections = [
-        'dev-license-section',
-        'dev-debug-section',
-        'dev-logs-section',
-        'dev-optimizations-section',
-        'dev-logs-viewer-section',
-        'dev-tools-section',
-        'dev-shortcuts-section',
-        'dev-todo-section',
-        'dev-notifications-test-section'
-    ];
+    // ============================================
+    // GESTIONNAIRES POUR LES FONCTIONNALITÉS SPÉCIFIQUES
+    // ============================================
 
-    // Debug: Vérifier que les éléments sont trouvés
-    console.log('🔧 [DEBUG] Éléments DOM trouvés:', {
-        developerEnabledToggle: !!developerEnabledToggle,
-        debugJavascriptToggle: !!debugJavascriptToggle,
-        debugJavascriptFiltersSection: !!debugJavascriptFiltersSection,
-        pdfEditorToggle: !!pdfEditorToggle,
-        settingsPageToggle: !!settingsPageToggle
-    });
-
-    // Fonction pour synchroniser l'état des checkboxes avec les valeurs sauvegardées
-    function syncCheckboxesWithSavedSettings() {
-        console.log('[SYNC] 🔄 Début de synchronisation des checkboxes...');
-
-        if (!window.pdfBuilderSavedSettings) {
-            console.warn('[SYNC] ⚠️ window.pdfBuilderSavedSettings n\'existe pas');
-            return;
-        }
-
-        console.log('[SYNC] 📊 window.pdfBuilderSavedSettings actuel:', window.pdfBuilderSavedSettings);
-
-        // Liste des checkboxes à synchroniser avec leurs IDs correspondants
-        const checkboxMapping = {
-            'pdf_builder_developer_enabled': 'developer_enabled',
-            'pdf_builder_debug_php_errors': 'debug_php_errors',
-            'pdf_builder_debug_javascript': 'debug_javascript',
-            'pdf_builder_debug_javascript_verbose': 'debug_javascript_verbose',
-            'pdf_builder_debug_ajax': 'debug_ajax',
-            'pdf_builder_debug_verbose': 'debug_verbose',
-            'pdf_builder_debug_pdf_editor': 'debug_pdf_editor',
-            'pdf_builder_debug_settings_page': 'debug_settings_page',
-            'pdf_builder_debug_page_template': 'debug_page_template',
-            'pdf_builder_debug_performance': 'debug_performance',
-            'pdf_builder_debug_database': 'debug_database',
-            'pdf_builder_performance_monitoring': 'performance_monitoring',
-            'pdf_builder_force_https': 'force_https'
-        };
-
-        let syncedCount = 0;
-        let skippedCount = 0;
-
-        Object.keys(checkboxMapping).forEach(key => {
-            const checkboxId = checkboxMapping[key];
-            const checkbox = document.getElementById(checkboxId);
-            if (checkbox) {
-                const savedValue = window.pdfBuilderSavedSettings[key];
-                const shouldBeChecked = savedValue && savedValue !== '0' && savedValue !== 0;
-                const wasChecked = checkbox.checked;
-
-                checkbox.checked = shouldBeChecked;
-                syncedCount++;
-
-                const status = wasChecked === shouldBeChecked ? '✅ INCHANGÉ' : '🔄 CHANGÉ';
-                console.log(`[SYNC] ${status} ${key} -> #${checkboxId}: ${wasChecked} → ${shouldBeChecked} (saved: ${savedValue})`);
-
-                if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.log(`🔧 [SYNC] ${key} -> ${checkboxId}: ${shouldBeChecked} (saved: ${savedValue})`);
-                }
-            } else {
-                skippedCount++;
-                console.warn(`[SYNC] ⚠️ Checkbox #${checkboxId} non trouvée pour clé ${key}`);
-                // Log additional debug info for page-specific toggles
-                if (['debug_pdf_editor', 'debug_settings_page', 'debug_page_template'].includes(checkboxId)) {
-                    console.warn(`[SYNC] 🔍 DÉTAILS pour ${checkboxId}:`);
-                    console.warn(`  - Élément trouvé:`, document.getElementById(checkboxId));
-                    console.warn(`  - Parent visible:`, checkbox ? checkbox.closest('tr')?.style.display : 'N/A');
-                    console.warn(`  - Section développeur visible:`, document.getElementById('dev-debug-section')?.style.display);
-                    console.warn(`  - Mode développeur actif:`, document.getElementById('developer_enabled')?.checked);
-                }
-                if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.warn(`🔧 [SYNC] Checkbox ${checkboxId} not found for key ${key}`);
-                }
-            }
-        });
-
-        console.log(`[SYNC] ✅ Synchronisation terminée: ${syncedCount} synchronisées, ${skippedCount} ignorées`);
-    }
-
-    // Synchroniser les checkboxes au chargement
-    syncCheckboxesWithSavedSettings();
-
-    // Exposer la fonction globalement pour les autres fichiers
-    window.syncCheckboxesWithSavedSettings = syncCheckboxesWithSavedSettings;
-
-    // Synchronisation retardée pour les toggles de pages (qui peuvent être masqués initialement)
-    setTimeout(function() {
-        console.log('[SYNC] 🔄 Synchronisation retardée pour les toggles de pages...');
-        const pageToggles = ['debug_pdf_editor', 'debug_settings_page', 'debug_page_template'];
-        let pageSyncedCount = 0;
-
-        pageToggles.forEach(toggleId => {
-            const checkbox = document.getElementById(toggleId);
-            if (checkbox) {
-                const settingKey = 'pdf_builder_' + toggleId;
-                const savedValue = window.pdfBuilderSavedSettings[settingKey];
-                const shouldBeChecked = savedValue && savedValue !== '0' && savedValue !== 0;
-                const wasChecked = checkbox.checked;
-
-                if (wasChecked !== shouldBeChecked) {
-                    checkbox.checked = shouldBeChecked;
-                    pageSyncedCount++;
-                    console.log(`[SYNC] 🔄 RETARDÉ ${settingKey} -> #${toggleId}: ${wasChecked} → ${shouldBeChecked}`);
-                }
-            }
-        });
-
-        if (pageSyncedCount > 0) {
-            console.log(`[SYNC] ✅ ${pageSyncedCount} toggles de pages synchronisés avec retard`);
-        }
-    }, 1000); // Attendre 1 seconde pour que les sections soient affichées
-
-    // Configurer la mise à jour automatique de window.pdfBuilderSavedSettings pour tous les toggles
-    updateSavedSettingsForToggle('developer_enabled', 'pdf_builder_developer_enabled');
-    updateSavedSettingsForToggle('debug_php_errors', 'pdf_builder_debug_php_errors');
-    updateSavedSettingsForToggle('debug_javascript', 'pdf_builder_debug_javascript');
-    updateSavedSettingsForToggle('debug_javascript_verbose', 'pdf_builder_debug_javascript_verbose');
-    updateSavedSettingsForToggle('debug_pdf_editor', 'pdf_builder_debug_pdf_editor');
-    updateSavedSettingsForToggle('debug_settings_page', 'pdf_builder_debug_settings_page');
-    updateSavedSettingsForToggle('debug_page_template', 'pdf_builder_debug_page_template');
-    updateSavedSettingsForToggle('debug_ajax', 'pdf_builder_debug_ajax');
-    updateSavedSettingsForToggle('debug_verbose', 'pdf_builder_debug_verbose');
-    updateSavedSettingsForToggle('debug_performance', 'pdf_builder_debug_performance');
-    updateSavedSettingsForToggle('debug_database', 'pdf_builder_debug_database');
-    updateSavedSettingsForToggle('performance_monitoring', 'pdf_builder_performance_monitoring');
-    updateSavedSettingsForToggle('force_https', 'pdf_builder_force_https');
-
-    // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
-    function updatePdfEditorToggleVisibility() {
-        console.log('🔧 [DEBUG PDF EDITOR] Fonction appelée');
-
-        const debugJavascriptToggle = document.getElementById('debug_javascript');
-        const debugJavascriptFiltersSection = document.getElementById('debug_javascript_filters_section');
-        
-        if (!debugJavascriptToggle || !debugJavascriptFiltersSection) {
-            console.log('🔧 [DEBUG PDF EDITOR] Éléments manquants:', {
-                debugJavascriptToggle: !!debugJavascriptToggle,
-                debugJavascriptFiltersSection: !!debugJavascriptFiltersSection
-            });
-            return;
-        }
-
-        const isJavascriptDebugEnabled = debugJavascriptToggle.checked;
-        console.log('🔧 [DEBUG PDF EDITOR] État debug_javascript:', isJavascriptDebugEnabled);
-
-        debugJavascriptFiltersSection.style.display = isJavascriptDebugEnabled ? 'table-row' : 'none';
-        console.log('🔧 [DEBUG PDF EDITOR] Style display appliqué:', debugJavascriptFiltersSection.style.display);
-
-        console.log(`🔧 [DEBUG PDF EDITOR] Sous-catégorie ${isJavascriptDebugEnabled ? 'AFFICHÉE' : 'MASQUÉE'}`);
-    }
-
-    // Fonction pour mettre à jour la visibilité du toggle Debug Page Paramètres
-    function updateSettingsPageToggleVisibility() {
-        const debugJavascriptToggle = document.getElementById('debug_javascript');
-        if (!debugJavascriptToggle) {
-            if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('🔧 [DEBUG SETTINGS PAGE] Élément manquant:', {
-                    debugJavascriptToggle: !!debugJavascriptToggle
-                });
-            }
-            return;
-        }
-
-        const isJavascriptDebugEnabled = debugJavascriptToggle.checked;
-        
-        if (window.pdfBuilderDebugSettings?.javascript) {
-            console.log(`🔧 [DEBUG SETTINGS PAGE] État: ${isJavascriptDebugEnabled ? 'AFFICHÉE' : 'MASQUÉE'} (dépend de Debug JavaScript)`);
-        }
-    }
-
-    // Fonction globale pour mettre à jour les sections développeur
-    window.updateDeveloperSections = function() {
-        if (!developerEnabledToggle) return;
-
-        const isEnabled = developerEnabledToggle.checked;
-        if (window.pdfBuilderDebugSettings?.javascript) {
-            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Changement détecté - État:', isEnabled ? 'ACTIVÉ' : 'DÉSACTIVÉ');
-        }
-
-        devSections.forEach(sectionId => {
-            const section = document.getElementById(sectionId);
-            if (section) {
-                section.style.display = isEnabled ? 'block' : 'none';
-                if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.log(`🔧 [TOGGLE MODE DÉVELOPPEUR] Section ${sectionId}: ${isEnabled ? 'AFFICHÉE' : 'MASQUÉE'}`);
-                }
-            } else {
-                if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.warn(`⚠️ [TOGGLE MODE DÉVELOPPEUR] Section ${sectionId} introuvable dans le DOM`);
-                }
-            }
-        });
-
-        // Mettre à jour la visibilité du toggle Debug Éditeur PDF
-        updatePdfEditorToggleVisibility();
-
-        // Mettre à jour la visibilité du toggle Debug Page Paramètres
-        updateSettingsPageToggleVisibility();
-    };
-
-    // Fonction pour mettre à jour window.pdfBuilderSavedSettings pour un toggle
-    function updateSavedSettingsForToggle(toggleId, settingKey) {
-        const toggle = document.getElementById(toggleId);
-        if (toggle && window.pdfBuilderSavedSettings) {
-            toggle.addEventListener('change', function(event) {
-                window.pdfBuilderSavedSettings[settingKey] = event.target.checked ? '1' : '0';
-                if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.log(`🔧 [TOGGLE UPDATE] ${settingKey} mis à jour: ${window.pdfBuilderSavedSettings[settingKey]}`);
-                }
-            });
-        }
-    }
-
-    // Fonction pour mettre à jour l'indicateur de statut du mode développeur (basé sur la valeur sauvegardée)
-    window.updateDeveloperStatusIndicator = function() {
-        const statusIndicator = document.querySelector('.developer-status-indicator');
-        if (statusIndicator) {
-            // Utiliser la valeur sauvegardée depuis window.pdfBuilderSavedSettings
-            const isEnabled = window.pdfBuilderSavedSettings?.pdf_builder_developer_enabled || false;
-            statusIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
-            statusIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
-            statusIndicator.style.color = 'white';
-            if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log(`🔧 [INDICATEUR STATUT] Mis à jour: ${statusIndicator.textContent} (valeur sauvegardée: ${isEnabled})`);
-            }
-        } else {
-            if (window.pdfBuilderDebugSettings?.javascript) {
-                console.error('❌ [INDICATEUR STATUT] Indicateur introuvable dans le DOM');
-            }
-        }
-    };
-
-    if (developerEnabledToggle) {
-        if (window.pdfBuilderDebugSettings?.javascript) {
-            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Élément toggle trouvé, initialisation...');
-        }
-
-        // Appliquer l'état initial
-        window.updateDeveloperSections();
-
-        // Appliquer l'état initial du toggle Debug Éditeur PDF
-        updatePdfEditorToggleVisibility();
-        updateSettingsPageToggleVisibility();
-
-        // Debug: Vérifier l'état initial des toggles
-        console.log('🔧 [DEBUG] État initial des toggles:', {
-            pdfEditorToggle: {
-                exists: !!pdfEditorToggle,
-                checked: pdfEditorToggle ? pdfEditorToggle.checked : 'N/A',
-                disabled: pdfEditorToggle ? pdfEditorToggle.disabled : 'N/A'
-            },
-            settingsPageToggle: {
-                exists: !!settingsPageToggle,
-                checked: settingsPageToggle ? settingsPageToggle.checked : 'N/A',
-                disabled: settingsPageToggle ? settingsPageToggle.disabled : 'N/A'
-            }
-        });
-
-        // Fonction pour basculer l'état du toggle
-        function toggleDeveloperMode() {
-            developerEnabledToggle.checked = !developerEnabledToggle.checked;
-            // Déclencher l'événement change manuellement
-            const changeEvent = new Event('change', { bubbles: true });
-            developerEnabledToggle.dispatchEvent(changeEvent);
-        }
-
-        // Écouter les clics sur le label du toggle
-        const toggleLabel = developerEnabledToggle.closest('.toggle-switch');
-        if (toggleLabel) {
-            toggleLabel.addEventListener('click', function(event) {
-                // Laisser le navigateur gérer le changement d'état normalement
-                // Le event listener 'change' se chargera de mettre à jour l'interface
-            });
-        }
-
-        // Écouter les changements du toggle pour mettre à jour l'interface en temps réel
-        developerEnabledToggle.addEventListener('change', function(event) {
-            if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Événement change déclenché');
-                console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Valeur du toggle:', event.target.checked);
-                console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] ID de l\'élément:', event.target.id);
-            }
-            window.updateDeveloperSections();
-        });
-
-        // Écouter les changements du toggle Debug JavaScript pour mettre à jour la visibilité du toggle Debug Éditeur PDF
-        if (debugJavascriptToggle) {
-            debugJavascriptToggle.addEventListener('change', function(event) {
-                console.log('🔧 [DEBUG JAVASCRIPT] Événement change déclenché');
-                console.log('🔧 [DEBUG JAVASCRIPT] Valeur du toggle:', event.target.checked);
-
-                updatePdfEditorToggleVisibility();
-                updateSettingsPageToggleVisibility();
-            });
-
-            // Ajouter aussi un écouteur de clic pour debug
-            debugJavascriptToggle.addEventListener('click', function(event) {
-                console.log('🔧 [DEBUG JAVASCRIPT] Clic détecté sur toggle');
-            });
-        }
-
-        if (window.pdfBuilderDebugSettings?.javascript) {
-            console.log('🔧 [TOGGLE MODE DÉVELOPPEUR] Écouteur d\'événements attaché avec succès');
-        }
-    } else {
-        if (window.pdfBuilderDebugSettings?.javascript) {
-            console.error('❌ [TOGGLE MODE DÉVELOPPEUR] Élément toggle introuvable dans le DOM');
-        }
-    }
-
-    // Gestion du nettoyage complet de la licence
-    const cleanupLicenseBtn = document.getElementById('cleanup_license_btn');
-    const cleanupStatus = document.getElementById('cleanup_status');
-    const cleanupNonce = document.getElementById('cleanup_license_nonce');
-
-    if (cleanupLicenseBtn && cleanupStatus && cleanupNonce) {
-        cleanupLicenseBtn.addEventListener('click', function() {
-            if (!confirm('⚠️ ATTENTION: Cette action va supprimer TOUTES les données de licence et réinitialiser le plugin à l\'état libre.\n\nCette action est IRRÉVERSIBLE.\n\nÊtes-vous sûr de vouloir continuer ?')) {
-                return;
-            }
-
-            // Désactiver le bouton pendant l'opération
-            cleanupLicenseBtn.disabled = true;
-            cleanupLicenseBtn.textContent = '🧹 Nettoyage en cours...';
-            cleanupStatus.textContent = '';
-            cleanupStatus.style.color = '#007cba';
-
-            // Faire l'appel AJAX
-            const ajaxUrl = window.ajaxurl || window.wp?.ajaxurl || (window.location.origin + '/wp-admin/admin-ajax.php');
-            fetch(ajaxUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    action: 'pdf_builder_cleanup_license',
-                    nonce: cleanupNonce.value
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    cleanupStatus.textContent = '✅ ' + data.data.message;
-                    cleanupStatus.style.color = '#28a745';
-                    // Recharger la page après 2 secondes pour refléter les changements
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
-                } else {
-                    cleanupStatus.textContent = '❌ Erreur: ' + (data.data?.message || 'Erreur inconnue');
-                    cleanupStatus.style.color = '#dc3545';
-                    cleanupLicenseBtn.disabled = false;
-                    cleanupLicenseBtn.textContent = '🧹 Nettoyer complètement la licence';
-                }
-            })
-            .catch(error => {
-                if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.error('Erreur AJAX cleanup license:', error);
-                }
-                cleanupStatus.textContent = '❌ Erreur de connexion';
-                cleanupStatus.style.color = '#dc3545';
-                cleanupLicenseBtn.disabled = false;
-                cleanupLicenseBtn.textContent = '🧹 Nettoyer complètement la licence';
-            });
-        });
-    }
-
-    // Boutons d'outils de développement
-    const toggleLicenseTestModeBtn = document.getElementById('toggle_license_test_mode_btn');
-    const clearCacheBtn = document.getElementById('clear_cache_btn');
-    const testRoutesBtn = document.getElementById('test_routes_btn');
-    const exportDiagnosticBtn = document.getElementById('export_diagnostic_btn');
-    const viewLogsBtn = document.getElementById('view_logs_btn');
-
-    // Helper function for AJAX calls
+    // Helper function for AJAX calls (centralisé)
     function makeAjaxCall(action, button, successCallback, errorCallback) {
         const ajaxUrl = window.ajaxurl || window.wp?.ajaxurl || (window.location.origin + '/wp-admin/admin-ajax.php');
         const originalText = button.textContent;
@@ -1199,14 +1222,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Always request a fresh nonce to avoid stale nonce problems
         fetch(ajaxUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({ action: 'pdf_builder_get_fresh_nonce' })
         })
         .then(resp => resp.json())
         .then(nonceData => {
-            const nonce = (nonceData && nonceData.success && nonceData.data && nonceData.data.nonce) ? nonceData.data.nonce : (window.pdfBuilderAjax?.nonce || '');
+            const nonce = (nonceData && nonceData.success && nonceData.data && nonceData.data.nonce)
+                ? nonceData.data.nonce
+                : (window.pdfBuilderAjax?.nonce || '');
 
             return fetch(ajaxUrl, {
                 method: 'POST',
@@ -1227,24 +1250,61 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
-            if (window.pdfBuilderDebugSettings?.javascript) {
-                console.error('Erreur AJAX:', error);
-            }
+            console.error('Erreur AJAX:', error);
             button.disabled = false;
             button.textContent = originalText;
             alert('[ERROR] Erreur de connexion');
         });
     }
 
-    // Test License Button
-    if (toggleLicenseTestModeBtn) {
-        toggleLicenseTestModeBtn.addEventListener('click', function() {
-            // This button toggles test mode, not tests license
-            // The actual license testing is done via generate_license_key_btn
+    // Gestion du nettoyage complet de la licence
+    const cleanupLicenseBtn = document.getElementById('cleanup_license_btn');
+    const cleanupStatus = document.getElementById('cleanup_status');
+    const cleanupNonce = document.getElementById('cleanup_license_nonce');
+
+    if (cleanupLicenseBtn && cleanupStatus && cleanupNonce) {
+        cleanupLicenseBtn.addEventListener('click', function() {
+            if (!confirm('⚠️ ATTENTION: Cette action va supprimer TOUTES les données de licence et réinitialiser le plugin à l\'état libre.\n\nCette action est IRRÉVERSIBLE.\n\nÊtes-vous sûr de vouloir continuer ?')) {
+                return;
+            }
+
+            cleanupLicenseBtn.disabled = true;
+            cleanupLicenseBtn.textContent = '🧹 Nettoyage en cours...';
+            cleanupStatus.textContent = '';
+            cleanupStatus.style.color = '#007cba';
+
+            fetch(window.ajaxurl || (window.location.origin + '/wp-admin/admin-ajax.php'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    action: 'pdf_builder_cleanup_license',
+                    nonce: cleanupNonce.value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cleanupStatus.textContent = '✅ ' + data.data.message;
+                    cleanupStatus.style.color = '#28a745';
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    cleanupStatus.textContent = '❌ Erreur: ' + (data.data?.message || 'Erreur inconnue');
+                    cleanupStatus.style.color = '#dc3545';
+                    cleanupLicenseBtn.disabled = false;
+                    cleanupLicenseBtn.textContent = '🧹 Nettoyer complètement la licence';
+                }
+            })
+            .catch(error => {
+                console.error('Erreur AJAX cleanup license:', error);
+                cleanupStatus.textContent = '❌ Erreur de connexion';
+                cleanupStatus.style.color = '#dc3545';
+                cleanupLicenseBtn.disabled = false;
+                cleanupLicenseBtn.textContent = '🧹 Nettoyer complètement la licence';
+            });
         });
     }
 
-    // Generate License Key Button
+    // Gestion des boutons de licence
     const generateLicenseKeyBtn = document.getElementById('generate_license_key_btn');
     const copyLicenseKeyBtn = document.getElementById('copy_license_key_btn');
     const deleteLicenseKeyBtn = document.getElementById('delete_license_key_btn');
@@ -1258,10 +1318,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     licenseKeyField.value = data.data.license_key;
                     licenseKeyStatus.textContent = '✅ Clé générée avec succès';
                     licenseKeyStatus.style.color = '#28a745';
-                    // Show delete button
-                    if (deleteLicenseKeyBtn) {
-                        deleteLicenseKeyBtn.style.display = 'inline-block';
-                    }
+                    if (deleteLicenseKeyBtn) deleteLicenseKeyBtn.style.display = 'inline-block';
                 },
                 function(data) {
                     licenseKeyStatus.textContent = '❌ ' + data.data.message;
@@ -1277,9 +1334,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 navigator.clipboard.writeText(licenseKeyField.value).then(function() {
                     licenseKeyStatus.textContent = '📋 Clé copiée dans le presse-papiers';
                     licenseKeyStatus.style.color = '#17a2b8';
-                    setTimeout(function() {
-                        licenseKeyStatus.textContent = '';
-                    }, 3000);
+                    setTimeout(() => licenseKeyStatus.textContent = '', 3000);
                 }).catch(function(err) {
                     licenseKeyStatus.textContent = '❌ Erreur lors de la copie';
                     licenseKeyStatus.style.color = '#dc3545';
@@ -1293,16 +1348,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (deleteLicenseKeyBtn && licenseKeyField && licenseKeyStatus) {
         deleteLicenseKeyBtn.addEventListener('click', function() {
-            if (!confirm('Voulez-vous vraiment supprimer cette clé de test ?')) {
-                return;
-            }
+            if (!confirm('Voulez-vous vraiment supprimer cette clé de test ?')) return;
 
             makeAjaxCall('pdf_builder_delete_test_license_key', deleteLicenseKeyBtn,
                 function(data) {
                     licenseKeyField.value = '';
                     licenseKeyStatus.textContent = '🗑️ Clé supprimée';
                     licenseKeyStatus.style.color = '#28a745';
-                    // Hide delete button
                     deleteLicenseKeyBtn.style.display = 'none';
                 },
                 function(data) {
@@ -1313,113 +1365,78 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Clear Cache Button
-    if (clearCacheBtn) {
-        clearCacheBtn.addEventListener('click', function() {
-            if (!confirm('Voulez-vous vider tout le cache du plugin ?')) {
-                return;
+    // Gestion des boutons d'outils de développement
+    const toolButtons = {
+        'clear_cache_btn': {
+            action: 'pdf_builder_clear_cache',
+            confirm: 'Voulez-vous vider tout le cache du plugin ?',
+            success: (data) => {
+                alert('[SUCCESS] ' + data.data.message + '\nNouvelle taille du cache: ' + (data.data.new_cache_size || '0 Ko'));
+                if (typeof updateCacheMetrics === 'function') updateCacheMetrics();
             }
-
-            makeAjaxCall('pdf_builder_clear_cache', clearCacheBtn,
-                function(data) {
-                    alert('[SUCCESS] ' + data.data.message + '\nNouvelle taille du cache: ' + (data.data.new_cache_size || '0 Ko'));
-                    // Refresh cache metrics if available
-                    if (typeof updateCacheMetrics === 'function') {
-                        updateCacheMetrics();
-                    }
-                }
-            );
-        });
-    }
-
-    // Reload Cache Button
-    const reloadCacheBtn = document.getElementById('reload_cache_btn');
-    if (reloadCacheBtn) {
-        reloadCacheBtn.addEventListener('click', function() {
-            makeAjaxCall('pdf_builder_clear_cache', reloadCacheBtn,
-                function(data) {
-                    alert('[SUCCESS] Cache rechargé avec succès\n' + data.data.message);
-                    // Refresh cache metrics if available
-                    if (typeof updateCacheMetrics === 'function') {
-                        updateCacheMetrics();
-                    }
-                }
-            );
-        });
-    }
-
-    // Clear Temp Button
-    const clearTempBtn = document.getElementById('clear_temp_btn');
-    if (clearTempBtn) {
-        clearTempBtn.addEventListener('click', function() {
-            if (!confirm('Voulez-vous vider tous les fichiers temporaires ?')) {
-                return;
+        },
+        'reload_cache_btn': {
+            action: 'pdf_builder_clear_cache',
+            confirm: null,
+            success: (data) => {
+                alert('[SUCCESS] Cache rechargé avec succès\n' + data.data.message);
+                if (typeof updateCacheMetrics === 'function') updateCacheMetrics();
             }
-
-            makeAjaxCall('pdf_builder_clear_temp', clearTempBtn,
-                function(data) {
-                    alert('[SUCCESS] ' + data.data.message);
-                },
-                function(data) {
-                    alert('[ERROR] ' + data.data.message);
+        },
+        'clear_temp_btn': {
+            action: 'pdf_builder_clear_temp',
+            confirm: 'Voulez-vous vider tous les fichiers temporaires ?',
+            success: (data) => alert('[SUCCESS] ' + data.data.message),
+            error: (data) => alert('[ERROR] ' + data.data.message)
+        },
+        'test_routes_btn': {
+            action: 'pdf_builder_test_routes',
+            confirm: null,
+            success: (data) => {
+                let message = '[SUCCESS] ' + data.data.message + '\n\nRoutes testées:\n';
+                data.data.routes_tested.forEach(route => message += '• ' + route + '\n');
+                if (data.data.failed_routes && data.data.failed_routes.length > 0) {
+                    message += '\nRoutes échouées:\n';
+                    data.data.failed_routes.forEach(route => message += '• ' + route + '\n');
                 }
-            );
-        });
-    }
+                alert(message);
+            }
+        },
+        'export_diagnostic_btn': {
+            action: 'pdf_builder_export_diagnostic',
+            confirm: null,
+            success: (data) => {
+                alert('[SUCCESS] ' + data.data.message + '\n\nFichier créé: ' + data.data.file_url);
+                window.open(data.data.file_url, '_blank');
+            }
+        },
+        'view_logs_btn': {
+            action: 'pdf_builder_view_logs',
+            confirm: null,
+            success: (data) => {
+                let message = '[LOGS] ' + data.data.message + '\n\n';
+                data.data.log_files.forEach(log => {
+                    message += `• ${log.name} (${log.size} octets) - Modifié: ${log.modified}\n`;
+                });
+                alert(message);
+            },
+            error: (data) => alert('[ERROR] ' + data.data.message)
+        }
+    };
 
-    // Test Routes Button
-    if (testRoutesBtn) {
-        testRoutesBtn.addEventListener('click', function() {
-            makeAjaxCall('pdf_builder_test_routes', testRoutesBtn,
-                function(data) {
-                    let message = '[SUCCESS] ' + data.data.message + '\n\nRoutes testées:\n';
-                    data.data.routes_tested.forEach(route => {
-                        message += '• ' + route + '\n';
-                    });
-                    if (data.data.failed_routes && data.data.failed_routes.length > 0) {
-                        message += '\nRoutes échouées:\n';
-                        data.data.failed_routes.forEach(route => {
-                            message += '• ' + route + '\n';
-                        });
-                    }
-                    alert(message);
-                }
-            );
-        });
-    }
+    // Attacher les gestionnaires aux boutons d'outils
+    Object.keys(toolButtons).forEach(btnId => {
+        const button = document.getElementById(btnId);
+        if (button) {
+            const config = toolButtons[btnId];
+            button.addEventListener('click', function() {
+                if (config.confirm && !confirm(config.confirm)) return;
+                makeAjaxCall(config.action, button, config.success, config.error);
+            });
+        }
+    });
 
-    // Export Diagnostic Button
-    if (exportDiagnosticBtn) {
-        exportDiagnosticBtn.addEventListener('click', function() {
-            makeAjaxCall('pdf_builder_export_diagnostic', exportDiagnosticBtn,
-                function(data) {
-                    alert('[SUCCESS] ' + data.data.message + '\n\nFichier créé: ' + data.data.file_url);
-                    // Open download link in new tab
-                    window.open(data.data.file_url, '_blank');
-                }
-            );
-        });
-    }
-
-    // View Logs Button
-    if (viewLogsBtn) {
-        viewLogsBtn.addEventListener('click', function() {
-            makeAjaxCall('pdf_builder_view_logs', viewLogsBtn,
-                function(data) {
-                    let message = '[LOGS] ' + data.data.message + '\n\n';
-                    data.data.log_files.forEach(log => {
-                        message += `• ${log.name} (${log.size} octets) - Modifié: ${log.modified}\n`;
-                    });
-                    alert(message);
-                },
-                function(data) {
-                    alert('[ERROR] ' + data.data.message);
-                }
-            );
-        });
-    }
-
-    // Refresh Logs Button
+    // Gestion des logs (refresh/clear)
     const refreshLogsBtn = document.getElementById('refresh_logs_btn');
     const clearLogsBtn = document.getElementById('clear_logs_btn');
     const logsContainer = document.getElementById('logs_content');
@@ -1440,9 +1457,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (clearLogsBtn && logsContainer) {
         clearLogsBtn.addEventListener('click', function() {
-            if (!confirm('Voulez-vous vraiment vider tous les logs ?')) {
-                return;
-            }
+            if (!confirm('Voulez-vous vraiment vider tous les logs ?')) return;
 
             makeAjaxCall('pdf_builder_clear_logs', clearLogsBtn,
                 function(data) {
