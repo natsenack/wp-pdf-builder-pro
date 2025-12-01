@@ -478,10 +478,19 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('[PDF Builder] Developer tab initialized');
 
     // Get the developer page AJAX configuration
+    console.log('[PDF Builder] Available configurations:');
+    console.log('- window.pdfBuilderAjax:', typeof window.pdfBuilderAjax, window.pdfBuilderAjax);
+    console.log('- window.devAjaxConfig:', typeof window.devAjaxConfig, window.devAjaxConfig);
+    console.log('- window.ajaxurl:', typeof window.ajaxurl, window.ajaxurl);
+
     const PDF_BUILDER_CONFIG = window.pdfBuilderAjax || window.devAjaxConfig || {
-        ajax_url: window.ajaxurl || '<?php echo admin_url('admin-ajax.php'); ?>',
+        ajaxurl: window.ajaxurl || '<?php echo admin_url('admin-ajax.php'); ?>',
         nonce: '<?php echo wp_create_nonce('pdf_builder_settings_ajax'); ?>'
     };
+
+    console.log('[PDF Builder] Final selected config:', PDF_BUILDER_CONFIG);
+    console.log('[PDF Builder] Config ajaxurl value:', PDF_BUILDER_CONFIG.ajaxurl);
+    console.log('[PDF Builder] Config nonce value:', PDF_BUILDER_CONFIG.nonce);
 
     // Elements
     const devModeToggle = document.getElementById('pdf-builder-dev-mode');
