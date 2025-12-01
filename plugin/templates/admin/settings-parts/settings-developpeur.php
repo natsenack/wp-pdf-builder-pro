@@ -176,12 +176,12 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                     <!-- Toggle 1: Éditeur PDF -->
                                     <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
                                         <div class="toggle-container">
-                                            <input type="hidden" name="pdf_builder_debug_pdf_editor" value="0" />
                                             <label class="toggle-switch">
                                                 <input type="checkbox" id="debug_pdf_editor" name="pdf_builder_debug_pdf_editor" value="1" <?php echo isset($settings['pdf_builder_debug_pdf_editor']) && $settings['pdf_builder_debug_pdf_editor'] ? 'checked' : ''; ?> />
                                                 <span class="toggle-slider"></span>
                                             </label>
                                             <span class="toggle-label" style="margin-left: 10px;">🎨 Éditeur PDF</span>
+                                            <input type="hidden" name="pdf_builder_debug_pdf_editor" value="0" />
                                         </div>
                                         <div style="font-size: 11px; color: #999; margin-top: 5px;">Page éditeur</div>
                                     </div>
@@ -189,12 +189,12 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                     <!-- Toggle 2: Page Paramètres -->
                                     <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
                                         <div class="toggle-container">
-                                            <input type="hidden" name="pdf_builder_debug_settings_page" value="0" />
                                             <label class="toggle-switch">
                                                 <input type="checkbox" id="debug_settings_page" name="pdf_builder_debug_settings_page" value="1" <?php echo isset($settings['pdf_builder_debug_settings_page']) && $settings['pdf_builder_debug_settings_page'] ? 'checked' : ''; ?> />
                                                 <span class="toggle-slider"></span>
                                             </label>
                                             <span class="toggle-label" style="margin-left: 10px;">⚙️ Page Paramètres</span>
+                                            <input type="hidden" name="pdf_builder_debug_settings_page" value="0" />
                                         </div>
                                         <div style="font-size: 11px; color: #999; margin-top: 5px;">Page paramètres</div>
                                     </div>
@@ -202,12 +202,12 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                     <!-- Toggle 3: Page Template -->
                                     <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
                                         <div class="toggle-container">
-                                            <input type="hidden" name="pdf_builder_debug_page_template" value="0" />
                                             <label class="toggle-switch">
                                                 <input type="checkbox" id="debug_page_template" name="pdf_builder_debug_page_template" value="1" <?php echo isset($settings['pdf_builder_debug_page_template']) && $settings['pdf_builder_debug_page_template'] ? 'checked' : ''; ?> />
                                                 <span class="toggle-slider"></span>
                                             </label>
                                             <span class="toggle-label" style="margin-left: 10px;">📋 Page Template</span>
+                                            <input type="hidden" name="pdf_builder_debug_page_template" value="0" />
                                         </div>
                                         <div style="font-size: 11px; color: #999; margin-top: 5px;">Page template</div>
                                     </div>
