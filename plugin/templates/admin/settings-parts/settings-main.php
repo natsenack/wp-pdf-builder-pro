@@ -2237,9 +2237,19 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
             console.log('[FLOATING SAVE] 📊 Nombre total d\'inputs trouvés:', allInputs.length);
 
             allInputs.forEach((input, index) => {
-                // Skip buttons and hidden fields we don't want, but include disabled inputs as they may have values
+                // Skip buttons and most hidden fields, but include debug-related hidden fields
                 if (input.type === 'button' || input.type === 'submit' || input.type === 'reset' ||
-                    input.name === '' || input.type === 'hidden') {
+                    input.name === '') {
+                    return;
+                }
+                
+                // Include hidden fields that are debug-related parameters
+                if (input.type === 'hidden' && !(
+                    input.name.includes('debug_javascript') || 
+                    input.name.includes('debug_javascript_verbose') ||
+                    input.name.includes('pdf_builder_debug_javascript') ||
+                    input.name.includes('pdf_builder_debug_javascript_verbose')
+                )) {
                     return;
                 }
 

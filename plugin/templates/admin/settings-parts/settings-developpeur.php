@@ -153,13 +153,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 <div id="dev-debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">🔍 Paramètres de Debug</h3>
                 <table class="form-table">
-                    <tr>
-                        <td colspan="2" style="padding: 0; border: none;">
-                            <!-- Hidden inputs for debug_javascript and debug_javascript_verbose -->
-                            <input type="hidden" id="debug_javascript" name="pdf_builder_debug_javascript" value="0" />
-                            <input type="hidden" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="0" />
-                        </td>
-                    </tr>
+
                     
                     <tr>
                         <th scope="row"><label for="debug_php_errors">Errors PHP</label></th>
@@ -214,7 +208,37 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         <th scope="row"><label>Debug JavaScript</label></th>
                         <td>
                             <div style="background: #f5f5f5; padding: 15px; border-radius: 4px; border-left: 4px solid #2196F3;">
-                                <p style="margin-top: 0; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les pages pour les logs détaillés :</p>
+                                <p style="margin-top: 0; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les options de debug JavaScript :</p>
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                                    <!-- Toggle 1: Debug JavaScript General -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <div class="toggle-container">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="debug_javascript_general" name="pdf_builder_debug_javascript" value="1" <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'checked' : ''; ?> />
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <span class="toggle-label" style="margin-left: 10px;">🔧 Debug JavaScript</span>
+                                            <input type="hidden" name="pdf_builder_debug_javascript" value="0" />
+                                        </div>
+                                        <div style="font-size: 11px; color: #999; margin-top: 5px;">Logs JavaScript détaillés</div>
+                                    </div>
+
+                                    <!-- Toggle 2: Debug JavaScript Verbose -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <div class="toggle-container">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="debug_javascript_verbose_general" name="pdf_builder_debug_javascript_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'checked' : ''; ?> />
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <span class="toggle-label" style="margin-left: 10px;">📝 Debug JavaScript Verbeux</span>
+                                            <input type="hidden" name="pdf_builder_debug_javascript_verbose" value="0" />
+                                        </div>
+                                        <div style="font-size: 11px; color: #999; margin-top: 5px;">Logs JavaScript ultra-détaillés</div>
+                                    </div>
+                                </div>
+
+                                <p style="margin-top: 15px; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les pages pour les logs détaillés :</p>
                                 
                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
                                     <!-- Toggle 1: Éditeur PDF -->
@@ -847,8 +871,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configurer la mise à jour automatique de window.pdfBuilderSavedSettings pour tous les toggles
     updateSavedSettingsForToggle('developer_enabled', 'pdf_builder_developer_enabled');
     updateSavedSettingsForToggle('debug_php_errors', 'pdf_builder_debug_php_errors');
-    updateSavedSettingsForToggle('debug_javascript', 'pdf_builder_debug_javascript');
-    updateSavedSettingsForToggle('debug_javascript_verbose', 'pdf_builder_debug_javascript_verbose');
+    updateSavedSettingsForToggle('debug_javascript_general', 'pdf_builder_debug_javascript');
+    updateSavedSettingsForToggle('debug_javascript_verbose_general', 'pdf_builder_debug_javascript_verbose');
     updateSavedSettingsForToggle('debug_pdf_editor', 'pdf_builder_debug_pdf_editor');
     updateSavedSettingsForToggle('debug_settings_page', 'pdf_builder_debug_settings_page');
     updateSavedSettingsForToggle('debug_page_template', 'pdf_builder_debug_page_template');
