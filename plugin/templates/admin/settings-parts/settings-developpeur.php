@@ -1,5 +1,45 @@
 <?php // Developer tab content - Updated: 2025-11-30 12:00:00
 
+// LOGS DÉTAILLÉS POUR DÉBOGUER LES TOGGLES DÉVELOPPEUR
+if (defined('WP_DEBUG') && WP_DEBUG) {
+    error_log('========================================');
+    error_log('PDF BUILDER: CHARGEMENT ONGLET DÉVELOPPEUR');
+    error_log('========================================');
+
+    // Log des paramètres reçus
+    error_log('PDF BUILDER: Paramètres $settings reçus:');
+    if (isset($settings) && is_array($settings)) {
+        foreach ($settings as $key => $value) {
+            if (strpos($key, 'developer') !== false || strpos($key, 'debug') !== false) {
+                error_log("  - $key: " . (is_bool($value) ? ($value ? 'TRUE' : 'FALSE') : (is_array($value) ? 'ARRAY[' . count($value) . ']' : $value)));
+            }
+        }
+    } else {
+        error_log('  - $settings NON DÉFINI ou NON ARRAY');
+    }
+
+    // Log des valeurs spécifiques aux toggles
+    error_log('PDF BUILDER: Valeurs des toggles développeur:');
+    $toggle_values = [
+        'pdf_builder_developer_enabled' => $settings['pdf_builder_developer_enabled'] ?? 'NON DÉFINI',
+        'pdf_builder_debug_php_errors' => $settings['pdf_builder_debug_php_errors'] ?? 'NON DÉFINI',
+        'pdf_builder_debug_javascript' => $settings['pdf_builder_debug_javascript'] ?? 'NON DÉFINI',
+        'pdf_builder_debug_javascript_verbose' => $settings['pdf_builder_debug_javascript_verbose'] ?? 'NON DÉFINI',
+        'pdf_builder_debug_ajax' => $settings['pdf_builder_debug_ajax'] ?? 'NON DÉFINI',
+        'pdf_builder_debug_pdf_editor' => $settings['pdf_builder_debug_pdf_editor'] ?? 'NON DÉFINI',
+        'pdf_builder_debug_settings_page' => $settings['pdf_builder_debug_settings_page'] ?? 'NON DÉFINI',
+        'pdf_builder_debug_performance' => $settings['pdf_builder_debug_performance'] ?? 'NON DÉFINI',
+        'pdf_builder_debug_database' => $settings['pdf_builder_debug_database'] ?? 'NON DÉFINI'
+    ];
+
+    foreach ($toggle_values as $key => $value) {
+        $bool_value = is_bool($value) ? $value : ($value && $value !== '0' && $value !== 0);
+        error_log("  - $key: $value (BOOL: " . ($bool_value ? 'TRUE' : 'FALSE') . ")");
+    }
+
+    error_log('========================================');
+}
+
 // Variables nécessaires pour l'onglet développeur
 $license_test_mode = (isset($settings) && isset($settings['pdf_builder_license_test_mode_enabled'])) ? $settings['pdf_builder_license_test_mode_enabled'] : false;
 $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_test_key'])) ? $settings['pdf_builder_license_test_key'] : '';

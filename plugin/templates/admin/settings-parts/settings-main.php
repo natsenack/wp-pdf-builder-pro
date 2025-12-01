@@ -2184,120 +2184,211 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
     // Initialize floating save button
     function initializeFloatingSaveButton() {
         const floatingSaveBtn = document.getElementById('floating-save-btn');
-        if (!floatingSaveBtn) return;
+        if (!floatingSaveBtn) {
+            console.error('[FLOATING SAVE] ❌ Bouton flottant non trouvé dans le DOM');
+            return;
+        }
+
+        console.log('[FLOATING SAVE] ✅ Bouton flottant trouvé, initialisation...');
 
         floatingSaveBtn.addEventListener('click', function(e) {
             e.preventDefault();
+
+            console.log('========================================');
+            console.log('[FLOATING SAVE] 🚀 CLIC SUR BOUTON FLOTTANT DÉTECTÉ');
+            console.log('========================================');
 
             // Collect all form data from all tabs
             const formData = new FormData();
 
             // Add action and nonce
             formData.append('action', 'pdf_builder_save_all_settings');
-            formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+            const nonce = window.pdfBuilderAjax?.nonce || '';
+            formData.append('nonce', nonce);
+
+            console.log('[FLOATING SAVE] 📝 Action:', 'pdf_builder_save_all_settings');
+            console.log('[FLOATING SAVE] 🔐 Nonce:', nonce ? nonce.substring(0, 10) + '...' : 'VIDE');
 
             // Get current active tab to determine context
             const activeTab = document.querySelector('.nav-tab-active');
             const currentTab = activeTab ? activeTab.getAttribute('href').substring(1) : 'general';
             formData.append('current_tab', currentTab);
 
+            console.log('[FLOATING SAVE] 📍 Onglet actif:', currentTab);
+
             // Collect data from all visible forms and inputs across all tabs
             // This ensures we save data from all tabs, not just the active one
             const allInputs = document.querySelectorAll('input, select, textarea');
             let collectedCount = 0;
             let developerFields = 0;
+            let developerData = {};
 
-            allInputs.forEach(input => {
+            console.log('[FLOATING SAVE] 🔍 Recherche de tous les inputs...');
+            console.log('[FLOATING SAVE] 📊 Nombre total d\'inputs trouvés:', allInputs.length);
+
+            allInputs.forEach((input, index) => {
                 // Skip buttons and hidden fields we don't want, but include disabled inputs as they may have values
                 if (input.type === 'button' || input.type === 'submit' || input.type === 'reset' ||
                     input.name === '' || input.type === 'hidden') {
                     return;
                 }
 
-                // Special debug for our problematic fields
-                if (input.name === 'pdf_builder_debug_pdf_editor' || input.name === 'pdf_builder_debug_settings_page') {
-                    console.log('[DEBUG FIELDS] Found field:', input.name, 'checked:', input.checked, 'disabled:', input.disabled, 'type:', input.type);
+                // LOG DÉTAILLÉ pour les champs développeur
+                const isDeveloperField = input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log');
+
+                if (isDeveloperField) {
+                    console.log(`[FLOATING SAVE] 🔧 CHAMP DÉVELOPPEUR #${index}:`, {
+                        name: input.name,
+                        type: input.type,
+                        checked: input.checked,
+                        value: input.value,
+                        disabled: input.disabled,
+                        id: input.id,
+                        className: input.className
+                    });
                 }
 
                 // Handle different input types
                 if (input.type === 'checkbox') {
-                    formData.append(input.name, input.checked ? '1' : '0');
+                    const checkboxValue = input.checked ? '1' : '0';
+                    formData.append(input.name, checkboxValue);
                     collectedCount++;
-                    if (input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log')) {
+
+                    if (isDeveloperField) {
                         developerFields++;
-                        if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.log('[FLOATING SAVE] Developer checkbox: ' + input.name + ' = ' + (input.checked ? '1' : '0') + (input.disabled ? ' (disabled)' : ''));
-                        }
+                        developerData[input.name] = checkboxValue;
+                        console.log(`[FLOATING SAVE] ✅ Checkbox ajoutée: ${input.name} = ${checkboxValue} (${input.checked ? 'coché' : 'décoché'})`);
                     }
                 } else if (input.type === 'radio') {
                     if (input.checked) {
                         formData.append(input.name, input.value);
                         collectedCount++;
+                        if (isDeveloperField) {
+                            developerFields++;
+                            developerData[input.name] = input.value;
+                        }
                     }
                 } else {
-                    formData.append(input.name, input.value || '');
+                    const fieldValue = input.value || '';
+                    formData.append(input.name, fieldValue);
                     collectedCount++;
-                    if (input.name.includes('developer') || input.name.includes('debug') || input.name.includes('log')) {
+                    if (isDeveloperField) {
                         developerFields++;
-                        if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.log('[FLOATING SAVE] Developer field: ' + input.name + ' = ' + (input.value || '') + (input.disabled ? ' (disabled)' : ''));
-                        }
+                        developerData[input.name] = fieldValue;
+                        console.log(`[FLOATING SAVE] 📝 Champ texte ajouté: ${input.name} = "${fieldValue}"`);
                     }
                 }
             });
 
-            if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('[FLOATING SAVE] Total inputs collected: ' + collectedCount);
-                console.log('[FLOATING SAVE] Developer fields collected: ' + developerFields);
-                console.log('[FLOATING SAVE] Current tab: ' + currentTab);
-            }
+            console.log('========================================');
+            console.log('[FLOATING SAVE] 📊 RÉSUMÉ DE LA COLLECTE:');
+            console.log('[FLOATING SAVE]   - Total champs collectés:', collectedCount);
+            console.log('[FLOATING SAVE]   - Champs développeur:', developerFields);
+            console.log('[FLOATING SAVE]   - Données développeur:', developerData);
+            console.log('========================================');
+
+            // Vérifier spécifiquement les toggles problématiques
+            const criticalToggles = [
+                'pdf_builder_developer_enabled',
+                'pdf_builder_debug_php_errors',
+                'pdf_builder_debug_javascript',
+                'pdf_builder_debug_javascript_verbose',
+                'pdf_builder_debug_ajax',
+                'pdf_builder_debug_pdf_editor',
+                'pdf_builder_debug_settings_page',
+                'pdf_builder_debug_performance',
+                'pdf_builder_debug_database'
+            ];
+
+            console.log('[FLOATING SAVE] 🔍 VÉRIFICATION DES TOGGLES CRITIQUES:');
+            criticalToggles.forEach(toggleName => {
+                const toggle = document.querySelector(`input[name="${toggleName}"]`);
+                if (toggle) {
+                    const formDataValue = developerData[toggleName] || 'NON TROUVÉ';
+                    console.log(`  - ${toggleName}: DOM=${toggle.checked}, FormData=${formDataValue}, Match=${(toggle.checked ? '1' : '0') === formDataValue ? '✅' : '❌'}`);
+                } else {
+                    console.log(`  - ${toggleName}: ❌ INPUT NON TROUVÉ DANS LE DOM`);
+                }
+            });
 
             // Make AJAX request using centralized handler
+            console.log('[FLOATING SAVE] 📡 Envoi de la requête AJAX...');
+
             PDF_Builder_Ajax_Handler.makeRequest(formData, {
                 button: floatingSaveBtn,
                 context: 'Floating Save Button',
                 successCallback: function(result, originalData) {
+                    console.log('[FLOATING SAVE] ✅ SUCCÈS - Réponse reçue:', result);
+                    console.log('[FLOATING SAVE] 📦 Données sauvegardées:', originalData.data?.saved_settings);
+
                     // Update window.pdfBuilderSavedSettings with new values
                     if (originalData.data && originalData.data.saved_settings) {
+                        console.log('[FLOATING SAVE] 🔄 Mise à jour de window.pdfBuilderSavedSettings...');
+                        const oldSettings = { ...window.pdfBuilderSavedSettings };
                         window.pdfBuilderSavedSettings = Object.assign({}, window.pdfBuilderSavedSettings, originalData.data.saved_settings);
-                        if (window.pdfBuilderDebugSettings?.javascript) {
-                            console.log('[FLOATING SAVE] Updated window.pdfBuilderSavedSettings with new values');
-                        }
+
+                        // Comparer les valeurs développeur avant/après
+                        console.log('[FLOATING SAVE] 🔍 COMPARAISON AVANT/APRÈS SAUVEGARDE:');
+                        criticalToggles.forEach(toggleName => {
+                            const oldValue = oldSettings[toggleName];
+                            const newValue = window.pdfBuilderSavedSettings[toggleName];
+                            const changed = oldValue !== newValue ? '🔄 CHANGÉ' : '✅ INCHANGÉ';
+                            console.log(`  - ${toggleName}: ${oldValue} → ${newValue} ${changed}`);
+                        });
+
+                        console.log('[FLOATING SAVE] ✅ window.pdfBuilderSavedSettings mis à jour');
+                    } else {
+                        console.warn('[FLOATING SAVE] ⚠️ Aucune donnée saved_settings dans la réponse');
                     }
 
                     // Update previews after successful save
                     if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeAllPreviews === 'function') {
+                        console.log('[FLOATING SAVE] 🔄 Mise à jour des previews...');
                         window.PDF_Builder_Preview_Manager.initializeAllPreviews();
                     }
 
                     // Update canvas previews if on contenu tab
                     if (currentTab === 'contenu' && typeof window.updateCanvasPreviews === 'function') {
+                        console.log('[FLOATING SAVE] 🎨 Mise à jour des previews canvas...');
                         window.updateCanvasPreviews('all');
                     }
 
                     // Update status indicators
                     if (typeof window.updateSecurityStatusIndicators === 'function') {
+                        console.log('[FLOATING SAVE] 🔒 Mise à jour des indicateurs sécurité...');
                         window.updateSecurityStatusIndicators();
                     }
                     if (typeof window.updateTemplateStatusIndicators === 'function') {
+                        console.log('[FLOATING SAVE] 📋 Mise à jour des indicateurs templates...');
                         window.updateTemplateStatusIndicators();
                     }
                     if (typeof window.updateSystemStatusIndicators === 'function') {
+                        console.log('[FLOATING SAVE] 🖥️ Mise à jour des indicateurs système...');
                         window.updateSystemStatusIndicators();
                     }
                     if (typeof window.updateTemplateLibraryIndicator === 'function') {
+                        console.log('[FLOATING SAVE] 📚 Mise à jour de l\'indicateur bibliothèque...');
                         window.updateTemplateLibraryIndicator();
                     }
 
                     // Re-sync checkboxes after settings update
                     if (typeof window.syncCheckboxesWithSavedSettings === 'function') {
+                        console.log('[FLOATING SAVE] 🔄 Re-synchronisation des checkboxes...');
                         window.syncCheckboxesWithSavedSettings();
                     }
+
+                    console.log('[FLOATING SAVE] ✅ Toutes les mises à jour terminées');
+                },
+                errorCallback: function(error, originalData) {
+                    console.error('[FLOATING SAVE] ❌ ERREUR lors de la sauvegarde:', error);
+                    console.error('[FLOATING SAVE] 📋 Données d\'erreur:', originalData);
                 }
             }).catch(error => {
-                console.error('Floating save error:', error);
+                console.error('[FLOATING SAVE] ❌ ERREUR AJAX:', error);
             });
         });
+
+        console.log('[FLOATING SAVE] ✅ Initialisation du bouton flottant terminée');
     }
 
 })();

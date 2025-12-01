@@ -1470,23 +1470,39 @@ function pdf_builder_get_all_canvas_settings_handler() {
  * Handler AJAX pour sauvegarder tous les paramètres depuis le bouton flottant
  */
 function pdf_builder_save_all_settings_handler() {
+    // ===== LOGGING DÉTAILLÉ POUR DEBUG DES TOGGLES DÉVELOPPEUR =====
+    error_log('===== PDF BUILDER SAVE ALL SETTINGS - DÉBUT =====');
+    error_log('Timestamp: ' . current_time('mysql'));
+    error_log('User ID: ' . get_current_user_id());
+    error_log('REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
+    error_log('Content-Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'UNKNOWN'));
+
     // Debug: Log the nonce received
     error_log('PDF Builder SAVE ALL: Received nonce: ' . ($_POST['nonce'] ?? 'NOT SET'));
     error_log('PDF Builder SAVE ALL: All POST keys: ' . implode(', ', array_keys($_POST)));
 
+    // LOG DES CHAMPS CRITIQUES POUR LES TOGGLES DÉVELOPPEUR
+    $critical_fields = ['debug_javascript', 'debug_pdf_editor', 'debug_settings_page', 'developer_enabled'];
+    foreach ($critical_fields as $field) {
+        $value = isset($_POST[$field]) ? $_POST[$field] : 'NOT_SET';
+        error_log("CRITICAL FIELD [{$field}]: {$value}");
+    }
+
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-        error_log('PDF Builder SAVE ALL: Nonce verification FAILED');
+        error_log('PDF Builder SAVE ALL: ❌ NONCE VERIFICATION FAILED');
         send_ajax_response(false, 'Nonce invalide');
         return;
     }
-    error_log('PDF Builder SAVE ALL: Nonce verification SUCCESS');
+    error_log('PDF Builder SAVE ALL: ✅ Nonce verification SUCCESS');
 
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
+        error_log('PDF Builder SAVE ALL: ❌ PERMISSIONS INSUFFISANTES');
         send_ajax_response(false, 'Permissions insuffisantes.');
         return;
     }
+    error_log('PDF Builder SAVE ALL: ✅ Permissions OK');
 
     // Log de l'onglet en cours d'enregistrement
     $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
@@ -1502,15 +1518,25 @@ function pdf_builder_save_all_settings_handler() {
         // Debug: Log tous les champs POST reçus
         error_log('PDF Builder DEBUG - Tous les champs POST reçus: ' . implode(', ', array_keys($_POST)));
 
+        // LOG DÉTAILLÉ DE TOUS LES CHAMPS POST AVEC LEURS VALEURS
+        error_log('===== DÉTAIL DES CHAMPS POST REÇUS =====');
+        foreach ($_POST as $key => $value) {
+            $display_value = is_array($value) ? 'ARRAY[' . count($value) . ']' : (string)$value;
+            error_log("POST[{$key}] = {$display_value}");
+        }
+        error_log('===== FIN DÉTAIL CHAMPS POST =====');
+
         // Traiter tous les champs soumis
         foreach ($_POST as $key => $value) {
             // Ignorer les champs spéciaux
             if (in_array($key, ['action', 'nonce', 'current_tab'])) {
                 $ignored_fields[] = $key;
+                error_log("IGNORED FIELD: {$key}");
                 continue;
             }
 
             $processed_fields[] = $key;
+            error_log("PROCESSING FIELD: {$key} (original value: " . (is_array($value) ? 'ARRAY' : $value) . ")");
 
             try {
                 // Préfixer la clé avec pdf_builder_ si elle ne l'a pas déjà
@@ -1523,20 +1549,25 @@ function pdf_builder_save_all_settings_handler() {
                 if (strpos($key, '_enabled') !== false || strpos($key, '_debug') !== false || in_array($key, ['debug_javascript', 'debug_pdf_editor', 'debug_settings_page'])) {
                     // Champs booléens
                     $sanitized_value = $value === '1' || $value === 'true' ? 1 : 0;
+                    error_log("BOOLEAN FIELD [{$key}]: original='{$value}' -> sanitized='{$sanitized_value}'");
                 } elseif (is_array($value)) {
                     // Tableaux
                     $sanitized_value = array_map('sanitize_text_field', $value);
+                    error_log("ARRAY FIELD [{$key}]: " . json_encode($sanitized_value));
                 } else {
                     // Texte normal
                     $sanitized_value = sanitize_text_field($value);
+                    error_log("TEXT FIELD [{$key}]: '{$sanitized_value}'");
                 }
 
                 // Sauvegarder l'option
-                update_option($option_key, $sanitized_value);
+                $update_result = update_option($option_key, $sanitized_value);
                 $saved_count++;
+                error_log("SAVED OPTION [{$option_key}] = '{$sanitized_value}' (update_result: " . ($update_result ? 'SUCCESS' : 'NO_CHANGE') . ")");
 
             } catch (Exception $e) {
                 $errors[] = "Erreur lors de la sauvegarde de $key: " . $e->getMessage();
+                error_log("ERROR SAVING [{$key}]: " . $e->getMessage());
             }
         }
 
@@ -1554,12 +1585,26 @@ function pdf_builder_save_all_settings_handler() {
             'debug_settings_page'
         ];
 
+        error_log('===== TRAITEMENT CHAMPS CHECKBOX NON COCHÉS =====');
         foreach ($checkbox_fields as $field) {
             if (!isset($_POST[$field])) {
+                $old_value = get_option('pdf_builder_' . $field, 'NOT_SET');
                 update_option('pdf_builder_' . $field, 0);
                 $saved_count++;
+                error_log("UNCHECKED CHECKBOX [{$field}]: old_value='{$old_value}' -> set to '0'");
+            } else {
+                error_log("CHECKBOX WAS SET [{$field}]: " . $_POST[$field]);
             }
         }
+        error_log('===== FIN TRAITEMENT CHECKBOX =====');
+
+        // VÉRIFICATION FINALE DES VALEURS SAUVEGARDÉES
+        error_log('===== VÉRIFICATION VALEURS SAUVEGARDÉES EN BASE =====');
+        foreach ($critical_fields as $field) {
+            $saved_value = get_option('pdf_builder_' . $field, 'NOT_FOUND');
+            error_log("DB CHECK [pdf_builder_{$field}] = '{$saved_value}'");
+        }
+        error_log('===== FIN VÉRIFICATION DB =====');
 
         // Message de succès
         $message = "✅ $saved_count paramètres sauvegardés avec succès.";
@@ -1606,9 +1651,12 @@ function pdf_builder_save_all_settings_handler() {
         error_log('  Traités: ' . count($processed_fields));
         error_log('  Sauvegardés: ' . $saved_count);
         error_log('  Erreurs: ' . count($errors));
+        error_log('===== PDF BUILDER SAVE ALL SETTINGS - FIN =====');
 
     } catch (Exception $e) {
         // Debug: Log the exception
+        error_log('PDF Builder SAVE ALL: ❌ EXCEPTION: ' . $e->getMessage());
+        error_log('PDF Builder SAVE ALL: Exception trace: ' . $e->getTraceAsString());
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('PDF Builder: Exception in save_settings: ' . $e->getMessage());
             error_log('PDF Builder: Exception trace: ' . $e->getTraceAsString());
