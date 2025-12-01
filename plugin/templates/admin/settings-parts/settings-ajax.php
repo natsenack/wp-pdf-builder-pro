@@ -1499,6 +1499,12 @@ function pdf_builder_save_all_settings_handler() {
         error_log("CRITICAL FIELD [{$field}]: {$value}");
     }
 
+    // LOG DES CHAMPS AVEC PRÉFIXE
+    error_log('CRITICAL PREFIXED FIELDS:');
+    error_log('pdf_builder_developer_enabled = ' . (isset($_POST['pdf_builder_developer_enabled']) ? $_POST['pdf_builder_developer_enabled'] : 'NOT_SET'));
+    error_log('pdf_builder_debug_javascript = ' . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
+    error_log('pdf_builder_debug_settings_page = ' . (isset($_POST['pdf_builder_debug_settings_page']) ? $_POST['pdf_builder_debug_settings_page'] : 'NOT_SET'));
+
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         error_log('PDF Builder SAVE ALL: ❌ NONCE VERIFICATION FAILED');
@@ -1614,6 +1620,12 @@ function pdf_builder_save_all_settings_handler() {
         foreach ($critical_fields as $field) {
             $saved_value = get_option('pdf_builder_' . $field, 'NOT_FOUND');
             error_log("DB CHECK [pdf_builder_{$field}] = '{$saved_value}'");
+        }
+        // Vérification des champs avec préfixe
+        $prefixed_fields = ['pdf_builder_developer_enabled', 'pdf_builder_debug_javascript', 'pdf_builder_debug_settings_page'];
+        foreach ($prefixed_fields as $field) {
+            $saved_value = get_option($field, 'NOT_FOUND');
+            error_log("DB CHECK [{$field}] = '{$saved_value}'");
         }
         error_log('===== FIN VÉRIFICATION DB =====');
 
