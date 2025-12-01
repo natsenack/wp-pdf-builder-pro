@@ -25,6 +25,16 @@ function send_ajax_response($success, $message = '', $data = [])
     }
 }
 
+// Helper to validate nonce accepting both action-specific and central 'pdf_builder_ajax' nonces
+function is_valid_pdf_builder_nonce($nonce, $action = '') {
+    $action = $action ?: 'pdf_builder_ajax';
+    // Accept both the action-specific nonce (legacy) or the central pdf_builder_ajax nonce
+    if (!empty($nonce) && (wp_verify_nonce($nonce, $action) || wp_verify_nonce($nonce, 'pdf_builder_ajax'))) {
+        return true;
+    }
+    return false;
+}
+
 /**
  * Système centralisé de gestion des réponses AJAX
  */
@@ -433,9 +443,9 @@ function pdf_builder_generate_test_license_key_handler() {
         return;
     }
 
-    // Vérifier le nonce
+    // Vérifier le nonce (supporte le nonce central pdf_builder_ajax)
     $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
-    if (!wp_verify_nonce($nonce, 'pdf_builder_generate_test_license_key')) {
+    if (!is_valid_pdf_builder_nonce($nonce, 'pdf_builder_generate_test_license_key')) {
         send_ajax_response(false, 'Nonce invalide');
         return;
     }
@@ -464,9 +474,9 @@ function pdf_builder_delete_test_license_key_handler() {
         return;
     }
 
-    // Vérifier le nonce
+    // Vérifier le nonce (supporte le nonce central pdf_builder_ajax)
     $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
-    if (!wp_verify_nonce($nonce, 'pdf_builder_delete_test_license_key')) {
+    if (!is_valid_pdf_builder_nonce($nonce, 'pdf_builder_delete_test_license_key')) {
         send_ajax_response(false, 'Nonce invalide');
         return;
     }
@@ -490,9 +500,9 @@ function pdf_builder_validate_test_license_key_handler() {
         return;
     }
 
-    // Vérifier le nonce
+    // Vérifier le nonce (supporte le nonce central pdf_builder_ajax)
     $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
-    if (!wp_verify_nonce($nonce, 'pdf_builder_validate_test_license_key')) {
+    if (!is_valid_pdf_builder_nonce($nonce, 'pdf_builder_validate_test_license_key')) {
         send_ajax_response(false, 'Nonce invalide');
         return;
     }

@@ -413,6 +413,8 @@
                             <div id="license_test_key_display_wrapper" style="display:flex; gap:8px; align-items:center;">
                                 <code id="license_test_key_display" style="background: #fff3cd; padding: 4px 8px; border-radius: 3px; border: 1px solid #ffc107; font-family: monospace;"><?php echo $license_test_key ? substr($license_test_key, 0, 6) . '••••••••••••••••' . substr($license_test_key, -6) : ''; ?></code>
                                 <button type="button" id="copy_license_key_btn" class="button button-small">📋 Copier</button>
+                                <button type="button" id="show_license_key_btn" class="button button-secondary">👁️ Afficher</button>
+                                <button type="button" id="validate_license_key_btn" class="button button-secondary">✅ Valider</button>
                                 <button type="button" id="generate_license_key_btn" class="button button-primary">🔑 Générer une clé de test</button>
                                 <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-pro-settings&tab=licence')); ?>" class="button button-link" style="margin-left:6px; text-decoration: none;">🔐 Onglet Licence</a>
                                 <button type="button" id="delete_license_key_btn" class="button button-secondary" style="display:<?php echo $license_test_key ? 'inline-block' : 'none'; ?>; background-color:#dc3545;color:white;border-color:#dc3545;">🗑️ Supprimer</button>

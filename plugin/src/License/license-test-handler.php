@@ -63,34 +63,28 @@ class LicenseTestHandler
         }
 
         // AJAX handler pour générer une clé de test
-        add_action('wp_ajax_pdf_builder_generate_test_license_key', [$this, 'handleGenerateTestKey']);
-        add_action('wp_ajax_nopriv_pdf_builder_generate_test_license_key', [$this, 'handleGenerateTestKey']);
+        // NOTE: Le handler AJAX centralisé (PDF_Builder_Unified_Ajax_Handler) prend en charge les actions.
+        // Les hooks ci-dessous ont été retirés pour éviter les doublons et la validation de nonce incompatible.
         if (defined('WP_DEBUG') && WP_DEBUG) {
             
         }
 
         // AJAX handler pour valider une clé de test
-        add_action('wp_ajax_pdf_builder_validate_test_license_key', [$this, 'handleValidateTestKey']);
-        add_action('wp_ajax_nopriv_pdf_builder_validate_test_license_key', [$this, 'handleValidateTestKey']);
+        // Hooks centralisés gèrent cette action
         if (defined('WP_DEBUG') && WP_DEBUG) {
             
         }
 
         // AJAX handler pour basculer le mode test
-        add_action('wp_ajax_pdf_builder_toggle_test_mode', [$this, 'handleToggleTestMode']);
-        add_action('wp_ajax_nopriv_pdf_builder_toggle_test_mode', [$this, 'handleToggleTestMode']);
-        add_action('wp_ajax_pdf_builder_toggle_license_test_mode', [$this, 'handleToggleTestMode']);
-        add_action('wp_ajax_nopriv_pdf_builder_toggle_license_test_mode', [$this, 'handleToggleTestMode']);
+        // Hooks centralisés gèrent cette action
         
 
         // AJAX handler pour supprimer la clé de test
-        add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handleDeleteTestKey']);
-        add_action('wp_ajax_nopriv_pdf_builder_delete_test_license_key', [$this, 'handleDeleteTestKey']);
+        // Hooks centralisés gèrent cette action
         
 
         // AJAX handler pour nettoyer complètement la licence
-        add_action('wp_ajax_pdf_builder_cleanup_license', [$this, 'handleCleanupLicense']);
-        add_action('wp_ajax_nopriv_pdf_builder_cleanup_license', [$this, 'handleCleanupLicense']);
+        // Hooks centralisés gèrent cette action
         
 
         
@@ -159,9 +153,9 @@ class LicenseTestHandler
     {
         
 
-        // Vérifier la nonce
-        if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_generate_test_license_key')) {
-            
+        // Vérifier la nonce (accepte le nonce central 'pdf_builder_ajax' pour compatibilité)
+        $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
+        if (empty($nonce) || (!wp_verify_nonce($nonce, 'pdf_builder_generate_test_license_key') && !wp_verify_nonce($nonce, 'pdf_builder_ajax'))) {
             wp_send_json_error([
                 'message' => 'Erreur de sécurité: nonce invalide'
             ], 403);
@@ -218,8 +212,9 @@ class LicenseTestHandler
      */
     public function handleValidateTestKey()
     {
-        // Vérifier la nonce
-        if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_validate_test_license_key')) {
+        // Vérifier la nonce (accepte le nonce central 'pdf_builder_ajax' pour compatibilité)
+        $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
+        if (empty($nonce) || (!wp_verify_nonce($nonce, 'pdf_builder_validate_test_license_key') && !wp_verify_nonce($nonce, 'pdf_builder_ajax'))) {
             wp_send_json_error([
                 'message' => 'Erreur de sécurité: nonce invalide'
             ], 403);
@@ -283,9 +278,9 @@ class LicenseTestHandler
     {
         
 
-        // Vérifier la nonce
-        if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_toggle_test_mode')) {
-            
+        // Vérifier la nonce (accepte le nonce central 'pdf_builder_ajax' pour compatibilité)
+        $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
+        if (empty($nonce) || (!wp_verify_nonce($nonce, 'pdf_builder_toggle_test_mode') && !wp_verify_nonce($nonce, 'pdf_builder_ajax'))) {
             wp_send_json_error([
                 'message' => 'Erreur de sécurité: nonce invalide'
             ], 403);
@@ -333,8 +328,9 @@ class LicenseTestHandler
      */
     public function handleDeleteTestKey()
     {
-        // Vérifier la nonce
-        if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_delete_test_license_key')) {
+        // Vérifier la nonce (accepte le nonce central 'pdf_builder_ajax' pour compatibilité)
+        $nonce = isset($_REQUEST['nonce']) ? sanitize_text_field($_REQUEST['nonce']) : '';
+        if (empty($nonce) || (!wp_verify_nonce($nonce, 'pdf_builder_delete_test_license_key') && !wp_verify_nonce($nonce, 'pdf_builder_ajax'))) {
             wp_send_json_error([
                 'message' => 'Erreur de sécurité: nonce invalide'
             ], 403);
