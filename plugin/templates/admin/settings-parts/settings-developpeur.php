@@ -153,6 +153,10 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 <div id="dev-debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">🔍 Paramètres de Debug</h3>
                 <table class="form-table">
+                    <!-- Hidden inputs for debug_javascript and debug_javascript_verbose -->
+                    <input type="hidden" id="debug_javascript" name="pdf_builder_debug_javascript" value="0" />
+                    <input type="hidden" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="0" />
+                    
                     <tr>
                         <th scope="row"><label for="debug_php_errors">Errors PHP</label></th>
                         <td>
@@ -207,10 +211,6 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         <td>
                             <div style="background: #f5f5f5; padding: 15px; border-radius: 4px; border-left: 4px solid #2196F3;">
                                 <p style="margin-top: 0; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les pages pour les logs détaillés :</p>
-                                
-                                <!-- Hidden inputs for debug_javascript and debug_javascript_verbose -->
-                                <input type="hidden" id="debug_javascript" name="pdf_builder_debug_javascript" value="0" />
-                                <input type="hidden" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="0" />
                                 
                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
                                     <!-- Toggle 1: Éditeur PDF -->
