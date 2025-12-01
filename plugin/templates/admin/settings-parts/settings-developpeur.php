@@ -166,6 +166,15 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                             <div class="toggle-description">Affiche les erreurs/warnings PHP du plugin</div>
                         </td>
                     </tr>
+
+                    <!-- Section Logs JavaScript par page -->
+                    <tr>
+                        <td colspan="2" style="background: #f8f9fa; border-top: 2px solid #dee2e6; border-bottom: 1px solid #dee2e6; padding: 8px 12px;">
+                            <strong style="color: #495057; font-size: 13px;">📋 Logs JavaScript par page</strong>
+                            <span style="color: #6c757d; font-size: 12px; margin-left: 10px;">(Isolation des logs JS selon la page visitée)</span>
+                        </td>
+                    </tr>
+
                     <tr id="debug_pdf_editor_row">
                         <th scope="row"><label for="debug_pdf_editor">Debug Éditeur PDF</label></th>
                         <td>
