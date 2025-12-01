@@ -694,7 +694,9 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
                 $notices[] = '<div class="notice notice-error"><p><strong>❌</strong> Erreur lors de la sauvegarde des paramètres: ' . esc_html($e->getMessage()) . '</p></div>';
             }
         }
-        $settings = get_option('pdf_builder_settings', []);
+        // IMPORTANT: Après sauvegarde, recharger $settings avec les valeurs par défaut fusionnées
+        $saved_settings = get_option('pdf_builder_settings', []);
+        $settings = array_merge($default_settings, $saved_settings);
         // Also update the standalone options so that other parts of the plugin
         // which read from individual options get updated when the non-AJAX form is used
 
@@ -752,57 +754,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
             update_option('pdf_builder_order_status_templates', array_map('sanitize_text_field', $_POST['order_status_templates']));
         }
 
-        // Build settings array from individual options for template compatibility
-        $settings = [
-            // Company info
-            'pdf_builder_company_phone_manual' => get_option('pdf_builder_company_phone_manual', ''),
-            'pdf_builder_company_siret' => get_option('pdf_builder_company_siret', ''),
-            'pdf_builder_company_vat' => get_option('pdf_builder_company_vat', ''),
-            'pdf_builder_company_rcs' => get_option('pdf_builder_company_rcs', ''),
-            'pdf_builder_company_capital' => get_option('pdf_builder_company_capital', ''),
 
-            // PDF settings
-            'pdf_builder_pdf_quality' => get_option('pdf_builder_pdf_quality', 'high'),
-            'pdf_builder_default_format' => get_option('pdf_builder_default_format', 'A4'),
-            'pdf_builder_default_orientation' => get_option('pdf_builder_default_orientation', 'portrait'),
-
-            // Cache settings
-            'pdf_builder_cache_enabled' => get_option('pdf_builder_cache_enabled', 1),
-            'cache_compression' => get_option('pdf_builder_cache_compression', 0),
-            'cache_auto_cleanup' => get_option('pdf_builder_cache_auto_cleanup', 0),
-            'cache_max_size' => get_option('pdf_builder_cache_max_size', 100),
-            'cache_ttl' => get_option('pdf_builder_cache_ttl', 3600),
-
-            // System settings
-            'performance_auto_optimization' => get_option('pdf_builder_performance_auto_optimization', 0),
-            'pdf_builder_auto_maintenance' => get_option('pdf_builder_auto_maintenance', 1),
-            'pdf_builder_auto_backup' => get_option('pdf_builder_auto_backup', 1),
-            'systeme_auto_backup_frequency' => get_option('pdf_builder_auto_backup_frequency', 'daily'),
-            'systeme_backup_retention' => get_option('pdf_builder_backup_retention', 30),
-
-            // Template settings
-            'default_template' => get_option('pdf_builder_default_template', 'blank'),
-            'template_library_enabled' => get_option('pdf_builder_template_library_enabled', 0),
-
-            // Developer settings
-            'pdf_builder_developer_enabled' => get_option('pdf_builder_developer_enabled', 0),
-            'pdf_builder_developer_password' => get_option('pdf_builder_developer_password', ''),
-            'pdf_builder_debug_php_errors' => get_option('pdf_builder_debug_php_errors', 0),
-            'pdf_builder_debug_javascript' => get_option('pdf_builder_debug_javascript', 0),
-            'pdf_builder_debug_javascript_verbose' => get_option('pdf_builder_debug_javascript_verbose', 0),
-            'pdf_builder_debug_ajax' => get_option('pdf_builder_debug_ajax', 0),
-            'pdf_builder_debug_pdf_editor' => get_option('pdf_builder_debug_pdf_editor', 0),
-            'pdf_builder_debug_settings_page' => get_option('pdf_builder_debug_settings_page', 0),
-            'pdf_builder_debug_performance' => get_option('pdf_builder_debug_performance', 0),
-            'pdf_builder_debug_database' => get_option('pdf_builder_debug_database', 0),
-            'pdf_builder_log_level' => get_option('pdf_builder_log_level', 'info'),
-            'pdf_builder_log_file_size' => get_option('pdf_builder_log_file_size', 10),
-            'pdf_builder_log_retention' => get_option('pdf_builder_log_retention', 30),
-            'pdf_builder_force_https' => get_option('pdf_builder_force_https', 0),
-
-            // License settings
-            'pdf_builder_license_test_mode_enabled' => get_option('pdf_builder_license_test_mode_enabled', 0),
-        ];
     } else {
         $notices[] = '<div class="notice notice-error"><p><strong>❌</strong> Erreur de sécurité. Veuillez réessayer.</p></div>';
     }
