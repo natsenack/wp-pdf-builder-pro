@@ -35,6 +35,26 @@
             window.testLicenseToggle = () => this.testToggleLicenseMode();
             window.pdfBuilderDeveloper = this;
 
+            // Listen for debug settings change so we can react immediately
+            if (typeof window !== 'undefined' && window.addEventListener) {
+                window.addEventListener('pdfBuilder:debugSettingsChanged', (e) => {
+                    try {
+                        const newSettings = e && e.detail ? e.detail : window.pdfBuilderDebugSettings;
+                        if (newSettings && newSettings.javascript) {
+                            console.log('[DEV TOGGLES] pdfBuilder:debugSettingsChanged received, JS debug enabled');
+                        } else {
+                            console.log('[DEV TOGGLES] pdfBuilder:debugSettingsChanged received, JS debug disabled');
+                        }
+                        // Re-sync developer toggles and visibility if necessary
+                        if (window.pdfBuilderDeveloperToggles && typeof window.pdfBuilderDeveloperToggles.forceSync === 'function') {
+                            window.pdfBuilderDeveloperToggles.forceSync();
+                        }
+                    } catch (err) {
+                        console.warn('[DEV TOGGLES] Error handling pdfBuilder:debugSettingsChanged', err);
+                    }
+                });
+            }
+
             // Module initialized - no unconditional logging
         }
 

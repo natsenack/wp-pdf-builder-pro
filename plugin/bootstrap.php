@@ -231,6 +231,37 @@ if (function_exists('add_action')) {
                 }
             }
         }, 1);
+    // Also enforce HTTPS for the administration pages if configured
+    add_action('admin_init', function() {
+        // Skip CLI, AJAX and REST calls
+        if (defined('WP_CLI') && WP_CLI) return;
+        if (defined('DOING_AJAX') && DOING_AJAX) return;
+        if (defined('REST_REQUEST') && REST_REQUEST) return;
+
+        $force = get_option('pdf_builder_force_https', '0');
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[PDF Builder HTTPS] admin_init fired. force=' . $force . ', is_ssl=' . (is_ssl() ? '1' : '0') . ', X-Forwarded-Proto=' . ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') . ', CFVisit=' . ($_SERVER['HTTP_CF_VISITOR'] ?? ''));
+        }
+        if ($force === '1' || $force === 1) {
+            $is_forwarded_ssl = (
+                (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
+                (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on') ||
+                (!empty($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https') !== false)
+            );
+            if (!is_ssl() && !$is_forwarded_ssl) {
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('[PDF Builder HTTPS] Admin redirecting to HTTPS. host=' . ($_SERVER['HTTP_HOST'] ?? '') . ', uri=' . ($_SERVER['REQUEST_URI'] ?? ''));
+                }
+                $host = $_SERVER['HTTP_HOST'] ?? '';
+                $uri = $_SERVER['REQUEST_URI'] ?? '';
+                if (!empty($host)) {
+                    $redirect = 'https://' . $host . $uri;
+                    wp_safe_redirect($redirect, 301);
+                    exit;
+                }
+            }
+        }
+    }, 1);
 }
 
 // Initialiser les variables $_SERVER manquantes pour éviter les erreurs PHP 8.1+

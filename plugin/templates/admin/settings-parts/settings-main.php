@@ -2402,11 +2402,36 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         window.pdfBuilderDebugSettings.ajax = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_ajax && window.pdfBuilderSavedSettings.pdf_builder_debug_ajax !== '0');
                         window.pdfBuilderDebugSettings.performance = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_performance && window.pdfBuilderSavedSettings.pdf_builder_debug_performance !== '0');
                         window.pdfBuilderDebugSettings.database = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_database && window.pdfBuilderSavedSettings.pdf_builder_debug_database !== '0');
+                        // Dispatch a custom event so other scripts (React, utilities) can re-sync debug behavior
+                        try {
+                            var detail = window.pdfBuilderDebugSettings || {};
+                            window.dispatchEvent(new CustomEvent('pdfBuilder:debugSettingsChanged', { detail: detail }));
+                        } catch (e) {
+                            console.warn('[FLOATING SAVE] ⚠️ Erreur lors du dispatch de l\'événement pdfBuilder:debugSettingsChanged', e);
+                        }
                     } else {
                         console.warn('[FLOATING SAVE] ⚠️ Aucune donnée saved_settings trouvée dans la réponse');
                         console.warn('[FLOATING SAVE] ⚠️ originalData.data:', originalData.data);
                         console.warn('[FLOATING SAVE] ⚠️ originalData directement:', originalData);
                         console.warn('[FLOATING SAVE] ⚠️ Type de savedSettings:', typeof savedSettings);
+                    }
+
+                    // If force_https was toggled on and current page is not HTTPS, reload via HTTPS to test redirect behavior
+                    try {
+                        const oldForce = oldSettings['pdf_builder_force_https'];
+                        const newForce = window.pdfBuilderSavedSettings['pdf_builder_force_https'];
+                        const isOldOn = oldForce === '1' || oldForce === 1 || oldForce === true || oldForce === 'true';
+                        const isNewOn = newForce === '1' || newForce === 1 || newForce === true || newForce === 'true';
+                        if (!isOldOn && isNewOn && window.location && window.location.protocol !== 'https:') {
+                            console.log('[FLOATING SAVE] 🌐 Force HTTPS activé — recharge via HTTPS');
+                            const host = window.location.host;
+                            const uri = window.location.pathname + window.location.search + window.location.hash;
+                            const redirectUrl = 'https://' + host + uri;
+                            // Use replace to avoid creating navigation history entry
+                            window.location.replace(redirectUrl);
+                        }
+                    } catch (e) {
+                        console.warn('[FLOATING SAVE] ⚠️ Erreur en testant la bascule de force_https', e);
                     }
 
                     // Update previews after successful save
