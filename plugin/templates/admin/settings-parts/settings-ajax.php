@@ -792,7 +792,7 @@ function pdf_builder_save_settings_handler() {
         return;
     }
 
-    $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
+    $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'general');
 
     // Extraire la liste des champs collectés côté JS pour comparaison (si présente)
     $js_collected = [];
@@ -859,7 +859,7 @@ function pdf_builder_save_settings_handler() {
 // Fixed syntax error - forced redeploy 2025-11-30
 function pdf_builder_save_canvas_settings_handler() {
 
-    $category = PDF_Builder_Sanitizer::text($_POST['category'] ?? 'dimensions');
+    $category = sanitize_text_field($_POST['category'] ?? 'dimensions');
 
     try {
             $saved_values = [];
@@ -875,7 +875,7 @@ function pdf_builder_save_canvas_settings_handler() {
 
                     foreach ($dimensions_mappings as $post_key => $option_key) {
                         if (isset($_POST[$post_key])) {
-                            $value = PDF_Builder_Sanitizer::text($_POST[$post_key]);
+                            $value = sanitize_text_field($_POST[$post_key]);
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
                         }
@@ -944,7 +944,7 @@ function pdf_builder_save_canvas_settings_handler() {
                             if ($post_key === 'canvas_shadow_enabled') {
                                 $value = $value === '1';
                             } else if ($post_key === 'canvas_border_width') {
-                                $value = PDF_Builder_Sanitizer::int($value);
+                                $value = intval($value);
                             }
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
@@ -974,7 +974,7 @@ function pdf_builder_save_canvas_settings_handler() {
                             if (in_array($post_key, ['canvas_guides_enabled', 'canvas_grid_enabled', 'canvas_snap_to_grid'])) {
                                 $value = $value === '1';
                             } else if ($post_key === 'canvas_grid_size') {
-                                $value = PDF_Builder_Sanitizer::int($value);
+                                $value = intval($value);
                             }
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
@@ -1029,7 +1029,7 @@ function pdf_builder_save_canvas_settings_handler() {
                             if ($post_key === 'canvas_export_transparent') {
                                 $value = $value === '1';
                             } else if ($post_key === 'canvas_export_quality') {
-                                $value = PDF_Builder_Sanitizer::int($value);
+                                $value = intval($value);
                             }
                             update_option($option_key, $value);
                             $saved_values[$post_key] = $value;
@@ -1190,7 +1190,7 @@ function pdf_builder_save_canvas_settings_handler() {
                         // Convert types appropriately
                         $value = $saved_values[$saved_key];
                         if (in_array($combined_key, ['default_canvas_dpi', 'canvas_width', 'canvas_height', 'border_width', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left', 'grid_size', 'snap_tolerance', 'handle_size', 'rotation_step', 'export_quality', 'image_quality', 'max_image_size', 'auto_save_interval', 'auto_save_versions', 'max_fps'])) {
-                            $value = PDF_Builder_Sanitizer::int($value);
+                            $value = intval($value);
                         } elseif (in_array($combined_key, ['shadow_enabled', 'show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 'show_guides', 'multi_select', 'copy_paste_enabled', 'show_resize_handles', 'enable_rotation', 'compress_images', 'include_metadata', 'auto_crop', 'embed_fonts', 'optimize_for_web', 'auto_save_enabled', 'lazy_loading_editor', 'preload_critical', 'lazy_loading_plugin', 'debug_enabled', 'performance_monitoring', 'error_reporting'])) {
                             $value = (bool)$value;
                         }
@@ -1219,7 +1219,7 @@ function pdf_builder_get_canvas_settings_handler() {
             return;
         }
 
-        $category = PDF_Builder_Sanitizer::text($_POST['category'] ?? '');
+        $category = sanitize_text_field($_POST['category'] ?? '');
 
         if (empty($category)) {
             // Retourner tous les paramètres si pas de catégorie spécifiée (rétrocompatibilité)
@@ -1505,7 +1505,7 @@ function pdf_builder_save_all_settings_handler() {
     error_log('PDF Builder SAVE ALL: ✅ Permissions OK');
 
     // Log de l'onglet en cours d'enregistrement
-    $current_tab = PDF_Builder_Sanitizer::text($_POST['current_tab'] ?? 'general');
+    $current_tab = isset($_POST['current_tab']) ? sanitize_text_field($_POST['current_tab']) : 'general';
     error_log('[PDF Builder] SAVE: Enregistrement depuis l\'onglet "' . $current_tab . '"');
 
     try {
