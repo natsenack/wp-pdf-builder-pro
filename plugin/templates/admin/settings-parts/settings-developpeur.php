@@ -176,40 +176,40 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                     </tr>
 
                     <tr id="debug_pdf_editor_row">
-                        <th scope="row"><label for="debug_pdf_editor">Debug Éditeur PDF</label></th>
+                        <th scope="row"><label for="debug_pdf_editor">Debug Éditeur PDF (JS)</label></th>
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="debug_pdf_editor" name="pdf_builder_debug_pdf_editor" value="1" <?php echo isset($settings['pdf_builder_debug_pdf_editor']) && $settings['pdf_builder_debug_pdf_editor'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <span class="toggle-label">Debug Éditeur PDF</span>
+                                <span class="toggle-label">Debug Éditeur PDF (JS)</span>
                             </div>
                             <div class="toggle-description">Isole les logs JavaScript exclusivement à la page de l'éditeur PDF</div>
                         </td>
                     </tr>
                     <tr id="debug_settings_page_row">
-                        <th scope="row"><label for="debug_settings_page">Debug Page Paramètres</label></th>
+                        <th scope="row"><label for="debug_settings_page">Debug Page Paramètres (JS)</label></th>
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="debug_settings_page" name="pdf_builder_debug_settings_page" value="1" <?php echo isset($settings['pdf_builder_debug_settings_page']) && $settings['pdf_builder_debug_settings_page'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <span class="toggle-label">Debug Page Paramètres</span>
+                                <span class="toggle-label">Debug Page Paramètres (JS)</span>
                             </div>
                             <div class="toggle-description">Isole les logs JavaScript exclusivement à la page des paramètres</div>
                         </td>
                     </tr>
                     <tr id="debug_templates_page_row">
-                        <th scope="row"><label for="debug_templates_page">Debug Page Templates</label></th>
+                        <th scope="row"><label for="debug_templates_page">Debug Page Templates (JS)</label></th>
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="debug_templates_page" name="pdf_builder_debug_templates_page" value="1" <?php echo isset($settings['pdf_builder_debug_templates_page']) && $settings['pdf_builder_debug_templates_page'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <span class="toggle-label">Debug Page Templates</span>
+                                <span class="toggle-label">Debug Page Templates (JS)</span>
                             </div>
                             <div class="toggle-description">Isole les logs JavaScript exclusivement à la page des templates</div>
                         </td>
