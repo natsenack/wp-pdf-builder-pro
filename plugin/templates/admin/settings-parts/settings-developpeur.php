@@ -9,6 +9,7 @@
 $settings = get_option('pdf_builder_settings', []);
 $dev_mode = isset($_POST['pdf_builder_developer_enabled']) ? sanitize_text_field($_POST['pdf_builder_developer_enabled']) : get_option('pdf_builder_developer_enabled', $settings['pdf_builder_developer_enabled'] ?? '0');
 $debug_enabled = isset($_POST['pdf_builder_canvas_debug_enabled']) ? sanitize_text_field($_POST['pdf_builder_canvas_debug_enabled']) : get_option('pdf_builder_canvas_debug_enabled', $settings['pdf_builder_canvas_debug_enabled'] ?? '0');
+$dev_password = isset($_POST['pdf_builder_developer_password']) ? sanitize_text_field($_POST['pdf_builder_developer_password']) : get_option('pdf_builder_developer_password', $settings['pdf_builder_developer_password'] ?? '');
 $show_tools = $dev_mode === '1';
 ?>
 
@@ -506,6 +507,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Auto-save setting via existing AJAX system
     function saveSetting(setting, value) {
+        console.log('[DEV] saveSetting called:', setting, '=', value);
+        console.log('[DEV] PDF_BUILDER_CONFIG:', PDF_BUILDER_CONFIG);
+
         const formData = new FormData();
         formData.append('action', 'pdf_builder_save_all_settings');
         formData.append('nonce', PDF_BUILDER_CONFIG.nonce);
@@ -516,25 +520,32 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('pdf_builder_canvas_debug_enabled', debugToggle.checked ? '1' : '0');
         formData.append('pdf_builder_developer_password', passwordField ? passwordField.value : '');
 
+        console.log('[DEV] Sending AJAX request to:', PDF_BUILDER_CONFIG.ajax_url);
+        console.log('[DEV] FormData:', Object.fromEntries(formData));
+
         return fetch(PDF_BUILDER_CONFIG.ajax_url, {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('[DEV] Raw response:', response);
+            return response.json();
+        })
         .then(data => {
+            console.log('[DEV] AJAX response:', data);
             if (data.success) {
                 showNotification('Paramètre sauvegardé', 'success');
                 console.log('[DEV] Setting saved:', setting, '=', value);
                 return data;
             } else {
                 console.error('[DEV] Save failed:', data);
-                showNotification('Erreur lors de la sauvegarde', 'error');
+                showNotification('Erreur lors de la sauvegarde: ' + (data.data?.message || 'Erreur inconnue'), 'error');
                 throw new Error('Save failed');
             }
         })
         .catch(error => {
             console.error('[DEV] AJAX error:', error);
-            showNotification('Erreur de connexion', 'error');
+            showNotification('Erreur de connexion: ' + error.message, 'error');
             throw error;
         });
     }
