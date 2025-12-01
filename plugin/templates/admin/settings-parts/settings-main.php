@@ -810,22 +810,35 @@ add_action('wp_ajax_pdf_builder_deactivate_license', function() {
 
 // Developer Settings AJAX Handler
 add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
+    error_log('PDF Builder Developer: AJAX handler called');
+
     try {
+        // Log all POST data for debugging
+        error_log('PDF Builder Developer: POST data: ' . print_r($_POST, true));
+
         // Verify nonce
         if (!wp_verify_nonce(sanitize_text_field($_POST['nonce'] ?? ''), 'pdf_builder_settings_ajax')) {
+            error_log('PDF Builder Developer: Nonce verification failed');
             wp_send_json_error(['message' => 'Security check failed']);
             return;
         }
 
+        error_log('PDF Builder Developer: Nonce verified successfully');
+
         // Check user capability
         if (!current_user_can('manage_options')) {
+            error_log('PDF Builder Developer: Insufficient permissions');
             wp_send_json_error(['message' => 'Insufficient permissions']);
             return;
         }
 
+        error_log('PDF Builder Developer: User permissions OK');
+
         // Get the setting key and value
         $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
         $setting_value = sanitize_text_field($_POST['setting_value'] ?? '');
+
+        error_log("PDF Builder Developer: Setting key: {$setting_key}, value: {$setting_value}");
 
         // Validate setting key (only allow developer settings)
         $allowed_keys = [
@@ -835,21 +848,27 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         ];
 
         if (!in_array($setting_key, $allowed_keys)) {
+            error_log("PDF Builder Developer: Invalid setting key: {$setting_key}");
             wp_send_json_error(['message' => 'Invalid setting key']);
             return;
         }
 
+        error_log('PDF Builder Developer: Setting key validated');
+
         // Get existing settings
         $settings = get_option('pdf_builder_settings', []);
+        error_log('PDF Builder Developer: Existing settings loaded: ' . print_r($settings, true));
 
         // Update the specific setting
         $settings[$setting_key] = $setting_value;
+        error_log("PDF Builder Developer: Updated settings array: " . print_r($settings, true));
 
         // Save back to database
         $updated = update_option('pdf_builder_settings', $settings);
+        error_log("PDF Builder Developer: update_option result: " . ($updated ? 'true' : 'false'));
 
         if ($updated) {
-            error_log("PDF Builder Developer: Setting saved - {$setting_key} = {$setting_value}");
+            error_log("PDF Builder Developer: Setting saved successfully - {$setting_key} = {$setting_value}");
 
             wp_send_json_success([
                 'message' => 'Developer setting saved successfully',
@@ -857,6 +876,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
                 'value' => $setting_value
             ]);
         } else {
+            error_log('PDF Builder Developer: Failed to save setting');
             wp_send_json_error(['message' => 'Failed to save setting']);
         }
 
