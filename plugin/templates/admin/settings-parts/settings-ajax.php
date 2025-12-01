@@ -1615,6 +1615,37 @@ function pdf_builder_save_all_settings_handler() {
         }
         error_log('===== FIN TRAITEMENT CHECKBOX =====');
 
+        // MISE À JOUR DE L'OPTION pdf_builder_settings POUR SYNCHRONISATION
+        error_log('===== MISE À JOUR OPTION pdf_builder_settings =====');
+        $current_settings = get_option('pdf_builder_settings', []);
+        $updated_settings = $current_settings;
+
+        // Mettre à jour les paramètres traités dans l'option globale
+        foreach ($processed_fields as $field) {
+            $option_key = strpos($field, 'pdf_builder_') === 0 ? $field : 'pdf_builder_' . $field;
+            $saved_value = get_option($option_key, '');
+
+            // Convertir en boolean pour les champs debug
+            if (strpos($field, '_debug') !== false || strpos($field, '_enabled') !== false) {
+                $saved_value = $saved_value ? true : false;
+            }
+
+            $updated_settings[$option_key] = $saved_value;
+            error_log("UPDATED pdf_builder_settings [{$option_key}] = " . (is_bool($saved_value) ? ($saved_value ? 'true' : 'false') : $saved_value));
+        }
+
+        // Mettre à jour les checkboxes non cochées
+        foreach ($checkbox_fields as $field) {
+            $saved_value = get_option($field, 0) ? true : false;
+            $updated_settings[$field] = $saved_value;
+            error_log("UPDATED pdf_builder_settings [{$field}] = " . ($saved_value ? 'true' : 'false'));
+        }
+
+        // Sauvegarder l'option globale mise à jour
+        $update_result = update_option('pdf_builder_settings', $updated_settings);
+        error_log('pdf_builder_settings UPDATE RESULT: ' . ($update_result ? 'SUCCESS' : 'NO_CHANGE'));
+        error_log('===== FIN MISE À JOUR pdf_builder_settings =====');
+
         // VÉRIFICATION FINALE DES VALEURS SAUVEGARDÉES
         error_log('===== VÉRIFICATION VALEURS SAUVEGARDÉES EN BASE =====');
         foreach ($critical_fields as $field) {
