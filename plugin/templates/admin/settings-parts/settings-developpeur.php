@@ -861,7 +861,8 @@
                 setTimeout(() => {
                     const formData = new FormData();
                     formData.append('pdf_builder_developer_enabled', isEnabled ? '1' : '0');
-                    formData.append('action', 'pdf_builder_save_developer_settings');
+                    formData.append('action', 'pdf_builder_save_settings');
+                    formData.append('tab', 'developpeur');
                     formData.append('nonce', window.pdfBuilderAjax.nonce);
 
                     fetch(window.ajaxurl, {

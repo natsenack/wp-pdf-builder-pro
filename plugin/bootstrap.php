@@ -207,7 +207,13 @@ if (function_exists('add_action')) {
 
             $force = get_option('pdf_builder_force_https', '0');
             if ($force === '1' || $force === 1) {
-                if (!is_ssl()) {
+                // Consider common reverse proxy headers to detect SSL
+                $is_forwarded_ssl = (
+                    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
+                    (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on') ||
+                    (!empty($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https') !== false)
+                );
+                if (!is_ssl() && !$is_forwarded_ssl) {
                     $host = $_SERVER['HTTP_HOST'] ?? '';
                     $uri = $_SERVER['REQUEST_URI'] ?? '';
                     if (!empty($host)) {
