@@ -1558,32 +1558,84 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 button: floatingSaveBtn,
                 context: 'Floating Save Button',
                 successCallback: function(result, originalData) {
+                    console.log('[FLOATING SAVE] ✅ SUCCÈS - Réponse reçue:', result);
+                    console.log('[FLOATING SAVE] 📦 Données sauvegardées:', originalData.data?.saved_settings);
+
+                    // Update window.pdfBuilderSavedSettings with new values
+                    if (originalData.data && originalData.data.saved_settings) {
+                        console.log('[FLOATING SAVE] 🔄 Mise à jour de window.pdfBuilderSavedSettings...');
+                        const oldSettings = { ...window.pdfBuilderSavedSettings };
+                        window.pdfBuilderSavedSettings = Object.assign({}, window.pdfBuilderSavedSettings, originalData.data.saved_settings);
+
+                        // Comparer les valeurs développeur avant/après
+                        console.log('[FLOATING SAVE] 🔍 COMPARAISON AVANT/APRÈS SAUVEGARDE:');
+                        const criticalToggles = [
+                            'pdf_builder_developer_enabled',
+                            'pdf_builder_debug_php_errors',
+                            'pdf_builder_debug_javascript',
+                            'pdf_builder_debug_javascript_verbose',
+                            'pdf_builder_debug_ajax',
+                            'pdf_builder_debug_pdf_editor',
+                            'pdf_builder_debug_settings_page',
+                            'pdf_builder_debug_performance',
+                            'pdf_builder_debug_database'
+                        ];
+                        criticalToggles.forEach(toggleName => {
+                            const oldValue = oldSettings[toggleName];
+                            const newValue = window.pdfBuilderSavedSettings[toggleName];
+                            const changed = oldValue !== newValue ? '🔄 CHANGÉ' : '✅ INCHANGÉ';
+                            console.log(`  - ${toggleName}: ${oldValue} → ${newValue} ${changed}`);
+                        });
+
+                        console.log('[FLOATING SAVE] ✅ window.pdfBuilderSavedSettings mis à jour');
+                    } else {
+                        console.warn('[FLOATING SAVE] ⚠️ Aucune donnée saved_settings dans la réponse');
+                    }
+
                     // Update previews after successful save
                     if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeAllPreviews === 'function') {
+                        console.log('[FLOATING SAVE] 🔄 Mise à jour des previews...');
                         window.PDF_Builder_Preview_Manager.initializeAllPreviews();
                     }
 
                     // Update canvas previews if on contenu tab
                     if (currentTab === 'contenu' && typeof window.updateCanvasPreviews === 'function') {
+                        console.log('[FLOATING SAVE] 🎨 Mise à jour des previews canvas...');
                         window.updateCanvasPreviews('all');
                     }
 
                     // Update status indicators
                     if (typeof window.updateSecurityStatusIndicators === 'function') {
+                        console.log('[FLOATING SAVE] 🔒 Mise à jour des indicateurs sécurité...');
                         window.updateSecurityStatusIndicators();
                     }
                     if (typeof window.updateTemplateStatusIndicators === 'function') {
+                        console.log('[FLOATING SAVE] 📋 Mise à jour des indicateurs templates...');
                         window.updateTemplateStatusIndicators();
                     }
                     if (typeof window.updateSystemStatusIndicators === 'function') {
+                        console.log('[FLOATING SAVE] 🖥️ Mise à jour des indicateurs système...');
                         window.updateSystemStatusIndicators();
                     }
                     if (typeof window.updateTemplateLibraryIndicator === 'function') {
+                        console.log('[FLOATING SAVE] 📚 Mise à jour de l\'indicateur bibliothèque...');
                         window.updateTemplateLibraryIndicator();
                     }
+
+                    // Re-sync checkboxes after settings update
+                    if (typeof window.syncCheckboxesWithSavedSettings === 'function') {
+                        console.log('[FLOATING SAVE] 🔄 Re-synchronisation des checkboxes...');
+                        window.syncCheckboxesWithSavedSettings();
+                    }
+
+                    console.log('[FLOATING SAVE] ✅ Toutes les mises à jour terminées');
+                },
+                errorCallback: function(error, originalData) {
+                    console.error('[FLOATING SAVE] ❌ ERREUR lors de la sauvegarde:', error);
+                    console.error('[FLOATING SAVE] 📋 Données d\'erreur:', originalData);
                 }
             }).catch(error => {
-                console.error('Floating save error:', error);
+                console.error('[FLOATING SAVE] ❌ ERREUR AJAX:', error);
             });
         });
     }

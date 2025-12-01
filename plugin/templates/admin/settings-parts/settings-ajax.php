@@ -1647,6 +1647,18 @@ function pdf_builder_save_all_settings_handler() {
             ]
         ]);
 
+        // Log final de la réponse pour debug
+        error_log('PDF BUILDER SAVE ALL - RESPONSE DATA: ' . json_encode([
+            'saved_count' => $saved_count,
+            'errors' => $errors,
+            'saved_settings' => $saved_options,
+            'debug_info' => [
+                'total_post' => count($_POST),
+                'processed' => count($processed_fields),
+                'saved' => $saved_count
+            ]
+        ]));
+
         // Debug log détaillé
         error_log('PDF Builder DEBUG - Analyse détaillée:');
         error_log('  Total POST: ' . count($_POST));

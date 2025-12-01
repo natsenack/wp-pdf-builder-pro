@@ -2212,13 +2212,23 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
             // Get current active tab to determine context
             const activeTab = document.querySelector('.nav-tab-active');
             const currentTab = activeTab ? activeTab.getAttribute('href').substring(1) : 'general';
+            // Pour le bouton flottant, sauvegarder seulement l'onglet actif
             formData.append('current_tab', currentTab);
 
             console.log('[FLOATING SAVE] 📍 Onglet actif:', currentTab);
 
-            // Collect data from all visible forms and inputs across all tabs
-            // This ensures we save data from all tabs, not just the active one
-            const allInputs = document.querySelectorAll('input, select, textarea');
+            // Collect data ONLY from the active tab content
+            // This ensures we save data from only the active tab, not all tabs
+            const activeTabContent = document.getElementById(currentTab);
+            let allInputs = [];
+            if (activeTabContent) {
+                allInputs = activeTabContent.querySelectorAll('input, select, textarea');
+                console.log('[FLOATING SAVE] 🔍 Recherche des inputs dans l\'onglet actif:', currentTab);
+            } else {
+                // Fallback: collect from all tabs if active tab content not found
+                allInputs = document.querySelectorAll('input, select, textarea');
+                console.log('[FLOATING SAVE] ⚠️ Contenu d\'onglet actif non trouvé, fallback vers tous les inputs');
+            }
             let collectedCount = 0;
             let developerFields = 0;
             let developerData = {};
@@ -2318,14 +2328,41 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 button: floatingSaveBtn,
                 context: 'Floating Save Button',
                 successCallback: function(result, originalData) {
-                    console.log('[FLOATING SAVE] ✅ SUCCÈS - Réponse reçue:', result);
-                    console.log('[FLOATING SAVE] 📦 Données sauvegardées:', originalData.data?.saved_settings);
+                    console.log('[FLOATING SAVE] ✅ SUCCÈS - Réponse complète reçue:', result);
+                    console.log('[FLOATING SAVE] 📦 Données originales:', originalData);
+                    console.log('[FLOATING SAVE] 🔍 Structure complète de result:', Object.keys(result));
+                    console.log('[FLOATING SAVE] 🔍 result.success:', result.success);
+                    console.log('[FLOATING SAVE] 🔍 result.data:', result.data);
+                    console.log('[FLOATING SAVE] 🔍 originalData === result:', originalData === result);
+                    console.log('[FLOATING SAVE] 🔍 Type de originalData:', typeof originalData);
+                    console.log('[FLOATING SAVE] 🔍 originalData.data existe:', originalData.data ? 'OUI' : 'NON');
+                    if (originalData.data) {
+                        console.log('[FLOATING SAVE] 🔍 Clés dans originalData.data:', Object.keys(originalData.data));
+                        console.log('[FLOATING SAVE] 🔍 originalData.data.saved_settings existe:', originalData.data.saved_settings ? 'OUI' : 'NON');
+                        if (originalData.data.saved_settings) {
+                            console.log('[FLOATING SAVE] 🔍 Contenu de saved_settings:', originalData.data.saved_settings);
+                        }
+                    }
+                    console.log('[FLOATING SAVE] 🔍 originalData.saved_settings existe:', originalData.saved_settings ? 'OUI' : 'NON');
+                    if (originalData.saved_settings) {
+                        console.log('[FLOATING SAVE] 🔍 Contenu de originalData.saved_settings:', originalData.saved_settings);
+                    }
+                    console.log('[FLOATING SAVE] 📦 Données sauvegardées (saved_settings):', originalData.data?.saved_settings || originalData.saved_settings);
 
                     // Update window.pdfBuilderSavedSettings with new values
+                    let savedSettings = null;
                     if (originalData.data && originalData.data.saved_settings) {
+                        savedSettings = originalData.data.saved_settings;
+                        console.log('[FLOATING SAVE] 🔄 Utilisation de originalData.data.saved_settings');
+                    } else if (originalData.saved_settings) {
+                        savedSettings = originalData.saved_settings;
+                        console.log('[FLOATING SAVE] 🔄 Utilisation de originalData.saved_settings');
+                    }
+
+                    if (savedSettings) {
                         console.log('[FLOATING SAVE] 🔄 Mise à jour de window.pdfBuilderSavedSettings...');
                         const oldSettings = { ...window.pdfBuilderSavedSettings };
-                        window.pdfBuilderSavedSettings = Object.assign({}, window.pdfBuilderSavedSettings, originalData.data.saved_settings);
+                        window.pdfBuilderSavedSettings = Object.assign({}, window.pdfBuilderSavedSettings, savedSettings);
 
                         // Comparer les valeurs développeur avant/après
                         console.log('[FLOATING SAVE] 🔍 COMPARAISON AVANT/APRÈS SAUVEGARDE:');
@@ -2338,7 +2375,9 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
 
                         console.log('[FLOATING SAVE] ✅ window.pdfBuilderSavedSettings mis à jour');
                     } else {
-                        console.warn('[FLOATING SAVE] ⚠️ Aucune donnée saved_settings dans la réponse');
+                        console.warn('[FLOATING SAVE] ⚠️ Aucune donnée saved_settings trouvée dans la réponse');
+                        console.warn('[FLOATING SAVE] ⚠️ originalData.data:', originalData.data);
+                        console.warn('[FLOATING SAVE] ⚠️ originalData directement:', originalData);
                     }
 
                     // Update previews after successful save
