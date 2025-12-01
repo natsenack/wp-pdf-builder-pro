@@ -1617,15 +1617,31 @@ function pdf_builder_save_all_settings_handler() {
 
         // Préparer les options sauvegardées pour la réponse (sans préfixe pour correspondre aux noms de champs du formulaire)
         $saved_options = [];
-        foreach ($processed_fields as $field) {
-            $option_key = strpos($field, 'pdf_builder_') === 0 ? $field : 'pdf_builder_' . $field;
-            $saved_options[$field] = get_option($option_key, '');
+        try {
+            foreach ($processed_fields as $field) {
+                $option_key = strpos($field, 'pdf_builder_') === 0 ? $field : 'pdf_builder_' . $field;
+                $saved_options[$field] = get_option($option_key, '');
+            }
+
+            // Ajouter les champs checkbox traités séparément
+            foreach ($checkbox_fields as $field) {
+                $saved_options[$field] = get_option('pdf_builder_' . $field, 0) ? '1' : '0';
+            }
+
+            error_log('PDF Builder SAVE ALL - Final saved_options count: ' . count($saved_options));
+            error_log('PDF Builder SAVE ALL - Sample saved_options keys: ' . implode(', ', array_slice(array_keys($saved_options), 0, 5)));
+            error_log('PDF Builder SAVE ALL - Critical developer fields: ' . json_encode([
+                'developer_enabled' => $saved_options['developer_enabled'] ?? 'NOT_SET',
+                'debug_javascript' => $saved_options['debug_javascript'] ?? 'NOT_SET',
+                'debug_settings_page' => $saved_options['debug_settings_page'] ?? 'NOT_SET'
+            ]));
+        } catch (Exception $e) {
+            error_log('PDF Builder SAVE ALL - ERROR building saved_options: ' . $e->getMessage());
+            $saved_options = ['error' => 'Failed to build saved options: ' . $e->getMessage()];
         }
 
-        // Ajouter les champs checkbox traités séparément
-        foreach ($checkbox_fields as $field) {
-            $saved_options[$field] = get_option('pdf_builder_' . $field, 0) ? '1' : '0';
-        }
+        error_log('PDF Builder SAVE ALL - About to send response with saved_settings count: ' . count($saved_options));
+        error_log('PDF Builder SAVE ALL - Response data keys: ' . implode(', ', ['saved_count', 'errors', 'saved_settings', 'debug_info']));
 
         send_ajax_response(true, $message, [
             'saved_count' => $saved_count,
