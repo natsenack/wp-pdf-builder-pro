@@ -2354,7 +2354,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
 
                         console.log('[FLOATING SAVE] ✅ window.pdfBuilderSavedSettings mis à jour');
                         // Mettre à jour les paramètres de debug JS en conséquence
-                        window.pdfBuilderDebugSettings.javascript = false;
+                        window.pdfBuilderDebugSettings.javascript = !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled !== '0');
                         window.pdfBuilderDebugSettings.javascript_verbose = false;
                         window.pdfBuilderDebugSettings.ajax = false;
                         window.pdfBuilderDebugSettings.performance = false;
