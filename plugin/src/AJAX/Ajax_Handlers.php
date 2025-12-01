@@ -218,6 +218,8 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 }
                 update_option($option_key, $option_value);
                 $saved_count++;
+                // DEBUG: Log bool field processing
+                error_log("[AJAX DEBUG] Bool field processed: key='$key', option_key='$option_key', value='$option_value', isset=" . (isset($_POST[$key]) ? 'true' : 'false') . ", POST_value='" . ($_POST[$key] ?? 'null') . "'");
             } elseif (in_array($key, $field_rules['array_fields'])) {
                 if (is_array($value)) {
                     $option_key = 'pdf_builder_' . $key;
@@ -258,6 +260,8 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             // Ajouter à saved_settings si une clé a été définie
             if (!empty($option_key)) {
                 $saved_settings[$option_key] = $option_value;
+                // DEBUG: Log saved_settings addition
+                error_log("[AJAX DEBUG] Added to saved_settings: '$option_key' = '$option_value'");
             }
         }
 
