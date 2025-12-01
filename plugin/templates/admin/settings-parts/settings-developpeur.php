@@ -154,9 +154,11 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 <h3 class="section-title">🔍 Paramètres de Debug</h3>
                 <table class="form-table">
                     <tr>
-                        <!-- Hidden inputs for debug_javascript and debug_javascript_verbose -->
-                        <input type="hidden" id="debug_javascript" name="pdf_builder_debug_javascript" value="0" />
-                        <input type="hidden" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="0" />
+                        <td colspan="2" style="padding: 0; border: none;">
+                            <!-- Hidden inputs for debug_javascript and debug_javascript_verbose -->
+                            <input type="hidden" id="debug_javascript" name="pdf_builder_debug_javascript" value="0" />
+                            <input type="hidden" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="0" />
+                        </td>
                     </tr>
                     
                     <tr>
