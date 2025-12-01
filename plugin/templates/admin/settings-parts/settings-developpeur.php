@@ -1011,6 +1011,46 @@ class PDF_Builder_DeveloperTogglesManager {
             case 'debug_javascript':
                 // Mettre à jour la visibilité des toggles de pages
                 this.updateVisibility();
+                // Mettre à jour window.pdfBuilderDebugSettings.javascript
+                if (window.pdfBuilderDebugSettings) {
+                    window.pdfBuilderDebugSettings.javascript = isChecked;
+                    console.log(`🔧 [TOGGLES MANAGER] window.pdfBuilderDebugSettings.javascript mis à jour: ${isChecked}`);
+                }
+                break;
+            case 'debug_javascript_verbose':
+                // Mettre à jour window.pdfBuilderDebugSettings.javascript_verbose
+                if (window.pdfBuilderDebugSettings) {
+                    window.pdfBuilderDebugSettings.javascript_verbose = isChecked;
+                    console.log(`🔧 [TOGGLES MANAGER] window.pdfBuilderDebugSettings.javascript_verbose mis à jour: ${isChecked}`);
+                }
+                break;
+            case 'debug_ajax':
+                // Mettre à jour window.pdfBuilderDebugSettings.ajax
+                if (window.pdfBuilderDebugSettings) {
+                    window.pdfBuilderDebugSettings.ajax = isChecked;
+                    console.log(`🔧 [TOGGLES MANAGER] window.pdfBuilderDebugSettings.ajax mis à jour: ${isChecked}`);
+                }
+                break;
+            case 'debug_performance':
+                // Mettre à jour window.pdfBuilderDebugSettings.performance
+                if (window.pdfBuilderDebugSettings) {
+                    window.pdfBuilderDebugSettings.performance = isChecked;
+                    console.log(`🔧 [TOGGLES MANAGER] window.pdfBuilderDebugSettings.performance mis à jour: ${isChecked}`);
+                }
+                break;
+            case 'debug_pdf_editor':
+                // Mettre à jour window.pdfBuilderDebugSettings.pdf_editor
+                if (window.pdfBuilderDebugSettings) {
+                    window.pdfBuilderDebugSettings.pdf_editor = isChecked;
+                    console.log(`🔧 [TOGGLES MANAGER] window.pdfBuilderDebugSettings.pdf_editor mis à jour: ${isChecked}`);
+                }
+                break;
+            case 'debug_settings_page':
+                // Mettre à jour window.pdfBuilderDebugSettings.settings_page
+                if (window.pdfBuilderDebugSettings) {
+                    window.pdfBuilderDebugSettings.settings_page = isChecked;
+                    console.log(`🔧 [TOGGLES MANAGER] window.pdfBuilderDebugSettings.settings_page mis à jour: ${isChecked}`);
+                }
                 break;
         }
     }
