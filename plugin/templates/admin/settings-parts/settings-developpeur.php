@@ -238,9 +238,10 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                     </div>
                                 </div>
 
-                                <p style="margin-top: 15px; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les pages pour les logs détaillés :</p>
+                                <div class="debug-pages-container" style="display: none;">
+                                    <p style="margin-top: 15px; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les pages pour les logs détaillés :</p>
 
-                                <div class="debug-pages-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                                    <div class="debug-pages-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
                                     <!-- Toggle 1: Éditeur PDF -->
                                     <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
                                         <div class="toggle-container">
@@ -327,6 +328,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                             <input type="hidden" name="pdf_builder_performance_monitoring" value="0" />
                                         </div>
                                         <div style="font-size: 11px; color: #999; margin-top: 5px;">Collecte de métriques</div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>
@@ -991,9 +993,9 @@ class PDF_Builder_DeveloperTogglesManager {
     updateVisibility() {
         // Masquer/afficher les sections de pages selon debug_javascript
         const debugJavascriptEnabled = this.getToggleState('debug_javascript');
-        const pageTogglesSection = document.querySelector('.debug-pages-section');
-        if (pageTogglesSection) {
-            pageTogglesSection.style.display = debugJavascriptEnabled ? 'block' : 'none';
+        const pageTogglesContainer = document.querySelector('.debug-pages-container');
+        if (pageTogglesContainer) {
+            pageTogglesContainer.style.display = debugJavascriptEnabled ? 'block' : 'none';
         }
 
         console.log(`👁️ [TOGGLES MANAGER] Visibilité mise à jour (Debug JS: ${debugJavascriptEnabled})`);
