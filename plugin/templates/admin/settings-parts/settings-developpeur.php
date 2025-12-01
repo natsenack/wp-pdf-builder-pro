@@ -191,13 +191,13 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                         <div style="font-size: 11px; color: #999; margin-top: 3px; margin-left: 26px;">Page paramètres</div>
                                     </div>
 
-                                    <!-- Toggle 3: Logs Verbeux -->
+                                    <!-- Toggle 3: Page Template -->
                                     <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
                                         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0;">
-                                            <input type="checkbox" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'checked' : ''; ?> />
-                                            <span style="font-weight: 500; color: #333; font-size: 13px;">📝 Logs Verbeux</span>
+                                            <input type="checkbox" id="debug_page_template" name="pdf_builder_debug_page_template" value="1" <?php echo isset($settings['pdf_builder_debug_page_template']) && $settings['pdf_builder_debug_page_template'] ? 'checked' : ''; ?> />
+                                            <span style="font-weight: 500; color: #333; font-size: 13px;">📋 Page Template</span>
                                         </label>
-                                        <div style="font-size: 11px; color: #999; margin-top: 3px; margin-left: 26px;">Détails complets</div>
+                                        <div style="font-size: 11px; color: #999; margin-top: 3px; margin-left: 26px;">Page template</div>
                                     </div>
                                 </div>
                             </div>
@@ -214,6 +214,19 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                 <span class="toggle-label">Debug AJAX</span>
                             </div>
                             <div class="toggle-description">Enregistre toutes les requêtes AJAX avec requête/réponse</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="debug_verbose">Logs Verbeux</label></th>
+                        <td>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="debug_verbose" name="pdf_builder_debug_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_verbose']) && $settings['pdf_builder_debug_verbose'] ? 'checked' : ''; ?> />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Logs Verbeux</span>
+                            </div>
+                            <div class="toggle-description">Détails complets de tous les événements JavaScript</div>
                         </td>
                     </tr>
                     <tr>
