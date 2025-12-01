@@ -133,6 +133,9 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         $saved_count = 0;
         $saved_settings = [];
 
+        // DEBUG: Log that this function is being executed
+        error_log("[AJAX HANDLER] process_all_settings called");
+
         // Définir les règles de validation des champs (même que dans settings-main.php)
         $field_rules = [
             'text_fields' => [
@@ -169,6 +172,9 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             if (in_array($key, ['action', 'nonce', 'current_tab'])) {
                 continue;
             }
+
+            // DEBUG: Log each field being processed
+            error_log("[AJAX HANDLER] Processing field: '$key' = '$value'");
 
             $option_key = '';
             $option_value = null;
