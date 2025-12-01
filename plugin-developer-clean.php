@@ -385,7 +385,7 @@ $show_tools = $dev_mode === '1';
             <h3 class="dev-card-title">Mode Développeur</h3>
             <div class="dev-toggle-group">
                 <label class="dev-toggle">
-                    <input type="checkbox" id="pdf-builder-dev-mode" <?php checked($dev_mode, '1'); ?>>
+                    <input type="checkbox" id="pdf-builder-dev-mode" name="pdf_builder_developer_enabled" <?php checked($dev_mode, '1'); ?>>
                     <span class="dev-toggle-slider"></span>
                 </label>
                 <span class="dev-toggle-label"><?php echo $dev_mode === '1' ? 'Activé' : 'Désactivé'; ?></span>
@@ -398,7 +398,7 @@ $show_tools = $dev_mode === '1';
             <h3 class="dev-card-title">Logs JavaScript</h3>
             <div class="dev-toggle-group">
                 <label class="dev-toggle">
-                    <input type="checkbox" id="pdf-builder-debug-enabled" <?php checked($debug_enabled, '1'); ?>>
+                    <input type="checkbox" id="pdf-builder-debug-enabled" name="pdf_builder_canvas_debug_enabled" <?php checked($debug_enabled, '1'); ?>>
                     <span class="dev-toggle-slider"></span>
                 </label>
                 <span class="dev-toggle-label"><?php echo $debug_enabled === '1' ? 'Activé' : 'Désactivé'; ?></span>
@@ -410,7 +410,7 @@ $show_tools = $dev_mode === '1';
             <div class="dev-card-icon">🔐</div>
             <h3 class="dev-card-title">Sécurité d'Accès</h3>
             <div class="dev-password-field">
-                <input type="password" id="pdf-builder-dev-password" placeholder="Mot de passe (optionnel)"
+                <input type="password" id="pdf-builder-dev-password" name="pdf_builder_developer_password" placeholder="Mot de passe (optionnel)"
                        value="<?php echo esc_attr($dev_password); ?>">
                 <button type="button" class="dev-password-toggle-btn">👁️</button>
             </div>
