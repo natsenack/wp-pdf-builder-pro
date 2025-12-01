@@ -895,6 +895,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Synchroniser les checkboxes au chargement
     syncCheckboxesWithSavedSettings();
 
+    // Exposer la fonction globalement pour les autres fichiers
+    window.syncCheckboxesWithSavedSettings = syncCheckboxesWithSavedSettings;
+
     // Synchronisation retardée pour les toggles de pages (qui peuvent être masqués initialement)
     setTimeout(function() {
         console.log('[SYNC] 🔄 Synchronisation retardée pour les toggles de pages...');
