@@ -270,13 +270,18 @@ document.addEventListener('DOMContentLoaded', function() {
             statusBanner.className = 'dev-status-banner ' + (isEnabled ? 'active' : 'inactive');
         }
 
-        // Sauvegarde directe via POST administrateur
+        // Utiliser EXACTEMENT le même système que le bouton flottant - action existante
         const formData = new FormData();
-        formData.append('action', 'save_dev_settings');
+        formData.append('action', 'pdf_builder_save_all_settings');
         formData.append('pdf_builder_developer_enabled', isEnabled ? '1' : '0');
         formData.append('pdf_builder_canvas_debug_enabled', document.getElementById('dev_canvas_debug_enabled')?.checked ? '1' : '0');
         formData.append('pdf_builder_developer_password', document.getElementById('developer_password')?.value || '');
-        formData.append('_wpnonce', 'pdf_builder_settings_nonce');
+
+        // Utiliser le même nonce que le bouton flottant
+        if (window.pdfBuilderAjax?.nonce) {
+            formData.append('nonce', window.pdfBuilderAjax.nonce);
+            formData.append('_wpnonce', window.pdfBuilderAjax.nonce);
+        }
 
         fetch(window.ajaxurl, {
             method: 'POST',
@@ -286,13 +291,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }).then(response => response.json())
         .then(data => {
-            console.log('[DEV MODE] Saved via AJAX', data);
+            console.log('[DEV MODE] Saved via existing system', data);
             if (data.success) {
-                console.log('[DEV MODE] Settings saved successfully');
-                // Afficher notification de succès
+                console.log('[DEV MODE] Settings saved successfully via existing AJAX');
+                // Window object is updated by the existing handler
                 showNotification('Paramètres sauvegardés avec succès', 'success');
             } else {
-                console.warn('[DEV MODE] Save failed:', data);
+                console.warn('[DEV MODE] Save failed via existing system:', data);
                 showNotification('Erreur lors de la sauvegarde', 'error');
             }
         }).catch(err => {
