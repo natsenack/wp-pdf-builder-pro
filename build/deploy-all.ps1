@@ -142,9 +142,9 @@ function Write-Log {
     $LogEntry = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [$Level] $Message"
     Write-Host $Message -ForegroundColor $Color
 
-    # Écrire dans le fichier de log
+    # Écrire dans le fichier de log (utilise AppendAllText pour meilleure robustesse)
     try {
-        $LogEntry | Out-File -FilePath $LogFile -Append -Encoding UTF8
+        [System.IO.File]::AppendAllText($LogFile, $LogEntry + "`r`n", [System.Text.Encoding]::UTF8)
     } catch {
         Write-Host "⚠️ Impossible d'écrire dans le log : $($_.Exception.Message)" -ForegroundColor Yellow
     }
@@ -167,10 +167,13 @@ function Write-DetailedLog {
         details = $Details
     }
 
-    # Écrire dans le fichier JSON
+    # Écrire dans le fichier JSON (NDJSON) — une entrée JSON compacte par ligne
     try {
         $jsonLogFile = "$LogFile.json"
-        $logEntry | ConvertTo-Json -Depth 10 | Out-File -FilePath $jsonLogFile -Append -Encoding UTF8
+        # Convertir en JSON et compresser en une seule ligne pour NDJSON
+        $jsonRaw = $logEntry | ConvertTo-Json -Depth 10
+        $jsonCompressed = ($jsonRaw -replace "(\r?\n)+\s*", " ").Trim()
+        [System.IO.File]::AppendAllText($jsonLogFile, $jsonCompressed + "`r`n", [System.Text.Encoding]::UTF8)
     } catch {
         Write-Host "⚠️ Impossible d'écrire dans le log JSON : $($_.Exception.Message)" -ForegroundColor Yellow
     }
