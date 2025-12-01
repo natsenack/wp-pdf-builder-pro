@@ -520,7 +520,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 update_option('pdf_builder_canvas_' . $canvas_key, $value);
                 $canvas_settings[$canvas_key] = $value;
             } else {
-                update_option('pdf_builder_' . $key, $value);
+                // Check if key already has pdf_builder_ prefix
+                $option_key = strpos($key, 'pdf_builder_') === 0 ? $key : 'pdf_builder_' . $key;
+                update_option($option_key, $value);
             }
             $saved_count++;
         }
