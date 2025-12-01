@@ -156,14 +156,50 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                     <tr>
                         <th scope="row"><label for="debug_php_errors">Errors PHP</label></th>
                         <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_php_errors" name="pdf_builder_debug_php_errors" value="1" <?php echo isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug PHP</span>
+                            <div style="background: #f5f5f5; padding: 15px; border-radius: 4px; border-left: 4px solid #2196F3;">
+                                <p style="margin-top: 0; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les options de debug :</p>
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                                    <!-- Toggle 1: Debug PHP -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <div class="toggle-container">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="debug_php_errors" name="pdf_builder_debug_php_errors" value="1" <?php echo isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'] ? 'checked' : ''; ?> />
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <span class="toggle-label" style="margin-left: 10px;">⚠️ Debug PHP</span>
+                                            <input type="hidden" name="pdf_builder_debug_php_errors" value="0" />
+                                        </div>
+                                        <div style="font-size: 11px; color: #999; margin-top: 5px;">Affiche les erreurs/warnings PHP</div>
+                                    </div>
+
+                                    <!-- Toggle 2: Debug AJAX -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <div class="toggle-container">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="debug_ajax" name="pdf_builder_debug_ajax" value="1" <?php echo isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax'] ? 'checked' : ''; ?> />
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <span class="toggle-label" style="margin-left: 10px;">🔄 Debug AJAX</span>
+                                            <input type="hidden" name="pdf_builder_debug_ajax" value="0" />
+                                        </div>
+                                        <div style="font-size: 11px; color: #999; margin-top: 5px;">Enregistre requêtes/réponses AJAX</div>
+                                    </div>
+
+                                    <!-- Toggle 3: Debug Verbose -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <div class="toggle-container">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="debug_verbose" name="pdf_builder_debug_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_verbose']) && $settings['pdf_builder_debug_verbose'] ? 'checked' : ''; ?> />
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <span class="toggle-label" style="margin-left: 10px;">📝 Logs Verbeux</span>
+                                            <input type="hidden" name="pdf_builder_debug_verbose" value="0" />
+                                        </div>
+                                        <div style="font-size: 11px; color: #999; margin-top: 5px;">Détails complets de tous les événements</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="toggle-description">Affiche les erreurs/warnings PHP du plugin</div>
                         </td>
                     </tr>
                     <tr>
@@ -216,55 +252,52 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="debug_ajax">Debug AJAX</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_ajax" name="pdf_builder_debug_ajax" value="1" <?php echo isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug AJAX</span>
-                            </div>
-                            <div class="toggle-description">Enregistre toutes les requêtes AJAX avec requête/réponse</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="debug_verbose">Logs Verbeux</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_verbose" name="pdf_builder_debug_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_verbose']) && $settings['pdf_builder_debug_verbose'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Logs Verbeux</span>
-                            </div>
-                            <div class="toggle-description">Détails complets de tous les événements JavaScript</div>
-                        </td>
-                    </tr>
-                    <tr>
                         <th scope="row"><label for="debug_performance">Métriques Performance</label></th>
                         <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_performance" name="pdf_builder_debug_performance" value="1" <?php echo isset($settings['pdf_builder_debug_performance']) && $settings['pdf_builder_debug_performance'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug perf.</span>
+                            <div style="background: #f5f5f5; padding: 15px; border-radius: 4px; border-left: 4px solid #FF9800;">
+                                <p style="margin-top: 0; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les options de performance :</p>
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                                    <!-- Toggle 1: Performance -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <div class="toggle-container">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="debug_performance" name="pdf_builder_debug_performance" value="1" <?php echo isset($settings['pdf_builder_debug_performance']) && $settings['pdf_builder_debug_performance'] ? 'checked' : ''; ?> />
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <span class="toggle-label" style="margin-left: 10px;">⚡ Performance</span>
+                                            <input type="hidden" name="pdf_builder_debug_performance" value="0" />
+                                        </div>
+                                        <div style="font-size: 11px; color: #999; margin-top: 5px;">Temps d'exécution et mémoire</div>
+                                    </div>
+
+                                    <!-- Toggle 2: Database -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <div class="toggle-container">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="debug_database" name="pdf_builder_debug_database" value="1" <?php echo isset($settings['pdf_builder_debug_database']) && $settings['pdf_builder_debug_database'] ? 'checked' : ''; ?> />
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <span class="toggle-label" style="margin-left: 10px;">🗄️ Requêtes BD</span>
+                                            <input type="hidden" name="pdf_builder_debug_database" value="0" />
+                                        </div>
+                                        <div style="font-size: 11px; color: #999; margin-top: 5px;">Requêtes SQL exécutées</div>
+                                    </div>
+
+                                    <!-- Toggle 3: Performance Monitoring -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <div class="toggle-container">
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="performance_monitoring" name="pdf_builder_performance_monitoring" value="1" <?php echo isset($settings['pdf_builder_performance_monitoring']) && $settings['pdf_builder_performance_monitoring'] ? 'checked' : ''; ?> />
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <span class="toggle-label" style="margin-left: 10px;">📊 Monitoring</span>
+                                            <input type="hidden" name="pdf_builder_performance_monitoring" value="0" />
+                                        </div>
+                                        <div style="font-size: 11px; color: #999; margin-top: 5px;">Collecte de métriques</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="toggle-description">Affiche le temps d'exécution et l'utilisation mémoire des opérations</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="debug_database">Requêtes BD</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_database" name="pdf_builder_debug_database" value="1" <?php echo isset($settings['pdf_builder_debug_database']) && $settings['pdf_builder_debug_database'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug DB</span>
-                            </div>
-                            <div class="toggle-description">Enregistre les requêtes SQL exécutées par le plugin</div>
                         </td>
                     </tr>
                 </table>
@@ -785,11 +818,14 @@ document.addEventListener('DOMContentLoaded', function() {
             'pdf_builder_debug_javascript': 'debug_javascript',
             'pdf_builder_debug_javascript_verbose': 'debug_javascript_verbose',
             'pdf_builder_debug_ajax': 'debug_ajax',
+            'pdf_builder_debug_verbose': 'debug_verbose',
             'pdf_builder_debug_pdf_editor': 'debug_pdf_editor',
             'pdf_builder_debug_settings_page': 'debug_settings_page',
+            'pdf_builder_debug_page_template': 'debug_page_template',
             'pdf_builder_debug_performance': 'debug_performance',
             'pdf_builder_debug_database': 'debug_database',
-            'pdf_builder_performance_monitoring': 'performance_monitoring'
+            'pdf_builder_performance_monitoring': 'performance_monitoring',
+            'pdf_builder_force_https': 'force_https'
         };
 
         Object.keys(checkboxMapping).forEach(key => {
@@ -818,24 +854,15 @@ document.addEventListener('DOMContentLoaded', function() {
     updateSavedSettingsForToggle('debug_php_errors', 'pdf_builder_debug_php_errors');
     updateSavedSettingsForToggle('debug_javascript', 'pdf_builder_debug_javascript');
     updateSavedSettingsForToggle('debug_javascript_verbose', 'pdf_builder_debug_javascript_verbose');
-    updateSavedSettingsForToggle('debug_ajax', 'pdf_builder_debug_ajax');
     updateSavedSettingsForToggle('debug_pdf_editor', 'pdf_builder_debug_pdf_editor');
     updateSavedSettingsForToggle('debug_settings_page', 'pdf_builder_debug_settings_page');
+    updateSavedSettingsForToggle('debug_page_template', 'pdf_builder_debug_page_template');
+    updateSavedSettingsForToggle('debug_ajax', 'pdf_builder_debug_ajax');
+    updateSavedSettingsForToggle('debug_verbose', 'pdf_builder_debug_verbose');
     updateSavedSettingsForToggle('debug_performance', 'pdf_builder_debug_performance');
     updateSavedSettingsForToggle('debug_database', 'pdf_builder_debug_database');
     updateSavedSettingsForToggle('performance_monitoring', 'pdf_builder_performance_monitoring');
-
-    // Configurer la mise à jour automatique de window.pdfBuilderSavedSettings pour tous les toggles
-    updateSavedSettingsForToggle('developer_enabled', 'pdf_builder_developer_enabled');
-    updateSavedSettingsForToggle('debug_php_errors', 'pdf_builder_debug_php_errors');
-    updateSavedSettingsForToggle('debug_javascript', 'pdf_builder_debug_javascript');
-    updateSavedSettingsForToggle('debug_javascript_verbose', 'pdf_builder_debug_javascript_verbose');
-    updateSavedSettingsForToggle('debug_ajax', 'pdf_builder_debug_ajax');
-    updateSavedSettingsForToggle('debug_pdf_editor', 'pdf_builder_debug_pdf_editor');
-    updateSavedSettingsForToggle('debug_settings_page', 'pdf_builder_debug_settings_page');
-    updateSavedSettingsForToggle('debug_performance', 'pdf_builder_debug_performance');
-    updateSavedSettingsForToggle('debug_database', 'pdf_builder_debug_database');
-    updateSavedSettingsForToggle('performance_monitoring', 'pdf_builder_performance_monitoring');
+    updateSavedSettingsForToggle('force_https', 'pdf_builder_force_https');
 
     // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
     function updatePdfEditorToggleVisibility() {
