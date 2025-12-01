@@ -2312,10 +2312,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 'pdf_builder_developer_enabled',
                 'pdf_builder_debug_php_errors',
                 'pdf_builder_debug_javascript',
-                'pdf_builder_debug_javascript_verbose',
                 'pdf_builder_debug_ajax',
-                'pdf_builder_debug_pdf_editor',
-                'pdf_builder_debug_settings_page',
                 'pdf_builder_debug_performance',
                 'pdf_builder_debug_database'
             ];

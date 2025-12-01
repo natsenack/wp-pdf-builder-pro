@@ -1132,7 +1132,7 @@ function pdf_builder_save_all_settings_handler() {
     error_log('PDF Builder SAVE ALL: All POST keys: ' . implode(', ', array_keys($_POST)));
 
     // LOG DES CHAMPS CRITIQUES POUR LES TOGGLES DÉVELOPPEUR
-    $critical_fields = ['debug_javascript', 'debug_pdf_editor', 'debug_settings_page', 'developer_enabled'];
+    $critical_fields = ['debug_javascript', 'developer_enabled'];
     foreach ($critical_fields as $field) {
         $value = isset($_POST[$field]) ? $_POST[$field] : 'NOT_SET';
         error_log("CRITICAL FIELD [{$field}]: {$value}");
@@ -1196,7 +1196,7 @@ function pdf_builder_save_all_settings_handler() {
                 }
 
                 // Traiter selon le type de champ
-                if (strpos($key, '_enabled') !== false || strpos($key, '_debug') !== false || in_array($key, ['debug_javascript', 'debug_pdf_editor', 'debug_settings_page'])) {
+                if (strpos($key, '_enabled') !== false || strpos($key, '_debug') !== false || in_array($key, ['debug_javascript'])) {
                     // Champs booléens
                     $sanitized_value = $value === '1' || $value === 'true' ? 1 : 0;
                     error_log("BOOLEAN FIELD [{$key}]: original='{$value}' -> sanitized='{$sanitized_value}'");
@@ -1230,9 +1230,7 @@ function pdf_builder_save_all_settings_handler() {
             'pdf_print_optimized',
             'template_library_enabled',
             'developer_enabled',
-            'debug_javascript',
-            'debug_pdf_editor',
-            'debug_settings_page'
+            'debug_javascript'
         ];
 
         error_log('===== TRAITEMENT CHAMPS CHECKBOX NON COCHÉS =====');
@@ -1288,8 +1286,7 @@ function pdf_builder_save_all_settings_handler() {
             error_log('PDF Builder SAVE ALL - Sample saved_options keys: ' . implode(', ', array_slice(array_keys($saved_options), 0, 5)));
             error_log('PDF Builder SAVE ALL - Critical developer fields: ' . json_encode([
                 'developer_enabled' => $saved_options['developer_enabled'] ?? 'NOT_SET',
-                'debug_javascript' => $saved_options['debug_javascript'] ?? 'NOT_SET',
-                'debug_settings_page' => $saved_options['debug_settings_page'] ?? 'NOT_SET'
+                'debug_javascript' => $saved_options['debug_javascript'] ?? 'NOT_SET'
             ]));
         } catch (Exception $e) {
             error_log('PDF Builder SAVE ALL - ERROR building saved_options: ' . $e->getMessage());
