@@ -781,6 +781,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+<script>
 // Envelopper toute l'initialisation dans DOMContentLoaded pour s'assurer que les éléments existent
 document.addEventListener('DOMContentLoaded', function() {
     // Toggle mot de passe
@@ -1829,66 +1830,5 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
     // Manual testing only - no automatic execution on page load
     // Tests are triggered manually via buttons only
 });
-
-<script>
-// Exposer la fonction de synchronisation globalement
-window.syncCheckboxesWithSavedSettings = function() {
-    console.log('[SYNC] 🔄 Début de synchronisation des checkboxes...');
-
-    if (!window.pdfBuilderSavedSettings) {
-        console.warn('[SYNC] ⚠️ window.pdfBuilderSavedSettings n\'existe pas');
-        return;
-    }
-
-    console.log('[SYNC] 📊 window.pdfBuilderSavedSettings actuel:', window.pdfBuilderSavedSettings);
-
-    // Liste des checkboxes à synchroniser avec leurs IDs correspondants
-    const checkboxMapping = {
-        'pdf_builder_developer_enabled': 'developer_enabled',
-        'pdf_builder_debug_php_errors': 'debug_php_errors',
-        'pdf_builder_debug_javascript': 'debug_javascript',
-        'pdf_builder_debug_javascript_verbose': 'debug_javascript_verbose',
-        'pdf_builder_debug_ajax': 'debug_ajax',
-        'pdf_builder_debug_verbose': 'debug_verbose',
-        'pdf_builder_debug_pdf_editor': 'debug_pdf_editor',
-        'pdf_builder_debug_settings_page': 'debug_settings_page',
-        'pdf_builder_debug_page_template': 'debug_page_template',
-        'pdf_builder_debug_performance': 'debug_performance',
-        'pdf_builder_debug_database': 'debug_database',
-        'pdf_builder_performance_monitoring': 'performance_monitoring',
-        'pdf_builder_force_https': 'force_https'
-    };
-
-    let syncedCount = 0;
-    let skippedCount = 0;
-
-    Object.keys(checkboxMapping).forEach(key => {
-        const checkboxId = checkboxMapping[key];
-        const checkbox = document.getElementById(checkboxId);
-        if (checkbox) {
-            const savedValue = window.pdfBuilderSavedSettings[key];
-            const shouldBeChecked = savedValue && savedValue !== '0' && savedValue !== 0;
-            const wasChecked = checkbox.checked;
-
-            checkbox.checked = shouldBeChecked;
-            syncedCount++;
-
-            const status = wasChecked === shouldBeChecked ? '✅ INCHANGÉ' : '🔄 CHANGÉ';
-            console.log(`[SYNC] ${status} ${key} -> #${checkboxId}: ${wasChecked} → ${shouldBeChecked} (saved: ${savedValue})`);
-
-            if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log(`🔧 [SYNC] ${key} -> ${checkboxId}: ${shouldBeChecked} (saved: ${savedValue})`);
-            }
-        } else {
-            skippedCount++;
-            console.warn(`[SYNC] ⚠️ Checkbox #${checkboxId} non trouvée pour clé ${key}`);
-            if (window.pdfBuilderDebugSettings?.javascript) {
-                console.warn(`🔧 [SYNC] Checkbox ${checkboxId} not found for key ${key}`);
-            }
-        }
-    });
-
-    console.log(`[SYNC] ✅ Synchronisation terminée: ${syncedCount} synchronisées, ${skippedCount} ignorées`);
-};
 </script>
 

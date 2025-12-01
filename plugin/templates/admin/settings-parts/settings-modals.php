@@ -642,7 +642,7 @@
                                 <select id="canvas_export_format" name="canvas_export_format">
                                     <option value="png" <?php selected(get_option('pdf_builder_canvas_export_format', 'png'), 'png'); ?>>PNG</option>
                                     <option value="jpg" <?php selected(get_option('pdf_builder_canvas_export_format', 'png'), 'jpg'); ?>>JPG</option>
-                                    <option value="svg" <?php selected(get_option('pdf_builder_canvas_export_format', 'png'), 'svg'); ?>>SVG</option>
+                                    <option value="pdf" <?php selected(get_option('pdf_builder_canvas_export_format', 'png'), 'pdf'); ?>>PDF</option>
                                 </select>
                             </td>
                         </tr>
