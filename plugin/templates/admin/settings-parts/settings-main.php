@@ -197,7 +197,26 @@ $notices = [];
 $all_settings = PDF_Builder_Settings_Loader::load_all_settings();
 
 // IMPORTANT: Pour éviter les incohérences, utiliser la même source que les sauvegardes AJAX
-$settings = get_option('pdf_builder_settings', []);
+// mais avec les valeurs par défaut fusionnées
+$saved_settings = get_option('pdf_builder_settings', []);
+$default_settings = [
+    'pdf_builder_developer_enabled' => false,
+    'pdf_builder_debug_php_errors' => false,
+    'pdf_builder_debug_javascript' => false,
+    'pdf_builder_debug_javascript_verbose' => false,
+    'pdf_builder_debug_ajax' => false,
+    'pdf_builder_debug_pdf_editor' => false,
+    'pdf_builder_debug_settings_page' => false,
+    'pdf_builder_debug_performance' => false,
+    'pdf_builder_debug_database' => false,
+    'pdf_builder_log_level' => 3,
+    'pdf_builder_log_file_size' => 10,
+    'pdf_builder_log_retention' => 30,
+    'pdf_builder_force_https' => false,
+    'pdf_builder_license_test_mode_enabled' => false,
+    // Ajouter d'autres valeurs par défaut si nécessaire
+];
+$settings = array_merge($default_settings, $saved_settings);
 $canvas_settings = $all_settings['pdf_builder_canvas_settings'];
 
 // Préparer les données pour les previews
@@ -218,7 +237,7 @@ $default_orientation = $preview_data['default_orientation'];
 <script>
 // Données centralisées chargées depuis la base de données
 // IMPORTANT: Charger depuis la même source que les sauvegardes AJAX pour éviter les incohérences
-window.pdfBuilderSavedSettings = <?php echo json_encode(get_option('pdf_builder_settings', [])); ?>;
+window.pdfBuilderSavedSettings = <?php echo json_encode($settings); ?>;
 window.pdfBuilderCanvasSettings = {};
 
 // Paramètres de debug pour le JavaScript
