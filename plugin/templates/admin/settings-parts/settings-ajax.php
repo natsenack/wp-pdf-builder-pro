@@ -1185,14 +1185,18 @@ function pdf_builder_save_canvas_settings_handler() {
                 ],
             ];
             
+            // Define field type mappings
+            $int_fields = ['default_canvas_dpi', 'canvas_width', 'canvas_height', 'border_width', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left', 'grid_size', 'snap_tolerance', 'handle_size', 'rotation_step', 'export_quality', 'image_quality', 'max_image_size', 'auto_save_interval', 'auto_save_versions', 'max_fps'];
+            $bool_fields = ['shadow_enabled', 'show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 'show_guides', 'multi_select', 'copy_paste_enabled', 'show_resize_handles', 'enable_rotation', 'compress_images', 'include_metadata', 'auto_crop', 'embed_fonts', 'optimize_for_web', 'auto_save_enabled', 'lazy_loading_editor', 'preload_critical', 'lazy_loading_plugin', 'debug_enabled', 'performance_monitoring', 'error_reporting'];
+            
             if (isset($mappings[$category])) {
                 foreach ($mappings[$category] as $saved_key => $combined_key) {
                     if (isset($saved_values[$saved_key])) {
                         // Convert types appropriately
                         $value = $saved_values[$saved_key];
-                        if (in_array($combined_key, ['default_canvas_dpi', 'canvas_width', 'canvas_height', 'border_width', 'margin_top', 'margin_right', 'margin_bottom', 'margin_left', 'grid_size', 'snap_tolerance', 'handle_size', 'rotation_step', 'export_quality', 'image_quality', 'max_image_size', 'auto_save_interval', 'auto_save_versions', 'max_fps'])) {
+                        if (in_array($combined_key, $int_fields)) {
                             $value = intval($value);
-                        } elseif (in_array($combined_key, ['shadow_enabled', 'show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements', 'show_guides', 'multi_select', 'copy_paste_enabled', 'show_resize_handles', 'enable_rotation', 'compress_images', 'include_metadata', 'auto_crop', 'embed_fonts', 'optimize_for_web', 'auto_save_enabled', 'lazy_loading_editor', 'preload_critical', 'lazy_loading_plugin', 'debug_enabled', 'performance_monitoring', 'error_reporting'])) {
+                        } elseif (in_array($combined_key, $bool_fields)) {
                             $value = (bool)$value;
                         }
                         $combined_settings[$combined_key] = $value;
