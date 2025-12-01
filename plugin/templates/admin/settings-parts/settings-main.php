@@ -231,11 +231,14 @@ $default_format = $preview_data['default_format'];
 $default_orientation = $preview_data['default_orientation'];
 
 // Passer les données sauvegardées au JavaScript pour les previews
+// FILTRER les paramètres obsolètes avant de les envoyer au JavaScript
+$filtered_settings = $settings;
+unset($filtered_settings['pdf_builder_debug_javascript']); // Supprimer l'option obsolète
 ?>
 <script>
 // Données centralisées chargées depuis la base de données
 // IMPORTANT: Charger depuis la même source que les sauvegardes AJAX pour éviter les incohérences
-window.pdfBuilderSavedSettings = <?php echo json_encode($settings); ?>;
+window.pdfBuilderSavedSettings = <?php echo json_encode($filtered_settings); ?>;
 window.pdfBuilderCanvasSettings = {};
 
 // Paramètres de debug pour le JavaScript
