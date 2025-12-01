@@ -813,26 +813,7 @@
             });
         }
 
-        // === GESTION DES SECTIONS PLIABLES ===
-
-        // Gérer le pliage/dépliage des sections
-        document.querySelectorAll('.dev-section-header').forEach(header => {
-            header.addEventListener('click', function() {
-                const section = this.parentElement;
-                const content = section.querySelector('.dev-section-content');
-                const toggle = this.querySelector('.dev-section-toggle');
-
-                if (section.classList.contains('collapsed')) {
-                    section.classList.remove('collapsed');
-                    content.style.display = 'block';
-                    toggle.textContent = '▼';
-                } else {
-                    section.classList.add('collapsed');
-                    content.style.display = 'none';
-                    toggle.textContent = '▶';
-                }
-            });
-        });
+        // (Removed old DOM-based accordion handler to avoid conflict with centralized JS)
 
         // === GESTION DU MODE DÉVELOPPEUR ===
 

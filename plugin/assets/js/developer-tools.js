@@ -83,6 +83,14 @@
             // === ACCORDÉON ===
             $(document).on('click', '#dev-todo-toggle', (e) => this.handleTodoAccordion(e));
             $(document).on('click', '.dev-section-header', (e) => this.handleSectionToggle(e));
+            // Keyboard accessibility: toggle on Enter or Space
+            $(document).on('keydown', '.dev-section-header', (e) => {
+                const key = e.key || e.keyCode;
+                if (key === 'Enter' || key === ' ' || key === 13 || key === 32) {
+                    e.preventDefault();
+                    this.handleSectionToggle(e);
+                }
+            });
 
             // === TESTS DE NOTIFICATIONS ===
             $(document).on('click', '#test_notification_success', (e) => this.testNotification('success'));
