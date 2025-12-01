@@ -219,7 +219,7 @@ window.pdfBuilderCanvasSettings = {};
 
 // Paramètres de debug pour le JavaScript
 window.pdfBuilderDebugSettings = {
-    javascript: false,
+    javascript: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled !== '0'),
     javascript_verbose: false,
     ajax: false,
     performance: false,
