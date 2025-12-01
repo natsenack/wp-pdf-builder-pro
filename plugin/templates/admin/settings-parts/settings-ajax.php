@@ -1471,6 +1471,10 @@ function pdf_builder_get_all_canvas_settings_handler() {
  * Handler AJAX pour sauvegarder tous les paramètres depuis le bouton flottant
  */
 function pdf_builder_save_all_settings_handler() {
+    // LOG DIAGNOSTIC - Vérifier que le handler s'exécute
+    error_log('=== PDF_BUILDER_SAVE_ALL_HANDLER EXECUTED ===');
+    file_put_contents(WP_CONTENT_DIR . '/pdf-builder-debug.log', date('Y-m-d H:i:s') . " - HANDLER EXECUTED\n", FILE_APPEND);
+
     // ===== LOGGING DÉTAILLÉ POUR DEBUG DES TOGGLES DÉVELOPPEUR =====
     error_log('===== PDF BUILDER SAVE ALL SETTINGS - HANDLER STARTED =====');
     $log_file = WP_CONTENT_DIR . '/pdf-builder-debug.log';
