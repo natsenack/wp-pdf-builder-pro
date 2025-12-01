@@ -971,7 +971,7 @@ class PreviewImageAPI
         try {
             // RendererCache gère automatiquement le nettoyage des entrées expirées
             // Nous pouvons forcer un nettoyage manuel si nécessaire
-            RendererCache::clearExpired();
+            RendererCache::cleanup();
 
             // Log du nettoyage
             if (defined('WP_DEBUG') && WP_DEBUG) {
