@@ -159,7 +159,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 wp_send_json_success([
                     'message' => 'Paramètres sauvegardés avec succès',
                     'saved_count' => $saved_count,
-                    'result_data' => $saved_options,
+                    'saved_settings' => $saved_options,
                     'new_nonce' => $this->nonce_manager->generate_nonce()
                 ]);
             } else {
@@ -367,10 +367,12 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         try {
             $saved_count = $this->save_all_settings();
+            $saved_options = $this->get_saved_options_for_tab('all');
 
             wp_send_json_success([
                 'message' => 'Tous les paramètres sauvegardés avec succès',
                 'saved_count' => $saved_count,
+                'saved_settings' => $saved_options,
                 'new_nonce' => $this->nonce_manager->generate_nonce()
             ]);
 
