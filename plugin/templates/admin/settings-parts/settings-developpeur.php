@@ -425,6 +425,20 @@
                                     <?php echo 'Expire le: ' . esc_html($license_test_key_expires); ?>
                                 <?php endif; ?>
                             </div>
+                            <!-- Modal: Edit/Validate/Set key -->
+                            <div id="license_key_modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10000; align-items:center; justify-content:center;">
+                                <div style="background:white; border-radius:8px; padding:18px; width:480px; max-width:92%;">
+                                    <h3 style="margin-top:0;">🔑 Clé de Test - Entrer / Valider</h3>
+                                    <p style="margin: 0 0 12px 0; color:#666;">Collez une clé de test ou validez une clé existante.</p>
+                                    <input id="license_test_key_input" type="text" placeholder="TEST-..." style="width:100%; padding:8px; border-radius:4px; border:1px solid #ddd;" />
+                                    <div style="display:flex; gap:10px; margin-top:12px;">
+                                        <button type="button" id="license_modal_validate_btn" class="button button-primary">✅ Valider</button>
+                                        <button type="button" id="license_modal_save_btn" class="button button-secondary">💾 Enregistrer</button>
+                                        <button type="button" id="license_modal_close_btn" class="button">Fermer</button>
+                                    </div>
+                                    <div id="license_modal_message" style="margin-top:10px; color:#666;"></div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 </table>

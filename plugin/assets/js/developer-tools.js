@@ -36,6 +36,11 @@
             // Ensure checkbox change also triggers AJAX toggle
             $(document).on('change', '#license_test_mode', (e) => this.testToggleLicenseMode(false));
             $(document).on('click', '#generate_license_key_btn', (e) => this.handleGenerateTestKey(e));
+            $(document).on('click', '#validate_license_key_btn', (e) => this.handleValidateLicenseKey(e));
+            $(document).on('click', '#show_license_key_btn', (e) => this.handleShowLicenseKey(e));
+            $(document).on('click', '#license_modal_validate_btn', (e) => this.handleValidateLicenseKeyFromModal(e));
+            $(document).on('click', '#license_modal_save_btn', (e) => this.handleSaveLicenseKeyFromModal(e));
+            $(document).on('click', '#license_modal_close_btn', (e) => this.handleCloseLicenseModal(e));
             $(document).on('click', '#copy_license_key_btn', (e) => this.handleCopyLicenseKey(e));
             $(document).on('click', '#delete_license_key_btn', (e) => this.handleDeleteTestKey(e));
             $(document).on('click', '#cleanup_license_btn', (e) => this.handleCleanupLicense(e));
@@ -250,6 +255,85 @@
             }, (error) => {
                 $('#license_key_status').text('❌ ' + (error.data?.message || 'Erreur lors de la génération')).css('color', '#dc3545');
             });
+        }
+
+        // Validate current key (from display) via AJAX
+        handleValidateLicenseKey(e) {
+            e.preventDefault();
+            const key = $('#license_test_key').val() || '';
+            if (!key) {
+                this.showError('Aucune clé à valider');
+                $('#license_key_status').text('❌ Aucune clé à valider').css('color', '#dc3545');
+                return;
+            }
+            this.makeAjaxCall('pdf_builder_validate_test_license_key', { action: 'pdf_builder_validate_test_license_key', key: key }, (response) => {
+                $('#license_key_status').text('✅ ' + (response.data?.message || 'Clé valide')).css('color', '#28a745');
+                this.showSuccess(response.data?.message || 'Clé valide');
+            }, (error) => {
+                $('#license_key_status').text('❌ ' + (error.data?.message || 'Clé invalide')).css('color', '#dc3545');
+                this.showError(error.data?.message || 'Clé invalide');
+            });
+        }
+
+        // Show full key in modal
+        handleShowLicenseKey(e) {
+            e.preventDefault();
+            const key = $('#license_test_key').val() || '';
+            $('#license_test_key_input').val(key);
+            $('#license_modal_message').text('');
+            $('#license_key_modal').css('display', 'flex');
+        }
+
+        handleValidateLicenseKeyFromModal(e) {
+            e.preventDefault();
+            const key = $('#license_test_key_input').val() || '';
+            if (!key) {
+                $('#license_modal_message').text('Veuillez saisir une clé à valider').css('color', '#dc3545');
+                return;
+            }
+            this.makeAjaxCall('pdf_builder_validate_test_license_key', { action: 'pdf_builder_validate_test_license_key', key: key }, (response) => {
+                $('#license_modal_message').text('✅ ' + (response.data?.message || 'Clé valide')).css('color', '#28a745');
+                this.showSuccess(response.data?.message || 'Clé valide');
+            }, (error) => {
+                $('#license_modal_message').text('❌ ' + (error.data?.message || 'Clé invalide')).css('color', '#dc3545');
+                this.showError(error.data?.message || 'Clé invalide');
+            });
+        }
+
+        // Save key entered in modal to server via save settings (developpeur tab)
+        handleSaveLicenseKeyFromModal(e) {
+            e.preventDefault();
+            const key = $('#license_test_key_input').val() || '';
+            if (!key) {
+                $('#license_modal_message').text('Veuillez saisir une clé à enregistrer').css('color', '#dc3545');
+                return;
+            }
+            // Save via the unified save settings endpoint - tab=developpeur
+            const data = {
+                action: 'pdf_builder_save_settings',
+                tab: 'developpeur',
+                pdf_builder_license_test_key: key
+            };
+            // Get nonce and call
+            this.makeAjaxCall('pdf_builder_save_settings', data, (response) => {
+                // Update UI
+                $('#license_test_key').val(key);
+                const masked = key ? (key.substr(0,6) + '••••••••••••••••' + key.substr(-6)) : '';
+                $('#license_test_key_display').text(masked);
+                if (response.success) {
+                    $('#license_modal_message').text('✅ Clé enregistrée').css('color', '#28a745');
+                    $('#license_key_status').text('✅ Clé enregistrée et active').css('color', '#28a745');
+                    $('#license_key_modal').hide();
+                }
+            }, (error) => {
+                $('#license_modal_message').text('❌ ' + (error.data?.message || 'Erreur lors de l\'enregistrement')).css('color', '#dc3545');
+                this.showError(error.data?.message || 'Erreur lors de l\'enregistrement');
+            });
+        }
+
+        handleCloseLicenseModal(e) {
+            e.preventDefault();
+            $('#license_key_modal').hide();
         }
 
         handleCopyLicenseKey(e) {
