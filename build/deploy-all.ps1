@@ -144,7 +144,7 @@ function Write-Log {
 
     # Écrire dans le fichier de log (utilise AppendAllText pour meilleure robustesse)
     try {
-        [System.IO.File]::AppendAllText($LogFile, $LogEntry + "`r`n", [System.Text.Encoding]::UTF8)
+        [System.IO.File]::AppendAllText($LogFile, $LogEntry + "`r`n", (New-Object System.Text.UTF8Encoding $false))
     } catch {
         Write-Host "⚠️ Impossible d'écrire dans le log : $($_.Exception.Message)" -ForegroundColor Yellow
     }
@@ -173,7 +173,7 @@ function Write-DetailedLog {
         # Convertir en JSON et compresser en une seule ligne pour NDJSON
         $jsonRaw = $logEntry | ConvertTo-Json -Depth 10
         $jsonCompressed = ($jsonRaw -replace "(\r?\n)+\s*", " ").Trim()
-        [System.IO.File]::AppendAllText($jsonLogFile, $jsonCompressed + "`r`n", [System.Text.Encoding]::UTF8)
+        [System.IO.File]::AppendAllText($jsonLogFile, $jsonCompressed + "`r`n", (New-Object System.Text.UTF8Encoding $false))
     } catch {
         Write-Host "⚠️ Impossible d'écrire dans le log JSON : $($_.Exception.Message)" -ForegroundColor Yellow
     }
@@ -745,8 +745,9 @@ if (-not $FullSync -and -not $IsTestMode -and $Mode -eq "plugin") {
     $lastDeployTime = $null
     
     if (Test-Path $lastDeployFile) {
-        $lastDeployContent = Get-Content $lastDeployFile -ErrorAction SilentlyContinue
-        if ([DateTime]::TryParse($lastDeployContent, [ref]$lastDeployTime)) {
+        $lastDeployContent = (Get-Content $lastDeployFile -ErrorAction SilentlyContinue) -join "`n"
+        $lastDeployContent = $lastDeployContent.Trim()
+        if ([DateTime]::TryParseExact($lastDeployContent, 'yyyy-MM-dd HH:mm:ss', [System.Globalization.CultureInfo]::InvariantCulture, [System.Globalization.DateTimeStyles]::None, [ref]$lastDeployTime)) {
             Write-Host "   • Dernier déploiement : $($lastDeployTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Gray
             
             # Filtrer les fichiers modifiés depuis le dernier déploiement
