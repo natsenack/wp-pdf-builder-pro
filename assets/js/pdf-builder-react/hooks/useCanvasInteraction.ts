@@ -517,12 +517,12 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
 
   }, [dispatch, state.canvas.snapToGrid, state.canvas.gridSize]);
 
-  // ✅ Syncer la ref avec l'état Redux (fallback au cas où dispatch arrive avant)
+  // ✅ Syncer la ref avec l'état Redux (correction: éviter la dépendance sur state entier)
   useEffect(() => {
     selectedElementsRef.current = state.selection.selectedElements;
     // ✅ CORRECTION 5: Garder un snapshot du state courant
     lastKnownStateRef.current = state;
-  }, [state.selection.selectedElements, state]);
+  }, [state.selection.selectedElements, state.elements, state.canvas]); // Dépendances spécifiques au lieu de state entier
 
   // ✅ CORRECTION 4: Fonction helper pour vérifier que rect est valide
   const validateCanvasRect = (rect: { width: number; height: number; left: number; top: number; right: number; bottom: number }): boolean => {

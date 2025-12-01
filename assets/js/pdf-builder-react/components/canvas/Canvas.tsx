@@ -2719,15 +2719,12 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     }
   }, [width, height, canvasSettings, state, drawElement, drawGrid, drawGuides, selectionState, drawSelection, visibleElementsList]);  // ✅ Include memoized drawGrid and drawGuides
 
-  // Redessiner quand l'état change
+  // Redessiner quand l'état change - CORRECTION: Supprimer renderCanvas des dépendances pour éviter les boucles
   useEffect(() => {
     renderCanvas();
-  }, [renderCanvas, imageLoadCount, selectionState?.updateTrigger]);
+  }, [state, canvasSettings, imageLoadCount, selectionState?.updateTrigger, visibleElementsList]); // Dépendances directes au lieu de renderCanvas
 
-  // Rendu initial
-  useEffect(() => {
-    renderCanvas();
-  }, [renderCanvas]);
+  // Rendu initial - REMOVED: Redondant avec l'effet principal ci-dessus
 
   // ✅ Force initial render when elements first load (for cached images)
   useEffect(() => {

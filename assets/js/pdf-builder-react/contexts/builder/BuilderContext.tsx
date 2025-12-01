@@ -588,12 +588,17 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
   const [state, dispatch] = useReducer(builderReducer, mergedInitialState);
   const canvasSettings = useCanvasSettings();
 
+  // ✅ CORRECTION: Flags pour éviter les boucles infinies
+  const zoomInitializedRef = useRef(false);
+  const gridInitializedRef = useRef(false);
+
   // Appliquer les paramètres de zoom depuis Canvas Settings au démarrage
   useEffect(() => {
     // Appliquer le zoom par défaut depuis les paramètres UNIQUEMENT au démarrage
     // Le zoom initial du state est 100, donc appliquer seulement si différent et prêt
     const initialZoom = 100; // Valeur initiale du state
-    if (canvasSettings.isReady && canvasSettings.zoomDefault !== initialZoom) {
+    if (canvasSettings.isReady && canvasSettings.zoomDefault !== initialZoom && !zoomInitializedRef.current) {
+      zoomInitializedRef.current = true;
       dispatch({
         type: 'SET_CANVAS',
         payload: {
@@ -601,10 +606,12 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
         }
       });
     }
-  }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin, canvasSettings.isReady]); // Retiré state.canvas.zoom
+  }, [canvasSettings.zoomDefault, canvasSettings.zoomMax, canvasSettings.zoomMin, canvasSettings.isReady]);
 
   // Synchroniser les paramètres de grille depuis CanvasSettingsContext (uniquement à l'initialisation)
   useEffect(() => {
+    if (!canvasSettings.isReady || gridInitializedRef.current) return;
+
     const updates: Partial<CanvasState> = {};
 
     // Ne synchroniser que si c'est la première fois ou si les paramètres ont changé dans les settings
@@ -624,9 +631,10 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
     }
 
     if (Object.keys(updates).length > 0) {
+      gridInitializedRef.current = true;
       dispatch({ type: 'SET_CANVAS', payload: updates });
     }
-  }, [canvasSettings.gridSize, canvasSettings.gridShow, canvasSettings.gridSnapEnabled]); // Retirer les dépendances d'état pour éviter la boucle
+  }, [canvasSettings.gridSize, canvasSettings.gridShow, canvasSettings.gridSnapEnabled, canvasSettings.isReady, state.canvas.gridSize, state.canvas.showGrid, state.canvas.snapToGrid]);
 
   // ✅ DISABLED: Template loading is now EXCLUSIVELY handled by useTemplate hook
   // which reads template_id from URL/localized data and calls AJAX GET

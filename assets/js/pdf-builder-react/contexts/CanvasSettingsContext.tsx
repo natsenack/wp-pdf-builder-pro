@@ -292,6 +292,9 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     return windowSettings;
   });
 
+  // ✅ CORRECTION: Flag pour éviter les boucles infinies lors des mises à jour d'événements
+  const isUpdatingFromEventRef = useRef(false);
+
   // Function to refresh settings from window object
   const handleRefresh = () => {
     const windowSettings = loadSettingsFromWindowObj();
@@ -308,12 +311,17 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   // Listen for settings update events
   useEffect(() => {
     const handleSettingsUpdate = () => {
+      if (isUpdatingFromEventRef.current) return; // Éviter les boucles infinies
       
+      isUpdatingFromEventRef.current = true;
       
       const windowSettings = loadSettingsFromWindowObj();
-      
       setSettings(windowSettings);
       
+      // Reset flag after a short delay
+      setTimeout(() => {
+        isUpdatingFromEventRef.current = false;
+      }, 100);
     };
     window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
     return () => window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
