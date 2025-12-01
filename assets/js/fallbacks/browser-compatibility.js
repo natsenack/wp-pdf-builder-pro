@@ -117,19 +117,18 @@ function checkBrowserCompatibility() {
     }
   });
 
-  // Afficher un résumé
-  console.group('🔍 Diagnostic de compatibilité navigateur');
+  // Afficher un résumé seulement en mode débogage ou s'il y a des erreurs
+  if (isDebugMode() || results.errors.length > 0) {
+    console.group('🔍 Diagnostic de compatibilité navigateur');
+    // Liste des APIs vérifiées
+    // console.table(results.apis); // Optionnel pour la table complète
 
-
-
-  if (results.errors.length > 0) {
-    console.warn('🚨 APIs non supportées:');
-    results.errors.forEach(error => console.warn(error));
-  } else {
-
+    if (results.errors.length > 0) {
+      console.warn('🚨 APIs non supportées:');
+      results.errors.forEach(error => console.warn(error));
+    }
+    console.groupEnd();
   }
-
-  console.groupEnd();
 
   // Stocker les résultats pour débogage
   window.browserCompatibilityResults = results;
@@ -137,13 +136,30 @@ function checkBrowserCompatibility() {
   return results;
 }
 
-// Exécuter le diagnostic au chargement
+// Fonction d'aide pour vérifier le mode débogage
+function isDebugMode() {
+  return typeof window !== 'undefined' && window.pdfBuilderDebugSettings?.javascript;
+}
+
+// Exécuter le diagnostic au chargement (seulement en mode débogage ou s'il y a des erreurs)
+function runDiagnostic() {
+  const results = checkBrowserCompatibility();
+
+  if (isDebugMode() || results.errors.length > 0) {
+    return results; // La fonction checkBrowserCompatibility gère déjà les logs
+  }
+
+  // En mode production et sans erreurs, redéfinir checkBrowserCompatibility pour éviter les appels répétitifs
+  window.checkBrowserCompatibility = () => results;
+  return results;
+}
+
 if (typeof window !== 'undefined') {
   // Attendre que le DOM soit prêt
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', checkBrowserCompatibility);
+    document.addEventListener('DOMContentLoaded', runDiagnostic);
   } else {
-    checkBrowserCompatibility();
+    runDiagnostic();
   }
 }
 
