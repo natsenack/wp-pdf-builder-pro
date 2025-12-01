@@ -167,56 +167,42 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="debug_javascript">Debug JavaScript</label></th>
+                        <th scope="row"><label>Debug JavaScript</label></th>
                         <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_javascript" name="pdf_builder_debug_javascript" value="1" <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug JS</span>
-                            </div>
-                            <div class="toggle-description">Active les logs détaillés en console (emojis: 🚀 start, ✅ success, ❌ error, ⚠️ warn)</div>
-                        </td>
-                    </tr>
-                    <!-- Sous-catégorie: Filtres JavaScript (visible si Debug JS activé) -->
-                    <tr id="debug_javascript_filters_section" style="display: <?php echo (isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript']) ? 'table-row' : 'none'; ?>; background-color: #f5f5f5; border-left: 4px solid #2196F3;">
-                        <td colspan="2" style="padding: 20px;">
-                            <h4 style="margin-top: 0; color: #2196F3; font-size: 14px;">🎯 Filtres de Debug JavaScript</h4>
-                            <p style="margin-top: 5px; margin-bottom: 15px; color: #666; font-size: 12px;">Sélectionnez les pages spécifiques pour les logs JavaScript :</p>
-                            
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                                <!-- Filtre 1: Éditeur PDF -->
-                                <div style="background: white; padding: 12px; border-radius: 4px; border: 1px solid #e0e0e0;">
-                                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;">
-                                        <input type="checkbox" id="debug_pdf_editor" name="pdf_builder_debug_pdf_editor" value="1" <?php echo isset($settings['pdf_builder_debug_pdf_editor']) && $settings['pdf_builder_debug_pdf_editor'] ? 'checked' : ''; ?> />
-                                        <span style="font-weight: 500; color: #333;">🎨 Éditeur PDF</span>
-                                    </label>
-                                    <div style="font-size: 11px; color: #999; margin-top: 5px; margin-left: 28px;">Logs seulement à la page de l'éditeur</div>
-                                </div>
+                            <div style="background: #f5f5f5; padding: 15px; border-radius: 4px; border-left: 4px solid #2196F3;">
+                                <p style="margin-top: 0; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les pages pour les logs détaillés :</p>
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                                    <!-- Toggle 1: Éditeur PDF -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0;">
+                                            <input type="checkbox" id="debug_pdf_editor" name="pdf_builder_debug_pdf_editor" value="1" <?php echo isset($settings['pdf_builder_debug_pdf_editor']) && $settings['pdf_builder_debug_pdf_editor'] ? 'checked' : ''; ?> />
+                                            <span style="font-weight: 500; color: #333; font-size: 13px;">🎨 Éditeur PDF</span>
+                                        </label>
+                                        <div style="font-size: 11px; color: #999; margin-top: 3px; margin-left: 26px;">Page éditeur</div>
+                                    </div>
 
-                                <!-- Filtre 2: Page Paramètres -->
-                                <div style="background: white; padding: 12px; border-radius: 4px; border: 1px solid #e0e0e0;">
-                                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;">
-                                        <input type="checkbox" id="debug_settings_page" name="pdf_builder_debug_settings_page" value="1" <?php echo isset($settings['pdf_builder_debug_settings_page']) && $settings['pdf_builder_debug_settings_page'] ? 'checked' : ''; ?> />
-                                        <span style="font-weight: 500; color: #333;">⚙️ Page Paramètres</span>
-                                    </label>
-                                    <div style="font-size: 11px; color: #999; margin-top: 5px; margin-left: 28px;">Logs seulement à la page des paramètres</div>
-                                </div>
+                                    <!-- Toggle 2: Page Paramètres -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0;">
+                                            <input type="checkbox" id="debug_settings_page" name="pdf_builder_debug_settings_page" value="1" <?php echo isset($settings['pdf_builder_debug_settings_page']) && $settings['pdf_builder_debug_settings_page'] ? 'checked' : ''; ?> />
+                                            <span style="font-weight: 500; color: #333; font-size: 13px;">⚙️ Page Paramètres</span>
+                                        </label>
+                                        <div style="font-size: 11px; color: #999; margin-top: 3px; margin-left: 26px;">Page paramètres</div>
+                                    </div>
 
-                                <!-- Filtre 3: Logs Verbeux -->
-                                <div style="background: white; padding: 12px; border-radius: 4px; border: 1px solid #e0e0e0;">
-                                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;">
-                                        <input type="checkbox" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'checked' : ''; ?> />
-                                        <span style="font-weight: 500; color: #333;">📝 Logs Verbeux</span>
-                                    </label>
-                                    <div style="font-size: 11px; color: #999; margin-top: 5px; margin-left: 28px;">Détails complets (rendu, interactions...)</div>
+                                    <!-- Toggle 3: Logs Verbeux -->
+                                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0;">
+                                            <input type="checkbox" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'checked' : ''; ?> />
+                                            <span style="font-weight: 500; color: #333; font-size: 13px;">📝 Logs Verbeux</span>
+                                        </label>
+                                        <div style="font-size: 11px; color: #999; margin-top: 3px; margin-left: 26px;">Détails complets</div>
+                                    </div>
                                 </div>
                             </div>
                         </td>
                     </tr>
-                    <!-- Fin de la sous-catégorie -->
-                    <tr>
                     <tr>
                         <th scope="row"><label for="debug_ajax">Debug AJAX</label></th>
                         <td>
