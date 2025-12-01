@@ -738,6 +738,25 @@ add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
                 update_option('pdf_builder_company_rcs', $updated_fields['company_rcs'] ?? '');
                 update_option('pdf_builder_company_capital', $updated_fields['company_capital'] ?? '');
                 break;
+            case 'acces':
+                // Handle access roles (array of roles)
+                if (isset($_POST['pdf_builder_allowed_roles']) && is_array($_POST['pdf_builder_allowed_roles'])) {
+                    $allowed_roles = array_map('sanitize_text_field', $_POST['pdf_builder_allowed_roles']);
+                    // Always include administrator
+                    if (!in_array('administrator', $allowed_roles)) {
+                        $allowed_roles[] = 'administrator';
+                    }
+                    update_option('pdf_builder_allowed_roles', $allowed_roles);
+                }
+                break;
+            default:
+                // General settings handler for other tabs
+                foreach ($updated_fields as $key => $value) {
+                    if (strpos($key, 'pdf_builder_') === 0 || strpos($key, 'systeme_') === 0) {
+                        update_option('pdf_builder_' . str_replace(['pdf_builder_', 'systeme_'], '', $key), $value);
+                    }
+                }
+                break;
         }
 
         wp_send_json_success([
@@ -746,6 +765,45 @@ add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
         ]);
 
     } catch (Exception $e) {
+        wp_send_json_error(['message' => $e->getMessage()]);
+    }
+});
+
+add_action('wp_ajax_pdf_builder_deactivate_license', function() {
+    try {
+        // Verify nonce
+        if (!wp_verify_nonce(sanitize_text_field($_POST['nonce'] ?? ''), 'pdf_builder_deactivate')) {
+            wp_send_json_error(['message' => 'Security check failed']);
+            return;
+        }
+
+        // Check user capability
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Insufficient permissions']);
+            return;
+        }
+
+        // Clear all license data
+        delete_option('pdf_builder_license_key');
+        delete_option('pdf_builder_license_status');
+        delete_option('pdf_builder_license_expires');
+        delete_option('pdf_builder_license_activated_at');
+        delete_option('pdf_builder_license_test_key');
+        delete_option('pdf_builder_license_test_key_expires');
+        delete_option('pdf_builder_license_test_mode_enabled');
+
+        // Reset to free mode
+        update_option('pdf_builder_license_status', 'free');
+
+        error_log('PDF Builder: License deactivated successfully via AJAX');
+
+        wp_send_json_success([
+            'message' => 'License deactivated successfully',
+            'status' => 'free'
+        ]);
+
+    } catch (Exception $e) {
+        error_log('PDF Builder: License deactivation error - ' . $e->getMessage());
         wp_send_json_error(['message' => $e->getMessage()]);
     }
 });

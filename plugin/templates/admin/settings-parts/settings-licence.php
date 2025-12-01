@@ -1,7 +1,7 @@
-<?php // Licence tab content - Updated: 2025-11-18 20:20:00 ?>
-            <form method="post" id="licence-form" action="">
-                <input type="hidden" name="current_tab" value="licence">
-                    <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h2>
+<?php // Licence tab content - Updated: AJAX centralized 2025-12-02 ?>
+            <!-- Licence Settings Section (No Form - AJAX Centralized) -->
+            <section id="licence-container" aria-label="Gestion de la Licence">
+                <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h2>
 
                 <style>
                     /* Classe commune pour les sections de l'onglet licence */
@@ -366,15 +366,11 @@
                             </ul>
                         </div>
 
-                        <form method="post">
-                            <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
-                            <p class="submit" style="margin-top: 20px;">
-                                <button type="submit" name="deactivate_license" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 10px 20px !important; display: block !important; visibility: visible !important; opacity: 1 !important;"
-                                        onclick="return confirm('Etes-vous sur de vouloir desactiver cette licence ? Vous pourrez la reactiver ou l\'utiliser sur un autre site.');">
-                                    Desactiver la Licence
-                                </button>
-                            </p>
-                        </form>
+                        <div style="margin-top: 20px;">
+                            <button type="button" id="deactivate-license-btn" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 10px 20px !important; display: block !important; visibility: visible !important; opacity: 1 !important;">
+                                Desactiver la Licence
+                            </button>
+                        </div>
 
                         <div style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); border: none; border-radius: 8px; padding: 22px; margin-top: 20px; color: #fff; box-shadow: 0 3px 8px rgba(23,162,184,0.25);">
                             <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Conseil :</strong>
@@ -397,18 +393,14 @@
                                 <li style="margin: 8px 0;">✓ Vous pourrez l'utiliser sur un autre site</li>
                                 <li style="margin: 8px 0;">✓ La licence restera valide jusqu'à son expiration</li>
                             </ul>
-                            <form method="post" id="deactivate_form_modal" style="display: inline;">
-                                <?php wp_nonce_field('pdf_builder_deactivate', 'pdf_builder_deactivate_nonce'); ?>
-                                <input type="hidden" name="deactivate_license" value="1">
-                                <div style="display: flex; gap: 12px; margin-top: 30px;">
-                                    <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
-                                        Annuler
-                                    </button>
-                                    <button type="submit" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
-                                        Désactiver
-                                    </button>
-                                </div>
-                            </form>
+                            <div style="display: flex; gap: 12px; margin-top: 30px;">
+                                <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
+                                    Annuler
+                                </button>
+                                <button type="button" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="deactivateLicense()">
+                                    Désactiver
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -909,4 +901,64 @@
                         }
                     </style>
 
-            </form>
+                </div>
+
+                <script>
+                // Gestion AJAX pour la désactivation de licence
+                function deactivateLicense() {
+                    if (!confirm('Êtes-vous sûr de vouloir désactiver cette licence ? Vous pourrez la réactiver plus tard.')) {
+                        return;
+                    }
+
+                    const button = document.querySelector('#deactivate-license-btn') ||
+                                   document.querySelector('[onclick="deactivateLicense()"]');
+
+                    if (button) {
+                        button.textContent = '⏳ Désactivation...';
+                        button.disabled = true;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('action', 'pdf_builder_deactivate_license');
+                    formData.append('nonce', '<?php echo wp_create_nonce('pdf_builder_deactivate'); ?>');
+
+                    fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('✅ Licence désactivée avec succès. La page va se recharger.');
+                            location.reload();
+                        } else {
+                            alert('❌ Erreur lors de la désactivation: ' + (data.data || 'Erreur inconnue'));
+                            if (button) {
+                                button.textContent = 'Désactiver la Licence';
+                                button.disabled = false;
+                            }
+                        }
+                        closeDeactivateModal();
+                    })
+                    .catch(error => {
+                        console.error('Erreur AJAX:', error);
+                        alert('❌ Erreur de connexion. Veuillez réessayer.');
+                        if (button) {
+                            button.textContent = 'Désactiver la Licence';
+                            button.disabled = false;
+                        }
+                        closeDeactivateModal();
+                    });
+                }
+
+                // Event listener pour le bouton ajouté dans la section premium
+                document.addEventListener('DOMContentLoaded', function() {
+                    const deactivateBtn = document.getElementById('deactivate-license-btn');
+                    if (deactivateBtn) {
+                        deactivateBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            showDeactivateModal();
+                        });
+                    }
+                });
+                </script>

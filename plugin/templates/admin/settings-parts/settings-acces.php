@@ -33,8 +33,8 @@
                 <!-- Colonne principale : toggles des rôles -->
                 <div>
 
-            <!-- Formulaire pour les paramètres d'accès (nécessaire pour la collecte AJAX) -->
-            <form id="access-settings-form">
+            <!-- Access Settings Section (No Form - AJAX Centralized) -->
+            <section id="access-settings-container" aria-label="Paramètres d'accès">
 
                 <!-- Boutons de contrôle rapide -->
                 <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
@@ -290,7 +290,7 @@
                     });
                 </script>
 
-            </form>
+            </div>
 
                 </div> <!-- Fin colonne principale -->
 
