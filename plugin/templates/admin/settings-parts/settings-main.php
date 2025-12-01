@@ -2232,6 +2232,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
             let collectedCount = 0;
             let developerFields = 0;
             let developerData = {};
+            let processedNames = new Set(); // Track processed field names to avoid duplicates
 
             console.log('[FLOATING SAVE] 🔍 Recherche de tous les inputs...');
             console.log('[FLOATING SAVE] 📊 Nombre total d\'inputs trouvés:', allInputs.length);
@@ -2250,6 +2251,12 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     input.name.includes('pdf_builder_debug_javascript') ||
                     input.name.includes('pdf_builder_debug_javascript_verbose')
                 )) {
+                    return;
+                }
+
+                // Skip if we've already processed this field name (prevents hidden inputs from overwriting checkboxes)
+                if (processedNames.has(input.name)) {
+                    console.log(`[FLOATING SAVE] ⏭️ Champ ignoré (déjà traité): ${input.name} (${input.type})`);
                     return;
                 }
 
@@ -2272,6 +2279,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 if (input.type === 'checkbox') {
                     const checkboxValue = input.checked ? '1' : '0';
                     formData.append(input.name, checkboxValue);
+                    processedNames.add(input.name); // Mark as processed
                     collectedCount++;
 
                     if (isDeveloperField) {
@@ -2282,6 +2290,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 } else if (input.type === 'radio') {
                     if (input.checked) {
                         formData.append(input.name, input.value);
+                        processedNames.add(input.name); // Mark as processed
                         collectedCount++;
                         if (isDeveloperField) {
                             developerFields++;
@@ -2291,6 +2300,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                 } else {
                     const fieldValue = input.value || '';
                     formData.append(input.name, fieldValue);
+                    processedNames.add(input.name); // Mark as processed
                     collectedCount++;
                     if (isDeveloperField) {
                         developerFields++;
