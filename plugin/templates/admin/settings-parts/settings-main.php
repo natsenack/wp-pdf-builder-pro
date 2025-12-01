@@ -2396,6 +2396,12 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         });
 
                         console.log('[FLOATING SAVE] ✅ window.pdfBuilderSavedSettings mis à jour');
+                        // Mettre à jour les paramètres de debug JS en conséquence
+                        window.pdfBuilderDebugSettings.javascript = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_javascript && window.pdfBuilderSavedSettings.pdf_builder_debug_javascript !== '0');
+                        window.pdfBuilderDebugSettings.javascript_verbose = window.pdfBuilderDebugSettings.javascript;
+                        window.pdfBuilderDebugSettings.ajax = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_ajax && window.pdfBuilderSavedSettings.pdf_builder_debug_ajax !== '0');
+                        window.pdfBuilderDebugSettings.performance = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_performance && window.pdfBuilderSavedSettings.pdf_builder_debug_performance !== '0');
+                        window.pdfBuilderDebugSettings.database = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_database && window.pdfBuilderSavedSettings.pdf_builder_debug_database !== '0');
                     } else {
                         console.warn('[FLOATING SAVE] ⚠️ Aucune donnée saved_settings trouvée dans la réponse');
                         console.warn('[FLOATING SAVE] ⚠️ originalData.data:', originalData.data);
