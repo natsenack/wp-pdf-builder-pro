@@ -536,6 +536,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 showNotification('Paramètre sauvegardé', 'success');
                 console.log('[DEV] Setting saved:', setting, '=', value);
+
+                // Refresh the page to update PHP variables with new values
+                setTimeout(() => {
+                    console.log('[DEV] Refreshing page to reflect new database values');
+                    window.location.reload();
+                }, 100);
+
                 return data;
             } else {
                 console.error('[DEV] Save failed:', data);
