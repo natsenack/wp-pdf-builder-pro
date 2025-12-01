@@ -23,6 +23,20 @@ $dev_ajax_config = [
 wp_localize_script('jquery', 'devAjaxConfig', $dev_ajax_config);
 wp_localize_script('wp-util', 'devAjaxConfig', $dev_ajax_config);
 wp_enqueue_script('jquery');
+wp_localize_script('jquery', 'pdfBuilderAjax', array(
+    'ajax_url' => admin_url('admin-ajax.php'),
+    'nonce' => wp_create_nonce('pdf_builder_settings_ajax')
+));
+wp_localize_script('wp-util', 'pdfBuilderAjax', array(
+    'ajax_url' => admin_url('admin-ajax.php'),
+    'nonce' => wp_create_nonce('pdf_builder_settings_ajax')
+));
+
+// Add directly to global window object for immediate availability
+wp_add_inline_script('jquery', "
+    window.pdfBuilderAjax = window.pdfBuilderAjax || " . wp_json_encode($dev_ajax_config) . ";
+    console.log('[PDF Builder] Developer AJAX config initialized:', window.pdfBuilderAjax);
+", 'before');
 ?>
 
 <style>
@@ -464,7 +478,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('[PDF Builder] Developer tab initialized');
 
     // Get the developer page AJAX configuration
-    const PDF_BUILDER_CONFIG = devAjaxConfig || {
+    const PDF_BUILDER_CONFIG = window.pdfBuilderAjax || window.devAjaxConfig || {
         ajax_url: window.ajaxurl || '<?php echo admin_url('admin-ajax.php'); ?>',
         nonce: '<?php echo wp_create_nonce('pdf_builder_settings_ajax'); ?>'
     };
