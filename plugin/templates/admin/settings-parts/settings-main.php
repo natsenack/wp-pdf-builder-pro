@@ -2448,16 +2448,26 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         console.log('[FLOATING SAVE] 📚 Mise à jour de l\'indicateur bibliothèque...');
                         window.updateTemplateLibraryIndicator();
                     }
+                    if (typeof window.updateDeveloperStatusIndicator === 'function') {
+                        console.log('[FLOATING SAVE] 👨‍💻 Mise à jour de l\'indicateur développeur...');
+                        window.updateDeveloperStatusIndicator();
+                    }
+                    if (typeof window.updateDeveloperSections === 'function') {
+                        console.log('[FLOATING SAVE] 🔧 Mise à jour des sections développeur...');
+                        window.updateDeveloperSections();
+                    }
 
                     // Re-sync checkboxes after settings update
-                    if (typeof window.syncCheckboxesWithSavedSettings === 'function') {
-                        console.log('[FLOATING SAVE] 🔄 Re-synchronisation des checkboxes...');
-                        // Add a small delay to ensure window.pdfBuilderSavedSettings is updated
-                        setTimeout(function() {
+                    console.log('[FLOATING SAVE] 🔄 Re-synchronisation des checkboxes...');
+                    // Add a longer delay to ensure all scripts are loaded and settings are updated
+                    setTimeout(function() {
+                        if (typeof window.syncCheckboxesWithSavedSettings === 'function') {
                             window.syncCheckboxesWithSavedSettings();
                             console.log('[FLOATING SAVE] ✅ Synchronisation des checkboxes terminée');
-                        }, 100);
-                    }
+                        } else {
+                            console.warn('[FLOATING SAVE] ⚠️ Fonction syncCheckboxesWithSavedSettings non disponible');
+                        }
+                    }, 500);
 
                     console.log('[FLOATING SAVE] ✅ Toutes les mises à jour terminées');
                 },
