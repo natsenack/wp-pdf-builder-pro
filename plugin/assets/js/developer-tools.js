@@ -40,8 +40,18 @@
                 window.addEventListener('pdfBuilder:debugSettingsChanged', (e) => {
                     try {
                         const newSettings = e && e.detail ? e.detail : window.pdfBuilderDebugSettings;
+                        // DEBUG: Log current state
+                        console.log('[DEV TOGGLES] DEBUG - window.pdfBuilderSavedSettings:', window.pdfBuilderSavedSettings);
+                        console.log('[DEV TOGGLES] DEBUG - pdf_builder_canvas_debug_enabled:', window.pdfBuilderSavedSettings?.pdf_builder_canvas_debug_enabled);
+                        console.log('[DEV TOGGLES] DEBUG - pdf_builder_canvas_debug_enabled type:', typeof window.pdfBuilderSavedSettings?.pdf_builder_canvas_debug_enabled);
+                        console.log('[DEV TOGGLES] DEBUG - pdf_builder_canvas_debug_enabled truthy:', !!window.pdfBuilderSavedSettings?.pdf_builder_canvas_debug_enabled);
+                        console.log('[DEV TOGGLES] DEBUG - not equal to 0:', window.pdfBuilderSavedSettings?.pdf_builder_canvas_debug_enabled !== '0');
+
                         // Mettre à jour window.pdfBuilderDebugSettings.javascript en fonction des paramètres sauvegardés
-                        window.pdfBuilderDebugSettings.javascript = !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled !== '0');
+                        const shouldEnableDebug = !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled !== '0');
+                        console.log('[DEV TOGGLES] DEBUG - shouldEnableDebug:', shouldEnableDebug);
+
+                        window.pdfBuilderDebugSettings.javascript = shouldEnableDebug;
                         if (window.pdfBuilderDebugSettings.javascript) {
                             console.log('[DEV TOGGLES] pdfBuilder:debugSettingsChanged received, JS debug enabled');
                         } else {
