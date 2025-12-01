@@ -806,6 +806,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // === GESTION DU MODE DÉVELOPPEUR ===
 
+    const developerToggle = document.getElementById('developer_enabled');
     const devSections = ['debug-section', 'logs-section', 'tools-section'];
     const licenseSection = document.getElementById('license-section');
     const statusBanner = document.querySelector('.dev-status-banner');
