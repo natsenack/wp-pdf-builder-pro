@@ -188,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
             'developer_enabled': 'pdf_builder_developer_enabled',
             'debug_php_errors': 'pdf_builder_debug_php_errors',
             'debug_javascript': 'pdf_builder_debug_javascript',
-            'debug_javascript_verbose': 'pdf_builder_debug_javascript_verbose',
             'debug_ajax': 'pdf_builder_debug_ajax',
             'debug_performance': 'pdf_builder_debug_performance',
             'debug_database': 'pdf_builder_debug_database',
