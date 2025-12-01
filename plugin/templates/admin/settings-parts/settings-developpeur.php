@@ -179,12 +179,12 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                             <div class="toggle-description">Active les logs détaillés en console (emojis: 🚀 start, ✅ success, ❌ error, ⚠️ warn)</div>
                         </td>
                     </tr>
-                    <tr id="debug_pdf_editor_row" style="<?php echo (!isset($settings['pdf_builder_debug_javascript']) || !$settings['pdf_builder_debug_javascript']) ? 'display: none;' : ''; ?>">
+                    <tr id="debug_pdf_editor_row">
                         <th scope="row"><label for="debug_pdf_editor">Debug Éditeur PDF</label></th>
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_pdf_editor" name="pdf_builder_debug_pdf_editor" value="1" <?php echo isset($settings['pdf_builder_debug_pdf_editor']) && $settings['pdf_builder_debug_pdf_editor'] ? 'checked' : ''; ?> <?php echo (!isset($settings['pdf_builder_debug_javascript']) || !$settings['pdf_builder_debug_javascript']) ? 'disabled' : ''; ?> />
+                                    <input type="checkbox" id="debug_pdf_editor" name="pdf_builder_debug_pdf_editor" value="1" <?php echo isset($settings['pdf_builder_debug_pdf_editor']) && $settings['pdf_builder_debug_pdf_editor'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span class="toggle-label">Debug Éditeur PDF</span>
@@ -192,12 +192,12 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                             <div class="toggle-description">Isole les logs JavaScript exclusivement à la page de l'éditeur PDF</div>
                         </td>
                     </tr>
-                    <tr id="debug_settings_page_row" style="<?php echo (!isset($settings['pdf_builder_debug_javascript']) || !$settings['pdf_builder_debug_javascript']) ? 'display: none;' : ''; ?>">
+                    <tr id="debug_settings_page_row">
                         <th scope="row"><label for="debug_settings_page">Debug Page Paramètres</label></th>
                         <td>
                             <div class="toggle-container">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_settings_page" name="pdf_builder_debug_settings_page" value="1" <?php echo isset($settings['pdf_builder_debug_settings_page']) && $settings['pdf_builder_debug_settings_page'] ? 'checked' : ''; ?> <?php echo (!isset($settings['pdf_builder_debug_javascript']) || !$settings['pdf_builder_debug_javascript']) ? 'disabled' : ''; ?> />
+                                    <input type="checkbox" id="debug_settings_page" name="pdf_builder_debug_settings_page" value="1" <?php echo isset($settings['pdf_builder_debug_settings_page']) && $settings['pdf_builder_debug_settings_page'] ? 'checked' : ''; ?> />
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <span class="toggle-label">Debug Page Paramètres</span>
@@ -805,62 +805,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
     function updatePdfEditorToggleVisibility() {
-        console.log('🔧 [DEBUG PDF EDITOR] Fonction appelée');
-
-        if (!debugJavascriptToggle || !debugPdfEditorRow) {
-            console.log('🔧 [DEBUG PDF EDITOR] Éléments manquants:', {
-                debugJavascriptToggle: !!debugJavascriptToggle,
-                debugPdfEditorRow: !!debugPdfEditorRow
-            });
-            return;
-        }
-
-        const isJavascriptDebugEnabled = debugJavascriptToggle.checked;
-        console.log('🔧 [DEBUG PDF EDITOR] État debug_javascript:', isJavascriptDebugEnabled);
-
-        debugPdfEditorRow.style.display = isJavascriptDebugEnabled ? 'table-row' : 'none';
-        console.log('🔧 [DEBUG PDF EDITOR] Style display appliqué:', debugPdfEditorRow.style.display);
-
-        // Désactiver le toggle si Debug JavaScript est désactivé
-        const pdfEditorToggle = document.getElementById('debug_pdf_editor');
-        if (pdfEditorToggle) {
-            pdfEditorToggle.disabled = !isJavascriptDebugEnabled;
-            if (!isJavascriptDebugEnabled) {
-                pdfEditorToggle.checked = false;
-            }
-            console.log('🔧 [DEBUG PDF EDITOR] Toggle disabled:', pdfEditorToggle.disabled, 'checked:', pdfEditorToggle.checked);
-        }
-
-        console.log(`🔧 [DEBUG PDF EDITOR] Toggle ${isJavascriptDebugEnabled ? 'AFFICHÉ' : 'MASQUÉ'} (dépend de Debug JavaScript)`);
+        // Ces toggles sont maintenant toujours visibles
+        console.log('🔧 [DEBUG PDF EDITOR] Toggles toujours visibles (dépendance supprimée)');
     }
 
     // Fonction pour mettre à jour la visibilité du toggle Debug Page Paramètres
     function updateSettingsPageToggleVisibility() {
-        if (!debugJavascriptToggle || !debugSettingsPageRow) {
-            if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('🔧 [DEBUG SETTINGS PAGE] Éléments manquants:', {
-                    debugJavascriptToggle: !!debugJavascriptToggle,
-                    debugSettingsPageRow: !!debugSettingsPageRow
-                });
-            }
-            return;
-        }
-
-        const isJavascriptDebugEnabled = debugJavascriptToggle.checked;
-        debugSettingsPageRow.style.display = isJavascriptDebugEnabled ? 'table-row' : 'none';
-
-        // Désactiver le toggle si Debug JavaScript est désactivé
-        const settingsPageToggle = document.getElementById('debug_settings_page');
-        if (settingsPageToggle) {
-            settingsPageToggle.disabled = !isJavascriptDebugEnabled;
-            if (!isJavascriptDebugEnabled) {
-                settingsPageToggle.checked = false;
-            }
-        }
-
-        if (window.pdfBuilderDebugSettings?.javascript) {
-            console.log(`🔧 [DEBUG SETTINGS PAGE] Toggle ${isJavascriptDebugEnabled ? 'AFFICHÉ' : 'MASQUÉ'} (dépend de Debug JavaScript)`);
-        }
+        // Ces toggles sont maintenant toujours visibles
+        console.log('🔧 [DEBUG SETTINGS PAGE] Toggles toujours visibles (dépendance supprimée)');
     }
 
     // Fonction globale pour mettre à jour les sections développeur
@@ -886,11 +838,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Mettre à jour la visibilité du toggle Debug Éditeur PDF
-        updatePdfEditorToggleVisibility();
-
-        // Mettre à jour la visibilité du toggle Debug Page Paramètres
-        updateSettingsPageToggleVisibility();
+        // Plus besoin de mettre à jour la visibilité des toggles Debug Éditeur PDF et Debug Page Paramètres
+        // puisqu'ils sont maintenant toujours visibles
     };
 
     // Fonction pour mettre à jour l'indicateur de statut du mode développeur (basé sur la valeur sauvegardée)
@@ -920,8 +869,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Appliquer l'état initial
         window.updateDeveloperSections();
 
-        // Appliquer l'état initial du toggle Debug Éditeur PDF
-        updatePdfEditorToggleVisibility();
+        // Plus besoin d'appliquer l'état initial des toggles Debug Éditeur PDF et Debug Page Paramètres
+        // puisqu'ils sont maintenant toujours visibles et activés
 
         // Debug: Vérifier l'état initial des toggles
         console.log('🔧 [DEBUG] État initial des toggles:', {
@@ -971,8 +920,7 @@ document.addEventListener('DOMContentLoaded', function() {
             debugJavascriptToggle.addEventListener('change', function(event) {
                 console.log('🔧 [DEBUG JAVASCRIPT] Événement change déclenché');
                 console.log('🔧 [DEBUG JAVASCRIPT] Valeur du toggle:', event.target.checked);
-                updatePdfEditorToggleVisibility();
-                updateSettingsPageToggleVisibility();
+                // Plus besoin de mettre à jour la visibilité des toggles dépendants
             });
 
             // Ajouter aussi un écouteur de clic pour debug
