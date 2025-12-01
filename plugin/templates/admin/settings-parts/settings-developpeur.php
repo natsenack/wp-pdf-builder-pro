@@ -545,40 +545,7 @@
                     </div>
                 </div>
 
-        <!-- Section Logs et Outils Développeur (cachée par défaut) -->
-        <div class="dev-section collapsed" id="logs-section">
-            <div class="dev-section-header">
-                <h3>📋 Logs et Outils Développeur</h3>
-            </div>
-            <div class="dev-section-content">
-                <div class="dev-tools-grid">
-                    <button type="button" id="view_logs_js_btn" class="dev-tool-btn">
-                        📄<br/>Logs JS
-                    </button>
-                    <button type="button" id="clear_cache_btn" class="dev-tool-btn">
-                        🔄<br/>Vider Cache
-                    </button>
-                    <button type="button" id="clear_temp_btn" class="dev-tool-btn">
-                        🗑️<br/>Vider Temp
-                    </button>
-                    <button type="button" id="clear_logs_btn" class="dev-tool-btn">
-                        📋<br/>Vider Logs
-                    </button>
-                    <button type="button" id="system_info_btn" class="dev-tool-btn">
-                        ℹ️<br/>Info Système
-                    </button>
-                    <button type="button" id="test_connections_btn" class="dev-tool-btn">
-                        🔗<br/>Test Connexions
-                    </button>
-                    <button type="button" id="reset_settings_btn" class="dev-tool-btn">
-                        🔄<br/>Reset Settings
-                    </button>
-                    <button type="button" id="backup_config_btn" class="dev-tool-btn">
-                        💾<br/>Sauvegarde
-                    </button>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Section À Faire -->
         <div class="dev-section collapsed" id="todo-section">
@@ -631,87 +598,25 @@
                     </ul>
                 </div>
             </div>
-            <div class="dev-section-content">
-                <div class="dev-tools-grid">
-                    <button type="button" id="view_logs_js_btn" class="dev-tool-btn">
-                        📄<br/>Logs JS
-                    </button>
-                </div>
+        </div>
 
-                <!-- Logs JavaScript Modal -->
-                <div id="js-logs-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:10000; align-items:center; justify-content:center;">
-                    <div style="background:white; border-radius:8px; width:90%; max-width:1000px; height:80%; max-height:800px; display:flex; flex-direction:column; box-shadow:0 10px 30px rgba(0,0,0,0.3);">
-                        <div style="padding:15px 20px; border-bottom:1px solid #ddd; display:flex; align-items:center; justify-content:space-between;">
-                            <h3 style="margin:0; color:#333; display:flex; align-items:center; gap:10px;">
-                                <span style="font-size:1.5em;">📄</span> Logs JavaScript - Console Dynamique
-                            </h3>
-                            <div style="display:flex; gap:10px;">
-                                <button type="button" id="refresh-logs-btn" class="button button-secondary" style="font-size:0.9em;">🔄 Actualiser</button>
-                                <button type="button" id="export-logs-btn" class="button button-secondary" style="font-size:0.9em;">💾 Exporter</button>
-                                <button type="button" id="clear-logs-btn" class="button button-secondary" style="font-size:0.9em;">🗑️ Vider</button>
-                                <button type="button" id="close-logs-modal-btn" class="button" style="font-size:0.9em;">✕ Fermer</button>
-                            </div>
-                        </div>
-                        <div id="logs-content" style="flex:1; overflow:auto; padding:20px; font-family:monospace; font-size:0.9em; background:#f8f9fa; line-height:1.4;">
-                            <div style="color:#6c757d; text-align:center; padding:40px;">
-                                🔄 Chargement des logs JavaScript...
-                            </div>
-                        </div>
+        <!-- Logs JavaScript Modal -->
+        <div id="js-logs-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:10000; align-items:center; justify-content:center;">
+            <div style="background:white; border-radius:8px; width:90%; max-width:1000px; height:80%; max-height:800px; display:flex; flex-direction:column; box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+                <div style="padding:15px 20px; border-bottom:1px solid #ddd; display:flex; align-items:center; justify-content:space-between;">
+                    <h3 style="margin:0; color:#333; display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:1.5em;">📄</span> Logs JavaScript - Console Dynamique
+                    </h3>
+                    <div style="display:flex; gap:10px;">
+                        <button type="button" id="refresh-logs-btn" class="button button-secondary" style="font-size:0.9em;">🔄 Actualiser</button>
+                        <button type="button" id="export-logs-btn" class="button button-secondary" style="font-size:0.9em;">💾 Exporter</button>
+                        <button type="button" id="clear-logs-btn" class="button button-secondary" style="font-size:0.9em;">🗑️ Vider</button>
+                        <button type="button" id="close-logs-modal-btn" class="button" style="font-size:0.9em;">✕ Fermer</button>
                     </div>
                 </div>
-
-                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; margin-top: 20px;">
-                    <h4 style="margin: 0 0 10px 0; color: #495057;">💡 Actions Disponibles</h4>
-                    <button type="button" id="clear_cache_btn" class="dev-tool-btn">
-                        🔄<br/>Vider Cache
-                    </button>
-                    <button type="button" id="clear_temp_btn" class="dev-tool-btn">
-                        🗑️<br/>Vider Temp
-                    </button>
-                    <button type="button" id="clear_logs_btn" class="dev-tool-btn">
-                        📋<br/>Vider Logs
-                    </button>
-                    <button type="button" id="system_info_btn" class="dev-tool-btn">
-                        ℹ️<br/>Info Système
-                    </button>
-                    <button type="button" id="test_connections_btn" class="dev-tool-btn">
-                        🔗<br/>Test Connexions
-                    </button>
-                    <button type="button" id="reset_settings_btn" class="dev-tool-btn">
-                        🔄<br/>Reset Settings
-                    </button>
-                    <button type="button" id="backup_config_btn" class="dev-tool-btn">
-                        💾<br/>Sauvegarde
-                    </button>
-                </div>
-
-                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; margin-top: 20px;">
-                    <h4 style="margin: 0 0 10px 0; color: #495057;">💡 Actions Disponibles</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; font-size: 0.9em; color: #6c757d;">
-                        <div>
-                            <strong>Logs JS:</strong> Ouvre la console des logs JavaScript dans un nouvel onglet
-                        </div>
-                        <div>
-                            <strong>Vider Cache:</strong> Supprime le cache du plugin pour forcer le rechargement
-                        </div>
-                        <div>
-                            <strong>Vider Temp:</strong> Supprime les fichiers temporaires générés
-                        </div>
-                        <div>
-                            <strong>Vider Logs:</strong> Supprime tous les fichiers de logs existants
-                        </div>
-                        <div>
-                            <strong>Info Système:</strong> Affiche les informations détaillées du système
-                        </div>
-                        <div>
-                            <strong>Test Connexions:</strong> Vérifie les connexions API et base de données
-                        </div>
-                        <div>
-                            <strong>Reset Settings:</strong> Remet à zéro tous les paramètres développeur
-                        </div>
-                        <div>
-                            <strong>Sauvegarde:</strong> Crée une sauvegarde des paramètres actuels
-                        </div>
+                <div id="logs-content" style="flex:1; overflow:auto; padding:20px; font-family:monospace; font-size:0.9em; background:#f8f9fa; line-height:1.4;">
+                    <div style="color:#6c757d; text-align:center; padding:40px;">
+                        🔄 Chargement des logs JavaScript...
                     </div>
                 </div>
             </div>
