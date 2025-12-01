@@ -249,20 +249,110 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
 .dev-log-level-indicator.level-3 { background: #28a745; color: white; }
 .dev-log-level-indicator.level-4 { background: #007cba; color: white; }
 
-@media (max-width: 768px) {
-    .dev-status-banner {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-    }
+.dev-todo-list {
+    min-height: 200px;
+}
 
-    .dev-grid {
-        grid-template-columns: 1fr;
-    }
+.dev-todo-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
 
-    .dev-tools-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.dev-todo-item:hover {
+    border-color: #007cba;
+    box-shadow: 0 2px 8px rgba(0,123,186,0.1);
+}
+
+.dev-todo-item.completed {
+    opacity: 0.6;
+    background: #f8f9fa;
+}
+
+.dev-todo-item.completed .dev-todo-text {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+.dev-todo-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.dev-todo-priority {
+    font-size: 0.8em;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    min-width: 60px;
+    text-align: center;
+}
+
+.dev-todo-priority.low { background: #d4edda; color: #155724; }
+.dev-todo-priority.medium { background: #fff3cd; color: #856404; }
+.dev-todo-priority.high { background: #f8d7da; color: #721c24; }
+.dev-todo-priority.urgent { background: #f5c6cb; color: #721c24; }
+
+.dev-todo-text {
+    flex: 1;
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+
+.dev-todo-date {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin-left: auto;
+}
+
+.dev-todo-delete {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 3px;
+    font-size: 1.2em;
+    transition: background-color 0.2s;
+}
+
+.dev-todo-delete:hover {
+    background: #f8d7da;
+}
+
+.dev-filter-btn {
+    padding: 6px 12px;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dev-filter-btn:hover {
+    background: #f8f9fa;
+}
+
+.dev-filter-btn.active {
+    background: #007cba;
+    color: white;
+    border-color: #007cba;
+}
+
+.dev-todo-empty {
+    display: block;
+}
+
+.dev-todo-empty.hidden {
+    display: none;
 }
 </style>
 
@@ -295,12 +385,75 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
         <input type="hidden" name="submit_developpeur" value="1">
 
-        <!-- Section Contrôle d'Accès -->
-        <div class="dev-section" id="access-section">
+        <!-- Section Licence de Test -->
+        <div class="dev-section" id="license-section">
             <div class="dev-section-header">
-                <h3>🔐 Contrôle d'Accès</h3>
+                <h3>🔑 Licence de Test</h3>
                 <span class="dev-section-toggle">▼</span>
             </div>
+            <div class="dev-section-content">
+                <div class="dev-grid">
+                    <div class="dev-card">
+                        <div class="dev-card-header">
+                            <span class="dev-card-icon">🧪</span>
+                            <h4 class="dev-card-title">Mode Test de Licence</h4>
+                        </div>
+                        <p class="dev-card-description">Active le mode de test pour les licences (développement uniquement)</p>
+                        <div style="margin-top: 15px;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="license_test_mode" name="pdf_builder_license_test_mode_enabled" value="1"
+                                       <?php echo isset($settings['pdf_builder_license_test_mode_enabled']) && $settings['pdf_builder_license_test_mode_enabled'] ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span style="margin-left: 10px; font-weight: 500;">
+                                <?php echo isset($settings['pdf_builder_license_test_mode_enabled']) && $settings['pdf_builder_license_test_mode_enabled'] ? 'Activé' : 'Désactivé'; ?>
+                            </span>
+                        </div>
+                        <p style="font-size: 0.8em; color: #6c757d; margin: 8px 0 0 0;">
+                            ⚠️ À utiliser uniquement en développement
+                        </p>
+                    </div>
+
+                    <div class="dev-card">
+                        <div class="dev-card-header">
+                            <span class="dev-card-icon">🔐</span>
+                            <h4 class="dev-card-title">Clé de Licence Test</h4>
+                        </div>
+                        <p class="dev-card-description">Clé de licence utilisée en mode test</p>
+                        <div class="dev-password-field" style="margin-top: 15px;">
+                            <input type="text" id="license_test_key" name="pdf_builder_license_test_key"
+                                   placeholder="Clé de licence de test" autocomplete="off"
+                                   value="<?php echo esc_attr($settings['pdf_builder_license_test_key'] ?? ''); ?>" />
+                        </div>
+                        <p style="font-size: 0.8em; color: #6c757d; margin: 8px 0 0 0;">
+                            Laissez vide pour utiliser la clé par défaut
+                        </p>
+                    </div>
+                </div>
+
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 15px; margin-top: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #856404;">⚠️ Avertissement Licence</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #856404; font-size: 0.9em;">
+                        <li>Le mode test de licence ne doit être utilisé qu'en développement</li>
+                        <li>Désactivez toujours ce mode en production</li>
+                        <li>Les clés de test peuvent expirer ou être invalidées</li>
+                        <li>Vérifiez la validité de votre licence avant déploiement</li>
+                    </ul>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 20px;">
+                    <button type="button" id="test-license-btn" class="dev-tool-btn">
+                        🔍 Tester Licence
+                    </button>
+                    <button type="button" id="validate-license-btn" class="dev-tool-btn">
+                        ✅ Valider Licence
+                    </button>
+                    <button type="button" id="reset-license-btn" class="dev-tool-btn">
+                        🔄 Reset Licence
+                    </button>
+                </div>
+            </div>
+        </div>
             <div class="dev-section-content">
                 <div class="dev-grid">
                     <div class="dev-card">
@@ -505,12 +658,58 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
             </div>
         </div>
 
-        <!-- Section Outils -->
-        <div class="dev-section" id="tools-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+        <!-- Section À Faire -->
+        <div class="dev-section" id="todo-section">
             <div class="dev-section-header">
-                <h3>🛠️ Outils de Développement</h3>
+                <h3>📋 À Faire</h3>
                 <span class="dev-section-toggle">▼</span>
             </div>
+            <div class="dev-section-content">
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="new-todo-input" placeholder="Nouvelle tâche à ajouter..."
+                               style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;" />
+                        <select id="todo-priority" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="low">🟢 Faible</option>
+                            <option value="medium" selected>🟡 Moyenne</option>
+                            <option value="high">🔴 Haute</option>
+                            <option value="urgent">🚨 Urgent</option>
+                        </select>
+                        <button type="button" id="add-todo-btn" class="button button-primary" style="padding: 8px 16px;">
+                            ➕ Ajouter
+                        </button>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <button type="button" id="filter-all" class="dev-filter-btn active" data-filter="all">Toutes</button>
+                        <button type="button" id="filter-active" class="dev-filter-btn" data-filter="active">Actives</button>
+                        <button type="button" id="filter-completed" class="dev-filter-btn" data-filter="completed">Terminées</button>
+                        <button type="button" id="clear-completed-btn" class="button button-secondary" style="margin-left: auto;">
+                            🗑️ Supprimer Terminées
+                        </button>
+                    </div>
+                </div>
+
+                <div id="todo-list" class="dev-todo-list">
+                    <!-- Les tâches seront ajoutées ici dynamiquement -->
+                    <div class="dev-todo-empty" style="text-align: center; color: #6c757d; padding: 40px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #dee2e6;">
+                        <div style="font-size: 3em; margin-bottom: 10px;">📝</div>
+                        <h4 style="margin: 0 0 10px 0; color: #495057;">Aucune tâche pour le moment</h4>
+                        <p style="margin: 0;">Ajoutez votre première tâche de développement ci-dessus !</p>
+                    </div>
+                </div>
+
+                <div style="background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 6px; padding: 15px; margin-top: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #0056b3;">💡 Conseils pour les tâches</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #0056b3; font-size: 0.9em;">
+                        <li>Utilisez les priorités pour organiser votre travail</li>
+                        <li>Les tâches sont sauvegardées automatiquement dans le navigateur</li>
+                        <li>Cochez les tâches terminées pour les suivre</li>
+                        <li>Supprimez régulièrement les tâches terminées</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
             <div class="dev-section-content">
                 <div class="dev-tools-grid">
                     <button type="button" id="view_logs_js_btn" class="dev-tool-btn">
@@ -605,7 +804,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'debug_ajax': 'pdf_builder_debug_ajax',
             'debug_performance': 'pdf_builder_debug_performance',
             'debug_database': 'pdf_builder_debug_database',
-            'force_https': 'pdf_builder_force_https'
+            'force_https': 'pdf_builder_force_https',
+            'license_test_mode': 'pdf_builder_license_test_mode_enabled'
         };
 
         Object.entries(settingMap).forEach(([elementId, settingKey]) => {
@@ -639,7 +839,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // === GESTION DU MODE DÉVELOPPEUR ===
 
-    const developerToggle = document.getElementById('developer_enabled');
+    const devSections = ['debug-section', 'logs-section', 'tools-section'];
+    const licenseSection = document.getElementById('license-section');
     const devSections = ['debug-section', 'logs-section', 'tools-section'];
     const statusBanner = document.querySelector('.dev-status-banner');
     const quickEnableBtn = document.getElementById('dev-quick-enable');
@@ -786,7 +987,10 @@ document.addEventListener('DOMContentLoaded', function() {
         system_info_btn: { action: 'pdf_builder_system_info', confirm: false, desc: 'Afficher les informations système' },
         test_connections_btn: { action: 'pdf_builder_test_connections', confirm: false, desc: 'Tester les connexions' },
         reset_settings_btn: { action: 'pdf_builder_reset_dev_settings', confirm: 'Remettre à zéro tous les paramètres développeur ?', desc: 'Reset des paramètres' },
-        backup_config_btn: { action: 'pdf_builder_backup_config', confirm: false, desc: 'Créer une sauvegarde' }
+        backup_config_btn: { action: 'pdf_builder_backup_config', confirm: false, desc: 'Créer une sauvegarde' },
+        test_license_btn: { action: 'pdf_builder_test_license', confirm: false, desc: 'Tester la licence' },
+        validate_license_btn: { action: 'pdf_builder_validate_license', confirm: false, desc: 'Valider la licence' },
+        reset_license_btn: { action: 'pdf_builder_reset_license', confirm: 'Remettre à zéro les paramètres de licence ?', desc: 'Reset licence' }
     };
 
     Object.entries(tools).forEach(([btnId, config]) => {
@@ -985,31 +1189,206 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 4000);
     }
 
-    // === RACCOURCIS CLAVIER ===
+    // === GESTION DES TÂCHES TODO ===
+
+    const todoList = document.getElementById('todo-list');
+    const newTodoInput = document.getElementById('new-todo-input');
+    const todoPriority = document.getElementById('todo-priority');
+    const addTodoBtn = document.getElementById('add-todo-btn');
+    const filterButtons = document.querySelectorAll('.dev-filter-btn');
+    const clearCompletedBtn = document.getElementById('clear-completed-btn');
+    const todoEmpty = document.querySelector('.dev-todo-empty');
+
+    let todos = JSON.parse(localStorage.getItem('pdfBuilderDevTodos') || '[]');
+    let currentFilter = 'all';
+
+    function saveTodos() {
+        localStorage.setItem('pdfBuilderDevTodos', JSON.stringify(todos));
+    }
+
+    function renderTodos() {
+        const filteredTodos = todos.filter(todo => {
+            if (currentFilter === 'all') return true;
+            if (currentFilter === 'active') return !todo.completed;
+            if (currentFilter === 'completed') return todo.completed;
+            return true;
+        });
+
+        todoList.innerHTML = '';
+
+        if (filteredTodos.length === 0) {
+            todoEmpty.classList.remove('hidden');
+            return;
+        }
+
+        todoEmpty.classList.add('hidden');
+
+        filteredTodos.forEach((todo, index) => {
+            const todoElement = document.createElement('div');
+            todoElement.className = `dev-todo-item ${todo.completed ? 'completed' : ''}`;
+
+            const originalIndex = todos.findIndex(t => t.id === todo.id);
+
+            todoElement.innerHTML = `
+                <input type="checkbox" class="dev-todo-checkbox" ${todo.completed ? 'checked' : ''} data-index="${originalIndex}" />
+                <span class="dev-todo-priority ${todo.priority}">${getPriorityText(todo.priority)}</span>
+                <span class="dev-todo-text">${escapeHtml(todo.text)}</span>
+                <span class="dev-todo-date">${formatDate(todo.created)}</span>
+                <button class="dev-todo-delete" data-index="${originalIndex}" title="Supprimer">×</button>
+            `;
+
+            todoList.appendChild(todoElement);
+        });
+    }
+
+    function addTodo() {
+        const text = newTodoInput.value.trim();
+        if (!text) {
+            showNotification('Veuillez saisir un texte pour la tâche', 'error');
+            return;
+        }
+
+        const todo = {
+            id: Date.now(),
+            text: text,
+            priority: todoPriority.value,
+            completed: false,
+            created: new Date().toISOString()
+        };
+
+        todos.unshift(todo); // Ajouter au début
+        saveTodos();
+        renderTodos();
+
+        newTodoInput.value = '';
+        newTodoInput.focus();
+
+        showNotification('Tâche ajoutée avec succès', 'success');
+    }
+
+    function toggleTodo(index) {
+        todos[index].completed = !todos[index].completed;
+        saveTodos();
+        renderTodos();
+    }
+
+    function deleteTodo(index) {
+        if (confirm('Supprimer cette tâche ?')) {
+            todos.splice(index, 1);
+            saveTodos();
+            renderTodos();
+            showNotification('Tâche supprimée', 'info');
+        }
+    }
+
+    function clearCompleted() {
+        const completedCount = todos.filter(t => t.completed).length;
+        if (completedCount === 0) {
+            showNotification('Aucune tâche terminée à supprimer', 'info');
+            return;
+        }
+
+        if (confirm(`Supprimer ${completedCount} tâche(s) terminée(s) ?`)) {
+            todos = todos.filter(t => !t.completed);
+            saveTodos();
+            renderTodos();
+            showNotification(`${completedCount} tâche(s) supprimée(s)`, 'success');
+        }
+    }
+
+    function setFilter(filter) {
+        currentFilter = filter;
+        filterButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        renderTodos();
+    }
+
+    function getPriorityText(priority) {
+        const texts = {
+            low: 'Faible',
+            medium: 'Moyenne',
+            high: 'Haute',
+            urgent: 'Urgent'
+        };
+        return texts[priority] || priority;
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = now - date;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+        if (days === 0) {
+            return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        } else if (days === 1) {
+            return 'Hier';
+        } else if (days < 7) {
+            return `Il y a ${days} jours`;
+        } else {
+            return date.toLocaleDateString('fr-FR');
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Événements pour les tâches TODO
+    if (addTodoBtn) {
+        addTodoBtn.addEventListener('click', addTodo);
+    }
+
+    if (newTodoInput) {
+        newTodoInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+    }
+
+    if (clearCompletedBtn) {
+        clearCompletedBtn.addEventListener('click', clearCompleted);
+    }
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            setFilter(this.dataset.filter);
+        });
+    });
+
+    // Délégation d'événements pour les tâches dynamiques
+    todoList.addEventListener('click', function(e) {
+        const target = e.target;
+
+        if (target.classList.contains('dev-todo-checkbox')) {
+            const index = parseInt(target.dataset.index);
+            toggleTodo(index);
+        } else if (target.classList.contains('dev-todo-delete')) {
+            const index = parseInt(target.dataset.index);
+            deleteTodo(index);
+        }
+    });
+
+    // === RACCOURCIS CLAVIER POUR TODO ===
 
     document.addEventListener('keydown', function(e) {
-        // Ctrl+Shift+D : Toggle mode développeur
-        if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        // Ctrl+Shift+T : Focus sur l'input de nouvelle tâche
+        if (e.ctrlKey && e.shiftKey && e.key === 'T') {
             e.preventDefault();
-            if (developerToggle) {
-                developerToggle.checked = !developerToggle.checked;
-                updateDeveloperMode();
-                showNotification('Mode développeur ' + (developerToggle.checked ? 'activé' : 'désactivé'), 'info');
+            if (newTodoInput) {
+                newTodoInput.focus();
+                // Ouvrir la section TODO si elle est fermée
+                const todoSection = document.getElementById('todo-section');
+                if (todoSection && todoSection.classList.contains('collapsed')) {
+                    todoSection.classList.remove('collapsed');
+                    todoSection.querySelector('.dev-section-content').style.display = 'block';
+                    todoSection.querySelector('.dev-section-toggle').textContent = '▼';
+                }
             }
-        }
-
-        // Ctrl+Shift+L : Ouvrir les logs
-        if (e.ctrlKey && e.shiftKey && e.key === 'L') {
-            e.preventDefault();
-            const logsBtn = document.getElementById('view_logs_js_btn');
-            if (logsBtn) logsBtn.click();
-        }
-
-        // Ctrl+Shift+C : Vider le cache
-        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-            e.preventDefault();
-            const cacheBtn = document.getElementById('clear_cache_btn');
-            if (cacheBtn && !cacheBtn.disabled) cacheBtn.click();
         }
     });
 
@@ -1017,5 +1396,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('[DEV TAB] Onglet développeur initialisé avec succès');
     updateDeveloperMode(); // S'assurer que l'état initial est correct
+    renderTodos(); // Initialiser l'affichage des tâches TODO
 });
 </script>
