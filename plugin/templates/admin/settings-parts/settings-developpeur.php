@@ -494,167 +494,6 @@
             </div>
 
 
-        <!-- Section Debug -->
-        <div class="dev-section collapsed" id="debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-            <div class="dev-section-header" role="button" tabindex="0" aria-expanded="false">
-                <h3>🔍 Paramètres de Debug</h3>
-                <span class="dev-section-toggle">▶️</span>
-            </div>
-            <div class="dev-section-content" aria-hidden="true">
-                <div class="dev-grid">
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">⚠️</span>
-                            <h4 class="dev-card-title">Debug PHP</h4>
-                        </div>
-                        <p class="dev-card-description">Erreurs et avertissements PHP</p>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="debug_php_errors" name="pdf_builder_debug_php_errors" value="1"
-                                   <?php echo isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'] ? 'checked' : ''; ?> />
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">🔧</span>
-                            <h4 class="dev-card-title">Debug JavaScript</h4>
-                        </div>
-                        <p class="dev-card-description">Tous les logs JavaScript du navigateur</p>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="debug_javascript" name="pdf_builder_debug_javascript" value="1"
-                                   <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'checked' : ''; ?> />
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">🔄</span>
-                            <h4 class="dev-card-title">Debug AJAX</h4>
-                        </div>
-                        <p class="dev-card-description">Requêtes AJAX et réponses</p>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="debug_ajax" name="pdf_builder_debug_ajax" value="1"
-                                   <?php echo isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax'] ? 'checked' : ''; ?> />
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">⚡</span>
-                            <h4 class="dev-card-title">Performance</h4>
-                        </div>
-                        <p class="dev-card-description">Temps d'exécution et utilisation mémoire</p>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="debug_performance" name="pdf_builder_debug_performance" value="1"
-                                   <?php echo isset($settings['pdf_builder_debug_performance']) && $settings['pdf_builder_debug_performance'] ? 'checked' : ''; ?> />
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">🗄️</span>
-                            <h4 class="dev-card-title">Base de Données</h4>
-                        </div>
-                        <p class="dev-card-description">Requêtes SQL et optimisations</p>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="debug_database" name="pdf_builder_debug_database" value="1"
-                                   <?php echo isset($settings['pdf_builder_debug_database']) && $settings['pdf_builder_debug_database'] ? 'checked' : ''; ?> />
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">🔒</span>
-                            <h4 class="dev-card-title">Sécurité HTTPS</h4>
-                        </div>
-                        <p class="dev-card-description">Forcer les connexions sécurisées</p>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="force_https" name="pdf_builder_force_https" value="1"
-                                   <?php echo isset($settings['pdf_builder_force_https']) && $settings['pdf_builder_force_https'] ? 'checked' : ''; ?> />
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div style="background: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 6px; padding: 15px; margin-top: 20px;">
-                    <h4 style="margin: 0 0 10px 0; color: #0056b3;">💡 Conseils de Debug</h4>
-                    <ul style="margin: 0; padding-left: 20px; color: #0056b3; font-size: 0.9em;">
-                        <li>Activez uniquement les options nécessaires pour éviter la surcharge des logs</li>
-                        <li>Utilisez "Debug JavaScript" pour les problèmes côté client</li>
-                        <li>"Debug AJAX" est utile pour les problèmes de communication</li>
-                        <li>Vérifiez les logs dans la console du navigateur (F12)</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section Logs -->
-        <div class="dev-section collapsed" id="logs-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-            <div class="dev-section-header" role="button" tabindex="0" aria-expanded="false">
-                <h3>📝 Configuration des Logs</h3>
-                <span class="dev-section-toggle">▶️</span>
-            </div>
-            <div class="dev-section-content" aria-hidden="true">
-                <div class="dev-grid">
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">📊</span>
-                            <h4 class="dev-card-title">Niveau de Log</h4>
-                        </div>
-                        <p class="dev-card-description">Contrôle la verbosité des logs</p>
-                        <select id="log_level" name="pdf_builder_log_level" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                            <option value="0" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 0) ? 'selected' : ''; ?>>🚫 Aucun log</option>
-                            <option value="1" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 1) ? 'selected' : ''; ?>>❌ Erreurs uniquement</option>
-                            <option value="2" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 2) ? 'selected' : ''; ?>>⚠️ Erreurs + Avertissements</option>
-                            <option value="3" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 3) ? 'selected' : ''; ?>>ℹ️ Info complète</option>
-                            <option value="4" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 4) ? 'selected' : ''; ?>>🔍 Détails (Développement)</option>
-                        </select>
-                        <span class="dev-log-level-indicator level-<?php echo isset($settings['pdf_builder_log_level']) ? intval($settings['pdf_builder_log_level']) : '0'; ?>">
-                            Niveau <?php echo isset($settings['pdf_builder_log_level']) ? intval($settings['pdf_builder_log_level']) : '0'; ?>
-                        </span>
-                    </div>
-
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">📏</span>
-                            <h4 class="dev-card-title">Taille Maximum</h4>
-                        </div>
-                        <p class="dev-card-description">Taille limite des fichiers de log</p>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="number" id="log_file_size" name="pdf_builder_log_file_size"
-                                   value="<?php echo isset($settings['pdf_builder_log_file_size']) ? intval($settings['pdf_builder_log_file_size']) : '10'; ?>"
-                                   min="1" max="100" style="width: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
-                            <span>MB</span>
-                        </div>
-                        <p style="font-size: 0.8em; color: #6c757d; margin: 8px 0 0 0;">
-                            Rotation automatique au dépassement
-                        </p>
-                    </div>
-
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">⏰</span>
-                            <h4 class="dev-card-title">Retention</h4>
-                        </div>
-                        <p class="dev-card-description">Durée de conservation des logs</p>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="number" id="log_retention" name="pdf_builder_log_retention"
-                                   value="<?php echo isset($settings['pdf_builder_log_retention']) ? intval($settings['pdf_builder_log_retention']) : '30'; ?>"
-                                   min="1" max="365" style="width: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
-                            <span>jours</span>
-                        </div>
-                        <p style="font-size: 0.8em; color: #6c757d; margin: 8px 0 0 0;">
-                            Suppression automatique des anciens logs
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Section À Faire -->
         <div class="dev-section collapsed" id="todo-section">
@@ -796,12 +635,6 @@
         if (window.pdfBuilderSavedSettings) {
             const settingMap = {
                 'developer_enabled': 'pdf_builder_developer_enabled',
-                'debug_php_errors': 'pdf_builder_debug_php_errors',
-                'debug_javascript': 'pdf_builder_debug_javascript',
-                'debug_ajax': 'pdf_builder_debug_ajax',
-                'debug_performance': 'pdf_builder_debug_performance',
-                'debug_database': 'pdf_builder_debug_database',
-                'force_https': 'pdf_builder_force_https',
                 'license_test_mode': 'pdf_builder_license_test_mode_enabled'
             };
 
@@ -818,7 +651,7 @@
         // === GESTION DU MODE DÉVELOPPEUR ===
 
         const developerToggle = document.getElementById('developer_enabled');
-        const devSections = ['debug-section', 'logs-section', 'tools-section'];
+        const devSections = ['logs-section', 'tools-section'];
         const licenseSection = document.getElementById('license-section');
         const statusBanner = document.querySelector('.dev-status-banner');
         const quickEnableBtn = document.getElementById('dev-quick-enable');
@@ -1006,15 +839,6 @@
                 const devSettings = {};
                 const settingMap = {
                     'pdf_builder_developer_enabled': 'developer_enabled',
-                    'pdf_builder_debug_php_errors': 'debug_php_errors',
-                    'pdf_builder_debug_javascript': 'debug_javascript',
-                    'pdf_builder_debug_ajax': 'debug_ajax',
-                    'pdf_builder_debug_performance': 'debug_performance',
-                    'pdf_builder_debug_database': 'debug_database',
-                    'pdf_builder_force_https': 'force_https',
-                    'pdf_builder_log_level': 'log_level',
-                    'pdf_builder_log_file_size': 'log_file_size',
-                    'pdf_builder_log_retention': 'log_retention',
                     'pdf_builder_developer_password': 'developer_password'
                 };
 

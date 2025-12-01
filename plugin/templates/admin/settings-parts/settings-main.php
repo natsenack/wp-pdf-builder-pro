@@ -68,15 +68,6 @@ class PDF_Builder_Settings_Loader {
         // Développeur
         'pdf_builder_developer_enabled' => false,
         'pdf_builder_developer_password' => '',
-        'pdf_builder_debug_php_errors' => false,
-        'pdf_builder_debug_javascript' => false,
-        'pdf_builder_debug_ajax' => false,
-        'pdf_builder_debug_performance' => false,
-        'pdf_builder_debug_database' => false,
-        'pdf_builder_log_level' => 3,
-        'pdf_builder_log_file_size' => 10,
-        'pdf_builder_log_retention' => 30,
-        'pdf_builder_force_https' => false,
         'pdf_builder_performance_monitoring' => false,
 
         // Système
@@ -198,15 +189,7 @@ $all_settings = PDF_Builder_Settings_Loader::load_all_settings();
 $saved_settings = get_option('pdf_builder_settings', []);
 $default_settings = [
     'pdf_builder_developer_enabled' => false,
-    'pdf_builder_debug_php_errors' => false,
-    'pdf_builder_debug_javascript' => false,
-    'pdf_builder_debug_ajax' => false,
-    'pdf_builder_debug_performance' => false,
-    'pdf_builder_debug_database' => false,
-    'pdf_builder_log_level' => 3,
-    'pdf_builder_log_file_size' => 10,
-    'pdf_builder_log_retention' => 30,
-    'pdf_builder_force_https' => false,
+    'pdf_builder_developer_password' => '',
     'pdf_builder_license_test_mode_enabled' => false,
     // Ajouter d'autres valeurs par défaut si nécessaire
 ];
@@ -236,13 +219,13 @@ window.pdfBuilderCanvasSettings = {};
 
 // Paramètres de debug pour le JavaScript
 window.pdfBuilderDebugSettings = {
-    javascript: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_debug_javascript && window.pdfBuilderSavedSettings.pdf_builder_debug_javascript !== '0'),
-    javascript_verbose: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_debug_javascript && window.pdfBuilderSavedSettings.pdf_builder_debug_javascript !== '0'),
-    ajax: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_debug_ajax && window.pdfBuilderSavedSettings.pdf_builder_debug_ajax !== '0'),
-    performance: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_debug_performance && window.pdfBuilderSavedSettings.pdf_builder_debug_performance !== '0'),
-    settings_page: true,  // ACTIVÉ pour déboguer la persistance des onglets
+    javascript: false,
+    javascript_verbose: false,
+    ajax: false,
+    performance: false,
+    settings_page: false,  // DÉSACTIVÉ - section debug supprimée
     pdf_editor: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled !== '0'),
-    database: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_debug_database && window.pdfBuilderSavedSettings.pdf_builder_debug_database !== '0')
+    database: false
 };
 
 // Variables AJAX globales pour les requêtes AJAX
@@ -542,20 +525,17 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
                 'company_phone_manual', 'company_siret', 'company_vat', 'company_rcs', 'company_capital',
                 'pdf_quality', 'default_format', 'default_orientation', 'default_template',
                 'systeme_auto_backup_frequency', 'pdf_builder_developer_password',
-                'pdf_builder_log_level', 'memory_limit', 'debug_mode', 'max_template_size', 'max_execution_time'
+                'memory_limit', 'debug_mode', 'max_template_size', 'max_execution_time'
             ],
             // Integer fields
             'int_fields' => [
-                'cache_max_size', 'cache_ttl', 'systeme_backup_retention',
-                'pdf_builder_log_file_size', 'pdf_builder_log_retention'
+                'cache_max_size', 'cache_ttl', 'systeme_backup_retention'
             ],
             // Boolean/checkbox fields (value check)
             'bool_fields' => [
                 'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
                 'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
-                'pdf_builder_developer_enabled', 'pdf_builder_debug_php_errors', 'pdf_builder_debug_javascript',
-                'pdf_builder_debug_ajax', 'pdf_builder_debug_performance',
-                'pdf_builder_debug_database', 'pdf_builder_force_https', 'pdf_builder_license_test_mode_enabled'
+                'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled'
             ],
             // Array fields
             'array_fields' => ['order_status_templates']
@@ -610,15 +590,6 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
             'template_library_enabled' => true,
             'pdf_builder_developer_enabled' => false,
             'pdf_builder_developer_password' => '',
-            'pdf_builder_debug_php_errors' => false,
-            'pdf_builder_debug_javascript' => false,
-            'pdf_builder_debug_ajax' => false,
-            'pdf_builder_debug_performance' => false,
-            'pdf_builder_debug_database' => false,
-            'pdf_builder_log_level' => 'info',
-            'pdf_builder_log_file_size' => 10,
-            'pdf_builder_log_retention' => 30,
-            'pdf_builder_force_https' => false,
             'pdf_builder_license_test_mode_enabled' => false,
             'order_status_templates' => [],
             'debug_mode' => false,
@@ -726,15 +697,6 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
         // Developer settings
         update_option('pdf_builder_developer_enabled', (isset($_POST['pdf_builder_developer_enabled']) && $_POST['pdf_builder_developer_enabled'] == '1') ? 1 : 0);
         update_option('pdf_builder_developer_password', sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''));
-        update_option('pdf_builder_debug_php_errors', (isset($_POST['pdf_builder_debug_php_errors']) && $_POST['pdf_builder_debug_php_errors'] == '1') ? 1 : 0);
-        update_option('pdf_builder_debug_javascript', (isset($_POST['pdf_builder_debug_javascript']) && $_POST['pdf_builder_debug_javascript'] == '1') ? 1 : 0);
-        update_option('pdf_builder_debug_ajax', (isset($_POST['pdf_builder_debug_ajax']) && $_POST['pdf_builder_debug_ajax'] == '1') ? 1 : 0);
-        update_option('pdf_builder_debug_performance', (isset($_POST['pdf_builder_debug_performance']) && $_POST['pdf_builder_debug_performance'] == '1') ? 1 : 0);
-        update_option('pdf_builder_debug_database', (isset($_POST['pdf_builder_debug_database']) && $_POST['pdf_builder_debug_database'] == '1') ? 1 : 0);
-        update_option('pdf_builder_log_level', sanitize_text_field($_POST['pdf_builder_log_level'] ?? 'info'));
-        update_option('pdf_builder_log_file_size', intval($_POST['pdf_builder_log_file_size'] ?? 10));
-        update_option('pdf_builder_log_retention', intval($_POST['pdf_builder_log_retention'] ?? 30));
-        update_option('pdf_builder_force_https', (isset($_POST['pdf_builder_force_https']) && $_POST['pdf_builder_force_https'] == '1') ? 1 : 0);
 
         // License settings
         update_option('pdf_builder_license_test_mode_enabled', (isset($_POST['pdf_builder_license_test_mode_enabled']) && $_POST['pdf_builder_license_test_mode_enabled'] == '1') ? 1 : 0);
@@ -2309,12 +2271,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
 
             // Vérifier spécifiquement les toggles problématiques
             const criticalToggles = [
-                'pdf_builder_developer_enabled',
-                'pdf_builder_debug_php_errors',
-                'pdf_builder_debug_javascript',
-                'pdf_builder_debug_ajax',
-                'pdf_builder_debug_performance',
-                'pdf_builder_debug_database'
+                'pdf_builder_developer_enabled'
             ];
 
             console.log('[FLOATING SAVE] 🔍 VÉRIFICATION DES TOGGLES CRITIQUES:');
@@ -2397,38 +2354,13 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
 
                         console.log('[FLOATING SAVE] ✅ window.pdfBuilderSavedSettings mis à jour');
                         // Mettre à jour les paramètres de debug JS en conséquence
-                        window.pdfBuilderDebugSettings.javascript = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_javascript && window.pdfBuilderSavedSettings.pdf_builder_debug_javascript !== '0');
-                        window.pdfBuilderDebugSettings.javascript_verbose = window.pdfBuilderDebugSettings.javascript;
-                        window.pdfBuilderDebugSettings.ajax = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_ajax && window.pdfBuilderSavedSettings.pdf_builder_debug_ajax !== '0');
-                        window.pdfBuilderDebugSettings.performance = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_performance && window.pdfBuilderSavedSettings.pdf_builder_debug_performance !== '0');
-                        window.pdfBuilderDebugSettings.database = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_database && window.pdfBuilderSavedSettings.pdf_builder_debug_database !== '0');
+                        window.pdfBuilderDebugSettings.javascript = false;
+                        window.pdfBuilderDebugSettings.javascript_verbose = false;
+                        window.pdfBuilderDebugSettings.ajax = false;
+                        window.pdfBuilderDebugSettings.performance = false;
+                        window.pdfBuilderDebugSettings.database = false;
                         // Update form inputs to reflect saved state
                         try {
-                            // Update debug checkboxes
-                            if (typeof window.pdfBuilderSavedSettings.pdf_builder_debug_javascript !== 'undefined') {
-                                const debugJsCheckbox = document.getElementById('pdf_builder_debug_javascript');
-                                if (debugJsCheckbox) {
-                                    debugJsCheckbox.checked = window.pdfBuilderSavedSettings.pdf_builder_debug_javascript === '1' || window.pdfBuilderSavedSettings.pdf_builder_debug_javascript === 1;
-                                }
-                            }
-                            if (typeof window.pdfBuilderSavedSettings.pdf_builder_debug_ajax !== 'undefined') {
-                                const debugAjaxCheckbox = document.getElementById('pdf_builder_debug_ajax');
-                                if (debugAjaxCheckbox) {
-                                    debugAjaxCheckbox.checked = window.pdfBuilderSavedSettings.pdf_builder_debug_ajax === '1' || window.pdfBuilderSavedSettings.pdf_builder_debug_ajax === 1;
-                                }
-                            }
-                            if (typeof window.pdfBuilderSavedSettings.pdf_builder_debug_performance !== 'undefined') {
-                                const debugPerfCheckbox = document.getElementById('pdf_builder_debug_performance');
-                                if (debugPerfCheckbox) {
-                                    debugPerfCheckbox.checked = window.pdfBuilderSavedSettings.pdf_builder_debug_performance === '1' || window.pdfBuilderSavedSettings.pdf_builder_debug_performance === 1;
-                                }
-                            }
-                            if (typeof window.pdfBuilderSavedSettings.pdf_builder_debug_database !== 'undefined') {
-                                const debugDbCheckbox = document.getElementById('pdf_builder_debug_database');
-                                if (debugDbCheckbox) {
-                                    debugDbCheckbox.checked = window.pdfBuilderSavedSettings.pdf_builder_debug_database === '1' || window.pdfBuilderSavedSettings.pdf_builder_debug_database === 1;
-                                }
-                            }
                             // Update developer mode checkbox
                             if (typeof window.pdfBuilderSavedSettings.pdf_builder_developer_enabled !== 'undefined') {
                                 const devCheckbox = document.getElementById('developer_enabled');
@@ -2447,23 +2379,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                             console.warn('[FLOATING SAVE] ⚠️ Erreur lors du dispatch de l\'événement pdfBuilder:debugSettingsChanged', e);
                         }
 
-                        // If force_https was toggled on and current page is not HTTPS, reload via HTTPS to test redirect behavior
-                        try {
-                            const oldForce = oldSettings['pdf_builder_force_https'];
-                            const newForce = window.pdfBuilderSavedSettings['pdf_builder_force_https'];
-                            const isOldOn = oldForce === '1' || oldForce === 1 || oldForce === true || oldForce === 'true';
-                            const isNewOn = newForce === '1' || newForce === 1 || newForce === true || newForce === 'true';
-                            if (!isOldOn && isNewOn && window.location && window.location.protocol !== 'https:') {
-                                console.log('[FLOATING SAVE] 🌐 Force HTTPS activé — recharge via HTTPS');
-                                const host = window.location.host;
-                                const uri = window.location.pathname + window.location.search + window.location.hash;
-                                const redirectUrl = 'https://' + host + uri;
-                                // Use replace to avoid creating navigation history entry
-                                window.location.replace(redirectUrl);
-                            }
-                        } catch (e) {
-                            console.warn('[FLOATING SAVE] ⚠️ Erreur en testant la bascule de force_https', e);
-                        }
+
                     }
 
                     // Update previews after successful save

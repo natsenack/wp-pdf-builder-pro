@@ -38,9 +38,10 @@ class PDF_Builder_Logger {
     }
 
     private function init_settings() {
-        $this->log_level = intval(get_option('pdf_builder_log_level', self::LEVEL_INFO));
-        $this->max_file_size = intval(get_option('pdf_builder_log_file_size', 10)) * 1024 * 1024; // MB to bytes
-        $this->retention_days = intval(get_option('pdf_builder_log_retention', 30));
+        // Utiliser des valeurs par défaut fixes (paramètres de debug supprimés)
+        $this->log_level = self::LEVEL_INFO; // Niveau INFO par défaut
+        $this->max_file_size = 10 * 1024 * 1024; // 10 MB par défaut
+        $this->retention_days = 30; // 30 jours par défaut
 
         // Définir le chemin du fichier de log
         $upload_dir = wp_upload_dir();

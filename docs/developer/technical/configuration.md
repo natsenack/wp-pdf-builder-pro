@@ -36,9 +36,7 @@ define('PDF_BUILDER_DB_CHARSET', 'utf8mb4');
 define('PDF_BUILDER_DB_COLLATE', 'utf8mb4_unicode_ci');
 
 // === LOGGING ===
-define('PDF_BUILDER_LOG_LEVEL', 'INFO'); // DEBUG, INFO, WARNING, ERROR
-define('PDF_BUILDER_LOG_MAX_SIZE', '10MB');
-define('PDF_BUILDER_LOG_RETENTION', 30); // jours
+// Logging géré via les paramètres WordPress (voir interface d'administration)
 ```
 
 ### Configuration TCPDF

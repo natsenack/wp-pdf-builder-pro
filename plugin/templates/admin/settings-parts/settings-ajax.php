@@ -151,12 +151,6 @@ class PDF_Builder_Options_Manager {
      * Configuration des options et leurs validateurs
      */
     private static $option_configs = [
-        // Debug & Logging
-        'pdf_builder_debug_mode' => ['type' => 'boolean', 'sanitize' => 'intval'],
-        'pdf_builder_log_level' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
-        'pdf_builder_log_file_size' => ['type' => 'int', 'sanitize' => 'intval'],
-        'pdf_builder_log_retention' => ['type' => 'int', 'sanitize' => 'intval'],
-
         // Company Info
         'pdf_builder_company_phone_manual' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
         'pdf_builder_company_siret' => ['type' => 'string', 'sanitize' => 'sanitize_text_field'],
@@ -212,15 +206,6 @@ class PDF_Builder_Options_Manager {
         'pdf_builder_license_test_mode' => ['type' => 'boolean', 'sanitize' => 'intval'],
         'pdf_builder_debug_php_errors' => ['type' => 'boolean', 'sanitize' => 'intval'],
         'pdf_builder_debug_javascript' => ['type' => 'boolean', 'sanitize' => 'intval'],
-        'pdf_builder_debug_ajax' => ['type' => 'boolean', 'sanitize' => 'intval'],
-        'pdf_builder_debug_performance' => ['type' => 'boolean', 'sanitize' => 'intval'],
-        'pdf_builder_debug_database' => ['type' => 'boolean', 'sanitize' => 'intval'],
-        'pdf_builder_log_level' => ['type' => 'int', 'sanitize' => 'intval'],
-        'pdf_builder_log_file_size' => ['type' => 'int', 'sanitize' => 'intval'],
-        'pdf_builder_log_retention' => ['type' => 'int', 'sanitize' => 'intval'],
-        'pdf_builder_force_https' => ['type' => 'boolean', 'sanitize' => 'intval'],
-        'pdf_builder_performance_monitoring' => ['type' => 'boolean', 'sanitize' => 'intval'],
-
         // Canvas Settings
         'pdf_builder_canvas_width' => ['type' => 'int', 'sanitize' => 'intval'],
         'pdf_builder_canvas_height' => ['type' => 'int', 'sanitize' => 'intval'],

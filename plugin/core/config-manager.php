@@ -18,9 +18,6 @@ class PDF_Builder_Option_Config_Manager {
     private static $option_configs = [
         // Debug & Logging
         'pdf_builder_debug_mode' => ['type' => 'boolean', 'sanitize' => 'intval', 'default' => false],
-        'pdf_builder_log_level' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => 'info'],
-        'pdf_builder_log_file_size' => ['type' => 'int', 'sanitize' => 'intval', 'default' => 1024],
-        'pdf_builder_log_retention' => ['type' => 'int', 'sanitize' => 'intval', 'default' => 30],
 
         // Company Info
         'pdf_builder_company_phone_manual' => ['type' => 'string', 'sanitize' => 'sanitize_text_field', 'default' => ''],

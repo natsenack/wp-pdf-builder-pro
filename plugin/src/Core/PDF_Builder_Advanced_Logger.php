@@ -78,9 +78,9 @@ class PDF_Builder_Advanced_Logger {
     private function init_config() {
         $this->config = array(
             'enabled' => get_option('pdf_builder_enable_logging', '1') === '1',
-            'level' => intval(get_option('pdf_builder_log_level', self::LEVEL_INFO)),
-            'max_file_size' => intval(get_option('pdf_builder_log_file_size', 10)) * 1024 * 1024, // MB to bytes
-            'retention_days' => intval(get_option('pdf_builder_log_retention', 30)),
+            'level' => self::LEVEL_INFO,
+            'max_file_size' => 10 * 1024 * 1024, // 10 MB en bytes
+            'retention_days' => 30,
             'auto_rotate' => true,
             'include_backtrace' => get_option('pdf_builder_log_backtrace', '0') === '1',
             'remote_logging' => get_option('pdf_builder_remote_logging', '0') === '1',
