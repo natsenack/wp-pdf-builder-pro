@@ -2402,6 +2402,43 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         window.pdfBuilderDebugSettings.ajax = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_ajax && window.pdfBuilderSavedSettings.pdf_builder_debug_ajax !== '0');
                         window.pdfBuilderDebugSettings.performance = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_performance && window.pdfBuilderSavedSettings.pdf_builder_debug_performance !== '0');
                         window.pdfBuilderDebugSettings.database = !!(window.pdfBuilderSavedSettings.pdf_builder_debug_database && window.pdfBuilderSavedSettings.pdf_builder_debug_database !== '0');
+                        // Update form inputs to reflect saved state
+                        try {
+                            // Update debug checkboxes
+                            if (typeof window.pdfBuilderSavedSettings.pdf_builder_debug_javascript !== 'undefined') {
+                                const debugJsCheckbox = document.getElementById('pdf_builder_debug_javascript');
+                                if (debugJsCheckbox) {
+                                    debugJsCheckbox.checked = window.pdfBuilderSavedSettings.pdf_builder_debug_javascript === '1' || window.pdfBuilderSavedSettings.pdf_builder_debug_javascript === 1;
+                                }
+                            }
+                            if (typeof window.pdfBuilderSavedSettings.pdf_builder_debug_ajax !== 'undefined') {
+                                const debugAjaxCheckbox = document.getElementById('pdf_builder_debug_ajax');
+                                if (debugAjaxCheckbox) {
+                                    debugAjaxCheckbox.checked = window.pdfBuilderSavedSettings.pdf_builder_debug_ajax === '1' || window.pdfBuilderSavedSettings.pdf_builder_debug_ajax === 1;
+                                }
+                            }
+                            if (typeof window.pdfBuilderSavedSettings.pdf_builder_debug_performance !== 'undefined') {
+                                const debugPerfCheckbox = document.getElementById('pdf_builder_debug_performance');
+                                if (debugPerfCheckbox) {
+                                    debugPerfCheckbox.checked = window.pdfBuilderSavedSettings.pdf_builder_debug_performance === '1' || window.pdfBuilderSavedSettings.pdf_builder_debug_performance === 1;
+                                }
+                            }
+                            if (typeof window.pdfBuilderSavedSettings.pdf_builder_debug_database !== 'undefined') {
+                                const debugDbCheckbox = document.getElementById('pdf_builder_debug_database');
+                                if (debugDbCheckbox) {
+                                    debugDbCheckbox.checked = window.pdfBuilderSavedSettings.pdf_builder_debug_database === '1' || window.pdfBuilderSavedSettings.pdf_builder_debug_database === 1;
+                                }
+                            }
+                            // Update developer mode checkbox
+                            if (typeof window.pdfBuilderSavedSettings.pdf_builder_developer_enabled !== 'undefined') {
+                                const devCheckbox = document.getElementById('developer_enabled');
+                                if (devCheckbox) {
+                                    devCheckbox.checked = window.pdfBuilderSavedSettings.pdf_builder_developer_enabled === '1' || window.pdfBuilderSavedSettings.pdf_builder_developer_enabled === 1;
+                                }
+                            }
+                        } catch (e) {
+                            console.warn('[FLOATING SAVE] ⚠️ Erreur lors de la mise à jour des checkboxes:', e);
+                        }
                         // Dispatch a custom event so other scripts (React, utilities) can re-sync debug behavior
                         try {
                             var detail = window.pdfBuilderDebugSettings || {};
