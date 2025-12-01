@@ -68,6 +68,7 @@ class PDF_Builder_Settings_Loader {
         // Développeur
         'pdf_builder_developer_enabled' => false,
         'pdf_builder_developer_password' => '',
+        'pdf_builder_canvas_debug_enabled' => false,
         'pdf_builder_performance_monitoring' => false,
 
         // Système
@@ -535,7 +536,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
             'bool_fields' => [
                 'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
                 'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
-                'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled'
+                'pdf_builder_developer_enabled', 'pdf_builder_canvas_debug_enabled', 'pdf_builder_license_test_mode_enabled'
             ],
             // Array fields
             'array_fields' => ['order_status_templates']
@@ -590,6 +591,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
             'template_library_enabled' => true,
             'pdf_builder_developer_enabled' => false,
             'pdf_builder_developer_password' => '',
+            'pdf_builder_canvas_debug_enabled' => false,
             'pdf_builder_license_test_mode_enabled' => false,
             'order_status_templates' => [],
             'debug_mode' => false,
@@ -697,6 +699,7 @@ if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || 
         // Developer settings
         update_option('pdf_builder_developer_enabled', (isset($_POST['pdf_builder_developer_enabled']) && $_POST['pdf_builder_developer_enabled'] == '1') ? 1 : 0);
         update_option('pdf_builder_developer_password', sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''));
+        update_option('pdf_builder_canvas_debug_enabled', (isset($_POST['pdf_builder_canvas_debug_enabled']) && $_POST['pdf_builder_canvas_debug_enabled'] == '1') ? 1 : 0);
 
         // License settings
         update_option('pdf_builder_license_test_mode_enabled', (isset($_POST['pdf_builder_license_test_mode_enabled']) && $_POST['pdf_builder_license_test_mode_enabled'] == '1') ? 1 : 0);
