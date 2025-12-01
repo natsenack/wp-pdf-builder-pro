@@ -2457,15 +2457,15 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         window.updateDeveloperSections();
                     }
 
-                    // Re-sync checkboxes after settings update
-                    console.log('[FLOATING SAVE] 🔄 Re-synchronisation des checkboxes...');
+                    // Re-sync toggles after settings update using the centralized system
+                    console.log('[FLOATING SAVE] 🔄 Re-synchronisation des toggles développeur...');
                     // Add a longer delay to ensure all scripts are loaded and settings are updated
                     setTimeout(function() {
-                        if (typeof window.syncCheckboxesWithSavedSettings === 'function') {
-                            window.syncCheckboxesWithSavedSettings();
-                            console.log('[FLOATING SAVE] ✅ Synchronisation des checkboxes terminée');
+                        if (window.pdfBuilderDeveloperToggles && typeof window.pdfBuilderDeveloperToggles.forceSync === 'function') {
+                            window.pdfBuilderDeveloperToggles.forceSync();
+                            console.log('[FLOATING SAVE] ✅ Synchronisation des toggles terminée');
                         } else {
-                            console.warn('[FLOATING SAVE] ⚠️ Fonction syncCheckboxesWithSavedSettings non disponible');
+                            console.warn('[FLOATING SAVE] ⚠️ Gestionnaire de toggles développeur non disponible');
                         }
                     }, 500);
 

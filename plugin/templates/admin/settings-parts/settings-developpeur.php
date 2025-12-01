@@ -1870,9 +1870,6 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
     window.showWarningNotification = window.simpleNotificationSystem.warning;
     window.showInfoNotification = window.simpleNotificationSystem.info;
 
-    // Add section to dev sections array for toggle
-    devSections.push('dev-notifications-test-section');
-
     // Initial log
     logToConsole('info', 'Notification test system initialized');
     addNotificationLog('[INIT] Système de test des notifications initialisé', 'system');
