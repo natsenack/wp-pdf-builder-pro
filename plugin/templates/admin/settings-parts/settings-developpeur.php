@@ -775,7 +775,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction pour synchroniser l'état des checkboxes avec les valeurs sauvegardées
     function syncCheckboxesWithSavedSettings() {
-        if (!window.pdfBuilderSavedSettings) return;
+        console.log('🔧 [SYNC] Début de syncCheckboxesWithSavedSettings');
+        console.log('🔧 [SYNC] window.pdfBuilderSavedSettings existe:', !!window.pdfBuilderSavedSettings);
+
+        if (!window.pdfBuilderSavedSettings) {
+            console.warn('🔧 [SYNC] window.pdfBuilderSavedSettings non disponible');
+            return;
+        }
+
+        console.log('🔧 [SYNC] Contenu de window.pdfBuilderSavedSettings:', window.pdfBuilderSavedSettings);
 
         // Liste des checkboxes à synchroniser avec leurs IDs correspondants
         const checkboxMapping = {
@@ -798,25 +806,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 const savedValue = window.pdfBuilderSavedSettings[key];
                 const shouldBeChecked = savedValue && savedValue !== '0' && savedValue !== 0;
                 checkbox.checked = shouldBeChecked;
-                if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.log(`🔧 [SYNC] ${key} -> ${checkboxId}: ${shouldBeChecked} (saved: ${savedValue})`);
-                }
+                console.log(`🔧 [SYNC] ${key} -> ${checkboxId}: ${shouldBeChecked} (saved: ${savedValue}, type: ${typeof savedValue})`);
             } else {
-                if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.warn(`🔧 [SYNC] Checkbox ${checkboxId} not found for key ${key}`);
-                }
+                console.warn(`🔧 [SYNC] Checkbox ${checkboxId} not found for key ${key}`);
             }
         });
+
+        console.log('🔧 [SYNC] Fin de syncCheckboxesWithSavedSettings');
     }
 
     // Synchroniser les checkboxes au chargement (avec délai pour s'assurer que window.pdfBuilderSavedSettings est disponible)
     function initializeCheckboxSync() {
+        console.log('🔧 [INIT SYNC] initializeCheckboxSync appelée');
+        console.log('🔧 [INIT SYNC] window.pdfBuilderSavedSettings existe au départ:', !!window.pdfBuilderSavedSettings);
+
         if (window.pdfBuilderSavedSettings) {
+            console.log('🔧 [INIT SYNC] window.pdfBuilderSavedSettings disponible immédiatement');
             syncCheckboxesWithSavedSettings();
         } else {
+            console.log('🔧 [INIT SYNC] window.pdfBuilderSavedSettings pas encore disponible, attente...');
             // Attendre que window.pdfBuilderSavedSettings soit disponible
             const checkInterval = setInterval(() => {
+                console.log('🔧 [INIT SYNC] Vérification périodique - window.pdfBuilderSavedSettings existe:', !!window.pdfBuilderSavedSettings);
                 if (window.pdfBuilderSavedSettings) {
+                    console.log('🔧 [INIT SYNC] window.pdfBuilderSavedSettings maintenant disponible !');
                     clearInterval(checkInterval);
                     syncCheckboxesWithSavedSettings();
                 }
@@ -824,10 +837,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Timeout après 5 secondes pour éviter une boucle infinie
             setTimeout(() => {
+                console.log('🔧 [INIT SYNC] Timeout atteint - arrêt de l\'attente');
                 clearInterval(checkInterval);
-                if (window.pdfBuilderDebugSettings?.javascript) {
-                    console.warn('🔧 [SYNC] Timeout: window.pdfBuilderSavedSettings non disponible après 5 secondes');
-                }
+                console.warn('🔧 [INIT SYNC] Timeout: window.pdfBuilderSavedSettings non disponible après 5 secondes');
             }, 5000);
         }
     }
