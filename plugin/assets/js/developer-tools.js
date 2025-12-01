@@ -43,6 +43,7 @@
             $(document).on('click', '#license_modal_close_btn', (e) => this.handleCloseLicenseModal(e));
             $(document).on('click', '#copy_license_key_btn', (e) => this.handleCopyLicenseKey(e));
             $(document).on('click', '#delete_license_key_btn', (e) => this.handleDeleteTestKey(e));
+            $(document).on('click', '#license_modal_delete_btn', (e) => this.handleDeleteTestKey(e));
             $(document).on('click', '#cleanup_license_btn', (e) => this.handleCleanupLicense(e));
 
             // === OUTILS DE DÉVELOPPEMENT ===
@@ -227,7 +228,7 @@
             this.makeAjaxCall('pdf_builder_generate_test_license_key', {
                 action: 'pdf_builder_generate_test_license_key'
             }, (response) => {
-                const newKey = response.data?.key || '';
+                const newKey = response.data?.key || response.data?.license_key || '';
                 $('#license_test_key').val(newKey);
                 // Keep global saved settings in sync if present
                 if (window.pdfBuilderSavedSettings) {
@@ -373,6 +374,10 @@
                     window.pdfBuilderSavedSettings.pdf_builder_license_test_mode_enabled = '0';
                 }
                 $('#delete_license_key_btn').hide();
+                // If called from the modal, hide it as well
+                if ($('#license_key_modal').is(':visible')) {
+                    $('#license_key_modal').hide();
+                }
                 this.showSuccess(response.data?.message || 'Clé de test supprimée');
             }, (error) => {
                 $('#license_key_status').text('❌ ' + (error.data?.message || 'Erreur lors de la suppression')).css('color', '#dc3545');

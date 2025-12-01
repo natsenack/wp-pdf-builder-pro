@@ -436,6 +436,7 @@
                                     <div style="display:flex; gap:10px; margin-top:12px;">
                                         <button type="button" id="license_modal_validate_btn" class="button button-primary">✅ Valider</button>
                                         <button type="button" id="license_modal_save_btn" class="button button-secondary">💾 Enregistrer</button>
+                                        <button type="button" id="license_modal_delete_btn" class="button button-danger" style="background-color:#dc3545;color:white;border-color:#dc3545;">🗑️ Supprimer la clé</button>
                                         <button type="button" id="license_modal_close_btn" class="button">Fermer</button>
                                     </div>
                                     <div id="license_modal_message" style="margin-top:10px; color:#666;"></div>
