@@ -217,7 +217,7 @@ $default_orientation = $preview_data['default_orientation'];
 ?>
 <script>
 // Données centralisées chargées depuis la base de données
-window.pdfBuilderSavedSettings = {};
+window.pdfBuilderSavedSettings = <?php echo json_encode($all_settings); ?>;
 window.pdfBuilderCanvasSettings = {};
 
 // Paramètres de debug pour le JavaScript

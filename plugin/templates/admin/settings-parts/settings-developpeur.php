@@ -724,12 +724,39 @@ document.addEventListener('DOMContentLoaded', function() {
         debugSettingsPageRow: !!debugSettingsPageRow
     });
 
-    // Debug: Vérifier les valeurs sauvegardées
-    console.log('🔧 [DEBUG] Valeurs sauvegardées:', {
-        debug_javascript: window.pdfBuilderSavedSettings?.pdf_builder_debug_javascript || 'NOT_SET',
-        debug_pdf_editor: window.pdfBuilderSavedSettings?.pdf_builder_debug_pdf_editor || 'NOT_SET',
-        debug_settings_page: window.pdfBuilderSavedSettings?.pdf_builder_debug_settings_page || 'NOT_SET'
-    });
+    // Fonction pour synchroniser l'état des checkboxes avec les valeurs sauvegardées
+    function syncCheckboxesWithSavedSettings() {
+        if (!window.pdfBuilderSavedSettings) return;
+
+        // Liste des checkboxes à synchroniser
+        const checkboxesToSync = [
+            'pdf_builder_developer_enabled',
+            'pdf_builder_debug_php_errors',
+            'pdf_builder_debug_javascript',
+            'pdf_builder_debug_javascript_verbose',
+            'pdf_builder_debug_ajax',
+            'pdf_builder_debug_pdf_editor',
+            'pdf_builder_debug_settings_page',
+            'pdf_builder_debug_performance',
+            'pdf_builder_debug_database',
+            'pdf_builder_performance_monitoring'
+        ];
+
+        checkboxesToSync.forEach(key => {
+            const checkbox = document.getElementById(key.replace('pdf_builder_', '').replace(/_([a-z])/g, (match, letter) => letter.toUpperCase()));
+            if (checkbox) {
+                const savedValue = window.pdfBuilderSavedSettings[key];
+                const shouldBeChecked = savedValue && savedValue !== '0' && savedValue !== 0;
+                checkbox.checked = shouldBeChecked;
+                if (window.pdfBuilderDebugSettings?.javascript) {
+                    console.log(`🔧 [SYNC] ${key}: ${shouldBeChecked} (saved: ${savedValue})`);
+                }
+            }
+        });
+    }
+
+    // Synchroniser les checkboxes au chargement
+    syncCheckboxesWithSavedSettings();
 
     // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
     function updatePdfEditorToggleVisibility() {
