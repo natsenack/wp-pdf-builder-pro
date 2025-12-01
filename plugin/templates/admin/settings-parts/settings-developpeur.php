@@ -1,6 +1,27 @@
 <?php
 // Quick fix for developer mode toggle
 
+// AJAX handler pour paramètres développeur - placé AU DÉBUT pour être exécuté
+add_action('wp_ajax_save_dev_settings', 'pdf_builder_save_dev_settings');
+
+function pdf_builder_save_dev_settings() {
+    // Vérification sécurité
+    if (!wp_verify_nonce($_POST['_wpnonce'] ?? '', 'pdf_builder_settings')) {
+        wp_send_json_error(['message' => 'Nonce invalide']);
+        return;
+    }
+
+    // Sauvegarde options individuelles
+    update_option('pdf_builder_dev_mode', sanitize_text_field($_POST['pdf_builder_developer_enabled'] ?? '0'));
+    update_option('pdf_builder_dev_canvas_debug', sanitize_text_field($_POST['pdf_builder_canvas_debug_enabled'] ?? '0'));
+    update_option('pdf_builder_dev_password', sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''));
+
+    wp_send_json_success([
+        'message' => 'Paramètres développeur sauvegardés',
+        'developer_enabled' => get_option('pdf_builder_dev_mode', '0')
+    ]);
+}
+
 // Variables - Récupération des paramètres développeur (méthode simplifiée et fiable)
 $settings = [
     'pdf_builder_developer_enabled' => get_option('pdf_builder_dev_mode', '0'),
@@ -530,29 +551,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-
-<?php
-// AJAX handler pour la sauvegarde des paramètres développeur
-add_action('wp_ajax_save_dev_settings', 'pdf_builder_save_dev_settings');
-
-function pdf_builder_save_dev_settings() {
-    // Vérification de sécurité
-    if (!wp_verify_nonce($_POST['_wpnonce'] ?? '', 'pdf_builder_settings')) {
-        wp_die('Sécurité: Nonce invalide');
-    }
-
-    // Sauvegarde des paramètres individuels
-    $developer_enabled = sanitize_text_field($_POST['pdf_builder_developer_enabled'] ?? '0');
-    $canvas_debug_enabled = sanitize_text_field($_POST['pdf_builder_canvas_debug_enabled'] ?? '0');
-    $developer_password = sanitize_text_field($_POST['pdf_builder_developer_password'] ?? '');
-
-    update_option('pdf_builder_dev_mode', $developer_enabled);
-    update_option('pdf_builder_dev_canvas_debug', $canvas_debug_enabled);
-    update_option('pdf_builder_dev_password', $developer_password);
-
-    wp_send_json_success([
-        'message' => 'Paramètres développeur sauvegardés avec succès',
-        'developer_enabled' => $developer_enabled,
-        'canvas_debug_enabled' => $canvas_debug_enabled
-    ]);
-}
