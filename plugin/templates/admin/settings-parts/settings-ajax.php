@@ -1278,6 +1278,15 @@ function pdf_builder_save_all_settings_handler() {
                 $saved_options[$field] = get_option('pdf_builder_' . $field, 0) ? '1' : '0';
             }
 
+            // IMPORTANT: Sauvegarder aussi dans l'option principale pour la persistance après rechargement
+            $main_settings = [];
+            foreach ($saved_options as $key => $value) {
+                $main_key = strpos($key, 'pdf_builder_') === 0 ? str_replace('pdf_builder_', '', $key) : $key;
+                $main_settings[$main_key] = $value;
+            }
+            update_option('pdf_builder_settings', $main_settings);
+            error_log('PDF Builder SAVE ALL - Main settings updated with ' . count($main_settings) . ' fields');
+
             error_log('PDF Builder SAVE ALL - Final saved_options count: ' . count($saved_options));
             error_log('PDF Builder SAVE ALL - Sample saved_options keys: ' . implode(', ', array_slice(array_keys($saved_options), 0, 5)));
             error_log('PDF Builder SAVE ALL - Critical developer fields: ' . json_encode([
