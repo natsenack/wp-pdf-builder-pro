@@ -74,17 +74,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                                 <span class="toggle-slider"></span>
                             </label>
                             <span style="margin-left: 10px;">🔧 Debug JS</span>
-                            <div style="font-size: 11px; color: #999; margin-top: 5px;">Logs JavaScript</div>
-                        </div>
-
-                        <!-- Debug JavaScript Verbose -->
-                        <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
-                            <label class="toggle-switch" style="margin: 0;">
-                                <input type="checkbox" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="1" <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span style="margin-left: 10px;">📝 JS Verbeux</span>
-                            <div style="font-size: 11px; color: #999; margin-top: 5px;">Logs ultra-détaillés</div>
+                            <div style="font-size: 11px; color: #999; margin-top: 5px;">Tous les logs JavaScript</div>
                         </div>
 
                         <!-- Debug AJAX -->
@@ -171,6 +161,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
     <div id="dev-tools-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
     <h3 class="section-title">🛠️ Outils de Développement</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+        <button type="button" id="view_logs_js_btn" class="button button-secondary">📄 Logs JS</button>
         <button type="button" id="clear_cache_btn" class="button button-secondary">🔄 Vider Cache</button>
         <button type="button" id="clear_temp_btn" class="button button-secondary">🗑️ Vider Temp</button>
         <button type="button" id="clear_logs_btn" class="button button-secondary">📋 Vider Logs</button>
@@ -244,9 +235,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Boutons outils
+    const viewLogsJsBtn = document.getElementById('view_logs_js_btn');
     const clearCacheBtn = document.getElementById('clear_cache_btn');
     const clearTempBtn = document.getElementById('clear_temp_btn');
     const clearLogsBtn = document.getElementById('clear_logs_btn');
+
+    if (viewLogsJsBtn) {
+        viewLogsJsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open(window.pdfBuilderLogsUrl || '/wp-content/plugins/pdf-builder-pro/logs/', '_blank');
+        });
+    }
 
     if (clearCacheBtn) {
         clearCacheBtn.addEventListener('click', function(e) {
