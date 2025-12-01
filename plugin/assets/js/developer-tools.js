@@ -33,6 +33,8 @@
 
             // === TESTS DE LICENCE ===
             $(document).on('click', '#toggle_license_test_mode_btn', (e) => this.handleToggleLicenseTestMode(e));
+            // Ensure checkbox change also triggers AJAX toggle
+            $(document).on('change', '#license_test_mode', (e) => this.testToggleLicenseMode(false));
             $(document).on('click', '#generate_license_key_btn', (e) => this.handleGenerateTestKey(e));
             $(document).on('click', '#copy_license_key_btn', (e) => this.handleCopyLicenseKey(e));
             $(document).on('click', '#delete_license_key_btn', (e) => this.handleDeleteTestKey(e));
@@ -79,6 +81,25 @@
 
             if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('🔧 [MODE DÉVELOPPEUR] Initialisation terminée - État:', developerEnabled ? 'ACTIF' : 'INACTIF');
+            }
+
+            // Initialize license test key display
+            if (window.pdfBuilderSavedSettings) {
+                const savedKey = window.pdfBuilderSavedSettings.pdf_builder_license_test_key || '';
+                const savedExpires = window.pdfBuilderSavedSettings.pdf_builder_license_test_key_expires || '';
+                if (savedKey) {
+                    const masked = savedKey.substr(0,6) + '••••••••••••••••' + savedKey.substr(-6);
+                    $('#license_test_key_display').text(masked);
+                    $('#license_test_key').val(savedKey);
+                    $('#delete_license_key_btn').show();
+                    if (savedExpires) {
+                        $('#license_key_expires').text('Expire le: ' + savedExpires);
+                    }
+                } else {
+                    $('#license_key_status').text('');
+                    $('#license_test_key_display').text('');
+                    $('#delete_license_key_btn').hide();
+                }
             }
         }
 
@@ -155,17 +176,23 @@
         // === TESTS DE LICENCE ===
         handleToggleLicenseTestMode(e) {
             e.preventDefault();
-            this.testToggleLicenseMode();
+            this.testToggleLicenseMode(true);
         }
 
-        testToggleLicenseMode() {
+        testToggleLicenseMode(forceToggle = true) {
             const checkbox = $('#license_test_mode');
             const status = $('#license_test_mode_status');
             const isChecked = checkbox.is(':checked');
 
-            // Update UI immediately
-            checkbox.prop('checked', !isChecked);
-            const newState = !isChecked;
+            let newState;
+            if (forceToggle) {
+                // Force toggle if requested (i.e., from a button click)
+                checkbox.prop('checked', !isChecked);
+                newState = !isChecked;
+            } else {
+                // Use the current checkbox state (i.e., user clicked the checkbox directly)
+                newState = checkbox.is(':checked');
+            }
 
             status.html(newState ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif')
                   .css({
@@ -195,12 +222,33 @@
             this.makeAjaxCall('pdf_builder_generate_test_license_key', {
                 action: 'pdf_builder_generate_test_license_key'
             }, (response) => {
-                $('#license_test_key').val(response.data.license_key);
+                const newKey = response.data?.key || '';
+                $('#license_test_key').val(newKey);
+                // Keep global saved settings in sync if present
+                if (window.pdfBuilderSavedSettings) {
+                    window.pdfBuilderSavedSettings.pdf_builder_license_test_key = newKey;
+                    if (response.data?.expires) {
+                        window.pdfBuilderSavedSettings.pdf_builder_license_test_key_expires = response.data.expires;
+                    }
+                }
+                if (newKey) {
+                    const masked = newKey.substr(0,6) + '••••••••••••••••' + newKey.substr(-6);
+                    $('#license_test_key_display').text(masked);
+                    $('#delete_license_key_btn').show();
+                }
+                if (response.data?.expires) {
+                    $('#license_key_expires').text('Expire le: ' + response.data.expires);
+                }
                 $('#license_key_status').text('✅ Clé générée avec succès').css('color', '#28a745');
-                $('#delete_license_key_btn').show();
-                this.showSuccess('Clé de test générée avec succès');
+                // Ensure test mode checkbox is updated
+                $('#license_test_mode').prop('checked', true);
+                $('#license_test_mode_status').html('✅ MODE TEST ACTIF').css({ 'background': '#d4edda', 'color': '#155724' });
+                if (window.pdfBuilderSavedSettings) {
+                    window.pdfBuilderSavedSettings.pdf_builder_license_test_mode_enabled = '1';
+                }
+                this.showSuccess(response.data?.message || 'Clé de test générée avec succès');
             }, (error) => {
-                $('#license_key_status').text('❌ ' + error.data?.message || 'Erreur lors de la génération').css('color', '#dc3545');
+                $('#license_key_status').text('❌ ' + (error.data?.message || 'Erreur lors de la génération')).css('color', '#dc3545');
             });
         }
 
@@ -227,11 +275,23 @@
                 action: 'pdf_builder_delete_test_license_key'
             }, (response) => {
                 $('#license_test_key').val('');
+                if (window.pdfBuilderSavedSettings) {
+                    window.pdfBuilderSavedSettings.pdf_builder_license_test_key = '';
+                    window.pdfBuilderSavedSettings.pdf_builder_license_test_key_expires = '';
+                }
+                $('#license_test_key_display').text('');
+                $('#license_key_expires').text('');
                 $('#license_key_status').text('🗑️ Clé supprimée').css('color', '#28a745');
+                // Ensure test mode is off when key is deleted
+                $('#license_test_mode').prop('checked', false);
+                $('#license_test_mode_status').html('❌ Mode test inactif').css({ 'background': '#f8d7da', 'color': '#721c24' });
+                if (window.pdfBuilderSavedSettings) {
+                    window.pdfBuilderSavedSettings.pdf_builder_license_test_mode_enabled = '0';
+                }
                 $('#delete_license_key_btn').hide();
-                this.showSuccess('Clé de test supprimée');
+                this.showSuccess(response.data?.message || 'Clé de test supprimée');
             }, (error) => {
-                $('#license_key_status').text('❌ ' + error.data?.message || 'Erreur lors de la suppression').css('color', '#dc3545');
+                $('#license_key_status').text('❌ ' + (error.data?.message || 'Erreur lors de la suppression')).css('color', '#dc3545');
             });
         }
 

@@ -4,16 +4,7 @@
  */
 
 import { debugWarn, debugError } from './debug';
-
-export interface Element {
-  [key: string]: unknown;
-  id: string;
-  type: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+import type { Element } from '../types/elements';
 
 /**
  * FONCTION CRITIQUE: Normalise les éléments sans perdre AUCUNE propriété personnalisée

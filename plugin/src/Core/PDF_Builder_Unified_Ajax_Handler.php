@@ -245,6 +245,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
                     // Licence
                     'license_test_mode' => get_option('pdf_builder_license_test_mode_enabled', '0'),
+                    'pdf_builder_license_test_key_expires' => get_option('pdf_builder_license_test_key_expires', ''),
                 ];
                 break;
 
@@ -281,6 +282,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'pdf_builder_force_https' => get_option('pdf_builder_force_https', '0'),
                     'pdf_builder_performance_monitoring' => get_option('pdf_builder_performance_monitoring', '0'),
                     'pdf_builder_license_test_mode_enabled' => get_option('pdf_builder_license_test_mode_enabled', '0'),
+                    'pdf_builder_license_test_key_expires' => get_option('pdf_builder_license_test_key_expires', ''),
                 ];
                 break;
 
@@ -735,6 +737,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             'pdf_builder_log_file_size' => intval($_POST['log_file_size'] ?? 10),
             'pdf_builder_log_retention' => intval($_POST['log_retention'] ?? 30),
             'pdf_builder_license_test_mode_enabled' => isset($_POST['license_test_mode']) ? '1' : '0',
+            'pdf_builder_license_test_key' => sanitize_text_field($_POST['pdf_builder_license_test_key'] ?? ''),
             'pdf_builder_force_https' => isset($_POST['force_https']) ? '1' : '0',
         ];
 
@@ -1116,13 +1119,17 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
-             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
-             update_option('pdf_builder_license_test_key', $test_key);
+            $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
+            update_option('pdf_builder_license_test_key', $test_key);
+            // set an expiry date (30 days)
+            $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
+            update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
 
-             wp_send_json_success([
-                 'message' => 'Clé de test générée avec succès.',
-                 'license_key' => $test_key
-             ]);
+            wp_send_json_success([
+                'message' => 'Clé de test générée avec succès.',
+                'license_key' => $test_key,
+                'expires' => $expires_in_30_days
+            ]);
 
          } catch (Exception $e) {
              error_log('[PDF Builder AJAX] Erreur génération clé test: ' . $e->getMessage());
@@ -1139,7 +1146,9 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
-             delete_option('pdf_builder_license_test_key');
+            delete_option('pdf_builder_license_test_key');
+            delete_option('pdf_builder_license_test_key_expires');
+            update_option('pdf_builder_license_test_mode_enabled', '0');
 
              wp_send_json_success([
                  'message' => 'Clé de test supprimée avec succès.'

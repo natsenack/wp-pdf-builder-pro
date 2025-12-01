@@ -197,9 +197,10 @@ class LicenseTestHandler
             update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
             
 
-            // Retourner la clé générée
+            // Retourner la clé générée (compatibilité: key + license_key)
             wp_send_json_success([
                 'key' => $new_key,
+                'license_key' => $new_key,
                 'expires' => $expires_in_30_days,
                 'message' => 'Clé de test générée avec succès (expire dans 30 jours)'
             ]);
@@ -347,8 +348,10 @@ class LicenseTestHandler
         }
 
         try {
-            // Supprimer la clé de test
+            // Supprimer la clé de test et l'expiration / désactiver le mode test
             delete_option('pdf_builder_license_test_key');
+            delete_option('pdf_builder_license_test_key_expires');
+            update_option('pdf_builder_license_test_mode_enabled', false);
 
             // Retourner la confirmation
             wp_send_json_success([

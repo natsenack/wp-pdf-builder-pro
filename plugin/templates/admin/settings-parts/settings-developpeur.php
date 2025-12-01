@@ -1,6 +1,7 @@
 <?php // Developer Settings Tab - Enhanced Version
     $license_test_mode = (isset($settings) && isset($settings['pdf_builder_license_test_mode_enabled'])) ? $settings['pdf_builder_license_test_mode_enabled'] : false;
     $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_test_key'])) ? $settings['pdf_builder_license_test_key'] : '';
+    $license_test_key_expires = (isset($settings) && isset($settings['pdf_builder_license_test_key_expires'])) ? $settings['pdf_builder_license_test_key_expires'] : '';
 ?>
 
 <style>
@@ -400,6 +401,7 @@
                                 <input type="checkbox" id="license_test_mode" name="pdf_builder_license_test_mode_enabled" value="1" <?php echo $license_test_mode ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
+                            <span id="license_test_mode_status" style="margin-left: 10px; font-weight: 600; color: <?php echo $license_test_mode ? '#155724' : '#721c24'; ?>; background: <?php echo $license_test_mode ? '#d4edda' : '#f8d7da'; ?>; padding: 3px 8px; border-radius: 6px;"><?php echo $license_test_mode ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif'; ?></span>
                             <span class="toggle-label">Activer le mode test de licence</span>
                             <p class="description">Active le mode de test pour les licences (développement uniquement)</p>
                         </td>
@@ -407,10 +409,22 @@
                     <tr>
                         <th scope="row"><label for="license_test_key">Clé de Licence Test</label></th>
                         <td>
-                            <input type="text" id="license_test_key" name="pdf_builder_license_test_key"
-                                   value="<?php echo esc_attr($license_test_key); ?>"
-                                   class="regular-text" placeholder="Laisser vide pour utiliser la clé par défaut" />
-                            <p class="description">Clé de licence utilisée en mode test</p>
+                            <!-- Display masked key similar to licence tab -->
+                            <div id="license_test_key_display_wrapper" style="display:flex; gap:8px; align-items:center;">
+                                <code id="license_test_key_display" style="background: #fff3cd; padding: 4px 8px; border-radius: 3px; border: 1px solid #ffc107; font-family: monospace;"><?php echo $license_test_key ? substr($license_test_key, 0, 6) . '••••••••••••••••' . substr($license_test_key, -6) : ''; ?></code>
+                                <button type="button" id="copy_license_key_btn" class="button button-small">📋 Copier</button>
+                                <button type="button" id="generate_license_key_btn" class="button button-primary">🔑 Générer une clé de test</button>
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-pro-settings&tab=licence')); ?>" class="button button-link" style="margin-left:6px; text-decoration: none;">🔐 Onglet Licence</a>
+                                <button type="button" id="delete_license_key_btn" class="button button-secondary" style="display:<?php echo $license_test_key ? 'inline-block' : 'none'; ?>; background-color:#dc3545;color:white;border-color:#dc3545;">🗑️ Supprimer</button>
+                            </div>
+                            <input type="hidden" id="license_test_key" name="pdf_builder_license_test_key" value="<?php echo esc_attr($license_test_key); ?>" />
+                            <p class="description">Clé de licence utilisée en mode test (masquée pour sécurité).</p>
+                            <div id="license_key_status" style="margin-top:6px; font-size:0.95em; color:#6c757d;"></div>
+                            <div id="license_key_expires" style="margin-top:6px; font-size:0.9em; color:#856404;">
+                                <?php if (!empty($license_test_key_expires)) : ?>
+                                    <?php echo 'Expire le: ' . esc_html($license_test_key_expires); ?>
+                                <?php endif; ?>
+                            </div>
                         </td>
                     </tr>
                 </table>
@@ -461,7 +475,7 @@
                     </div>
                 </div>
             </div>
-</div>
+
 
         <!-- Section Debug -->
         <div class="dev-section" id="debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
@@ -676,7 +690,6 @@
                     </ul>
                 </div>
             </div>
-        </div>
             <div class="dev-section-content">
                 <div class="dev-tools-grid">
                     <button type="button" id="view_logs_js_btn" class="dev-tool-btn">
@@ -735,6 +748,7 @@
                     </div>
                 </div>
             </div>
+        </div>
 
         <!-- Avertissement Production -->
         <div class="dev-warning-box">
@@ -753,8 +767,9 @@
                 Utilisez un environnement de développement séparé pour les tests.
             </div>
         </div>
+    </form>
 
-
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
