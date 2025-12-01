@@ -875,6 +875,14 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 skippedCount++;
                 console.warn(`[SYNC] ⚠️ Checkbox #${checkboxId} non trouvée pour clé ${key}`);
+                // Log additional debug info for page-specific toggles
+                if (['debug_pdf_editor', 'debug_settings_page', 'debug_page_template'].includes(checkboxId)) {
+                    console.warn(`[SYNC] 🔍 DÉTAILS pour ${checkboxId}:`);
+                    console.warn(`  - Élément trouvé:`, document.getElementById(checkboxId));
+                    console.warn(`  - Parent visible:`, checkbox ? checkbox.closest('tr')?.style.display : 'N/A');
+                    console.warn(`  - Section développeur visible:`, document.getElementById('dev-debug-section')?.style.display);
+                    console.warn(`  - Mode développeur actif:`, document.getElementById('developer_enabled')?.checked);
+                }
                 if (window.pdfBuilderDebugSettings?.javascript) {
                     console.warn(`🔧 [SYNC] Checkbox ${checkboxId} not found for key ${key}`);
                 }
@@ -886,6 +894,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Synchroniser les checkboxes au chargement
     syncCheckboxesWithSavedSettings();
+
+    // Synchronisation retardée pour les toggles de pages (qui peuvent être masqués initialement)
+    setTimeout(function() {
+        console.log('[SYNC] 🔄 Synchronisation retardée pour les toggles de pages...');
+        const pageToggles = ['debug_pdf_editor', 'debug_settings_page', 'debug_page_template'];
+        let pageSyncedCount = 0;
+
+        pageToggles.forEach(toggleId => {
+            const checkbox = document.getElementById(toggleId);
+            if (checkbox) {
+                const settingKey = 'pdf_builder_' + toggleId;
+                const savedValue = window.pdfBuilderSavedSettings[settingKey];
+                const shouldBeChecked = savedValue && savedValue !== '0' && savedValue !== 0;
+                const wasChecked = checkbox.checked;
+
+                if (wasChecked !== shouldBeChecked) {
+                    checkbox.checked = shouldBeChecked;
+                    pageSyncedCount++;
+                    console.log(`[SYNC] 🔄 RETARDÉ ${settingKey} -> #${toggleId}: ${wasChecked} → ${shouldBeChecked}`);
+                }
+            }
+        });
+
+        if (pageSyncedCount > 0) {
+            console.log(`[SYNC] ✅ ${pageSyncedCount} toggles de pages synchronisés avec retard`);
+        }
+    }, 1000); // Attendre 1 seconde pour que les sections soient affichées
 
     // Configurer la mise à jour automatique de window.pdfBuilderSavedSettings pour tous les toggles
     updateSavedSettingsForToggle('developer_enabled', 'pdf_builder_developer_enabled');
