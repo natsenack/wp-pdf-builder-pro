@@ -13,13 +13,14 @@ if (!defined('ABSPATH')) {
 function send_ajax_response($success, $message = '', $data = [])
 {
     $log_file = WP_CONTENT_DIR . '/pdf-builder-debug.log';
-    file_put_contents($log_file, date('Y-m-d H:i:s') . " - send_ajax_response called: success=$success, message=$message\n", FILE_APPEND);
+    file_put_contents($log_file, date('Y-m-d H:i:s') . " - send_ajax_response called: success=$success, message=$message, data_keys=" . implode(',', array_keys($data)) . "\n", FILE_APPEND);
 
     if ($success) {
         $merged = array_merge(['message' => $message], $data);
+        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Sending SUCCESS response with data: " . json_encode($merged) . "\n", FILE_APPEND);
         wp_send_json_success($merged);
     } else {
-        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Sending error response: $message\n", FILE_APPEND);
+        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Sending ERROR response: $message\n", FILE_APPEND);
         wp_send_json_error(['message' => $message]);
     }
 }
@@ -1471,7 +1472,9 @@ function pdf_builder_get_all_canvas_settings_handler() {
  */
 function pdf_builder_save_all_settings_handler() {
     // ===== LOGGING DÉTAILLÉ POUR DEBUG DES TOGGLES DÉVELOPPEUR =====
-    error_log('===== PDF BUILDER SAVE ALL SETTINGS - DÉBUT =====');
+    error_log('===== PDF BUILDER SAVE ALL SETTINGS - HANDLER STARTED =====');
+    $log_file = WP_CONTENT_DIR . '/pdf-builder-debug.log';
+    file_put_contents($log_file, date('Y-m-d H:i:s') . " - pdf_builder_save_all_settings_handler STARTED\n", FILE_APPEND);
     error_log('Timestamp: ' . current_time('mysql'));
     error_log('User ID: ' . get_current_user_id());
     error_log('REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
