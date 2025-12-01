@@ -1082,21 +1082,23 @@ wp_localize_script('pdf-builder-developer-js', 'pdfBuilderDeveloperConfig', $aja
         saveSetting: function(key, value) {
             console.log(`[PDF Builder Developer] Saving setting: ${key} = ${value}`);
 
-            const formData = new FormData();
-            formData.append('action', this.config.action);
-            formData.append('nonce', this.config.nonce);
-            formData.append('setting_key', key);
-            formData.append('setting_value', value);
+            // Use the main AJAX object that works
+            const ajaxData = {
+                action: this.config.action,
+                nonce: this.config.nonce,
+                setting_key: key,
+                setting_value: value
+            };
 
-            return fetch(this.config.ajax_url, {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: formData
+            console.log('[PDF Builder Developer] AJAX data:', ajaxData);
+
+            return $.ajax({
+                url: this.config.ajax_url,
+                type: 'POST',
+                data: ajaxData,
+                dataType: 'json'
             })
-            .then(response => response.json())
-            .then(data => {
+            .done(data => {
                 if (data.success) {
                     console.log(`[PDF Builder Developer] Setting saved successfully: ${key}`);
                     this.showNotification('Paramètre sauvegardé avec succès', 'success');
@@ -1107,10 +1109,10 @@ wp_localize_script('pdf-builder-developer-js', 'pdfBuilderDeveloperConfig', $aja
                     throw new Error('Save failed');
                 }
             })
-            .catch(error => {
-                console.error('[PDF Builder Developer] AJAX error:', error);
-                this.showNotification('Erreur de connexion: ' + error.message, 'error');
-                throw error;
+            .fail((xhr, status, error) => {
+                console.error('[PDF Builder Developer] AJAX error:', xhr.status, xhr.responseText, error);
+                this.showNotification('Erreur de connexion: ' + error, 'error');
+                throw new Error('AJAX failed');
             });
         },
 
