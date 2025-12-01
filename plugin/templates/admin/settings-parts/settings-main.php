@@ -2377,12 +2377,27 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     } else if (originalData.saved_settings) {
                         savedSettings = originalData.saved_settings;
                         console.log('[FLOATING SAVE] 🔄 Utilisation de originalData.saved_settings');
+                    } else if (originalData.data && typeof originalData.data === 'object') {
+                        // Fallback: try to find saved settings in any data field
+                        console.log('[FLOATING SAVE] 🔍 Recherche de saved_settings dans originalData.data...');
+                        for (const [key, value] of Object.entries(originalData.data)) {
+                            if (key.includes('saved') || key.includes('settings')) {
+                                console.log(`[FLOATING SAVE] 🔍 Trouvé potentiel: ${key} =`, value);
+                                if (typeof value === 'object' && value !== null) {
+                                    savedSettings = value;
+                                    console.log('[FLOATING SAVE] 🔄 Utilisation de fallback:', key);
+                                    break;
+                                }
+                            }
+                        }
                     }
 
-                    if (savedSettings) {
+                    if (savedSettings && typeof savedSettings === 'object') {
                         console.log('[FLOATING SAVE] 🔄 Mise à jour de window.pdfBuilderSavedSettings...');
+                        console.log('[FLOATING SAVE] 📊 Anciennes valeurs:', window.pdfBuilderSavedSettings);
                         const oldSettings = { ...window.pdfBuilderSavedSettings };
                         window.pdfBuilderSavedSettings = Object.assign({}, window.pdfBuilderSavedSettings, savedSettings);
+                        console.log('[FLOATING SAVE] 📊 Nouvelles valeurs:', window.pdfBuilderSavedSettings);
 
                         // Comparer les valeurs développeur avant/après
                         console.log('[FLOATING SAVE] 🔍 COMPARAISON AVANT/APRÈS SAUVEGARDE:');
@@ -2398,6 +2413,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         console.warn('[FLOATING SAVE] ⚠️ Aucune donnée saved_settings trouvée dans la réponse');
                         console.warn('[FLOATING SAVE] ⚠️ originalData.data:', originalData.data);
                         console.warn('[FLOATING SAVE] ⚠️ originalData directement:', originalData);
+                        console.warn('[FLOATING SAVE] ⚠️ Type de savedSettings:', typeof savedSettings);
                     }
 
                     // Update previews after successful save
@@ -2433,7 +2449,11 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                     // Re-sync checkboxes after settings update
                     if (typeof window.syncCheckboxesWithSavedSettings === 'function') {
                         console.log('[FLOATING SAVE] 🔄 Re-synchronisation des checkboxes...');
-                        window.syncCheckboxesWithSavedSettings();
+                        // Add a small delay to ensure window.pdfBuilderSavedSettings is updated
+                        setTimeout(function() {
+                            window.syncCheckboxesWithSavedSettings();
+                            console.log('[FLOATING SAVE] ✅ Synchronisation des checkboxes terminée');
+                        }, 100);
                     }
 
                     console.log('[FLOATING SAVE] ✅ Toutes les mises à jour terminées');

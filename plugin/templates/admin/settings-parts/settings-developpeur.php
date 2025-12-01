@@ -828,7 +828,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction pour synchroniser l'état des checkboxes avec les valeurs sauvegardées
     function syncCheckboxesWithSavedSettings() {
-        if (!window.pdfBuilderSavedSettings) return;
+        console.log('[SYNC] 🔄 Début de synchronisation des checkboxes...');
+
+        if (!window.pdfBuilderSavedSettings) {
+            console.warn('[SYNC] ⚠️ window.pdfBuilderSavedSettings n\'existe pas');
+            return;
+        }
+
+        console.log('[SYNC] 📊 window.pdfBuilderSavedSettings actuel:', window.pdfBuilderSavedSettings);
 
         // Liste des checkboxes à synchroniser avec leurs IDs correspondants
         const checkboxMapping = {
@@ -847,22 +854,36 @@ document.addEventListener('DOMContentLoaded', function() {
             'pdf_builder_force_https': 'force_https'
         };
 
+        let syncedCount = 0;
+        let skippedCount = 0;
+
         Object.keys(checkboxMapping).forEach(key => {
             const checkboxId = checkboxMapping[key];
             const checkbox = document.getElementById(checkboxId);
             if (checkbox) {
                 const savedValue = window.pdfBuilderSavedSettings[key];
                 const shouldBeChecked = savedValue && savedValue !== '0' && savedValue !== 0;
+                const wasChecked = checkbox.checked;
+
                 checkbox.checked = shouldBeChecked;
+                syncedCount++;
+
+                const status = wasChecked === shouldBeChecked ? '✅ INCHANGÉ' : '🔄 CHANGÉ';
+                console.log(`[SYNC] ${status} ${key} -> #${checkboxId}: ${wasChecked} → ${shouldBeChecked} (saved: ${savedValue})`);
+
                 if (window.pdfBuilderDebugSettings?.javascript) {
                     console.log(`🔧 [SYNC] ${key} -> ${checkboxId}: ${shouldBeChecked} (saved: ${savedValue})`);
                 }
             } else {
+                skippedCount++;
+                console.warn(`[SYNC] ⚠️ Checkbox #${checkboxId} non trouvée pour clé ${key}`);
                 if (window.pdfBuilderDebugSettings?.javascript) {
                     console.warn(`🔧 [SYNC] Checkbox ${checkboxId} not found for key ${key}`);
                 }
             }
         });
+
+        console.log(`[SYNC] ✅ Synchronisation terminée: ${syncedCount} synchronisées, ${skippedCount} ignorées`);
     }
 
     // Synchroniser les checkboxes au chargement
