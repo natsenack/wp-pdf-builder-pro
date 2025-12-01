@@ -474,6 +474,24 @@
 
                     <div class="dev-card">
                         <div class="dev-card-header">
+                            <span class="dev-card-icon">📄</span>
+                            <h4 class="dev-card-title">Logs JavaScript</h4>
+                        </div>
+                        <p class="dev-card-description">Active les logs détaillés dans l'éditeur PDF (console navigateur)</p>
+                        <div style="margin-top: 15px;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled" value="1"
+                                       <?php echo isset($settings['pdf_builder_canvas_debug_enabled']) && $settings['pdf_builder_canvas_debug_enabled'] && $settings['pdf_builder_canvas_debug_enabled'] !== '0' ? 'checked' : ''; ?> />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span style="margin-left: 10px; font-weight: 500;">
+                                <?php echo isset($settings['pdf_builder_canvas_debug_enabled']) && $settings['pdf_builder_canvas_debug_enabled'] && $settings['pdf_builder_canvas_debug_enabled'] !== '0' ? 'Activé' : 'Désactivé'; ?>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="dev-card">
+                        <div class="dev-card-header">
                             <span class="dev-card-icon">🔑</span>
                             <h4 class="dev-card-title">Sécurité d'Accès</h4>
                         </div>
@@ -635,6 +653,7 @@
         if (window.pdfBuilderSavedSettings) {
             const settingMap = {
                 'developer_enabled': 'pdf_builder_developer_enabled',
+                'canvas_debug_enabled': 'pdf_builder_canvas_debug_enabled',
                 'license_test_mode': 'pdf_builder_license_test_mode_enabled'
             };
 
