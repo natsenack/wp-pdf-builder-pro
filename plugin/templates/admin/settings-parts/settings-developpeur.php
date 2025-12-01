@@ -11,6 +11,18 @@ $dev_mode = isset($_POST['pdf_builder_developer_enabled']) ? sanitize_text_field
 $debug_enabled = isset($_POST['pdf_builder_canvas_debug_enabled']) ? sanitize_text_field($_POST['pdf_builder_canvas_debug_enabled']) : get_option('pdf_builder_canvas_debug_enabled', $settings['pdf_builder_canvas_debug_enabled'] ?? '0');
 $dev_password = isset($_POST['pdf_builder_developer_password']) ? sanitize_text_field($_POST['pdf_builder_developer_password']) : get_option('pdf_builder_developer_password', $settings['pdf_builder_developer_password'] ?? '');
 $show_tools = $dev_mode === '1';
+
+// Create AJAX configuration for this developer tab page
+$dev_ajax_config = [
+    'ajax_url' => admin_url('admin-ajax.php'),
+    'nonce' => wp_create_nonce('pdf_builder_settings_ajax'),
+    'debug_mode' => defined('WP_DEBUG') && WP_DEBUG
+];
+
+// Add to global scope so JavaScript can access it
+wp_localize_script('jquery', 'devAjaxConfig', $dev_ajax_config);
+wp_localize_script('wp-util', 'devAjaxConfig', $dev_ajax_config);
+wp_enqueue_script('jquery');
 ?>
 
 <style>
@@ -451,8 +463,8 @@ $show_tools = $dev_mode === '1';
 document.addEventListener('DOMContentLoaded', function() {
     console.log('[PDF Builder] Developer tab initialized');
 
-    // Get the same nonce configuration as the main settings system
-    const PDF_BUILDER_CONFIG = window.PDF_BUILDER_CONFIG || {
+    // Get the developer page AJAX configuration
+    const PDF_BUILDER_CONFIG = devAjaxConfig || {
         ajax_url: window.ajaxurl || '<?php echo admin_url('admin-ajax.php'); ?>',
         nonce: '<?php echo wp_create_nonce('pdf_builder_settings_ajax'); ?>'
     };
