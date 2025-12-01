@@ -28,3 +28,4 @@ function initializePreviewImageAjax() {
 }
 
 export default registerPreviewImageHook;
+

@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
-import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
+import { useBuilder } from '../contexts/builder/BuilderContext';
 import { useCanvasSetting } from './useCanvasSettings';
 
 /**
@@ -152,3 +152,4 @@ export const useKeyboardShortcuts = () => {
     canRedo: state.history.future.length > 0,
   };
 };
+

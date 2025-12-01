@@ -89,24 +89,23 @@ export function usePreview(): UsePreviewReturn {
       }
 
       // Générer l'aperçu
-      const result: PreviewResult = await window.pdfPreviewAPI.generateEditorPreview(
+      const result = await window.pdfPreviewAPI.generateEditorPreview(
         templateData,
         { format: finalFormat, quality }
       );
 
-      if (result && result.success && result.image_url) {
+      if (result && typeof result === 'object' && 'success' in result && result.success && 'image_url' in result && typeof result.image_url === 'string') {
         if (finalFormat === 'pdf') {
           // Pour PDF, ouvrir dans un nouvel onglet
-
           window.open(result.image_url, '_blank');
           setPreviewUrl(null); // Ne pas afficher dans la modale
         } else {
           // Pour PNG/JPG, afficher dans la modale
-
           setPreviewUrl(result.image_url);
         }
       } else {
-        throw new Error(result?.error || 'Erreur lors de la génération de l\'aperçu');
+        const errorMsg = (result && typeof result === 'object' && 'error' in result && typeof result.error === 'string') ? result.error : 'Erreur lors de la génération de l\'aperçu';
+        throw new Error(errorMsg);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue lors de la génération';
@@ -139,3 +138,4 @@ export function usePreview(): UsePreviewReturn {
 }
 
 export default usePreview;
+

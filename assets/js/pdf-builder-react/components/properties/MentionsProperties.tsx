@@ -1005,3 +1005,4 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
     </>
   );
 }
+

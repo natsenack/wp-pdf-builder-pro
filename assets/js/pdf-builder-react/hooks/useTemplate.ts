@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
-import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
-import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
+import { useBuilder } from '../contexts/builder/BuilderContext';
+import { useCanvasSettings } from '../contexts/CanvasSettingsContext';
 import { LoadTemplatePayload, TemplateState } from '../types/elements';
 import { debugError, debugWarn } from '../utils/debug';
 import { normalizeElementsBeforeSave, normalizeElementsAfterLoad, debugElementState } from '../utils/elementNormalization';
@@ -200,7 +200,7 @@ export function useTemplate() {
       // 🔍 Tracer les éléments reçus du serveur
       if (templateData.elements) {
         // 🔍 Vérifier spécifiquement les éléments order_number
-        const orderNumberElements = templateData.elements.filter(el => el.type === 'order_number');
+        const orderNumberElements = templateData.elements.filter((el: any) => el.type === 'order_number');
       }
 
       // Parse JSON strings
@@ -343,16 +343,16 @@ export function useTemplate() {
 
       debugError(`❌ [LOAD TEMPLATE] Échec du chargement sur ${isChrome ? 'Chrome' : isFirefox ? 'Firefox' : isSafari ? 'Safari' : 'navigateur inconnu'}`);
       debugError('❌ [LOAD TEMPLATE] Détails de l\'erreur:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        name: error instanceof Error ? error.name : 'Unknown',
         templateId: templateId,
         ajaxUrl: window.pdfBuilderData?.ajaxUrl,
         userAgent: navigator.userAgent
       });
 
       // Tentative de fallback pour Chrome
-      if (isChrome && error.message.includes('fetch')) {
+      if (isChrome && (error instanceof Error && error.message.includes('fetch'))) {
         debugWarn('🔄 [LOAD TEMPLATE] Tentative de fallback pour Chrome - Nouvelle tentative avec options différentes');
 
         try {
@@ -597,3 +597,4 @@ export function useTemplate() {
     updateTemplateSettings
   };
 }
+

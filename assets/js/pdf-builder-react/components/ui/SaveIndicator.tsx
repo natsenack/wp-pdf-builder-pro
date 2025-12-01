@@ -95,23 +95,16 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
           padding: '12px 16px',
           WebkitBorderRadius: '8px',
           MozBorderRadius: '8px',
-          msBorderRadius: '8px',
-          OBorderRadius: '8px',
           borderRadius: '8px',
           background: state === 'saving' ? '#f0f6fc' : state === 'saved' ? '#f0fdf4' : state === 'error' ? '#fef2f2' : '#fff',
           border: state === 'saving' ? '1px solid #0073aa' : state === 'saved' ? '1px solid #46b450' : state === 'error' ? '1px solid #dc2626' : '1px solid #e0e0e0',
           WebkitBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           MozBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          msBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          OBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           fontSize: '13px',
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
           zIndex: 999999,
-          display: '-webkit-box',
-          display: '-webkit-flex',
-          display: '-moz-box',
-          display: '-ms-flexbox',
           display: 'flex',
           WebkitBoxAlign: 'center',
           WebkitAlignItems: 'center',
@@ -216,3 +209,4 @@ export const SaveIndicator: React.FC<SaveIndicatorProps> = ({
 };
 
 export default SaveIndicator;
+

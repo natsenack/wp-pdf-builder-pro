@@ -147,3 +147,4 @@ export function injectResponsiveUtils(): void {
   style.textContent = responsiveUtils;
   document.head.appendChild(style);
 }
+

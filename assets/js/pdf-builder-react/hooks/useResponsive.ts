@@ -76,3 +76,4 @@ export function useIsTablet(): boolean {
   const breakpoint = useBreakpoint();
   return breakpoint === 'md';
 }
+

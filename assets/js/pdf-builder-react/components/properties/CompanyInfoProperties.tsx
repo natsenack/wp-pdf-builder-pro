@@ -1171,3 +1171,4 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
     </>
   );
 }
+

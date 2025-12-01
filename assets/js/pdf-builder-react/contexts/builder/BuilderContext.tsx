@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
-import { useCanvasSettings } from '../CanvasSettingsContext.tsx';
+import { useCanvasSettings } from '../CanvasSettingsContext';
 import {
   BuilderState,
   BuilderAction,
@@ -797,3 +797,4 @@ export function useCanvas() {
 
 export { BuilderContext };
 // Pas d'export de conversion MM/PX - on utilise que PX
+

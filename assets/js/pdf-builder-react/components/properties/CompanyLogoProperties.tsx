@@ -411,3 +411,4 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
     </>
   );
 }
+

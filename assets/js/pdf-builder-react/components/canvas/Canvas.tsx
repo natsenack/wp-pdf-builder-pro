@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
-import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
-import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
-import { useCanvasSetting } from '../../hooks/useCanvasSettings.ts';
-import { useCanvasDrop } from '../../hooks/useCanvasDrop.ts';
-import { useCanvasInteraction } from '../../hooks/useCanvasInteraction.ts';
-import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts.ts';
+import { useBuilder } from '../../contexts/builder/BuilderContext';
+import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
+import { useCanvasSetting } from '../../hooks/useCanvasSettings';
+import { useCanvasDrop } from '../../hooks/useCanvasDrop';
+import { useCanvasInteraction } from '../../hooks/useCanvasInteraction';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import { Element, ShapeElementProperties, TextElementProperties, LineElementProperties, ProductTableElementProperties, CustomerInfoElementProperties, CompanyInfoElementProperties, ImageElementProperties, OrderNumberElementProperties, MentionsElementProperties, DocumentTypeElementProperties, BuilderState } from '../../types/elements';
 import { wooCommerceManager } from '../../utils/WooCommerceElementsManager';
 import { elementChangeTracker } from '../../utils/ElementChangeTracker';
@@ -37,7 +37,7 @@ const cleanupImageCache = (imageCache: React.MutableRefObject<Map<string, { imag
   toRemove.forEach(([url]) => cache.delete(url));
 };
 import { CanvasMonitoringDashboard } from '../../utils/CanvasMonitoringDashboard';
-import { ContextMenu, ContextMenuItem } from '../ui/ContextMenu.tsx';
+import { ContextMenu, ContextMenuItem } from '../ui/ContextMenu';
 
 // Fonctions utilitaires de dessin (déplacées en dehors du composant pour éviter les avertissements React Compiler)
 
@@ -2828,3 +2828,5 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     </>
   );
 }
+
+

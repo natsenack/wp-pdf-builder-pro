@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { BuilderProvider } from './contexts/builder/BuilderContext.tsx';
-import { CanvasSettingsProvider } from './contexts/CanvasSettingsContext.tsx';
-import { PDFBuilderContent } from './components/PDFBuilderContent.tsx';
-import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas.ts';
+import { BuilderProvider } from './contexts/builder/BuilderContext';
+import { CanvasSettingsProvider } from './contexts/CanvasSettingsContext';
+import { PDFBuilderContent } from './components/PDFBuilderContent';
+import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas';
 
 interface PDFBuilderProps {
   width?: number;
@@ -49,3 +49,4 @@ export function PDFBuilder({
 
 // Export des composants individuels pour une utilisation modulaire
 export { PDFBuilderContent };
+

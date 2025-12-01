@@ -7,7 +7,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 export default [
   js.configs.recommended,
   {
-    files: ['assets/js/src/**/*.{js,ts,tsx}'],
+    files: ['assets/js/pdf-builder-react/**/*.{js,ts,tsx}'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {

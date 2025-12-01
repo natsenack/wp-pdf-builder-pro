@@ -1,6 +1,6 @@
 import React from 'react';
-import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
-import { useCanvasSettings } from '../../contexts/CanvasSettingsContext.tsx';
+import { useBuilder } from '../../contexts/builder/BuilderContext';
+import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
 import { useIsMobile, useIsTablet } from '../../hooks/useResponsive';
 import { ResponsiveContainer } from '../ui/Responsive';
 import { BuilderMode } from '../../types/elements';
@@ -505,3 +505,4 @@ export function Toolbar({ className }: ToolbarProps) {
     </ResponsiveContainer>
   );
 }
+

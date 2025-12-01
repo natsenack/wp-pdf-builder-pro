@@ -24,13 +24,25 @@ import {
 // Fonction d'initialisation appelée par WordPress
 declare global {
   interface Window {
-    pdfBuilderReactData: {
+    pdfBuilderReactInitData: {
       nonce: string;
       ajaxUrl: string;
       strings: {
         loading: string;
         error: string;
       };
+    };
+    initPDFBuilderReact: typeof initPDFBuilderReact;
+    pdfBuilderReact: {
+      initPDFBuilderReact: typeof initPDFBuilderReact;
+      loadTemplate: typeof loadTemplate;
+      getEditorState: typeof getEditorState;
+      setEditorState: typeof setEditorState;
+      getCurrentTemplate: typeof getCurrentTemplate;
+      exportTemplate: typeof exportTemplate;
+      saveTemplate: typeof saveTemplate;
+      registerEditorInstance: typeof registerEditorInstance;
+      resetAPI: typeof resetAPI;
     };
   }
 }
@@ -92,22 +104,7 @@ export function initPDFBuilderReact() {
 }
 
 // Déclarer l'interface globale pour TypeScript
-declare global {
-  interface Window {
-    initPDFBuilderReact: typeof initPDFBuilderReact;
-    pdfBuilderReact: {
-      initPDFBuilderReact: typeof initPDFBuilderReact;
-      loadTemplate: typeof loadTemplate;
-      getEditorState: typeof getEditorState;
-      setEditorState: typeof setEditorState;
-      getCurrentTemplate: typeof getCurrentTemplate;
-      exportTemplate: typeof exportTemplate;
-      saveTemplate: typeof saveTemplate;
-      registerEditorInstance: typeof registerEditorInstance;
-      resetAPI: typeof resetAPI;
-    };
-  }
-}
+// (Déjà déclarée plus haut)
 
 // Export pour utilisation manuelle (WordPress l'appelle explicitement)
 window.initPDFBuilderReact = initPDFBuilderReact;
@@ -126,3 +123,4 @@ window.pdfBuilderReact = {
   resetAPI
 };
 debugLog('🔧 DEBUG: window.pdfBuilderReact assigned:', window.pdfBuilderReact);
+

@@ -390,3 +390,4 @@ export interface ValidationResult {
     /** Avertissements */
     warnings?: string[];
 }
+

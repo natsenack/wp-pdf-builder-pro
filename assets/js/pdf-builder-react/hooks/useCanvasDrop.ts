@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
+import { useBuilder } from '../contexts/builder/BuilderContext';
 import { Element } from '../types/elements';
 
 interface UseCanvasDropProps {
@@ -200,3 +200,4 @@ export const useCanvasDrop = ({ canvasRef, canvasWidth, canvasHeight, elements, 
     isDragOver
   };
 };
+

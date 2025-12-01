@@ -322,3 +322,4 @@ export function ImageProperties({ element, onChange, activeTab, setActiveTab }: 
     </>
   );
 }
+

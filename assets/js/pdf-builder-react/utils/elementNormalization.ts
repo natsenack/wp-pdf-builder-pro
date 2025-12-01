@@ -155,3 +155,4 @@ export function validateElementIntegrity(elements: Element[], elementType: strin
 export function debugElementState(elements: Element[], label: string): void {
   // Debug function - logs removed for production
 }
+

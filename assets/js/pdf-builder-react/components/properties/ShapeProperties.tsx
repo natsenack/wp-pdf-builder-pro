@@ -316,3 +316,4 @@ export function ShapeProperties({ element, onChange, activeTab, setActiveTab }: 
     </>
   );
 }
+

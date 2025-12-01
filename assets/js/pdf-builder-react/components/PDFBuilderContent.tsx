@@ -1,14 +1,14 @@
 import React, { useState, useEffect, memo, useCallback } from 'react';
-import { Canvas } from './canvas/Canvas.tsx';
-import { Toolbar } from './toolbar/Toolbar.tsx';
-import { PropertiesPanel } from './properties/PropertiesPanel.tsx';
-import { Header } from './header/Header.tsx';
-import { ElementLibrary } from './element-library/ElementLibrary.tsx';
-import { useTemplate } from '../hooks/useTemplate.ts';
-import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
-import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas.ts';
-import { injectResponsiveUtils } from '../utils/responsive.ts';
-import { useIsMobile, useIsTablet } from '../hooks/useResponsive.ts';
+import { Canvas } from './canvas/Canvas';
+import { Toolbar } from './toolbar/Toolbar';
+import { PropertiesPanel } from './properties/PropertiesPanel';
+import { Header } from './header/Header';
+import { ElementLibrary } from './element-library/ElementLibrary';
+import { useTemplate } from '../hooks/useTemplate';
+import { useCanvasSettings } from '../contexts/CanvasSettingsContext';
+import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '../constants/canvas';
+import { injectResponsiveUtils } from '../utils/responsive';
+import { useIsMobile, useIsTablet } from '../hooks/useResponsive';
 import { debugLog, debugError } from '../utils/debug';
 
 // Déclaration des types pour les fonctions de notification globales
@@ -320,3 +320,4 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     </>
   );
 });
+

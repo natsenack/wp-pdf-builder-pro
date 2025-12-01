@@ -359,3 +359,4 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
     </div>
   );
 }
+

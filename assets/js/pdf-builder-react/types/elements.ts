@@ -624,3 +624,4 @@ export interface DocumentTypeElement extends BaseElement {
   textAlign?: string;
   textColor?: string;
 }
+

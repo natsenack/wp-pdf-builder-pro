@@ -3,7 +3,7 @@ import { debugError } from '../utils/debug';
 
 declare global {
   interface Window {
-    pdfBuilderCanvasSettings?: Record<string, unknown>;
+    pdfBuilderCanvasSettings?: any;
     pdfBuilderAjax?: {
       nonce: string;
       url: string;
@@ -12,6 +12,9 @@ declare global {
     pdfBuilderData?: {
       nonce: string;
       ajaxUrl: string;
+      templateId?: string | number;
+      existingTemplate?: any;
+      hasExistingData?: boolean;
     };
   }
 }
@@ -413,3 +416,4 @@ export function useCanvasSettings(): CanvasSettingsContextType {
   }
   return context;
 }
+

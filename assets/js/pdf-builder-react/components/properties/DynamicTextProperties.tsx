@@ -845,3 +845,4 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
     </>
   );
 }
+

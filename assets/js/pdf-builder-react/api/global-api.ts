@@ -159,3 +159,5 @@ export interface GlobalAPI {
   resetAPI: typeof resetAPI;
   updateCanvasDimensions: typeof updateCanvasDimensions;
 }
+
+

@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react';
-import { useBuilder } from '../contexts/builder/BuilderContext.tsx';
-import { useCanvasSettings } from '../contexts/CanvasSettingsContext.tsx';
+import { useBuilder } from '../contexts/builder/BuilderContext';
+import { useCanvasSettings } from '../contexts/CanvasSettingsContext';
 import { Element } from '../types/elements';
 
 // Déclaration des APIs globales du navigateur
@@ -1187,3 +1187,4 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     }
   };
 };
+

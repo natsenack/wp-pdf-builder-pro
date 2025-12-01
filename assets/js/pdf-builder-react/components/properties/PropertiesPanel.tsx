@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, memo } from 'react';
-import { useBuilder } from '../../contexts/builder/BuilderContext.tsx';
+import { useBuilder } from '../../contexts/builder/BuilderContext';
 import { useIsMobile, useIsTablet } from '../../hooks/useResponsive';
 import { ResponsiveContainer } from '../ui/Responsive';
 import { ProductTableProperties } from './ProductTableProperties';
@@ -369,3 +369,4 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
     </div>
   );
 });
+

@@ -53,7 +53,13 @@ declare global {
       pdf_editor?: boolean;
       javascript_verbose?: boolean;
     };
-    pdfBuilderCanvasSettings?: any;
+    pdfBuilderData?: {
+      nonce: string;
+      ajaxUrl: string;
+      templateId?: string | number;
+      existingTemplate?: any;
+      hasExistingData?: boolean;
+    };
   }
 }
 
@@ -113,3 +119,4 @@ if (typeof window !== 'undefined') {
     });
   }
 }
+

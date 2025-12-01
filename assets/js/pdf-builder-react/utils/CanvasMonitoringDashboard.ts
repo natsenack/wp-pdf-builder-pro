@@ -160,3 +160,4 @@ declare global {
 if (typeof window !== 'undefined') {
   (window as unknown as Record<string, unknown>).CanvasMonitoringDashboard = CanvasMonitoringDashboard;
 }
+

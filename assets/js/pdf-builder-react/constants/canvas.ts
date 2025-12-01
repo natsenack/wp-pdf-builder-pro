@@ -36,3 +36,4 @@ export const CANVAS_DIMENSIONS = {
     name: 'A4 Landscape'
   }
 } as const;
+

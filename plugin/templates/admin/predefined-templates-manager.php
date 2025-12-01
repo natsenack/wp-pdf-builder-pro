@@ -39,7 +39,7 @@ class PDF_Builder_Predefined_Templates_Manager
         $settings = get_option('pdf_builder_settings', []);
         
         // N'ajouter le menu que si le Mode Développeur est activé
-        if (!empty($settings['developer_enabled'])) {
+        if (!empty($settings['pdf_builder_developer_enabled'])) {
             add_submenu_page(
                 'pdf-builder-pro',
                 __('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
@@ -179,7 +179,7 @@ JS;
     private function isDeveloperAuthenticated()
     {
         $settings = get_option('pdf_builder_settings', []);
-        if (empty($settings['developer_enabled'])) {
+        if (empty($settings['pdf_builder_developer_enabled'])) {
             return false;
         }
         // Vérifier l'authentification développeur stockée en option
@@ -229,8 +229,8 @@ JS;
             $settings = get_option('pdf_builder_settings', []);
             
             
-            if (empty($settings['developer_enabled'])) {
-                
+            if (empty($settings['pdf_builder_developer_enabled'])) {
+
                 wp_send_json_error('Mode développeur désactivé');
             }
             
@@ -315,7 +315,7 @@ JS;
         }
         // Vérifier l'authentification développeur
         $settings = get_option('pdf_builder_settings', []);
-        if (empty($settings['developer_enabled'])) {
+        if (empty($settings['pdf_builder_developer_enabled'])) {
             ?>
             <div class="wrap">
                 <h1><?php _e('🔒 Accès Restreint', 'pdf-builder-pro'); ?></h1>
