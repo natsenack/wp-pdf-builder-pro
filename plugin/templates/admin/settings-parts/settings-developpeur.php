@@ -1889,5 +1889,6 @@ window.syncCheckboxesWithSavedSettings = function() {
 
     console.log(`[SYNC] ✅ Synchronisation terminée: ${syncedCount} synchronisées, ${skippedCount} ignorées`);
 };
+
 </script>
 
