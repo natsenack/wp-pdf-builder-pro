@@ -974,10 +974,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const toggleLabel = developerEnabledToggle.closest('.toggle-switch');
         if (toggleLabel) {
             toggleLabel.addEventListener('click', function(event) {
-                // Ne pas déclencher si on clique directement sur l'input
-                if (event.target === developerEnabledToggle) return;
-                event.preventDefault();
-                toggleDeveloperMode();
+                // Laisser le navigateur gérer le changement d'état normalement
+                // Le event listener 'change' se chargera de mettre à jour l'interface
             });
         }
 
