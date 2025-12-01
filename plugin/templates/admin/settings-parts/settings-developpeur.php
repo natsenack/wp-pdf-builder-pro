@@ -803,6 +803,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Synchroniser les checkboxes au chargement
     syncCheckboxesWithSavedSettings();
 
+    // Configurer la mise à jour automatique de window.pdfBuilderSavedSettings pour tous les toggles
+    updateSavedSettingsForToggle('developer_enabled', 'pdf_builder_developer_enabled');
+    updateSavedSettingsForToggle('debug_php_errors', 'pdf_builder_debug_php_errors');
+    updateSavedSettingsForToggle('debug_javascript', 'pdf_builder_debug_javascript');
+    updateSavedSettingsForToggle('debug_javascript_verbose', 'pdf_builder_debug_javascript_verbose');
+    updateSavedSettingsForToggle('debug_ajax', 'pdf_builder_debug_ajax');
+    updateSavedSettingsForToggle('debug_pdf_editor', 'pdf_builder_debug_pdf_editor');
+    updateSavedSettingsForToggle('debug_settings_page', 'pdf_builder_debug_settings_page');
+    updateSavedSettingsForToggle('debug_performance', 'pdf_builder_debug_performance');
+    updateSavedSettingsForToggle('debug_database', 'pdf_builder_debug_database');
+    updateSavedSettingsForToggle('performance_monitoring', 'pdf_builder_performance_monitoring');
+
     // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
     function updatePdfEditorToggleVisibility() {
         console.log('🔧 [DEBUG PDF EDITOR] Fonction appelée');
@@ -893,6 +905,19 @@ document.addEventListener('DOMContentLoaded', function() {
         updateSettingsPageToggleVisibility();
     };
 
+    // Fonction pour mettre à jour window.pdfBuilderSavedSettings pour un toggle
+    function updateSavedSettingsForToggle(toggleId, settingKey) {
+        const toggle = document.getElementById(toggleId);
+        if (toggle && window.pdfBuilderSavedSettings) {
+            toggle.addEventListener('change', function(event) {
+                window.pdfBuilderSavedSettings[settingKey] = event.target.checked ? '1' : '0';
+                if (window.pdfBuilderDebugSettings?.javascript) {
+                    console.log(`🔧 [TOGGLE UPDATE] ${settingKey} mis à jour: ${window.pdfBuilderSavedSettings[settingKey]}`);
+                }
+            });
+        }
+    }
+
     // Fonction pour mettre à jour l'indicateur de statut du mode développeur (basé sur la valeur sauvegardée)
     window.updateDeveloperStatusIndicator = function() {
         const statusIndicator = document.querySelector('.developer-status-indicator');
@@ -971,6 +996,13 @@ document.addEventListener('DOMContentLoaded', function() {
             debugJavascriptToggle.addEventListener('change', function(event) {
                 console.log('🔧 [DEBUG JAVASCRIPT] Événement change déclenché');
                 console.log('🔧 [DEBUG JAVASCRIPT] Valeur du toggle:', event.target.checked);
+
+                // Mettre à jour window.pdfBuilderSavedSettings pour refléter le changement
+                if (window.pdfBuilderSavedSettings) {
+                    window.pdfBuilderSavedSettings['pdf_builder_debug_javascript'] = event.target.checked ? '1' : '0';
+                    console.log('🔧 [DEBUG JAVASCRIPT] window.pdfBuilderSavedSettings mis à jour:', window.pdfBuilderSavedSettings['pdf_builder_debug_javascript']);
+                }
+
                 updatePdfEditorToggleVisibility();
                 updateSettingsPageToggleVisibility();
             });
@@ -985,7 +1017,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (pdfEditorToggle) {
             pdfEditorToggle.addEventListener('change', function(event) {
                 console.log('🔧 [DEBUG PDF EDITOR] Toggle changé:', event.target.checked);
-                // Le toggle peut être changé programmatiquement ou par l'utilisateur
+                // Mettre à jour window.pdfBuilderSavedSettings
+                if (window.pdfBuilderSavedSettings) {
+                    window.pdfBuilderSavedSettings['pdf_builder_debug_pdf_editor'] = event.target.checked ? '1' : '0';
+                }
             });
 
             pdfEditorToggle.addEventListener('click', function(event) {
@@ -996,7 +1031,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (settingsPageToggle) {
             settingsPageToggle.addEventListener('change', function(event) {
                 console.log('🔧 [DEBUG SETTINGS PAGE] Toggle changé:', event.target.checked);
-                // Le toggle peut être changé programmatiquement ou par l'utilisateur
+                // Mettre à jour window.pdfBuilderSavedSettings
+                if (window.pdfBuilderSavedSettings) {
+                    window.pdfBuilderSavedSettings['pdf_builder_debug_settings_page'] = event.target.checked ? '1' : '0';
+                }
             });
 
             settingsPageToggle.addEventListener('click', function(event) {
