@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Éditor React PDF Builder</title>
+    
+    <!-- Simuler les dépendances React globales (comme dans WordPress) -->
+    <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        #test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        #pdf-builder-react-root {
+            border: 2px dashed #ccc;
+            min-height: 600px;
+            position: relative;
+            background: #fafafa;
+        }
+        
+        #pdf-builder-react-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+        }
+        
+        #pdf-builder-react-editor {
+            display: none;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div id="test-container">
+        <h1>Test Éditor React PDF Builder</h1>
+        
+        <div class="test-section">
+            <h2>Diagnostic</h2>
+            <div id="diagnostic"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Éditeur React</h2>
+            <div id="pdf-builder-react-root">
+                <div id="pdf-builder-react-loading">Chargement de l'éditeur...</div>
+                <div id="pdf-builder-react-editor"></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Contrôles de Test</h2>
+            <button onclick="testInitialization()">Tester Initialisation</button>
+            <button onclick="testAPI()">Tester API</button>
+            <button onclick="testTemplateLoading()">Tester Chargement Template</button>
+            <button onclick="clearEditor()">Effacer Éditeur</button>
+            <div id="test-results"></div>
+        </div>
+    </div>
+
+    <!-- Charger le bundle compilé -->
+    <script src="plugin/assets/js/dist/pdf-builder-react.js"></script>
+    
+    <script>
+        let testResults = document.getElementById('test-results');
+        let diagnostic = document.getElementById('diagnostic');
+        
+        function log(message, type = 'info') {
+            console.log(`[Test] ${message}`);
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            testResults.appendChild(div);
+        }
+        
+        function updateDiagnostic() {
+            const checks = [
+                {
+                    name: 'React disponible',
+                    test: () => typeof React !== 'undefined',
+                    error: 'React n\'est pas chargé'
+                },
+                {
+                    name: 'ReactDOM disponible',
+                    test: () => typeof ReactDOM !== 'undefined',
+                    error: 'ReactDOM n\'est pas chargé'
+                },
+                {
+                    name: 'PDF Builder React bundle chargé',
+                    test: () => typeof window.pdfBuilderReact !== 'undefined',
+                    error: 'Le bundle PDF Builder React n\'est pas chargé'
+                },
+                {
+                    name: 'API initPDFBuilderReact disponible',
+                    test: () => typeof window.pdfBuilderReact?.initPDFBuilderReact === 'function',
+                    error: 'La fonction initPDFBuilderReact n\'est pas disponible'
+                },
+                {
+                    name: 'Container racine existe',
+                    test: () => document.getElementById('pdf-builder-react-root') !== null,
+                    error: 'Le container racine n\'existe pas'
+                }
+            ];
+            
+            let html = '<h3>État du Diagnostic:</h3>';
+            checks.forEach(check => {
+                const passed = check.test();
+                const icon = passed ? '✅' : '❌';
+                const color = passed ? '#155724' : '#721c24';
+                html += `<div style="color: ${color}; margin: 5px 0;">${icon} ${check.name}</div>`;
+                if (!passed) {
+                    html += `<div style="color: #856404; margin-left: 20px;">⚠️ ${check.error}</div>`;
+                }
+            });
+            
+            diagnostic.innerHTML = html;
+        }
+        
+        async function testInitialization() {
+            log('Test d\'initialisation...', 'warning');
+            
+            try {
+                if (!window.pdfBuilderReact?.initPDFBuilderReact) {
+                    throw new Error('API d\'initialisation non disponible');
+                }
+                
+                const success = await window.pdfBuilderReact.initPDFBuilderReact();
+                
+                if (success) {
+                    log('✅ Initialisation réussie', 'success');
+                    
+                    // Vérifier que l'éditeur s'est bien rendu
+                    setTimeout(() => {
+                        const editorContent = document.querySelector('#pdf-builder-react-root');
+                        if (editorContent && editorContent.children.length > 2) {
+                            log('✅ Éditeur rendu avec succès', 'success');
+                        } else {
+                            log('⚠️ Éditeur rendu mais contenu suspect', 'warning');
+                        }
+                    }, 1000);
+                    
+                } else {
+                    throw new Error('L\'initialisation a échoué');
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur d'initialisation: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAPI() {
+            log('Test de l\'API...', 'warning');
+            
+            try {
+                const api = window.pdfBuilderReact;
+                if (!api) throw new Error('API non disponible');
+                
+                const methods = [
+                    'initPDFBuilderReact',
+                    'loadTemplate', 
+                    'getEditorState',
+                    'setEditorState',
+                    'getCurrentTemplate',
+                    'exportTemplate',
+                    'saveTemplate',
+                    'registerEditorInstance',
+                    'resetAPI',
+                    'updateCanvasDimensions'
+                ];
+                
+                methods.forEach(method => {
+                    if (typeof api[method] === 'function') {
+                        log(`✅ ${method} disponible`, 'success');
+                    } else {
+                        log(`❌ ${method} manquant`, 'error');
+                    }
+                });
+                
+            } catch (error) {
+                log(`❌ Erreur API: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testTemplateLoading() {
+            log('Test de chargement de template...', 'warning');
+            
+            try {
+                const mockTemplate = {
+                    id: 'test-template-1',
+                    name: 'Template de Test',
+                    elements: [
+                        {
+                            id: 'test-element-1',
+                            type: 'text',
+                            x: 100,
+                            y: 100,
+                            width: 200,
+                            height: 50,
+                            text: 'Texte de test',
+                            visible: true,
+                            locked: false,
+                            createdAt: new Date(),
+                            updatedAt: new Date()
+                        }
+                    ],
+                    isNew: false,
+                    isModified: false,
+                    isSaving: false,
+                    isLoading: false
+                };
+                
+                if (window.pdfBuilderReact?.loadTemplate) {
+                    await window.pdfBuilderReact.loadTemplate(mockTemplate);
+                    log('✅ Template chargé avec succès', 'success');
+                } else {
+                    throw new Error('Méthode loadTemplate non disponible');
+                }
+                
+            } catch (error) {
+                log(`❌ Erreur chargement template: ${error.message}`, 'error');
+            }
+        }
+        
+        function clearEditor() {
+            testResults.innerHTML = '';
+            const root = document.getElementById('pdf-builder-react-root');
+            const loading = document.getElementById('pdf-builder-react-loading');
+            const editor = document.getElementById('pdf-builder-react-editor');
+            
+            if (root) root.innerHTML = '<div id="pdf-builder-react-loading">Chargement de l\'éditeur...</div><div id="pdf-builder-react-editor"></div>';
+            
+            log('Éditeur effacé', 'warning');
+        }
+        
+        // Initialiser le diagnostic au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDiagnostic();
+            log('Page de test chargée', 'success');
+            
+            // Vérifier périodiquement l'état
+            setInterval(updateDiagnostic, 2000);
+        });
+    </script>
+</body>
+</html>

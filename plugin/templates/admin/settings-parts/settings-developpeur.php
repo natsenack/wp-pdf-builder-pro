@@ -844,6 +844,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Appeler initializeCheckboxSync immédiatement après sa définition
     initializeCheckboxSync();
 
     // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
@@ -1753,7 +1754,6 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
 
     // Manual testing only - no automatic execution on page load
     // Tests are triggered manually via buttons only
-});
 });
 </script>
 

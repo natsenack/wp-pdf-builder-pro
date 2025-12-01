@@ -178,15 +178,18 @@ const initialHistoryState: HistoryState = {
       isLoading: true // ✅ Start as loading
     },
     previewMode: 'editor',
-    history: {} as HistoryState // Sera défini récursivement
+    history: {
+      past: [],
+      present: null as any, // Évite la récursion infinie
+      future: [],
+      canUndo: false,
+      canRedo: false
+    }
   } as BuilderState,
   future: [],
   canUndo: false,
   canRedo: false
 };
-
-// Correction de la récursion
-initialHistoryState.present.history = initialHistoryState;
 
 const initialState: BuilderState = {
   elements: [],

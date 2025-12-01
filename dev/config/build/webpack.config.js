@@ -8,7 +8,7 @@ module.exports = {
   entry: {
     'pdf-builder-react': './assets/js/pdf-builder-react/index.js'
   },
-  target: ['web', 'es5'], // Cibler ES5 pour la compatibilité maximale
+  target: ['web', 'es6'], // Cibler ES6 pour de meilleures performances
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, '../../../plugin/assets/js/dist'),
@@ -41,7 +41,15 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: [
+          {
+            loader: 'style-loader',
+            options: {
+              injectType: 'singletonStyleTag'
+            }
+          }, 
+          'css-loader'
+        ]
       }
     ]
   },
@@ -54,29 +62,53 @@ module.exports = {
     })
   ],
   optimization: {
-    splitChunks: false, // Désactiver complètement le code splitting
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          priority: 10
+        },
+        common: {
+          minChunks: 2,
+          priority: 5,
+          reuseExistingChunk: true
+        }
+      }
+    },
     minimize: true,
     minimizer: [
       new TerserPlugin({
         terserOptions: {
           compress: {
-            drop_console: false,  // ✅ TEMPORAIREMENT DÉSACTIVÉ pour debug
+            drop_console: true,  // ✅ Supprimer les logs en production
             drop_debugger: true,
-            pure_funcs: [] // Ne pas supprimer les logs
+            pure_funcs: ['console.log', 'console.info', 'console.debug'],
+            pure_getters: true,
+            unsafe: true,
+            unsafe_comps: true,
+            warnings: false
           },
           mangle: {
             safari10: true
+          },
+          output: {
+            comments: false,
+            beautify: false
           }
         }
       })
     ],
     usedExports: true,
-    sideEffects: true
+    sideEffects: false, // Optimiser le tree shaking
+    runtimeChunk: false // Éviter un chunk séparé pour le runtime
   },
   performance: {
-    hints: false, // TEMPORAIREMENT DÉSACTIVÉ pour debug
-    maxEntrypointSize: 150 * 1024, // 150 KiB (réduit de 200)
-    maxAssetSize: 150 * 1024,     // 150 KiB (réduit de 200)
+    hints: 'warning',
+    maxEntrypointSize: 250 * 1024, // 250 KiB
+    maxAssetSize: 250 * 1024,     // 250 KiB
     assetFilter: function(assetFilename) {
       return !assetFilename.endsWith('.map');
     }
