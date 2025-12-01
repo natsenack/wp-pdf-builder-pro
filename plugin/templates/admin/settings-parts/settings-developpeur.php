@@ -764,6 +764,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gestion du toggle Mode Développeur
     const developerEnabledToggle = document.getElementById('developer_enabled');
     const debugJavascriptToggle = document.getElementById('debug_javascript');
+    const debugJavascriptFiltersSection = document.getElementById('debug_javascript_filters_section');
     const debugPdfEditorRow = document.getElementById('debug_pdf_editor_row');
     const debugSettingsPageRow = document.getElementById('debug_settings_page_row');
     const pdfEditorToggle = document.getElementById('debug_pdf_editor');
@@ -784,6 +785,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🔧 [DEBUG] Éléments DOM trouvés:', {
         developerEnabledToggle: !!developerEnabledToggle,
         debugJavascriptToggle: !!debugJavascriptToggle,
+        debugJavascriptFiltersSection: !!debugJavascriptFiltersSection,
         debugPdfEditorRow: !!debugPdfEditorRow,
         debugSettingsPageRow: !!debugSettingsPageRow
     });
@@ -966,6 +968,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Appliquer l'état initial du toggle Debug Éditeur PDF
         updatePdfEditorToggleVisibility();
+        updateSettingsPageToggleVisibility();
 
         // Debug: Vérifier l'état initial des toggles
         console.log('🔧 [DEBUG] État initial des toggles:', {
@@ -1021,19 +1024,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Ajouter aussi un écouteur de clic pour debug
             debugJavascriptToggle.addEventListener('click', function(event) {
                 console.log('🔧 [DEBUG JAVASCRIPT] Clic détecté sur toggle');
-            });
-        }
-
-        // Attacher les écouteurs d'événements aux toggles enfants pour permettre l'interaction
-        if (pdfEditorToggle) {
-            pdfEditorToggle.addEventListener('click', function(event) {
-                console.log('🔧 [DEBUG PDF EDITOR] Clic détecté sur toggle enfant');
-            });
-        }
-
-        if (settingsPageToggle) {
-            settingsPageToggle.addEventListener('click', function(event) {
-                console.log('🔧 [DEBUG SETTINGS PAGE] Clic détecté sur toggle enfant');
             });
         }
 
