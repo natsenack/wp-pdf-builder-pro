@@ -392,65 +392,32 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 <span class="dev-section-toggle">▼</span>
             </div>
             <div class="dev-section-content">
-                <div class="dev-grid">
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">🧪</span>
-                            <h4 class="dev-card-title">Mode Test de Licence</h4>
-                        </div>
-                        <p class="dev-card-description">Active le mode de test pour les licences (développement uniquement)</p>
-                        <div style="margin-top: 15px;">
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="license_test_mode">Mode Test Licence</label></th>
+                        <td>
                             <label class="toggle-switch">
-                                <input type="checkbox" id="license_test_mode" name="pdf_builder_license_test_mode_enabled" value="1"
-                                       <?php echo isset($settings['pdf_builder_license_test_mode_enabled']) && $settings['pdf_builder_license_test_mode_enabled'] ? 'checked' : ''; ?> />
+                                <input type="checkbox" id="license_test_mode" name="pdf_builder_license_test_mode_enabled" value="1" <?php echo $license_test_mode ? 'checked' : ''; ?> />
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span style="margin-left: 10px; font-weight: 500;">
-                                <?php echo isset($settings['pdf_builder_license_test_mode_enabled']) && $settings['pdf_builder_license_test_mode_enabled'] ? 'Activé' : 'Désactivé'; ?>
-                            </span>
-                        </div>
-                        <p style="font-size: 0.8em; color: #6c757d; margin: 8px 0 0 0;">
-                            ⚠️ À utiliser uniquement en développement
-                        </p>
-                    </div>
-
-                    <div class="dev-card">
-                        <div class="dev-card-header">
-                            <span class="dev-card-icon">🔐</span>
-                            <h4 class="dev-card-title">Clé de Licence Test</h4>
-                        </div>
-                        <p class="dev-card-description">Clé de licence utilisée en mode test</p>
-                        <div class="dev-password-field" style="margin-top: 15px;">
+                            <span class="toggle-label">Activer le mode test de licence</span>
+                            <p class="description">Active le mode de test pour les licences (développement uniquement)</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="license_test_key">Clé de Licence Test</label></th>
+                        <td>
                             <input type="text" id="license_test_key" name="pdf_builder_license_test_key"
-                                   placeholder="Clé de licence de test" autocomplete="off"
-                                   value="<?php echo esc_attr($settings['pdf_builder_license_test_key'] ?? ''); ?>" />
-                        </div>
-                        <p style="font-size: 0.8em; color: #6c757d; margin: 8px 0 0 0;">
-                            Laissez vide pour utiliser la clé par défaut
-                        </p>
-                    </div>
-                </div>
+                                   value="<?php echo esc_attr($license_test_key); ?>"
+                                   class="regular-text" placeholder="Laisser vide pour utiliser la clé par défaut" />
+                            <p class="description">Clé de licence utilisée en mode test</p>
+                        </td>
+                    </tr>
+                </table>
 
-                <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 15px; margin-top: 20px;">
-                    <h4 style="margin: 0 0 10px 0; color: #856404;">⚠️ Avertissement Licence</h4>
-                    <ul style="margin: 0; padding-left: 20px; color: #856404; font-size: 0.9em;">
-                        <li>Le mode test de licence ne doit être utilisé qu'en développement</li>
-                        <li>Désactivez toujours ce mode en production</li>
-                        <li>Les clés de test peuvent expirer ou être invalidées</li>
-                        <li>Vérifiez la validité de votre licence avant déploiement</li>
-                    </ul>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 20px;">
-                    <button type="button" id="test-license-btn" class="dev-tool-btn">
-                        🔍 Tester Licence
-                    </button>
-                    <button type="button" id="validate-license-btn" class="dev-tool-btn">
-                        ✅ Valider Licence
-                    </button>
-                    <button type="button" id="reset-license-btn" class="dev-tool-btn">
-                        🔄 Reset Licence
-                    </button>
+                <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-top: 20px;">
+                    <h4 style="margin-top: 0; color: #856404;">⚠️ Avertissement</h4>
+                    <p style="margin: 0; color: #856404;">Le mode test de licence ne doit être utilisé qu'en développement. Désactivez-le toujours en production.</p>
                 </div>
             </div>
         </div>
@@ -987,10 +954,7 @@ document.addEventListener('DOMContentLoaded', function() {
         system_info_btn: { action: 'pdf_builder_system_info', confirm: false, desc: 'Afficher les informations système' },
         test_connections_btn: { action: 'pdf_builder_test_connections', confirm: false, desc: 'Tester les connexions' },
         reset_settings_btn: { action: 'pdf_builder_reset_dev_settings', confirm: 'Remettre à zéro tous les paramètres développeur ?', desc: 'Reset des paramètres' },
-        backup_config_btn: { action: 'pdf_builder_backup_config', confirm: false, desc: 'Créer une sauvegarde' },
-        test_license_btn: { action: 'pdf_builder_test_license', confirm: false, desc: 'Tester la licence' },
-        validate_license_btn: { action: 'pdf_builder_validate_license', confirm: false, desc: 'Valider la licence' },
-        reset_license_btn: { action: 'pdf_builder_reset_license', confirm: 'Remettre à zéro les paramètres de licence ?', desc: 'Reset licence' }
+        backup_config_btn: { action: 'pdf_builder_backup_config', confirm: false, desc: 'Créer une sauvegarde' }
     };
 
     Object.entries(tools).forEach(([btnId, config]) => {
