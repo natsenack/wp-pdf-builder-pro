@@ -882,41 +882,6 @@
 
         // === FONCTIONS UTILITAIRES ===
 
-        function executeToolAction(action, button, description) {
-            const originalText = button.textContent;
-            const originalDisabled = button.disabled;
-
-            button.disabled = true;
-            button.textContent = '⏳ ' + description + '...';
-            button.style.opacity = '0.7';
-
-            fetch(window.ajaxurl || (window.location.origin + '/wp-admin/admin-ajax.php'), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    action: action,
-                    nonce: window.pdfBuilderAjax?.nonce || ''
-                })
-            })
-            .then(resp => resp.json())
-            .then(data => {
-                button.disabled = originalDisabled;
-                button.textContent = originalText;
-                button.style.opacity = '1';
-
-                if (data.success) {
-                    showNotification('✅ ' + (data.data?.message || description + ' réussie'), 'success');
-                } else {
-                    showNotification('❌ ' + (data.data?.message || 'Erreur lors de ' + description.toLowerCase()), 'error');
-                }
-            })
-            .catch(err => {
-                button.disabled = originalDisabled;
-                button.textContent = originalText;
-                button.style.opacity = '1';
-                showNotification('❌ Erreur de connexion', 'error');
-                console.error('Tool action error:', err);
-            });
         function showNotification(message, type = 'info') {
             // Créer la notification
             const notification = document.createElement('div');
