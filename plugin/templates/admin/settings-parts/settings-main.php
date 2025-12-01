@@ -236,13 +236,13 @@ window.pdfBuilderCanvasSettings = {};
 
 // Paramètres de debug pour le JavaScript
 window.pdfBuilderDebugSettings = {
-    javascript: false,
-    javascript_verbose: false,
-    ajax: false,
-    performance: false,
+    javascript: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_debug_javascript && window.pdfBuilderSavedSettings.pdf_builder_debug_javascript !== '0'),
+    javascript_verbose: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_debug_javascript && window.pdfBuilderSavedSettings.pdf_builder_debug_javascript !== '0'),
+    ajax: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_debug_ajax && window.pdfBuilderSavedSettings.pdf_builder_debug_ajax !== '0'),
+    performance: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_debug_performance && window.pdfBuilderSavedSettings.pdf_builder_debug_performance !== '0'),
     settings_page: true,  // ACTIVÉ pour déboguer la persistance des onglets
-    pdf_editor: false,
-    database: false
+    pdf_editor: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled !== '0'),
+    database: !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_debug_database && window.pdfBuilderSavedSettings.pdf_builder_debug_database !== '0')
 };
 
 // Variables AJAX globales pour les requêtes AJAX

@@ -221,7 +221,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'developer_enabled' => get_option('pdf_builder_developer_enabled', '0'),
                     'developer_password' => get_option('pdf_builder_developer_password', ''),
                     'debug_php_errors' => get_option('pdf_builder_debug_php_errors', '0'),
-                    'pdf_builder_debug_javascript' => get_option('pdf_builder_debug_javascript', '0'),
+                            'pdf_builder_debug_javascript' => get_option('pdf_builder_debug_javascript', '0'),
                     'pdf_builder_debug_ajax' => get_option('pdf_builder_debug_ajax', '0'),
                     'pdf_builder_debug_performance' => get_option('pdf_builder_debug_performance', '0'),
                     'pdf_builder_debug_database' => get_option('pdf_builder_debug_database', '0'),
@@ -447,7 +447,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             'log_retention' => intval($_POST['log_retention'] ?? 30),
 
             // Développeur - Optimisations
-            'force_https' => !empty($_POST['force_https']) ? '1' : '0',
+            // Ensure we read the correct POST key when saving settings
+            'force_https' => !empty($_POST['pdf_builder_force_https']) || !empty($_POST['force_https']) ? '1' : '0',
             'performance_monitoring' => !empty($_POST['performance_monitoring']) ? '1' : '0',
 
             // PDF - Paramètres
@@ -738,7 +739,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             'pdf_builder_log_retention' => intval($_POST['log_retention'] ?? 30),
             'pdf_builder_license_test_mode_enabled' => isset($_POST['license_test_mode']) ? '1' : '0',
             'pdf_builder_license_test_key' => sanitize_text_field($_POST['pdf_builder_license_test_key'] ?? ''),
-            'pdf_builder_force_https' => isset($_POST['force_https']) ? '1' : '0',
+            'pdf_builder_force_https' => isset($_POST['pdf_builder_force_https']) ? '1' : (isset($_POST['force_https']) ? '1' : '0'),
         ];
 
         if (defined('WP_DEBUG') && WP_DEBUG) {

@@ -198,6 +198,27 @@ if (function_exists('add_action')) {
             new \PDF_Builder\Api\PreviewImageAPI();
         }
     });
+    // Force HTTPS if enabled in settings (simple redirect to https if not SSL)
+        add_action('template_redirect', function() {
+            // Skip CLI, AJAX, REST requests and cron
+            if (defined('WP_CLI') && WP_CLI) return;
+            if (defined('DOING_AJAX') && DOING_AJAX) return;
+            if (defined('REST_REQUEST') && REST_REQUEST) return;
+
+            $force = get_option('pdf_builder_force_https', '0');
+            if ($force === '1' || $force === 1) {
+                if (!is_ssl()) {
+                    $host = $_SERVER['HTTP_HOST'] ?? '';
+                    $uri = $_SERVER['REQUEST_URI'] ?? '';
+                    if (!empty($host)) {
+                        $redirect = 'https://' . $host . $uri;
+                        // Preserver host and redirect safely
+                        wp_safe_redirect($redirect, 301);
+                        exit;
+                    }
+                }
+            }
+        }, 1);
 }
 
 // Initialiser les variables $_SERVER manquantes pour éviter les erreurs PHP 8.1+
