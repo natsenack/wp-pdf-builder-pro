@@ -2358,11 +2358,14 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         console.log('[FLOATING SAVE] ✅ window.pdfBuilderSavedSettings mis à jour');
 
                         // DEBUG: Log debug info from AJAX response
+                        console.log('[AJAX DEBUG] Checking result.data:', result.data);
                         if (result && result.data && result.data.debug_logs) {
                             console.log('[AJAX DEBUG] Debug logs from server:', result.data.debug_logs);
                             console.log('[AJAX DEBUG] pdf_builder_canvas_debug_enabled present:', result.data.debug_logs.pdf_builder_canvas_debug_enabled_present);
                             console.log('[AJAX DEBUG] pdf_builder_canvas_debug_enabled value:', result.data.debug_logs.pdf_builder_canvas_debug_enabled_value);
                             console.log('[AJAX DEBUG] All processed fields:', result.data.debug_logs.processed_fields);
+                        } else {
+                            console.log('[AJAX DEBUG] No debug_logs in response');
                         }
                         // Mettre à jour les paramètres de debug JS en conséquence
                         window.pdfBuilderDebugSettings.javascript = !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled !== '0');
