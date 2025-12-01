@@ -13,9 +13,23 @@
         }
 
         init() {
-            this.bindEvents();
+                this.bindEvents();
             this.initializeDeveloperMode();
             this.initializeNotificationsTest();
+                this.initializeSectionsCollapsedState();
+            // export a toggles manager globally for other scripts to re-sync UI
+            window.pdfBuilderDeveloperToggles = {
+                forceSync: () => {
+                    try {
+                        const isEnabled = (window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_developer_enabled === '1') || $('#developer_enabled').is(':checked');
+                        this.updateDeveloperSectionsVisibility(isEnabled);
+                        this.updateDeveloperStatusIndicator();
+                        console.log('[DEV TOGGLES] forceSync executed, developerEnabled:', isEnabled);
+                    } catch (e) {
+                        console.error('[DEV TOGGLES] forceSync failed:', e);
+                    }
+                }
+            };
 
             // Expose test functions globally for debugging
             window.testLicenseToggle = () => this.testToggleLicenseMode();
@@ -68,6 +82,7 @@
 
             // === ACCORDÉON ===
             $(document).on('click', '#dev-todo-toggle', (e) => this.handleTodoAccordion(e));
+            $(document).on('click', '.dev-section-header', (e) => this.handleSectionToggle(e));
 
             // === TESTS DE NOTIFICATIONS ===
             $(document).on('click', '#test_notification_success', (e) => this.testNotification('success'));
@@ -77,6 +92,27 @@
             $(document).on('click', '#test_notification_all', (e) => this.testAllNotifications());
             $(document).on('click', '#test_notification_clear', (e) => this.clearAllNotifications());
             $(document).on('click', '#test_notification_stats', (e) => this.showNotificationStats());
+        }
+
+        // Ensure all dev sections are closed by default and set correct toggle icons
+        initializeSectionsCollapsedState() {
+            $('.dev-section').each(function() {
+                const section = $(this);
+                section.addClass('collapsed');
+                const toggle = section.find('.dev-section-toggle');
+                if (toggle.length) {
+                    toggle.text('▶️');
+                }
+                // Update aria attributes
+                const header = section.find('.dev-section-header');
+                const content = section.find('.dev-section-content');
+                if (header.length) {
+                    header.attr('aria-expanded', 'false');
+                }
+                if (content.length) {
+                    content.attr('aria-hidden', 'true');
+                }
+            });
         }
 
         // === GESTION DU MODE DÉVELOPPEUR ===
@@ -560,6 +596,24 @@
         }
 
         // === ACCORDÉON ===
+        handleSectionToggle(e) {
+            e.preventDefault();
+            const header = $(e.currentTarget);
+            const section = header.closest('.dev-section');
+            const toggle = header.find('.dev-section-toggle');
+
+            if (section.hasClass('collapsed')) {
+                section.removeClass('collapsed');
+                if (toggle.length) toggle.text('🔽');
+                header.attr('aria-expanded', 'true');
+                section.find('.dev-section-content').attr('aria-hidden', 'false');
+            } else {
+                section.addClass('collapsed');
+                if (toggle.length) toggle.text('▶️');
+                header.attr('aria-expanded', 'false');
+                section.find('.dev-section-content').attr('aria-hidden', 'true');
+            }
+        }
         handleTodoAccordion(e) {
             e.preventDefault();
             const content = $('#dev-todo-content');

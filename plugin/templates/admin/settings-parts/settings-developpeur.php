@@ -387,12 +387,12 @@
         <input type="hidden" name="submit_developpeur" value="1">
 
         <!-- Section Licence de Test -->
-        <div class="dev-section" id="license-section">
-            <div class="dev-section-header">
+        <div class="dev-section collapsed" id="license-section">
+            <div class="dev-section-header" role="button" tabindex="0" aria-expanded="false">
                 <h3>🔑 Licence de Test</h3>
                 <span class="dev-section-toggle">▼</span>
             </div>
-            <div class="dev-section-content">
+            <div class="dev-section-content" aria-hidden="true">
                 <table class="form-table">
                     <tr>
                         <th scope="row"><label for="license_test_mode">Mode Test Licence</label></th>
@@ -432,7 +432,7 @@
                                 <div style="background:white; border-radius:8px; padding:18px; width:480px; max-width:92%;">
                                     <h3 style="margin-top:0;">🔑 Clé de Test - Entrer / Valider</h3>
                                     <p style="margin: 0 0 12px 0; color:#666;">Collez une clé de test ou validez une clé existante.</p>
-                                    <input id="license_test_key_input" type="text" placeholder="TEST-..." style="width:100%; padding:8px; border-radius:4px; border:1px solid #ddd;" />
+                                    <input id="license_test_key_input" type="text" placeholder="TEST-..." autocomplete="off" aria-label="Clé de licence de test" style="width:100%; padding:8px; border-radius:4px; border:1px solid #ddd;" />
                                     <div style="display:flex; gap:10px; margin-top:12px;">
                                         <button type="button" id="license_modal_validate_btn" class="button button-primary">✅ Valider</button>
                                         <button type="button" id="license_modal_save_btn" class="button button-secondary">💾 Enregistrer</button>
@@ -495,12 +495,12 @@
 
 
         <!-- Section Debug -->
-        <div class="dev-section" id="debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-            <div class="dev-section-header">
+        <div class="dev-section collapsed" id="debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <div class="dev-section-header" role="button" tabindex="0" aria-expanded="false">
                 <h3>🔍 Paramètres de Debug</h3>
                 <span class="dev-section-toggle">▼</span>
             </div>
-            <div class="dev-section-content">
+            <div class="dev-section-content" aria-hidden="true">
                 <div class="dev-grid">
                     <div class="dev-card">
                         <div class="dev-card-header">
@@ -594,12 +594,12 @@
         </div>
 
         <!-- Section Logs -->
-        <div class="dev-section" id="logs-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-            <div class="dev-section-header">
+        <div class="dev-section collapsed" id="logs-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <div class="dev-section-header" role="button" tabindex="0" aria-expanded="false">
                 <h3>📝 Configuration des Logs</h3>
                 <span class="dev-section-toggle">▼</span>
             </div>
-            <div class="dev-section-content">
+            <div class="dev-section-content" aria-hidden="true">
                 <div class="dev-grid">
                     <div class="dev-card">
                         <div class="dev-card-header">
@@ -657,12 +657,12 @@
         </div>
 
         <!-- Section À Faire -->
-        <div class="dev-section" id="todo-section">
-            <div class="dev-section-header">
+        <div class="dev-section collapsed" id="todo-section">
+            <div class="dev-section-header" role="button" tabindex="0" aria-expanded="false">
                 <h3>📋 À Faire</h3>
                 <span class="dev-section-toggle">▼</span>
             </div>
-            <div class="dev-section-content">
+            <div class="dev-section-content" aria-hidden="true">
                 <div style="margin-bottom: 20px;">
                     <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                         <input type="text" id="new-todo-input" placeholder="Nouvelle tâche à ajouter..."
