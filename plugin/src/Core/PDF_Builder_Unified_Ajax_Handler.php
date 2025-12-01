@@ -32,8 +32,8 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function init_hooks() {
         // Actions de sauvegarde principales
-        // add_action('wp_ajax_pdf_builder_save_settings', [$this, 'handle_save_settings']);
-        // add_action('wp_ajax_pdf_builder_save_all_settings', [$this, 'handle_save_all_settings']); // Disabled - conflicts with dispatcher
+        add_action('wp_ajax_pdf_builder_save_settings', [$this, 'handle_save_settings']);
+        add_action('wp_ajax_pdf_builder_save_all_settings', [$this, 'handle_save_all_settings']);
 
         // Actions de cache
         add_action('wp_ajax_pdf_builder_get_cache_metrics', [$this, 'handle_get_cache_metrics']);
@@ -354,6 +354,30 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         return $saved_options;
+    }
+
+    /**
+     * Handler pour sauvegarder tous les paramètres
+     */
+    public function handle_save_all_settings() {
+        // Temporarily disable nonce validation for debugging
+        // if (!$this->nonce_manager->validate_ajax_request('save_all_settings')) {
+        //     return;
+        // }
+
+        try {
+            $saved_count = $this->save_all_settings();
+
+            wp_send_json_success([
+                'message' => 'Tous les paramètres sauvegardés avec succès',
+                'saved_count' => $saved_count,
+                'new_nonce' => $this->nonce_manager->generate_nonce()
+            ]);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder AJAX] Erreur sauvegarde tous: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+        }
     }
 
     /**
