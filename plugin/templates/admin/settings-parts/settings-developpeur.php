@@ -216,32 +216,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         </td>
                     </tr>
                     <!-- Fin de la sous-catégorie -->
-                    <tr id="debug_pdf_editor_row" style="display: none;">
-                        <th scope="row"><label for="debug_pdf_editor">Debug Éditeur PDF</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_pdf_editor_old" name="pdf_builder_debug_pdf_editor_old" value="1" disabled />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug Éditeur PDF</span>
-                            </div>
-                            <div class="toggle-description">Isole les logs JavaScript exclusivement à la page de l'éditeur PDF</div>
-                        </td>
-                    </tr>
-                    <tr id="debug_settings_page_row" style="display: none;">
-                        <th scope="row"><label for="debug_settings_page">Debug Page Paramètres</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="debug_settings_page_old" name="pdf_builder_debug_settings_page_old" value="1" disabled />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug Page Paramètres</span>
-                            </div>
-                            <div class="toggle-description">Isole les logs JavaScript exclusivement à la page des paramètres</div>
-                        </td>
-                    </tr>
+                    <tr>
                     <tr>
                         <th scope="row"><label for="debug_ajax">Debug AJAX</label></th>
                         <td>
@@ -765,8 +740,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const developerEnabledToggle = document.getElementById('developer_enabled');
     const debugJavascriptToggle = document.getElementById('debug_javascript');
     const debugJavascriptFiltersSection = document.getElementById('debug_javascript_filters_section');
-    const debugPdfEditorRow = document.getElementById('debug_pdf_editor_row');
-    const debugSettingsPageRow = document.getElementById('debug_settings_page_row');
     const pdfEditorToggle = document.getElementById('debug_pdf_editor');
     const settingsPageToggle = document.getElementById('debug_settings_page');
     const devSections = [
@@ -786,8 +759,8 @@ document.addEventListener('DOMContentLoaded', function() {
         developerEnabledToggle: !!developerEnabledToggle,
         debugJavascriptToggle: !!debugJavascriptToggle,
         debugJavascriptFiltersSection: !!debugJavascriptFiltersSection,
-        debugPdfEditorRow: !!debugPdfEditorRow,
-        debugSettingsPageRow: !!debugSettingsPageRow
+        pdfEditorToggle: !!pdfEditorToggle,
+        settingsPageToggle: !!settingsPageToggle
     });
 
     // Fonction pour synchroniser l'état des checkboxes avec les valeurs sauvegardées
