@@ -156,7 +156,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
                 'pdf_builder_developer_enabled', 'pdf_builder_debug_php_errors', 'pdf_builder_debug_javascript',
                 'pdf_builder_debug_javascript_verbose', 'pdf_builder_debug_ajax', 'pdf_builder_debug_performance',
-                'pdf_builder_debug_database', 'pdf_builder_debug_pdf_editor', 'pdf_builder_debug_settings_page', 'pdf_builder_force_https', 'pdf_builder_license_test_mode_enabled',
+                'pdf_builder_debug_database', 'pdf_builder_debug_pdf_editor', 'pdf_builder_debug_settings_page', 'pdf_builder_debug_templates_page', 'pdf_builder_force_https', 'pdf_builder_license_test_mode_enabled',
                 // Canvas bool fields
                 'canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_guides_enabled', 'canvas_drag_enabled',
                 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts',
