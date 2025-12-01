@@ -45,43 +45,47 @@
                                     <input type="text" id="company_phone_manual" name="company_phone_manual"
                                         value="<?php echo esc_attr($company_phone_manual); ?>"
                                         placeholder="+33 1 23 45 67 89" />
-                                    <p class="description">Téléphone de l'entreprise</p>
+<p class="description">Téléphone de l'entreprise</p>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="company_siret">Numéro SIRET</label></th>
                                 <td>
                                     <input type="text" id="company_siret" name="company_siret"
-                                        value="<?php echo esc_attr($company_siret); ?>"
+                                        value="<?php echo esc_attr(get_option('pdf_builder_company_siret', '')); ?>"
                                         placeholder="123 456 789 00012" />
                                     <p class="description">Numéro SIRET de l'entreprise</p>
+                                    <div class="company-siret-preview" style="color: #666; font-size: 12px; margin-top: 4px;"></div>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="company_vat">Numéro TVA</label></th>
                                 <td>
                                     <input type="text" id="company_vat" name="company_vat"
-                                        value="<?php echo esc_attr($company_vat); ?>"
+                                        value="<?php echo esc_attr(get_option('pdf_builder_company_vat', '')); ?>"
                                         placeholder="FR12345678901, DE123456789, BE0123456789" />
                                     <p class="description">Numéro de TVA intracommunautaire (format européen : 2 lettres pays + 8-12 caractères)</p>
+                                    <div class="company-vat-preview" style="color: #666; font-size: 12px; margin-top: 4px;"></div>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="company_rcs">RCS</label></th>
                                 <td>
                                     <input type="text" id="company_rcs" name="company_rcs"
-                                        value="<?php echo esc_attr($company_rcs); ?>"
+                                        value="<?php echo esc_attr(get_option('pdf_builder_company_rcs', '')); ?>"
                                         placeholder="Lyon B 123 456 789" />
                                     <p class="description">Numéro RCS (Registre du Commerce et des Sociétés)</p>
+                                    <div class="company-rcs-preview" style="color: #666; font-size: 12px; margin-top: 4px;"></div>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="company_capital">Capital social</label></th>
                                 <td>
                                     <input type="text" id="company_capital" name="company_capital"
-                                        value="<?php echo esc_attr($company_capital); ?>"
+                                        value="<?php echo esc_attr(get_option('pdf_builder_company_capital', '')); ?>"
                                         placeholder="10 000 €" />
                                     <p class="description">Montant du capital social de l'entreprise</p>
+                                    <div class="company-capital-preview" style="color: #666; font-size: 12px; margin-top: 4px;"></div>
                                 </td>
                             </tr>
                         </table>

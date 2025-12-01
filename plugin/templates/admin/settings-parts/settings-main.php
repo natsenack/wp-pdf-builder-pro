@@ -24,13 +24,22 @@ require_once dirname(__FILE__) . '/settings-styles.php';
 $centralized_js_mode = true;
 $notices = [];
 
-// Load current settings
+// Load current settings - DIRECTLY FROM DATABASE OPTIONS
 $settings = get_option('pdf_builder_settings', []);
 $company_phone_manual = get_option('pdf_builder_company_phone_manual', '');
 $company_siret = get_option('pdf_builder_company_siret', '');
 $company_vat = get_option('pdf_builder_company_vat', '');
 $company_rcs = get_option('pdf_builder_company_rcs', '');
 $company_capital = get_option('pdf_builder_company_capital', '');
+
+// DEBUG: Log loaded values for troubleshooting
+if (defined('WP_DEBUG') && WP_DEBUG) {
+    error_log('PDF Builder SETTINGS LOADED:');
+    error_log(' - company_siret: ' . $company_siret);
+    error_log(' - company_vat: ' . $company_vat);
+    error_log(' - company_rcs: ' . $company_rcs);
+    error_log(' - company_capital: ' . $company_capital);
+}
 
 // Add nonce for AJAX
 wp_nonce_field('pdf_builder_settings', '_wpnonce_pdf_builder');
