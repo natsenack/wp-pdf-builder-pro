@@ -99,9 +99,7 @@ $show_tools = $dev_mode === '1';
 }
 
 .dev-toggle input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+    display: none;
 }
 
 .dev-toggle-slider {
@@ -125,11 +123,11 @@ $show_tools = $dev_mode === '1';
     transition: 0.3s;
 }
 
-.dev-toggle input:checked + .dev-toggle-slider {
+.dev-toggle.active .dev-toggle-slider {
     background: #3b82f6;
 }
 
-.dev-toggle input:checked + .dev-toggle-slider:before {
+.dev-toggle.active .dev-toggle-slider:before {
     transform: translateX(20px);
 }
 
@@ -455,7 +453,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Elements
     const devModeToggle = document.getElementById('pdf-builder-dev-mode');
+    const devModeToggleContainer = devModeToggle.closest('.dev-toggle');
     const debugToggle = document.getElementById('pdf-builder-debug-enabled');
+    const debugToggleContainer = debugToggle.closest('.dev-toggle');
     const passwordField = document.getElementById('pdf-builder-dev-password');
     const passwordToggle = document.querySelector('.dev-password-toggle-btn');
     const quickEnableBtn = document.querySelector('.dev-quick-enable');
@@ -546,16 +546,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Event listeners for toggles
     if (devModeToggle) {
+        // Initialize toggle state
+        if (devModeToggle.checked) {
+            devModeToggleContainer.classList.add('active');
+        }
+
         devModeToggle.addEventListener('change', function() {
             const isEnabled = this.checked;
+            if (isEnabled) {
+                devModeToggleContainer.classList.add('active');
+            } else {
+                devModeToggleContainer.classList.remove('active');
+            }
             updateDevMode(isEnabled);
             saveSetting('pdf_builder_developer_enabled', isEnabled ? '1' : '0');
         });
     }
 
     if (debugToggle) {
+        // Initialize toggle state
+        if (debugToggle.checked) {
+            debugToggleContainer.classList.add('active');
+        }
+
         debugToggle.addEventListener('change', function() {
             const isEnabled = this.checked;
+            if (isEnabled) {
+                debugToggleContainer.classList.add('active');
+            } else {
+                debugToggleContainer.classList.remove('active');
+            }
             const label = this.closest('.dev-toggle-group').querySelector('.dev-toggle-label');
             label.textContent = isEnabled ? 'Activé' : 'Désactivé';
             saveSetting('pdf_builder_canvas_debug_enabled', isEnabled ? '1' : '0');
