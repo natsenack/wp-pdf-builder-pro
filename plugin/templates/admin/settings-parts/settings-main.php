@@ -812,7 +812,7 @@ add_action('wp_ajax_pdf_builder_deactivate_license', function() {
 add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
     try {
         // Verify nonce
-        if (!wp_verify_nonce(sanitize_text_field($_POST['nonce'] ?? ''), 'pdf_builder_developer_settings')) {
+        if (!wp_verify_nonce(sanitize_text_field($_POST['nonce'] ?? ''), 'pdf_builder_settings_ajax')) {
             wp_send_json_error(['message' => 'Security check failed']);
             return;
         }

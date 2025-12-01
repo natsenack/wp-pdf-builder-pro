@@ -20,7 +20,7 @@ $show_tools = $dev_mode === '1';
 // Create secure AJAX configuration
 $ajax_config = [
     'ajax_url' => admin_url('admin-ajax.php'),
-    'nonce' => wp_create_nonce('pdf_builder_developer_settings'),
+    'nonce' => wp_create_nonce('pdf_builder_settings_ajax'),
     'action' => 'pdf_builder_developer_save_settings',
     'debug_mode' => defined('WP_DEBUG') && WP_DEBUG,
     'current_values' => [
