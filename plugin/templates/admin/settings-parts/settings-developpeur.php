@@ -1755,5 +1755,6 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
     // Manual testing only - no automatic execution on page load
     // Tests are triggered manually via buttons only
 });
+});
 </script>
 
