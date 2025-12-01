@@ -1580,23 +1580,23 @@ function pdf_builder_save_all_settings_handler() {
 
         // Traiter les champs checkbox non cochés (qui ne sont pas envoyés)
         $checkbox_fields = [
-            'debug_mode',
-            'log_level',
-            'pdf_cache_enabled',
-            'pdf_metadata_enabled',
-            'pdf_print_optimized',
-            'template_library_enabled',
-            'developer_enabled',
-            'debug_javascript',
-            'debug_pdf_editor',
-            'debug_settings_page'
+            'pdf_builder_debug_mode',
+            'pdf_builder_log_level',
+            'pdf_builder_pdf_cache_enabled',
+            'pdf_builder_pdf_metadata_enabled',
+            'pdf_builder_pdf_print_optimized',
+            'pdf_builder_template_library_enabled',
+            'pdf_builder_developer_enabled',
+            'pdf_builder_debug_javascript',
+            'pdf_builder_debug_pdf_editor',
+            'pdf_builder_debug_settings_page'
         ];
 
         error_log('===== TRAITEMENT CHAMPS CHECKBOX NON COCHÉS =====');
         foreach ($checkbox_fields as $field) {
             if (!isset($_POST[$field])) {
-                $old_value = get_option('pdf_builder_' . $field, 'NOT_SET');
-                update_option('pdf_builder_' . $field, 0);
+                $old_value = get_option($field, 'NOT_SET');
+                update_option($field, 0);
                 $saved_count++;
                 error_log("UNCHECKED CHECKBOX [{$field}]: old_value='{$old_value}' -> set to '0'");
             } else {
@@ -1629,7 +1629,8 @@ function pdf_builder_save_all_settings_handler() {
 
             // Ajouter les champs checkbox traités séparément
             foreach ($checkbox_fields as $field) {
-                $saved_options[$field] = get_option('pdf_builder_' . $field, 0) ? '1' : '0';
+                $short_field = str_replace('pdf_builder_', '', $field);
+                $saved_options[$short_field] = get_option($field, 0) ? '1' : '0';
             }
 
             error_log('PDF Builder SAVE ALL - Final saved_options count: ' . count($saved_options));
