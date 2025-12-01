@@ -23,7 +23,6 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
     $toggle_values = [
         'pdf_builder_developer_enabled' => $settings['pdf_builder_developer_enabled'] ?? 'NON DÉFINI',
         'pdf_builder_debug_php_errors' => $settings['pdf_builder_debug_php_errors'] ?? 'NON DÉFINI',
-        'pdf_builder_debug_javascript' => $settings['pdf_builder_debug_javascript'] ?? 'NON DÉFINI',
         'pdf_builder_debug_javascript_verbose' => $settings['pdf_builder_debug_javascript_verbose'] ?? 'NON DÉFINI',
         'pdf_builder_debug_ajax' => $settings['pdf_builder_debug_ajax'] ?? 'NON DÉFINI',
         'pdf_builder_debug_pdf_editor' => $settings['pdf_builder_debug_pdf_editor'] ?? 'NON DÉFINI',
