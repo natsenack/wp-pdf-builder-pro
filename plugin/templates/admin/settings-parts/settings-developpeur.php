@@ -208,6 +208,10 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                             <div style="background: #f5f5f5; padding: 15px; border-radius: 4px; border-left: 4px solid #2196F3;">
                                 <p style="margin-top: 0; margin-bottom: 15px; color: #666; font-size: 13px; font-weight: 500;">Sélectionnez les pages pour les logs détaillés :</p>
                                 
+                                <!-- Hidden inputs for debug_javascript and debug_javascript_verbose -->
+                                <input type="hidden" id="debug_javascript" name="pdf_builder_debug_javascript" value="0" />
+                                <input type="hidden" id="debug_javascript_verbose" name="pdf_builder_debug_javascript_verbose" value="0" />
+                                
                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
                                     <!-- Toggle 1: Éditeur PDF -->
                                     <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e0e0e0;">
@@ -566,19 +570,6 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 <p style="color: #666; margin-bottom: 15px;">Outils pour mesurer et analyser les performances du système.</p>
 
                 <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="performance_monitoring">Monitoring Performance</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="performance_monitoring" name="pdf_builder_performance_monitoring" value="1" <?php echo isset($settings['pdf_builder_performance_monitoring']) && $settings['pdf_builder_performance_monitoring'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Activer le monitoring des performances</span>
-                            </div>
-                            <div class="toggle-description">Active la collecte de métriques de performance (FPS, mémoire, etc.)</div>
-                        </td>
-                    </tr>
                     <tr>
                         <th scope="row">Test FPS Canvas</th>
                         <td>
