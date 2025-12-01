@@ -1346,6 +1346,16 @@ function pdf_builder_ajax_get_template()
 }
 
 // ============================================================================
+// CHARGER LES HANDLERS AJAX
+// ============================================================================
+
+// Inclure et initialiser les handlers AJAX
+$ajax_handlers_path = PDF_BUILDER_PLUGIN_DIR . 'src/Ajax/Ajax_Handlers.php';
+if (file_exists($ajax_handlers_path)) {
+    require_once $ajax_handlers_path;
+}
+
+// ============================================================================
 // INITIALISER LE SYSTÈME DE MIGRATION (DÉPLACÉ PLUS HAUT)
 // ============================================================================
 // Le système de migration est maintenant initialisé juste après constants.php

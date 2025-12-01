@@ -110,12 +110,8 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         try {
             $this->validate_request();
 
-            $current_tab = $this->validate_required_param('current_tab');
-            $saved_count = 0;
-
-            // Traiter selon l'onglet
-            $result = $this->process_tab_settings($current_tab);
-            $saved_count = $result['saved_count'];
+            // Traiter tous les paramètres envoyés
+            $saved_count = $this->process_all_settings();
 
             if ($saved_count > 0) {
                 $this->send_success([
@@ -132,70 +128,67 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         }
     }
 
-    private function process_tab_settings($tab) {
+    private function process_all_settings() {
         $saved_count = 0;
 
-        switch ($tab) {
-            case 'general':
-                $saved_count = $this->save_general_settings();
-                break;
-            case 'performance':
-                $saved_count = $this->save_performance_settings();
-                break;
-            case 'systeme':
-                $saved_count = $this->save_system_settings();
-                break;
-            // Ajouter d'autres onglets...
-            default:
-                $this->send_error('Onglet inconnu', 400);
-        }
-
-        return ['saved_count' => $saved_count];
-    }
-
-    private function save_general_settings() {
-        $settings = [
-            'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
-            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-            'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
-            'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
-            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+        // Définir les règles de validation des champs (même que dans settings-main.php)
+        $field_rules = [
+            'text_fields' => [
+                'company_phone_manual', 'company_siret', 'company_vat', 'company_rcs', 'company_capital',
+                'pdf_quality', 'default_format', 'default_orientation', 'default_template', 'systeme_auto_backup_frequency',
+                'pdf_builder_developer_password', 'pdf_builder_log_level'
+            ],
+            'int_fields' => [
+                'cache_max_size', 'cache_ttl', 'systeme_backup_retention',
+                'pdf_builder_log_file_size', 'pdf_builder_log_retention'
+            ],
+            'bool_fields' => [
+                'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
+                'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
+                'pdf_builder_developer_enabled', 'pdf_builder_debug_php_errors', 'pdf_builder_debug_javascript',
+                'pdf_builder_debug_javascript_verbose', 'pdf_builder_debug_ajax', 'pdf_builder_debug_performance',
+                'pdf_builder_debug_database', 'pdf_builder_debug_pdf_editor', 'pdf_builder_debug_settings_page', 'pdf_builder_force_https', 'pdf_builder_license_test_mode_enabled'
+            ],
+            'array_fields' => ['order_status_templates']
         ];
 
-        foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
+        // Traiter tous les champs POST
+        foreach ($_POST as $key => $value) {
+            // Sauter les champs WordPress internes
+            if (in_array($key, ['action', 'nonce', 'current_tab'])) {
+                continue;
+            }
+
+            if (in_array($key, $field_rules['text_fields'])) {
+                update_option('pdf_builder_' . $key, sanitize_text_field($value ?? ''));
+                $saved_count++;
+            } elseif (in_array($key, $field_rules['int_fields'])) {
+                update_option('pdf_builder_' . $key, intval($value ?? 0));
+                $saved_count++;
+            } elseif (in_array($key, $field_rules['bool_fields'])) {
+                update_option('pdf_builder_' . $key, isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0);
+                $saved_count++;
+            } elseif (in_array($key, $field_rules['array_fields'])) {
+                if (is_array($value)) {
+                    update_option('pdf_builder_' . $key, array_map('sanitize_text_field', $value));
+                } else {
+                    update_option('pdf_builder_' . $key, []);
+                }
+                $saved_count++;
+            } else {
+                // Pour les champs non définis, essayer de deviner le type
+                if (is_numeric($value)) {
+                    update_option('pdf_builder_' . $key, intval($value));
+                } elseif (is_array($value)) {
+                    update_option('pdf_builder_' . $key, array_map('sanitize_text_field', $value));
+                } else {
+                    update_option('pdf_builder_' . $key, sanitize_text_field($value ?? ''));
+                }
+                $saved_count++;
+            }
         }
 
-        return count($settings);
-    }
-
-    private function save_performance_settings() {
-        $settings = [
-            'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
-            'cache_expiry' => intval($_POST['cache_expiry'] ?? 3600),
-            'compression_enabled' => isset($_POST['compression_enabled']) ? '1' : '0',
-        ];
-
-        foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
-        }
-
-        return count($settings);
-    }
-
-    private function save_system_settings() {
-        $settings = [
-            'cache_enabled' => $_POST['cache_enabled'] ?? '0',
-            'cache_compression' => $_POST['cache_compression'] ?? '0',
-            'auto_maintenance' => $_POST['systeme_auto_maintenance'] ?? '0',
-            'auto_backup' => $_POST['systeme_auto_backup'] ?? '0',
-        ];
-
-        foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
-        }
-
-        return count($settings);
+        return $saved_count;
     }
 }
 
@@ -299,9 +292,9 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
 
 // Fonction d'initialisation des handlers AJAX
 function pdf_builder_init_ajax_handlers() {
-    // Settings handler - Désactivé pour éviter les conflits avec le système unifié
-    // $settings_handler = new PDF_Builder_Settings_Ajax_Handler();
-    // add_action('wp_ajax_pdf_builder_save_settings', [$settings_handler, 'handle']);
+    // Settings handler - Réactivé pour le système unifié
+    $settings_handler = new PDF_Builder_Settings_Ajax_Handler();
+    add_action('wp_ajax_pdf_builder_save_all_settings', [$settings_handler, 'handle']);
 
     // Template handler
     $template_handler = new PDF_Builder_Template_Ajax_Handler();
