@@ -118,7 +118,7 @@ $devSectionDisplay = $devModeActive ? 'block' : 'none';
                         </div>
                         <div style="margin-top: 15px;">
                             <label class="toggle-switch">
-                                <input type="checkbox" id="canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled" value="1"
+                            <input type="checkbox" id="dev_canvas_debug_enabled" name="pdf_builder_canvas_debug_enabled" value="1"
                                        <?php checked($settings['pdf_builder_canvas_debug_enabled'], '1'); ?> />
                                 <span class="toggle-slider"></span>
                             </label>
@@ -348,6 +348,13 @@ document.addEventListener('DOMContentLoaded', function() {
             timestamp: new Date().toISOString(),
             message: `Mode développeur: ${document.getElementById('developer_enabled')?.checked ? 'Activé' : 'Désactivé'}`,
             source: 'DeveloperMode'
+        });
+
+        logs.push({
+            type: 'info',
+            timestamp: new Date().toISOString(),
+            message: `Logs JavaScript: ${document.getElementById('dev_canvas_debug_enabled')?.checked ? 'Activé' : 'Désactivé'}`,
+            source: 'CanvasDebug'
         });
 
         const exampleLogs = [
