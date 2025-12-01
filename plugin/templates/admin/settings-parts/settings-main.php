@@ -2409,30 +2409,24 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         } catch (e) {
                             console.warn('[FLOATING SAVE] ⚠️ Erreur lors du dispatch de l\'événement pdfBuilder:debugSettingsChanged', e);
                         }
-                    } else {
-                        console.warn('[FLOATING SAVE] ⚠️ Aucune donnée saved_settings trouvée dans la réponse');
-                        console.warn('[FLOATING SAVE] ⚠️ originalData.data:', originalData.data);
-                        console.warn('[FLOATING SAVE] ⚠️ originalData directement:', originalData);
-                        console.warn('[FLOATING SAVE] ⚠️ Type de savedSettings:', typeof savedSettings);
-                    }
 
-                    // If force_https was toggled on and current page is not HTTPS, reload via HTTPS to test redirect behavior
-                    try {
-                        const oldForce = oldSettings['pdf_builder_force_https'];
-                        const newForce = window.pdfBuilderSavedSettings['pdf_builder_force_https'];
-                        const isOldOn = oldForce === '1' || oldForce === 1 || oldForce === true || oldForce === 'true';
-                        const isNewOn = newForce === '1' || newForce === 1 || newForce === true || newForce === 'true';
-                        if (!isOldOn && isNewOn && window.location && window.location.protocol !== 'https:') {
-                            console.log('[FLOATING SAVE] 🌐 Force HTTPS activé — recharge via HTTPS');
-                            const host = window.location.host;
-                            const uri = window.location.pathname + window.location.search + window.location.hash;
-                            const redirectUrl = 'https://' + host + uri;
-                            // Use replace to avoid creating navigation history entry
-                            window.location.replace(redirectUrl);
+                        // If force_https was toggled on and current page is not HTTPS, reload via HTTPS to test redirect behavior
+                        try {
+                            const oldForce = oldSettings['pdf_builder_force_https'];
+                            const newForce = window.pdfBuilderSavedSettings['pdf_builder_force_https'];
+                            const isOldOn = oldForce === '1' || oldForce === 1 || oldForce === true || oldForce === 'true';
+                            const isNewOn = newForce === '1' || newForce === 1 || newForce === true || newForce === 'true';
+                            if (!isOldOn && isNewOn && window.location && window.location.protocol !== 'https:') {
+                                console.log('[FLOATING SAVE] 🌐 Force HTTPS activé — recharge via HTTPS');
+                                const host = window.location.host;
+                                const uri = window.location.pathname + window.location.search + window.location.hash;
+                                const redirectUrl = 'https://' + host + uri;
+                                // Use replace to avoid creating navigation history entry
+                                window.location.replace(redirectUrl);
+                            }
+                        } catch (e) {
+                            console.warn('[FLOATING SAVE] ⚠️ Erreur en testant la bascule de force_https', e);
                         }
-                    } catch (e) {
-                        console.warn('[FLOATING SAVE] ⚠️ Erreur en testant la bascule de force_https', e);
-                    }
 
                     // Update previews after successful save
                     if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeAllPreviews === 'function') {
