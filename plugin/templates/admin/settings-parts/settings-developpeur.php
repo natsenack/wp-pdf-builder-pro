@@ -809,8 +809,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Synchroniser les checkboxes au chargement
-    syncCheckboxesWithSavedSettings();
+    // Synchroniser les checkboxes au chargement (avec délai pour s'assurer que window.pdfBuilderSavedSettings est disponible)
+    function initializeCheckboxSync() {
+        if (window.pdfBuilderSavedSettings) {
+            syncCheckboxesWithSavedSettings();
+        } else {
+            // Attendre que window.pdfBuilderSavedSettings soit disponible
+            const checkInterval = setInterval(() => {
+                if (window.pdfBuilderSavedSettings) {
+                    clearInterval(checkInterval);
+                    syncCheckboxesWithSavedSettings();
+                }
+            }, 50); // Vérifier toutes les 50ms
+
+            // Timeout après 5 secondes pour éviter une boucle infinie
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                if (window.pdfBuilderDebugSettings?.javascript) {
+                    console.warn('🔧 [SYNC] Timeout: window.pdfBuilderSavedSettings non disponible après 5 secondes');
+                }
+            }, 5000);
+        }
+    }
+
+    initializeCheckboxSync();
 
     // Fonction pour mettre à jour la visibilité du toggle Debug Éditeur PDF
     function updatePdfEditorToggleVisibility() {
