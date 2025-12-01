@@ -1830,6 +1830,7 @@ Notifications actives: ${document.querySelectorAll('.pdf-notification').length}
     // Tests are triggered manually via buttons only
 });
 
+<script>
 // Exposer la fonction de synchronisation globalement
 window.syncCheckboxesWithSavedSettings = function() {
     console.log('[SYNC] 🔄 Début de synchronisation des checkboxes...');
@@ -1889,6 +1890,4 @@ window.syncCheckboxesWithSavedSettings = function() {
 
     console.log(`[SYNC] ✅ Synchronisation terminée: ${syncedCount} synchronisées, ${skippedCount} ignorées`);
 };
-
-</script>
 

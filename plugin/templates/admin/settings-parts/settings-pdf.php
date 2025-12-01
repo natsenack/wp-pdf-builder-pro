@@ -25,30 +25,30 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="pdf_page_size">Format de page</label></th>
+                            <th scope="row"><label for="default_format">Format de page</label></th>
                             <td>
-                                <select id="pdf_page_size" name="pdf_page_size">
-                                    <option value="A4" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'A4'); ?>>A4</option>
-                                    <option value="A3" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'A3'); ?> disabled title="Bientôt disponible">A3 (soon)</option>
-                                    <option value="Letter" <?php selected(get_option('pdf_builder_pdf_page_size', 'A4'), 'Letter'); ?> disabled title="Bientôt disponible">Letter (soon)</option>
+                                <select id="default_format" name="default_format">
+                                    <option value="A4" <?php selected(get_option('pdf_builder_default_format', 'A4'), 'A4'); ?>>A4</option>
+                                    <option value="A3" <?php selected(get_option('pdf_builder_default_format', 'A4'), 'A3'); ?> disabled title="Bientôt disponible">A3 (soon)</option>
+                                    <option value="Letter" <?php selected(get_option('pdf_builder_default_format', 'A4'), 'Letter'); ?> disabled title="Bientôt disponible">Letter (soon)</option>
                                 </select>
                                 <p class="description" style="margin-top:6px; color:#6c757d; font-size:12px;">Les formats A3 et Letter sont prévus; sélection désactivée pour l'instant.</p>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="pdf_orientation">Orientation</label></th>
+                            <th scope="row"><label for="default_orientation">Orientation</label></th>
                             <td>
-                                <select id="pdf_orientation" name="pdf_orientation">
-                                    <option value="portrait" <?php selected(get_option('pdf_builder_pdf_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
-                                    <option value="landscape" <?php selected(get_option('pdf_builder_pdf_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
+                                <select id="default_orientation" name="default_orientation">
+                                    <option value="portrait" <?php selected(get_option('pdf_builder_default_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
+                                    <option value="landscape" <?php selected(get_option('pdf_builder_default_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="pdf_cache_enabled">Cache activé</label></th>
+                            <th scope="row"><label for="pdf_builder_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="pdf_cache_enabled" name="pdf_cache_enabled" value="1" <?php checked(get_option('pdf_builder_pdf_cache_enabled', true)); ?>>
+                                    <input type="checkbox" id="pdf_builder_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Améliorer les performances en mettant en cache les PDF</p>

@@ -187,7 +187,7 @@ class PDF_Builder_Settings_Loader {
 
 // Debug: Page loaded
 if (defined('WP_DEBUG') && WP_DEBUG) {
-
+    error_log('PDF Builder: Settings page loaded successfully');
 }
 
 // Initialize
@@ -504,6 +504,9 @@ if (!empty($_POST)) {
 }
 
 // Process form - handle both regular form submissions and AJAX requests
+$is_ajax = (isset($_POST['action']) && $_POST['action'] === 'pdf_builder_save_settings') ||
+           (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest');
+
 if ((isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) || (isset($_POST['action']) && $_POST['action'] === 'pdf_builder_save_settings')) {
     if ($is_ajax) {
         if (defined('WP_DEBUG') && WP_DEBUG) {
