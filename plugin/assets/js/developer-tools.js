@@ -40,7 +40,9 @@
                 window.addEventListener('pdfBuilder:debugSettingsChanged', (e) => {
                     try {
                         const newSettings = e && e.detail ? e.detail : window.pdfBuilderDebugSettings;
-                        if (newSettings && newSettings.javascript) {
+                        // Mettre à jour window.pdfBuilderDebugSettings.javascript en fonction des paramètres sauvegardés
+                        window.pdfBuilderDebugSettings.javascript = !!(window.pdfBuilderSavedSettings && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled && window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled !== '0');
+                        if (window.pdfBuilderDebugSettings.javascript) {
                             console.log('[DEV TOGGLES] pdfBuilder:debugSettingsChanged received, JS debug enabled');
                         } else {
                             console.log('[DEV TOGGLES] pdfBuilder:debugSettingsChanged received, JS debug disabled');
