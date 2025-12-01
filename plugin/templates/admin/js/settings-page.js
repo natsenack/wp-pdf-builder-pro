@@ -46,9 +46,8 @@ jQuery(document).ready(function($) {
      * @param {...any} args - Arguments à logger
      */
     function debugLog(...args) {
-        if (isDebugEnabled('javascript')) {
-            console.log('[PDF Builder Debug]', ...args);
-        }
+        // TEMP: Always log for debugging
+        console.log('[PDF Builder Debug]', ...args);
     }
 
     /**
@@ -56,9 +55,8 @@ jQuery(document).ready(function($) {
      * @param {...any} args - Arguments à logger
      */
     function debugLogVerbose(...args) {
-        if (isDebugEnabled('javascript') && isDebugEnabled('javascript_verbose')) {
-            console.log('[PDF Builder Debug Verbose]', ...args);
-        }
+        // TEMP: Always log for debugging
+        console.log('[PDF Builder Debug Verbose]', ...args);
     }
 
     /**
@@ -66,9 +64,8 @@ jQuery(document).ready(function($) {
      * @param {...any} args - Arguments à logger
      */
     function debugLogAjax(...args) {
-        if (isDebugEnabled('ajax')) {
-            console.log('[PDF Builder AJAX]', ...args);
-        }
+        // TEMP: Always log for debugging
+        console.log('[PDF Builder AJAX]', ...args);
     }
 
     /**
@@ -76,9 +73,8 @@ jQuery(document).ready(function($) {
      * @param {...any} args - Arguments à logger
      */
     function debugLogPerformance(...args) {
-        if (isDebugEnabled('performance')) {
-            console.log('[PDF Builder Performance]', ...args);
-        }
+        // TEMP: Always log for debugging
+        console.log('[PDF Builder Performance]', ...args);
     }
 
     /**
@@ -86,9 +82,8 @@ jQuery(document).ready(function($) {
      * @param {...any} args - Arguments à logger
      */
     function debugLogSettingsPage(...args) {
-        if (isDebugEnabled('settings_page')) {
-            console.log('[PDF Builder Settings Page]', ...args);
-        }
+        // TEMP: Always log for debugging
+        console.log('[PDF Builder Settings Page]', ...args);
     }
 
     // Utilitaire pour obtenir le nonce AJAX (priorité à cacheNonce)

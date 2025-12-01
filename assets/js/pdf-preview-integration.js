@@ -12,21 +12,18 @@ function isDebugEnabled() {
 }
 
 function debugLog(...args) {
-    if (isDebugEnabled()) {
-        console.log(...args);
-    }
+    // TEMP: Always log for debugging
+    console.log(...args);
 }
 
 function debugError(...args) {
-    if (isDebugEnabled()) {
-        console.error(...args);
-    }
+    // TEMP: Always log for debugging
+    console.error(...args);
 }
 
 function debugWarn(...args) {
-    if (isDebugEnabled()) {
-        console.warn(...args);
-    }
+    // TEMP: Always log for debugging
+    console.warn(...args);
 }
 
 // ==========================================

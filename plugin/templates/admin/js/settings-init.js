@@ -25,17 +25,13 @@
             const PDF_BUILDER_DEBUG_ENABLED = window.pdfBuilderDebugSettings?.javascript || false;
             const PDF_BUILDER_DEBUG_VERBOSE = window.pdfBuilderDebugSettings?.javascript || false;
 
-            // Fonction de debug sécurisée
+            // Fonction de debug sécurisée - TEMP: Always log for debugging
             window.pdfBuilderDebug = function(...args) {
-                if (PDF_BUILDER_DEBUG_ENABLED) {
-                    console.log('[PDF Builder Debug]', ...args);
-                }
+                console.log('[PDF Builder Debug]', ...args);
             };
 
             window.pdfBuilderError = function(...args) {
-                if (PDF_BUILDER_DEBUG_ENABLED) {
-                    console.error('[PDF Builder Error]', ...args);
-                }
+                console.error('[PDF Builder Error]', ...args);
             };
 
             // Ici nous pourrons ajouter toute la logique d'initialisation
