@@ -808,7 +808,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const devSections = ['debug-section', 'logs-section', 'tools-section'];
     const licenseSection = document.getElementById('license-section');
-    const devSections = ['debug-section', 'logs-section', 'tools-section'];
     const statusBanner = document.querySelector('.dev-status-banner');
     const quickEnableBtn = document.getElementById('dev-quick-enable');
 
