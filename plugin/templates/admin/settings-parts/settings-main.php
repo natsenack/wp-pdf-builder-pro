@@ -214,7 +214,25 @@ $default_settings = [
     'pdf_builder_license_test_mode_enabled' => false,
     // Ajouter d'autres valeurs par défaut si nécessaire
 ];
-$settings = array_merge($default_settings, $saved_settings);
+
+// Charger les paramètres développeur depuis les options individuelles (car ils sont sauvegardés individuellement)
+$developer_settings = [
+    'pdf_builder_developer_enabled' => get_option('pdf_builder_developer_enabled', false),
+    'pdf_builder_developer_password' => get_option('pdf_builder_developer_password', ''),
+    'pdf_builder_debug_php_errors' => get_option('pdf_builder_debug_php_errors', false),
+    'pdf_builder_debug_javascript_verbose' => get_option('pdf_builder_debug_javascript_verbose', false),
+    'pdf_builder_debug_ajax' => get_option('pdf_builder_debug_ajax', false),
+    'pdf_builder_debug_pdf_editor' => get_option('pdf_builder_debug_pdf_editor', false),
+    'pdf_builder_debug_settings_page' => get_option('pdf_builder_debug_settings_page', false),
+    'pdf_builder_debug_performance' => get_option('pdf_builder_debug_performance', false),
+    'pdf_builder_debug_database' => get_option('pdf_builder_debug_database', false),
+    'pdf_builder_log_level' => get_option('pdf_builder_log_level', 'info'),
+    'pdf_builder_log_file_size' => get_option('pdf_builder_log_file_size', 10),
+    'pdf_builder_log_retention' => get_option('pdf_builder_log_retention', 30),
+    'pdf_builder_force_https' => get_option('pdf_builder_force_https', false),
+];
+
+$settings = array_merge($default_settings, $saved_settings, $developer_settings);
 $canvas_settings = $all_settings['pdf_builder_canvas_settings'];
 
 // Préparer les données pour les previews
