@@ -1648,10 +1648,9 @@ function pdf_builder_save_all_settings_handler() {
         error_log('PDF Builder SAVE ALL - Response data keys: ' . implode(', ', ['saved_count', 'errors', 'saved_settings', 'debug_info']));
 
         // Use wp_send_json_success directly to ensure proper response format
-        wp_send_json_success(array_merge([
+        $response_data = [
             'message' => $message,
-            'new_nonce' => wp_create_nonce('pdf_builder_ajax')
-        ], [
+            'new_nonce' => wp_create_nonce('pdf_builder_ajax'),
             'saved_count' => $saved_count,
             'errors' => $errors,
             'saved_settings' => $saved_options,
@@ -1669,7 +1668,9 @@ function pdf_builder_save_all_settings_handler() {
                 ],
                 'missing_fields' => implode(', ', array_diff($js_collected, array_keys($_POST)))
             ]
-        ]));
+        ];
+
+        wp_send_json_success($response_data);
 
         // Log final de la réponse pour debug
         error_log('PDF BUILDER SAVE ALL - RESPONSE DATA: ' . json_encode([
