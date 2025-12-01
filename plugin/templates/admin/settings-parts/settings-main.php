@@ -2427,6 +2427,7 @@ window.updateFloatingSaveButtonText = updateFloatingSaveButtonText;
                         } catch (e) {
                             console.warn('[FLOATING SAVE] ⚠️ Erreur en testant la bascule de force_https', e);
                         }
+                    }
 
                     // Update previews after successful save
                     if (window.PDF_Builder_Preview_Manager && typeof window.PDF_Builder_Preview_Manager.initializeAllPreviews === 'function') {
