@@ -1,18 +1,14 @@
 <?php
 // Quick fix for developer mode toggle
 
-// Variables (copied from original)
-$license_test_mode = isset($_POST['pdf_builder_license_test_mode_enabled']) ? '1' : (get_option('pdf_builder_license_test_mode_enabled', '0'));
-$license_test_key = get_option('pdf_builder_license_test_key', '');
-$license_test_key_expires = get_option('pdf_builder_license_test_key_expires', '');
-
+// Variables - Récupération des paramètres développeur (méthode simplifiée et fiable)
 $settings = [
-    'pdf_builder_developer_enabled' => get_option('pdf_builder_developer_enabled', '0'),
-    'pdf_builder_developer_password' => get_option('pdf_builder_developer_password', ''),
-    'pdf_builder_canvas_debug_enabled' => get_option('pdf_builder_canvas_debug_enabled', '0'),
-    'pdf_builder_license_test_mode_enabled' => $license_test_mode,
-    'pdf_builder_license_test_key' => $license_test_key,
-    'pdf_builder_license_test_key_expires' => $license_test_key_expires
+    'pdf_builder_developer_enabled' => get_option('pdf_builder_dev_mode', '0'),
+    'pdf_builder_developer_password' => get_option('pdf_builder_dev_password', ''),
+    'pdf_builder_canvas_debug_enabled' => get_option('pdf_builder_dev_canvas_debug', '0'),
+    'pdf_builder_license_test_mode_enabled' => get_option('pdf_builder_license_test_mode', '0'),
+    'pdf_builder_license_test_key' => get_option('pdf_builder_license_test_key', ''),
+    'pdf_builder_license_test_key_expires' => get_option('pdf_builder_license_test_key_expires', ''),
 ];
 
 // Determine initial visibility for developer sections
@@ -253,38 +249,35 @@ document.addEventListener('DOMContentLoaded', function() {
             statusBanner.className = 'dev-status-banner ' + (isEnabled ? 'active' : 'inactive');
         }
 
-        // Sauvegarde automatique AJAX - Utiliser la même méthode que le bouton flottant
-        if (window.pdfBuilderAjax && window.ajaxurl) {
-            const formData = new FormData();
-            formData.append('action', 'pdf_builder_save_all_settings');
-            formData.append('pdf_builder_developer_enabled', isEnabled ? '1' : '0');
-            formData.append('pdf_builder_canvas_debug_enabled', document.getElementById('dev_canvas_debug_enabled')?.checked ? '1' : '0');
-            formData.append('pdf_builder_developer_password', document.getElementById('developer_password')?.value || '');
+        // Sauvegarde directe via POST administrateur
+        const formData = new FormData();
+        formData.append('action', 'save_dev_settings');
+        formData.append('pdf_builder_developer_enabled', isEnabled ? '1' : '0');
+        formData.append('pdf_builder_canvas_debug_enabled', document.getElementById('dev_canvas_debug_enabled')?.checked ? '1' : '0');
+        formData.append('pdf_builder_developer_password', document.getElementById('developer_password')?.value || '');
+        formData.append('_wpnonce', 'pdf_builder_settings_nonce');
 
-            if (window.pdfBuilderAjax.nonce) {
-                formData.append('_wpnonce', window.pdfBuilderAjax.nonce);
-                formData.append('nonce', window.pdfBuilderAjax.nonce);
+        fetch(window.ajaxurl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
-
-            fetch(window.ajaxurl, {
-                method: 'POST',
-                body: formData
-            }).then(response => response.json())
-            .then(data => {
-                console.log('[DEV MODE] Saved via AJAX - Full settings');
-
-                if (data.success && data.data && data.data.saved_settings) {
-                    if (window.pdfBuilderSavedSettings) {
-                        window.pdfBuilderSavedSettings.pdf_builder_developer_enabled = isEnabled ? '1' : '0';
-                        window.pdfBuilderSavedSettings.pdf_builder_canvas_debug_enabled = document.getElementById('dev_canvas_debug_enabled')?.checked ? '1' : '0';
-                        window.pdfBuilderSavedSettings.pdf_builder_developer_password = document.getElementById('developer_password')?.value || '';
-                    }
-                    console.log('[DEV MODE] Settings updated in window object');
-                } else {
-                    console.warn('[DEV MODE] AJAX response format unexpected:', data);
-                }
-            }).catch(err => console.warn('[DEV MODE] AJAX save failed:', err));
-        }
+        }).then(response => response.json())
+        .then(data => {
+            console.log('[DEV MODE] Saved via AJAX', data);
+            if (data.success) {
+                console.log('[DEV MODE] Settings saved successfully');
+                // Afficher notification de succès
+                showNotification('Paramètres sauvegardés avec succès', 'success');
+            } else {
+                console.warn('[DEV MODE] Save failed:', data);
+                showNotification('Erreur lors de la sauvegarde', 'error');
+            }
+        }).catch(err => {
+            console.warn('[DEV MODE] AJAX error:', err);
+            showNotification('Erreur réseau', 'error');
+        });
     }
 
     if (developerToggle) {
@@ -506,5 +499,60 @@ document.addEventListener('DOMContentLoaded', function() {
     updateDeveloperMode(); // Ensure correct initial state
 
     console.log('[DEV TAB] Initialisation terminée');
+
+    // Fonction de notification
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#007cba'};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 9999;
+            font-weight: 500;
+            max-width: 400px;
+            transform: translateX(420px);
+            transition: transform 0.3s ease;
+        `;
+        notification.textContent = message;
+
+        document.body.appendChild(notification);
+        setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+
+        setTimeout(() => {
+            notification.style.transform = 'translateX(420px)';
+            setTimeout(() => notification.remove(), 300);
+        }, 4000);
+    }
 });
 </script>
+
+<?php
+// AJAX handler pour la sauvegarde des paramètres développeur
+add_action('wp_ajax_save_dev_settings', 'pdf_builder_save_dev_settings');
+
+function pdf_builder_save_dev_settings() {
+    // Vérification de sécurité
+    if (!wp_verify_nonce($_POST['_wpnonce'] ?? '', 'pdf_builder_settings')) {
+        wp_die('Sécurité: Nonce invalide');
+    }
+
+    // Sauvegarde des paramètres individuels
+    $developer_enabled = sanitize_text_field($_POST['pdf_builder_developer_enabled'] ?? '0');
+    $canvas_debug_enabled = sanitize_text_field($_POST['pdf_builder_canvas_debug_enabled'] ?? '0');
+    $developer_password = sanitize_text_field($_POST['pdf_builder_developer_password'] ?? '');
+
+    update_option('pdf_builder_dev_mode', $developer_enabled);
+    update_option('pdf_builder_dev_canvas_debug', $canvas_debug_enabled);
+    update_option('pdf_builder_dev_password', $developer_password);
+
+    wp_send_json_success([
+        'message' => 'Paramètres développeur sauvegardés avec succès',
+        'developer_enabled' => $developer_enabled,
+        'canvas_debug_enabled' => $canvas_debug_enabled
+    ]);
+}
