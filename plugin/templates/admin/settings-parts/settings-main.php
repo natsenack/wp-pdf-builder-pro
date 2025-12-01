@@ -121,20 +121,21 @@ $js_config = [
     const PDF_BUILDER_CONFIG = <?php echo json_encode($js_config); ?>;
 
     /**
-     * MAIN SETTINGS CONTROLLER
+     * MAIN SETTINGS CONTROLLER CLASS
      * Centralized control for all settings functionality
      */
-    const PDF_Builder_Settings = {
-        config: PDF_BUILDER_CONFIG,
-
-        init() {
-            console.log('🎯 Initializing Centralized PDF Builder Settings System');
-
+    class PDF_Builder_Settings_Controller {
+        constructor() {
+            this.config = PDF_BUILDER_CONFIG;
             this.Validator = new SettingsValidator();
             this.ShapeManager = new SettingsUI();
             this.SaveManager = new SettingsSaver();
             this.Notifier = new SettingsNotifier();
             this.PreviewManager = new SettingsPreview();
+        }
+
+        init() {
+            console.log('🎯 Initializing Centralized PDF Builder Settings System');
 
             // Initialize all components
             this.bindTabEvents();
@@ -142,7 +143,7 @@ $js_config = [
             this.initializePreviews();
 
             console.log('✅ PDF Builder Settings System Initialized');
-        },
+        }
 
         bindTabEvents() {
             const tabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
@@ -152,7 +153,7 @@ $js_config = [
                     this.switchTab(tab.dataset.tab);
                 });
             });
-        },
+        }
 
         switchTab(tabId) {
             // Update tabs
@@ -167,19 +168,19 @@ $js_config = [
             if (this.SaveManager) {
                 this.SaveManager.updateButtonText(tabId);
             }
-        },
+        }
 
         bindSaveEvents() {
             this.SaveManager.bindEvents();
-        },
+        }
 
         initializePreviews() {
             this.PreviewManager.init();
         }
-    };
+    }
 
     /**
-     * SETTINGS VALIDATOR
+     * SETTINGS VALIDATOR CLASS
      * Centralized validation system
      */
     class SettingsValidator {
@@ -530,7 +531,7 @@ $js_config = [
 
     // Initialize the system when DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
-        const settingsController = new PDF_Builder_Settings();
+        const settingsController = new PDF_Builder_Settings_Controller();
         settingsController.init();
 
         // Connect components
