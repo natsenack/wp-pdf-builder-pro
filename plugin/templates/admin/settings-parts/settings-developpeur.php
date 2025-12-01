@@ -7,9 +7,9 @@
 
 // Load settings from existing system - with POST override for immediate visual feedback
 $settings = get_option('pdf_builder_settings', []);
-$dev_mode = isset($_POST['pdf_builder_developer_enabled']) ? sanitize_text_field($_POST['pdf_builder_developer_enabled']) : get_option('pdf_builder_developer_enabled', $settings['pdf_builder_developer_enabled'] ?? '0');
-$debug_enabled = isset($_POST['pdf_builder_canvas_debug_enabled']) ? sanitize_text_field($_POST['pdf_builder_canvas_debug_enabled']) : get_option('pdf_builder_canvas_debug_enabled', $settings['pdf_builder_canvas_debug_enabled'] ?? '0');
-$dev_password = isset($_POST['pdf_builder_developer_password']) ? sanitize_text_field($_POST['pdf_builder_developer_password']) : get_option('pdf_builder_developer_password', $settings['pdf_builder_developer_password'] ?? '');
+$dev_mode = isset($_POST['pdf_builder_developer_enabled']) ? sanitize_text_field($_POST['pdf_builder_developer_enabled']) : ($settings['pdf_builder_developer_enabled'] ?? '0');
+$debug_enabled = isset($_POST['pdf_builder_canvas_debug_enabled']) ? sanitize_text_field($_POST['pdf_builder_canvas_debug_enabled']) : ($settings['pdf_builder_canvas_debug_enabled'] ?? '0');
+$dev_password = isset($_POST['pdf_builder_developer_password']) ? sanitize_text_field($_POST['pdf_builder_developer_password']) : ($settings['pdf_builder_developer_password'] ?? '');
 $show_tools = $dev_mode === '1';
 
 // Create AJAX configuration for this developer tab page
