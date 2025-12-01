@@ -395,7 +395,7 @@ $show_tools = $dev_mode === '1';
             <div class="dev-card-icon">📄</div>
             <h3 class="dev-card-title">Logs JavaScript</h3>
             <div class="dev-toggle-group">
-                <label class="dev-toggle">
+                <label class="dev-toggle <?php echo $debug_enabled === '1' ? 'active' : ''; ?>">
                     <input type="checkbox" id="pdf-builder-debug-enabled" name="pdf_builder_canvas_debug_enabled" <?php checked($debug_enabled, '1'); ?>>
                     <span class="dev-toggle-slider"></span>
                 </label>
