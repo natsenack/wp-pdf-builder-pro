@@ -1193,11 +1193,11 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
   const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
-  // Force re-render when canvas settings change
-  const [, forceUpdate] = useState({});
-  useEffect(() => {
-    forceUpdate({});
-  }, [canvasSettings.canvasBackgroundColor, canvasSettings.borderColor, canvasSettings.borderWidth, canvasSettings.shadowEnabled, canvasSettings.containerBackgroundColor]);
+  // Force re-render when canvas settings change (commenté pour éviter les boucles)
+  // const [, forceUpdate] = useState({});
+  // useEffect(() => {
+  //   forceUpdate({});
+  // }, [canvasSettings.canvasBackgroundColor, canvasSettings.borderColor, canvasSettings.borderWidth, canvasSettings.shadowEnabled, canvasSettings.containerBackgroundColor]);
 
   // État pour le menu contextuel
   const [contextMenu, setContextMenu] = React.useState<{
@@ -2828,5 +2828,3 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     </>
   );
 }
-
-

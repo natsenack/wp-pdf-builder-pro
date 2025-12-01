@@ -320,29 +320,30 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   }, []);
 
   // Synchronisation automatique : si gridShow est désactivé, désactiver gridSnapEnabled et gridSize
-  useEffect(() => {
-    if (!settings.gridShow) {
-      let needsUpdate = false;
-      const updates: Partial<CanvasSettingsContextType> = {};
+  // Commenté pour éviter les boucles infinies de rendu
+  // useEffect(() => {
+  //   if (!settings.gridShow) {
+  //     let needsUpdate = false;
+  //     const updates: Partial<CanvasSettingsContextType> = {};
 
-      if (settings.gridSnapEnabled) {
-        updates.gridSnapEnabled = false;
-        needsUpdate = true;
-      }
+  //     if (settings.gridSnapEnabled) {
+  //       updates.gridSnapEnabled = false;
+  //       needsUpdate = true;
+  //     }
 
-      if (settings.gridSize !== 0) {
-        updates.gridSize = 0;
-        needsUpdate = true;
-      }
+  //     if (settings.gridSize !== 0) {
+  //       updates.gridSize = 0;
+  //       needsUpdate = true;
+  //     }
 
-      if (needsUpdate) {
-        setSettings(prev => ({
-          ...prev,
-          ...updates
-        }));
-      }
-    }
-  }, [settings.gridShow, settings.gridSnapEnabled, settings.gridSize]);
+  //     if (needsUpdate) {
+  //       setSettings(prev => ({
+  //         ...prev,
+  //         ...updates
+  //       }));
+  //     }
+  //   }
+  // }, [settings.gridShow, settings.gridSnapEnabled, settings.gridSize]);
 
   // Ajouter la fonction refreshSettings au contexte final
   const contextValue: CanvasSettingsContextType = {
@@ -416,4 +417,3 @@ export function useCanvasSettings(): CanvasSettingsContextType {
   }
   return context;
 }
-
