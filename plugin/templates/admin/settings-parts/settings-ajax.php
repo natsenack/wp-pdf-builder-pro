@@ -1294,14 +1294,34 @@ function pdf_builder_save_all_settings_handler() {
         // Préparer les options sauvegardées pour la réponse (sans préfixe pour correspondre aux noms de champs du formulaire)
         $saved_options = [];
         try {
+            error_log('===== CONSTRUCTION SAVED_OPTIONS =====');
+            error_log('processed_fields count: ' . count($processed_fields));
+            error_log('processed_fields sample: ' . implode(', ', array_slice($processed_fields, 0, 10)));
+            
             foreach ($processed_fields as $field) {
                 $option_key = strpos($field, 'pdf_builder_') === 0 ? $field : 'pdf_builder_' . $field;
-                $saved_options[$field] = get_option($option_key, '');
+                $saved_value = get_option($option_key, '');
+                $saved_options[$field] = $saved_value;
+                error_log("SAVED_OPTIONS [{$field}] -> option_key[{$option_key}] = '{$saved_value}'");
+                
+                // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+                if (strpos($field, 'debug_javascript') !== false) {
+                    error_log("DEBUG_JAVASCRIPT PROCESSED: field='{$field}', option_key='{$option_key}', saved_value='{$saved_value}'");
+                }
             }
 
             // Ajouter les champs checkbox traités séparément
+            error_log('checkbox_fields: ' . implode(', ', $checkbox_fields));
             foreach ($checkbox_fields as $field) {
-                $saved_options[$field] = get_option('pdf_builder_' . $field, 0) ? '1' : '0';
+                $option_key = 'pdf_builder_' . $field;
+                $db_value = get_option($option_key, 0);
+                $saved_options[$field] = $db_value ? '1' : '0';
+                error_log("CHECKBOX SAVED_OPTIONS [{$field}] -> option_key[{$option_key}] = db_value:'{$db_value}' -> saved:'{$saved_options[$field]}'");
+                
+                // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+                if ($field === 'debug_javascript') {
+                    error_log("DEBUG_JAVASCRIPT CHECKBOX: field='{$field}', option_key='{$option_key}', db_value='{$db_value}', saved='{$saved_options[$field]}'");
+                }
             }
 
             // IMPORTANT: Sauvegarder aussi dans l'option principale pour la persistance après rechargement
@@ -1317,7 +1337,8 @@ function pdf_builder_save_all_settings_handler() {
             error_log('PDF Builder SAVE ALL - Sample saved_options keys: ' . implode(', ', array_slice(array_keys($saved_options), 0, 5)));
             error_log('PDF Builder SAVE ALL - Critical developer fields: ' . json_encode([
                 'developer_enabled' => $saved_options['developer_enabled'] ?? 'NOT_SET',
-                'debug_javascript' => $saved_options['debug_javascript'] ?? 'NOT_SET'
+                'debug_javascript' => $saved_options['debug_javascript'] ?? 'NOT_SET',
+                'pdf_builder_debug_javascript' => $saved_options['pdf_builder_debug_javascript'] ?? 'NOT_SET'
             ]));
         } catch (Exception $e) {
             error_log('PDF Builder SAVE ALL - ERROR building saved_options: ' . $e->getMessage());
