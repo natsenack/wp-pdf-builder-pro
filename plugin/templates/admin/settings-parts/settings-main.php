@@ -376,12 +376,17 @@
 
             bindTabEvents() {
                 const tabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+                console.log('🔍 [bindTabEvents] Nombre d\'onglets trouvés:', tabs.length);
+                console.log('🔍 [bindTabEvents] Onglets:', Array.from(tabs).map(t => ({ tab: t.dataset.tab, classe: t.className })));
+                
                 tabs.forEach(tab => {
                     tab.addEventListener('click', (e) => {
                         e.preventDefault();
+                        console.log('🖱️ [Click] Onglet cliqué:', tab.dataset.tab);
                         this.switchTab(tab.dataset.tab);
                     });
                 });
+                console.log('✅ [bindTabEvents] Event listeners attachés');
             }
 
             // bindSubTabEvents() supprimée - pas de sous-onglets
@@ -806,28 +811,36 @@
 
         // Initialize the system when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Initialisation du système PDF Builder Settings');
+            console.log('🚀 DOMContentLoaded - Initialisation du système PDF Builder Settings');
 
-            const settingsController = new PDF_Builder_Settings_Controller();
-            
-            // Connect components BEFORE init() so dependencies are available
-            settingsController.SaveManager.setDependencies(
-                settingsController.Validator,
-                settingsController.ShapeManager
-            );
-            
-            settingsController.init();
+            try {
+                const settingsController = new PDF_Builder_Settings_Controller();
+                console.log('✅ PDF_Builder_Settings_Controller créé');
+                
+                // Connect components BEFORE init() so dependencies are available
+                settingsController.SaveManager.setDependencies(
+                    settingsController.Validator,
+                    settingsController.ShapeManager
+                );
+                console.log('✅ Dépendances du SaveManager définies');
+                
+                settingsController.init();
+                console.log('✅ Contrôleur initialisé');
 
-            // Vérifier l'état initial des onglets
-            console.log('📋 État initial des onglets:');
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                console.log('  Onglet:', tab.dataset.tab, 'active:', tab.classList.contains('nav-tab-active'));
-            });
-            document.querySelectorAll('.tab-content').forEach(content => {
-                console.log('  Contenu:', content.id, 'active:', content.classList.contains('active'));
-            });
+                // Vérifier l'état initial des onglets
+                console.log('📋 État initial des onglets:');
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    console.log('  Onglet:', tab.dataset.tab, 'active:', tab.classList.contains('nav-tab-active'));
+                });
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    console.log('  Contenu:', content.id, 'active:', content.classList.contains('active'));
+                });
 
-            console.log('✅ Système PDF Builder Settings initialisé');
+                console.log('✅ Système PDF Builder Settings initialisé');
+            } catch (e) {
+                console.error('❌ ERREUR lors de l\'initialisation:', e);
+                console.error('Stack:', e.stack);
+            }
         });
 
     })();
@@ -846,6 +859,65 @@
 ?>
 <!-- SYSTÈME ROBUSTE DE SAUVEGARDE GLOBALE VIA BOUTON FLOTTANT -->
 <script type="text/javascript">
+    // ATTENDRE QUE LE DOM SOIT COMPLÈTEMENT CHARGÉ AVANT DE FAIRE QUOI QUE CE SOIT
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFallbackTabNavigation);
+    } else {
+        // DOM est déjà chargé
+        initFallbackTabNavigation();
+    }
+    
+    function initFallbackTabNavigation() {
+        console.log('🔧 [FALLBACK] Initialisation du fallback de navigation des onglets');
+        
+        // ===== FALLBACK ROBUSTE POUR NAVIGATION DES ONGLETS =====
+        // Système vanilla-JS pour la navigation (jQuery seulement si vanillaJS échoue)
+        const tabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+        console.log('🔍 [FALLBACK] Nombre d\'onglets trouvés:', tabs.length);
+        
+        if (tabs.length > 0) {
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.dataset.tab;
+                    console.log('🔗 [FALLBACK] Navigation vers onglet:', tabId);
+                    
+                    if (!tabId) return;
+                    
+                    // Enlever la classe active de tous les onglets
+                    document.querySelectorAll('#pdf-builder-tabs .nav-tab').forEach(t => {
+                        t.classList.remove('nav-tab-active');
+                    });
+                    
+                    // Enlever la classe active de tous les contenus
+                    document.querySelectorAll('#pdf-builder-tab-content .tab-content').forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    
+                    // Ajouter la classe active au nouvel onglet
+                    this.classList.add('nav-tab-active');
+                    
+                    // Ajouter la classe active au nouvel onglet
+                    const contentElement = document.getElementById(tabId);
+                    if (contentElement) {
+                        contentElement.classList.add('active');
+                        console.log('✅ [FALLBACK] Onglet activé:', tabId);
+                    }
+                    
+                    // Sauvegarder dans localStorage
+                    try {
+                        localStorage.setItem('pdf_builder_active_tab', tabId);
+                    } catch (err) {
+                        console.warn('⚠️ [FALLBACK] Impossible de sauvegarder dans localStorage:', err);
+                    }
+                });
+            });
+            console.log('✅ [FALLBACK] Fallback de navigation des onglets installé');
+        } else {
+            console.warn('⚠️ [FALLBACK] Aucun onglet trouvé!');
+        }
+    }
+    
     jQuery(document).ready(function($) {
         // Attendre que PDF_BUILDER_CONFIG soit disponible ou utiliser une valeur par défaut
         function getNonce() {
@@ -879,33 +951,6 @@
         // Objets pour stocker les données par onglet
         var settingsByTab = {};
         console.log('✅ Système PDF Builder Settings en ligne');
-        
-        // ===== FALLBACK ROBUSTE POUR NAVIGATION DES ONGLETS =====
-        // Si le système vanilla-JS ne fonctionne pas, jQuery prendra le relais
-        console.log('📌 Installation du fallback jQuery pour navigation des onglets');
-        
-        $(document).on('click', '#pdf-builder-tabs .nav-tab', function(e) {
-            e.preventDefault();
-            var tabId = $(this).data('tab');
-            console.log('🔗 [jQuery Fallback] Navigation vers onglet:', tabId);
-            
-            if (!tabId) return;
-            
-            // Enlever les classes active de tous les onglets et contenus
-            $('#pdf-builder-tabs .nav-tab').removeClass('nav-tab-active');
-            $('#pdf-builder-tab-content .tab-content').removeClass('active');
-            
-            // Ajouter la classe active au nouvel onglet et contenu
-            $(this).addClass('nav-tab-active');
-            $('#' + tabId).addClass('active');
-            
-            // Sauvegarder dans localStorage
-            try {
-                localStorage.setItem('pdf_builder_active_tab', tabId);
-            } catch (e) {
-                console.warn('⚠️ Impossible de sauvegarder l\'onglet actif dans localStorage:', e);
-            }
-        });
     });
 </script>
 
