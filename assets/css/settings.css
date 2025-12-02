@@ -181,12 +181,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
 }
 
 .metric-icon {
-    font-size: 20px;
-    opacity: 0.8;
+    font-size: 24px;
+    opacity: 0.9;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .metric-status {
@@ -195,129 +198,52 @@
 
 .status-indicator {
     display: inline-block;
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: #6c757d;
-    border: 2px solid #fff;
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
 }
 
 .metric-status[data-status="ready"] .status-indicator {
-    background: #28a745;
-    box-shadow: 0 0 6px rgba(40, 167, 69, 0.4);
+    background: linear-gradient(135deg, #28a745, #20c997);
+    box-shadow: 0 0 12px rgba(40, 167, 69, 0.5), 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .metric-status[data-status="scheduled"] .status-indicator {
-    background: #ffc107;
-    box-shadow: 0 0 6px rgba(255, 193, 7, 0.4);
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    box-shadow: 0 0 12px rgba(255, 193, 7, 0.5), 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .metric-status[data-status="active"] .status-indicator {
-    background: #007cba;
-    box-shadow: 0 0 6px rgba(0, 124, 186, 0.4);
+    background: linear-gradient(135deg, #007cba, #17a2b8);
+    box-shadow: 0 0 12px rgba(0, 124, 186, 0.5), 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .metric-status[data-status="inactive"] .status-indicator {
-    background: #dc3545;
-    box-shadow: 0 0 6px rgba(220, 53, 69, 0.4);
+    background: linear-gradient(135deg, #dc3545, #e83e8c);
+    box-shadow: 0 0 12px rgba(220, 53, 69, 0.5), 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .metric-status[data-status="manual"] .status-indicator {
-    background: #6f42c1;
-    box-shadow: 0 0 6px rgba(111, 66, 193, 0.4);
+    background: linear-gradient(135deg, #6f42c1, #e83e8c);
+    box-shadow: 0 0 12px rgba(111, 66, 193, 0.5), 0 2px 8px rgba(0,0,0,0.15);
 }
 
-/* Valeurs des métriques améliorées */
-.metric-value {
-    font-size: 18px;
-    font-weight: 600;
-    color: #495057;
-    margin-bottom: 4px;
-    line-height: 1.2;
-}
-
-/* Badges de statut */
-.status-badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-badge.status-active {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.status-badge.status-inactive {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.manual-badge {
-    display: inline-block;
-    padding: 4px 8px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
-}
-
-/* Actions des métriques */
-.metric-action {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 8px;
-    padding: 6px 10px;
-    background: rgba(102, 126, 234, 0.1);
-    border-radius: 6px;
-    border: 1px solid rgba(102, 126, 234, 0.2);
-    transition: all 0.3s ease;
-    opacity: 0.7;
-}
-
-.maintenance-metric-card:hover .metric-action {
-    opacity: 1;
-    background: rgba(102, 126, 234, 0.15);
-    border-color: rgba(102, 126, 234, 0.3);
-    transform: translateY(-1px);
-}
-
-.action-text {
-    font-size: 11px;
-    font-weight: 500;
-    color: #667eea;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.action-icon {
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-/* États spécifiques des métriques */
-.systeme-cache-status .metric-value {
-    color: #28a745;
-    font-weight: 600;
-}
-
-/* Animations et effets */
+/* Cartes métriques améliorées */
 .maintenance-metric-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 2px solid rgba(102, 126, 234, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 2px 8px rgba(102, 126, 234, 0.06);
 }
 
 .maintenance-metric-card::before {
@@ -327,18 +253,149 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
-    transition: left 0.5s ease;
+    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.08), transparent);
+    transition: left 0.6s ease;
+    z-index: 1;
+}
+
+.maintenance-metric-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 6px 20px rgba(102, 126, 234, 0.12);
+    border-color: rgba(102, 126, 234, 0.25);
 }
 
 .maintenance-metric-card:hover::before {
     left: 100%;
 }
 
-/* États de chargement */
+.maintenance-metric-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Valeurs des métriques améliorées */
+.metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.maintenance-metric-card:hover .metric-value {
+    color: #667eea;
+    transform: scale(1.05);
+}
+
+/* Labels des métriques */
+.metric-label {
+    font-size: 13px;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.maintenance-metric-card:hover .metric-label {
+    color: #495057;
+}
+
+/* Badges de statut améliorés */
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.status-badge.status-active {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    color: #155724;
+    border: 2px solid #28a745;
+}
+
+.status-badge.status-inactive {
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    color: #721c24;
+    border: 2px solid #dc3545;
+}
+
+.manual-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+/* Actions des métriques améliorées */
+.metric-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    border-radius: 12px;
+    border: 2px solid rgba(102, 126, 234, 0.15);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0.8;
+    backdrop-filter: blur(10px);
+}
+
+.maintenance-metric-card:hover .metric-action {
+    opacity: 1;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    border-color: rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.action-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #667eea;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.action-icon {
+    font-size: 14px;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+.maintenance-metric-card:hover .action-icon {
+    transform: scale(1.1);
+}
+
+/* États spécifiques des métriques */
+.systeme-cache-status .metric-value {
+    color: #28a745;
+    font-weight: 700;
+}
+
+/* États de chargement améliorés */
 .maintenance-metric-card.loading {
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.8;
+    animation: loadingPulse 2s infinite;
 }
 
 .maintenance-metric-card.loading .metric-value {
@@ -349,24 +406,78 @@
     animation: pulse 1.5s infinite;
 }
 
+@keyframes loadingPulse {
+    0%, 100% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.01);
+    }
+}
+
 @keyframes pulse {
     0%, 100% {
         opacity: 1;
+        transform: scale(1);
     }
     50% {
-        opacity: 0.5;
+        opacity: 0.7;
+        transform: scale(1.1);
     }
 }
 
-/* États de succès/erreur */
+/* États de succès/erreur améliorés */
+.maintenance-metric-card.success {
+    animation: successGlow 0.6s ease-out;
+}
+
 .maintenance-metric-card.success .status-indicator {
-    background: #28a745;
-    box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+    background: linear-gradient(135deg, #28a745, #20c997);
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.8), 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.maintenance-metric-card.error {
+    animation: errorShake 0.6s ease-out;
 }
 
 .maintenance-metric-card.error .status-indicator {
-    background: #dc3545;
-    box-shadow: 0 0 8px rgba(220, 53, 69, 0.6);
+    background: linear-gradient(135deg, #dc3545, #e83e8c);
+    box-shadow: 0 0 20px rgba(220, 53, 69, 0.8), 0 4px 15px rgba(0,0,0,0.2);
+}
+
+@keyframes successGlow {
+    0% { box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 2px 8px rgba(102, 126, 234, 0.06); }
+    50% { box-shadow: 0 4px 20px rgba(40, 167, 69, 0.3), 0 2px 8px rgba(102, 126, 234, 0.06); }
+    100% { box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 2px 8px rgba(102, 126, 234, 0.06); }
+}
+
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+}
+
+/* Indicateurs visuels pour les différents types d'actions */
+.maintenance-metric-card[data-action="run-maintenance"] .metric-action {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
+    border-color: rgba(40, 167, 69, 0.2);
+}
+
+.maintenance-metric-card[data-action="schedule-maintenance"] .metric-action {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(253, 126, 20, 0.1));
+    border-color: rgba(255, 193, 7, 0.2);
+}
+
+.maintenance-metric-card[data-action="toggle-maintenance"] .metric-action {
+    background: linear-gradient(135deg, rgba(0, 123, 186, 0.1), rgba(23, 162, 184, 0.1));
+    border-color: rgba(0, 123, 186, 0.2);
+}
+
+.maintenance-metric-card[data-action="run-manual-maintenance"] .metric-action {
+    background: linear-gradient(135deg, rgba(111, 66, 193, 0.1), rgba(232, 62, 140, 0.1));
+    border-color: rgba(111, 66, 193, 0.2);
 }
 
 /* Informations sur l'état du cache */
