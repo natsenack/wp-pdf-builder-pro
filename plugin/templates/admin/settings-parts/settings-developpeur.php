@@ -54,7 +54,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 </tr>
              </table>
 
-            <div id="dev-license-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-license-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">🔐 Test de Licence</h3>
 
                 <table class="form-table">
@@ -114,7 +114,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 </table>
             </div>
 
-            <div id="dev-debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">🔍 Paramètres de Debug</h3>
 
                 <table class="form-table">
@@ -197,9 +197,9 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         </td>
                     </tr>
                 </table>
-            </div>
+            </section>
 
-            <div id="dev-logs-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-logs-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">Fichiers Logs</h3>
 
                 <table class="form-table">
@@ -231,9 +231,9 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         </td>
                     </tr>
                 </table>
-            </div>
+            </section>
 
-            <div id="dev-optimizations-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-optimizations-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">Optimisations Avancées</h3>
 
                 <table class="form-table">
@@ -251,9 +251,9 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         </td>
                     </tr>
                 </table>
-            </div>
+            </section>
 
-            <div id="dev-logs-viewer-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-logs-viewer-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">Visualiseur de Logs Temps Réel</h3>
 
                 <div style="margin-bottom: 15px;">
@@ -274,9 +274,9 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         <em style="color: #666;">Cliquez sur "Actualiser Logs" pour charger les logs récents...</em>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div id="dev-tools-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-tools-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">Outils de Développement</h3>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
@@ -299,9 +299,9 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         ℹ️ Info Système
                     </button>
                 </div>
-            </div>
+            </section>
 
-            <div id="dev-notifications-test-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-notifications-test-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">🔔 Test du Système de Notifications</h3>
                 <p style="color: #666; margin-bottom: 15px;">Testez le système de notifications toast avec différents types et logs détaillés en console.</p>
 
@@ -350,9 +350,9 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         <li>Les logs détaillés sont affichés en console (F12)</li>
                     </ul>
                 </div>
-            </div>
+            </section>
 
-            <div id="dev-shortcuts-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-shortcuts-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">Raccourcis Clavier Développeur</h3>
 
                 <table class="wp-list-table widefat fixed striped">
@@ -389,9 +389,9 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </section>
 
-            <div id="dev-todo-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-todo-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
              <!-- Accordéon pour la section À Faire - Développement -->
                 <div class="accordion-container" style="margin-bottom: 20px;">
                     <button type="button" class="accordion-toggle" id="dev-todo-toggle" style="width: 100%; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; text-align: left; cursor: pointer; font-size: 16px; font-weight: bold; color: #495057; transition: all 0.3s ease;">
@@ -548,7 +548,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                 </div>
             </div>
 
-            <div id="dev-console-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-console-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">Console Code</h3>
 
                 <table class="form-table">
@@ -565,9 +565,9 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         </td>
                     </tr>
                 </table>
-            </div>
+            </section>
 
-            <div id="dev-hooks-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
+            <section id="dev-hooks-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <!-- Tableau de références des hooks disponibles -->
                 <h3 class="section-title">Hooks Disponibles</h3>
 
@@ -612,7 +612,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </section>
 
             <!-- Section Monitoring des Performances -->
             <h3 class="section-title">📊 Monitoring des Performances</h3>
