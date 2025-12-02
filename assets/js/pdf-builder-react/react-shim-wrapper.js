@@ -88,3 +88,48 @@ console.log('✅ [react-shim-wrapper] Module exports set:', {
   useRef: typeof module.exports.useRef,
   createElement: typeof module.exports.createElement
 });
+
+// 🔧 POLYFILL: Force passive: true for all addEventListener calls by default
+// This eliminates "[Violation] Added non-passive event listener" warnings
+// Events that need preventDefault() explicitly set passive: false
+if (typeof window !== 'undefined' && window.EventTarget) {
+  const originalAddEventListener = window.EventTarget.prototype.addEventListener;
+  
+  window.EventTarget.prototype.addEventListener = function(type, listener, options) {
+    // Events that need preventDefault capability (scroll-blocking)
+    const scrollBlockingEvents = new Set([
+      'touchstart', 'touchmove', 'wheel',
+      'mousedown', 'mousemove', 'mouseup'
+    ]);
+    
+    // If options is a boolean, keep it as-is (for backward compatibility)
+    if (typeof options === 'boolean') {
+      return originalAddEventListener.call(this, type, listener, options);
+    }
+    
+    // If options is an object, ensure passive is set appropriately
+    if (typeof options === 'object' && options !== null) {
+      // Only override if passive wasn't explicitly set
+      if (!('passive' in options)) {
+        // For scroll-blocking events without explicit passive, default to false to allow preventDefault
+        if (scrollBlockingEvents.has(type)) {
+          // Keep the original call for events that might need preventDefault
+          return originalAddEventListener.call(this, type, listener, options);
+        } else {
+          // For non-blocking events, force passive: true
+          options.passive = true;
+        }
+      }
+      return originalAddEventListener.call(this, type, listener, options);
+    }
+    
+    // If no options provided, add passive: true for non-blocking events
+    if (typeof options === 'undefined') {
+      return originalAddEventListener.call(this, type, listener, { passive: true });
+    }
+    
+    return originalAddEventListener.call(this, type, listener, options);
+  };
+  
+  console.log('✅ [react-shim-wrapper] Passive event listener polyfill installed');
+}
