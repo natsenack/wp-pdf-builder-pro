@@ -1,20 +1,216 @@
-/* TEST TEMPORAIRE - Forcer l'affichage d'un seul onglet */
+/* =============================================================================
+   SETTINGS.CSS - Styles pour les boutons de maintenance PDF Builder
+   ============================================================================= */
+
+/* =============================================================================
+   GESTION DES ONGLETS WORDPRESS
+   ============================================================================= */
+
+/* Styles WordPress pour les onglets */
+.nav-tab-wrapper .nav-tab {
+    border-bottom: 1px solid #ccc;
+    background: #f1f1f1;
+    color: #555;
+    text-decoration: none;
+    padding: 8px 12px;
+    margin-right: 4px;
+    border-radius: 4px 4px 0 0;
+    border: 1px solid #ccc;
+    border-bottom: none;
+}
+
+.nav-tab-wrapper .nav-tab.nav-tab-active {
+    background: #fff;
+    border-bottom: 1px solid #fff;
+    color: #000;
+    font-weight: 600;
+}
+
+/* Contenu des onglets */
+.tab-content-wrapper {
+    margin-top: 20px;
+}
+
+/* Masquer tous les onglets par défaut */
 .tab-content {
-    display: none !important;
+    display: none;
 }
 
+/* Afficher seulement l'onglet actif */
 .tab-content.active {
-    display: block !important;
+    display: block;
 }
 
-/* Masquer tous les onglets SAUF general */
-#licence, #systeme, #acces, #securite, #pdf, #contenu, #templates, #developpeur {
-    display: none !important;
+/* Conteneur interne des onglets pour isoler le contenu */
+.tab-content-inner {
+    padding: 20px 0;
 }
 
-/* Afficher seulement l'onglet general */
-#general {
-    display: block !important;
+/* =============================================================================
+   BOUTONS DE MAINTENANCE AMÉLIORÉS
+   ============================================================================= */
+
+/* Cartes métriques améliorées pour la maintenance */
+.maintenance-metric-card {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.maintenance-metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #667eea;
+}
+
+/* Valeurs des métriques */
+.metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+/* Labels des métriques */
+.metric-label {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Indicateurs de statut */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #6c757d;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+}
+
+/* États des indicateurs */
+.metric-status[data-status="ready"] .status-indicator {
+    background: #28a745;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+}
+
+.metric-status[data-status="scheduled"] .status-indicator {
+    background: #ffc107;
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.3);
+}
+
+.metric-status[data-status="active"] .status-indicator {
+    background: #007cba;
+    box-shadow: 0 0 8px rgba(0, 123, 186, 0.3);
+}
+
+.metric-status[data-status="inactive"] .status-indicator {
+    background: #dc3545;
+    box-shadow: 0 0 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Badges de statut */
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.status-active {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #28a745;
+}
+
+.status-badge.status-inactive {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #dc3545;
+}
+
+/* Boutons d'action */
+.metric-action {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.maintenance-metric-card:hover .metric-action {
+    opacity: 1;
+    background: rgba(102, 126, 234, 0.2);
+    border-color: rgba(102, 126, 234, 0.4);
+}
+
+/* Texte d'action */
+.action-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #667eea;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* États de chargement */
+.maintenance-metric-card.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.maintenance-metric-card.loading .status-indicator {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
+}
+
+/* États de succès/erreur */
+.maintenance-metric-card.success .status-indicator {
+    background: #28a745;
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
+}
+
+.maintenance-metric-card.error .status-indicator {
+    background: #dc3545;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .maintenance-metric-card {
+        margin-bottom: 10px;
+    }
+
+    .metric-value {
+        font-size: 20px;
+    }
+
+    .metric-label {
+        font-size: 12px;
+    }
 }
 
 /* Cartes métriques améliorées pour la maintenance */

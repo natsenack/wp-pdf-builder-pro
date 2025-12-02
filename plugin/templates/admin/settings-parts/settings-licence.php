@@ -391,163 +391,163 @@
                     </div>
                     <?php endif; ?>
 
-                <script>
-                    function showDeactivateModal() {
-                        var modal = document.getElementById('deactivate_modal');
-                        if (modal) {
-                            modal.style.display = 'flex';
+                    <script>
+                        function showDeactivateModal() {
+                            var modal = document.getElementById('deactivate_modal');
+                            if (modal) {
+                                modal.style.display = 'flex';
+                            }
+                            return false;
                         }
-                        return false;
-                    }
 
-                    function closeDeactivateModal() {
-                        var modal = document.getElementById('deactivate_modal');
-                        if (modal) {
-                            modal.style.display = 'none';
+                        function closeDeactivateModal() {
+                            var modal = document.getElementById('deactivate_modal');
+                            if (modal) {
+                                modal.style.display = 'none';
+                            }
                         }
-                    }
 
-                    // Fermer la modale si on clique en dehors
-                    document.addEventListener('click', function(event) {
-                        var modal = document.getElementById('deactivate_modal');
-                        if (event.target === modal) {
-                            closeDeactivateModal();
-                        }
-                    });
+                        // Fermer la modale si on clique en dehors
+                        document.addEventListener('click', function(event) {
+                            var modal = document.getElementById('deactivate_modal');
+                            if (event.target === modal) {
+                                closeDeactivateModal();
+                            }
+                        });
 
-                    // ✅ Handler pour le bouton "Vider le cache" dans l'onglet Général
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var clearCacheBtn = document.getElementById('clear-cache-general-btn');
-                        if (clearCacheBtn) {
-                            clearCacheBtn.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                var resultsSpan = document.getElementById('clear-cache-general-results');
-                                var cacheEnabledCheckbox = document.getElementById('cache_enabled');
+                        // ✅ Handler pour le bouton "Vider le cache" dans l'onglet Général
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var clearCacheBtn = document.getElementById('clear-cache-general-btn');
+                            if (clearCacheBtn) {
+                                clearCacheBtn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    var resultsSpan = document.getElementById('clear-cache-general-results');
+                                    var cacheEnabledCheckbox = document.getElementById('cache_enabled');
 
-                                // ✅ Vérifie si le cache est activé
-                                if (cacheEnabledCheckbox && !cacheEnabledCheckbox.checked) {
-                                    resultsSpan.textContent = '⚠️ Le cache n\'est pas activé!';
-                                    resultsSpan.style.color = '#ff9800';
-                                    return;
-                                }
-
-                                clearCacheBtn.disabled = true;
-                                clearCacheBtn.textContent = '⏳ Vérification...';
-                                resultsSpan.textContent = '';
-
-                                // ✅ Appel AJAX pour vider le cache
-                                var formData = new FormData();
-                                formData.append('action', 'pdf_builder_clear_cache');
-                                formData.append('nonce', pdf_builder_ajax.nonce);
-
-                                fetch(pdf_builder_ajax.ajax_url, {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then(function(response) {
-                                    return response.json();
-                                })
-                                .then(function(data) {
-                                    clearCacheBtn.disabled = false;
-                                    clearCacheBtn.textContent = '🗑️ Vider tout le cache';
-
-                                    if (data.success) {
-                                        resultsSpan.textContent = '✅ Cache vidé avec succès!';
-                                        resultsSpan.style.color = '#28a745';
-                                        // Update cache size display
-                                        var cacheSizeDisplay = document.getElementById('cache-size-display');
-                                        if (cacheSizeDisplay && data.data && data.data.new_cache_size) {
-                                            cacheSizeDisplay.innerHTML = data.data.new_cache_size;
-                                        }
-                                    } else {
-                                        resultsSpan.textContent = '❌ Erreur: ' + (data.data || 'Erreur inconnue');
-                                        resultsSpan.style.color = '#dc3232';
+                                    // ✅ Vérifie si le cache est activé
+                                    if (cacheEnabledCheckbox && !cacheEnabledCheckbox.checked) {
+                                        resultsSpan.textContent = '⚠️ Le cache n\'est pas activé!';
+                                        resultsSpan.style.color = '#ff9800';
+                                        return;
                                     }
-                                })
-                                .catch(function(error) {
-                                    clearCacheBtn.disabled = false;
-                                    clearCacheBtn.textContent = '🗑️ Vider tout le cache';
-                                    resultsSpan.textContent = '❌ Erreur AJAX: ' + error.message;
-                                    resultsSpan.style.color = '#dc3232';
-                                    if (window.pdfBuilderDebugSettings?.javascript) {
-                                        console.error('Erreur lors du vide du cache:', error);
+
+                                    clearCacheBtn.disabled = true;
+                                    clearCacheBtn.textContent = '⏳ Vérification...';
+                                    resultsSpan.textContent = '';
+
+                                    // ✅ Appel AJAX pour vider le cache
+                                    var formData = new FormData();
+                                    formData.append('action', 'pdf_builder_clear_cache');
+                                    formData.append('nonce', pdf_builder_ajax.nonce);
+
+                                    fetch(pdf_builder_ajax.ajax_url, {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then(function(response) {
+                                        return response.json();
+                                    })
+                                    .then(function(data) {
+                                        clearCacheBtn.disabled = false;
+                                        clearCacheBtn.textContent = '🗑️ Vider tout le cache';
+
+                                        if (data.success) {
+                                            resultsSpan.textContent = '✅ Cache vidé avec succès!';
+                                            resultsSpan.style.color = '#28a745';
+                                            // Update cache size display
+                                            var cacheSizeDisplay = document.getElementById('cache-size-display');
+                                            if (cacheSizeDisplay && data.data && data.data.new_cache_size) {
+                                                cacheSizeDisplay.innerHTML = data.data.new_cache_size;
+                                            }
+                                        } else {
+                                            resultsSpan.textContent = '❌ Erreur: ' + (data.data || 'Erreur inconnue');
+                                            resultsSpan.style.color = '#dc3232';
+                                        }
+                                    })
+                                    .catch(function(error) {
+                                        clearCacheBtn.disabled = false;
+                                        clearCacheBtn.textContent = '🗑️ Vider tout le cache';
+                                        resultsSpan.textContent = '❌ Erreur AJAX: ' + error.message;
+                                        resultsSpan.style.color = '#dc3232';
+                                        if (window.pdfBuilderDebugSettings?.javascript) {
+                                            console.error('Erreur lors du vide du cache:', error);
+                                        }
+                                    });
+                                });
+                            }
+
+                            // ✅ Handler pour le bouton "Tester l'intégration du cache"
+                            var testCacheBtn = document.getElementById('test-cache-btn');
+                            if (testCacheBtn) {
+                                testCacheBtn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    var resultsSpan = document.getElementById('cache-test-results');
+                                    var outputDiv = document.getElementById('cache-test-output');
+
+                                    testCacheBtn.disabled = true;
+                                    testCacheBtn.textContent = '⏳ Test en cours...';
+                                    resultsSpan.textContent = '';
+                                    outputDiv.style.display = 'none';
+
+                                    // Test de l'intégration du cache
+                                    var testResults = [];
+                                    testResults.push('🔍 Test de l\'intégration du cache système...');
+
+                                    // Vérifier si les fonctions de cache sont disponibles
+                                    if (typeof wp_cache_flush === 'function') {
+                                        testResults.push('✅ Fonction wp_cache_flush disponible');
+                                    } else {
+                                        testResults.push('⚠️ Fonction wp_cache_flush non disponible');
+                                    }
+
+                                    // Tester l'écriture/lecture de cache
+                                    var testKey = 'pdf_builder_test_' + Date.now();
+                                    var testValue = 'test_value_' + Math.random();
+
+                                    // Simuler un test de cache
+                                    setTimeout(function() {
+                                        testResults.push('✅ Test d\'écriture en cache: ' + testValue);
+                                        testResults.push('✅ Test de lecture en cache: OK');
+                                        testResults.push('✅ Intégration du cache fonctionnelle');
+
+                                        outputDiv.innerHTML = '<strong>Résultats du test:</strong><br>' + testResults.join('<br>');
+                                        outputDiv.style.display = 'block';
+                                        resultsSpan.innerHTML = '<span style="color: #28a745;">✅ Test réussi</span>';
+
+                                        testCacheBtn.disabled = false;
+                                        testCacheBtn.textContent = '🧪 Tester l\'intégration du cache';
+                                    }, 1500);
+                                });
+                            }
+
+                            // ✅ Handler pour le bouton toggle des fonctionnalités
+                            var toggleFeaturesBtn = document.getElementById('toggle-features-btn');
+                            if (toggleFeaturesBtn) {
+                                toggleFeaturesBtn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    var hiddenFeatures = document.querySelectorAll('.feature-hidden');
+                                    var showText = this.querySelector('.show-text');
+                                    var hideText = this.querySelector('.hide-text');
+
+                                    if (hiddenFeatures.length > 0 && hiddenFeatures[0].style.display === 'none') {
+                                        // Montrer les fonctionnalités cachées
+                                        hiddenFeatures.forEach(function(feature) {
+                                            feature.style.display = 'table-row';
+                                        });
+                                        showText.style.display = 'none';
+                                        hideText.style.display = 'inline';
+                                    } else {
+                                        // Cacher les fonctionnalités
+                                        hiddenFeatures.forEach(function(feature) {
+                                            feature.style.display = 'none';
+                                        });
+                                        showText.style.display = 'inline';
+                                        hideText.style.display = 'none';
                                     }
                                 });
-                            });
-                        }
-
-                        // ✅ Handler pour le bouton "Tester l'intégration du cache"
-                        var testCacheBtn = document.getElementById('test-cache-btn');
-                        if (testCacheBtn) {
-                            testCacheBtn.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                var resultsSpan = document.getElementById('cache-test-results');
-                                var outputDiv = document.getElementById('cache-test-output');
-
-                                testCacheBtn.disabled = true;
-                                testCacheBtn.textContent = '⏳ Test en cours...';
-                                resultsSpan.textContent = '';
-                                outputDiv.style.display = 'none';
-
-                                // Test de l'intégration du cache
-                                var testResults = [];
-                                testResults.push('🔍 Test de l\'intégration du cache système...');
-
-                                // Vérifier si les fonctions de cache sont disponibles
-                                if (typeof wp_cache_flush === 'function') {
-                                    testResults.push('✅ Fonction wp_cache_flush disponible');
-                                } else {
-                                    testResults.push('⚠️ Fonction wp_cache_flush non disponible');
-                                }
-
-                                // Tester l'écriture/lecture de cache
-                                var testKey = 'pdf_builder_test_' + Date.now();
-                                var testValue = 'test_value_' + Math.random();
-
-                                // Simuler un test de cache
-                                setTimeout(function() {
-                                    testResults.push('✅ Test d\'écriture en cache: ' + testValue);
-                                    testResults.push('✅ Test de lecture en cache: OK');
-                                    testResults.push('✅ Intégration du cache fonctionnelle');
-
-                                    outputDiv.innerHTML = '<strong>Résultats du test:</strong><br>' + testResults.join('<br>');
-                                    outputDiv.style.display = 'block';
-                                    resultsSpan.innerHTML = '<span style="color: #28a745;">✅ Test réussi</span>';
-
-                                    testCacheBtn.disabled = false;
-                                    testCacheBtn.textContent = '🧪 Tester l\'intégration du cache';
-                                }, 1500);
-                            });
-                        }
-
-                        // ✅ Handler pour le bouton toggle des fonctionnalités
-                        var toggleFeaturesBtn = document.getElementById('toggle-features-btn');
-                        if (toggleFeaturesBtn) {
-                            toggleFeaturesBtn.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                var hiddenFeatures = document.querySelectorAll('.feature-hidden');
-                                var showText = this.querySelector('.show-text');
-                                var hideText = this.querySelector('.hide-text');
-
-                                if (hiddenFeatures.length > 0 && hiddenFeatures[0].style.display === 'none') {
-                                    // Montrer les fonctionnalités cachées
-                                    hiddenFeatures.forEach(function(feature) {
-                                        feature.style.display = 'table-row';
-                                    });
-                                    showText.style.display = 'none';
-                                    hideText.style.display = 'inline';
-                                } else {
-                                    // Cacher les fonctionnalités
-                                    hiddenFeatures.forEach(function(feature) {
-                                        feature.style.display = 'none';
-                                    });
-                                    showText.style.display = 'inline';
-                                    hideText.style.display = 'none';
-                                }
-                            });
-                        }
-                    });
-                </script>
+                            }
+                        });
+                    </script>
 
                     <!-- Informations utiles -->
                     <aside style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); border: none; border-radius: 12px; padding: 30px; margin-bottom: 30px; color: #fff; box-shadow: 0 4px 12px rgba(23,162,184,0.3);">
@@ -833,65 +833,65 @@
                     <!-- Styles pour les toggles -->
                     
 
-                </section>
+            </section>
 
                 <script>
-                // Gestion AJAX pour la désactivation de licence
-                function deactivateLicense() {
-                    if (!confirm('Êtes-vous sûr de vouloir désactiver cette licence ? Vous pourrez la réactiver plus tard.')) {
-                        return;
-                    }
+                 // Gestion AJAX pour la désactivation de licence
+                 function deactivateLicense() {
+                        if (!confirm('Êtes-vous sûr de vouloir désactiver cette licence ? Vous pourrez la réactiver plus tard.')) {
+                            return;
+                        }
 
-                    const button = document.querySelector('#deactivate-license-btn') ||
-                                   document.querySelector('[onclick="deactivateLicense()"]');
+                        const button = document.querySelector('#deactivate-license-btn') ||
+                                    document.querySelector('[onclick="deactivateLicense()"]');
 
-                    if (button) {
-                        button.textContent = '⏳ Désactivation...';
-                        button.disabled = true;
-                    }
+                        if (button) {
+                            button.textContent = '⏳ Désactivation...';
+                            button.disabled = true;
+                        }
 
-                    const formData = new FormData();
-                    formData.append('action', 'pdf_builder_deactivate_license');
-                    formData.append('nonce', '<?php echo wp_create_nonce('pdf_builder_deactivate'); ?>');
+                        const formData = new FormData();
+                        formData.append('action', 'pdf_builder_deactivate_license');
+                        formData.append('nonce', '<?php echo wp_create_nonce('pdf_builder_deactivate'); ?>');
 
-                    fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('✅ Licence désactivée avec succès. La page va se recharger.');
-                            location.reload();
-                        } else {
-                            alert('❌ Erreur lors de la désactivation: ' + (data.data || 'Erreur inconnue'));
+                        fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('✅ Licence désactivée avec succès. La page va se recharger.');
+                                location.reload();
+                            } else {
+                                alert('❌ Erreur lors de la désactivation: ' + (data.data || 'Erreur inconnue'));
+                                if (button) {
+                                    button.textContent = 'Désactiver la Licence';
+                                    button.disabled = false;
+                                }
+                            }
+                            closeDeactivateModal();
+                        })
+                        .catch(error => {
+                            console.error('Erreur AJAX:', error);
+                            alert('❌ Erreur de connexion. Veuillez réessayer.');
                             if (button) {
                                 button.textContent = 'Désactiver la Licence';
                                 button.disabled = false;
                             }
-                        }
-                        closeDeactivateModal();
-                    })
-                    .catch(error => {
-                        console.error('Erreur AJAX:', error);
-                        alert('❌ Erreur de connexion. Veuillez réessayer.');
-                        if (button) {
-                            button.textContent = 'Désactiver la Licence';
-                            button.disabled = false;
-                        }
-                        closeDeactivateModal();
-                    });
-                }
-
-                // Event listener pour le bouton ajouté dans la section premium
-                document.addEventListener('DOMContentLoaded', function() {
-                    const deactivateBtn = document.getElementById('deactivate-license-btn');
-                    if (deactivateBtn) {
-                        deactivateBtn.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            showDeactivateModal();
+                            closeDeactivateModal();
                         });
                     }
-                });
+
+                    // Event listener pour le bouton ajouté dans la section premium
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const deactivateBtn = document.getElementById('deactivate-license-btn');
+                        if (deactivateBtn) {
+                            deactivateBtn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                showDeactivateModal();
+                            });
+                        }
+                    });
                 </script>
 
