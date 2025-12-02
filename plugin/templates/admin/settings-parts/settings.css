@@ -176,6 +176,130 @@
     gap: 15px;
 }
 
+.alert-icon {
+    font-size: 24px;
+    color: #856404;
+}
+
+.alert-title {
+    color: #856404;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+}
+
+.alert-text {
+    color: #856404;
+    margin: 0;
+}
+
+/* === STYLES POUR LES BADGES DE STATUT === */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.status-test {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffc107;
+}
+
+.status-badge.status-active {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #28a745;
+}
+
+.status-badge.status-free {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+/* === STYLES POUR L'AFFICHAGE DES CLÉS === */
+.license-key-display,
+.test-key-display {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-family: monospace;
+    font-size: 13px;
+    color: #495057;
+    word-break: break-all;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.copy-link {
+    color: #007cba;
+    text-decoration: none;
+    font-size: 12px;
+    margin-left: 8px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.copy-link:hover {
+    color: #005a87;
+    text-decoration: underline;
+}
+
+.test-mode-indicator {
+    color: #856404;
+    font-size: 12px;
+    font-style: italic;
+    margin-left: 8px;
+}
+
+/* === STYLES POUR LES DATES D'EXPIRATION === */
+.test-expiry-date,
+.license-expiry-date {
+    font-size: 14px;
+    font-weight: bold;
+    color: #495057;
+    margin: 0;
+}
+
+.test-expiry-status,
+.license-expiry-status {
+    font-size: 12px;
+    color: #6c757d;
+    margin: 5px 0 0 0;
+    font-style: italic;
+}
+
+/* === STYLES POUR LES SECTIONS INFO === */
+.info-title {
+    color: #007cba;
+    font-size: 18px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #007cba;
+    padding-bottom: 8px;
+}
+
+/* === STYLES POUR LE TABLEAU DE COMPARAISON === */
+.feature-limited {
+    color: #856404;
+    font-style: italic;
+}
+
+.feature-enabled {
+    color: #155724;
+    font-weight: bold;
+}
+
+.feature-disabled {
+    color: #6c757d;
+    text-decoration: line-through;
+}
+
 /* === STYLES POUR LES FORMULAIRES === */
 .form-row {
     display: flex;
@@ -4022,7 +4146,31 @@ input:checked + .toggle-slider:before {
     border-radius: 10px;
     font-weight: normal;
 }
-/* === STYLES POUR LES TEMPLATES === */
+/* === RÈGLES SPÉCIFIQUES POUR LES ONGLETS === */
+/* Masquer le contenu système quand l'onglet général est actif */
+#general.tab-content:not(.active) ~ #systeme.tab-content:not(.active) {
+    display: none !important;
+}
+
+/* Masquer le contenu général quand l'onglet système est actif */
+#systeme.tab-content:not(.active) ~ #general.tab-content:not(.active) {
+    display: none !important;
+}
+
+/* Règle générale pour masquer les onglets inactifs */
+.tab-content:not(.active) {
+    display: none !important;
+}
+
+/* Règle spécifique pour l'onglet système */
+#systeme.tab-content:not(.active) {
+    display: none !important;
+}
+
+/* Règle spécifique pour l'onglet général */
+#general.tab-content:not(.active) {
+    display: none !important;
+}
 
 /* Wrapper du statut des templates */
 .templates-status-wrapper {
