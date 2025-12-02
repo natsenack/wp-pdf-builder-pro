@@ -228,7 +228,7 @@
                                     <h4>📊 État de la maintenance</h4>
                                 </header>
                                 <div class="metric-grid">
-                                    <div class="maintenance-metric-card" data-metric="last-run">
+                                    <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="last-run" data-action="run-maintenance">
                                         <div class="metric-value">
                                             <?php
                                             $last_maintenance = get_option('pdf_builder_last_maintenance', 'Jamais');
@@ -240,8 +240,8 @@
                                         </div>
                                         <div class="metric-label">Dernière exécution</div>
                                         <div class="metric-hint">Cliquez pour lancer</div>
-                                    </div>
-                                    <div class="maintenance-metric-card" data-metric="next-run">
+                                    </button>
+                                    <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="next-run" data-action="schedule-maintenance">
                                         <div class="metric-value">
                                             <?php
                                             $next_maintenance = get_option('pdf_builder_next_maintenance', 'Non planifiée');
@@ -253,19 +253,19 @@
                                         </div>
                                         <div class="metric-label">Prochaine exécution</div>
                                         <div class="metric-hint">Cliquez pour configurer</div>
-                                    </div>
-                                    <div class="maintenance-metric-card" data-metric="status">
+                                    </button>
+                                    <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="status" data-action="toggle-maintenance">
                                         <div class="metric-value">
                                             <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'Activée' : 'Désactivée'; ?>
                                         </div>
                                         <div class="metric-label">Maintenance auto</div>
                                         <div class="metric-hint">Cliquez pour basculer</div>
-                                    </div>
-                                    <div class="maintenance-metric-card" data-metric="manual">
+                                    </button>
+                                    <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="manual" data-action="run-manual-maintenance">
                                         <div class="metric-value">Manuel</div>
                                         <div class="metric-label">Lancement manuel</div>
                                         <div class="metric-hint">Cliquez pour exécuter</div>
-                                    </div>
+                                    </button>
                                 </div>
                             </article>
                         </div>
