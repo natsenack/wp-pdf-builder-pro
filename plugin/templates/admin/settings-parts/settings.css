@@ -2460,8 +2460,6 @@ input:checked + .toggle-slider:before {
     right: 30px;
     z-index: 9999;
     display: block !important;
-    background: red; /* DEBUG: Couleur temporaire pour voir le bouton */
-    border: 2px solid yellow; /* DEBUG: Bordure visible */
 }
 
 .floating-save-btn {
