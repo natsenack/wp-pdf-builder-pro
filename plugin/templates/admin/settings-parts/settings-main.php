@@ -996,13 +996,25 @@
                     return;
                 }
 
+                // Créer une copie des données pour ne pas modifier l'original
+                var tabData = {};
+                $.extend(tabData, settingsByTab[tabId]);
+                
+                // Supprimer les nonces individuels des onglets (pdf_builder_*_nonce)
+                // car on va utiliser le nonce global AJAX à la place
+                Object.keys(tabData).forEach(function(key) {
+                    if (key.match(/_nonce$/) || key.match(/_wp_http_referer$/) || key === 'current_tab') {
+                        delete tabData[key];
+                    }
+                });
+
                 var ajaxData = {
                     action: 'pdf_builder_save_' + tabId,
                     nonce: nonce
                 };
 
-                // Merge les données de l'onglet
-                $.extend(ajaxData, settingsByTab[tabId]);
+                // Merge les données de l'onglet (sans les nonces)
+                $.extend(ajaxData, tabData);
 
                 console.log('📤 Envoi pour onglet "' + tabId + '":', settingsByTab[tabId]);
 
