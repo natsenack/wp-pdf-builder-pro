@@ -1,140 +1,24 @@
-/* =============================================================================
-   SETTINGS.CSS - Styles centralisés pour tous les paramètres PDF Builder
-   ============================================================================= */
-
-/* =============================================================================
-   GESTION DES ONGLETS
-   ============================================================================= */
-
-.tab-content-wrapper {
-    margin-top: 20px;
-}
-
-/* Masquer tous les onglets par défaut */
+/* TEST TEMPORAIRE - Forcer l'affichage d'un seul onglet */
 .tab-content {
     display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
 }
 
-/* Afficher seulement l'onglet actif */
 .tab-content.active {
     display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    height: auto !important;
-    overflow: visible !important;
 }
 
-/* Styles WordPress pour les onglets */
-.nav-tab-wrapper .nav-tab {
-    border-bottom: 1px solid #ccc;
-    background: #f1f1f1;
-    color: #555;
-    text-decoration: none;
-    padding: 8px 12px;
-    margin-right: 4px;
-    border-radius: 4px 4px 0 0;
-}
-
-.nav-tab-wrapper .nav-tab.nav-tab-active {
-    background: #fff;
-    border-bottom: 1px solid #fff;
-    color: #000;
-    font-weight: 600;
-}
-
-/* Forcer l'affichage correct des onglets */
-#pdf-builder-tab-content .tab-content:not(.active) {
+/* Masquer tous les onglets SAUF general */
+#licence, #systeme, #acces, #securite, #pdf, #contenu, #templates, #developpeur {
     display: none !important;
 }
 
-#pdf-builder-tab-content .tab-content.active {
+/* Afficher seulement l'onglet general */
+#general {
     display: block !important;
 }
 
-/* =============================================================================
-   SYSTÈME - Cache, Maintenance & Sauvegarde
-   ============================================================================= */
-
-.system-cache-section,
-.system-maintenance-section,
-.system-backup-section {
-    margin-bottom: 30px;
-    border: 1px solid #e1e5e9;
-    border-radius: 8px;
-    background: #fff;
-    overflow: hidden;
-}
-
-.system-cache-section header,
-.system-maintenance-section header,
-.system-backup-section header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 15px 20px;
-    margin: 0;
-}
-
-.system-cache-section h3,
-.system-maintenance-section h3,
-.system-backup-section h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.system-cache-section h3 span:first-child,
-.system-maintenance-section h3 span:first-child,
-.system-backup-section h3 span:first-child {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.cache-performance-status,
-.maintenance-status,
-.backup-status {
-    font-size: 12px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-.cache-performance-status {
-    background: #28a745;
-}
-
-.maintenance-status {
-    background: #17a2b8;
-}
-
-.backup-status {
-    background: #ffc107;
-    color: #212529;
-}
-
-.system-section-content {
-    padding: 20px;
-}
-
-/* Métriques des sections système */
-.metric-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.cache-metric-card,
-.maintenance-metric-card,
-.backup-metric-card {
+/* Cartes métriques améliorées pour la maintenance */
+.maintenance-metric-card {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 8px;
@@ -142,16 +26,16 @@
     text-align: center;
     transition: all 0.3s ease;
     cursor: pointer;
+    margin-bottom: 15px;
 }
 
-.cache-metric-card:hover,
-.maintenance-metric-card:hover,
-.backup-metric-card:hover {
+.maintenance-metric-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     border-color: #667eea;
 }
 
+/* Valeurs des métriques */
 .metric-value {
     font-size: 24px;
     font-weight: 700;
@@ -159,6 +43,7 @@
     margin-bottom: 5px;
 }
 
+/* Labels des métriques */
 .metric-label {
     font-size: 14px;
     color: #6c757d;
@@ -167,254 +52,96 @@
     letter-spacing: 0.5px;
 }
 
-.metric-hint {
-    font-size: 12px;
-    color: #9ca3af;
-    margin-top: 5px;
-    font-style: italic;
-}
-
-/* === AMÉLIORATIONS DES BOUTONS DE MAINTENANCE === */
-
-/* En-tête des cartes métriques */
-.metric-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
-}
-
-.metric-icon {
-    font-size: 24px;
-    opacity: 0.9;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-}
-
-.metric-status {
-    position: relative;
-}
-
+/* Indicateurs de statut */
 .status-indicator {
     display: inline-block;
     width: 10px;
     height: 10px;
     border-radius: 50%;
     background: #6c757d;
-    border: 3px solid #fff;
-    box-shadow: 0 0 0 2px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+    margin-left: 8px;
 }
 
+/* États des indicateurs */
 .metric-status[data-status="ready"] .status-indicator {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    box-shadow: 0 0 12px rgba(40, 167, 69, 0.5), 0 2px 8px rgba(0,0,0,0.15);
+    background: #28a745;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
 }
 
 .metric-status[data-status="scheduled"] .status-indicator {
-    background: linear-gradient(135deg, #ffc107, #fd7e14);
-    box-shadow: 0 0 12px rgba(255, 193, 7, 0.5), 0 2px 8px rgba(0,0,0,0.15);
+    background: #ffc107;
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.3);
 }
 
 .metric-status[data-status="active"] .status-indicator {
-    background: linear-gradient(135deg, #007cba, #17a2b8);
-    box-shadow: 0 0 12px rgba(0, 124, 186, 0.5), 0 2px 8px rgba(0,0,0,0.15);
+    background: #007cba;
+    box-shadow: 0 0 8px rgba(0, 123, 186, 0.3);
 }
 
 .metric-status[data-status="inactive"] .status-indicator {
-    background: linear-gradient(135deg, #dc3545, #e83e8c);
-    box-shadow: 0 0 12px rgba(220, 53, 69, 0.5), 0 2px 8px rgba(0,0,0,0.15);
+    background: #dc3545;
+    box-shadow: 0 0 8px rgba(220, 53, 69, 0.3);
 }
 
-.metric-status[data-status="manual"] .status-indicator {
-    background: linear-gradient(135deg, #6f42c1, #e83e8c);
-    box-shadow: 0 0 12px rgba(111, 66, 193, 0.5), 0 2px 8px rgba(0,0,0,0.15);
-}
-
-/* Cartes métriques améliorées */
-.maintenance-metric-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border: 2px solid rgba(102, 126, 234, 0.1);
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 2px 8px rgba(102, 126, 234, 0.06);
-}
-
-.maintenance-metric-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.08), transparent);
-    transition: left 0.6s ease;
-    z-index: 1;
-}
-
-.maintenance-metric-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 6px 20px rgba(102, 126, 234, 0.12);
-    border-color: rgba(102, 126, 234, 0.25);
-}
-
-.maintenance-metric-card:hover::before {
-    left: 100%;
-}
-
-.maintenance-metric-card > * {
-    position: relative;
-    z-index: 2;
-}
-
-/* Valeurs des métriques améliorées */
-.metric-value {
-    font-size: 22px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 8px;
-    line-height: 1.2;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-}
-
-.maintenance-metric-card:hover .metric-value {
-    color: #667eea;
-    transform: scale(1.05);
-}
-
-/* Labels des métriques */
-.metric-label {
-    font-size: 13px;
-    color: #6c757d;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-    transition: all 0.3s ease;
-}
-
-.maintenance-metric-card:hover .metric-label {
-    color: #495057;
-}
-
-/* Badges de statut améliorés */
+/* Badges de statut */
 .status-badge {
     display: inline-block;
-    padding: 6px 12px;
-    border-radius: 20px;
+    padding: 4px 8px;
+    border-radius: 12px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
 }
 
 .status-badge.status-active {
-    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    background: #d4edda;
     color: #155724;
-    border: 2px solid #28a745;
+    border: 1px solid #28a745;
 }
 
 .status-badge.status-inactive {
-    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    background: #f8d7da;
     color: #721c24;
-    border: 2px solid #dc3545;
+    border: 1px solid #dc3545;
 }
 
-.manual-badge {
-    display: inline-block;
-    padding: 6px 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    border: 2px solid rgba(255,255,255,0.2);
-}
-
-/* Actions des métriques améliorées */
+/* Boutons d'action */
 .metric-action {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
     margin-top: 12px;
-    padding: 10px 16px;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-    border-radius: 12px;
-    border: 2px solid rgba(102, 126, 234, 0.15);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    padding: 8px 12px;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 6px;
+    transition: all 0.3s ease;
     opacity: 0.8;
-    backdrop-filter: blur(10px);
 }
 
 .maintenance-metric-card:hover .metric-action {
     opacity: 1;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    background: rgba(102, 126, 234, 0.2);
     border-color: rgba(102, 126, 234, 0.4);
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
+/* Texte d'action */
 .action-text {
     font-size: 12px;
     font-weight: 600;
     color: #667eea;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.5px;
 }
 
-.action-icon {
-    font-size: 14px;
-    opacity: 0.9;
-    transition: all 0.3s ease;
-}
-
-.maintenance-metric-card:hover .action-icon {
-    transform: scale(1.1);
-}
-
-/* États spécifiques des métriques */
-.systeme-cache-status .metric-value {
-    color: #28a745;
-    font-weight: 700;
-}
-
-/* États de chargement améliorés */
+/* États de chargement */
 .maintenance-metric-card.loading {
     pointer-events: none;
-    opacity: 0.8;
-    animation: loadingPulse 2s infinite;
-}
-
-.maintenance-metric-card.loading .metric-value {
-    color: #6c757d;
+    opacity: 0.7;
 }
 
 .maintenance-metric-card.loading .status-indicator {
     animation: pulse 1.5s infinite;
-}
-
-@keyframes loadingPulse {
-    0%, 100% {
-        opacity: 0.8;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.9;
-        transform: scale(1.01);
-    }
 }
 
 @keyframes pulse {
@@ -423,267 +150,33 @@
         transform: scale(1);
     }
     50% {
-        opacity: 0.7;
-        transform: scale(1.1);
+        opacity: 0.6;
+        transform: scale(1.2);
     }
 }
 
-/* États de succès/erreur améliorés */
-.maintenance-metric-card.success {
-    animation: successGlow 0.6s ease-out;
-}
-
+/* États de succès/erreur */
 .maintenance-metric-card.success .status-indicator {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    box-shadow: 0 0 20px rgba(40, 167, 69, 0.8), 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.maintenance-metric-card.error {
-    animation: errorShake 0.6s ease-out;
+    background: #28a745;
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
 }
 
 .maintenance-metric-card.error .status-indicator {
-    background: linear-gradient(135deg, #dc3545, #e83e8c);
-    box-shadow: 0 0 20px rgba(220, 53, 69, 0.8), 0 4px 15px rgba(0,0,0,0.2);
-}
-
-@keyframes successGlow {
-    0% { box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 2px 8px rgba(102, 126, 234, 0.06); }
-    50% { box-shadow: 0 4px 20px rgba(40, 167, 69, 0.3), 0 2px 8px rgba(102, 126, 234, 0.06); }
-    100% { box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 2px 8px rgba(102, 126, 234, 0.06); }
-}
-
-@keyframes errorShake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-2px); }
-    75% { transform: translateX(2px); }
-}
-
-/* Indicateurs visuels pour les différents types d'actions */
-.maintenance-metric-card[data-action="run-maintenance"] .metric-action {
-    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
-    border-color: rgba(40, 167, 69, 0.2);
-}
-
-.maintenance-metric-card[data-action="schedule-maintenance"] .metric-action {
-    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(253, 126, 20, 0.1));
-    border-color: rgba(255, 193, 7, 0.2);
-}
-
-.maintenance-metric-card[data-action="toggle-maintenance"] .metric-action {
-    background: linear-gradient(135deg, rgba(0, 123, 186, 0.1), rgba(23, 162, 184, 0.1));
-    border-color: rgba(0, 123, 186, 0.2);
-}
-
-.maintenance-metric-card[data-action="run-manual-maintenance"] .metric-action {
-    background: linear-gradient(135deg, rgba(111, 66, 193, 0.1), rgba(232, 62, 140, 0.1));
-    border-color: rgba(111, 66, 193, 0.2);
-}
-
-/* Informations sur l'état du cache */
-.cache-status-info,
-.maintenance-status-info,
-.backup-status-info {
-    margin-top: 20px;
-    padding: 15px;
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-}
-
-.cache-status-info header,
-.maintenance-status-info header,
-.backup-status-info header {
-    margin-bottom: 15px;
-}
-
-.cache-status-info h4,
-.maintenance-status-info h4,
-.backup-status-info h4 {
-    margin: 0;
-    color: #495057;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-/* Boutons système */
-.system-btn {
-    margin-right: 10px;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.system-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.system-btn.danger {
     background: #dc3545;
-    border-color: #dc3545;
-    color: white;
-}
-
-.system-btn.danger:hover {
-    background: #c82333;
-    border-color: #bd2130;
-}
-
-/* Informations de maintenance */
-.maintenance-info-box {
-    margin-top: 8px;
-    padding: 12px;
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    font-size: 13px;
-    color: #6c757d;
-    line-height: 1.5;
-}
-
-.maintenance-info-box strong {
-    color: #495057;
-    display: block;
-    margin-bottom: 8px;
-}
-
-.maintenance-info-box em {
-    font-style: italic;
-    color: #9ca3af;
-    display: block;
-    margin-top: 8px;
-}
-
-/* Informations de sauvegarde */
-.backup-info {
-    margin-bottom: 20px;
-    padding: 15px;
-    background: #e7f3ff;
-    border: 1px solid #b3d7ff;
-    border-radius: 6px;
-}
-
-.backup-info header {
-    margin-bottom: 10px;
-}
-
-.backup-info h4 {
-    margin: 0;
-    color: #0066cc;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.backup-info ul {
-    margin: 0;
-    padding-left: 20px;
-    color: #495057;
-}
-
-.backup-info li {
-    margin-bottom: 5px;
-    line-height: 1.4;
-}
-
-/* Actions de sauvegarde */
-.backup-actions {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.backup-actions button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.backup-actions button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.backup-actions .button-primary {
-    background: #007cba;
-    border-color: #007cba;
-    color: white;
-}
-
-.backup-actions .button-primary:hover {
-    background: #005a87;
-    border-color: #005a87;
-}
-
-/* Input de rétention des sauvegardes */
-.backup-retention-input {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.backup-retention-input input {
-    width: 80px;
-    padding: 6px 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.backup-retention-input span {
-    color: #6c757d;
-    font-weight: 500;
-}
-
-/* Message d'aide pour la sauvegarde */
-.backup-help-notice {
-    margin-top: 20px;
-    padding: 15px;
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
-    border-radius: 6px;
-}
-
-.backup-help-notice header {
-    margin-bottom: 10px;
-}
-
-.backup-help-notice h4 {
-    margin: 0;
-    color: #856404;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.backup-help-notice p {
-    margin: 0;
-    color: #856404;
-    line-height: 1.5;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .metric-grid {
-        grid-template-columns: 1fr;
+    .maintenance-metric-card {
+        margin-bottom: 10px;
     }
 
-    .system-cache-section h3,
-    .system-maintenance-section h3,
-    .system-backup-section h3 {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
+    .metric-value {
+        font-size: 20px;
     }
 
-    .backup-actions {
-        flex-direction: column;
-    }
-
-    .backup-actions button {
-        justify-content: center;
+    .metric-label {
+        font-size: 12px;
     }
 }

@@ -82,15 +82,51 @@
     </nav>
 
     <section id="pdf-builder-tab-content" class="tab-content-wrapper">
-        <div id="general" class="tab-content active"><?php require_once 'settings-general.php'; ?></div>
-        <div id="licence" class="tab-content"><?php require_once 'settings-licence.php'; ?></div>
-        <div id="systeme" class="tab-content"><?php require_once 'settings-systeme.php'; ?></div>
-        <div id="acces" class="tab-content"><?php require_once 'settings-acces.php'; ?></div>
-        <div id="securite" class="tab-content"><?php require_once 'settings-securite.php'; ?></div>
-        <div id="pdf" class="tab-content"><?php require_once 'settings-pdf.php'; ?></div>
-        <div id="contenu" class="tab-content"><?php require_once 'settings-contenu.php'; ?></div>
-        <div id="templates" class="tab-content"><?php require_once 'settings-templates.php'; ?></div>
-        <div id="developpeur" class="tab-content"><?php require_once 'settings-developpeur.php'; ?></div>
+        <div id="general" class="tab-content active">
+            <div class="tab-content-inner">
+                <?php require_once 'settings-general.php'; ?>
+            </div>
+        </div>
+        <div id="licence" class="tab-content">
+            <div class="tab-content-inner">
+                <?php require_once 'settings-licence.php'; ?>
+            </div>
+        </div>
+        <div id="systeme" class="tab-content">
+            <div class="tab-content-inner">
+                <?php require_once 'settings-systeme.php'; ?>
+            </div>
+        </div>
+        <div id="acces" class="tab-content">
+            <div class="tab-content-inner">
+                <?php require_once 'settings-acces.php'; ?>
+            </div>
+        </div>
+        <div id="securite" class="tab-content">
+            <div class="tab-content-inner">
+                <?php require_once 'settings-securite.php'; ?>
+            </div>
+        </div>
+        <div id="pdf" class="tab-content">
+            <div class="tab-content-inner">
+                <?php require_once 'settings-pdf.php'; ?>
+            </div>
+        </div>
+        <div id="contenu" class="tab-content">
+            <div class="tab-content-inner">
+                <?php require_once 'settings-contenu.php'; ?>
+            </div>
+        </div>
+        <div id="templates" class="tab-content">
+            <div class="tab-content-inner">
+                <?php require_once 'settings-templates.php'; ?>
+            </div>
+        </div>
+        <div id="developpeur" class="tab-content">
+            <div class="tab-content-inner">
+                <?php require_once 'settings-developpeur.php'; ?>
+            </div>
+        </div>
     </section>
 
     <aside id="pdf-builder-floating-save">
