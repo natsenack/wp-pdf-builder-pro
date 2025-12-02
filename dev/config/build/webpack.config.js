@@ -90,16 +90,24 @@ module.exports = {
       new TerserPlugin({
         terserOptions: {
           compress: {
-            drop_console: false,  // ❌ Garder les logs pour le debug
+            drop_console: false,
             drop_debugger: true,
-            pure_funcs: [],  // ❌ Ne pas supprimer les fonctions console
+            pure_funcs: [],
             pure_getters: true,
-            unsafe: true,
-            unsafe_comps: true,
-            warnings: false
+            unsafe: false,  // More conservative
+            unsafe_comps: false,
+            warnings: false,
+            // Keep React hook references intact
+            passes: 1,  // Reduce optimization passes
+            unused: true  // Remove unused vars but keep properties
           },
           mangle: {
-            safari10: true
+            safari10: true,
+            // Keep React property names intact
+            properties: {
+              regex: /^use/,  // Don't mangle properties starting with 'use'
+              keep_quoted: true
+            }
           },
           output: {
             comments: false,
