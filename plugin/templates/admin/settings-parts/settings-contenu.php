@@ -129,45 +129,7 @@
                                 <p>Configurez l'affichage et l'alignement sur la grille de conception.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="grid-preview-container">
-                                    <div class="grid-canvas">
-                                        <!-- Quadrillage principal -->
-                                        <div class="grid-lines">
-                                            <div class="grid-line horizontal"></div>
-                                            <div class="grid-line horizontal"></div>
-                                            <div class="grid-line horizontal"></div>
-                                            <div class="grid-line vertical"></div>
-                                            <div class="grid-line vertical"></div>
-                                            <div class="grid-line vertical"></div>
-                                        </div>
-                                        <!-- Points d'intersection -->
-                                        <div class="grid-dots">
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                        </div>
-                                        <!-- Guides d'alignement -->
-                                        <div class="guide-lines">
-                                            <div class="guide-line horizontal active"></div>
-                                            <div class="guide-line vertical active"></div>
-                                        </div>
-                                        <!-- Élément d'exemple -->
-                                        <div class="preview-element">
-                                            <div class="element-box"></div>
-                                        </div>
-                                    </div>
-                                    <div class="grid-legend">
-                                        <span class="legend-item">📐 Grille</span>
-                                        <span class="legend-item">📏 Guides</span>
-                                        <span class="legend-item">📦 Élément</span>
-                                    </div>
-                                </div>
+                                <div class="grid-preview" title="Grille & Guides activés"></div>
                             </div>
                             <div class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
@@ -188,17 +150,7 @@
                                 <p>Contrôlez les niveaux de zoom et les options de navigation.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="zoom-preview-container">
-                                    <div class="zoom-indicator">
-                                        <button class="zoom-btn zoom-minus" disabled>−</button>
-                                        <span class="zoom-level">100%</span>
-                                        <button class="zoom-btn zoom-plus" disabled>+</button>
-                                    </div>
-                                    <div class="zoom-info">
-                                        <span>10% - 500%</span>
-                                        <span>Pas: 25%</span>
-                                    </div>
-                                </div>
+                                <div class="zoom-preview" title="Zoom 100% activé"></div>
                             </div>
                             <div class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
@@ -219,50 +171,7 @@
                                 <p>Contrôlez les interactions canvas, la sélection et les raccourcis clavier.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="interactions-preview-container">
-                                    <!-- Canvas miniature avec éléments -->
-                                    <div class="mini-canvas">
-                                        <!-- Grille de fond -->
-                                        <div class="mini-canvas-grid"></div>
-
-                                        <!-- Éléments sur le canvas -->
-                                        <div class="mini-element text-element" style="top: 15px; left: 20px; width: 40px; height: 20px;">
-                                            <div class="mini-element-content">T</div>
-                                        </div>
-                                        <div class="mini-element shape-element selected" style="top: 45px; left: 15px; width: 35px; height: 25px;">
-                                            <div class="mini-element-content">□</div>
-                                            <!-- Poignées de sélection -->
-                                            <div class="mini-handle nw"></div>
-                                            <div class="mini-handle ne"></div>
-                                            <div class="mini-handle sw"></div>
-                                            <div class="mini-handle se"></div>
-                                            <div class="mini-handle rotation" style="top: -8px; left: 50%; transform: translateX(-50%);"></div>
-                                        </div>
-                                        <div class="mini-element image-element" style="top: 20px; left: 70px; width: 30px; height: 30px;">
-                                            <div class="mini-element-content">🖼</div>
-                                        </div>
-
-                                        <!-- Sélection rectangle en cours -->
-                                        <div class="selection-rectangle" style="top: 10px; left: 10px; width: 60px; height: 40px;"></div>
-
-                                        <!-- Curseur de souris -->
-                                        <div class="mouse-cursor" style="top: 55px; left: 85px;">
-                                            <div class="cursor-icon">👆</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Contrôles en bas -->
-                                    <div class="interactions-controls">
-                                        <div class="selection-mode-indicator">
-                                            <span class="mode-icon active" title="Rectangle">▭</span>
-                                            <span class="mode-icon" title="Lasso">🪢</span>
-                                            <span class="mode-icon" title="Clic">👆</span>
-                                        </div>
-                                        <div class="interaction-status">
-                                            <span class="status-indicator selecting">Sélection en cours</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="interactions-preview" title="Sélection multiple activée"></div>
                             </div>
                             <div class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
@@ -283,17 +192,7 @@
                                 <p>Configurez les formats et la qualité d'export des designs.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="export-preview-container">
-                                    <div class="export-formats">
-                                        <span class="format-badge png">PNG</span>
-                                        <span class="format-badge jpg">JPG</span>
-                                        <span class="format-badge pdf">PDF</span>
-                                    </div>
-                                    <div class="export-quality-bar">
-                                        <div class="quality-fill" style="width: 90%;"></div>
-                                        <span class="quality-text">90%</span>
-                                    </div>
-                                </div>
+                                <div class="export-preview" title="Export PNG/JPG/PDF activé"></div>
                             </div>
                             <div class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
@@ -314,28 +213,7 @@
                                 <p>Optimisez les FPS, mémoire et temps de réponse.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="performance-preview-container">
-                                    <div class="performance-metrics">
-                                        <div class="metric-item">
-                                            <span class="metric-label">FPS</span>
-                                            <span class="metric-value">60</span>
-                                        </div>
-                                        <div class="metric-item">
-                                            <span class="metric-label">RAM JS</span>
-                                            <span class="metric-value">256MB</span>
-                                        </div>
-                                        <div class="metric-item">
-                                            <span class="metric-label">RAM PHP</span>
-                                            <span class="metric-value">256MB</span>
-                                        </div>
-                                    </div>
-                                    <div class="performance-status">
-                                        <div class="status-indicator">
-                                            <span class="status-dot"></span>
-                                            <span class="status-text">Lazy Loading</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="performance-preview" title="Performance optimisée"></div>
                             </div>
                             <div class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
@@ -356,40 +234,7 @@
                                 <p>Outils de débogage et monitoring des performances.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="debug-preview-container">
-                                    <div class="debug-console">
-                                        <div class="console-line">
-                                            <span class="console-timestamp">[14:32:15]</span>
-                                            <span class="console-level info">INFO</span>
-                                            <span class="console-message">Canvas initialized</span>
-                                        </div>
-                                        <div class="console-line">
-                                            <span class="console-timestamp">[14:32:16]</span>
-                                            <span class="console-level warn">WARN</span>
-                                            <span class="console-message">Memory usage: 85%</span>
-                                        </div>
-                                        <div class="console-line">
-                                            <span class="console-timestamp">[14:32:17]</span>
-                                            <span class="console-level error">ERROR</span>
-                                            <span class="console-message">Failed to load image</span>
-                                        </div>
-                                        <div class="console-cursor">_</div>
-                                    </div>
-                                    <div class="debug-stats">
-                                        <div class="stat-item">
-                                            <span class="stat-label">FPS</span>
-                                            <span class="stat-value">60</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-label">RAM</span>
-                                            <span class="stat-value">85MB</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-label">Errors</span>
-                                            <span class="stat-value">2</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="debug-preview" title="Debug activé"></div>
                             </div>
                             <div class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
@@ -433,6 +278,5 @@
                         </td>
                     </tr>
                 </table>
-            </section>
             </section>
 
