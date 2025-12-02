@@ -31,7 +31,7 @@
                         </h3>
                     </header>
 
-                    <main>
+                    <article>
                         <table class="form-table">
                         <tr>
                             <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
@@ -107,7 +107,7 @@
                                 <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
                             </td>
                         </tr>
-                    </main>
+                    </article>
 
                     <!-- Informations sur l'état du cache -->
                     <article class="cache-status-info" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
