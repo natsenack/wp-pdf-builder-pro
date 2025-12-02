@@ -158,7 +158,7 @@
 ?>
 
 <!-- Hidden nonce field for legacy AJAX system -->
-<input type="hidden" name="_wpnonce_pdf_builder" value="<?php echo wp_create_nonce('pdf_builder_settings_ajax'); ?>" />
+<input type="hidden" name="_wpnonce_pdf_builder" value="<?php echo wp_create_nonce('pdf_builder_settings_legacy'); ?>" />
 
 <script>
     /**
