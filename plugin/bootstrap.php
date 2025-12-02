@@ -1505,3 +1505,11 @@ pdf_builder_initialize_canvas_defaults();
 // INITIALISER LE SYSTÈME DE MIGRATION (DÉPLACÉ PLUS HAUT)
 // ============================================================================
 // Le système de migration est maintenant initialisé juste après constants.php
+
+// ============================================================================
+// CHARGER LE LOADER DES STYLES DE LA PAGE DE PARAMÈTRES
+// ============================================================================
+// Charge le CSS de settings au moment approprié (admin_print_styles)
+if (is_admin()) {
+    require_once __DIR__ . '/templates/admin/settings-loader.php';
+}
