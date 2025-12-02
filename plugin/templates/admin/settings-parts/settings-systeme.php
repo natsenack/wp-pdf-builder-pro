@@ -21,15 +21,18 @@
             <section id="systeme-settings-container" aria-label="Paramètres système">
 
                 <!-- Section Cache et Performance -->
-                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; font-size: 18px;">
-                        <span style="display: inline-flex; align-items: center; gap: 10px;">
-                            📋 Cache & Performance - ⚠️ En attente d'implémentation
-                            <span class="cache-performance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_cache_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
-                        </span>
-                    </h3>
+                <section class="system-cache-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <header>
+                        <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; font-size: 18px;">
+                            <span style="display: inline-flex; align-items: center; gap: 10px;">
+                                📋 Cache & Performance - ⚠️ En attente d'implémentation
+                                <span class="cache-performance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_cache_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
+                            </span>
+                        </h3>
+                    </header>
 
-                    <table class="form-table">
+                    <main>
+                        <table class="form-table">
                         <tr>
                             <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                             <td>
@@ -104,11 +107,13 @@
                                 <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
                             </td>
                         </tr>
-                    </table>
+                    </main>
 
                     <!-- Informations sur l'état du cache -->
-                    <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
-                        <h4 style="margin-top: 0; color: #155724; font-size: 16px;">📊 État du système de cache</h4>
+                    <article class="cache-status-info" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
+                        <header>
+                            <h4 style="margin-top: 0; color: #155724; font-size: 16px;">📊 État du système de cache</h4>
+                        </header>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px;">
                             <div class="cache-metric-card" style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid #dee2e6; cursor: pointer; transition: all 0.3s ease;" data-metric="size">
                                 <div style="font-size: 24px; font-weight: bold; color: #28a745;">
@@ -171,20 +176,24 @@
                                 <div style="color: #666; font-size: 12px;">Dernier nettoyage</div>
                                 <div style="color: #999; font-size: 10px; margin-top: 5px;">Cliquez pour nettoyer</div>
                             </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </article>
+                </section>
 
                 <!-- Section Maintenance -->
-                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
-                        <span style="display: inline-flex; align-items: center; gap: 10px;">
-                            🔧 Maintenance
-                            <span class="maintenance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
-                        </span>
-                    </h3>
+                <section class="system-maintenance-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <header>
+                        <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+                            <span style="display: inline-flex; align-items: center; gap: 10px;">
+                                🔧 Maintenance
+                                <span class="maintenance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
+                            </span>
+                        </h3>
+                    </header>
 
-                    <table class="form-table">
+                    <main>
+                        <table class="form-table">
                         <tr>
                             <th scope="row">Actions de maintenance</th>
                             <td>
@@ -212,29 +221,36 @@
                                 </div>
                             </td>
                         </tr>
+                        </tr>
                     </table>
-                </div>
+                    </main>
+                </section>
 
                 <!-- Section Sauvegarde -->
-                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                    <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
-                        <span style="display: inline-flex; align-items: center; gap: 10px;">
-                            💾 Gestion des Sauvegardes
-                            <span class="backup-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_auto_backup', '0') === '1' ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_auto_backup', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
-                        </span>
-                    </h3>
+                <section class="system-backup-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <header>
+                        <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
+                            <span style="display: inline-flex; align-items: center; gap: 10px;">
+                                💾 Gestion des Sauvegardes
+                                <span class="backup-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_auto_backup', '0') === '1' ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_auto_backup', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
+                            </span>
+                        </h3>
+                    </header>
 
-                    <!-- Informations sur les sauvegardes -->
-                    <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-                        <h4 style="margin: 0 0 10px 0; color: #495057; font-size: 14px;">ℹ️ Informations</h4>
-                        <ul style="margin: 0; padding-left: 20px; color: #6c757d; font-size: 13px;">
-                            <li>Les sauvegardes contiennent tous vos paramètres PDF Builder</li>
-                            <li>Les sauvegardes automatiques sont créées quotidiennement</li>
-                            <li>Les anciennes sauvegardes sont supprimées automatiquement selon la rétention configurée</li>
-                        </ul>
-                    </div>
+                    <main>
+                        <!-- Informations sur les sauvegardes -->
+                        <article class="backup-info" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                            <header>
+                                <h4 style="margin: 0 0 10px 0; color: #495057; font-size: 14px;">ℹ️ Informations</h4>
+                            </header>
+                            <ul style="margin: 0; padding-left: 20px; color: #6c757d; font-size: 13px;">
+                                <li>Les sauvegardes contiennent tous vos paramètres PDF Builder</li>
+                                <li>Les sauvegardes automatiques sont créées quotidiennement</li>
+                                <li>Les anciennes sauvegardes sont supprimées automatiquement selon la rétention configurée</li>
+                            </ul>
+                        </article>
 
-                    <table class="form-table">
+                        <table class="form-table">
                         <tr>
                             <th scope="row" style="width: 200px;">Actions de sauvegarde</th>
                             <td>
@@ -304,14 +320,17 @@
                             </td>
                         </tr>
                     </table>
-                </div>
+                    </main>
+                </section>
 
                 <!-- Message d'aide pour la sauvegarde -->
-                <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 2px solid #f39c12; border-radius: 12px;">
-                    <h4 style="margin: 0 0 10px 0; color: #8b4513;">💡 Comment sauvegarder les paramètres ?</h4>
+                <aside class="backup-help-notice" style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 2px solid #f39c12; border-radius: 12px;">
+                    <header>
+                        <h4 style="margin: 0 0 10px 0; color: #8b4513;">💡 Comment sauvegarder les paramètres ?</h4>
+                    </header>
                     <p style="margin: 0; color: #5d4e37; font-size: 14px;">
                         Utilisez le bouton <strong style="color: #007cba;">"💾 Enregistrer"</strong> flottant en bas à droite de l'écran pour sauvegarder tous les paramètres système.
                         Les modifications ne sont appliquées que lorsque vous cliquez sur ce bouton.
                     </p>
-                </div>
+                </aside>
             </section>

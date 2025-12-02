@@ -60,7 +60,7 @@
                         $description = $role_descriptions[$role_key] ?? 'Rôle personnalisé';
                         $is_admin = $role_key === 'administrator';
                         ?>
-                        <div class="role-toggle-item <?php echo $is_admin ? 'admin-role' : ''; ?>">
+                        <article class="role-toggle-item <?php echo $is_admin ? 'admin-role' : ''; ?>">
                             <div class="role-info">
                                 <div class="role-name">
                                     <?php echo esc_html($role_name); ?>
@@ -82,7 +82,7 @@
                                        <?php echo $is_admin ? 'disabled' : ''; ?> />
                                 <label for="role_<?php echo esc_attr($role_key); ?>" class="toggle-slider"></label>
                             </div>
-                        </div>
+                        </article>
                         <?php
                     endforeach; ?>
                 </div>
@@ -298,7 +298,7 @@
                 <div>
 
                     <!-- Permissions incluses -->
-                    <div style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <aside style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                         <h4 style="margin-top: 0; color: #003d66; font-size: 14px;">🔐 Permissions Incluses</h4>
                         <p style="margin: 10px 0 15px 0; color: #003d66; font-size: 13px;">Les rôles sélectionnés auront accès à :</p>
                         <ul style="margin: 0; padding-left: 20px; color: #003d66; font-size: 13px; line-height: 1.5;">
@@ -308,17 +308,17 @@
                             <li>✅ Prévisualisation avant génération</li>
                             <li>✅ Gestion des commandes WooCommerce (si applicable)</li>
                         </ul>
-                    </div>
+                    </aside>
 
                     <!-- Avertissement important -->
-                    <div style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <aside style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                         <h4 style="margin-top: 0; color: #856404; font-size: 14px;">⚠️ Informations Importantes</h4>
                         <ul style="margin: 0; padding-left: 20px; color: #856404; font-size: 13px; line-height: 1.5;">
                             <li>Les rôles non sélectionnés n'auront aucun accès à PDF Builder Pro</li>
                             <li>Le rôle "Administrator" a toujours accès complet, indépendamment</li>
                             <li>Minimum requis : au moins un rôle sélectionné</li>
                         </ul>
-                    </div>
+                    </aside>
 
                 </div> <!-- Fin colonne informations -->
 

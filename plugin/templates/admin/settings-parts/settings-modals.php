@@ -8,13 +8,13 @@
                 <button type="button" class="cache-modal-close">&times;</button>
             </header>
             <main class="cache-modal-body">
-                <div class="cache-modal-info">
+                <aside class="cache-modal-info">
                     <p>
                         <strong>ℹ️ Informations sur la taille du cache :</strong> Cette section affiche la taille totale des fichiers en cache du plugin PDF Builder.
                         Le cache inclut les aperçus PDF générés et les données temporaires.
                     </p>
-                </div>
-                <div id="cache-size-details">
+                </aside>
+                <article id="cache-size-details">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
                         <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
                             <h4 style="margin-top: 0; color: #495057;">[DOSSIER APERCUS] Dossier des aperçus</h4>
@@ -39,7 +39,7 @@
                             <li>Le cache est automatiquement nettoyé selon les paramètres configurés</li>
                         </ul>
                     </div>
-                </div>
+                </article>
             </div>
             <div class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
@@ -58,13 +58,13 @@
                 <button type="button" class="cache-modal-close">&times;</button>
             </header>
             <main class="cache-modal-body">
-                <div class="cache-modal-info">
+                <aside class="cache-modal-info">
                     <p>
                         <strong>ℹ️ Informations sur les transients :</strong> Les transients sont des données temporaires stockées dans la base de données WordPress.
                         Ils expirent automatiquement et améliorent les performances en évitant les recalculs.
                     </p>
-                </div>
-                <div id="cache-transients-details">
+                </aside>
+                <article id="cache-transients-details">
                     <div style="margin-top: 20px;">
                         <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
                             <h4 style="margin-top: 0; color: #495057;">📊 Statistiques des transients</h4>
@@ -91,7 +91,7 @@
                             </p>
                         </div>
                     </div>
-                </div>
+                </article>
             </div>
             <div class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
@@ -110,12 +110,12 @@
                 <button type="button" class="cache-modal-close">&times;</button>
             </header>
             <main class="cache-modal-body">
-                <div class="cache-modal-info">
+                <aside class="cache-modal-info">
                     <p>
                         <strong>ℹ️ Configuration du système de cache :</strong> Gérez les paramètres de cache pour optimiser les performances du plugin PDF Builder.
                         Le cache améliore considérablement les temps de chargement en stockant les données temporaires.
                     </p>
-                </div>
+                </aside>
                 <form id="cache-status-form">
                     <table class="form-table">
                         <tr>
@@ -182,13 +182,13 @@
                 <button type="button" class="cache-modal-close">&times;</button>
             </header>
             <main class="cache-modal-body">
-                <div class="cache-modal-info">
+                <aside class="cache-modal-info">
                     <p>
                         <strong>ℹ️ Nettoyage du cache :</strong> Supprimez les fichiers cache obsolètes et les données temporaires pour libérer de l'espace disque
                         et améliorer les performances. Cette opération est sûre et peut être effectuée à tout moment.
                     </p>
-                </div>
-                <div style="margin-top: 20px;">
+                </aside>
+                <article style="margin-top: 20px;">
                     <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
                         <h4 style="margin-top: 0; color: #495057;">[DERNIERS NETTOYAGES] Derniers nettoyages</h4>
                         <div style="margin-top: 10px;">
@@ -229,7 +229,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </article>
             </main>
             <footer class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Annuler</button>
@@ -246,12 +246,12 @@
                 <button type="button" class="canvas-modal-close">&times;</button>
             </header>
             <main class="canvas-modal-body">
-                <div class="canvas-modal-info">
+                <aside class="canvas-modal-info">
                     <p>
                         <strong>ℹ️ Comment ça marche :</strong> Ces paramètres définissent la taille, l'orientation et la qualité du document PDF généré. 
                         Le format A4 est actuellement supporté, d'autres formats arrivent bientôt.
                     </p>
-                </div>
+                </aside>
                 <form id="canvas-dimensions-form">
                     <table class="form-table">
                         <tr>
@@ -342,12 +342,12 @@
                 <button type="button" class="canvas-modal-close">&times;</button>
             </header>
             <main class="canvas-modal-body">
-                <div class="canvas-modal-info">
+                <aside class="canvas-modal-info">
                     <p>
                         <strong>ℹ️ Comment ça marche :</strong> Contrôlez les niveaux de zoom et les options de navigation du canvas.
                         Le zoom avec la molette de souris peut être activé/désactivé, et la navigation au clavier permet de se déplacer dans le canvas.
                     </p>
-                </div>
+                </aside>
                 <form id="zoom-form">
                     <h4 class="canvas-modal-section-title">🔍 Zoom</h4>
                     <table class="form-table">
@@ -398,12 +398,12 @@
                 <button type="button" class="canvas-modal-close">&times;</button>
             </header>
             <main class="canvas-modal-body">
-                <div class="canvas-modal-info">
+                <aside class="canvas-modal-info">
                     <p >
                         <strong>ℹ️ Comment ça marche :</strong> Ces paramètres contrôlent l'apparence visuelle du canvas de conception et de l'interface d'édition. 
                         Personnalisez les couleurs et les effets pour un meilleur confort de travail.
                     </p>
-                </div>
+                </aside>
                 <?php
                 /**
                  * Paramètres canvas pour les modales
@@ -477,12 +477,12 @@
                 <button type="button" class="canvas-modal-close">&times;</button>
             </header>
             <main class="canvas-modal-body">
-                <div class="canvas-modal-info">
+                <aside class="canvas-modal-info">
                     <p >
                         <strong>ℹ️ Comment ça marche :</strong> Activez la grille pour afficher un quadrillage sur le canvas. 
                         Les éléments s'aligneront automatiquement sur les lignes de la grille si l'accrochage est activé.
                     </p>
-                </div>
+                </aside>
                 <form id="canvas-grille-form">
                     <table class="form-table">
                         <tr>
@@ -541,12 +541,12 @@
                 <button type="button" class="canvas-modal-close">&times;</button>
             </header>
             <main class="canvas-modal-body">
-                <div class="canvas-modal-info">
+                <aside class="canvas-modal-info">
                     <p >
                         <strong>ℹ️ Comment ça marche :</strong> Ces paramètres contrôlent les interactions disponibles sur le canvas pour manipuler les éléments,
                         ainsi que le comportement général de sélection et les raccourcis clavier.
                     </p>
-                </div>
+                </aside>
                 <form id="canvas-interactions-form">
                     <h4 class="canvas-modal-section-title">🖱️ Interactions</h4>
                     <table class="form-table">
@@ -680,11 +680,11 @@
                 <button type="button" class="canvas-modal-close">&times;</button>
             </header>
             <main class="canvas-modal-body">
-                <div class="canvas-modal-info">
+                <aside class="canvas-modal-info">
                     <p >
                         <strong>🚀 Optimisation :</strong> Ces paramètres améliorent les performances de l'éditeur et du plugin pour une expérience plus fluide.
                     </p>
-                </div>
+                </aside>
                 <form id="canvas-performance-form">
                     <!-- Section Éditeur PDF -->
                     <h4 class="canvas-modal-section-title margin-25">
