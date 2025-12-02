@@ -138,76 +138,26 @@
         if (typeof window.showSuccessNotification === 'undefined') {
             window.showSuccessNotification = function(message) {
                 console.log('✅ Success:', message);
-                // Create a temporary notification element
-                const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: #28a745;
-                    color: white;
-                    padding: 12px 20px;
-                    border-radius: 4px;
-                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-                    z-index: 10000;
-                    font-size: 14px;
-                    max-width: 300px;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                `;
-                notification.textContent = message.replace('✅ ', '');
-                document.body.appendChild(notification);
-
-                // Show notification
-                setTimeout(() => notification.style.opacity = '1', 10);
-
-                // Hide and remove after 3 seconds
-                setTimeout(() => {
-                    notification.style.opacity = '0';
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.parentNode.removeChild(notification);
-                        }
-                    }, 300);
-                }, 3000);
+                // Use centralized notification system if available, otherwise fallback
+                if (window.simpleNotificationSystem && window.simpleNotificationSystem.success) {
+                    window.simpleNotificationSystem.success(message);
+                } else {
+                    // Fallback: simple console log only
+                    console.log('Notification system not ready, logged to console only');
+                }
             };
         }
 
         if (typeof window.showErrorNotification === 'undefined') {
             window.showErrorNotification = function(message) {
                 console.error('❌ Error:', message);
-                // Create a temporary notification element
-                const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: #dc3545;
-                    color: white;
-                    padding: 12px 20px;
-                    border-radius: 4px;
-                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-                    z-index: 10000;
-                    font-size: 14px;
-                    max-width: 300px;
-                    opacity: 0;
-                    transition: opacity 0.3s ease;
-                `;
-                notification.textContent = message.replace('❌ ', '');
-                document.body.appendChild(notification);
-
-                // Show notification
-                setTimeout(() => notification.style.opacity = '1', 10);
-
-                // Hide and remove after 5 seconds for errors
-                setTimeout(() => {
-                    notification.style.opacity = '0';
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.parentNode.removeChild(notification);
-                        }
-                    }, 300);
-                }, 5000);
+                // Use centralized notification system if available, otherwise fallback
+                if (window.simpleNotificationSystem && window.simpleNotificationSystem.error) {
+                    window.simpleNotificationSystem.error(message);
+                } else {
+                    // Fallback: simple console error only
+                    console.error('Notification system not ready, logged to console only');
+                }
             };
         }
 
