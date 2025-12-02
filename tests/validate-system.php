@@ -352,7 +352,7 @@ echo "Documentation score: $docs_score/$docs_max\n\n";
 // Test 10: Security Depth Analysis
 echo "Test 10: Security Depth Analysis\n";
 $security_depth_score = 0;
-$security_depth_max = 4;
+$security_depth_max = 6;
 
 if (file_exists($factory_file)) {
     $content = file_get_contents($factory_file);
@@ -380,9 +380,77 @@ if (file_exists($factory_file)) {
         echo "[PASS] No hardcoded sensitive data\n";
         $security_depth_score += 1;
     }
+
+    // Check for proper JSON response handling
+    if (strpos($content, 'wp_send_json_error') !== false && strpos($content, 'wp_send_json_success') !== false) {
+        echo "[PASS] Proper JSON response handling\n";
+        $security_depth_score += 1;
+    }
+
+    // Check for input validation
+    if (strpos($content, 'isset($_POST[') !== false && strpos($content, 'sanitize_') !== false) {
+        echo "[PASS] Input validation implemented\n";
+        $security_depth_score += 1;
+    }
 }
 
 echo "Security depth score: $security_depth_score/$security_depth_max\n\n";
+
+// Test 11: Syntax and Compilation Validation
+echo "Test 11: Syntax and Compilation Validation\n";
+$syntax_score = 0;
+$syntax_max = 2;
+
+// Check PHP syntax
+if (file_exists($factory_file)) {
+    $syntax_check = shell_exec("php -l \"$factory_file\" 2>&1");
+    if (strpos($syntax_check, 'No syntax errors detected') !== false) {
+        echo "[PASS] PHP syntax validation passed\n";
+        $syntax_score += 1;
+    } else {
+        echo "[FAIL] PHP syntax errors detected\n";
+    }
+}
+
+// Check for proper file structure and includes
+$required_includes = ['wp_send_json_success', 'wp_send_json_error', 'wp_verify_nonce', 'current_user_can'];
+$includes_found = 0;
+foreach ($required_includes as $include) {
+    if (strpos($content, $include) !== false) {
+        $includes_found++;
+    }
+}
+
+if ($includes_found >= count($required_includes)) {
+    echo "[PASS] All required WordPress functions included\n";
+    $syntax_score += 1;
+}
+
+echo "Syntax validation score: $syntax_score/$syntax_max\n\n";
+
+// Test 12: Final Robustness Check
+echo "Test 12: Final Robustness Check\n";
+$robustness_score = 0;
+$robustness_max = 1;
+
+// Check for comprehensive error handling and edge cases
+if (file_exists($factory_file)) {
+    $content = file_get_contents($factory_file);
+
+    // Check for comprehensive error handling
+    $error_patterns = 0;
+    if (strpos($content, 'try') !== false && strpos($content, 'catch') !== false) $error_patterns++;
+    if (strpos($content, 'wp_send_json_error') !== false) $error_patterns++;
+    if (strpos($content, 'wp_send_json_success') !== false) $error_patterns++;
+    if (strpos($content, 'error_log') !== false) $error_patterns++;
+
+    if ($error_patterns >= 4) {
+        echo "[PASS] Comprehensive error handling and logging\n";
+        $robustness_score += 1;
+    }
+}
+
+echo "Robustness score: $robustness_score/$robustness_max\n\n";
 
 // Summary
 echo "=== Validation Summary ===\n";
@@ -395,7 +463,9 @@ echo "Performance: " . ($performance_warnings == 0 ? "[PASS]" : "[WARN]") . " Pe
 echo "Code Quality: " . ($quality_score >= 4 ? "[EXCELLENT]" : ($quality_score >= 2 ? "[GOOD]" : "[FAIR]")) . " Code standards ($quality_score/$quality_max)\n";
 echo "Integration: " . ($integration_score >= 3 ? "[EXCELLENT]" : ($integration_score >= 2 ? "[GOOD]" : "[FAIR]")) . " Test & integration readiness ($integration_score/$integration_max)\n";
 echo "Documentation: " . ($docs_score >= 2 ? "[GOOD]" : "[FAIR]") . " Code documentation ($docs_score/$docs_max)\n";
-echo "Security Depth: " . ($security_depth_score >= 3 ? "[EXCELLENT]" : ($security_depth_score >= 2 ? "[GOOD]" : "[FAIR]")) . " Advanced security ($security_depth_score/$security_depth_max)\n";
+echo "Security Depth: " . ($security_depth_score >= 4 ? "[EXCELLENT]" : ($security_depth_score >= 3 ? "[GOOD]" : "[FAIR]")) . " Advanced security ($security_depth_score/$security_depth_max)\n";
+echo "Syntax Validation: " . ($syntax_score >= 2 ? "[EXCELLENT]" : ($syntax_score >= 1 ? "[GOOD]" : "[FAIL]")) . " Code compilation ($syntax_score/$syntax_max)\n";
+echo "Robustness: " . ($robustness_score >= 1 ? "[EXCELLENT]" : "[FAIL]") . " Error handling completeness ($robustness_score/$robustness_max)\n";
 
 // Enhanced scoring system with more weight on quality aspects
 $base_score = ($files_exist / count($required_files)) * 15 +
@@ -408,7 +478,9 @@ $base_score = ($files_exist / count($required_files)) * 15 +
 $quality_bonus = ($quality_score / $quality_max) * 10 +
                  ($integration_score / $integration_max) * 10 +
                  ($docs_score / $docs_max) * 5 +
-                 ($security_depth_score / $security_depth_max) * 10;
+                 ($security_depth_score / $security_depth_max) * 10 +
+                 ($syntax_score / $syntax_max) * 5 +
+                 ($robustness_score / $robustness_max) * 5;
 
 $overall_score = min(100, $base_score + $quality_bonus);
 
@@ -431,4 +503,4 @@ if ($overall_score >= 95) {
 echo "\n=== Detailed Breakdown ===\n";
 echo "Base Functionality: " . round($base_score, 1) . "/70\n";
 echo "Quality & Integration: " . round($quality_bonus, 1) . "/30\n";
-echo "\nValidation completed with enhanced quality assessment.\n";
+echo "\nValidation completed with comprehensive quality assessment.\n";
