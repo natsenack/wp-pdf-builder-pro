@@ -163,5 +163,11 @@ const exports = {
 
 if (DEBUG_VERBOSE) debugLog('🌐 Exporting for webpack UMD...');
 
+// ✅ CRITICAL: Assign immediately to window for UMD
+if (typeof window !== 'undefined') {
+  window.pdfBuilderReact = exports;
+  if (DEBUG_VERBOSE) debugLog('✅ window.pdfBuilderReact assigned');
+}
+
 // Export for webpack UMD library output
 export default exports;
