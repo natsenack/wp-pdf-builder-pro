@@ -36,7 +36,7 @@ function pdf_builder_register_settings_handler($tab_id, $fields = [], $sanitizer
         }
 
         // Vérifier le nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_ajax')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
