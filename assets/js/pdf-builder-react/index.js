@@ -17,7 +17,35 @@ import ReactDOM from 'react-dom';
 
 console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react/index.js starting execution...');
 console.log('🔧 [WEBPACK BUNDLE] React available:', typeof React);
-console.log('🔧 [WEBPACK BUNDLE] createRoot available:', typeof createRoot);
+console.log('🔧 [WEBPACK BUNDLE] createRoot available:', typeof ReactDOM?.createRoot);
+
+// ✅ CRITICAL: Expose React hooks on window.React for JSX runtime
+if (typeof window !== 'undefined' && window.React) {
+  // Import all hooks so they're available when Babel injects them
+  const {
+    useState, useEffect, useRef, useCallback, useMemo, useContext,
+    useReducer, useLayoutEffect, useId, useTransition, useDeferredValue,
+    useImperativeHandle, useDebugValue, useSyncExternalStore
+  } = React;
+  
+  // Ensure hooks are available on window.React
+  window.React.useState = useState;
+  window.React.useEffect = useEffect;
+  window.React.useRef = useRef;
+  window.React.useCallback = useCallback;
+  window.React.useMemo = useMemo;
+  window.React.useContext = useContext;
+  window.React.useReducer = useReducer;
+  window.React.useLayoutEffect = useLayoutEffect;
+  window.React.useId = useId;
+  window.React.useTransition = useTransition;
+  window.React.useDeferredValue = useDeferredValue;
+  window.React.useImperativeHandle = useImperativeHandle;
+  window.React.useDebugValue = useDebugValue;
+  window.React.useSyncExternalStore = useSyncExternalStore;
+  
+  console.log('✅ [WEBPACK BUNDLE] React hooks attached to window.React');
+}
 
 // Imports synchrones des composants lourds (plus de lazy loading pour éviter les chunks webpack)
 import { PDFBuilder } from './PDFBuilder.tsx';
