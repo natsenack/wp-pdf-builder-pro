@@ -17,7 +17,7 @@
                         <tr>
                             <th scope="row"><label for="pdf_quality">Qualité</label></th>
                             <td>
-                                <select id="pdf_quality" name="pdf_quality">
+                                <select id="pdf_quality" name="pdf_quality" data-settings-field="true" data-settings-tab="pdf">
                                     <option value="low" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'low'); ?>>Rapide (fichiers légers)</option>
                                     <option value="medium" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'medium'); ?>>Équilibré</option>
                                     <option value="high" <?php selected(get_option('pdf_builder_pdf_quality', 'high'), 'high'); ?>>Haute qualité</option>
@@ -38,7 +38,7 @@
                         <tr>
                             <th scope="row"><label for="default_orientation">Orientation</label></th>
                             <td>
-                                <select id="default_orientation" name="default_orientation">
+                                <select id="default_orientation" name="default_orientation" data-settings-field="true" data-settings-tab="pdf">
                                     <option value="portrait" <?php selected(get_option('pdf_builder_default_orientation', 'portrait'), 'portrait'); ?>>Portrait</option>
                                     <option value="landscape" <?php selected(get_option('pdf_builder_default_orientation', 'portrait'), 'landscape'); ?>>Paysage</option>
                                 </select>
@@ -48,7 +48,7 @@
                             <th scope="row"><label for="pdf_builder_cache_enabled">Cache activé</label></th>
                             <td>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="pdf_builder_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
+                                    <input type="checkbox" id="pdf_builder_cache_enabled" name="pdf_builder_cache_enabled" value="1" data-settings-field="true" data-settings-tab="pdf" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <p class="description">Améliorer les performances en mettant en cache les PDF</p>
