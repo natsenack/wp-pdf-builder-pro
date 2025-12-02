@@ -169,5 +169,6 @@ if (typeof window !== 'undefined') {
   if (DEBUG_VERBOSE) debugLog('✅ window.pdfBuilderReact assigned');
 }
 
-// Export for webpack UMD library output
+// Export as named export (NOT default) so webpack UMD doesn't wrap it
+export const pdfBuilderReact = exports;
 export default exports;

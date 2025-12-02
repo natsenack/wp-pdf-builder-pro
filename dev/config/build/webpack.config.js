@@ -17,8 +17,7 @@ module.exports = {
     library: {
       name: 'pdfBuilderReact',
       type: 'umd',
-      umdNamedDefine: false,
-      export: 'default'
+      umdNamedDefine: false
     }
   },
   externals: {
