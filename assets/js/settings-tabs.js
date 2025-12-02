@@ -5,7 +5,12 @@
 (function() {
     'use strict';
 
-    console.log('PDF Builder: settings-tabs.js VERSION DEBUG CHARGÉ');
+    const DEBUG = !!(typeof PDF_BUILDER_CONFIG !== 'undefined' && PDF_BUILDER_CONFIG.debug);
+    if (DEBUG) {
+        console.log('PDF Builder: settings-tabs.js DEBUG MODE ACTIVÉ');
+    } else {
+        console.log('PDF Builder: settings-tabs.js chargé (debug OFF)');
+    }
 
     // Configuration globale
     const PDF_BUILDER_CONFIG = typeof window.PDF_BUILDER_CONFIG !== 'undefined' ? window.PDF_BUILDER_CONFIG : {};
@@ -64,7 +69,11 @@
         // Activer l'onglet cible
         console.log('PDF Builder - Activation de l\'onglet "' + tabId + '"...');
         const targetBtn = document.querySelector('[data-tab="' + tabId + '"]');
-        const targetContent = document.getElementById(tabId);
+        // Support IDs that are either 'general' OR prefixed 'tab-general'
+        let targetContent = document.getElementById(tabId);
+        if (!targetContent) {
+            targetContent = document.getElementById('tab-' + tabId);
+        }
         
         if (targetBtn) {
             targetBtn.classList.add('nav-tab-active');
@@ -93,23 +102,28 @@
 
     // Gestionnaire d'événements avec logs
     function handleTabClick(event) {
-        console.log('PDF Builder - CLIQUE DÉTECTÉ sur:', event.target);
-        console.log('PDF Builder - Attributs de l\'élément cliqué:', {
-            'data-tab': event.target.getAttribute('data-tab'),
-            'href': event.target.getAttribute('href'),
-            'class': event.target.className,
-            'tagName': event.target.tagName
-        });
+        // Use currentTarget to always reference the element the listener was attached to
+        const el = event.currentTarget || event.target;
+        console.log('PDF Builder - CLIQUE DÉTECTÉ (element):', el);
         
-        event.preventDefault();
-        event.stopPropagation();
-        
-        const tabId = event.target.getAttribute('data-tab');
+        const tabId = el.getAttribute('data-tab');
         if (!tabId) {
             console.error('PDF Builder - ERREUR: Aucun attribut data-tab trouvé sur l\'élément cliqué!');
             return;
         }
         
+        // Prevent the default navigation and propagation after we know we have a data-tab
+        event.preventDefault();
+        event.stopPropagation();
+        if (DEBUG) {
+            console.log('PDF Builder - Event details:', {
+                defaultPrevented: event.defaultPrevented,
+                isTrusted: event.isTrusted,
+                pointerType: event.pointerType || null,
+                clientX: event.clientX || null,
+                clientY: event.clientY || null
+            });
+        }
         console.log('PDF Builder - LANCEMENT du switch vers "' + tabId + '"');
         switchTab(tabId);
     }
@@ -148,15 +162,36 @@
         
         console.log('PDF Builder - ' + tabButtons.length + ' onglets et ' + tabContents.length + ' contenus trouvés');
         
-        // Attacher les événements de clic
-        console.log('PDF Builder - Attribution des événements de clic...');
+        // Attacher les événements de clic (listener par délégation comme fallback)
+        console.log('PDF Builder - Attribution des événements de clic (délégation)');
+        tabsContainer.addEventListener('click', function(e) {
+            const anchor = e.target.closest('.nav-tab');
+            if (anchor && tabsContainer.contains(anchor)) {
+                if (DEBUG) {
+                    const cs = window.getComputedStyle(anchor);
+                    console.log('PDF Builder - Délégation: clic détecté sur', anchor.getAttribute('data-tab'), {
+                        pointerEvents: cs.pointerEvents,
+                        display: cs.display,
+                        visibility: cs.visibility,
+                        bounds: anchor.getBoundingClientRect()
+                    });
+                }
+                handleTabClick.call(anchor, e);
+            }
+        });
+        // Et aussi attacher sur chaque bouton individuellement pour robustesse
         tabButtons.forEach(function(btn, index) {
-            // Supprimer les anciens événements pour éviter les doublons
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            
-            newBtn.addEventListener('click', handleTabClick);
-            console.log('  ' + (index + 1) + '. Événement attaché à "' + newBtn.textContent.trim() + '"');
+            btn.removeEventListener('click', handleTabClick);
+            btn.addEventListener('click', handleTabClick);
+            if (DEBUG) {
+                const cs = window.getComputedStyle(btn);
+                console.log('PDF Builder - Btn info: ', index + 1, btn.getAttribute('data-tab'), {
+                    pointerEvents: cs.pointerEvents,
+                    display: cs.display,
+                    visibility: cs.visibility,
+                    bounds: btn.getBoundingClientRect()
+                });
+            }
         });
         
         // Restaurer l'onglet sauvegardé
@@ -200,6 +235,20 @@
             }
         }, 100);
     });
+
+    // Pour diagnostiquer les clics capturés plus haut dans la pile (utile si un overlay empêche les clicks)
+    if (DEBUG) {
+        document.addEventListener('click', function(e) {
+            console.log('PDF Builder - Capture-level click event:', e.target, {
+                clientX: e.clientX,
+                clientY: e.clientY,
+                defaultPrevented: e.defaultPrevented
+            });
+        }, true);
+        document.addEventListener('pointerdown', function(e) {
+            console.log('PDF Builder - pointerdown event at capture:', e.target);
+        }, true);
+    }
 
     // Logs supplémentaires pour le debugging
     console.log('PDF Builder - Script settings-tabs.js chargé jusqu\'à la fin');

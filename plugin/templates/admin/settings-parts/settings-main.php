@@ -98,7 +98,10 @@ $settings = get_option('pdf_builder_settings', array());
 // Préparer la configuration pour le JavaScript
 $js_config = array(
     'nonce' => wp_create_nonce('pdf_builder_settings_ajax'),
-    'ajax_url' => admin_url('admin-ajax.php')
+    'ajax_url' => admin_url('admin-ajax.php'),
+    // activer/désactiver le debug JS depuis les options (pdf_builder_debug_javascript)
+    'debug' => !empty($settings['pdf_builder_debug_javascript']) ? true : false,
+    'debug_verbose' => !empty($settings['pdf_builder_debug_javascript_verbose']) ? true : false,
 );
 
 // Enqueue jQuery d'abord, puis notre script
