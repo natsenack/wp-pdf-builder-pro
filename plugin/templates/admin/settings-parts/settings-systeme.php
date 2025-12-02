@@ -183,7 +183,7 @@
 
                 <!-- Section Maintenance -->
                 <section class="system-maintenance-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                    <header>
+                    <section>
                         <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                             <span style="display: inline-flex; align-items: center; gap: 10px;">
                                 🔧 Maintenance
@@ -222,7 +222,7 @@
                             </table>
                         </main>
 
-                    </header>
+                    </section>
 
                 </section>
 
