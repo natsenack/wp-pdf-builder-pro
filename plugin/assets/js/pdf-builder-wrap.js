@@ -26,10 +26,9 @@
         };
     };
 
-    // Create initial stub
-    window.pdfBuilderReact = createStub();
-    Object.assign(initialized, window.pdfBuilderReact);
-    console.log('✅ [pdf-builder-wrap] Stub pdfBuilderReact created on window');
+    // Create initial stub but DON'T assign to window yet
+    var stub = createStub();
+    console.log('✅ [pdf-builder-wrap] Stub pdfBuilderReact created (not assigned to window yet)');
 
     // Check if webpack bundle has replaced the stub
     // A real implementation will have non-empty function bodies
@@ -61,10 +60,13 @@
         }
     }, 50);
 
-    // Force dispatch event after timeout
+    // Force assign stub and dispatch event after timeout
     setTimeout(function() {
         if (!isInitialized) {
             clearInterval(checkRealModule);
+            // Assign stub to window as fallback
+            window.pdfBuilderReact = stub;
+            Object.assign(initialized, window.pdfBuilderReact);
             console.log('⚠️ [pdf-builder-wrap] Using stub pdfBuilderReact (webpack module not loaded)');
             // Still dispatch event so initialization can proceed with stub
             try {
