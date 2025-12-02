@@ -79,29 +79,29 @@
                 <section class="licence-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5;">
                         <h3 style="color: #007cba;">📊 Statut de la Licence</h3>
 
-                        <div style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
+                        <section style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
                             <!-- Carte Statut Principal -->
                             <article style="border: 3px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?> 0%, <?php echo $is_premium ? '#e8f5e9' : '#ffffff'; ?> 100%); -webkit-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -moz-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -ms-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -o-box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Statut</div>
+                                <aside style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Statut</aside>
                                 <div style="font-size: 26px; font-weight: 900; color: <?php echo $is_premium ? '#155724' : '#495057'; ?>; margin-bottom: 8px;">
                                     <?php echo $is_premium ? '✅ Premium Actif' : '○ Gratuit'; ?>
                                 </div>
-                                <div style="font-size: 12px; color: <?php echo $is_premium ? '#155724' : '#6c757d'; ?>; font-style: italic;">
+                                <aside style="font-size: 12px; color: <?php echo $is_premium ? '#155724' : '#6c757d'; ?>; font-style: italic;">
                                     <?php echo $is_premium ? 'Licence premium activée' : 'Aucune licence premium'; ?>
-                                </div>
+                                </aside>
                             </article>
 
                             <!-- Carte Mode Test (si applicable) -->
                             <?php if (!empty($test_key)) :
                                 ?>
                             <article style="border: 3px solid #ffc107; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); -webkit-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -moz-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -ms-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -o-box-shadow: 0 4px 6px rgba(255,193,7,0.2); box-shadow: 0 4px 6px rgba(255,193,7,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <div style="font-size: 13px; color: #856404; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Mode</div>
+                                <aside style="font-size: 13px; color: #856404; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Mode</aside>
                                 <div style="font-size: 26px; font-weight: 900; color: #856404; margin-bottom: 8px;">
                                     🧪 TEST (Dev)
                                 </div>
-                                <div style="font-size: 12px; color: #856404; font-style: italic;">
+                                <aside style="font-size: 12px; color: #856404; font-style: italic;">
                                     Mode développement actif
-                                </div>
+                                </aside>
                             </article>
                                 <?php
                             endif; ?>
@@ -110,11 +110,11 @@
                             <?php if ($is_premium && $license_expires) :
                                 ?>
                             <article style="border: 3px solid #17a2b8; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); -webkit-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -moz-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -ms-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -o-box-shadow: 0 4px 6px rgba(23,162,184,0.2); box-shadow: 0 4px 6px rgba(23,162,184,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <div style="font-size: 13px; color: #0c5460; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Expire le</div>
+                                <aside style="font-size: 13px; color: #0c5460; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Expire le</aside>
                                 <div style="font-size: 26px; font-weight: 900; color: #0c5460; margin-bottom: 8px;">
                                     <?php echo date('d/m/Y', strtotime($license_expires)); ?>
                                 </div>
-                                <div style="font-size: 12px; color: #0c5460; font-style: italic;">
+                                <aside style="font-size: 12px; color: #0c5460; font-style: italic;">
                                     <?php
                                     $now = new DateTime();
                                     $expires = new DateTime($license_expires);
@@ -125,7 +125,7 @@
                                         echo '✓ Valide pendant ' . $diff->days . ' jours';
                                     }
                                     ?>
-                                </div>
+                                </aside>
                             </article>
                                 <?php
                             endif; ?>
@@ -140,8 +140,8 @@
 
                             if (!$diff->invert && $diff->days <= 30 && $diff->days > 0) {
                                 ?>
-                                <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 2px solid #ffc107; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin-top: 20px; -webkit-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -moz-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -ms-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -o-box-shadow: 0 3px 8px rgba(255,193,7,0.2); box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
-                                    <div style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; -webkit-gap: 15px; -moz-gap: 15px; gap: 15px;">
+                                <aside style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 2px solid #ffc107; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin-top: 20px; -webkit-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -moz-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -ms-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -o-box-shadow: 0 3px 8px rgba(255,193,7,0.2); box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
+                                    <section style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; -webkit-gap: 15px; -moz-gap: 15px; gap: 15px;">
                                         <div style="font-size: 32px; flex-shrink: 0;">⏰</div>
                                         <div>
                                             <strong style="font-size: 16px; color: #856404; display: block; margin-bottom: 4px;">Votre licence expire bientôt</strong>
@@ -150,8 +150,8 @@
                                                 Renouvelez dès maintenant pour continuer à bénéficier de toutes les fonctionnalités premium.
                                             </p>
                                         </div>
-                                    </div>
-                                </div>
+                                    </section>
+                                </aside>
                                 <?php
                             }
                         }
@@ -303,15 +303,15 @@
                         ?>
                     <!-- Mode DÉMO : Pas de licence -->
                     <section class="licence-section" style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
-                        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+                        <header style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                             <div style="font-size: 50px;">🧪</div>
                             <div>
                                 <h3 style="margin: 0 0 8px 0; color: #856404; font-size: 26px; font-weight: 700;">Mode DÉMO - Clés de Test Uniquement</h3>
                                 <p style="margin: 0; color: #856404; font-size: 15px; line-height: 1.5;">La validation des clés premium n'est pas encore active. Utilisez le mode TEST pour explorer les fonctionnalités.</p>
                             </div>
-                        </div>
+                        </header>
 
-                        <div style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 20px; margin-bottom: 20px; color: #856404; font-size: 14px; line-height: 1.6;">
+                        <article style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 20px; margin-bottom: 20px; color: #856404; font-size: 14px; line-height: 1.6;">
                             <strong>✓ Comment tester :</strong>
                             <ol style="margin: 10px 0 0 0; padding-left: 20px;">
                                 <li>Allez à l'onglet <strong>Développeur</strong></li>
@@ -319,44 +319,44 @@
                                 <li>La clé TEST s'activera automatiquement</li>
                                 <li>Toutes les fonctionnalités premium seront disponibles</li>
                             </ol>
-                        </div>
+                        </article>
 
-                        <div style="background: rgba(220, 53, 69, 0.1); border-left: 4px solid #dc3545; border-radius: 6px; padding: 15px; color: #721c24; font-size: 13px;">
+                        <aside style="background: rgba(220, 53, 69, 0.1); border-left: 4px solid #dc3545; border-radius: 6px; padding: 15px; color: #721c24; font-size: 13px;">
                             <strong>⚠️ Note importante :</strong> Les clés premium réelles seront validées une fois le système de licence en production.
-                        </div>
+                        </aside>
                     </section>
                         <?php
                     elseif ($is_test_mode) :
                         ?>
                     <!-- Mode TEST : Gestion de la clé de test -->
                     <section class="licence-section" style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
-                        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+                        <header style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                             <div style="font-size: 50px;">🧪</div>
                             <div>
                                 <h3 style="margin: 0 0 8px 0; color: #856404; font-size: 26px; font-weight: 700;">Gestion de la Clé de Test</h3>
                                 <p style="margin: 0; color: #856404;">Vous testez actuellement avec une clé TEST. Toutes les fonctionnalités premium sont disponibles.</p>
                             </div>
-                        </div>
+                        </header>
 
-                        <div style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 15px; margin-bottom: 20px; color: #856404; font-size: 13px;">
+                        <aside style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 15px; margin-bottom: 20px; color: #856404; font-size: 13px;">
                             <strong>ℹ️ Mode Test Actif :</strong> Vous pouvez désactiver cette clé à tout moment depuis la section "Détails de la Clé" ci-dessus, ou générer une nouvelle clé de test depuis l'onglet Développeur.
-                        </div>
+                        </aside>
                     </section>
                         <?php
                     else :
                         ?>
                     <!-- Mode PREMIUM : Gestion de la licence premium -->
                     <section class="licence-section" style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; box-shadow: 0 3px 8px rgba(40,167,69,0.2);">
-                        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+                        <header style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
                             <div style="font-size: 50px;">🔐</div>
                             <div>
                                 <h3 style="margin: 0 0 8px 0; color: #155724; font-size: 26px; font-weight: 700;">Gestion de la Licence Premium</h3>
                                 <p style="margin: 0; color: #155724;">Votre licence premium est active et valide. Vous pouvez gerer votre licence ci-dessous.</p>
                             </div>
-                        </div>
+                        </header>
 
                         <!-- Avertissements et informations -->
-                        <div style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); border: none; border-radius: 8px; padding: 20px; margin-bottom: 20px; color: #fff; box-shadow: 0 3px 8px rgba(255,193,7,0.3);">
+                        <aside style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); border: none; border-radius: 8px; padding: 20px; margin-bottom: 20px; color: #fff; box-shadow: 0 3px 8px rgba(255,193,7,0.3);">
                             <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Savoir :</strong>
                             <ul style="margin: 12px 0 0 0; padding-left: 20px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
                                 <li style="margin: 6px 0;">Votre licence reste <strong>active pendant un an</strong> a partir de son activation</li>
@@ -364,18 +364,18 @@
                                 <li style="margin: 6px 0;"><strong>Desactivez</strong> pour utiliser la meme cle sur un autre site WordPress</li>
                                 <li style="margin: 6px 0;">Une cle ne peut etre active que sur <strong>un seul site a la fois</strong></li>
                             </ul>
-                        </div>
+                        </aside>
 
-                        <div style="margin-top: 20px;">
+                        <article style="margin-top: 20px;">
                             <button type="button" id="deactivate-license-btn" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 10px 20px !important; display: block !important; visibility: visible !important; opacity: 1 !important;">
                                 Desactiver la Licence
                             </button>
-                        </div>
+                        </article>
 
-                        <div style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); border: none; border-radius: 8px; padding: 22px; margin-top: 20px; color: #fff; box-shadow: 0 3px 8px rgba(23,162,184,0.25);">
+                        <aside style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); border: none; border-radius: 8px; padding: 22px; margin-top: 20px; color: #fff; box-shadow: 0 3px 8px rgba(23,162,184,0.25);">
                             <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Conseil :</strong>
                             <p style="margin: 12px 0 0 0; line-height: 1.6; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">La desactivation permet de reutiliser votre cle sur un autre site, mais ne supprime pas votre acces ici jusqu'a l'expiration de la licence.</p>
-                        </div>
+                        </aside>
                     </section>
 
                         <?php
@@ -566,41 +566,41 @@
                     <!-- Informations utiles -->
                     <aside style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); border: none; border-radius: 12px; padding: 30px; margin-bottom: 30px; color: #fff; box-shadow: 0 4px 12px rgba(23,162,184,0.3);">
                         <h4 style="margin: 0 0 20px 0; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">Informations Utiles</h4>
-                        <div style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-gap: 15px; -moz-gap: 15px; gap: 15px;">
+                        <section style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-gap: 15px; -moz-gap: 15px; gap: 15px;">
                             <!-- Site actuel -->
-                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                            <article style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
                                 <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Site actuel</div>
                                 <code style="background: rgba(255,255,255,0.2); padding: 6px 10px; border-radius: 4px; font-family: monospace; color: #fff; display: block; word-break: break-all; font-size: 12px;"><?php echo esc_html(home_url()); ?></code>
-                            </div>
+                            </article>
 
                             <!-- Plan actif -->
-                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                            <article style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
                                 <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Plan actif</div>
                                 <span style="background: rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius:  4px; font-weight: bold; font-size: 13px; display: inline-block;"><?php echo !empty($test_key) ? '🧪 Mode Test' : ($is_premium ? '⭐ Premium' : '○ Gratuit'); ?></span>
-                            </div>
+                            </article>
 
                             <!-- Version du plugin -->
-                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                            <article style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
                                 <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Version du plugin</div>
                                 <div style="font-size: 14px; font-weight: bold;"><?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'N/A'; ?></div>
-                            </div>
+                            </article>
 
                             <?php if ($is_premium) :
                                 ?>
                             <!-- Support Premium -->
-                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                            <article style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
                                 <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Support</div>
                                 <a href="https://pdfbuilderpro.com/support" target="_blank" style="color: #fff; text-decoration: underline; font-weight: 600; font-size: 13px;">Contact Support Premium →</a>
-                            </div>
+                            </article>
 
                             <!-- Documentation -->
-                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
+                            <article style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
                                 <div style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Documentation</div>
                                 <a href="https://pdfbuilderpro.com/docs" target="_blank" style="color: #fff; text-decoration: underline; font-weight: 600; font-size: 13px;">Lire la Documentation →</a>
-                            </div>
+                            </article>
                                 <?php
                             endif; ?>
-                        </div>
+                        </section>
                     </aside>
 
                     <!-- Comparaison des fonctionnalités -->
@@ -757,45 +757,45 @@
                             </h4>
 
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
+                                <article style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
                                     <span style="color: #ff9800; font-size: 16px;">🏢</span>
                                     <div style="flex: 1;">
                                         <strong style="color: #e65100; font-size: 12px;">Usage professionnel</strong>
                                         <div style="color: #5d4037; font-size: 11px; line-height: 1.3;">Qualité 300 DPI sans filigrane</div>
                                     </div>
-                                </div>
+                                </article>
 
-                                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
+                                <article style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
                                     <span style="color: #ff9800; font-size: 16px;">⚡</span>
                                     <div style="flex: 1;">
                                         <strong style="color: #e65100; font-size: 12px;">Productivité</strong>
                                         <div style="color: #5d4037; font-size: 11px; line-height: 1.3;">Templates illimités et génération en masse</div>
                                     </div>
-                                </div>
+                                </article>
 
-                                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
+                                <article style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
                                     <span style="color: #ff9800; font-size: 16px;">🔧</span>
                                     <div style="flex: 1;">
                                         <strong style="color: #e65100; font-size: 12px;">Évolutivité</strong>
                                         <div style="color: #5d4037; font-size: 11px; line-height: 1.3;">API développeur complète</div>
                                     </div>
-                                </div>
+                                </article>
 
-                                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
+                                <article style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
                                     <span style="color: #ff9800; font-size: 16px;">🎯</span>
                                     <div style="flex: 1;">
                                         <strong style="color: #e65100; font-size: 12px;">Support dédié</strong>
                                         <div style="color: #5d4037; font-size: 11px; line-height: 1.3;">Réponse sous 24h garantie</div>
                                     </div>
-                                </div>
+                                </article>
 
-                                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800; grid-column: span 2;">
+                                <article style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800; grid-column: span 2;">
                                     <span style="color: #ff9800; font-size: 16px;">💰</span>
                                     <div style="flex: 1;">
                                         <strong style="color: #e65100; font-size: 12px;">Économique</strong>
                                         <div style="color: #5d4037; font-size: 11px; line-height: 1.3;">79€ à vie vs coûts récurrents</div>
                                     </div>
-                                </div>
+                                </article>
                             </div>
 
                             <!-- Animation CSS pour l'effet pulse -->
@@ -842,7 +842,7 @@
                             </tr>
                         </table>
 
-                        <div style="background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4caf50; border-radius: 6px; padding: 15px; margin-top: 20px;">
+                        <aside style="background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4caf50; border-radius: 6px; padding: 15px; margin-top: 20px;">
                             <h5 style="margin: 0 0 10px 0; color: #2e7d32; font-size: 14px;">ℹ️ Informations sur les rappels</h5>
                             <ul style="margin: 0; padding-left: 20px; color: #2e7d32; font-size: 13px; line-height: 1.5;">
                                 <li>Les rappels sont envoyés automatiquement selon le calendrier ci-dessus</li>
@@ -850,7 +850,7 @@
                                 <li>Les emails sont envoyés depuis votre propre serveur WordPress</li>
                                 <li>Vous pouvez désactiver cette fonctionnalité à tout moment</li>
                             </ul>
-                        </div>
+                        </aside>
                     </section>
 
                     <!-- Styles pour les toggles -->

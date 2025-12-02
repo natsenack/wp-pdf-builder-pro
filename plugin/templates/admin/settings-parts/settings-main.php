@@ -65,7 +65,6 @@
 <main class="wrap" id="pdf-builder-settings-wrapper">
     <header class="pdf-builder-header">
         <h1><?php _e('⚙️ PDF Builder Pro Settings (JS CENTRALIZED)', 'pdf-builder-pro'); ?></h1>
-        <p><strong>Centralized JavaScript System:</strong> Clean, organized, and efficient.</p>
     </header>
 
     <div id="pdf-builder-notifications"></div>
