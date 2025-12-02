@@ -320,11 +320,10 @@
 
                 // Restaurer l'onglet actif depuis localStorage
                 this.restoreActiveTab();
-                this.restoreActiveSubTab();
+                // this.restoreActiveSubTab(); // SUPPRIMÉ - pas de sous-onglets
 
                 // Initialiser tous les composants
                 this.bindTabEvents();
-                this.bindSubTabEvents();
                 this.bindSaveEvents();
                 this.initializePreviews();
 
@@ -369,43 +368,7 @@
                 this.switchTab('general');
             }
 
-            restoreActiveSubTab() {
-                try {
-                    const savedSubTab = localStorage.getItem('pdf_builder_active_sub_tab');
-                    if (savedSubTab) {
-                        console.log('📂 Sous-onglet actif restauré depuis localStorage:', savedSubTab);
-
-                        // Vérifier que le sous-onglet existe
-                        const subTabElement = document.querySelector(`#general-sub-tabs [data-tab="${savedSubTab}"]`);
-                        const subContentElement = document.getElementById(savedSubTab);
-
-                        if (subTabElement && subContentElement) {
-                            // Désactiver tous les sous-onglets
-                            document.querySelectorAll('#general-sub-tabs .nav-tab').forEach(t => {
-                                t.classList.remove('nav-tab-active');
-                            });
-                            document.querySelectorAll('#general-tab-content .tab-content').forEach(c => {
-                                c.classList.remove('active');
-                            });
-
-                            // Activer le sous-onglet sauvegardé
-                            subTabElement.classList.add('nav-tab-active');
-                            subContentElement.classList.add('active');
-
-                            console.log('✅ Sous-onglet restauré avec succès:', savedSubTab);
-                            return;
-                        } else {
-                            console.warn('⚠️ Sous-onglet sauvegardé non trouvé, utilisation du sous-onglet par défaut');
-                        }
-                    }
-                } catch (e) {
-                    console.warn('⚠️ Erreur lors de la restauration du sous-onglet:', e);
-                }
-
-                // Si aucun sous-onglet sauvegardé ou erreur, utiliser le sous-onglet par défaut (general-company)
-                console.log('🔄 Utilisation du sous-onglet par défaut');
-                this.switchSubTab('general-company');
-            }
+            // restoreActiveSubTab() supprimée - pas de sous-onglets
 
             bindTabEvents() {
                 const tabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
@@ -417,15 +380,7 @@
                 });
             }
 
-            bindSubTabEvents() {
-                const subTabs = document.querySelectorAll('#general-sub-tabs .nav-tab');
-                subTabs.forEach(tab => {
-                    tab.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.switchSubTab(tab.dataset.tab);
-                    });
-                });
-            }
+            // bindSubTabEvents() supprimée - pas de sous-onglets
 
             switchTab(tabId) {
                 console.log('🔄 Changement d\'onglet vers:', tabId);
@@ -476,34 +431,7 @@
                 }
             }
 
-            switchSubTab(subTabId) {
-                console.log('🔄 Changement de sous-onglet vers:', subTabId);
-
-                // Update sub-tabs
-                document.querySelectorAll('#general-sub-tabs .nav-tab').forEach(t => {
-                    t.classList.remove('nav-tab-active');
-                });
-                const activeSubTab = document.querySelector(`#general-sub-tabs [data-tab="${subTabId}"]`);
-                if (activeSubTab) {
-                    activeSubTab.classList.add('nav-tab-active');
-                }
-
-                // Update sub-content
-                document.querySelectorAll('#general-tab-content .tab-content').forEach(c => {
-                    c.classList.remove('active');
-                });
-                const activeSubContent = document.getElementById(subTabId);
-                if (activeSubContent) {
-                    activeSubContent.classList.add('active');
-                }
-
-                // Sauvegarder le sous-onglet actif dans localStorage
-                try {
-                    localStorage.setItem('pdf_builder_active_sub_tab', subTabId);
-                } catch (e) {
-                    console.warn('⚠️ Impossible de sauvegarder le sous-onglet actif:', e);
-                }
-            }
+            // switchSubTab() supprimée - pas de sous-onglets
 
             bindSaveEvents() {
                 this.SaveManager.bindEvents();
