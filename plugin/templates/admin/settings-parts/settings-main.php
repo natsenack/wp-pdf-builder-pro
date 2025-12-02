@@ -868,13 +868,7 @@
 
     // GESTIONNAIRES AJAX - Fonctionnalité de sauvegarde centralisée gérée dans settings-ajax.php
 
-<?php
-// REMOVED: Duplicate AJAX handlers - now handled by the factory system in settings-handlers-factory.php
-// This eliminates duplication and uses the centralized, well-factored factory approach
 ?>
-
-?>
-
 <!-- SYSTÈME ROBUSTE DE SAUVEGARDE GLOBALE VIA BOUTON FLOTTANT -->
 <script type="text/javascript">
     jQuery(document).ready(function($) {
