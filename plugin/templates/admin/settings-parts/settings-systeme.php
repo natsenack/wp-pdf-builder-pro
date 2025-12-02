@@ -466,3 +466,7 @@
                         Les modifications ne sont appliquées que lorsque vous cliquez sur ce bouton.
                     </p>
                 </aside>
+
+            <!-- Modales de cache et canvas - chargées SEULEMENT dans le tab Système -->
+            <?php require_once __DIR__ . '/settings-modals.php'; ?>
+
