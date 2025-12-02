@@ -4148,40 +4148,100 @@ input:checked + .toggle-slider:before {
 }
 /* === RÈGLES SPÉCIFIQUES POUR LES ONGLETS === */
 /* Masquer tous les contenus d'onglets par défaut */
-.tab-content {
+#pdf-builder-tab-content > .tab-content {
     display: none !important;
 }
 
 /* Afficher seulement l'onglet actif */
-.tab-content.active {
+#pdf-builder-tab-content > .tab-content.active {
     display: block !important;
 }
 
-/* Règles spécifiques pour éviter les conflits entre onglets général et système */
-#general.tab-content:not(.active) {
+/* Sous-onglets de l'onglet général */
+#general-tab-content .tab-content {
     display: none !important;
 }
 
-#systeme.tab-content:not(.active) {
-    display: none !important;
-}
-
-/* Règles prioritaires pour masquer les onglets inactifs */
-#pdf-builder-tab-content .tab-content:not(.active) {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
-}
-
-/* Règles prioritaires pour afficher l'onglet actif */
-#pdf-builder-tab-content .tab-content.active {
+#general-tab-content .tab-content.active {
     display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    height: auto !important;
-    overflow: visible !important;
+}
+
+/* Classes pour les textareas et descriptions */
+.textarea-code {
+    width: 100%;
+    font-family: monospace;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+}
+
+.general-css-description,
+.general-html-description {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.general-html-title {
+    color: #28a745;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 0;
+}
+
+.company-preview {
+    color: #666;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* === STYLES POUR LES BOÎTES D'INFO GÉNÉRALES === */
+.general-info-box {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+}
+
+.general-info-title {
+    margin-top: 0;
+    color: #155724;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.general-info-content {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.general-info-content p {
+    margin: 3px 0;
+    color: #495057;
+    font-size: 14px;
+}
+
+.general-info-hint {
+    color: #666;
+    font-size: 12px;
+    margin: 8px 0 0 0;
+    font-style: italic;
+}
+
+.general-manual-title {
+    color: #dc3545;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+.general-manual-description {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 15px;
 }
 
 /* Wrapper du statut des templates */
