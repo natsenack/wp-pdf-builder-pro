@@ -4,6 +4,8 @@ import { CanvasSettingsProvider } from './contexts/CanvasSettingsContext';
 import { PDFBuilderContent } from './components/PDFBuilderContent';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas';
 
+console.log('🔧 [PDFBuilder.tsx] Import successful. React:', typeof React, 'useState:', typeof useState, 'useEffect:', typeof useEffect);
+
 interface PDFBuilderProps {
   width?: number;
   height?: number;

@@ -17,6 +17,9 @@ import ReactDOM from 'react-dom';
 
 console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react/index.js starting execution...');
 console.log('🔧 [WEBPACK BUNDLE] React available:', typeof React);
+console.log('🔧 [WEBPACK BUNDLE] React.useRef available:', typeof React?.useRef);
+console.log('🔧 [WEBPACK BUNDLE] React.useState available:', typeof React?.useState);
+console.log('🔧 [WEBPACK BUNDLE] React keys:', Object.keys(React || {}).slice(0, 10));
 console.log('🔧 [WEBPACK BUNDLE] createRoot available:', typeof ReactDOM?.createRoot);
 
 // ✅ Exports React from window for fallback access
