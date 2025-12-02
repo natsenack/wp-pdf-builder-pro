@@ -1431,12 +1431,12 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
         }
     };
 
-    // Alias pour compatibilité
+    // Alias pour compatibilité - bind methods to preserve context
     window.pdfBuilderNotify = window.simpleNotificationSystem;
-    window.showSuccessNotification = window.simpleNotificationSystem.success;
-    window.showErrorNotification = window.simpleNotificationSystem.error;
-    window.showWarningNotification = window.simpleNotificationSystem.warning;
-    window.showInfoNotification = window.simpleNotificationSystem.info;
+    window.showSuccessNotification = window.simpleNotificationSystem.success.bind(window.simpleNotificationSystem);
+    window.showErrorNotification = window.simpleNotificationSystem.error.bind(window.simpleNotificationSystem);
+    window.showWarningNotification = window.simpleNotificationSystem.warning.bind(window.simpleNotificationSystem);
+    window.showInfoNotification = window.simpleNotificationSystem.info.bind(window.simpleNotificationSystem);
 
     // Add section to dev sections array for toggle
     devSections.push('dev-notifications-test-section');
