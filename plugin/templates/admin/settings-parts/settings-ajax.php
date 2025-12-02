@@ -1369,6 +1369,16 @@ function pdf_builder_save_all_settings_handler() {
 
         error_log('PDF Builder SAVE ALL - About to send response with saved_settings count: ' . count($saved_options));
         error_log('PDF Builder SAVE ALL - Response data keys: ' . implode(', ', ['saved_count', 'errors', 'saved_settings', 'debug_info']));
+        
+        // LOG COMPLET DE SAVED_OPTIONS AVANT RÉPONSE
+        error_log('PDF Builder SAVE ALL - COMPLETE SAVED_OPTIONS BEFORE RESPONSE:');
+        foreach ($saved_options as $key => $value) {
+            error_log("  [{$key}] = '{$value}'");
+            if (strpos($key, 'debug') !== false) {
+                error_log("    ^^^ DEBUG FIELD FOUND ^^^");
+            }
+        }
+        error_log('PDF Builder SAVE ALL - END SAVED_OPTIONS');
 
         // Use wp_send_json_success directly to ensure proper response format
         $response_data = [
