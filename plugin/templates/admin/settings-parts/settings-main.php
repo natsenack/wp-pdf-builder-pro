@@ -546,20 +546,20 @@
 
             updateButtonText(tabId) {
                 const tabNames = {
-                    'general': 'Save General',
-                    'licence': 'Save License',
-                    'systeme': 'Save System',
-                    'acces': 'Save Access',
-                    'securite': 'Save Security',
-                    'pdf': 'Save PDF',
-                    'contenu': 'Save Canvas',
-                    'templates': 'Save Templates',
-                    'developpeur': 'Save Developer'
+                    'general': 'Enregistrer General',
+                    'licence': 'Enregistrer Licence',
+                    'systeme': 'Enregistrer Système',
+                    'acces': 'Enregistrer Accès',
+                    'securite': 'Enregistrer Sécurité',
+                    'pdf': 'Enregistrer PDF',
+                    'contenu': 'Enregistrer Contenu',
+                    'templates': 'Enregistrer Templates',
+                    'developpeur': 'Enregistrer Développeur'
                 };
 
                 const btnText = this.saveButton?.querySelector('.btn-text');
                 if (btnText) {
-                    btnText.textContent = tabNames[tabId] || 'Save Everything';
+                    btnText.textContent = tabNames[tabId] || 'Enregistrer Tout';
                 }
             }
         }
@@ -699,60 +699,7 @@
         require_once __DIR__ . '/tab-diagnostic.php';
     }
 
-    // AJAX HANDLERS - Centralized save functionality
-    add_action('wp_ajax_pdf_builder_save_all_settings', function() {
-        try {
-            // Verify nonce
-            if (!wp_verify_nonce(sanitize_text_field($_POST['nonce'] ?? ''), 'pdf_builder_settings_ajax')) {
-                wp_send_json_error(['message' => 'Security check failed']);
-                return;
-            }
-
-            // Collect and sanitize all form data
-            $updated_fields = [];
-            foreach ($_POST as $key => $value) {
-                // Skip WordPress internal fields
-                if (in_array($key, ['action', 'nonce'])) continue;
-
-                if (is_array($value)) {
-                    $updated_fields[$key] = array_map('sanitize_text_field', $value);
-                } else {
-                    $updated_fields[$key] = sanitize_text_field($value);
-                }
-            }
-
-            // Update individual settings
-            $settings_map = [
-                'company_phone_manual' => 'pdf_builder_company_phone_manual',
-                'company_siret' => 'pdf_builder_company_siret',
-                'company_vat' => 'pdf_builder_company_vat',
-                'company_rcs' => 'pdf_builder_company_rcs',
-                'company_capital' => 'pdf_builder_company_capital'
-            ];
-
-            foreach ($settings_map as $form_key => $option_key) {
-                if (isset($updated_fields[$form_key])) {
-                    update_option($option_key, $updated_fields[$form_key]);
-                }
-            }
-
-            // Update main settings array
-            $existing_settings = get_option('pdf_builder_settings', []);
-            $new_settings = array_merge($existing_settings, $updated_fields);
-            update_option('pdf_builder_settings', $new_settings);
-
-            error_log('PDF Builder: AJAX - Settings saved successfully');
-
-            wp_send_json_success([
-                'message' => 'Settings saved successfully',
-                'updated' => count($updated_fields)
-            ]);
-
-        } catch (Exception $e) {
-            error_log('PDF Builder: AJAX Error - ' . $e->getMessage());
-            wp_send_json_error(['message' => $e->getMessage()]);
-        }
-    });
+    // AJAX HANDLERS - Centralized save functionality is handled in settings-ajax.php
 
     add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
         try {
