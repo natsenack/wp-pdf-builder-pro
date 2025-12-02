@@ -875,12 +875,26 @@
 <!-- SYSTÈME ROBUSTE DE SAUVEGARDE GLOBALE VIA BOUTON FLOTTANT -->
 <script type="text/javascript">
     jQuery(document).ready(function($) {
-        // Utiliser le même nonce que le système moderne
-        var nonce = PDF_BUILDER_CONFIG ? PDF_BUILDER_CONFIG.nonce : $('input[name="_wpnonce_pdf_builder"]').val();
+        // Attendre que PDF_BUILDER_CONFIG soit disponible ou utiliser une valeur par défaut
+        function getNonce() {
+            if (typeof PDF_BUILDER_CONFIG !== 'undefined' && PDF_BUILDER_CONFIG.nonce) {
+                return PDF_BUILDER_CONFIG.nonce;
+            }
+            // Fallback: récupérer depuis le champ caché ou générer un nouveau nonce
+            var hiddenNonce = $('input[name="_wpnonce_pdf_builder"]').val();
+            if (hiddenNonce) {
+                return hiddenNonce;
+            }
+            console.warn('⚠️ Aucun nonce disponible, génération d\'un nouveau nonce temporaire');
+            return '';
+        }
+
+        var nonce = getNonce();
         console.log('🔐 [DEBUG NONCE] Nonce utilisé par système legacy:', nonce);
-        console.log('🔐 [DEBUG NONCE] PDF_BUILDER_CONFIG disponible:', !!PDF_BUILDER_CONFIG);
+        console.log('🔐 [DEBUG NONCE] PDF_BUILDER_CONFIG disponible:', typeof PDF_BUILDER_CONFIG !== 'undefined');
+
         if (!nonce) {
-            console.warn('⚠️ Nonce manquant pour la sauvegarde');
+            console.warn('⚠️ Nonce manquant pour la sauvegarde - système désactivé');
             return;
         }
 
