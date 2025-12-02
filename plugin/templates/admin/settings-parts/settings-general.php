@@ -45,7 +45,7 @@
                                     <input type="text" id="company_phone_manual" name="company_phone_manual"
                                         value="<?php echo esc_attr($company_phone_manual); ?>"
                                         placeholder="+33 1 23 45 67 89" />
-<p class="description">Téléphone de l'entreprise</p>
+                                        <p class="description">Téléphone de l'entreprise</p>
                                 </td>
                             </tr>
                             <tr>
