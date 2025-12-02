@@ -139,6 +139,7 @@
                 this.Validator = new SettingsValidator();
                 this.ShapeManager = new SettingsUI();
                 this.SaveManager = new SettingsSaver();
+                this.PreviewManager = new SettingsPreview();
             }
 
             init() {
