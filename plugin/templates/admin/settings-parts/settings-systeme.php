@@ -17,9 +17,6 @@
 ?>
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
-            <!-- System Settings Section (No Form - AJAX Centralized) -->
-            <section id="systeme-settings-container" aria-label="Paramètres système">
-
                 <!-- Section Cache et Performance -->
                 <section class="system-cache-section">
                     <header>
