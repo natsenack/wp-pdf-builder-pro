@@ -319,9 +319,11 @@
 
                 // Restaurer l'onglet actif depuis localStorage
                 this.restoreActiveTab();
+                this.restoreActiveSubTab();
 
                 // Initialiser tous les composants
                 this.bindTabEvents();
+                this.bindSubTabEvents();
                 this.bindSaveEvents();
                 this.initializePreviews();
 
@@ -366,6 +368,44 @@
                 this.switchTab('general');
             }
 
+            restoreActiveSubTab() {
+                try {
+                    const savedSubTab = localStorage.getItem('pdf_builder_active_sub_tab');
+                    if (savedSubTab) {
+                        console.log('📂 Sous-onglet actif restauré depuis localStorage:', savedSubTab);
+
+                        // Vérifier que le sous-onglet existe
+                        const subTabElement = document.querySelector(`#general-sub-tabs [data-tab="${savedSubTab}"]`);
+                        const subContentElement = document.getElementById(savedSubTab);
+
+                        if (subTabElement && subContentElement) {
+                            // Désactiver tous les sous-onglets
+                            document.querySelectorAll('#general-sub-tabs .nav-tab').forEach(t => {
+                                t.classList.remove('nav-tab-active');
+                            });
+                            document.querySelectorAll('#general-tab-content .tab-content').forEach(c => {
+                                c.classList.remove('active');
+                            });
+
+                            // Activer le sous-onglet sauvegardé
+                            subTabElement.classList.add('nav-tab-active');
+                            subContentElement.classList.add('active');
+
+                            console.log('✅ Sous-onglet restauré avec succès:', savedSubTab);
+                            return;
+                        } else {
+                            console.warn('⚠️ Sous-onglet sauvegardé non trouvé, utilisation du sous-onglet par défaut');
+                        }
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Erreur lors de la restauration du sous-onglet:', e);
+                }
+
+                // Si aucun sous-onglet sauvegardé ou erreur, utiliser le sous-onglet par défaut (general-company)
+                console.log('🔄 Utilisation du sous-onglet par défaut');
+                this.switchSubTab('general-company');
+            }
+
             bindTabEvents() {
                 const tabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
                 tabs.forEach(tab => {
@@ -376,22 +416,32 @@
                 });
             }
 
+            bindSubTabEvents() {
+                const subTabs = document.querySelectorAll('#general-sub-tabs .nav-tab');
+                subTabs.forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.switchSubTab(tab.dataset.tab);
+                    });
+                });
+            }
+
             switchTab(tabId) {
                 console.log('🔄 Changement d\'onglet vers:', tabId);
 
                 // Update tabs
-                document.querySelectorAll('.nav-tab').forEach(t => {
+                document.querySelectorAll('#pdf-builder-tabs .nav-tab').forEach(t => {
                     t.classList.remove('nav-tab-active');
                     console.log('Retiré nav-tab-active de:', t.dataset.tab);
                 });
-                const activeTab = document.querySelector(`[data-tab="${tabId}"]`);
+                const activeTab = document.querySelector(`#pdf-builder-tabs [data-tab="${tabId}"]`);
                 if (activeTab) {
                     activeTab.classList.add('nav-tab-active');
                     console.log('Ajouté nav-tab-active à:', tabId);
                 }
 
                 // Update content
-                document.querySelectorAll('.tab-content').forEach(c => {
+                document.querySelectorAll('#pdf-builder-tab-content .tab-content').forEach(c => {
                     c.classList.remove('active');
                     console.log('Retiré active de:', c.id);
                 });
@@ -399,6 +449,16 @@
                 if (activeContent) {
                     activeContent.classList.add('active');
                     console.log('Ajouté active à:', tabId);
+                }
+
+                // Show/hide sub-tabs based on main tab
+                const subTabsWrapper = document.getElementById('general-sub-tabs');
+                if (subTabsWrapper) {
+                    if (tabId === 'general') {
+                        subTabsWrapper.style.display = 'block';
+                    } else {
+                        subTabsWrapper.style.display = 'none';
+                    }
                 }
 
                 // Sauvegarder l'onglet actif dans localStorage
@@ -412,6 +472,35 @@
                 // Update save button text
                 if (this.SaveManager) {
                     this.SaveManager.updateButtonText(tabId);
+                }
+            }
+
+            switchSubTab(subTabId) {
+                console.log('🔄 Changement de sous-onglet vers:', subTabId);
+
+                // Update sub-tabs
+                document.querySelectorAll('#general-sub-tabs .nav-tab').forEach(t => {
+                    t.classList.remove('nav-tab-active');
+                });
+                const activeSubTab = document.querySelector(`#general-sub-tabs [data-tab="${subTabId}"]`);
+                if (activeSubTab) {
+                    activeSubTab.classList.add('nav-tab-active');
+                }
+
+                // Update sub-content
+                document.querySelectorAll('#general-tab-content .tab-content').forEach(c => {
+                    c.classList.remove('active');
+                });
+                const activeSubContent = document.getElementById(subTabId);
+                if (activeSubContent) {
+                    activeSubContent.classList.add('active');
+                }
+
+                // Sauvegarder le sous-onglet actif dans localStorage
+                try {
+                    localStorage.setItem('pdf_builder_active_sub_tab', subTabId);
+                } catch (e) {
+                    console.warn('⚠️ Impossible de sauvegarder le sous-onglet actif:', e);
                 }
             }
 
@@ -874,6 +963,12 @@
                     update_option('pdf_builder_company_vat', $updated_fields['company_vat'] ?? '');
                     update_option('pdf_builder_company_rcs', $updated_fields['company_rcs'] ?? '');
                     update_option('pdf_builder_company_capital', $updated_fields['company_capital'] ?? '');
+                    // New CSS and HTML settings
+                    update_option('pdf_builder_custom_css', $updated_fields['pdf_builder_custom_css'] ?? '');
+                    update_option('pdf_builder_css_enabled', $updated_fields['pdf_builder_css_enabled'] ?? '0');
+                    update_option('pdf_builder_invoice_template', $updated_fields['pdf_builder_invoice_template'] ?? '');
+                    update_option('pdf_builder_quote_template', $updated_fields['pdf_builder_quote_template'] ?? '');
+                    update_option('pdf_builder_html_enabled', $updated_fields['pdf_builder_html_enabled'] ?? '0');
                     break;
                 case 'acces':
                     // Gérer les rôles d'accès (tableau de rôles)

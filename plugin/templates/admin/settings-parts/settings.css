@@ -113,6 +113,25 @@ input:checked + .slider:before, input:checked + .toggle-slider:before {
     margin-bottom: -1px;
 }
 
+/* Styles pour les sous-onglets */
+.nav-tab-wrapper.sub-tabs {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+
+.nav-tab-wrapper.sub-tabs .nav-tab {
+    padding: 6px 12px;
+    font-size: 14px;
+    margin-right: 2px;
+}
+
+.nav-tab-wrapper.sub-tabs .nav-tab-active {
+    background: #f8f9fa;
+    color: #007cba;
+    border-color: #007cba;
+}
+
 .tab-content {
     display: none;
 }
