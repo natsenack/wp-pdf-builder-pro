@@ -289,5 +289,76 @@ add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
             error_log('PDF Builder Tab Settings Save Error: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur lors de la sauvegarde des paramètres']);
         }
+    });
+
+    return true;
+}
+
+/**
+ * Handler AJAX ultra-rapide pour sauvegarder TOUS les paramètres en UNE SEULE requête
+ * Beaucoup plus rapide que d'appeler les handlers individuels
+ */
+function pdf_builder_register_bulk_save_handler() {
+    add_action('wp_ajax_pdf_builder_save_all_direct', function() {
+        try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!isset($_POST['nonce'])) {
+                wp_send_json_error(['message' => 'Vérification de sécurité échouée']);
+                return;
+            }
+
+            $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings');
+            if (!$nonce_valid) {
+                wp_send_json_error(['message' => 'Vérification de sécurité échouée']);
+                return;
+            }
+
+            // Récupérer et nettoyer TOUS les paramètres en une seule opération
+            $data = [];
+            $allowed_keys = $_POST;
+            unset($allowed_keys['action']);
+            unset($allowed_keys['nonce']);
+
+            // Nettoyer et valider en une seule boucle
+            foreach ($allowed_keys as $key => $value) {
+                $clean_key = sanitize_key($key);
+                $clean_value = is_array($value) ? implode(',', array_map('sanitize_text_field', $value)) : sanitize_text_field($value);
+                $data['pdf_builder_' . $clean_key] = $clean_value;
+            }
+
+            if (empty($data)) {
+                wp_send_json_error(['message' => 'Aucune donnée']);
+                return;
+            }
+
+            // Sauvegarder EN BATCH (ultra rapide!)
+            $saved_count = pdf_builder_batch_save_options($data);
+
+            wp_send_json_success([
+                'message' => 'Tous les paramètres sauvegardés',
+                'fields_saved' => $saved_count,
+                'count' => count($data)
+            ]);
+
+        } catch (Exception $e) {
+            error_log('PDF Builder Bulk Save Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
+        }
+    });
+}
+
+// Enregistrer le handler bulk
+add_action('init', 'pdf_builder_register_bulk_save_handler');
+
+// Pour permettre l'accès non-authentifié (optionnel)
+add_action('wp_ajax_nopriv_pdf_builder_save_all_direct', function() {
+    wp_send_json_error(['message' => 'Non autorisé']);
 });
 ?>
+

@@ -582,9 +582,8 @@
                     }
                 });
             }
-
             async saveAllSettings() {
-                console.log('💾 Sauvegarde parallélisée...');
+                console.log('💾 Sauvegarde directe ultra-rapide...');
 
                 if (this.ui && this.saveButton) {
                     this.ui.setButtonState(this.saveButton, 'loading');
@@ -594,42 +593,41 @@
                 const showError = window.showErrorNotification;
 
                 try {
-                    // Récupérer tous les onglets visibles
-                    const tabs = document.querySelectorAll('.tab-content');
-                    if (tabs.length === 0) {
-                        throw new Error('Aucun onglet trouvé');
+                    // Collecter TOUS les champs
+                    const formData = this.collectAllSettings();
+                    if (Object.keys(formData).length === 0) {
+                        throw new Error('Aucun paramètre à enregistrer');
                     }
 
-                    // Créer une promesse pour chaque onglet (PARALLÉLISÉ)
-                    const savePromises = Array.from(tabs).map(tabElement => {
-                        const tabId = tabElement.id;
-                        if (!tabId) return Promise.resolve(null);
-                        return this.saveTabSettingsInternal(tabId);
+                    // UNE SEULE requête AJAX - ultra rapide!
+                    const response = await new Promise((resolve, reject) => {
+                        jQuery.ajax({
+                            url: PDF_BUILDER_CONFIG.ajax_url,
+                            type: 'POST',
+                            data: {
+                                'action': 'pdf_builder_save_all_direct',
+                                'nonce': PDF_BUILDER_CONFIG.nonce,
+                                ...formData
+                            },
+                            dataType: 'json',
+                            timeout: 30000,
+                            success: (data) => resolve(data),
+                            error: (xhr, status, error) => reject(new Error(error || status))
+                        });
                     });
 
-                    // Attendre que tous les onglets soient sauvegardés EN PARALLÈLE
-                    const results = await Promise.all(savePromises);
-
-                    // Compter les succès
-                    const successCount = results.filter(r => r && r.success).length;
-                    const totalCount = results.filter(r => r !== null).length;
-
-                    if (successCount === totalCount && totalCount > 0) {
+                    if (response.success) {
                         if (typeof showSuccess === 'function') {
-                            showSuccess('✅ Tous les paramètres sauvegardés!');
-                        }
-                    } else if (successCount > 0) {
-                        if (typeof showError === 'function') {
-                            showError(`⚠️ ${successCount}/${totalCount} onglets sauvegardés`);
+                            showSuccess(`✅ ${response.data.fields_saved} paramètres enregistrés!`);
                         }
                     } else {
-                        throw new Error('Erreur de sauvegarde');
+                        throw new Error(response.data?.message || 'Erreur');
                     }
 
                 } catch (error) {
                     console.error('Erreur:', error);
                     if (typeof showError === 'function') {
-                        showError('❌ Erreur: ' + error.message);
+                        showError('❌ ' + error.message);
                     }
                 } finally {
                     if (this.ui && this.saveButton) {
@@ -638,42 +636,8 @@
                 }
             }
 
-            // Fonction interne pour sauvegarder un seul onglet (appelée en parallèle)
-            async saveTabSettingsInternal(tabId) {
-                try {
-                    const formData = this.collectTabSettings(tabId);
-                    if (Object.keys(formData).length === 0) {
-                        return { success: true, tabId };
-                    }
-
-                    return await new Promise((resolve, reject) => {
-                        jQuery.ajax({
-                            url: PDF_BUILDER_CONFIG.ajax_url,
-                            type: 'POST',
-                            data: {
-                                'action': 'pdf_builder_save_' + tabId,
-                                'nonce': PDF_BUILDER_CONFIG.nonce,
-                                ...formData
-                            },
-                            dataType: 'json',
-                            success: (data) => {
-                                console.log(`✅ [${tabId}] Sauvegardé`);
-                                resolve(data);
-                            },
-                            error: (xhr, status, error) => {
-                                console.warn(`❌ [${tabId}] Erreur: ${error}`);
-                                resolve({ success: false, tabId, error });
-                            }
-                        });
-                    });
-                } catch (error) {
-                    console.warn(`❌ [${tabId}] Exception: ${error.message}`);
-                    return { success: false, tabId, error: error.message };
-                }
-            }
-
             async saveTabSettings(tabId) {
-                console.log('💾 Sauvegarde des paramètres de l\'onglet:', tabId);
+                console.log('💾 Sauvegarde de l\'onglet:', tabId);
 
                 if (this.validator && !this.validator.validateTab(tabId)) {
                     if (window.showErrorNotification) {
