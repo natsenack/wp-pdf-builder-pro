@@ -2040,6 +2040,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
         drawCompanyLogo(ctx, element);
         break;
       case 'order-number':
+      case 'order_number':
         debugLog(`[Canvas] Rendering order number element: ${element.id}`);
         drawOrderNumber(ctx, element, currentState);
         break;
