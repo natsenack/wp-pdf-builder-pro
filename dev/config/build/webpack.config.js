@@ -16,7 +16,7 @@ module.exports = {
     globalObject: 'window',
     library: {
       name: 'pdfBuilderReact',
-      type: 'window'
+      type: 'self'
     }
   },
   externals: {

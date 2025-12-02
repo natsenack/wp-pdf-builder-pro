@@ -9,12 +9,24 @@ console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react-wrapper.js loading...');
 // Import the actual React module
 import * as pdfBuilderReactModule from './pdf-builder-react/index.js';
 
-// Force assignment to window IMMEDIATELY when webpack loads
-if (typeof window !== 'undefined') {
-  console.log('✅ [pdf-builder-wrapper] Webpack bundle executing, assigning to window.pdfBuilderReact');
-  window.pdfBuilderReact = pdfBuilderReactModule.default || pdfBuilderReactModule;
-  
-  // Dispatch event to signal module is ready
+// Extract the default export - it's already an object with all functions
+const moduleExports = pdfBuilderReactModule.default || pdfBuilderReactModule;
+
+// Export each property individually so webpack creates a plain object
+export const initPDFBuilderReact = moduleExports.initPDFBuilderReact;
+export const loadTemplate = moduleExports.loadTemplate;
+export const getEditorState = moduleExports.getEditorState;
+export const setEditorState = moduleExports.setEditorState;
+export const getCurrentTemplate = moduleExports.getCurrentTemplate;
+export const exportTemplate = moduleExports.exportTemplate;
+export const saveTemplate = moduleExports.saveTemplate;
+export const registerEditorInstance = moduleExports.registerEditorInstance;
+export const resetAPI = moduleExports.resetAPI;
+export const updateCanvasDimensions = moduleExports.updateCanvasDimensions;
+export const _isWebpackBundle = true;
+
+// Also signal when loaded
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   try {
     const event = new Event('pdfBuilderReactLoaded');
     document.dispatchEvent(event);
@@ -24,5 +36,5 @@ if (typeof window !== 'undefined') {
   }
 }
 
-// Also export it so webpack UMD can use it
-export default pdfBuilderReactModule.default || pdfBuilderReactModule;
+// Export default as well for compatibility
+export default moduleExports;
