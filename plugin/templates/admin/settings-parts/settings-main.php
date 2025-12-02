@@ -415,6 +415,21 @@
                 try {
                     const formData = this.collectAllSettings();
 
+                    // DEBUG LOGS POUR LE TOGGLE DEBUG JAVASCRIPT
+                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                        console.log('🚀 [DEBUG JS TOGGLE] Données collectées avant envoi:', formData);
+                        console.log('🚀 [DEBUG JS TOGGLE] debug_javascript dans formData:', formData['pdf_builder_debug_javascript'] || 'NON TROUVÉ');
+                        console.log('🚀 [DEBUG JS TOGGLE] debug_javascript dans formData (sans prefixe):', formData['debug_javascript'] || 'NON TROUVÉ');
+                        
+                        // Vérifier si le champ est dans les données AJAX
+                        const ajaxData = {
+                            'action': 'pdf_builder_save_all_settings',
+                            'nonce': PDF_BUILDER_CONFIG.nonce,
+                            ...formData
+                        };
+                        console.log('🚀 [DEBUG JS TOGGLE] Données AJAX complètes:', ajaxData);
+                    }
+
                     // Send to server using jQuery AJAX wrapped in Promise
                     // FIXED: Using arrow functions to preserve context
                     const response = await new Promise((resolve, reject) => {
@@ -429,10 +444,24 @@
                             dataType: 'json',
                             success: (data) => {
                                 console.log('[AJAX Success] Response received:', data);
+                                
+                                // DEBUG LOGS POUR LE TOGGLE DEBUG JAVASCRIPT
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.log('✅ [DEBUG JS TOGGLE] Réponse serveur reçue:', data);
+                                    console.log('✅ [DEBUG JS TOGGLE] debug_javascript dans saved_settings:', data.data?.saved_settings?.debug_javascript || 'NON TROUVÉ');
+                                    console.log('✅ [DEBUG JS TOGGLE] debug_javascript dans saved_settings (avec prefixe):', data.data?.saved_settings?.pdf_builder_debug_javascript || 'NON TROUVÉ');
+                                }
+                                
                                 resolve(data);
                             },
                             error: (xhr, status, error) => {
                                 console.error('[AJAX Error] Error details:', {status, error, responseText: xhr.responseText});
+                                
+                                // DEBUG LOGS POUR LE TOGGLE DEBUG JAVASCRIPT
+                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                                    console.error('❌ [DEBUG JS TOGGLE] Erreur AJAX:', {status, error, responseText: xhr.responseText});
+                                }
+                                
                                 reject(new Error(error || 'AJAX request failed'));
                             }
                         });
@@ -522,6 +551,25 @@
                         }
                     }
                 });
+
+                // DEBUG LOGS POUR LE TOGGLE DEBUG JAVASCRIPT
+                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
+                    console.log('🔍 [DEBUG JS TOGGLE] CollectAllSettings - Champs collectés:', Object.keys(formData));
+                    console.log('🔍 [DEBUG JS TOGGLE] debug_javascript dans formData:', formData['pdf_builder_debug_javascript'] || 'NON TROUVÉ');
+                    console.log('🔍 [DEBUG JS TOGGLE] debug_javascript dans formData (sans prefixe):', formData['debug_javascript'] || 'NON TROUVÉ');
+                    
+                    // Chercher tous les champs liés au debug
+                    const debugFields = Object.keys(formData).filter(key => key.includes('debug'));
+                    console.log('🔍 [DEBUG JS TOGGLE] Tous les champs debug trouvés:', debugFields);
+                    
+                    // Vérifier l'élément DOM directement
+                    const debugJsElement = document.getElementById('debug_javascript');
+                    if (debugJsElement) {
+                        console.log('🔍 [DEBUG JS TOGGLE] Élément DOM trouvé - checked:', debugJsElement.checked, 'value:', debugJsElement.value);
+                    } else {
+                        console.log('🔍 [DEBUG JS TOGGLE] Élément DOM NON trouvé');
+                    }
+                }
 
                 return formData;
             }

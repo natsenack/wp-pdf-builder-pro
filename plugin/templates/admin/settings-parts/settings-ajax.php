@@ -1133,6 +1133,21 @@ function pdf_builder_save_all_settings_handler() {
         error_log("CRITICAL FIELD [{$field}]: {$value}");
     }
 
+    // LOG SPÉCIFIQUE POUR LE TOGGLE DEBUG JAVASCRIPT
+    error_log("=== DEBUG JAVASCRIPT TOGGLE ANALYSIS ===");
+    error_log("pdf_builder_debug_javascript in POST: " . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
+    error_log("debug_javascript in POST: " . (isset($_POST['debug_javascript']) ? $_POST['debug_javascript'] : 'NOT_SET'));
+    
+    // Vérifier tous les champs POST contenant 'debug'
+    $debug_related_fields = [];
+    foreach ($_POST as $key => $value) {
+        if (strpos($key, 'debug') !== false) {
+            $debug_related_fields[$key] = $value;
+        }
+    }
+    error_log("All debug-related fields in POST: " . json_encode($debug_related_fields));
+    error_log("=== END DEBUG JAVASCRIPT TOGGLE ANALYSIS ===");
+
     // Vérifier le nonce
     if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         error_log('PDF Builder SAVE ALL: ❌ NONCE VERIFICATION FAILED');
@@ -1229,14 +1244,29 @@ function pdf_builder_save_all_settings_handler() {
         ];
 
         error_log('===== TRAITEMENT CHAMPS CHECKBOX NON COCHÉS =====');
+
+        // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+        error_log("BEFORE CHECKBOX PROCESSING - debug_javascript in POST: " . (isset($_POST['debug_javascript']) ? $_POST['debug_javascript'] : 'NOT_SET'));
+        error_log("BEFORE CHECKBOX PROCESSING - pdf_builder_debug_javascript in POST: " . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
+
         foreach ($checkbox_fields as $field) {
             if (!isset($_POST[$field])) {
                 $old_value = get_option('pdf_builder_' . $field, 'NOT_SET');
                 update_option('pdf_builder_' . $field, 0);
                 $saved_count++;
                 error_log("UNCHECKED CHECKBOX [{$field}]: old_value='{$old_value}' -> set to '0'");
+                
+                // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+                if ($field === 'debug_javascript') {
+                    error_log("DEBUG_JAVASCRIPT SET TO 0 (was unchecked)");
+                }
             } else {
                 error_log("CHECKBOX WAS SET [{$field}]: " . $_POST[$field]);
+                
+                // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+                if ($field === 'debug_javascript') {
+                    error_log("DEBUG_JAVASCRIPT WAS CHECKED: " . $_POST[$field]);
+                }
             }
         }
         error_log('===== FIN TRAITEMENT CHECKBOX =====');
@@ -1246,6 +1276,12 @@ function pdf_builder_save_all_settings_handler() {
         foreach ($critical_fields as $field) {
             $saved_value = get_option('pdf_builder_' . $field, 'NOT_FOUND');
             error_log("DB CHECK [pdf_builder_{$field}] = '{$saved_value}'");
+            
+            // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+            if ($field === 'debug_javascript') {
+                error_log("FINAL DB VALUE FOR DEBUG_JAVASCRIPT: '{$saved_value}'");
+                error_log("DEBUG_JAVASCRIPT OPTION KEY: 'pdf_builder_debug_javascript'");
+            }
         }
         error_log('===== FIN VÉRIFICATION DB =====');
 
