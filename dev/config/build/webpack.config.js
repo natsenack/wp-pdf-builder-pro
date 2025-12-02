@@ -6,7 +6,10 @@ const CompressionPlugin = require('compression-webpack-plugin');
 module.exports = {
   mode: 'production', // Mode production pour l'optimisation
   entry: {
-    'pdf-builder-react': './assets/js/pdf-builder-react-wrapper.js'
+    'pdf-builder-react': [
+      './assets/js/pdf-builder-react/react-injector.js',  // Load first to inject React globally
+      './assets/js/pdf-builder-react-wrapper.js'          // Then load the actual app
+    ]
   },
   target: ['web', 'es6'], // Cibler ES6 pour de meilleures performances
   output: {
@@ -21,14 +24,10 @@ module.exports = {
   },
   externals: {
     'react': 'React',
-    'react-dom': 'ReactDOM',
-    'react/jsx-runtime': 'React',  // Force JSX runtime to use window.React
+    'react-dom': 'ReactDOM'
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
-    alias: {
-      // Empty - let externals handle it
-    }
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
   },
   module: {
     rules: [
@@ -41,14 +40,7 @@ module.exports = {
             presets: [
               '@babel/preset-env',
               '@babel/preset-typescript',
-              ['@babel/preset-react', { runtime: 'automatic' }]
-            ],
-            plugins: [
-              // Inject React hooks into scope for classic usage in transpiled code
-              ['@babel/plugin-transform-react-jsx', {
-                runtime: 'automatic',
-                importSource: 'react'
-              }]
+              ['@babel/preset-react', { runtime: 'classic' }]
             ]
           }
         }
