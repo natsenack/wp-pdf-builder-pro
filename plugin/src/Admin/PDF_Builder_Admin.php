@@ -1412,7 +1412,7 @@ class PdfBuilderAdmin
             wp_enqueue_script('pdf-builder-react', $react_script_url, [], $version_param, true);
 
             // ✅ Enqueue the initialization helper script that checks for pdfBuilderReact
-            $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-init.js';
+            $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
             $init_helper_version = $cache_bust;
             wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react'], $init_helper_version, true);
 
