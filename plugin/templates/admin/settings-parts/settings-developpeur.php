@@ -30,9 +30,15 @@ $ajax_config = [
     ]
 ];
 
-// Enqueue and localize script properly
+// Enqueue jQuery only
 wp_enqueue_script('jquery');
-wp_localize_script('jquery', 'pdfBuilderDeveloperConfig', $ajax_config);
+
+// Add configuration as global JavaScript variable
+?>
+<script type="text/javascript">
+window.pdfBuilderDeveloperConfig = <?php echo wp_json_encode($ajax_config); ?>;
+</script>
+<?php
 ?>
 
 <div class="pdf-builder-developer">
@@ -99,7 +105,7 @@ wp_localize_script('jquery', 'pdfBuilderDeveloperConfig', $ajax_config);
                 <div class="dev-password-field">
                     <input type="password" id="pdf-builder-dev-password" name="pdf_builder_developer_password"
                            placeholder="Mot de passe optionnel pour sécuriser l'accès"
-                           value="<?php echo esc_attr($dev_password); ?>">
+                           value="<?php echo esc_attr($dev_password); ?>" autocomplete="new-password">
                     <button type="button" class="dev-password-toggle" id="dev-password-toggle" title="Afficher/Masquer le mot de passe">
                         👁️
                     </button>
@@ -929,15 +935,16 @@ wp_localize_script('jquery', 'pdfBuilderDeveloperConfig', $ajax_config);
 (function($) {
     'use strict';
 
+    // Configuration directement définie
     const DeveloperSettings = {
-        config: null,
+        config: <?php echo wp_json_encode($ajax_config); ?>,
         elements: {},
         currentLogs: [],
 
         init: function() {
             console.log('[PDF Builder Developer] Initializing developer settings...');
 
-            // Get configuration
+            // Get configuration from global variable
             this.config = window.pdfBuilderDeveloperConfig || {};
             console.log('[PDF Builder Developer] Config loaded:', this.config);
 
