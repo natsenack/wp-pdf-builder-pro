@@ -1372,6 +1372,19 @@ function pdf_builder_save_all_settings_handler() {
         
         // LOG COMPLET DE SAVED_OPTIONS AVANT RÉPONSE
         error_log('PDF Builder SAVE ALL - COMPLETE SAVED_OPTIONS BEFORE RESPONSE:');
+        error_log('DUMPING ENTIRE saved_options ARRAY FOR DEBUG:');
+        error_log(print_r($saved_options, true));
+        
+        // Check specifically for debug_javascript fields
+        $debug_js_variants = ['debug_javascript', 'pdf_builder_debug_javascript', 'debugjavascript'];
+        foreach ($debug_js_variants as $variant) {
+            if (isset($saved_options[$variant])) {
+                error_log("✓ FOUND DEBUG JS FIELD: saved_options['{$variant}'] = '" . $saved_options[$variant] . "'");
+            } else {
+                error_log("✗ NOT FOUND: saved_options['{$variant}']");
+            }
+        }
+        
         foreach ($saved_options as $key => $value) {
             error_log("  [{$key}] = '{$value}'");
             if (strpos($key, 'debug') !== false) {
