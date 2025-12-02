@@ -159,8 +159,8 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     // Délai minimal pour permettre au menu de se rendre
     const timer = setTimeout(() => {
       document.addEventListener('mousedown', handleClickOutside, { passive: true });
-      document.addEventListener('contextmenu', handleContextMenu);
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('contextmenu', handleContextMenu, { passive: true });
+      document.addEventListener('keydown', handleEscape, { passive: true });
     }, 50);
 
     return () => {

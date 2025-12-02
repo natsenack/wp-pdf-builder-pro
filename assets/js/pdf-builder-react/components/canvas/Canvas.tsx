@@ -1440,7 +1440,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       // Le canvas se re-rendra automatiquement grâce aux dépendances du useEffect principal
     };
 
-    window.addEventListener('pdfBuilderCanvasBgColorChanged', handleBgColorChange as EventListener);
+    window.addEventListener('pdfBuilderCanvasBgColorChanged', handleBgColorChange as EventListener, { passive: true });
 
     return () => {
       window.removeEventListener('pdfBuilderCanvasBgColorChanged', handleBgColorChange as EventListener);
@@ -2817,7 +2817,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload, { passive: true });
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [state.template.isModified]);
 

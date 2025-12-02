@@ -327,7 +327,7 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
         isUpdatingFromEventRef.current = false;
       }, 100);
     };
-    window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
+    window.addEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate, { passive: true });
     return () => window.removeEventListener('pdfBuilderCanvasSettingsUpdated', handleSettingsUpdate);
   }, []);
 

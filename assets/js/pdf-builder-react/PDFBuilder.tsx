@@ -37,7 +37,7 @@ export function PDFBuilder({
       setDimensions({ width, height });
     };
 
-    document.addEventListener('pdfBuilderUpdateCanvasDimensions', handleUpdateDimensions as EventListener);
+    document.addEventListener('pdfBuilderUpdateCanvasDimensions', handleUpdateDimensions as EventListener, { passive: true });
     console.log('✅ PDFBuilder: Dimension change listener added');
 
     return () => {

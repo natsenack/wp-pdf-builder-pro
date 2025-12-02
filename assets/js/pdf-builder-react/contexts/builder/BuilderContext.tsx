@@ -657,7 +657,7 @@ export function BuilderProvider({ children, initialState: initialStateProp }: Bu
       }
     };
 
-    document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
+    document.addEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener, { passive: true });
     return () => {
       document.removeEventListener('pdfBuilderLoadTemplate', handleLoadTemplate as EventListener);
     };
