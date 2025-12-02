@@ -1255,9 +1255,18 @@ function pdf_builder_save_all_settings_handler() {
         error_log("BEFORE CHECKBOX PROCESSING - pdf_builder_debug_javascript in POST: " . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
 
         foreach ($checkbox_fields as $field) {
-            if (!isset($_POST[$field])) {
-                $old_value = get_option('pdf_builder_' . $field, 'NOT_SET');
-                update_option('pdf_builder_' . $field, 0);
+            // Vérifier AVEC et SANS le préfixe pdf_builder_
+            $post_key_with_prefix = 'pdf_builder_' . $field;
+            $post_key_without_prefix = $field;
+            $post_key_checked = isset($_POST[$post_key_with_prefix]) ? $post_key_with_prefix : (isset($_POST[$post_key_without_prefix]) ? $post_key_without_prefix : null);
+            $is_checked = $post_key_checked !== null;
+            
+            // La clé réelle de l'option en base de données
+            $option_key = 'pdf_builder_' . $field;
+            
+            if (!$is_checked) {
+                $old_value = get_option($option_key, 'NOT_SET');
+                update_option($option_key, 0);
                 $saved_count++;
                 error_log("UNCHECKED CHECKBOX [{$field}]: old_value='{$old_value}' -> set to '0'");
                 
@@ -1266,11 +1275,15 @@ function pdf_builder_save_all_settings_handler() {
                     error_log("DEBUG_JAVASCRIPT SET TO 0 (was unchecked)");
                 }
             } else {
-                error_log("CHECKBOX WAS SET [{$field}]: " . $_POST[$field]);
+                $checked_value = $_POST[$post_key_checked];
+                $sanitized = $checked_value === '1' || $checked_value === 'true' ? 1 : 0;
+                update_option($option_key, $sanitized);
+                $saved_count++;
+                error_log("CHECKBOX WAS SET [{$field}] from POST['{$post_key_checked}'] = '{$checked_value}' -> sanitized to '{$sanitized}'");
                 
                 // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
                 if ($field === 'debug_javascript') {
-                    error_log("DEBUG_JAVASCRIPT WAS CHECKED: " . $_POST[$field]);
+                    error_log("DEBUG_JAVASCRIPT WAS CHECKED and SAVED: {$sanitized}");
                 }
             }
         }
