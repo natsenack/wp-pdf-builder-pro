@@ -129,6 +129,23 @@
         // Global config from PHP
         const PDF_BUILDER_CONFIG = <?php echo json_encode($js_config); ?>;
 
+        // Initialize notification functions if not already defined
+        if (typeof window.showSuccessNotification === 'undefined') {
+            window.showSuccessNotification = function(message) {
+                console.log('✅ Success:', message);
+                // You can implement a proper notification system here
+                alert('Success: ' + message);
+            };
+        }
+
+        if (typeof window.showErrorNotification === 'undefined') {
+            window.showErrorNotification = function(message) {
+                console.error('❌ Error:', message);
+                // You can implement a proper notification system here
+                alert('Error: ' + message);
+            };
+        }
+
         /**
          * MAIN SETTINGS CONTROLLER CLASS
          * Centralized control for all settings functionality
