@@ -198,6 +198,10 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     // Already prefixed, save as-is
                     $option_key = $key;
                     $option_value = sanitize_text_field($value ?? '');
+                } elseif (strpos($key, 'debug_') === 0) {
+                    // Debug fields need pdf_builder_ prefix
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = sanitize_text_field($value ?? '');
                 } else {
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = sanitize_text_field($value ?? '');
@@ -212,6 +216,10 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
+                    $option_value = intval($value ?? 0);
+                } elseif (strpos($key, 'debug_') === 0) {
+                    // Debug fields need pdf_builder_ prefix
+                    $option_key = 'pdf_builder_' . $key;
                     $option_value = intval($value ?? 0);
                 } else {
                     $option_key = 'pdf_builder_' . $key;
@@ -228,6 +236,10 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     // Already prefixed, save as-is
                     $option_key = $key;
                     $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
+                } elseif (strpos($key, 'debug_') === 0) {
+                    // Debug fields need pdf_builder_ prefix
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
                 } else {
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
@@ -236,10 +248,13 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 $saved_count++;
                 // DEBUG: Log bool field processing
                 error_log("[AJAX DEBUG] Bool field processed: key='$key', option_key='$option_key', value='$option_value', isset=" . (isset($_POST[$key]) ? 'true' : 'false') . ", POST_value='" . ($_POST[$key] ?? 'null') . "'");
-                
+
                 // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
                 if (strpos($key, 'debug_javascript') !== false) {
                     error_log("[AJAX DEBUG JAVASCRIPT] Processing debug_javascript field: key='$key', option_key='$option_key', value='$option_value'");
+                    // VÉRIFIER LA SAUVEGARDE EN BDD APRÈS UPDATE
+                    $db_value_after = get_option($option_key, 'NOT_FOUND_AFTER_UPDATE');
+                    error_log("[AJAX DEBUG JAVASCRIPT] VERIFICATION BDD APRES SAUVEGARDE: get_option('$option_key') = '$db_value_after'");
                 }
             } elseif (in_array($key, $field_rules['array_fields'])) {
                 if (is_array($value)) {
