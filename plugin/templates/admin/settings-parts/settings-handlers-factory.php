@@ -155,12 +155,13 @@ function pdf_builder_initialize_all_settings_handlers() {
     pdf_builder_register_settings_handler('templates', []);
 }
 
-// Initialiser les handlers au chargement du plugin admin
-if (is_admin()) {
-    add_action('admin_init', 'pdf_builder_initialize_all_settings_handlers', 1);
-    
-    // Handler pour la sauvegarde d'onglet spécifique (utilisé par le système JavaScript moderne)
-    add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
+// Initialiser les handlers - IMPORTANT: Utiliser 'init' au lieu de 'admin_init'
+// pour que les actions AJAX soient correctement enregistrées
+add_action('init', 'pdf_builder_initialize_all_settings_handlers', 1);
+
+// Handler pour la sauvegarde d'onglet spécifique (utilisé par le système JavaScript moderne)
+// IMPORTANT: Enregistrer directement, pas dans un hook admin_init
+add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
         try {
             // Vérifier les permissions
             if (!current_user_can('manage_options')) {
@@ -240,6 +241,5 @@ if (is_admin()) {
             error_log('PDF Builder Tab Settings Save Error: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur lors de la sauvegarde des paramètres']);
         }
-    });
-}
+});
 ?>
