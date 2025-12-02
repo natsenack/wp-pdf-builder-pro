@@ -3,6 +3,7 @@
      * PDF Builder Pro - Main Settings Logic (CENTRALIZED JS VERSION)
      * Core settings processing with CLEAN, CENTRALIZED JavaScript
      * Updated: 2025-12-02 03:25:00 - FORCE CACHE CLEAR
+     * Cache Buster: <?php echo time(); ?>
      */
 
     // Logs
@@ -123,6 +124,7 @@
      * Clean, organized, and maintainable
      * Version: 2025-12-02-03-25-00 - FORCE CACHE CLEAR
      * Cache Buster: <?php echo time(); ?>
+     * Final Fix: Promise wrapper for jQuery.ajax
      */
 
     (function() {
