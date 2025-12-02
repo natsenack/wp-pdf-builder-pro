@@ -93,6 +93,8 @@
         <div id="templates" class="tab-content"><?php require_once 'settings-templates.php'; ?></div>
         <div id="developpeur" class="tab-content"><?php require_once 'settings-developpeur.php'; ?></div>
     </div>
+    </div>
+    </div>
 
     <div id="pdf-builder-floating-save">
         <button id="pdf-builder-save-button" class="floating-save-btn" type="button">
