@@ -6,7 +6,7 @@ const CompressionPlugin = require('compression-webpack-plugin');
 module.exports = {
   mode: 'production', // Mode production pour l'optimisation
   entry: {
-    'pdf-builder-react': './assets/js/pdf-builder-react/index.js'
+    'pdf-builder-react': './assets/js/pdf-builder-react-wrapper.js'
   },
   target: ['web', 'es6'], // Cibler ES6 pour de meilleures performances
   output: {
