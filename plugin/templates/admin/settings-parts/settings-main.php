@@ -1062,43 +1062,77 @@
         var settingsByTab = {};
 
         /**
-         * Collect tous les champs marqués avec data-settings-field
-         * Organise par onglet via data-settings-tab
+         * Collecte TOUS les champs de chaque onglet actif
+         * Utilise les onglets actifs pour déterminer quels champs collecter
          */
         function collectAllSettings() {
             settingsByTab = {};
 
-            $('[data-settings-field="true"]').each(function() {
-                var field = $(this);
-                var tabId = field.data('settings-tab') || 'general';
-                var fieldName = field.attr('name'); // Utiliser 'name' plutôt que 'id'
-                var fieldValue;
+            // Liste des onglets actifs (ceux qui ont du contenu)
+            var activeTabs = ['general', 'licence', 'systeme', 'acces', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
 
-                if (!fieldName) {
-                    console.warn('⚠️ Champ sans name:', field);
-                    return; // Skip
+            activeTabs.forEach(function(tabId) {
+                // Collecter tous les champs dans cet onglet
+                var tabContainer = $('#' + tabId); // L'ID de l'onglet correspond directement au tabId
+                if (tabContainer.length === 0) {
+                    console.log('⚠️ Conteneur onglet "' + tabId + '" non trouvé');
+                    return; // Passer à l'onglet suivant
                 }
 
-                // Déterminer la valeur selon le type de champ
-                if (field.is(':checkbox')) {
-                    fieldValue = field.is(':checked') ? '1' : '0';
-                } else if (field.is(':radio')) {
-                    fieldValue = field.is(':checked') ? field.val() : null;
-                } else if (field.is('select')) {
-                    fieldValue = field.val();
+                // Collecter tous les types de champs dans cet onglet
+                var fields = tabContainer.find('input, select, textarea');
+
+                console.log('🔍 Recherche dans onglet "' + tabId + '":', fields.length + ' champs trouvés');
+
+                fields.each(function() {
+                    var field = $(this);
+                    var fieldName = field.attr('name');
+                    var fieldValue;
+
+                    if (!fieldName) {
+                        // Essayer avec l'id si pas de name
+                        fieldName = field.attr('id');
+                        if (!fieldName) {
+                            console.warn('⚠️ Champ sans name ni id dans onglet ' + tabId + ':', field);
+                            return; // Skip
+                        }
+                    }
+
+                    // Déterminer la valeur selon le type de champ
+                    if (field.is(':checkbox')) {
+                        fieldValue = field.is(':checked') ? '1' : '0';
+                    } else if (field.is(':radio')) {
+                        // Pour les radios, ne prendre que celle qui est cochée
+                        if (!field.is(':checked')) {
+                            return; // Skip les radios non cochées
+                        }
+                        fieldValue = field.val();
+                    } else if (field.is('select')) {
+                        fieldValue = field.val();
+                    } else if (field.is('textarea')) {
+                        fieldValue = field.val();
+                    } else if (field.is('input[type="hidden"], input[type="text"], input[type="email"], input[type="number"], input[type="password"]')) {
+                        fieldValue = field.val();
+                    } else {
+                        // Autres types de input (comme file, etc.) - ignorer
+                        return;
+                    }
+
+                    // Initialiser l'onglet s'il n'existe pas
+                    if (!settingsByTab[tabId]) {
+                        settingsByTab[tabId] = {};
+                    }
+
+                    // Stocker la valeur avec le nom du champ (le handler PHP le préfixera avec pdf_builder_)
+                    settingsByTab[tabId][fieldName] = fieldValue || '';
+                    console.log('✓ Collecté ' + tabId + '.' + fieldName + ' = "' + (fieldValue || '') + '"');
+                });
+
+                // Si aucun champ trouvé pour cet onglet, le marquer comme vide
+                if (!settingsByTab[tabId] || Object.keys(settingsByTab[tabId]).length === 0) {
+                    console.log('ℹ️ Aucun champ trouvé pour onglet "' + tabId + '"');
                 } else {
-                    fieldValue = field.val();
-                }
-
-                // Initialiser le tab s'il n'existe pas
-                if (!settingsByTab[tabId]) {
-                    settingsByTab[tabId] = {};
-                }
-
-                // Stocker la valeur avec le nom du champ (le handler PHP le préfixera avec pdf_builder_)
-                if (fieldValue !== null && fieldValue !== undefined) {
-                    settingsByTab[tabId][fieldName] = fieldValue;
-                    console.log('✓ Collecté ' + tabId + '.' + fieldName + ' = ' + fieldValue);
+                    console.log('📊 Onglet "' + tabId + '": ' + Object.keys(settingsByTab[tabId]).length + ' champs collectés');
                 }
             });
 
