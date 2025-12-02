@@ -4,6 +4,8 @@
  * This file acts as the true webpack entry point that exports everything to window
  */
 
+console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react-wrapper.js loading...');
+
 // Import the actual React module
 import * as pdfBuilderReactModule from './pdf-builder-react/index.js';
 
