@@ -1409,7 +1409,13 @@ class PdfBuilderAdmin
                 }
             }
 
-            wp_enqueue_script('pdf-builder-react', $react_script_url, [], $version_param, true);
+            // ✅ Enqueue wrapper script FIRST to create stub pdfBuilderReact on window
+            $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js';
+            $wrap_helper_version = $cache_bust;
+            wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, [], $wrap_helper_version, true);
+
+            // Then enqueue the actual bundle
+            wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
 
             // ✅ Enqueue the initialization helper script that checks for pdfBuilderReact
             $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
