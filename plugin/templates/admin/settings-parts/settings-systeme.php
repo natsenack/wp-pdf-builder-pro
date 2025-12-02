@@ -200,7 +200,6 @@
                         </main>
 
                     <!-- Section Maintenance Système -->
-                    <section class="system-maintenance-section">
                         <div class="system-section-content">
                             <table class="form-table">
                                 <tr>
@@ -270,7 +269,6 @@
                                 </div>
                             </article>
                         </div>
-                    </section>
                 </section>
                 <!-- Section Sauvegarde -->
                 <section class="system-backup-section">
