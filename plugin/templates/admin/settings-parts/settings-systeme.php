@@ -198,81 +198,80 @@
                                 </tr>
                             </table>
                         </main>
+
+                    <!-- Section Maintenance Système -->
+                    <section class="system-maintenance-section">
+                        <div class="system-section-content">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
+                                    <td>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <p class="description">Active la maintenance automatique hebdomadaire</p>
+                                        <div class="maintenance-info-box">
+                                            <strong>ℹ️ Ce que fait la maintenance automatique :</strong><br>
+                                            • Optimisation de la base de données (réparation des tables)<br>
+                                            • Vérification et réparation des templates<br>
+                                            • Suppression des fichiers temporaires (+24h)<br>
+                                            • Nettoyage du cache ancien (+7 jours)<br>
+                                            <em>Exécution tous les dimanches à 02:00. Les logs sont enregistrés automatiquement.</em>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Métriques de maintenance -->
+                            <article class="maintenance-status-info">
+                                <header>
+                                    <h4>📊 État de la maintenance</h4>
+                                </header>
+                                <div class="metric-grid">
+                                    <div class="maintenance-metric-card" data-metric="last-run">
+                                        <div class="metric-value">
+                                            <?php
+                                            $last_maintenance = get_option('pdf_builder_last_maintenance', 'Jamais');
+                                            if ($last_maintenance !== 'Jamais') {
+                                                $last_maintenance = human_time_diff(strtotime($last_maintenance)) . ' ago';
+                                            }
+                                            echo $last_maintenance;
+                                            ?>
+                                        </div>
+                                        <div class="metric-label">Dernière exécution</div>
+                                        <div class="metric-hint">Cliquez pour lancer</div>
+                                    </div>
+                                    <div class="maintenance-metric-card" data-metric="next-run">
+                                        <div class="metric-value">
+                                            <?php
+                                            $next_maintenance = get_option('pdf_builder_next_maintenance', 'Non planifiée');
+                                            if ($next_maintenance !== 'Non planifiée') {
+                                                $next_maintenance = date_i18n('d/m/Y H:i', strtotime($next_maintenance));
+                                            }
+                                            echo $next_maintenance;
+                                            ?>
+                                        </div>
+                                        <div class="metric-label">Prochaine exécution</div>
+                                        <div class="metric-hint">Cliquez pour configurer</div>
+                                    </div>
+                                    <div class="maintenance-metric-card" data-metric="status">
+                                        <div class="metric-value">
+                                            <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'Activée' : 'Désactivée'; ?>
+                                        </div>
+                                        <div class="metric-label">Maintenance auto</div>
+                                        <div class="metric-hint">Cliquez pour basculer</div>
+                                    </div>
+                                    <div class="maintenance-metric-card" data-metric="manual">
+                                        <div class="metric-value">Manuel</div>
+                                        <div class="metric-label">Lancement manuel</div>
+                                        <div class="metric-hint">Cliquez pour exécuter</div>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    </section>
                 </section>
-
-                <!-- Section Maintenance Système -->
-                <section class="system-maintenance-section">
-                    <div class="system-section-content">
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="description">Active la maintenance automatique hebdomadaire</p>
-                                    <div class="maintenance-info-box">
-                                        <strong>ℹ️ Ce que fait la maintenance automatique :</strong><br>
-                                        • Optimisation de la base de données (réparation des tables)<br>
-                                        • Vérification et réparation des templates<br>
-                                        • Suppression des fichiers temporaires (+24h)<br>
-                                        • Nettoyage du cache ancien (+7 jours)<br>
-                                        <em>Exécution tous les dimanches à 02:00. Les logs sont enregistrés automatiquement.</em>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-
-                        <!-- Métriques de maintenance -->
-                        <article class="maintenance-status-info">
-                            <header>
-                                <h4>📊 État de la maintenance</h4>
-                            </header>
-                            <div class="metric-grid">
-                                <div class="maintenance-metric-card" data-metric="last-run">
-                                    <div class="metric-value">
-                                        <?php
-                                        $last_maintenance = get_option('pdf_builder_last_maintenance', 'Jamais');
-                                        if ($last_maintenance !== 'Jamais') {
-                                            $last_maintenance = human_time_diff(strtotime($last_maintenance)) . ' ago';
-                                        }
-                                        echo $last_maintenance;
-                                        ?>
-                                    </div>
-                                    <div class="metric-label">Dernière exécution</div>
-                                    <div class="metric-hint">Cliquez pour lancer</div>
-                                </div>
-                                <div class="maintenance-metric-card" data-metric="next-run">
-                                    <div class="metric-value">
-                                        <?php
-                                        $next_maintenance = get_option('pdf_builder_next_maintenance', 'Non planifiée');
-                                        if ($next_maintenance !== 'Non planifiée') {
-                                            $next_maintenance = date_i18n('d/m/Y H:i', strtotime($next_maintenance));
-                                        }
-                                        echo $next_maintenance;
-                                        ?>
-                                    </div>
-                                    <div class="metric-label">Prochaine exécution</div>
-                                    <div class="metric-hint">Cliquez pour configurer</div>
-                                </div>
-                                <div class="maintenance-metric-card" data-metric="status">
-                                    <div class="metric-value">
-                                        <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'Activée' : 'Désactivée'; ?>
-                                    </div>
-                                    <div class="metric-label">Maintenance auto</div>
-                                    <div class="metric-hint">Cliquez pour basculer</div>
-                                </div>
-                                <div class="maintenance-metric-card" data-metric="manual">
-                                    <div class="metric-value">Manuel</div>
-                                    <div class="metric-label">Lancement manuel</div>
-                                    <div class="metric-hint">Cliquez pour exécuter</div>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </section>
-
                 <!-- Section Sauvegarde -->
                 <section class="system-backup-section">
                     <header>
@@ -425,4 +424,3 @@
                         Les modifications ne sont appliquées que lorsque vous cliquez sur ce bouton.
                     </p>
                 </aside>
-            </section>
