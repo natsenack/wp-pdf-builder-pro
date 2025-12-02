@@ -2453,7 +2453,8 @@ input:checked + .toggle-slider:before {
 }
 
 /* === BOUTON FLOTTANT DE SAUVEGARDE UNIVERSELLE === */
-#floating-save-container {
+#floating-save-container,
+#pdf-builder-floating-save {
     position: fixed;
     bottom: 30px;
     right: 30px;
@@ -2506,7 +2507,8 @@ input:checked + .toggle-slider:before {
 
 /* Responsive pour mobile */
 @media (max-width: 768px) {
-    #floating-save-container {
+    #floating-save-container,
+    #pdf-builder-floating-save {
         bottom: 15px;
         right: 15px;
     }
