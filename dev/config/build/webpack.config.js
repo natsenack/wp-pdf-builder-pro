@@ -94,26 +94,23 @@ module.exports = {
             drop_debugger: true,
             pure_funcs: [],
             pure_getters: true,
-            unsafe: false,  // More conservative
+            unsafe: false,
             unsafe_comps: false,
             warnings: false,
-            // Keep React hook references intact
-            passes: 1,  // Reduce optimization passes
-            unused: true  // Remove unused vars but keep properties
+            passes: 1
           },
           mangle: {
             safari10: true,
-            // Keep React property names intact
-            properties: {
-              regex: /^use/,  // Don't mangle properties starting with 'use'
-              keep_quoted: true
-            }
+            // Keep all hook names intact - don't mangle at all
+            keep_fnames: true
           },
           output: {
             comments: false,
             beautify: false
           }
-        }
+        },
+        // Exclude react shim from minification entirely
+        exclude: [/react-shim-wrapper/]
       })
     ],
     usedExports: true,
