@@ -36,6 +36,7 @@
         console.log('🔍 [pdf-builder-wrap] Checking for real module...');
         console.log('🔍 [pdf-builder-wrap] window.pdfBuilderReact exists:', !!window.pdfBuilderReact);
         if (window.pdfBuilderReact) {
+            console.log('🔍 [pdf-builder-wrap] window.pdfBuilderReact:', window.pdfBuilderReact);
             console.log('🔍 [pdf-builder-wrap] initPDFBuilderReact type:', typeof window.pdfBuilderReact.initPDFBuilderReact);
             console.log('🔍 [pdf-builder-wrap] _isWebpackBundle:', window.pdfBuilderReact._isWebpackBundle);
         }
