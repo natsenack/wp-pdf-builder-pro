@@ -48,8 +48,8 @@ function pdf_builder_register_settings_handler($tab_id, $fields = [], $sanitizer
                 $verify_modern = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_ajax');
                 $verify_legacy = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_legacy');
                 
-                error_log('  Vérification moderne (pdf_builder_settings_ajax): ' . ($verify_modern === false ? 'FAILED' : ($verify_modern === 1 ? 'VALID' : 'FAILED_DUPLICATE')));
-                error_log('  Vérification legacy (pdf_builder_settings_legacy): ' . ($verify_legacy === false ? 'FAILED' : ($verify_legacy === 1 ? 'VALID' : 'FAILED_DUPLICATE')));
+                error_log('  Vérification moderne (pdf_builder_settings_ajax): ' . var_export($verify_modern, true));
+                error_log('  Vérification legacy (pdf_builder_settings_legacy): ' . var_export($verify_legacy, true));
                 
                 $nonce_valid = $verify_modern || $verify_legacy;
             }
@@ -182,8 +182,8 @@ add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
                 $verify_modern = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_ajax');
                 $verify_legacy = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_legacy');
                 
-                error_log('  Vérification moderne (pdf_builder_settings_ajax): ' . ($verify_modern === false ? 'FAILED' : ($verify_modern === 1 ? 'VALID' : 'FAILED_DUPLICATE')));
-                error_log('  Vérification legacy (pdf_builder_settings_legacy): ' . ($verify_legacy === false ? 'FAILED' : ($verify_legacy === 1 ? 'VALID' : 'FAILED_DUPLICATE')));
+                error_log('  Vérification moderne (pdf_builder_settings_ajax): ' . var_export($verify_modern, true));
+                error_log('  Vérification legacy (pdf_builder_settings_legacy): ' . var_export($verify_legacy, true));
                 
                 $nonce_valid = $verify_modern || $verify_legacy;
             }
