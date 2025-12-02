@@ -19,39 +19,12 @@ console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react/index.js starting execution
 console.log('🔧 [WEBPACK BUNDLE] React available:', typeof React);
 console.log('🔧 [WEBPACK BUNDLE] createRoot available:', typeof ReactDOM?.createRoot);
 
-// ✅ CRITICAL: Ensure React hooks are available globally for Babel JSX transform
-// Babel with automatic runtime injects code like: React.useState, React.useEffect, etc.
-// These MUST be available when the bundle code runs
-if (typeof window !== 'undefined' && window.React) {
-  const ReactHooks = {
-    useState: React.useState,
-    useEffect: React.useEffect,
-    useRef: React.useRef,
-    useCallback: React.useCallback,
-    useMemo: React.useMemo,
-    useContext: React.useContext,
-    useReducer: React.useReducer,
-    useLayoutEffect: React.useLayoutEffect,
-    useId: React.useId,
-    useTransition: React.useTransition,
-    useDeferredValue: React.useDeferredValue,
-    useImperativeHandle: React.useImperativeHandle,
-    useDebugValue: React.useDebugValue,
-    useSyncExternalStore: React.useSyncExternalStore,
-    createElement: React.createElement,
-    Fragment: React.Fragment,
-    isValidElement: React.isValidElement
-  };
-  
-  // Merge hooks into window.React so they're always available
-  Object.assign(window.React, ReactHooks);
-  
-  // Also create a global fallback for direct access
-  if (typeof globalThis !== 'undefined') {
-    globalThis.React = window.React;
-  }
-  
-  console.log('✅ [WEBPACK BUNDLE] React hooks ensured on window.React and globalThis');
+// ✅ Exports React from window for fallback access
+if (typeof window !== 'undefined' && !window.React) {
+  window.React = React;
+}
+if (typeof window !== 'undefined' && !window.ReactDOM) {
+  window.ReactDOM = ReactDOM;
 }
 
 // Imports synchrones des composants lourds (plus de lazy loading pour éviter les chunks webpack)
