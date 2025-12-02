@@ -1379,53 +1379,11 @@ function pdf_builder_save_all_settings_handler() {
             error_log('PDF Builder SAVE ALL - Main settings updated with ' . count($main_settings) . ' fields');
 
             error_log('PDF Builder SAVE ALL - Final saved_options count: ' . count($saved_options));
-            error_log('PDF Builder SAVE ALL - Sample saved_options keys: ' . implode(', ', array_slice(array_keys($saved_options), 0, 5)));
-            error_log('PDF Builder SAVE ALL - Critical developer fields: ' . json_encode([
-                'developer_enabled' => $saved_options['developer_enabled'] ?? 'NOT_SET',
-                'debug_javascript' => $saved_options['debug_javascript'] ?? 'NOT_SET',
-                'pdf_builder_debug_javascript' => $saved_options['pdf_builder_debug_javascript'] ?? 'NOT_SET'
-            ]));
-            
-            // CRITICAL: Explicit check for debug_javascript in final response
-            error_log('🟢 FINAL CHECK - debug_javascript keys in saved_options:');
-            foreach ($saved_options as $k => $v) {
-                if (strpos($k, 'debug_javascript') !== false) {
-                    error_log("   FOUND: saved_options['{$k}'] = '{$v}'");
-                }
-            }
-            if (!isset($saved_options['debug_javascript']) && !isset($saved_options['pdf_builder_debug_javascript'])) {
-                error_log("   🔴 NOT FOUND: debug_javascript NOT IN SAVED_OPTIONS");
-            }
+            error_log('PDF Builder SAVE ALL - Saved options keys: ' . implode(', ', array_keys($saved_options)));
         } catch (Exception $e) {
             error_log('PDF Builder SAVE ALL - ERROR building saved_options: ' . $e->getMessage());
             $saved_options = ['error' => 'Failed to build saved options: ' . $e->getMessage()];
         }
-
-        error_log('PDF Builder SAVE ALL - About to send response with saved_settings count: ' . count($saved_options));
-        error_log('PDF Builder SAVE ALL - Response data keys: ' . implode(', ', ['saved_count', 'errors', 'saved_settings', 'debug_info']));
-        
-        // LOG COMPLET DE SAVED_OPTIONS AVANT RÉPONSE
-        error_log('PDF Builder SAVE ALL - COMPLETE SAVED_OPTIONS BEFORE RESPONSE:');
-        error_log('DUMPING ENTIRE saved_options ARRAY FOR DEBUG:');
-        error_log(print_r($saved_options, true));
-        
-        // Check specifically for debug_javascript fields
-        $debug_js_variants = ['debug_javascript', 'pdf_builder_debug_javascript', 'debugjavascript'];
-        foreach ($debug_js_variants as $variant) {
-            if (isset($saved_options[$variant])) {
-                error_log("✓ FOUND DEBUG JS FIELD: saved_options['{$variant}'] = '" . $saved_options[$variant] . "'");
-            } else {
-                error_log("✗ NOT FOUND: saved_options['{$variant}']");
-            }
-        }
-        
-        foreach ($saved_options as $key => $value) {
-            error_log("  [{$key}] = '{$value}'");
-            if (strpos($key, 'debug') !== false) {
-                error_log("    ^^^ DEBUG FIELD FOUND ^^^");
-            }
-        }
-        error_log('PDF Builder SAVE ALL - END SAVED_OPTIONS');
 
         // Use wp_send_json_success directly to ensure proper response format
         $response_data = [
@@ -1450,28 +1408,11 @@ function pdf_builder_save_all_settings_handler() {
             ]
         ];
 
+        // ULTIMATE DEBUG: Vérifier le contenu exact avant envoi
+        error_log('🔵 ABOUT TO SEND - saved_options keys: ' . implode(', ', array_keys($saved_options)));
+        error_log('🔵 debug_javascript in saved_options: ' . ($saved_options['debug_javascript'] ?? 'NOT FOUND'));
+
         wp_send_json_success($response_data);
-
-        // Log final de la réponse pour debug
-        error_log('PDF BUILDER SAVE ALL - RESPONSE DATA: ' . json_encode([
-            'saved_count' => $saved_count,
-            'errors' => $errors,
-            'saved_settings' => $saved_options,
-            'debug_info' => [
-                'total_post' => count($_POST),
-                'processed' => count($processed_fields),
-                'saved' => $saved_count
-            ]
-        ]));
-
-        // Debug log détaillé
-        error_log('PDF Builder DEBUG - Analyse détaillée:');
-        error_log('  Total POST: ' . count($_POST));
-        error_log('  Ignorés: ' . count($ignored_fields) . ' - ' . implode(', ', $ignored_fields));
-        error_log('  Traités: ' . count($processed_fields));
-        error_log('  Sauvegardés: ' . $saved_count);
-        error_log('  Erreurs: ' . count($errors));
-        error_log('===== PDF BUILDER SAVE ALL SETTINGS - FIN =====');
 
     } catch (Exception $e) {
         // Debug: Log the exception
