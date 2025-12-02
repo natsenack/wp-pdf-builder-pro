@@ -135,6 +135,12 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
 
         // DEBUG: Log that this function is being executed
         error_log("[AJAX HANDLER] process_all_settings called");
+        error_log("[AJAX HANDLER] POST data received: " . json_encode(array_keys($_POST)));
+
+        // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+        error_log("=== AJAX HANDLER DEBUG JAVASCRIPT ANALYSIS ===");
+        error_log("pdf_builder_debug_javascript in POST: " . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
+        error_log("debug_javascript in POST: " . (isset($_POST['debug_javascript']) ? $_POST['debug_javascript'] : 'NOT_SET'));
 
         // Définir les règles de validation des champs (même que dans settings-main.php)
         $field_rules = [
@@ -157,6 +163,10 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
                 'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
                 'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled', 'pdf_builder_canvas_debug_enabled',
+                // Debug fields - AJOUTÉ POUR CORRIGER LE TOGGLE DEBUG JAVASCRIPT
+                'debug_javascript', 'pdf_builder_debug_javascript', 'debug_javascript_verbose', 'pdf_builder_debug_javascript_verbose',
+                'debug_ajax', 'pdf_builder_debug_ajax', 'debug_performance', 'pdf_builder_debug_performance',
+                'debug_database', 'pdf_builder_debug_database', 'debug_php_errors', 'pdf_builder_debug_php_errors',
                 // Canvas bool fields
                 'canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_guides_enabled', 'canvas_drag_enabled',
                 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts',
@@ -226,6 +236,11 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 $saved_count++;
                 // DEBUG: Log bool field processing
                 error_log("[AJAX DEBUG] Bool field processed: key='$key', option_key='$option_key', value='$option_value', isset=" . (isset($_POST[$key]) ? 'true' : 'false') . ", POST_value='" . ($_POST[$key] ?? 'null') . "'");
+                
+                // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+                if (strpos($key, 'debug_javascript') !== false) {
+                    error_log("[AJAX DEBUG JAVASCRIPT] Processing debug_javascript field: key='$key', option_key='$option_key', value='$option_value'");
+                }
             } elseif (in_array($key, $field_rules['array_fields'])) {
                 if (is_array($value)) {
                     $option_key = 'pdf_builder_' . $key;
