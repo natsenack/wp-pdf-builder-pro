@@ -67,8 +67,6 @@
         <h1><?php _e('⚙️ PDF Builder Pro Settings (JS CENTRALIZED)', 'pdf-builder-pro'); ?></h1>
     </header>
 
-    <div id="pdf-builder-notifications"></div>
-
     <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general">⚙️ General</a>
         <a href="#licence" class="nav-tab" data-tab="licence">🔑 Licence</a>
@@ -141,8 +139,6 @@
                 this.Validator = new SettingsValidator();
                 this.ShapeManager = new SettingsUI();
                 this.SaveManager = new SettingsSaver();
-                this.Notifier = new SettingsNotifier();
-                this.PreviewManager = new SettingsPreview();
             }
 
             init() {
@@ -296,14 +292,12 @@
             constructor() {
                 this.validator = null;
                 this.ui = null;
-                this.notifier = null;
                 this.saveButton = document.getElementById('pdf-builder-save-button');
             }
 
-            setDependencies(validator, ui, notifier) {
+            setDependencies(validator, ui) {
                 this.validator = validator;
                 this.ui = ui;
-                this.notifier = notifier;
             }
 
             bindEvents() {
@@ -346,8 +340,8 @@
                     });
 
                     if (response.success) {
-                        if (this.notifier) {
-                            this.notifier.show('✅ All settings saved successfully!', 'success');
+                        if (window.showSuccessNotification) {
+                            window.showSuccessNotification('✅ All settings saved successfully!');
                         }
                     } else {
                         throw new Error(response.data?.message || 'Save failed');
@@ -355,8 +349,8 @@
 
                 } catch (error) {
                     console.error('Save error:', error);
-                    if (this.notifier) {
-                        this.notifier.show('❌ Error saving settings: ' + error.message, 'error');
+                    if (window.showErrorNotification) {
+                        window.showErrorNotification('❌ Error saving settings: ' + error.message);
                     }
                 } finally {
                     if (this.ui && this.saveButton) {
@@ -369,7 +363,9 @@
                 console.log('💾 Saving tab settings:', tabId);
 
                 if (this.validator && !this.validator.validateTab(tabId)) {
-                    this.notifier?.show('❌ Please fix validation errors', 'error');
+                    if (window.showErrorNotification) {
+                        window.showErrorNotification('❌ Please fix validation errors');
+                    }
                     return;
                 }
 
@@ -388,14 +384,14 @@
                         dataType: 'json'
                     });
 
-                    if (response.success && this.notifier) {
-                        this.notifier.show(`✅ ${tabId.charAt(0).toUpperCase() + tabId.slice(1)} settings saved!`, 'success');
+                    if (response.success && window.showSuccessNotification) {
+                        window.showSuccessNotification(`✅ ${tabId.charAt(0).toUpperCase() + tabId.slice(1)} settings saved!`);
                     }
 
                 } catch (error) {
                     console.error('Tab save error:', error);
-                    if (this.notifier) {
-                        this.notifier.show('❌ Error saving settings', 'error');
+                    if (window.showErrorNotification) {
+                        window.showErrorNotification('❌ Error saving settings');
                     }
                 }
             }
@@ -458,43 +454,6 @@
         }
 
         /**
-         * SETTINGS NOTIFIER
-         * Centralized notification system
-         */
-        class SettingsNotifier {
-            constructor() {
-                this.container = document.getElementById('pdf-builder-notifications');
-            }
-
-            show(message, type = 'info') {
-                if (!this.container) return;
-
-                const notification = document.createElement('div');
-                notification.className = `notice notice-${type} is-dismissible`;
-                notification.innerHTML = `
-                    <p>${message}</p>
-                    <button type="button" class="notice-dismiss">
-                        <span class="screen-reader-text">Dismiss this notice.</span>
-                    </button>
-                `;
-
-                // Add dismiss functionality
-                notification.querySelector('.notice-dismiss').addEventListener('click', () => {
-                    notification.remove();
-                });
-
-                this.container.appendChild(notification);
-
-                // Auto-dismiss after 5 seconds
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 5000);
-            }
-        }
-
-        /**
          * SETTINGS PREVIEW MANAGER
          * Handles live previews for settings
          */
@@ -544,8 +503,7 @@
             // Connect components
             settingsController.SaveManager.setDependencies(
                 settingsController.Validator,
-                settingsController.ShapeManager,
-                settingsController.Notifier
+                settingsController.ShapeManager
             );
         });
 
@@ -621,32 +579,6 @@
         color: #dc3232;
         font-size: 12px;
         margin-top: 4px;
-    }
-
-    /* Notifications styling */
-    #pdf-builder-notifications .notice {
-        margin: 20px 0;
-        padding: 12px 16px;
-        border-radius: 4px;
-        border-left: 4px solid;
-    }
-
-    #pdf-builder-notifications .notice-success {
-        border-left-color: #46b450;
-        background: #d4edda;
-        color: #155724;
-    }
-
-    #pdf-builder-notifications .notice-error {
-        border-left-color: #dc3232;
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    #pdf-builder-notifications .notice:notice-info {
-        border-left-color: #00a0d2;
-        background: #d1ecf1;
-        color: #0e4459;
     }
 </style>
 <?php
