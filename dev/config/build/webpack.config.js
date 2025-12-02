@@ -13,7 +13,12 @@ module.exports = {
     filename: '[name].js',
     path: path.resolve(__dirname, '../../../plugin/assets/js/dist'),
     clean: true,
-    globalObject: 'this'
+    globalObject: 'this',
+    library: {
+      name: 'pdfBuilderReact',
+      type: 'umd',
+      umdNamedDefine: false
+    }
   },
   externals: {
     // ❌ REMOVED: React and ReactDOM declared as external

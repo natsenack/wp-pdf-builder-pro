@@ -161,28 +161,7 @@ const exports = {
   updateCanvasDimensions
 };
 
-if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
+if (DEBUG_VERBOSE) debugLog('🌐 Exporting for webpack UMD...');
 
-// Wrapper IIFE for immediate execution
-(function() {
-  if (typeof window === 'undefined') {
-
-    return;
-  }
-
-  // CRITICAL: Assign the exports object directly and immediately
-  window.pdfBuilderReact = exports;
-  
-  // Verify immediately
-  if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-    // Silent success - editor is ready
-  } else {
-
-  }
-}).call(window);
-
-if (DEBUG_VERBOSE) debugLog('🎉 PDF Builder React bundle execution completed');
-
-// NO MORE EXPORTS - webpack will handle this differently
-// Removed: export default exports;
-// Removed: if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') { module.exports = exports; }
+// Export for webpack UMD library output
+export default exports;
