@@ -24,8 +24,7 @@ require_once $settings_parts_dir . 'settings-canvas-params.php';
 require_once $settings_parts_dir . 'settings-styles.php';
 require_once $settings_parts_dir . 'settings-scripts.php';
 
-// Include modal components
-require_once $settings_parts_dir . 'settings-modals.php';
+// Modals are now included inside settings-main.php (inside the main wrapper)
 
 // Dummy script to close any unclosed script tags
 ?>
