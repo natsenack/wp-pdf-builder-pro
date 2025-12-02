@@ -96,7 +96,7 @@
     <aside id="pdf-builder-floating-save">
         <button id="pdf-builder-save-button" class="floating-save-btn" type="button">
             <span class="dashicons dashicons-cloud-upload"></span>
-            <span class="btn-text">Enregistrer Everything</span>
+            <span class="btn-text">Enregistrer Tout</span>
             <span class="spinner" style="display: none;"></span>
         </button>
     </aside>
@@ -116,7 +116,7 @@
             ]
         ],
         'debug_mode' => defined('WP_DEBUG') && WP_DEBUG
-];
+    ];
 ?>
 
 <script>

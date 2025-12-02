@@ -2,9 +2,9 @@
             <h2>👥 Gestion des Rôles et Permissions</h2>
 
             <!-- Message de confirmation que l'onglet est chargé -->
-            <div style="margin-bottom: 20px; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
+            <aside style="margin-bottom: 20px; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
                 ✅ Section Rôles chargée - Utilise le bouton "Enregistrer" flottant pour sauvegarder
-            </div>
+            </aside>
 
             <?php
             global $wp_roles;
@@ -37,7 +37,7 @@
             <section id="access-settings-container" aria-label="Paramètres d'accès">
 
                 <!-- Boutons de contrôle rapide -->
-                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+                <nav style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
                     <button type="button" id="select-all-roles" class="button button-secondary" style="margin-right: 5px;">
                         Sélectionner Tout
                     </button>
@@ -50,7 +50,7 @@
                     <span class="description" style="margin-left: 10px;">
                         Sélectionnés: <strong id="selected-count"><?php echo count($allowed_roles); ?></strong> rôle(s)
                     </span>
-                </div>
+                </nav>
 
                 <!-- Boutons toggle pour les rôles -->
                 <div class="roles-toggle-list">
@@ -61,18 +61,18 @@
                         $is_admin = $role_key === 'administrator';
                         ?>
                         <article class="role-toggle-item <?php echo $is_admin ? 'admin-role' : ''; ?>">
-                            <div class="role-info">
-                                <div class="role-name">
+                            <header class="role-info">
+                                <h5 class="role-name">
                                     <?php echo esc_html($role_name); ?>
                                     <?php if ($is_admin) :
                                         ?>
                                         <span class="admin-badge">🔒 Toujours actif</span>
                                         <?php
                                     endif; ?>
-                                </div>
-                                <div class="role-description"><?php echo esc_html($description); ?></div>
-                                <div class="role-key"><?php echo esc_html($role_key); ?></div>
-                            </div>
+                                </h5>
+                                <p class="role-description"><?php echo esc_html($description); ?></p>
+                                <small class="role-key"><?php echo esc_html($role_key); ?></small>
+                            </header>
                             <div class="toggle-switch">
                                 <input type="checkbox"
                                        id="role_<?php echo esc_attr($role_key); ?>"
@@ -128,13 +128,10 @@
                         gap: 8px;
                     }
 
-                    .admin-badge {
-                        font-size: 12px;
-                        color: #d63384;
-                        font-weight: 500;
-                        background: rgba(214, 51, 132, 0.1);
-                        padding: 2px 6px;
-                        border-radius: 4px;
+                    .role-name,
+                    .role-description,
+                    .role-key {
+                        margin: 0;
                     }
 
                     .role-description {

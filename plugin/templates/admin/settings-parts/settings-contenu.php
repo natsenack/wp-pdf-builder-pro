@@ -68,16 +68,16 @@
                     <div class="canvas-settings-grid">
                         <!-- Carte Dimensions & Format -->
                         <article class="canvas-card" data-category="dimensions">
-                            <div class="canvas-card-header">
+                            <header class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">📐</span>
                                 </div>
                                 <h4>Dimensions & Format</h4>
-                            </div>
-                            <div class="canvas-card-content">
+                            </header>
+                            <main class="canvas-card-content">
                                 <p>Définissez la taille, la résolution et le format de votre canvas de conception.</p>
-                            </div>
-                            <div class="canvas-card-preview">
+                            </main>
+                            <aside class="canvas-card-preview">
                                 <div class="preview-format">
                                     <div >
                                         <span id="card-canvas-width">794</span>×
@@ -87,12 +87,12 @@
                                         96 DPI - A4 (210.0×297.0mm)
                                     </span>
                                 </div>
-                            </div>
-                            <div class="canvas-card-actions">
+                            </aside>
+                            <footer class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
                                     <span>⚙️</span> Configurer
                                 </button>
-                            </div>
+                            </footer>
                         </article>
 
                         <!-- Carte Apparence -->
