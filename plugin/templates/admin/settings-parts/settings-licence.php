@@ -1,23 +1,9 @@
-<?php // Licence tab content - Updated: AJAX centralized 2025-12-02 ?>
+﻿<?php // Licence tab content - Updated: AJAX centralized 2025-12-02 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
             <section id="licence-container" aria-label="Gestion de la Licence">
                 <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h2>
 
-                <style>
-                    /* Classe commune pour les sections de l'onglet licence */
-                    .licence-section {
-                        border-radius: 12px;
-                        padding: 20px;
-                        margin-bottom: 20px;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                    }
-                    .licence-section h3 {
-                        margin-top: 0;
-                        border-bottom: 2px solid #007cba;
-                        padding-bottom: 8px;
-                        font-size: 18px;
-                    }
-                </style>
+                
 
                 <?php
                     $license_status = get_option('pdf_builder_license_status', 'free');
@@ -845,52 +831,7 @@
                     </section>
 
                     <!-- Styles pour les toggles -->
-                    <style>
-                        .toggle-switch {
-                            position: relative;
-                            display: inline-block;
-                            width: 50px;
-                            height: 24px;
-                        }
-
-                        .toggle-switch input {
-                            opacity: 0;
-                            width: 0;
-                            height: 0;
-                        }
-
-                        .toggle-slider {
-                            position: absolute;
-                            cursor: pointer;
-                            top: 0;
-                            left: 0;
-                            right: 0;
-                            bottom: 0;
-                            background-color: #ccc;
-                            transition: 0.3s;
-                            border-radius: 24px;
-                        }
-
-                        .toggle-slider:before {
-                            position: absolute;
-                            content: "";
-                            height: 18px;
-                            width: 18px;
-                            left: 3px;
-                            bottom: 3px;
-                            background-color: white;
-                            transition: 0.3s;
-                            border-radius: 50%;
-                        }
-
-                        input:checked + .toggle-slider {
-                            background-color: #4caf50;
-                        }
-
-                        input:checked + .toggle-slider:before {
-                            transform: translateX(26px);
-                        }
-                    </style>
+                    
 
                 </section>
 
@@ -953,3 +894,4 @@
                     }
                 });
                 </script>
+

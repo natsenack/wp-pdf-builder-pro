@@ -1,64 +1,18 @@
-<?php // Content tab content - Updated: 2025-11-18 20:20:00 ?>
+﻿<?php // Content tab content - Updated: 2025-11-18 20:20:00 ?>
 
-<style>
-    /* Toggle switch styles */
-    .toggle-switch {
-        position: relative;
-        display: inline-block;
-        width: 50px;
-        height: 24px;
-        cursor: pointer;
-    }
 
-    .toggle-switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .toggle-slider {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        border-radius: 24px;
-        transition: 0.3s;
-    }
-
-    .toggle-slider:before {
-        position: absolute;
-        content: "";
-        height: 18px;
-        width: 18px;
-        left: 3px;
-        bottom: 3px;
-        background-color: white;
-        border-radius: 50%;
-        transition: 0.3s;
-    }
-
-    input:checked + .toggle-slider {
-        background-color: #007cba;
-    }
-
-    input:checked + .toggle-slider:before {
-        transform: translateX(26px);
-    }
-</style>
 
             <h2>🎨 Contenu & Design</h2>
 
             <!-- Section Canvas -->
-            <section class="canvas-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 10px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
-                    <span style="display: inline-flex; align-items: center; gap: 10px;">
+            <section class="contenu-canvas-section">
+                <h3>
+                    <span>
                         🎨 Canvas
                     </span>
                 </h3>
 
-                <p style="color: #666; margin-bottom: 20px;">Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
+                <p>Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
 
                 <form method="post" id="canvas-form">
                     <?php wp_nonce_field('pdf_builder_canvas_nonce', 'pdf_builder_canvas_nonce'); ?>
@@ -392,11 +346,11 @@
             </section>
 
                 <!-- Section Templates -->
-            <section class="templates-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
-                    <span style="display: inline-flex; align-items: center; gap: 10px;">
+            <section class="contenu-templates-section">
+                <h3>
+                    <span>
                         📋 Templates
-                        <span id="template-library-indicator" class="template-library-indicator" style="font-size: 12px; background: <?php echo get_option('pdf_builder_template_library_enabled', true) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_template_library_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
+                        <span id="template-library-indicator" class="template-library-indicator" style="background: <?php echo get_option('pdf_builder_template_library_enabled', true) ? '#28a745' : '#dc3545'; ?>;"><?php echo get_option('pdf_builder_template_library_enabled', true) ? 'ACTIF' : 'INACTIF'; ?></span>
                     </span>
                 </h3>
 
@@ -424,4 +378,5 @@
                     </tr>
                 </table>
             </section>
+
 

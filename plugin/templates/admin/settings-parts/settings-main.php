@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     /**
      * PDF Builder Pro - Logique principale des paramètres (VERSION JS CENTRALISÉE)
      * Traitement des paramètres principal avec JavaScript NETTOYÉ, CENTRALISÉ
@@ -725,77 +725,7 @@
     })();
 </script>
 
-<style>
-    /* Styles centralisés des paramètres */
-    .tab-content-wrapper {
-        margin-top: 20px;
-    }
 
-    .tab-content {
-        display: none;
-    }
-
-    .tab-content.active {
-        display: block;
-    }
-
-    .floating-save-btn {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: #007cba;
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 16px 24px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0,123,186,0.3);
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        z-index: 1000;
-    }
-
-    .floating-save-btn:hover {
-        background: #005a87;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0,123,186,0.4);
-    }
-
-    .floating-save-btn:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    .spinner {
-        width: 16px;
-        height: 16px;
-        border: 2px solid #ffffff;
-        border-top: 2px solid transparent;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    .field-error {
-        border-color: #dc3232 !important;
-        box-shadow: 0 0 0 1px #dc3232 !important;
-    }
-
-    .field-error-msg {
-        color: #dc3232;
-        font-size: 12px;
-        margin-top: 4px;
-    }
-</style>
 <?php
 
     // Inclure le diagnostic si nécessaire
@@ -974,3 +904,4 @@
 ?>
 
 <?php require_once __DIR__ . '/settings-modals.php'; ?>
+

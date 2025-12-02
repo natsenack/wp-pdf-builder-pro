@@ -1,8 +1,8 @@
-<?php // Acces tab content - Updated: 2025-11-18 20:20:00 ?>
+﻿<?php // Acces tab content - Updated: 2025-11-18 20:20:00 ?>
             <h2>👥 Gestion des Rôles et Permissions</h2>
 
             <!-- Message de confirmation que l'onglet est chargé -->
-            <aside style="margin-bottom: 20px; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;">
+            <aside class="access-success-notice">
                 ✅ Section Rôles chargée - Utilise le bouton "Enregistrer" flottant pour sauvegarder
             </aside>
 
@@ -25,10 +25,10 @@
                 ];
             ?>
 
-            <p style="margin-bottom: 20px;">Sélectionnez les rôles WordPress qui auront accès à PDF Builder Pro.</p>
+            <p>Sélectionnez les rôles WordPress qui auront accès à PDF Builder Pro.</p>
 
             <!-- Disposition en colonnes -->
-            <div style="display: grid; grid-template-columns: 1fr 350px; gap: 30px; align-items: start;">
+            <div class="access-main-layout">
 
                 <!-- Colonne principale : toggles des rôles -->
                 <div>
@@ -37,17 +37,17 @@
                     <section id="access-settings-container" aria-label="Paramètres d'accès">
 
                         <!-- Boutons de contrôle rapide -->
-                        <nav style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
-                            <button type="button" id="select-all-roles" class="button button-secondary" style="margin-right: 5px;">
+                        <nav class="access-role-nav">
+                            <button type="button" id="select-all-roles" class="button button-secondary access-select-btn">
                                 Sélectionner Tout
                             </button>
-                            <button type="button" id="select-common-roles" class="button button-secondary" style="margin-right: 5px;">
+                            <button type="button" id="select-common-roles" class="button button-secondary access-select-btn">
                                 Rôles Courants
                             </button>
-                            <button type="button" id="select-none-roles" class="button button-secondary" style="margin-right: 5px;">
+                            <button type="button" id="select-none-roles" class="button button-secondary access-select-btn">
                                 Désélectionner Tout
                             </button>
-                            <span class="description" style="margin-left: 10px;">
+                            <span class="description access-selected-count">
                                 Sélectionnés: <strong id="selected-count"><?php echo count($allowed_roles); ?></strong> rôle(s)
                             </span>
                         </nav>
@@ -87,125 +87,7 @@
                             endforeach; ?>
                         </div>
 
-                        <style>
-                            .roles-toggle-list {
-                                max-width: 600px;
-                            }
-
-                            .role-toggle-item {
-                                display: flex;
-                                align-items: center;
-                                justify-content: space-between;
-                                padding: 15px 20px;
-                                margin-bottom: 8px;
-                                background: #f8f9fa;
-                                border: 1px solid #e9ecef;
-                                border-radius: 8px;
-                                transition: all 0.2s ease;
-                            }
-
-                            .role-toggle-item:hover {
-                                background: #e9ecef;
-                                border-color: #dee2e6;
-                            }
-
-                            .role-toggle-item.admin-role {
-                                background: #fce4ec;
-                                border-color: #f8bbd9;
-                            }
-
-                            .role-info {
-                                flex: 1;
-                            }
-
-                            .role-name {
-                                font-weight: 600;
-                                font-size: 15px;
-                                color: #333;
-                                margin-bottom: 2px;
-                                display: flex;
-                                align-items: center;
-                                gap: 8px;
-                            }
-
-                            .role-name,
-                            .role-description,
-                            .role-key {
-                                margin: 0;
-                            }
-
-                            .role-description {
-                                font-size: 13px;
-                                color: #666;
-                                margin-bottom: 2px;
-                            }
-
-                            .role-key {
-                                font-size: 11px;
-                                color: #999;
-                                font-family: monospace;
-                            }
-
-                            .toggle-switch {
-                                position: relative;
-                                width: 50px;
-                                height: 24px;
-                            }
-
-                            .toggle-switch input {
-                                opacity: 0;
-                                width: 0;
-                                height: 0;
-                            }
-
-                            .toggle-slider {
-                                position: absolute;
-                                cursor: pointer;
-                                top: 0;
-                                left: 0;
-                                right: 0;
-                                bottom: 0;
-                                background-color: #ccc;
-                                transition: 0.3s;
-                                border-radius: 24px;
-                            }
-
-                            .toggle-slider:before {
-                                position: absolute;
-                                content: "";
-                                height: 18px;
-                                width: 18px;
-                                left: 3px;
-                                bottom: 3px;
-                                background-color: white;
-                                transition: 0.3s;
-                                border-radius: 50%;
-                                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                            }
-
-                            input:checked + .toggle-slider {
-                                background-color: #2271b1;
-                            }
-
-                            input:checked + .toggle-slider:before {
-                                transform: translateX(26px);
-                            }
-
-                            .toggle-switch input:disabled + .toggle-slider {
-                                background-color: #d63384;
-                                cursor: not-allowed;
-                                opacity: 0.7;
-                            }
-
-                            .toggle-switch input:disabled:checked + .toggle-slider {
-                                background-color: #d63384;
-                            }
-
-                            /* Animation au survol */
-                            .toggle-slider:hover {
-                                box-shadow: 0 0 8px rgba(34, 113, 177, 0.3);
-                            }
-                        </style>
+                        
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
@@ -294,10 +176,10 @@
                 <div>
 
                     <!-- Permissions incluses -->
-                    <aside style="background: #e7f3ff; border-left: 4px solid #2271b1; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <h4 style="margin-top: 0; color: #003d66; font-size: 14px;">🔐 Permissions Incluses</h4>
-                        <p style="margin: 10px 0 15px 0; color: #003d66; font-size: 13px;">Les rôles sélectionnés auront accès à :</p>
-                        <ul style="margin: 0; padding-left: 20px; color: #003d66; font-size: 13px; line-height: 1.5;">
+                    <aside class="access-permissions-aside">
+                        <h4>🔐 Permissions Incluses</h4>
+                        <p>Les rôles sélectionnés auront accès à :</p>
+                        <ul>
                             <li>✅ Création, édition et suppression de templates PDF</li>
                             <li>✅ Génération et téléchargement de PDF</li>
                             <li>✅ Accès aux paramètres et configuration</li>
@@ -307,9 +189,9 @@
                     </aside>
 
                     <!-- Avertissement important -->
-                    <aside style="background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <h4 style="margin-top: 0; color: #856404; font-size: 14px;">⚠️ Informations Importantes</h4>
-                        <ul style="margin: 0; padding-left: 20px; color: #856404; font-size: 13px; line-height: 1.5;">
+                    <aside class="access-warning-aside">
+                        <h4>⚠️ Informations Importantes</h4>
+                        <ul>
                             <li>Les rôles non sélectionnés n'auront aucun accès à PDF Builder Pro</li>
                             <li>Le rôle "Administrator" a toujours accès complet, indépendamment</li>
                             <li>Minimum requis : au moins un rôle sélectionné</li>
@@ -319,4 +201,5 @@
                 </div> <!-- Fin colonne informations -->
 
             </div> <!-- Fin disposition en colonnes -->
+
 

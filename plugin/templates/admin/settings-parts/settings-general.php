@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * General tab content
  * Updated: 2025-11-18 20:15:00
@@ -92,24 +92,5 @@
                     </article>
                 </form>
 
-
-
-               <style>
-                    /* Classe commune pour les sections de l'onglet général */
-                    .general-section {
-                        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 2px solid #e9ecef;
-                        border-radius: 12px;
-                        padding: 20px;
-                        margin-bottom: 20px;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                    }
-                    .general-section h3 {
-                        color: #495057;
-                        margin-top: 0;
-                        border-bottom: 2px solid #e9ecef;
-                        padding-bottom: 8px;
-                        font-size: 18px;
-                    }
-               </style>
            </section>
+
