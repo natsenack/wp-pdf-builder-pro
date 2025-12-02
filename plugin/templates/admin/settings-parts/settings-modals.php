@@ -41,7 +41,7 @@
                     </div>
                 </article>
             </div>
-            <div class="cache-modal-footer">
+            <footer class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
                 <button type="button" class="button button-primary" id="clear-cache-from-modal">🗑️ Vider le cache</button>
             </footer>
@@ -93,7 +93,7 @@
                     </div>
                 </article>
             </div>
-            <div class="cache-modal-footer">
+            <footer class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
                 <button type="button" class="button button-warning" id="clear-transients-from-modal">🗑️ Vider les transients</button>
             </footer>
@@ -189,8 +189,10 @@
                     </p>
                 </aside>
                 <article style="margin-top: 20px;">
-                    <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                        <h4 style="margin-top: 0; color: #495057;">[DERNIERS NETTOYAGES] Derniers nettoyages</h4>
+                    <section>
+                        <header>
+                            <h4 style="margin-top: 0; color: #495057;">[DERNIERS NETTOYAGES] Derniers nettoyages</h4>
+                        </header>
                         <div style="margin-top: 10px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #dee2e6;">
                                 <span>Dernier nettoyage automatique:</span>
@@ -211,9 +213,11 @@
                                 </span>
                             </div>
                         </div>
-                    </div>
-                    <div style="margin-top: 20px; padding: 15px; background: #d1ecf1; border: 1px solid #17a2b8; border-radius: 8px;">
-                        <h4 style="margin-top: 0; color: #0c5460;">[ACTIONS NETTOYAGE] Actions de nettoyage disponibles</h4>
+                    </section>
+                    <section>
+                        <header>
+                            <h4 style="margin-top: 0; color: #0c5460;">[ACTIONS NETTOYAGE] Actions de nettoyage disponibles</h4>
+                        </header>
                         <div style="margin-top: 15px; display: grid; gap: 10px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <input type="checkbox" id="cleanup_files" checked>
@@ -228,7 +232,7 @@
                                 <label for="cleanup_temp">Supprimer les fichiers temporaires (+24h)</label>
                             </div>
                         </div>
-                    </div>
+                    </section>
                 </article>
             </main>
             <footer class="cache-modal-footer">
@@ -414,51 +418,59 @@
                 ?>
 
                 <form id="canvas-apparence-form">
-                    <h4 class="canvas-modal-section-title">🎨 Canvas</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_bg_color">Couleur de fond du canvas</label></th>
-                            <td>
-                                <input type="color" id="canvas_bg_color" name="canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>" />
-                                <p class="canvas-modal-description">Couleur d'arrière-plan de la zone de conception</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_border_color">Couleur des bordures</label></th>
-                            <td>
-                                <input type="color" id="canvas_border_color" name="canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_color', '#cccccc')); ?>" />
-                                <p class="canvas-modal-description">Couleur des bordures autour du canvas</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_border_width">Épaisseur des bordures (px)</label></th>
-                            <td>
-                                <input type="number" id="canvas_border_width" name="canvas_border_width" value="<?php echo intval(get_option('pdf_builder_canvas_border_width', 1)); ?>" min="0" max="10" />
-                                <p class="canvas-modal-description">Épaisseur des bordures en pixels (0 = aucune)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_shadow_enabled">Ombre activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_shadow_enabled" name="canvas_shadow_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_shadow_enabled', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Ajoute une ombre portée au canvas</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <section>
+                        <header>
+                            <h4 class="canvas-modal-section-title">🎨 Canvas</h4>
+                        </header>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="canvas_bg_color">Couleur de fond du canvas</label></th>
+                                <td>
+                                    <input type="color" id="canvas_bg_color" name="canvas_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_bg_color', '#ffffff')); ?>" />
+                                    <p class="canvas-modal-description">Couleur d'arrière-plan de la zone de conception</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_border_color">Couleur des bordures</label></th>
+                                <td>
+                                    <input type="color" id="canvas_border_color" name="canvas_border_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_border_color', '#cccccc')); ?>" />
+                                    <p class="canvas-modal-description">Couleur des bordures autour du canvas</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_border_width">Épaisseur des bordures (px)</label></th>
+                                <td>
+                                    <input type="number" id="canvas_border_width" name="canvas_border_width" value="<?php echo intval(get_option('pdf_builder_canvas_border_width', 1)); ?>" min="0" max="10" />
+                                    <p class="canvas-modal-description">Épaisseur des bordures en pixels (0 = aucune)</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_shadow_enabled">Ombre activée</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_shadow_enabled" name="canvas_shadow_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_shadow_enabled', '0'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Ajoute une ombre portée au canvas</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </section>
                     
-                    <h4 class="canvas-modal-section-title spaced">✏️ Éditeur</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_container_bg_color">Arrière-plan de l'éditeur</label></th>
-                            <td>
-                                <input type="color" id="canvas_container_bg_color" name="canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa')); ?>" />
-                                <p class="canvas-modal-description">Couleur de fond de l'interface d'édition</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <section>
+                        <header>
+                            <h4 class="canvas-modal-section-title spaced">✏️ Éditeur</h4>
+                        </header>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="canvas_container_bg_color">Arrière-plan de l'éditeur</label></th>
+                                <td>
+                                    <input type="color" id="canvas_container_bg_color" name="canvas_container_bg_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa')); ?>" />
+                                    <p class="canvas-modal-description">Couleur de fond de l'interface d'édition</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </section>
                 </form>
             </main>
             <footer class="canvas-modal-footer">
@@ -548,74 +560,82 @@
                     </p>
                 </aside>
                 <form id="canvas-interactions-form">
-                    <h4 class="canvas-modal-section-title">🖱️ Interactions</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_drag_enabled">Glisser-déposer activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_drag_enabled" name="canvas_drag_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_drag_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Permet de déplacer les éléments sur le canvas</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_resize_enabled">Redimensionnement activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_resize_enabled" name="canvas_resize_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_resize_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Affiche les poignées pour redimensionner les éléments</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_rotate_enabled">Rotation activée</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_rotate_enabled" name="canvas_rotate_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_rotate_enabled', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Permet de faire pivoter les éléments avec la souris</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_multi_select">Sélection multiple</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_multi_select" name="canvas_multi_select" value="1" <?php checked(get_option('pdf_builder_canvas_multi_select', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Ctrl+Clic pour sélectionner plusieurs éléments</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_selection_mode">Mode de sélection</label></th>
-                            <td>
-                                <select id="canvas_selection_mode" name="canvas_selection_mode">
-                                    <option value="click" <?php selected(get_option('pdf_builder_canvas_selection_mode', 'click'), 'click'); ?>>Clic simple</option>
-                                    <option value="lasso" <?php selected(get_option('pdf_builder_canvas_selection_mode', 'click'), 'lasso'); ?>>Lasso</option>
-                                    <option value="rectangle" <?php selected(get_option('pdf_builder_canvas_selection_mode', 'click'), 'rectangle'); ?>>Rectangle</option>
-                                </select>
-                                <p class="canvas-modal-description">Méthode de sélection des éléments sur le canvas</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <section>
+                        <header>
+                            <h4 class="canvas-modal-section-title">🖱️ Interactions</h4>
+                        </header>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="canvas_drag_enabled">Glisser-déposer activé</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_drag_enabled" name="canvas_drag_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_drag_enabled', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Permet de déplacer les éléments sur le canvas</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_resize_enabled">Redimensionnement activé</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_resize_enabled" name="canvas_resize_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_resize_enabled', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Affiche les poignées pour redimensionner les éléments</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_rotate_enabled">Rotation activée</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_rotate_enabled" name="canvas_rotate_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_rotate_enabled', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Permet de faire pivoter les éléments avec la souris</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_multi_select">Sélection multiple</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_multi_select" name="canvas_multi_select" value="1" <?php checked(get_option('pdf_builder_canvas_multi_select', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Ctrl+Clic pour sélectionner plusieurs éléments</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_selection_mode">Mode de sélection</label></th>
+                                <td>
+                                    <select id="canvas_selection_mode" name="canvas_selection_mode">
+                                        <option value="click" <?php selected(get_option('pdf_builder_canvas_selection_mode', 'click'), 'click'); ?>>Clic simple</option>
+                                        <option value="lasso" <?php selected(get_option('pdf_builder_canvas_selection_mode', 'click'), 'lasso'); ?>>Lasso</option>
+                                        <option value="rectangle" <?php selected(get_option('pdf_builder_canvas_selection_mode', 'click'), 'rectangle'); ?>>Rectangle</option>
+                                    </select>
+                                    <p class="canvas-modal-description">Méthode de sélection des éléments sur le canvas</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </section>
 
-                    <h4 class="canvas-modal-section-title spaced">⚙️ Comportement</h4>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_keyboard_shortcuts">Raccourcis clavier</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_keyboard_shortcuts" name="canvas_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_shortcuts', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Active les raccourcis clavier (Ctrl+Z, Ctrl+Y, etc.)</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <section>
+                        <header>
+                            <h4 class="canvas-modal-section-title spaced">⚙️ Comportement</h4>
+                        </header>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="canvas_keyboard_shortcuts">Raccourcis clavier</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_keyboard_shortcuts" name="canvas_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_canvas_keyboard_shortcuts', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Active les raccourcis clavier (Ctrl+Z, Ctrl+Y, etc.)</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </section>
                 </form>
             </main>
             <footer class="canvas-modal-footer">
@@ -687,104 +707,112 @@
                 </aside>
                 <form id="canvas-performance-form">
                     <!-- Section Éditeur PDF -->
-                    <h4 class="canvas-modal-section-title margin-25">
-                        <span class="canvas-modal-inline-flex">
-                            [EDITEUR PDF] Éditeur PDF
-                        </span>
-                    </h4>
-                    <p class="canvas-modal-sub-description">Paramètres de performance pour l'interface de conception</p>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_fps_target">Cible FPS</label></th>
-                            <td>
-                                <select id="canvas_fps_target" name="canvas_fps_target">
-                                    <option value="30" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 30); ?>>30 FPS (Économie)</option>
-                                    <option value="60" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 60); ?>>60 FPS (Standard)</option>
-                                    <option value="120" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 120); ?>>120 FPS (Haute performance)</option>
-                                </select>
-                                <div id="fps_preview" class="canvas-modal-preview">
-                                    FPS actuel : <span id="current_fps_value"><?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?></span>
-                                </div>
-                                <p class="canvas-modal-description">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_memory_limit_js">Limite mémoire JavaScript</label></th>
-                            <td>
-                                <select id="canvas_memory_limit_js" name="canvas_memory_limit_js">
-                                    <option value="128" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '128'); ?>>128 MB</option>
-                                    <option value="256" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '256'); ?>>256 MB</option>
-                                    <option value="512" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '512'); ?>>512 MB</option>
-                                    <option value="1024" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '1024'); ?>>1 GB</option>
-                                </select>
-                                <p class="canvas-modal-description">Mémoire allouée au canvas et aux éléments</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_lazy_loading_editor">Chargement paresseux (Éditeur)</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_lazy_loading_editor" name="canvas_lazy_loading_editor" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_editor', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Charge les éléments seulement quand visibles</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_preload_critical">Préchargement ressources critiques</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_preload_critical" name="canvas_preload_critical" value="1" <?php checked(get_option('pdf_builder_canvas_preload_critical', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Précharge les polices et outils essentiels</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <section>
+                        <header>
+                            <h4 class="canvas-modal-section-title margin-25">
+                                <span class="canvas-modal-inline-flex">
+                                    [EDITEUR PDF] Éditeur PDF
+                                </span>
+                            </h4>
+                        </header>
+                        <p class="canvas-modal-sub-description">Paramètres de performance pour l'interface de conception</p>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="canvas_fps_target">Cible FPS</label></th>
+                                <td>
+                                    <select id="canvas_fps_target" name="canvas_fps_target">
+                                        <option value="30" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 30); ?>>30 FPS (Économie)</option>
+                                        <option value="60" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 60); ?>>60 FPS (Standard)</option>
+                                        <option value="120" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 120); ?>>120 FPS (Haute performance)</option>
+                                    </select>
+                                    <div id="fps_preview" class="canvas-modal-preview">
+                                        FPS actuel : <span id="current_fps_value"><?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?></span>
+                                    </div>
+                                    <p class="canvas-modal-description">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_memory_limit_js">Limite mémoire JavaScript</label></th>
+                                <td>
+                                    <select id="canvas_memory_limit_js" name="canvas_memory_limit_js">
+                                        <option value="128" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '128'); ?>>128 MB</option>
+                                        <option value="256" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '256'); ?>>256 MB</option>
+                                        <option value="512" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '512'); ?>>512 MB</option>
+                                        <option value="1024" <?php selected(get_option('pdf_builder_canvas_memory_limit_js', '256'), '1024'); ?>>1 GB</option>
+                                    </select>
+                                    <p class="canvas-modal-description">Mémoire allouée au canvas et aux éléments</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_lazy_loading_editor">Chargement paresseux (Éditeur)</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_lazy_loading_editor" name="canvas_lazy_loading_editor" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_editor', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Charge les éléments seulement quand visibles</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_preload_critical">Préchargement ressources critiques</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_preload_critical" name="canvas_preload_critical" value="1" <?php checked(get_option('pdf_builder_canvas_preload_critical', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Précharge les polices et outils essentiels</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </section>
 
                     <!-- Section Plugin WordPress -->
-                    <h4 class="canvas-modal-section-title margin-35">
-                        <span class="canvas-modal-inline-flex">
-                            🔌 Plugin WordPress
-                        </span>
-                    </h4>
-                    <p class="canvas-modal-sub-description">Paramètres de performance pour le backend et génération PDF</p>
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_memory_limit_php">Limite mémoire PHP</label></th>
-                            <td>
-                                <select id="canvas_memory_limit_php" name="canvas_memory_limit_php">
-                                    <option value="128" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '128'); ?>>128 MB</option>
-                                    <option value="256" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '256'); ?>>256 MB</option>
-                                    <option value="512" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '512'); ?>>512 MB</option>
-                                    <option value="1024" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '1024'); ?>>1 GB</option>
-                                </select>
-                                <p class="canvas-modal-description">Mémoire pour génération PDF et traitement</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_response_timeout">Timeout réponses AJAX</label></th>
-                            <td>
-                                <select id="canvas_response_timeout" name="canvas_response_timeout">
-                                    <option value="10" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '10'); ?>>10 secondes</option>
-                                    <option value="30" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '30'); ?>>30 secondes</option>
-                                    <option value="60" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '60'); ?>>60 secondes</option>
-                                    <option value="120" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '120'); ?>>120 secondes</option>
-                                </select>
-                                <p class="canvas-modal-description">Délai maximum pour les requêtes serveur</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_lazy_loading_plugin">Chargement paresseux (Plugin)</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_lazy_loading_plugin" name="canvas_lazy_loading_plugin" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_plugin', '1'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="canvas-modal-description">Charge les données seulement quand nécessaire</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <section>
+                        <header>
+                            <h4 class="canvas-modal-section-title margin-35">
+                                <span class="canvas-modal-inline-flex">
+                                    🔌 Plugin WordPress
+                                </span>
+                            </h4>
+                        </header>
+                        <p class="canvas-modal-sub-description">Paramètres de performance pour le backend et génération PDF</p>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="canvas_memory_limit_php">Limite mémoire PHP</label></th>
+                                <td>
+                                    <select id="canvas_memory_limit_php" name="canvas_memory_limit_php">
+                                        <option value="128" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '128'); ?>>128 MB</option>
+                                        <option value="256" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '256'); ?>>256 MB</option>
+                                        <option value="512" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '512'); ?>>512 MB</option>
+                                        <option value="1024" <?php selected(get_option('pdf_builder_canvas_memory_limit_php', '256'), '1024'); ?>>1 GB</option>
+                                    </select>
+                                    <p class="canvas-modal-description">Mémoire pour génération PDF et traitement</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_response_timeout">Timeout réponses AJAX</label></th>
+                                <td>
+                                    <select id="canvas_response_timeout" name="canvas_response_timeout">
+                                        <option value="10" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '10'); ?>>10 secondes</option>
+                                        <option value="30" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '30'); ?>>30 secondes</option>
+                                        <option value="60" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '60'); ?>>60 secondes</option>
+                                        <option value="120" <?php selected(get_option('pdf_builder_canvas_response_timeout', '30'), '120'); ?>>120 secondes</option>
+                                    </select>
+                                    <p class="canvas-modal-description">Délai maximum pour les requêtes serveur</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_lazy_loading_plugin">Chargement paresseux (Plugin)</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_lazy_loading_plugin" name="canvas_lazy_loading_plugin" value="1" <?php checked(get_option('pdf_builder_canvas_lazy_loading_plugin', '1'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="canvas-modal-description">Charge les données seulement quand nécessaire</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </section>
                 </form>
             </main>
             <footer class="canvas-modal-footer">
