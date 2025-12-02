@@ -1343,12 +1343,6 @@ function pdf_builder_save_all_settings_handler() {
                 }
             }
             error_log("🟠 FIELDS PROCESSED: {$fields_processed}");
-                
-                // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
-                if (strpos($field, 'debug_javascript') !== false) {
-                    error_log("DEBUG_JAVASCRIPT PROCESSED: field='{$field}', display_key='{$display_key}', option_key='{$option_key}', saved_value='{$saved_value}'");
-                }
-            }
 
             // Ajouter les champs checkbox traités séparément (qui n'étaient pas dans POST car non cochés)
             error_log('checkbox_fields: ' . implode(', ', $checkbox_fields));
