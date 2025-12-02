@@ -831,6 +831,84 @@
                     </section>
 
                     <!-- Styles pour les toggles -->
+                    <style>
+                        /* Styles pour les toggles switches */
+                        .toggle-switch {
+                            position: relative;
+                            width: 50px;
+                            height: 24px;
+                        }
+
+                        .toggle-switch input {
+                            opacity: 0;
+                            width: 0;
+                            height: 0;
+                        }
+
+                        .toggle-slider {
+                            position: absolute;
+                            cursor: pointer;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            background-color: #ccc;
+                            transition: 0.3s;
+                            border-radius: 24px;
+                            pointer-events: none;
+                        }
+
+                        .toggle-slider:before {
+                            position: absolute;
+                            content: "";
+                            height: 18px;
+                            width: 18px;
+                            left: 3px;
+                            bottom: 3px;
+                            background-color: white;
+                            transition: 0.3s;
+                            border-radius: 50%;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                        }
+
+                        input:checked + .toggle-slider {
+                            background-color: #2271b1;
+                        }
+
+                        input:checked + .toggle-slider:before {
+                            transform: translateX(26px);
+                        }
+
+                        /* Support pour la classe checked en plus de :checked */
+                        .toggle-switch.checked .toggle-slider {
+                            background-color: #2271b1;
+                        }
+
+                        .toggle-switch.checked input + .toggle-slider:before {
+                            transform: translateX(26px);
+                        }
+
+                        .toggle-switch input:disabled + .toggle-slider {
+                            background-color: #d63384;
+                            cursor: not-allowed;
+                            opacity: 0.7;
+                        }
+
+                        .toggle-switch input:disabled:checked + .toggle-slider {
+                            background-color: #d63384;
+                        }
+
+                        /* Classe pour désactiver visuellement les toggles */
+                        .toggle-switch.disabled {
+                            opacity: 0.5;
+                            pointer-events: none;
+                        }
+
+                        /* Animation au survol */
+                        .toggle-slider:hover {
+                            box-shadow: 0 0 8px rgba(34, 113, 177, 0.3);
+                        }
+                    </style>
                     
 
             </section>
