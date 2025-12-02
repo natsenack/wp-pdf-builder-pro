@@ -461,27 +461,32 @@ export interface ImageElementProperties {
 }
 
 export interface OrderNumberElementProperties {
+  // Propriétés d'affichage
+  showHeaders?: boolean;
+  showBackground?: boolean;
+  showBorders?: boolean;
+  showLabel?: boolean;
+  showDate?: boolean;
+  // Propriétés de mise en page
+  textAlign?: 'left' | 'center' | 'right';
+  contentAlign?: 'left' | 'center' | 'right';
+  labelPosition?: 'above' | 'left' | 'right' | 'below';
+  labelText?: string;
+  // Propriétés de police générales (fallback)
   fontSize?: number;
   fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
-  textAlign?: 'left' | 'center' | 'right';
-  textColor?: string;
-  backgroundColor?: string;
-  showBackground?: boolean;
-  prefix?: string;
-  suffix?: string;
-  padding?: number;
-  borderRadius?: number;
-  borderWidth?: number;
-  borderColor?: string;
-  showOrderDate?: boolean;
-  dateFormat?: string;
-  // Propriétés de police pour le label
-  labelFontSize?: number;
-  labelFontFamily?: string;
-  labelFontWeight?: string;
-  labelFontStyle?: string;
+  // Propriétés de police pour les en-têtes (label)
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  // Propriétés de police pour le corps (numéro et date)
+  bodyFontSize?: number;
+  bodyFontFamily?: string;
+  bodyFontWeight?: string;
+  bodyFontStyle?: string;
   // Propriétés de police pour le numéro
   numberFontSize?: number;
   numberFontFamily?: string;
@@ -492,12 +497,21 @@ export interface OrderNumberElementProperties {
   dateFontFamily?: string;
   dateFontWeight?: string;
   dateFontStyle?: string;
-  // Propriétés d'affichage et de mise en page
-  contentAlign?: 'left' | 'center' | 'right';
-  showLabel?: boolean;
-  showDate?: boolean;
-  labelPosition?: 'above' | 'left' | 'right' | 'below';
-  labelText?: string;
+  // Propriétés de couleur
+  textColor?: string;
+  backgroundColor?: string;
+  borderColor?: string;
+  headerTextColor?: string;
+  // Propriétés de style
+  borderWidth?: number;
+  borderRadius?: number;
+  padding?: number;
+  theme?: string;
+  // Propriétés spécifiques à l'ordre
+  prefix?: string;
+  suffix?: string;
+  showOrderDate?: boolean;
+  dateFormat?: string;
 }
 
 export interface MentionsElementProperties {
