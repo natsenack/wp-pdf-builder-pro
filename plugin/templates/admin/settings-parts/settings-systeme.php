@@ -223,8 +223,6 @@
                                 </td>
                             </tr>
                         </table>
-                    </div>
-                </section>
 
                         <!-- Métriques de maintenance -->
                         <article class="maintenance-status-info">
