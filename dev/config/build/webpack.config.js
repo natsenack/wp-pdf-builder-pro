@@ -16,9 +16,9 @@ module.exports = {
     globalObject: 'this'
   },
   externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM',
-    'react-dom/client': 'ReactDOM'
+    // ❌ REMOVED: React and ReactDOM declared as external
+    // They need to be bundled to include hooks like useRef, useCallback, etc.
+    // React and ReactDOM will be loaded from WordPress @wordpress/element
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']

@@ -1377,11 +1377,16 @@ class PdfBuilderAdmin
 
         // Charger les scripts pour l'éditeur React
         if ($hook === 'pdf-builder_page_pdf-builder-react-editor') {
-            // Enqueue React scripts from jsDelivr CDN (more reliable than unpkg)
-            wp_enqueue_script('react', 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js', [], '18.2.0', true);
-            wp_enqueue_script('react-dom', 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
+            // ✅ USE WordPress native React from @wordpress/element (more reliable and includes all hooks)
+            // WordPress provides React 18 natively starting from WP 6.2
+            if (function_exists('wp_enqueue_script')) {
+                // Try to use WordPress provided React first
+                wp_enqueue_script('react');       // WordPress provided React
+                wp_enqueue_script('react-dom');   // WordPress provided React-DOM
+            }
 
             // Enqueue PDF Builder React scripts from local build
+            // ✅ React and ReactDOM are now BUNDLED with pdf-builder-react (not external)
             $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
             // ✅ Force cache bust by using current timestamp (changes every second)
             $cache_bust = time(); // Unix timestamp - changes every second
