@@ -578,90 +578,95 @@
             }
 
             async saveAllSettings() {
-                console.log('💾 Sauvegarde de tous les paramètres...');
+                console.log('💾 Sauvegarde parallélisée de tous les paramètres...');
 
                 if (this.ui && this.saveButton) {
                     this.ui.setButtonState(this.saveButton, 'loading');
                 }
 
-                // Stocker le contexte et les fonctions de notification pour éviter les problèmes 'this' dans les callbacks
-                const self = this;
                 const showSuccess = window.showSuccessNotification;
                 const showError = window.showErrorNotification;
 
                 try {
-                    const formData = this.collectAllSettings();
-
-                    // LOGS DEBUG POUR LE TOGGLE DEBUG JAVASCRIPT
-                    if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                        console.log('🚀 [DEBUG JS TOGGLE] Données collectées avant envoi:', formData);
-                        console.log('🚀 [DEBUG JS TOGGLE] debug_javascript dans formData:', formData['pdf_builder_debug_javascript'] || 'NON TROUVÉ');
-                        console.log('🚀 [DEBUG JS TOGGLE] debug_javascript dans formData (sans prefixe):', formData['debug_javascript'] || 'NON TROUVÉ');
-                        
-                        // Vérifier si le champ est dans les données AJAX
-                        const ajaxData = {
-                            'action': 'pdf_builder_save_all_settings',
-                            'nonce': PDF_BUILDER_CONFIG.nonce,
-                            ...formData
-                        };
-                        console.log('🚀 [DEBUG JS TOGGLE] Données AJAX complètes:', ajaxData);
+                    // Récupérer tous les onglets visibles
+                    const tabs = document.querySelectorAll('.tab-content');
+                    if (tabs.length === 0) {
+                        throw new Error('Aucun onglet trouvé');
                     }
 
-                    // Envoyer au serveur en utilisant jQuery AJAX wrappé dans Promise
-                    // CORRIGÉ: Utilisation de fonctions fléchées pour préserver le contexte
-                    const response = await new Promise((resolve, reject) => {
-                        jQuery.ajax({
-                            url: PDF_BUILDER_CONFIG.ajax_url,
-                            type: 'POST',
-                            data: {
-                                'action': 'pdf_builder_save_all_settings',
-                                'nonce': PDF_BUILDER_CONFIG.nonce,
-                                ...formData
-                            },
-                            dataType: 'json',
-                            success: (data) => {
-                                console.log('[AJAX Succès] Réponse reçue:', data);
-                                
-                                // LOGS DEBUG POUR LE TOGGLE DEBUG JAVASCRIPT
-                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                    console.log('✅ [DEBUG JS TOGGLE] Réponse serveur reçue:', data);
-                                    console.log('✅ [DEBUG JS TOGGLE] debug_javascript dans saved_settings:', data.data?.saved_settings?.debug_javascript || 'NON TROUVÉ');
-                                    console.log('✅ [DEBUG JS TOGGLE] debug_javascript dans saved_settings (avec prefixe):', data.data?.saved_settings?.pdf_builder_debug_javascript || 'NON TROUVÉ');
-                                }
-                                
-                                resolve(data);
-                            },
-                            error: (xhr, status, error) => {
-                                console.error('[AJAX Erreur] Détails de l\'erreur:', {status, error, responseText: xhr.responseText});
-                                
-                                // LOGS DEBUG POUR LE TOGGLE DEBUG JAVASCRIPT
-                                if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
-                                    console.error('❌ [DEBUG JS TOGGLE] Erreur AJAX:', {status, error, responseText: xhr.responseText});
-                                }
-                                
-                                reject(new Error(error || 'Échec de la requête AJAX'));
-                            }
-                        });
+                    // Créer une promesse pour chaque onglet (PARALLÉLISÉ)
+                    const savePromises = Array.from(tabs).map(tabElement => {
+                        const tabId = tabElement.id;
+                        if (!tabId) return Promise.resolve(null);
+
+                        return this.saveTabSettingsInternal(tabId);
                     });
 
-                    if (response.success) {
-                        console.log('✅ Tous les paramètres sauvegardés avec succès!');
+                    // Attendre que tous les onglets soient sauvegardés EN PARALLÈLE
+                    const results = await Promise.all(savePromises);
+
+                    // Compter les succès et erreurs
+                    const successCount = results.filter(r => r && r.success).length;
+                    const errorCount = results.filter(r => !r || !r.success).length;
+                    const totalCount = results.filter(r => r !== null).length;
+
+                    if (successCount === totalCount && totalCount > 0) {
+                        console.log(`✅ Tous les ${totalCount} onglets sauvegardés avec succès!`);
                         if (typeof showSuccess === 'function') {
-                            showSuccess('✅ Tous les paramètres sauvegardés avec succès!');
+                            showSuccess(`✅ ${totalCount} onglets sauvegardés avec succès!`);
+                        }
+                    } else if (successCount > 0) {
+                        console.warn(`⚠️ Partiel: ${successCount}/${totalCount} onglets sauvegardés`);
+                        if (typeof showError === 'function') {
+                            showError(`⚠️ Partiel: ${successCount}/${totalCount} onglets sauvegardés`);
                         }
                     } else {
-                        throw new Error(response.data?.message || 'Échec de la sauvegarde');
+                        throw new Error('Aucun onglet n\'a pu être sauvegardé');
                     }
 
                 } catch (error) {
-                    console.error('Erreur de sauvegarde:', error);
+                    console.error('❌ Erreur de sauvegarde:', error);
                     if (typeof showError === 'function') {
-                        showError('❌ Erreur lors de la sauvegarde des paramètres: ' + error.message);
+                        showError('❌ Erreur: ' + error.message);
                     }
                 } finally {
                     if (this.ui && this.saveButton) {
                         this.ui.setButtonState(this.saveButton, 'reset');
                     }
+                }
+            }
+
+            // Fonction interne pour sauvegarder un seul onglet (appelée en parallèle)
+            async saveTabSettingsInternal(tabId) {
+                try {
+                    const formData = this.collectTabSettings(tabId);
+                    if (Object.keys(formData).length === 0) {
+                        return { success: true, tabId, message: 'Pas de modifications' };
+                    }
+
+                    return await new Promise((resolve, reject) => {
+                        jQuery.ajax({
+                            url: PDF_BUILDER_CONFIG.ajax_url,
+                            type: 'POST',
+                            data: {
+                                'action': 'pdf_builder_save_' + tabId,
+                                'nonce': PDF_BUILDER_CONFIG.nonce,
+                                ...formData
+                            },
+                            dataType: 'json',
+                            success: (data) => {
+                                console.log(`✅ [${tabId}] Sauvegardé`);
+                                resolve(data);
+                            },
+                            error: (xhr, status, error) => {
+                                console.warn(`❌ [${tabId}] Erreur: ${error}`);
+                                resolve({ success: false, tabId, error });
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.warn(`❌ [${tabId}] Exception: ${error.message}`);
+                    return { success: false, tabId, error: error.message };
                 }
             }
 

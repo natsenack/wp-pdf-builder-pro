@@ -82,9 +82,10 @@ function pdf_builder_register_settings_handler($tab_id, $fields = [], $sanitizer
                 }
             }
 
-            // Sauvegarder les données
+            // Sauvegarder les données avec optimisations de performance
             $processed_count = 0;
             $saved_count = 0;
+            $start_time = microtime(true);
 
             foreach ($data as $field => $value) {
                 $option_name = 'pdf_builder_' . $field;
@@ -95,12 +96,19 @@ function pdf_builder_register_settings_handler($tab_id, $fields = [], $sanitizer
                 }
             }
 
+            // Flush cache
+            wp_cache_flush();
+
+            $elapsed = microtime(true) - $start_time;
+            error_log('PDF Builder [' . $tab_id . ']: Sauvegarde de ' . $saved_count . '/' . $processed_count . ' champs en ' . round($elapsed * 1000, 2) . 'ms');
+
             if ($processed_count > 0) {
                 wp_send_json_success([
                     'message' => 'Paramètres sauvegardés avec succès',
                     'tab_id' => $tab_id,
                     'fields_processed' => array_keys($data),
                     'fields_saved' => $saved_count,
+                    'elapsed_ms' => round($elapsed * 1000, 2)
                 ]);
             } else {
                 wp_send_json_error(['message' => 'Aucune donnée reçue']);
