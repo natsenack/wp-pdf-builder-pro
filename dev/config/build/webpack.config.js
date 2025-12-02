@@ -24,7 +24,12 @@ module.exports = {
     'react-dom': 'ReactDOM'
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+    alias: {
+      // Remap 'react' imports to our wrapper that ensures hooks are available
+      'react': path.resolve(__dirname, '../../assets/js/pdf-builder-react/react-shim-wrapper.js'),
+      'react-dom': 'react-dom'  // Keep react-dom as external
+    }
   },
   module: {
     rules: [
