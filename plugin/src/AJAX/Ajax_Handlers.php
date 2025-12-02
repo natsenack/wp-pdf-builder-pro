@@ -319,6 +319,15 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             }
         }
 
+        // S'assurer que tous les champs debug sont dans saved_settings
+        foreach (['pdf_builder_debug_javascript', 'pdf_builder_debug_javascript_verbose', 'pdf_builder_debug_ajax', 'pdf_builder_debug_performance', 'pdf_builder_debug_database', 'pdf_builder_debug_php_errors'] as $debug_field) {
+            if (!isset($saved_settings[$debug_field])) {
+                $db_value = get_option($debug_field, 0);
+                $saved_settings[$debug_field] = $db_value;
+                error_log("[AJAX DEBUG RECOVERY] Récupéré depuis DB: '$debug_field' = '$db_value'");
+            }
+        }
+
         return [
             'saved_count' => $saved_count,
             'saved_settings' => $saved_settings,

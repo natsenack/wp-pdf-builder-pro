@@ -1240,7 +1240,12 @@ function pdf_builder_save_all_settings_handler() {
             'pdf_print_optimized',
             'template_library_enabled',
             'developer_enabled',
-            'debug_javascript'
+            'debug_javascript',
+            'debug_javascript_verbose',
+            'debug_ajax',
+            'debug_performance',
+            'debug_database',
+            'debug_php_errors'
         ];
 
         error_log('===== TRAITEMENT CHAMPS CHECKBOX NON COCHÉS =====');
@@ -1332,6 +1337,16 @@ function pdf_builder_save_all_settings_handler() {
             }
             update_option('pdf_builder_settings', $main_settings);
             error_log('PDF Builder SAVE ALL - Main settings updated with ' . count($main_settings) . ' fields');
+
+            // S'ASSURER QUE LES CHAMPS DEBUG SONT DANS saved_options AVANT DE RETOURNER
+            foreach ($checkbox_fields as $field) {
+                if (!isset($saved_options[$field])) {
+                    $option_key = 'pdf_builder_' . $field;
+                    $db_value = get_option($option_key, 0);
+                    $saved_options[$field] = $db_value ? '1' : '0';
+                    error_log("ENSURE DEBUG FIELDS - Added missing field [{$field}] with value: '{$saved_options[$field]}'");
+                }
+            }
 
             error_log('PDF Builder SAVE ALL - Final saved_options count: ' . count($saved_options));
             error_log('PDF Builder SAVE ALL - Sample saved_options keys: ' . implode(', ', array_slice(array_keys($saved_options), 0, 5)));
