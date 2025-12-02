@@ -13,6 +13,9 @@ if (!defined('ABSPATH')) {
 add_action('wp_ajax_pdf_builder_optimize_database', 'pdf_builder_optimize_database_ajax');
 add_action('wp_ajax_pdf_builder_repair_templates', 'pdf_builder_repair_templates_ajax');
 add_action('wp_ajax_pdf_builder_remove_temp_files', 'pdf_builder_remove_temp_files_ajax');
+add_action('wp_ajax_pdf_builder_run_manual_maintenance', 'pdf_builder_run_manual_maintenance_ajax');
+add_action('wp_ajax_pdf_builder_schedule_maintenance', 'pdf_builder_schedule_maintenance_ajax');
+add_action('wp_ajax_pdf_builder_toggle_auto_maintenance', 'pdf_builder_toggle_auto_maintenance_ajax');
 
 /**
  * Vérifie un nonce pour les actions de maintenance ou le dispatcher AJAX principal
@@ -539,6 +542,173 @@ function pdf_builder_remove_temp_files_ajax() {
 
     } catch (Exception $e) {
         wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX Handler - Lancer la maintenance manuelle complète
+ */
+function pdf_builder_run_manual_maintenance_ajax() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !pdf_builder_verify_maintenance_nonce($_POST['nonce'])) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    try {
+        $maintenance_results = [];
+
+        // 1. Optimiser la base de données
+        global $wpdb;
+        $tables_optimized = 0;
+        $tables_to_optimize = [
+            $wpdb->prefix . 'pdf_builder_templates',
+            $wpdb->prefix . 'pdf_builder_elements',
+            $wpdb->prefix . 'pdf_builder_settings'
+        ];
+
+        foreach ($tables_to_optimize as $table) {
+            if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table)) == $table) {
+                $wpdb->query("OPTIMIZE TABLE $table");
+                $tables_optimized++;
+            }
+        }
+
+        $maintenance_results[] = "$tables_optimized tables optimisées";
+
+        // 2. Nettoyer les transients expirés
+        $expired_transients = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%' AND option_value < " . time());
+        $maintenance_results[] = "$expired_transients transients expirés nettoyés";
+
+        // 3. Supprimer les fichiers temporaires
+        $upload_dir = wp_upload_dir();
+        $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+        $temp_files_deleted = 0;
+
+        if (is_dir($temp_dir)) {
+            $files = glob($temp_dir . '/*');
+            foreach ($files as $file) {
+                if (is_file($file) && filemtime($file) < (time() - 86400)) { // Plus de 24h
+                    if (unlink($file)) {
+                        $temp_files_deleted++;
+                    }
+                }
+            }
+        }
+
+        $maintenance_results[] = "$temp_files_deleted fichiers temporaires supprimés";
+
+        // 4. Vider le cache ancien
+        $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
+        $cache_files_deleted = 0;
+
+        if (is_dir($cache_dir)) {
+            $files = glob($cache_dir . '/*');
+            foreach ($files as $file) {
+                if (is_file($file) && filemtime($file) < (time() - 604800)) { // Plus de 7 jours
+                    if (unlink($file)) {
+                        $cache_files_deleted++;
+                    }
+                }
+            }
+        }
+
+        $maintenance_results[] = "$cache_files_deleted fichiers cache anciens supprimés";
+
+        // 5. Mettre à jour la date de dernière maintenance
+        update_option('pdf_builder_last_maintenance', current_time('mysql'));
+
+        wp_send_json_success([
+            'message' => 'Maintenance manuelle terminée avec succès',
+            'results' => $maintenance_results,
+            'timestamp' => current_time('mysql')
+        ]);
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la maintenance: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX Handler - Programmer la prochaine maintenance
+ */
+function pdf_builder_schedule_maintenance_ajax() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !pdf_builder_verify_maintenance_nonce($_POST['nonce'])) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    $next_run = isset($_POST['next_run']) ? sanitize_text_field($_POST['next_run']) : '';
+
+    if (empty($next_run)) {
+        wp_send_json_error('Date de prochaine exécution manquante');
+        return;
+    }
+
+    // Valider le format de date
+    $timestamp = strtotime($next_run);
+    if (!$timestamp) {
+        wp_send_json_error('Format de date invalide');
+        return;
+    }
+
+    try {
+        update_option('pdf_builder_next_maintenance', date('Y-m-d H:i:s', $timestamp));
+
+        wp_send_json_success([
+            'message' => 'Maintenance programmée pour le ' . date_i18n('d/m/Y H:i', $timestamp),
+            'next_run' => date('Y-m-d H:i:s', $timestamp),
+            'timestamp' => current_time('mysql')
+        ]);
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la programmation: ' . $e->getMessage());
+    }
+}
+
+/**
+ * AJAX Handler - Basculer la maintenance automatique
+ */
+function pdf_builder_toggle_auto_maintenance_ajax() {
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Permissions insuffisantes');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !pdf_builder_verify_maintenance_nonce($_POST['nonce'])) {
+        wp_send_json_error('Nonce invalide');
+        return;
+    }
+
+    try {
+        $current_status = get_option('pdf_builder_auto_maintenance', '0');
+        $new_status = ($current_status === '1') ? '0' : '1';
+
+        update_option('pdf_builder_auto_maintenance', $new_status);
+
+        wp_send_json_success([
+            'message' => 'Maintenance automatique ' . ($new_status === '1' ? 'activée' : 'désactivée'),
+            'new_status' => $new_status === '1',
+            'timestamp' => current_time('mysql')
+        ]);
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors du basculement: ' . $e->getMessage());
     }
 }
 

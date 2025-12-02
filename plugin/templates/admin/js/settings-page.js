@@ -829,4 +829,169 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // ===== GESTIONNAIRES POUR LES BOUTONS D'ACTION DE MAINTENANCE =====
+
+    // Gestionnaire pour les boutons d'action de maintenance
+    $('.maintenance-action-btn').on('click', function(e) {
+        e.preventDefault();
+
+        const $button = $(this);
+        const action = $button.data('action');
+        const metric = $button.data('metric');
+
+        debugLogSettingsPage('🔧 Bouton maintenance cliqué:', { action: action, metric: metric });
+
+        switch (action) {
+            case 'run-maintenance':
+                // Lancer la maintenance manuelle complète
+                runManualMaintenance($button);
+                break;
+
+            case 'schedule-maintenance':
+                // Programmer la prochaine maintenance
+                scheduleNextMaintenance($button);
+                break;
+
+            case 'toggle-maintenance':
+                // Basculer l'état de la maintenance automatique
+                toggleAutoMaintenance($button);
+                break;
+
+            case 'run-manual-maintenance':
+                // Lancer la maintenance manuelle (même que run-maintenance)
+                runManualMaintenance($button);
+                break;
+
+            default:
+                debugLogSettingsPage('❌ Action maintenance inconnue:', action);
+                break;
+        }
+    });
+
+    // Fonction pour lancer la maintenance manuelle
+    function runManualMaintenance($button) {
+        if (!confirm('Lancer la maintenance manuelle complète ?\n\nCela peut prendre quelques minutes.')) {
+            return;
+        }
+
+        $button.prop('disabled', true).find('.metric-value').text('🗃️ En cours...');
+
+        fetchFreshAjaxNonce().then(function(nonce) {
+            $.ajax({
+                url: pdfBuilderAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_run_manual_maintenance',
+                    nonce: nonce
+                },
+                timeout: 120000, // 2 minutes
+                success: function(response) {
+                    debugLogAjax('pdf_builder_run_manual_maintenance success', response);
+                    if (response.success) {
+                        // Mettre à jour l'affichage
+                        updateMaintenanceStatus();
+                        alert('✅ Maintenance terminée avec succès');
+                    } else {
+                        var msg = response.data && response.data.message ? response.data.message : 'Échec de la maintenance';
+                        alert('❌ ' + msg);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    debugLogAjax('pdf_builder_run_manual_maintenance error', status, error, xhr && xhr.responseText);
+                    alert('❌ Erreur lors de la maintenance');
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    // Recharger les métriques de maintenance
+                    updateMaintenanceStatus();
+                }
+            });
+        });
+    }
+
+    // Fonction pour programmer la prochaine maintenance
+    function scheduleNextMaintenance($button) {
+        const nextRun = prompt('Programmer la prochaine maintenance (format: YYYY-MM-DD HH:MM)', '');
+        if (!nextRun) return;
+
+        $button.prop('disabled', true).find('.metric-value').text('📅 Programmation...');
+
+        fetchFreshAjaxNonce().then(function(nonce) {
+            $.ajax({
+                url: pdfBuilderAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_schedule_maintenance',
+                    nonce: nonce,
+                    next_run: nextRun
+                },
+                success: function(response) {
+                    debugLogAjax('pdf_builder_schedule_maintenance success', response);
+                    if (response.success) {
+                        updateMaintenanceStatus();
+                        alert('✅ Maintenance programmée');
+                    } else {
+                        var msg = response.data && response.data.message ? response.data.message : 'Échec de la programmation';
+                        alert('❌ ' + msg);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    debugLogAjax('pdf_builder_schedule_maintenance error', status, error, xhr && xhr.responseText);
+                    alert('❌ Erreur de programmation');
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    updateMaintenanceStatus();
+                }
+            });
+        });
+    }
+
+    // Fonction pour basculer la maintenance automatique
+    function toggleAutoMaintenance($button) {
+        const currentStatus = $button.find('.metric-value').text().trim();
+        const newStatus = (currentStatus === 'Activée') ? 'Désactivée' : 'Activée';
+
+        if (!confirm('Basculer la maintenance automatique vers: ' + newStatus + ' ?')) {
+            return;
+        }
+
+        $button.prop('disabled', true).find('.metric-value').text('🔄 Basculement...');
+
+        fetchFreshAjaxNonce().then(function(nonce) {
+            $.ajax({
+                url: pdfBuilderAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_toggle_auto_maintenance',
+                    nonce: nonce
+                },
+                success: function(response) {
+                    debugLogAjax('pdf_builder_toggle_auto_maintenance success', response);
+                    if (response.success) {
+                        updateMaintenanceStatus();
+                        alert('✅ Maintenance automatique ' + (response.data.new_status ? 'activée' : 'désactivée'));
+                    } else {
+                        var msg = response.data && response.data.message ? response.data.message : 'Échec du basculement';
+                        alert('❌ ' + msg);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    debugLogAjax('pdf_builder_toggle_auto_maintenance error', status, error, xhr && xhr.responseText);
+                    alert('❌ Erreur de basculement');
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    updateMaintenanceStatus();
+                }
+            });
+        });
+    }
+
+    // Fonction pour mettre à jour l'état de la maintenance
+    function updateMaintenanceStatus() {
+        // Recharger la section maintenance ou mettre à jour les valeurs
+        location.reload(); // Simplifié pour l'instant
+    }
+
 });
