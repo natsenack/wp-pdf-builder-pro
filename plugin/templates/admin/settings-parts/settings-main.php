@@ -58,8 +58,11 @@ $js_config = array(
     'ajax_url' => admin_url('admin-ajax.php')
 );
 
-wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $js_config);
+// Enqueue jQuery d'abord, puis notre script
+wp_enqueue_script('jquery');
 wp_enqueue_script('pdf-builder-settings-tabs', plugins_url('/assets/js/settings-tabs.js', dirname(dirname(__FILE__))), array('jquery'), time(), true);
+// Localiser la config APRES enqueue mais AVANT le script se charge
+wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $js_config);
 ?>
 
 
