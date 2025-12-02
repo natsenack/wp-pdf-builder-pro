@@ -4166,6 +4166,24 @@ input:checked + .toggle-slider:before {
     display: none !important;
 }
 
+/* Règles prioritaires pour masquer les onglets inactifs */
+#pdf-builder-tab-content .tab-content:not(.active) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Règles prioritaires pour afficher l'onglet actif */
+#pdf-builder-tab-content .tab-content.active {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
 /* Wrapper du statut des templates */
 .templates-status-wrapper {
     max-width: 100%;

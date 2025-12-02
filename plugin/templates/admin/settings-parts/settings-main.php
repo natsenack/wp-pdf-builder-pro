@@ -923,6 +923,28 @@
             });
 
             console.log('✅ Système PDF Builder Settings initialisé');
+            
+            // FORCER le masquage des onglets inactifs au démarrage
+            console.log('🔧 Application des règles CSS forcées pour les onglets...');
+            document.querySelectorAll('#pdf-builder-tab-content .tab-content').forEach(tab => {
+                if (!tab.classList.contains('active')) {
+                    tab.style.display = 'none';
+                    tab.style.visibility = 'hidden';
+                    tab.style.opacity = '0';
+                    tab.style.height = '0';
+                    tab.style.overflow = 'hidden';
+                    console.log('Masqué onglet inactif:', tab.id);
+                } else {
+                    tab.style.display = 'block';
+                    tab.style.visibility = 'visible';
+                    tab.style.opacity = '1';
+                    tab.style.height = 'auto';
+                    tab.style.overflow = 'visible';
+                    console.log('Affiché onglet actif:', tab.id);
+                }
+            });
+            
+            console.log('✅ Règles CSS forcées appliquées');
         });
 
     })();
