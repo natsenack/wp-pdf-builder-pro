@@ -13,11 +13,10 @@ module.exports = {
     filename: '[name].js',
     path: path.resolve(__dirname, '../../../plugin/assets/js/dist'),
     clean: true,
-    globalObject: 'this',
+    globalObject: 'window',
     library: {
       name: 'pdfBuilderReact',
-      type: 'umd',
-      umdNamedDefine: false
+      type: 'window'
     }
   },
   externals: {
