@@ -25,6 +25,8 @@ $company_capital = get_option('pdf_builder_company_capital', '');
 wp_nonce_field('pdf_builder_settings', '_wpnonce_pdf_builder');
 ?>
 
+<!-- TEST: LE FICHIER SETTINGS-MAIN.PHP EST BIEN CHARGÉ LE 2 DÉCEMBRE À 23H20 -->
+
 <main class="wrap" id="pdf-builder-settings-wrapper">
     <header class="pdf-builder-header">
         <h1><?php _e('⚙️ Paramètres PDF Builder Pro (VERSION SIMPLE)', 'pdf-builder-pro'); ?></h1>
