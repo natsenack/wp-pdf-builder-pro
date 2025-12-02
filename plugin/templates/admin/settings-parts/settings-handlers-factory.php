@@ -214,86 +214,6 @@ function pdf_builder_initialize_all_settings_handlers() {
 // pour que les actions AJAX soient correctement enregistrées
 add_action('init', 'pdf_builder_initialize_all_settings_handlers', 1);
 
-// Handler pour la sauvegarde d'onglet spécifique (utilisé par le système JavaScript moderne)
-// IMPORTANT: Enregistrer directement, pas dans un hook admin_init
-add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
-        try {
-            // Vérifier les permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => 'Permissions insuffisantes']);
-                return;
-            }
-
-            // Vérifier le nonce - accepter les deux types (moderne et legacy)
-            $nonce_valid = false;
-            $nonce_received = isset($_POST['nonce']) ? $_POST['nonce'] : 'NOT_PROVIDED';
-            $tab_id = isset($_POST['tab']) ? sanitize_key($_POST['tab']) : 'UNKNOWN';
-            
-            // DEBUG: Logs pour déboguer le problème de nonce
-            error_log('PDF Builder Tab Settings AJAX Debug [' . $tab_id . ']:');
-            error_log('  Nonce reçu: ' . $nonce_received);
-            
-            if (isset($_POST['nonce'])) {
-                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings');
-                
-                error_log('  Vérification (pdf_builder_settings): ' . var_export($nonce_valid, true));
-            }
-            
-            error_log('  Résultat final: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
-            
-            if (!$nonce_valid) {
-                wp_send_json_error(['message' => 'Vérification de sécurité échouée']);
-                return;
-            }
-
-            // Récupérer l'onglet demandé
-            $tab_id = isset($_POST['tab']) ? sanitize_key($_POST['tab']) : '';
-            if (empty($tab_id)) {
-                wp_send_json_error(['message' => 'Onglet non spécifié']);
-                return;
-            }
-
-            // Récupérer et nettoyer les données
-            $data = [];
-            $allowed_posts = $_POST;
-            unset($allowed_posts['action'], $allowed_posts['nonce'], $allowed_posts['tab']);
-
-            foreach ($allowed_posts as $key => $value) {
-                $clean_key = sanitize_key($key);
-                $clean_value = sanitize_text_field($value);
-                $data[$clean_key] = $clean_value;
-            }
-
-            // Sauvegarder les données EN BATCH (beaucoup plus rapide)
-            $options_to_save = [];
-            foreach ($data as $field => $value) {
-                $option_name = 'pdf_builder_' . $field;
-                $options_to_save[$option_name] = $value;
-            }
-
-            $saved_count = pdf_builder_batch_save_options($options_to_save);
-            $processed_count = count($data);
-
-            if ($processed_count > 0) {
-                wp_send_json_success([
-                    'message' => 'Paramètres sauvegardés avec succès',
-                    'tab_id' => $tab_id,
-                    'fields_processed' => array_keys($data),
-                    'fields_saved' => $saved_count,
-                ]);
-            } else {
-                wp_send_json_error(['message' => 'Aucune donnée reçue']);
-            }
-
-        } catch (Exception $e) {
-            error_log('PDF Builder Tab Settings Save Error: ' . $e->getMessage());
-            wp_send_json_error(['message' => 'Erreur lors de la sauvegarde des paramètres']);
-        }
-    });
-
-    return true;
-}
-
 /**
  * Handler AJAX ultra-rapide pour sauvegarder TOUS les paramètres en UNE SEULE requête
  * Beaucoup plus rapide que d'appeler les handlers individuels
@@ -361,4 +281,3 @@ add_action('wp_ajax_nopriv_pdf_builder_save_all_direct', function() {
     wp_send_json_error(['message' => 'Non autorisé']);
 });
 ?>
-
