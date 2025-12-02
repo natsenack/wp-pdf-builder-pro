@@ -4,6 +4,7 @@
      * Core settings processing with CLEAN, CENTRALIZED JavaScript
      * Updated: 2025-12-02 03:25:00 - FORCE CACHE CLEAR
      * Cache Buster: <?php echo time(); ?>
+     * Final Fix: Promise wrapper for jQuery.ajax - VERSION 2 - FORCE RELOAD
      */
 
     // Logs
@@ -406,11 +407,16 @@
                     this.ui.setButtonState(this.saveButton, 'loading');
                 }
 
+                // Store context and notification functions to avoid 'this' issues in callbacks
+                const self = this;
+                const showSuccess = window.showSuccessNotification;
+                const showError = window.showErrorNotification;
+
                 try {
                     const formData = this.collectAllSettings();
 
                     // Send to server using jQuery AJAX wrapped in Promise
-                    // FIXED: No more direct await on jQuery.ajax - using Promise wrapper
+                    // FIXED: Using arrow functions to preserve context
                     const response = await new Promise((resolve, reject) => {
                         jQuery.ajax({
                             url: PDF_BUILDER_CONFIG.ajax_url,
@@ -421,10 +427,12 @@
                                 ...formData
                             },
                             dataType: 'json',
-                            success: function(data) {
+                            success: (data) => {
+                                console.log('[AJAX Success] Response received:', data);
                                 resolve(data);
                             },
-                            error: function(xhr, status, error) {
+                            error: (xhr, status, error) => {
+                                console.error('[AJAX Error] Error details:', {status, error, responseText: xhr.responseText});
                                 reject(new Error(error || 'AJAX request failed'));
                             }
                         });
@@ -432,8 +440,8 @@
 
                     if (response.success) {
                         console.log('✅ All settings saved successfully!');
-                        if (window.showSuccessNotification) {
-                            window.showSuccessNotification('✅ All settings saved successfully!');
+                        if (typeof showSuccess === 'function') {
+                            showSuccess('✅ All settings saved successfully!');
                         }
                     } else {
                         throw new Error(response.data?.message || 'Save failed');
@@ -441,8 +449,8 @@
 
                 } catch (error) {
                     console.error('Save error:', error);
-                    if (window.showErrorNotification) {
-                        window.showErrorNotification('❌ Error saving settings: ' + error.message);
+                    if (typeof showError === 'function') {
+                        showError('❌ Error saving settings: ' + error.message);
                     }
                 } finally {
                     if (this.ui && this.saveButton) {
@@ -461,6 +469,9 @@
                     return;
                 }
 
+                // Store notification functions to avoid context issues
+                const showSuccess = window.showSuccessNotification;
+                const showError = window.showErrorNotification;
                 const formData = this.collectTabSettings(tabId);
 
                 try {
@@ -475,23 +486,25 @@
                                 ...formData
                             },
                             dataType: 'json',
-                            success: function(data) {
+                            success: (data) => {
+                                console.log('[AJAX Success] Tab save response:', data);
                                 resolve(data);
                             },
-                            error: function(xhr, status, error) {
+                            error: (xhr, status, error) => {
+                                console.error('[AJAX Error] Tab save failed:', {status, error});
                                 reject(new Error(error || 'AJAX request failed'));
                             }
                         });
                     });
 
-                    if (response.success && window.showSuccessNotification) {
-                        window.showSuccessNotification(`✅ ${tabId.charAt(0).toUpperCase() + tabId.slice(1)} settings saved!`);
+                    if (response.success && typeof showSuccess === 'function') {
+                        showSuccess(`✅ ${tabId.charAt(0).toUpperCase() + tabId.slice(1)} settings saved!`);
                     }
 
                 } catch (error) {
                     console.error('Tab save error:', error);
-                    if (window.showErrorNotification) {
-                        window.showErrorNotification('❌ Error saving settings');
+                    if (typeof showError === 'function') {
+                        showError('❌ Error saving settings');
                     }
                 }
             }
