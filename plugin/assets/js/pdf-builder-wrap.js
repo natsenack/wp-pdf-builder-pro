@@ -64,11 +64,16 @@
     setTimeout(function() {
         if (!isInitialized) {
             clearInterval(checkRealModule);
-            // Assign stub to window as fallback
-            window.pdfBuilderReact = stub;
-            Object.assign(initialized, window.pdfBuilderReact);
-            console.log('⚠️ [pdf-builder-wrap] Using stub pdfBuilderReact (webpack module not loaded)');
-            // Still dispatch event so initialization can proceed with stub
+            // Only assign stub if no real implementation exists
+            if (!window.pdfBuilderReact || typeof window.pdfBuilderReact.initPDFBuilderReact !== 'function' || 
+                window.pdfBuilderReact.initPDFBuilderReact.toString().indexOf('return false') !== -1) {
+                window.pdfBuilderReact = stub;
+                Object.assign(initialized, window.pdfBuilderReact);
+                console.log('⚠️ [pdf-builder-wrap] Using stub pdfBuilderReact (webpack module not loaded)');
+            } else {
+                console.log('✅ [pdf-builder-wrap] Keeping real pdfBuilderReact from webpack bundle');
+            }
+            // Still dispatch event so initialization can proceed
             try {
                 var event = new Event('pdfBuilderReactReady');
                 document.dispatchEvent(event);
