@@ -298,6 +298,12 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 $saved_settings[$option_key] = $option_value;
                 // DEBUG: Log saved_settings addition
                 error_log("[AJAX DEBUG] Added to saved_settings: '$option_key' = '$option_value'");
+                
+                // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT DANS SAVED_SETTINGS
+                if (strpos($option_key, 'debug_javascript') !== false) {
+                    error_log("[AJAX DEBUG JAVASCRIPT] AJOUTÉ À SAVED_SETTINGS: '$option_key' => '$option_value'");
+                    error_log("[AJAX DEBUG JAVASCRIPT] TOTAL SAVED_SETTINGS: " . count($saved_settings));
+                }
             }
         }
 
@@ -310,7 +316,12 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 'pdf_builder_canvas_debug_enabled_present' => isset($saved_settings['pdf_builder_canvas_debug_enabled']),
                 'pdf_builder_canvas_debug_enabled_value' => $saved_settings['pdf_builder_canvas_debug_enabled'] ?? 'not_set',
                 'all_post_fields' => array_keys($_POST),
-                'handler_executed' => true
+                'handler_executed' => true,
+                // LOGS SPÉCIFIQUES POUR DEBUG
+                'debug_fields_in_saved_settings' => array_filter($saved_settings, function($key) {
+                    return strpos($key, 'debug') !== false;
+                }, ARRAY_FILTER_USE_KEY),
+                'debug_javascript_value' => $saved_settings['pdf_builder_debug_javascript'] ?? 'NOT_IN_SAVED_SETTINGS'
             ]
         ];
     }
