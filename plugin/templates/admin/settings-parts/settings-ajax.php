@@ -1258,6 +1258,8 @@ function pdf_builder_save_all_settings_handler() {
         // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
         error_log("BEFORE CHECKBOX PROCESSING - debug_javascript in POST: " . (isset($_POST['debug_javascript']) ? $_POST['debug_javascript'] : 'NOT_SET'));
         error_log("BEFORE CHECKBOX PROCESSING - pdf_builder_debug_javascript in POST: " . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
+        error_log("BEFORE CHECKBOX PROCESSING - debug_javascript in processed_fields: " . (in_array('debug_javascript', $processed_fields) ? 'YES' : 'NO'));
+        error_log("BEFORE CHECKBOX PROCESSING - pdf_builder_debug_javascript in processed_fields: " . (in_array('pdf_builder_debug_javascript', $processed_fields) ? 'YES' : 'NO'));
 
         foreach ($checkbox_fields as $field) {
             // Vérifier AVEC et SANS le préfixe pdf_builder_
@@ -1314,28 +1316,33 @@ function pdf_builder_save_all_settings_handler() {
             $message .= " ⚠️ " . count($errors) . " erreurs ignorées.";
         }
 
+        error_log('PDF Builder SAVE ALL - About to build saved_options from processed_fields');
+
         // Préparer les options sauvegardées pour la réponse (sans préfixe pour correspondre aux noms de champs du formulaire)
         $saved_options = [];
         try {
             error_log('===== CONSTRUCTION SAVED_OPTIONS =====');
             error_log('processed_fields count: ' . count($processed_fields));
-            error_log('processed_fields sample: ' . implode(', ', array_slice($processed_fields, 0, 10)));
             
+            $fields_processed = 0;
             foreach ($processed_fields as $field) {
+                $fields_processed++;
+                
                 // Normaliser la clé : retirer le préfixe pdf_builder_ pour la cohérence dans la réponse
                 $display_key = str_replace('pdf_builder_', '', $field);
                 
                 $option_key = strpos($field, 'pdf_builder_') === 0 ? $field : 'pdf_builder_' . $field;
                 $saved_value = get_option($option_key, '');
                 
+                // Utiliser la clé normalisée (sans préfixe) dans saved_options pour correspondre aux noms de formulaire
+                $saved_options[$display_key] = $saved_value;
+                
                 // CRITICAL: Log debug_javascript explicitly
                 if (strpos($field, 'debug_javascript') !== false) {
                     error_log("🟡 SAVED_OPTIONS LOOP - DEBUG_JAVASCRIPT: field='{$field}', display_key='{$display_key}', option_key='{$option_key}', saved_value='{$saved_value}'");
                 }
-                
-                // Utiliser la clé normalisée (sans préfixe) dans saved_options pour correspondre aux noms de formulaire
-                $saved_options[$display_key] = $saved_value;
-                error_log("SAVED_OPTIONS [{$display_key}] -> option_key[{$option_key}] = '{$saved_value}'");
+            }
+            error_log("🟠 FIELDS PROCESSED: {$fields_processed}");
                 
                 // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
                 if (strpos($field, 'debug_javascript') !== false) {
