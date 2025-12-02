@@ -176,7 +176,8 @@
                             </div>
                         </article>
                     </div>
-                </section>                <!-- Section Maintenance -->
+                </section>
+                <!-- Section Maintenance -->
                 <section class="system-maintenance-section">
                         <h3>
                             <span style="display: inline-flex; align-items: center; gap: 10px;">
@@ -194,6 +195,9 @@
                                         <button type="button" id="remove-temp-btn" class="button button-secondary">🗂️ Supprimer fichiers temp</button>
                                         <div id="maintenance-results" style="margin-top: 10px;"></div>
                                     </td>
+                                </tr>
+                            </table>
+                        </main>
                 </section>
 
                 <!-- Section Maintenance Système -->
@@ -219,6 +223,8 @@
                                 </td>
                             </tr>
                         </table>
+                    </div>
+                </section>
 
                         <!-- Métriques de maintenance -->
                         <article class="maintenance-status-info">
