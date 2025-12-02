@@ -38,10 +38,23 @@ function pdf_builder_register_settings_handler($tab_id, $fields = [], $sanitizer
 
             // Vérifier le nonce - accepter les deux types (moderne et legacy)
             $nonce_valid = false;
+            $nonce_received = isset($_POST['nonce']) ? $_POST['nonce'] : 'NOT_PROVIDED';
+            
+            // DEBUG: Logs pour déboguer le problème de nonce
+            error_log('PDF Builder AJAX Debug [' . $tab_id . ']:');
+            error_log('  Nonce reçu: ' . $nonce_received);
+            
             if (isset($_POST['nonce'])) {
-                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_ajax') || 
-                              wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_legacy');
+                $verify_modern = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_ajax');
+                $verify_legacy = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_legacy');
+                
+                error_log('  Vérification moderne (pdf_builder_settings_ajax): ' . ($verify_modern === false ? 'FAILED' : ($verify_modern === 1 ? 'VALID' : 'FAILED_DUPLICATE')));
+                error_log('  Vérification legacy (pdf_builder_settings_legacy): ' . ($verify_legacy === false ? 'FAILED' : ($verify_legacy === 1 ? 'VALID' : 'FAILED_DUPLICATE')));
+                
+                $nonce_valid = $verify_modern || $verify_legacy;
             }
+            
+            error_log('  Résultat final: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
             
             if (!$nonce_valid) {
                 wp_send_json_error(['message' => 'Vérification de sécurité échouée']);
@@ -157,10 +170,24 @@ if (is_admin()) {
 
             // Vérifier le nonce - accepter les deux types (moderne et legacy)
             $nonce_valid = false;
+            $nonce_received = isset($_POST['nonce']) ? $_POST['nonce'] : 'NOT_PROVIDED';
+            $tab_id = isset($_POST['tab']) ? sanitize_key($_POST['tab']) : 'UNKNOWN';
+            
+            // DEBUG: Logs pour déboguer le problème de nonce
+            error_log('PDF Builder Tab Settings AJAX Debug [' . $tab_id . ']:');
+            error_log('  Nonce reçu: ' . $nonce_received);
+            
             if (isset($_POST['nonce'])) {
-                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_ajax') || 
-                              wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_legacy');
+                $verify_modern = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_ajax');
+                $verify_legacy = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_legacy');
+                
+                error_log('  Vérification moderne (pdf_builder_settings_ajax): ' . ($verify_modern === false ? 'FAILED' : ($verify_modern === 1 ? 'VALID' : 'FAILED_DUPLICATE')));
+                error_log('  Vérification legacy (pdf_builder_settings_legacy): ' . ($verify_legacy === false ? 'FAILED' : ($verify_legacy === 1 ? 'VALID' : 'FAILED_DUPLICATE')));
+                
+                $nonce_valid = $verify_modern || $verify_legacy;
             }
+            
+            error_log('  Résultat final: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
             
             if (!$nonce_valid) {
                 wp_send_json_error(['message' => 'Vérification de sécurité échouée']);
