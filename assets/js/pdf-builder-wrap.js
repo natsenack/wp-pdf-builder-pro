@@ -1,50 +1,76 @@
 /**
  * PDF Builder React - Bootstrap Script
- * Initializes pdfBuilderReact on window with stub functions
- * The actual implementation is loaded from the webpack bundle
+ * Creates stub functions on window that get replaced by webpack bundle
  */
 
 (function() {
     'use strict';
 
-    // Create stub object immediately
-    if (!window.pdfBuilderReact) {
-        window.pdfBuilderReact = {
-            initPDFBuilderReact: function() { console.warn('[pdf-builder-wrap] initPDFBuilderReact not loaded yet'); },
-            loadTemplate: function() { console.warn('[pdf-builder-wrap] loadTemplate not loaded yet'); },
-            getEditorState: function() { console.warn('[pdf-builder-wrap] getEditorState not loaded yet'); },
-            setEditorState: function() { console.warn('[pdf-builder-wrap] setEditorState not loaded yet'); },
-            getCurrentTemplate: function() { console.warn('[pdf-builder-wrap] getCurrentTemplate not loaded yet'); },
-            exportTemplate: function() { console.warn('[pdf-builder-wrap] exportTemplate not loaded yet'); },
-            saveTemplate: function() { console.warn('[pdf-builder-wrap] saveTemplate not loaded yet'); },
-            registerEditorInstance: function() { console.warn('[pdf-builder-wrap] registerEditorInstance not loaded yet'); },
-            resetAPI: function() { console.warn('[pdf-builder-wrap] resetAPI not loaded yet'); },
-            updateCanvasDimensions: function() { console.warn('[pdf-builder-wrap] updateCanvasDimensions not loaded yet'); }
-        };
-        console.log('✅ [pdf-builder-wrap] Stub pdfBuilderReact created on window');
-    }
+    // Create initialized flag
+    var isInitialized = false;
+    var initialized = {};
 
-    // Wait for webpack module to execute and merge its exports
-    var attempts = 0;
-    var checkWebpackModule = setInterval(function() {
-        attempts++;
-        
-        // Check if webpack has set a proper object
+    // Create object with all required methods
+    var createStub = function() {
+        return {
+            initPDFBuilderReact: function() { return false; },
+            loadTemplate: function() { return false; },
+            getEditorState: function() { return null; },
+            setEditorState: function() { return false; },
+            getCurrentTemplate: function() { return null; },
+            exportTemplate: function() { return false; },
+            saveTemplate: function() { return false; },
+            registerEditorInstance: function() { return false; },
+            resetAPI: function() { return false; },
+            updateCanvasDimensions: function() { return false; }
+        };
+    };
+
+    // Create initial stub
+    window.pdfBuilderReact = createStub();
+    Object.assign(initialized, window.pdfBuilderReact);
+    console.log('✅ [pdf-builder-wrap] Stub pdfBuilderReact created on window');
+
+    // Check if webpack bundle has replaced the stub
+    // A real implementation will have non-empty function bodies
+    var checkRealModule = setInterval(function() {
         if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-            // Check if it's still a stub (no real implementation)
             var fnStr = window.pdfBuilderReact.initPDFBuilderReact.toString();
-            if (fnStr.indexOf('not loaded yet') === -1) {
-                console.log('✅ [pdf-builder-wrap] Real pdfBuilderReact loaded from webpack');
-                clearInterval(checkWebpackModule);
-                document.dispatchEvent(new Event('pdfBuilderReactReady'));
-                return;
+            
+            // Check if this is a real implementation (not a stub that just returns false)
+            if (fnStr.indexOf('return false') === -1 && fnStr.indexOf('warn') === -1) {
+                // Verify it's different from our stub
+                var isReal = fnStr.length > 50; // Real function will be longer
+                
+                if (isReal) {
+                    console.log('✅ [pdf-builder-wrap] Real pdfBuilderReact loaded from webpack');
+                    isInitialized = true;
+                    clearInterval(checkRealModule);
+                    
+                    // Dispatch ready event
+                    try {
+                        var event = new Event('pdfBuilderReactReady');
+                        document.dispatchEvent(event);
+                        console.log('✅ [pdf-builder-wrap] pdfBuilderReactReady event dispatched');
+                    } catch (e) {
+                        console.error('[pdf-builder-wrap] Error dispatching event:', e);
+                    }
+                    return;
+                }
             }
         }
-        
-        if (attempts > 50) {
-            clearInterval(checkWebpackModule);
-            console.warn('⚠️ [pdf-builder-wrap] Timeout waiting for webpack module');
-            document.dispatchEvent(new Event('pdfBuilderReactReady'));
+    }, 50);
+
+    // Force dispatch event after timeout
+    setTimeout(function() {
+        if (!isInitialized) {
+            clearInterval(checkRealModule);
+            console.log('⚠️ [pdf-builder-wrap] Using stub pdfBuilderReact (webpack module not loaded)');
+            // Still dispatch event so initialization can proceed with stub
+            try {
+                var event = new Event('pdfBuilderReactReady');
+                document.dispatchEvent(event);
+            } catch (e) {}
         }
-    }, 100);
+    }, 5000);
 })();
