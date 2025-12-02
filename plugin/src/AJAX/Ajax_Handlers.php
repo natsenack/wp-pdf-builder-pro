@@ -256,6 +256,18 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     $db_value_after = get_option($option_key, 'NOT_FOUND_AFTER_UPDATE');
                     error_log("[AJAX DEBUG JAVASCRIPT] VERIFICATION BDD APRES SAUVEGARDE: get_option('$option_key') = '$db_value_after'");
                 }
+
+                // MISE À JOUR DES PARAMÈTRES CANVAS POUR LES CHAMPS DEBUG
+                if (preg_match('/debug_(.+)/', $key, $matches)) {
+                    $debug_key = $matches[1];
+                    $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+                    if (!isset($canvas_settings['debug'])) {
+                        $canvas_settings['debug'] = [];
+                    }
+                    $canvas_settings['debug'][$debug_key] = $option_value;
+                    update_option('pdf_builder_canvas_settings', $canvas_settings);
+                    error_log("[AJAX DEBUG] Updated canvas settings debug.$debug_key = $option_value");
+                }
             } elseif (in_array($key, $field_rules['array_fields'])) {
                 if (is_array($value)) {
                     $option_key = 'pdf_builder_' . $key;
