@@ -44,6 +44,9 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 // Add nonce for AJAX
 wp_nonce_field('pdf_builder_settings', '_wpnonce_pdf_builder');
 
+// Log AJAX handlers registration
+error_log('PDF Builder: Registering AJAX handlers...');
+
 // Basic form processing fallback (NO AJAX)
 if (isset($_POST['submit']) && isset($_POST['_wpnonce'])) {
     if (wp_verify_nonce($_POST['_wpnonce'], 'pdf_builder_settings')) {
@@ -809,6 +812,7 @@ add_action('wp_ajax_pdf_builder_deactivate_license', function() {
 });
 
 // Developer Settings AJAX Handler
+error_log('PDF Builder: Registering developer settings AJAX handler');
 add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
     error_log('PDF Builder Developer: AJAX handler called');
 
