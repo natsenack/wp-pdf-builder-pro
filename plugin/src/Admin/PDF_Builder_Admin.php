@@ -1409,10 +1409,15 @@ class PdfBuilderAdmin
                 }
             }
 
-            // ✅ Enqueue wrapper script FIRST to create stub pdfBuilderReact on window
+            // ✅ Enqueue AJAX throttle manager FIRST to prevent connection pool exhaustion
+            $throttle_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/ajax-throttle.js';
+            $throttle_version = $cache_bust;
+            wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $throttle_version, true);
+
+            // ✅ Enqueue wrapper script NEXT to create stub pdfBuilderReact on window
             $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js';
             $wrap_helper_version = $cache_bust;
-            wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, [], $wrap_helper_version, true);
+            wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle'], $wrap_helper_version, true);
 
             // Then enqueue the actual bundle
             wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
