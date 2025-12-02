@@ -202,6 +202,9 @@ if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
 // ✅ CRITICAL: Assign to window SYNCHRONOUSLY
 if (typeof window !== 'undefined') {
   window.pdfBuilderReact = exports;
+  // Set a flag to indicate webpack bundle has loaded
+  window.pdfBuilderReact._isWebpackBundle = true;
+  window.pdfBuilderReact._loadedAt = Date.now();
   console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact assigned from webpack bundle');
   console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact.initPDFBuilderReact:', typeof window.pdfBuilderReact.initPDFBuilderReact);
   console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact.initPDFBuilderReact length:', window.pdfBuilderReact.initPDFBuilderReact.toString().length);
