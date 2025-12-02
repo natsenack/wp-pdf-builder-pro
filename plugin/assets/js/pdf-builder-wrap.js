@@ -33,6 +33,12 @@
     // Check if webpack bundle has replaced the stub
     // Look for the webpack bundle flag
     var checkRealModule = setInterval(function() {
+        console.log('🔍 [pdf-builder-wrap] Checking for real module...');
+        console.log('🔍 [pdf-builder-wrap] window.pdfBuilderReact exists:', !!window.pdfBuilderReact);
+        if (window.pdfBuilderReact) {
+            console.log('🔍 [pdf-builder-wrap] initPDFBuilderReact type:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+            console.log('🔍 [pdf-builder-wrap] _isWebpackBundle:', window.pdfBuilderReact._isWebpackBundle);
+        }
         if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function' && window.pdfBuilderReact._isWebpackBundle) {
             console.log('✅ [pdf-builder-wrap] Real pdfBuilderReact loaded from webpack (detected via flag)');
             isInitialized = true;
