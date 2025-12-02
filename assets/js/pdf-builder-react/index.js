@@ -13,6 +13,10 @@ import { debugLog, debugError } from './utils/debug';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
+console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react/index.js starting execution...');
+console.log('🔧 [WEBPACK BUNDLE] React available:', typeof React);
+console.log('🔧 [WEBPACK BUNDLE] createRoot available:', typeof createRoot);
+
 // Imports synchrones des composants lourds (plus de lazy loading pour éviter les chunks webpack)
 import { PDFBuilder } from './PDFBuilder.tsx';
 import {
@@ -166,7 +170,9 @@ if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
 // ✅ CRITICAL: Assign to window SYNCHRONOUSLY
 if (typeof window !== 'undefined') {
   window.pdfBuilderReact = exports;
-  console.log('✅ window.pdfBuilderReact assigned from webpack bundle');
+  console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact assigned from webpack bundle');
+  console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact.initPDFBuilderReact:', typeof window.pdfBuilderReact.initPDFBuilderReact);
+  console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact.initPDFBuilderReact length:', window.pdfBuilderReact.initPDFBuilderReact.toString().length);
 }
 
 // No complex exports - let webpack UMD handle it with the assignment above
