@@ -20,15 +20,14 @@ module.exports = {
     }
   },
   externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM'
+    'react': 'React',
+    'react-dom': 'ReactDOM',
+    'react/jsx-runtime': 'React',  // Force JSX runtime to use window.React
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {
-      // Remap 'react' imports to our wrapper that ensures hooks are available
-      'react': path.resolve(__dirname, '../../assets/js/pdf-builder-react/react-shim-wrapper.js'),
-      'react-dom': 'react-dom'  // Keep react-dom as external
+      // Empty - let externals handle it
     }
   },
   module: {
@@ -42,7 +41,14 @@ module.exports = {
             presets: [
               '@babel/preset-env',
               '@babel/preset-typescript',
-              ['@babel/preset-react', { runtime: 'classic' }]
+              ['@babel/preset-react', { runtime: 'automatic' }]
+            ],
+            plugins: [
+              // Inject React hooks into scope for classic usage in transpiled code
+              ['@babel/plugin-transform-react-jsx', {
+                runtime: 'automatic',
+                importSource: 'react'
+              }]
             ]
           }
         }
