@@ -283,17 +283,7 @@
                                 <p>Configurez les formats et la qualité d'export des designs.</p>
                             </div>
                             <div class="canvas-card-preview">
-                                <div class="export-preview-container">
-                                    <div class="export-formats">
-                                        <span class="format-badge png">PNG</span>
-                                        <span class="format-badge jpg">JPG</span>
-                                        <span class="format-badge pdf">PDF</span>
-                                    </div>
-                                    <div class="export-quality-bar">
-                                        <div class="quality-fill" style="width: 90%;"></div>
-                                        <span class="quality-text">90%</span>
-                                    </div>
-                                </div>
+                                <div class="export-preview" title="Export PNG/JPG/PDF activé"></div>
                             </div>
                             <div class="canvas-card-actions">
                                 <button type="button" class="canvas-configure-btn">
