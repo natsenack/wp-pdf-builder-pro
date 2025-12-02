@@ -143,7 +143,7 @@
 <?php // Global variables for JS
     $js_config = [
         'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('pdf_builder_settings_ajax'),
+        'nonce' => wp_create_nonce('pdf_builder_settings'),
         'current_settings' => [
             'general' => [
                 'company_phone_manual' => $company_phone_manual,
@@ -158,7 +158,7 @@
 ?>
 
 <!-- Hidden nonce field for legacy AJAX system -->
-<input type="hidden" name="_wpnonce_pdf_builder" value="<?php echo wp_create_nonce('pdf_builder_settings_legacy'); ?>" />
+<input type="hidden" name="_wpnonce_pdf_builder" value="<?php echo wp_create_nonce('pdf_builder_settings'); ?>" />
 
 <script>
     /**

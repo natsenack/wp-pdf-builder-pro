@@ -45,13 +45,9 @@ function pdf_builder_register_settings_handler($tab_id, $fields = [], $sanitizer
             error_log('  Nonce reçu: ' . $nonce_received);
             
             if (isset($_POST['nonce'])) {
-                $verify_modern = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_ajax');
-                $verify_legacy = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_legacy');
+                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings');
                 
-                error_log('  Vérification moderne (pdf_builder_settings_ajax): ' . var_export($verify_modern, true));
-                error_log('  Vérification legacy (pdf_builder_settings_legacy): ' . var_export($verify_legacy, true));
-                
-                $nonce_valid = $verify_modern || $verify_legacy;
+                error_log('  Vérification (pdf_builder_settings): ' . var_export($nonce_valid, true));
             }
             
             error_log('  Résultat final: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
@@ -179,13 +175,9 @@ add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
             error_log('  Nonce reçu: ' . $nonce_received);
             
             if (isset($_POST['nonce'])) {
-                $verify_modern = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_ajax');
-                $verify_legacy = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings_legacy');
+                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings');
                 
-                error_log('  Vérification moderne (pdf_builder_settings_ajax): ' . var_export($verify_modern, true));
-                error_log('  Vérification legacy (pdf_builder_settings_legacy): ' . var_export($verify_legacy, true));
-                
-                $nonce_valid = $verify_modern || $verify_legacy;
+                error_log('  Vérification (pdf_builder_settings): ' . var_export($nonce_valid, true));
             }
             
             error_log('  Résultat final: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
