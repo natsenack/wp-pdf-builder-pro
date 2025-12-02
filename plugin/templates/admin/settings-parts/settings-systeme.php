@@ -1,18 +1,18 @@
 <?php // Systeme tab content - Updated: 2025-11-18 20:20:00
 
-// Fonction pour calculer la taille d'un répertoire
-function pdf_builder_get_directory_size($directory) {
-    $size = 0;
-    if (is_dir($directory)) {
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
-        foreach ($iterator as $file) {
-            if ($file->isFile()) {
-                $size += $file->getSize();
+    // Fonction pour calculer la taille d'un répertoire
+    function pdf_builder_get_directory_size($directory) {
+        $size = 0;
+        if (is_dir($directory)) {
+            $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+            foreach ($iterator as $file) {
+                if ($file->isFile()) {
+                    $size += $file->getSize();
+                }
             }
         }
+        return $size;
     }
-    return $size;
-}
 
 ?>
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
@@ -135,7 +135,7 @@ function pdf_builder_get_directory_size($directory) {
                                     }
                                     echo '</span>';
                                     ?>
-            </div>
+                                </div>
                                 <div style="color: #666; font-size: 12px;">Taille du cache</div>
                                 <div style="color: #999; font-size: 10px; margin-top: 5px;">Cliquez pour détails</div>
                             </div>
@@ -154,7 +154,7 @@ function pdf_builder_get_directory_size($directory) {
                             <div class="cache-metric-card systeme-cache-status" style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid #dee2e6; cursor: pointer; transition: all 0.3s ease;" data-metric="status">
                                 <div class="cache-enabled-indicator" style="font-size: 24px; font-weight: bold; color: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>;">
                                 <?php echo get_option('pdf_builder_cache_enabled', false) ? 'Cache activé' : 'Cache désactivé'; ?>
-                            </div>
+                                </div>
                                 <div style="color: #666; font-size: 12px;">État du cache</div>
                                 <div style="color: #999; font-size: 10px; margin-top: 5px;">Cliquez pour configurer</div>
                             </div>
@@ -314,4 +314,4 @@ function pdf_builder_get_directory_size($directory) {
                         Les modifications ne sont appliquées que lorsque vous cliquez sur ce bouton.
                     </p>
                 </div>
-            </div>
+            </section>

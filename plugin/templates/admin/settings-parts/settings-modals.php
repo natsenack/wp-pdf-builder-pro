@@ -2,12 +2,12 @@
 <!-- Cache Size Details Modal -->
 <div id="cache-size-modal" class="cache-modal" data-category="size">
     <div class="cache-modal-overlay">
-        <div class="cache-modal-content">
-            <div class="cache-modal-header">
+        <section class="cache-modal-content">
+            <header class="cache-modal-header">
                 <h3>[DETAILS CACHE] Détails de la taille du cache</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
-            </div>
-            <div class="cache-modal-body">
+            </header>
+            <main class="cache-modal-body">
                 <div class="cache-modal-info">
                     <p>
                         <strong>ℹ️ Informations sur la taille du cache :</strong> Cette section affiche la taille totale des fichiers en cache du plugin PDF Builder.
@@ -44,20 +44,20 @@
             <div class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
                 <button type="button" class="button button-primary" id="clear-cache-from-modal">🗑️ Vider le cache</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 
 <!-- Cache Transients Details Modal -->
 <div id="cache-transients-modal" class="cache-modal" data-category="transients">
     <div class="cache-modal-overlay">
-        <div class="cache-modal-content">
-            <div class="cache-modal-header">
+        <section class="cache-modal-content">
+            <header class="cache-modal-header">
                 <h3>📊 Détails des transients actifs</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
-            </div>
-            <div class="cache-modal-body">
+            </header>
+            <main class="cache-modal-body">
                 <div class="cache-modal-info">
                     <p>
                         <strong>ℹ️ Informations sur les transients :</strong> Les transients sont des données temporaires stockées dans la base de données WordPress.
@@ -96,20 +96,20 @@
             <div class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
                 <button type="button" class="button button-warning" id="clear-transients-from-modal">🗑️ Vider les transients</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 
 <!-- Cache Status Configuration Modal -->
 <div id="cache-status-modal" class="cache-modal" data-category="status">
     <div class="cache-modal-overlay">
-        <div class="cache-modal-content">
-            <div class="cache-modal-header">
+        <section class="cache-modal-content">
+            <header class="cache-modal-header">
                 <h3>⚙️ Configuration du cache</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
-            </div>
-            <div class="cache-modal-body">
+            </header>
+            <main class="cache-modal-body">
                 <div class="cache-modal-info">
                     <p>
                         <strong>ℹ️ Configuration du système de cache :</strong> Gérez les paramètres de cache pour optimiser les performances du plugin PDF Builder.
@@ -164,24 +164,24 @@
                         </tr>
                     </table>
                 </form>
-            </div>
-            <div class="cache-modal-footer">
+            </main>
+            <footer class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary cache-modal-save" data-category="status">Sauvegarder</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 
 <!-- Cache Cleanup Modal -->
 <div id="cache-cleanup-modal" class="cache-modal" data-category="cleanup">
     <div class="cache-modal-overlay">
-        <div class="cache-modal-content">
-            <div class="cache-modal-header">
+        <section class="cache-modal-content">
+            <header class="cache-modal-header">
                 <h3>🧹 Nettoyage du cache</h3>
                 <button type="button" class="cache-modal-close">&times;</button>
-            </div>
-            <div class="cache-modal-body">
+            </header>
+            <main class="cache-modal-body">
                 <div class="cache-modal-info">
                     <p>
                         <strong>ℹ️ Nettoyage du cache :</strong> Supprimez les fichiers cache obsolètes et les données temporaires pour libérer de l'espace disque
@@ -230,22 +230,22 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="cache-modal-footer">
+            </main>
+            <footer class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary" id="perform-cleanup-btn">🧹 Nettoyer maintenant</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 <div id="canvas-dimensions-modal" class="canvas-modal" data-category="dimensions">
     <div class="canvas-modal-overlay">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header">
+        <section class="canvas-modal-content">
+            <header class="canvas-modal-header">
                 <h3>📏 Dimensions & Format</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
+            </header>
+            <main class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p>
                         <strong>ℹ️ Comment ça marche :</strong> Ces paramètres définissent la taille, l'orientation et la qualité du document PDF généré. 
@@ -325,23 +325,23 @@
                         </tr>
                     </table>
                 </form>
-            </div>
-            <div class="canvas-modal-footer">
+            </main>
+            <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="dimensions">Sauvegarder</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 <!-- Canvas Configuration Modals Zoom & Navigation -->
 <div id="canvas-zoom-modal" class="canvas-modal" data-category="zoom">
     <div class="canvas-modal-overlay">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header">
+        <section class="canvas-modal-content">
+            <header class="canvas-modal-header">
                 <h3>🔍 Zoom</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
+            </header>
+            <main class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p>
                         <strong>ℹ️ Comment ça marche :</strong> Contrôlez les niveaux de zoom et les options de navigation du canvas.
@@ -381,37 +381,37 @@
                         </tr>
                     </table>
                 </form>
-            </div>
-            <div class="canvas-modal-footer">
+            </main>
+            <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="zoom">Sauvegarder</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 <!-- Canvas Configuration Modals Apparence -->
 <div id="canvas-apparence-modal" class="canvas-modal" data-category="apparence">
     <div class="canvas-modal-overlay">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header">
+        <section class="canvas-modal-content">
+            <header class="canvas-modal-header">
                 <h3 >🎨 Apparence</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
+            </header>
+            <main class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p >
                         <strong>ℹ️ Comment ça marche :</strong> Ces paramètres contrôlent l'apparence visuelle du canvas de conception et de l'interface d'édition. 
                         Personnalisez les couleurs et les effets pour un meilleur confort de travail.
                     </p>
                 </div>
-            <?php
-            /**
-             * Paramètres canvas pour les modales
-             * Définit les valeurs par défaut depuis les options séparées (synchronisées)
-             */
+                <?php
+                /**
+                 * Paramètres canvas pour les modales
+                 * Définit les valeurs par défaut depuis les options séparées (synchronisées)
+                 */
 
-            // Les modales lisent depuis les options séparées pour cohérence
-            ?>
+                // Les modales lisent depuis les options séparées pour cohérence
+                ?>
 
                 <form id="canvas-apparence-form">
                     <h4 class="canvas-modal-section-title">🎨 Canvas</h4>
@@ -460,23 +460,23 @@
                         </tr>
                     </table>
                 </form>
-            </div>
-            <div class="canvas-modal-footer">
+            </main>
+            <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="apparence">Sauvegarder</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 <!-- Canvas Configuration Modals Grille & Guides -->
 <div id="canvas-grille-modal" class="canvas-modal" data-category="grille">
     <div class="canvas-modal-overlay">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header">
+        <section class="canvas-modal-content">
+            <header class="canvas-modal-header">
                 <h3 >📐 Grille & Guides</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
+            </header>
+            <main class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p >
                         <strong>ℹ️ Comment ça marche :</strong> Activez la grille pour afficher un quadrillage sur le canvas. 
@@ -524,23 +524,23 @@
                         </tr>
                     </table>
                 </form>
-            </div>
-            <div class="canvas-modal-footer">
+            </main>
+            <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="grille">Sauvegarder</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 <!-- Canvas Configuration Modals Interactions & Comportement-->
 <div id="canvas-interactions-modal" class="canvas-modal" data-category="interactions">
     <div class="canvas-modal-overlay">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header">
+        <section class="canvas-modal-content">
+            <header class="canvas-modal-header">
                 <h3 >🖱️ Interactions & Comportement</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
+            </header>
+            <main class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p >
                         <strong>ℹ️ Comment ça marche :</strong> Ces paramètres contrôlent les interactions disponibles sur le canvas pour manipuler les éléments,
@@ -617,23 +617,23 @@
                         </tr>
                     </table>
                 </form>
-            </div>
-            <div class="canvas-modal-footer">
+            </main>
+            <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="interactions">Sauvegarder</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 <!-- Canvas Configuration Modals Export & Qualité -->
 <div id="canvas-export-modal" class="canvas-modal" data-category="export">
     <div class="canvas-modal-overlay">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header">
+        <section class="canvas-modal-content">
+            <header class="canvas-modal-header">
                 <h3 >📤 Export & Qualité</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
+            </header>
+            <main class="canvas-modal-body">
                 <form id="canvas-export-form">
                     <table class="form-table">
                         <tr>
@@ -663,23 +663,23 @@
                         </tr>
                     </table>
                 </form>
-            </div>
-            <div class="canvas-modal-footer">
+            </main>
+            <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="export">Sauvegarder</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 <!-- Canvas Configuration Modals Performance -->
 <div id="canvas-performance-modal" class="canvas-modal" data-category="performance">
     <div class="canvas-modal-overlay">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header">
+        <section class="canvas-modal-content">
+            <header class="canvas-modal-header">
                 <h3 >⚡ Performance</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
+            </header>
+            <main class="canvas-modal-body">
                 <div class="canvas-modal-info">
                     <p >
                         <strong>🚀 Optimisation :</strong> Ces paramètres améliorent les performances de l'éditeur et du plugin pour une expérience plus fluide.
@@ -786,23 +786,23 @@
                         </tr>
                     </table>
                 </form>
-            </div>
-            <div class="canvas-modal-footer">
+            </main>
+            <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="performance">Sauvegarder</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 <!-- Canvas Configuration Modals Debug -->
 <div id="canvas-debug-modal" class="canvas-modal" data-category="debug">
     <div class="canvas-modal-overlay">
-        <div class="canvas-modal-content">
-            <div class="canvas-modal-header">
+        <section class="canvas-modal-content">
+            <header class="canvas-modal-header">
                 <h3 >🐛 Debug</h3>
                 <button type="button" class="canvas-modal-close">&times;</button>
-            </div>
-            <div class="canvas-modal-body">
+            </header>
+            <main class="canvas-modal-body">
                 <form id="canvas-debug-form">
                     <table class="form-table">
                         <tr>
@@ -834,62 +834,62 @@
                         </tr>
                     </table>
                 </form>
-            </div>
-            <div class="canvas-modal-footer">
+            </main>
+            <footer class="canvas-modal-footer">
                 <button type="button" class="button button-secondary canvas-modal-cancel">Annuler</button>
                 <button type="button" class="button button-primary canvas-modal-save" data-category="debug">Sauvegarder</button>
-            </div>
-        </div>
+            </footer>
+        </section>
     </div>
 </div>
 
 <script>
-// Preview FPS en temps réel
-document.addEventListener('DOMContentLoaded', function() {
-    const fpsSelect = document.getElementById('canvas_fps_target');
-    const fpsValue = document.getElementById('current_fps_value');
+    // Preview FPS en temps réel
+    document.addEventListener('DOMContentLoaded', function() {
+        const fpsSelect = document.getElementById('canvas_fps_target');
+        const fpsValue = document.getElementById('current_fps_value');
 
-    if (fpsSelect && fpsValue) {
-        fpsSelect.addEventListener('change', function() {
-            fpsValue.textContent = this.value;
-            fpsValue.style.color = this.value >= 60 ? '#28a745' : this.value >= 30 ? '#ffc107' : '#dc3545';
-        });
-    }
-
-    // Gestion de la dépendance Sélection multiple -> Mode de sélection
-    const multiSelectCheckbox = document.getElementById('canvas_multi_select');
-    const selectionModeSelect = document.getElementById('canvas_selection_mode');
-
-    if (multiSelectCheckbox && selectionModeSelect) {
-        // Fonction pour gérer l'état du mode de sélection
-        function updateSelectionModeState() {
-            if (!multiSelectCheckbox.checked) {
-                // Désactiver le mode de sélection si sélection multiple est désactivée
-                selectionModeSelect.disabled = true;
-                selectionModeSelect.style.opacity = '0.5';
-                selectionModeSelect.style.cursor = 'not-allowed';
-                // Sauvegarder la valeur actuelle pour la restaurer si réactivé
-                selectionModeSelect.setAttribute('data-previous-value', selectionModeSelect.value);
-                selectionModeSelect.value = 'click'; // Forcer en mode clic simple
-            } else {
-                // Réactiver le mode de sélection si sélection multiple est activée
-                selectionModeSelect.disabled = false;
-                selectionModeSelect.style.opacity = '1';
-                selectionModeSelect.style.cursor = 'default';
-                // Restaurer la valeur précédente si elle existe
-                const previousValue = selectionModeSelect.getAttribute('data-previous-value');
-                if (previousValue) {
-                    selectionModeSelect.value = previousValue;
-                    selectionModeSelect.removeAttribute('data-previous-value');
-                }
-            }
+        if (fpsSelect && fpsValue) {
+            fpsSelect.addEventListener('change', function() {
+                fpsValue.textContent = this.value;
+                fpsValue.style.color = this.value >= 60 ? '#28a745' : this.value >= 30 ? '#ffc107' : '#dc3545';
+            });
         }
 
-        // Appliquer l'état initial
-        updateSelectionModeState();
+        // Gestion de la dépendance Sélection multiple -> Mode de sélection
+        const multiSelectCheckbox = document.getElementById('canvas_multi_select');
+        const selectionModeSelect = document.getElementById('canvas_selection_mode');
 
-        // Écouter les changements sur la case à cocher
-        multiSelectCheckbox.addEventListener('change', updateSelectionModeState);
-    }
-});
+        if (multiSelectCheckbox && selectionModeSelect) {
+            // Fonction pour gérer l'état du mode de sélection
+            function updateSelectionModeState() {
+                if (!multiSelectCheckbox.checked) {
+                    // Désactiver le mode de sélection si sélection multiple est désactivée
+                    selectionModeSelect.disabled = true;
+                    selectionModeSelect.style.opacity = '0.5';
+                    selectionModeSelect.style.cursor = 'not-allowed';
+                    // Sauvegarder la valeur actuelle pour la restaurer si réactivé
+                    selectionModeSelect.setAttribute('data-previous-value', selectionModeSelect.value);
+                    selectionModeSelect.value = 'click'; // Forcer en mode clic simple
+                } else {
+                    // Réactiver le mode de sélection si sélection multiple est activée
+                    selectionModeSelect.disabled = false;
+                    selectionModeSelect.style.opacity = '1';
+                    selectionModeSelect.style.cursor = 'default';
+                    // Restaurer la valeur précédente si elle existe
+                    const previousValue = selectionModeSelect.getAttribute('data-previous-value');
+                    if (previousValue) {
+                        selectionModeSelect.value = previousValue;
+                        selectionModeSelect.removeAttribute('data-previous-value');
+                    }
+                }
+            }
+
+            // Appliquer l'état initial
+            updateSelectionModeState();
+
+            // Écouter les changements sur la case à cocher
+            multiSelectCheckbox.addEventListener('change', updateSelectionModeState);
+        }
+    });
 </script>

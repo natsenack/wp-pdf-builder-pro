@@ -63,7 +63,7 @@
                         🔧 Options avancées <span id="advanced-toggle" style="float: right;">▼</span>
                     </h3>
 
-                    <div id="advanced-section" style="display: none;">
+                    <section id="advanced-section" style="display: none;">
                         <table class="form-table">
                             <tr>
                                 <th scope="row"><label for="pdf_compression">Compression</label></th>
@@ -97,7 +97,7 @@
                                 </td>
                             </tr>
                         </table>
-                    </div>
+                    </section>
                 </section>
             </form>
 

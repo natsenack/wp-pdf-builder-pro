@@ -110,7 +110,7 @@
                                     <p class="description">Chiffrer les données sensibles des utilisateurs</p>
                                 </td>
                             </tr>
-                        </table>
+                    </table>
 
                         <!-- Section Types de Consentement -->
                         <h4 style="color: #155724; margin-top: 30px; margin-bottom: 15px;">🤝 Types de Consentement</h4>
@@ -192,5 +192,5 @@
                                 <div id="audit-log-content"></div>
                             </div>
                         </div>
-                    </div>
+                </div>
             </form>

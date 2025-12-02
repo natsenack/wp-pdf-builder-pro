@@ -62,15 +62,15 @@
 
     // Load centralized JavaScript
 ?>
-<div class="wrap" id="pdf-builder-settings-wrapper">
-    <div class="pdf-builder-header">
+<main class="wrap" id="pdf-builder-settings-wrapper">
+    <header class="pdf-builder-header">
         <h1><?php _e('⚙️ PDF Builder Pro Settings (JS CENTRALIZED)', 'pdf-builder-pro'); ?></h1>
         <p><strong>Centralized JavaScript System:</strong> Clean, organized, and efficient.</p>
-    </div>
+    </header>
 
     <div id="pdf-builder-notifications"></div>
 
-    <div class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs">
+    <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general">⚙️ General</a>
         <a href="#licence" class="nav-tab" data-tab="licence">🔑 Licence</a>
         <a href="#systeme" class="nav-tab" data-tab="systeme">🖥️ System</a>
@@ -80,9 +80,9 @@
         <a href="#contenu" class="nav-tab" data-tab="contenu">🎨 Content</a>
         <a href="#templates" class="nav-tab" data-tab="templates">📋 Templates</a>
         <a href="#developpeur" class="nav-tab" data-tab="developpeur">🛠️ Developer</a>
-    </div>
+    </nav>
 
-    <div id="pdf-builder-tab-content" class="tab-content-wrapper">
+    <section id="pdf-builder-tab-content" class="tab-content-wrapper">
         <div id="general" class="tab-content active"><?php require_once 'settings-general.php'; ?></div>
         <div id="licence" class="tab-content"><?php require_once 'settings-licence.php'; ?></div>
         <div id="systeme" class="tab-content"><?php require_once 'settings-systeme.php'; ?></div>
@@ -92,18 +92,16 @@
         <div id="contenu" class="tab-content"><?php require_once 'settings-contenu.php'; ?></div>
         <div id="templates" class="tab-content"><?php require_once 'settings-templates.php'; ?></div>
         <div id="developpeur" class="tab-content"><?php require_once 'settings-developpeur.php'; ?></div>
-    </div>
-    </div>
-    </div>
+    </section>
 
-    <div id="pdf-builder-floating-save">
+    <aside id="pdf-builder-floating-save">
         <button id="pdf-builder-save-button" class="floating-save-btn" type="button">
             <span class="dashicons dashicons-cloud-upload"></span>
             <span class="btn-text">Enregistrer Everything</span>
             <span class="spinner" style="display: none;"></span>
         </button>
-    </div>
-</div>
+    </aside>
+</main>
 
 <?php // Global variables for JS
     $js_config = [
@@ -881,7 +879,5 @@
         }
     });
 ?>
-
-</div>
 
 <?php require_once __DIR__ . '/settings-modals.php'; ?>
