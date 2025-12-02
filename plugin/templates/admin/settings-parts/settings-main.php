@@ -558,13 +558,19 @@
             setDependencies(validator, ui) {
                 this.validator = validator;
                 this.ui = ui;
+                this.saveLocked = false; // Empêcher les clics multiples
             }
 
             bindEvents() {
                 if (this.saveButton) {
                     this.saveButton.addEventListener('click', (e) => {
                         e.preventDefault();
-                        this.saveAllSettings();
+                        if (!this.saveLocked) {
+                            this.saveLocked = true;
+                            this.saveAllSettings().finally(() => {
+                                this.saveLocked = false;
+                            });
+                        }
                     });
                 }
 
@@ -578,7 +584,7 @@
             }
 
             async saveAllSettings() {
-                console.log('💾 Sauvegarde parallélisée de tous les paramètres...');
+                console.log('💾 Sauvegarde parallélisée...');
 
                 if (this.ui && this.saveButton) {
                     this.ui.setButtonState(this.saveButton, 'loading');
@@ -598,34 +604,30 @@
                     const savePromises = Array.from(tabs).map(tabElement => {
                         const tabId = tabElement.id;
                         if (!tabId) return Promise.resolve(null);
-
                         return this.saveTabSettingsInternal(tabId);
                     });
 
                     // Attendre que tous les onglets soient sauvegardés EN PARALLÈLE
                     const results = await Promise.all(savePromises);
 
-                    // Compter les succès et erreurs
+                    // Compter les succès
                     const successCount = results.filter(r => r && r.success).length;
-                    const errorCount = results.filter(r => !r || !r.success).length;
                     const totalCount = results.filter(r => r !== null).length;
 
                     if (successCount === totalCount && totalCount > 0) {
-                        console.log(`✅ Tous les ${totalCount} onglets sauvegardés avec succès!`);
                         if (typeof showSuccess === 'function') {
-                            showSuccess(`✅ ${totalCount} onglets sauvegardés avec succès!`);
+                            showSuccess('✅ Tous les paramètres sauvegardés!');
                         }
                     } else if (successCount > 0) {
-                        console.warn(`⚠️ Partiel: ${successCount}/${totalCount} onglets sauvegardés`);
                         if (typeof showError === 'function') {
-                            showError(`⚠️ Partiel: ${successCount}/${totalCount} onglets sauvegardés`);
+                            showError(`⚠️ ${successCount}/${totalCount} onglets sauvegardés`);
                         }
                     } else {
-                        throw new Error('Aucun onglet n\'a pu être sauvegardé');
+                        throw new Error('Erreur de sauvegarde');
                     }
 
                 } catch (error) {
-                    console.error('❌ Erreur de sauvegarde:', error);
+                    console.error('Erreur:', error);
                     if (typeof showError === 'function') {
                         showError('❌ Erreur: ' + error.message);
                     }
@@ -641,7 +643,7 @@
                 try {
                     const formData = this.collectTabSettings(tabId);
                     if (Object.keys(formData).length === 0) {
-                        return { success: true, tabId, message: 'Pas de modifications' };
+                        return { success: true, tabId };
                     }
 
                     return await new Promise((resolve, reject) => {

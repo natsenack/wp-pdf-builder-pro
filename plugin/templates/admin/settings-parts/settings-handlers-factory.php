@@ -11,6 +11,67 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Sauvegarde en batch les options WordPress (beaucoup plus rapide que update_option() en boucle)
+ * Utilise une transaction pour être atomique
+ * 
+ * @param array $options_data Tableau ['option_name' => 'value']
+ * @return int Nombre d'options sauvegardées
+ */
+function pdf_builder_batch_save_options($options_data) {
+    global $wpdb;
+    
+    if (empty($options_data)) {
+        return 0;
+    }
+    
+    $start_time = microtime(true);
+    $saved = 0;
+    
+    // Désactiver les autocommit pour traiter en bloc
+    $wpdb->query('START TRANSACTION');
+    
+    try {
+        foreach ($options_data as $option_name => $value) {
+            // Vérifier si l'option existe déjà
+            $existing = get_option($option_name);
+            
+            if ($existing === false) {
+                // INSERT si n'existe pas
+                $wpdb->query($wpdb->prepare(
+                    "INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'yes')",
+                    $option_name,
+                    maybe_serialize($value)
+                ));
+                $saved++;
+            } elseif ($existing != $value) {
+                // UPDATE si valeur différente
+                $wpdb->query($wpdb->prepare(
+                    "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s",
+                    maybe_serialize($value),
+                    $option_name
+                ));
+                $saved++;
+            }
+        }
+        
+        $wpdb->query('COMMIT');
+        
+    } catch (Exception $e) {
+        $wpdb->query('ROLLBACK');
+        error_log('PDF Builder Batch Save Error: ' . $e->getMessage());
+        return 0;
+    }
+    
+    $elapsed = microtime(true) - $start_time;
+    error_log('PDF Builder Batch Save: ' . $saved . '/' . count($options_data) . ' en ' . round($elapsed * 1000, 2) . 'ms');
+    
+    // Clear cache une seule fois à la fin
+    wp_cache_flush();
+    
+    return $saved;
+}
+
+/**
  * Enregistre automatiquement un handler AJAX pour sauvegarder des champs
  * 
  * @param string $tab_id Identifiant unique de l'onglet (ex: 'licence', 'acces', 'securite')
@@ -82,25 +143,15 @@ function pdf_builder_register_settings_handler($tab_id, $fields = [], $sanitizer
                 }
             }
 
-            // Sauvegarder les données avec optimisations de performance
-            $processed_count = 0;
-            $saved_count = 0;
-            $start_time = microtime(true);
-
+            // Sauvegarder les données EN BATCH (beaucoup plus rapide)
+            $options_to_save = [];
             foreach ($data as $field => $value) {
                 $option_name = 'pdf_builder_' . $field;
-                $result = update_option($option_name, $value);
-                $processed_count++;
-                if ($result !== false) {
-                    $saved_count++;
-                }
+                $options_to_save[$option_name] = $value;
             }
 
-            // Flush cache
-            wp_cache_flush();
-
-            $elapsed = microtime(true) - $start_time;
-            error_log('PDF Builder [' . $tab_id . ']: Sauvegarde de ' . $saved_count . '/' . $processed_count . ' champs en ' . round($elapsed * 1000, 2) . 'ms');
+            $saved_count = pdf_builder_batch_save_options($options_to_save);
+            $processed_count = count($data);
 
             if ($processed_count > 0) {
                 wp_send_json_success([
@@ -213,18 +264,15 @@ add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
                 $data[$clean_key] = $clean_value;
             }
 
-            // Sauvegarder les données
-            $processed_count = 0;
-            $saved_count = 0;
-
+            // Sauvegarder les données EN BATCH (beaucoup plus rapide)
+            $options_to_save = [];
             foreach ($data as $field => $value) {
                 $option_name = 'pdf_builder_' . $field;
-                $result = update_option($option_name, $value);
-                $processed_count++;
-                if ($result !== false) {
-                    $saved_count++;
-                }
+                $options_to_save[$option_name] = $value;
             }
+
+            $saved_count = pdf_builder_batch_save_options($options_to_save);
+            $processed_count = count($data);
 
             if ($processed_count > 0) {
                 wp_send_json_success([
