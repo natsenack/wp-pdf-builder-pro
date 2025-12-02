@@ -227,7 +227,13 @@
                                 <h4>📊 État de la maintenance</h4>
                             </header>
                             <div class="metric-grid">
-                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="last-run" data-action="run-maintenance">
+                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="last-run" data-action="run-maintenance" title="Lancer la maintenance manuelle complète">
+                                    <div class="metric-card-header">
+                                        <div class="metric-icon">🔄</div>
+                                        <div class="metric-status" data-status="ready">
+                                            <span class="status-indicator"></span>
+                                        </div>
+                                    </div>
                                     <div class="metric-value">
                                         <?php
                                         $last_maintenance = get_option('pdf_builder_last_maintenance', 'Jamais');
@@ -238,9 +244,19 @@
                                         ?>
                                     </div>
                                     <div class="metric-label">Dernière exécution</div>
-                                    <div class="metric-hint">Cliquez pour lancer</div>
+                                    <div class="metric-action">
+                                        <span class="action-text">Lancer maintenant</span>
+                                        <span class="action-icon">▶️</span>
+                                    </div>
                                 </button>
-                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="next-run" data-action="schedule-maintenance">
+
+                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="next-run" data-action="schedule-maintenance" title="Programmer la prochaine maintenance automatique">
+                                    <div class="metric-card-header">
+                                        <div class="metric-icon">📅</div>
+                                        <div class="metric-status" data-status="scheduled">
+                                            <span class="status-indicator"></span>
+                                        </div>
+                                    </div>
                                     <div class="metric-value">
                                         <?php
                                         $next_maintenance = get_option('pdf_builder_next_maintenance', 'Non planifiée');
@@ -251,19 +267,48 @@
                                         ?>
                                     </div>
                                     <div class="metric-label">Prochaine exécution</div>
-                                    <div class="metric-hint">Cliquez pour configurer</div>
+                                    <div class="metric-action">
+                                        <span class="action-text">Programmer</span>
+                                        <span class="action-icon">⚙️</span>
+                                    </div>
                                 </button>
-                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="status" data-action="toggle-maintenance">
+
+                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="status" data-action="toggle-maintenance" title="Activer/désactiver la maintenance automatique">
+                                    <div class="metric-card-header">
+                                        <div class="metric-icon">
+                                            <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? '✅' : '❌'; ?>
+                                        </div>
+                                        <div class="metric-status" data-status="<?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'active' : 'inactive'; ?>">
+                                            <span class="status-indicator"></span>
+                                        </div>
+                                    </div>
                                     <div class="metric-value">
-                                        <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'Activée' : 'Désactivée'; ?>
+                                        <span class="status-badge <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'status-active' : 'status-inactive'; ?>">
+                                            <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'Activée' : 'Désactivée'; ?>
+                                        </span>
                                     </div>
                                     <div class="metric-label">Maintenance auto</div>
-                                    <div class="metric-hint">Cliquez pour basculer</div>
+                                    <div class="metric-action">
+                                        <span class="action-text">Basculer</span>
+                                        <span class="action-icon">🔄</span>
+                                    </div>
                                 </button>
-                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="manual" data-action="run-manual-maintenance">
-                                    <div class="metric-value">Manuel</div>
+
+                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="manual" data-action="run-manual-maintenance" title="Exécuter manuellement toutes les tâches de maintenance">
+                                    <div class="metric-card-header">
+                                        <div class="metric-icon">🚀</div>
+                                        <div class="metric-status" data-status="manual">
+                                            <span class="status-indicator"></span>
+                                        </div>
+                                    </div>
+                                    <div class="metric-value">
+                                        <span class="manual-badge">Manuel</span>
+                                    </div>
                                     <div class="metric-label">Lancement manuel</div>
-                                    <div class="metric-hint">Cliquez pour exécuter</div>
+                                    <div class="metric-action">
+                                        <span class="action-text">Exécuter</span>
+                                        <span class="action-icon">⚡</span>
+                                    </div>
                                 </button>
                             </div>
                         </article>
