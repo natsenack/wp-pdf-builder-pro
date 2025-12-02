@@ -121,6 +121,7 @@
     /**
      * CENTRALIZED PDF BUILDER SETTINGS JAVASCRIPT SYSTEM
      * Clean, organized, and maintainable
+     * Version: 2025-12-02-03-25-00
      */
 
     (function() {
@@ -406,6 +407,7 @@
                     const formData = this.collectAllSettings();
 
                     // Send to server using jQuery AJAX wrapped in Promise
+                    // FIXED: No more direct await on jQuery.ajax - using Promise wrapper
                     const response = await new Promise((resolve, reject) => {
                         jQuery.ajax({
                             url: PDF_BUILDER_CONFIG.ajax_url,
