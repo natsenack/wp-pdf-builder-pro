@@ -21,6 +21,7 @@
 
     // Charger les dépendances
     require_once dirname(__FILE__) . '/settings-styles.php';
+    require_once dirname(__FILE__) . '/settings-general-handler.php';
 
     // Activer le système JavaScript centralisé
     $centralized_js_mode = true;
@@ -1039,4 +1040,44 @@
             wp_send_json_error(['message' => $e->getMessage()]);
         }
     });
+
+    // ============================================================================
+    // GESTIONNAIRE SIMPLE POUR LES PARAMÈTRES GÉNÉRAUX
+    // ============================================================================
+    // Sauvegarde automatique des champs de l'onglet Général
+    jQuery(document).ready(function($) {
+        // Charger le nonce depuis la page
+        const nonce = $('input[name="_wpnonce_pdf_builder"]').val();
+        if (!nonce) {
+            console.warn('⚠️ Nonce manquant pour les paramètres généraux');
+            return;
+        }
+
+        // Sauvegarder les champs généraux lors de leur modification
+        $('#company_phone_manual, #company_siret, #company_vat, #company_rcs, #company_capital').on('change', function() {
+            const fieldName = $(this).attr('id');
+            const fieldValue = $(this).val();
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_save_general',
+                    nonce: nonce,
+                    [fieldName]: fieldValue
+                },
+                success: function(response) {
+                    if (response.success) {
+                        console.log('✅ Paramètre ' + fieldName + ' sauvegardé');
+                    } else {
+                        console.error('❌ Erreur: ' + (response.data?.message || 'Erreur inconnue'));
+                    }
+                },
+                error: function() {
+                    console.error('❌ Erreur AJAX lors de la sauvegarde');
+                }
+            });
+        });
+    });
 ?>
+
