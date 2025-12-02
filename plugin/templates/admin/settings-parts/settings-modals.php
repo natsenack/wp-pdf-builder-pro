@@ -68,20 +68,20 @@
                     <section style="margin-top: 20px;">
                         <article style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
                             <h4 style="margin-top: 0; color: #495057;">📊 Statistiques des transients</h4>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
-                                <div style="text-align: center;">
+                            <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
+                                <article style="text-align: center;">
                                     <div style="font-size: 24px; font-weight: bold; color: #28a745;" id="total-transients-count">0</div>
                                     <div style="color: #666; font-size: 12px;">Total actifs</div>
-                                </div>
-                                <div style="text-align: center;">
+                                </article>
+                                <article style="text-align: center;">
                                     <div style="font-size: 24px; font-weight: bold; color: #17a2b8;" id="expired-transients-count">0</div>
                                     <div style="color: #666; font-size: 12px;">Expirés</div>
-                                </div>
-                                <div style="text-align: center;">
+                                </article>
+                                <article style="text-align: center;">
                                     <div style="font-size: 24px; font-weight: bold; color: #ffc107;" id="pdf-builder-transients-count">0</div>
                                     <div style="color: #666; font-size: 12px;">PDF Builder</div>
-                                </div>
-                            </div>
+                                </article>
+                            </section>
                         </article>
                         <aside style="margin-top: 20px; padding: 15px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 8px;">
                             <h4 style="margin-top: 0; color: #8b4513;">⚠️ Note importante</h4>
@@ -193,8 +193,8 @@
                         <header>
                             <h4 style="margin-top: 0; color: #495057;">[DERNIERS NETTOYAGES] Derniers nettoyages</h4>
                         </header>
-                        <div style="margin-top: 10px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #dee2e6;">
+                        <section style="margin-top: 10px;">
+                            <article style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #dee2e6;">
                                 <span>Dernier nettoyage automatique:</span>
                                 <span style="font-weight: bold; color: #28a745;">
                                     <?php
@@ -202,8 +202,8 @@
                                     echo $last_auto_cleanup !== 'Jamais' ? human_time_diff(strtotime($last_auto_cleanup)) . ' ago' : $last_auto_cleanup;
                                     ?>
                                 </span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #dee2e6;">
+                            </article>
+                            <article style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #dee2e6;">
                                 <span>Dernier nettoyage manuel:</span>
                                 <span style="font-weight: bold; color: #28a745;">
                                     <?php
@@ -211,27 +211,27 @@
                                     echo $last_manual_cleanup !== 'Jamais' ? human_time_diff(strtotime($last_manual_cleanup)) . ' ago' : $last_manual_cleanup;
                                     ?>
                                 </span>
-                            </div>
-                        </div>
+                            </article>
+                        </section>
                     </section>
                     <section>
                         <header>
                             <h4 style="margin-top: 0; color: #0c5460;">[ACTIONS NETTOYAGE] Actions de nettoyage disponibles</h4>
                         </header>
-                        <div style="margin-top: 15px; display: grid; gap: 10px;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
+                        <section style="margin-top: 15px; display: grid; gap: 10px;">
+                            <article style="display: flex; align-items: center; gap: 10px;">
                                 <input type="checkbox" id="cleanup_files" checked>
                                 <label for="cleanup_files">Supprimer les fichiers cache obsolètes</label>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 10px;">
+                            </article>
+                            <article style="display: flex; align-items: center; gap: 10px;">
                                 <input type="checkbox" id="cleanup_transients" checked>
                                 <label for="cleanup_transients">Vider les transients expirés</label>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 10px;">
+                            </article>
+                            <article style="display: flex; align-items: center; gap: 10px;">
                                 <input type="checkbox" id="cleanup_temp">
                                 <label for="cleanup_temp">Supprimer les fichiers temporaires (+24h)</label>
-                            </div>
-                        </div>
+                            </article>
+                        </section>
                     </section>
                 </article>
             </main>
@@ -275,13 +275,13 @@
                         <tr>
                             <th scope="row"><label>Orientation</label></th>
                             <td>
-                                <div style="background: #f0f8ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 10px; margin: 5px 0;">
+                                <aside style="background: #f0f8ff; border: 1px solid #b3d9ff; border-radius: 4px; padding: 10px; margin: 5px 0;">
                                     <strong>📄 Portrait uniquement (v1.0)</strong><br>
                                     <small style="color: #666;">
                                         L'orientation paysage sera disponible dans la version 2.0 avec recalcul automatique des dimensions.
                                         Actuellement, tous les documents sont générés en format portrait pour garantir la stabilité.
                                     </small>
-                                </div>
+                                </aside>
                                 <p class="canvas-modal-description">Orientation fixée en portrait pour la v1.0</p>
                             </td>
                         </tr>
@@ -300,7 +300,7 @@
                         <tr>
                             <th scope="row"><label>Dimensions calculées</label></th>
                             <td>
-                                <div id="canvas-dimensions-display" class="canvas-modal-display">
+                                <aside id="canvas-dimensions-display" class="canvas-modal-display">
                                     <span id="canvas-width-display"><?php echo intval(get_option('pdf_builder_canvas_width', 794)); ?></span> ×
                                     <span id="canvas-height-display"><?php echo intval(get_option('pdf_builder_canvas_height', 1123)); ?></span> px
                                     <br>
@@ -324,7 +324,7 @@
                                         echo round($dimensions['width'], 1) . '×' . round($dimensions['height'], 1) . 'mm';
                                         ?>
                                     </small>
-                                </div>
+                                </aside>
                             </td>
                         </tr>
                     </table>
@@ -739,9 +739,9 @@
                                         <option value="60" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 60); ?>>60 FPS (Standard)</option>
                                         <option value="120" <?php selected(get_option('pdf_builder_canvas_fps_target', 60), 120); ?>>120 FPS (Haute performance)</option>
                                     </select>
-                                    <div id="fps_preview" class="canvas-modal-preview">
+                                    <aside id="fps_preview" class="canvas-modal-preview">
                                         FPS actuel : <span id="current_fps_value"><?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?></span>
-                                    </div>
+                                    </aside>
                                     <p class="canvas-modal-description">Fluidité du rendu canvas (plus élevé = plus de ressources)</p>
                                 </td>
                             </tr>
