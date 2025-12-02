@@ -136,15 +136,6 @@ function pdf_builder_initialize_all_settings_handlers() {
     pdf_builder_register_settings_handler('templates', []);
 }
 
-/**
- * Enregistre tous les handlers AJAX pour les paramètres PDF Builder
- * Fonction principale appelée pour initialiser le système de sauvegarde
- */
-function pdf_builder_register_ajax_handlers() {
-    // Cette fonction est appelée depuis pdf_builder_initialize_all_settings_handlers
-    // Tous les handlers sont déjà enregistrés via admin_init
-}
-
 // Initialiser les handlers au chargement du plugin admin
 if (is_admin()) {
     add_action('admin_init', 'pdf_builder_initialize_all_settings_handlers', 1);
