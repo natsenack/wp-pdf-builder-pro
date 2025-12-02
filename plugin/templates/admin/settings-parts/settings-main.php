@@ -334,28 +334,24 @@ $js_config = [
             try {
                 const formData = this.collectAllSettings();
 
-                // Send to server
-                const response = await fetch(PDF_BUILDER_CONFIG.ajax_url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: new URLSearchParams({
+                // Send to server using jQuery AJAX instead of fetch
+                const response = await $.ajax({
+                    url: PDF_BUILDER_CONFIG.ajax_url,
+                    type: 'POST',
+                    data: {
                         'action': 'pdf_builder_save_all_settings',
                         'nonce': PDF_BUILDER_CONFIG.nonce,
                         ...formData
-                    })
+                    },
+                    dataType: 'json'
                 });
 
-                const result = await response.json();
-
-                if (result.success) {
+                if (response.success) {
                     if (this.notifier) {
                         this.notifier.show('✅ All settings saved successfully!', 'success');
                     }
                 } else {
-                    throw new Error(result.data?.message || 'Save failed');
+                    throw new Error(response.data?.message || 'Save failed');
                 }
 
             } catch (error) {
@@ -381,19 +377,19 @@ $js_config = [
             const formData = this.collectTabSettings(tabId);
 
             try {
-                const response = await fetch(PDF_BUILDER_CONFIG.ajax_url, {
-                    method: 'POST',
-                    body: new URLSearchParams({
+                const response = await $.ajax({
+                    url: PDF_BUILDER_CONFIG.ajax_url,
+                    type: 'POST',
+                    data: {
                         'action': 'pdf_builder_save_tab_settings',
                         'tab': tabId,
                         'nonce': PDF_BUILDER_CONFIG.nonce,
                         ...formData
-                    })
+                    },
+                    dataType: 'json'
                 });
 
-                const result = await response.json();
-
-                if (result.success && this.notifier) {
+                if (response.success && this.notifier) {
                     this.notifier.show(`✅ ${tabId.charAt(0).toUpperCase() + tabId.slice(1)} settings saved!`, 'success');
                 }
 
@@ -812,16 +808,23 @@ add_action('wp_ajax_pdf_builder_deactivate_license', function() {
 });
 
 // Developer Settings AJAX Handler
-error_log('PDF Builder: Registering developer settings AJAX handler');
+error_log('PDF Builder: Registering developer settings AJAX handler at line ' . __LINE__);
 add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
-    error_log('PDF Builder Developer: AJAX handler called');
+    error_log('PDF Builder Developer: AJAX handler STARTED at ' . date('Y-m-d H:i:s'));
 
     try {
         // Log all POST data for debugging
-        error_log('PDF Builder Developer: POST data: ' . print_r($_POST, true));
+        error_log('PDF Builder Developer: POST data received: ' . print_r($_POST, true));
+        error_log('PDF Builder Developer: REQUEST METHOD: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('PDF Builder Developer: CONTENT TYPE: ' . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
 
         // Verify nonce
-        if (!wp_verify_nonce(sanitize_text_field($_POST['nonce'] ?? ''), 'pdf_builder_settings_ajax')) {
+        $nonce_value = sanitize_text_field($_POST['nonce'] ?? '');
+        error_log('PDF Builder Developer: Nonce received: ' . $nonce_value);
+        $nonce_valid = wp_verify_nonce($nonce_value, 'pdf_builder_settings_ajax');
+        error_log('PDF Builder Developer: Nonce verification result: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
+
+        if (!$nonce_valid) {
             error_log('PDF Builder Developer: Nonce verification failed');
             wp_send_json_error(['message' => 'Security check failed']);
             return;
@@ -830,7 +833,10 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         error_log('PDF Builder Developer: Nonce verified successfully');
 
         // Check user capability
-        if (!current_user_can('manage_options')) {
+        $has_capability = current_user_can('manage_options');
+        error_log('PDF Builder Developer: User capability check: ' . ($has_capability ? 'HAS CAPABILITY' : 'NO CAPABILITY'));
+
+        if (!$has_capability) {
             error_log('PDF Builder Developer: Insufficient permissions');
             wp_send_json_error(['message' => 'Insufficient permissions']);
             return;
@@ -842,7 +848,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
         $setting_value = sanitize_text_field($_POST['setting_value'] ?? '');
 
-        error_log("PDF Builder Developer: Setting key: {$setting_key}, value: {$setting_value}");
+        error_log("PDF Builder Developer: Setting key: '{$setting_key}', value: '{$setting_value}'");
 
         // Validate setting key (only allow developer settings)
         $allowed_keys = [
@@ -851,7 +857,10 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
             'pdf_builder_developer_password'
         ];
 
-        if (!in_array($setting_key, $allowed_keys)) {
+        $key_allowed = in_array($setting_key, $allowed_keys);
+        error_log('PDF Builder Developer: Setting key validation: ' . ($key_allowed ? 'ALLOWED' : 'NOT ALLOWED'));
+
+        if (!$key_allowed) {
             error_log("PDF Builder Developer: Invalid setting key: {$setting_key}");
             wp_send_json_error(['message' => 'Invalid setting key']);
             return;
@@ -869,7 +878,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 
         // Save back to database
         $updated = update_option('pdf_builder_settings', $settings);
-        error_log("PDF Builder Developer: update_option result: " . ($updated ? 'true' : 'false'));
+        error_log("PDF Builder Developer: update_option result: " . ($updated ? 'SUCCESS' : 'FAILED'));
 
         if ($updated) {
             error_log("PDF Builder Developer: Setting saved successfully - {$setting_key} = {$setting_value}");
@@ -886,8 +895,11 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 
     } catch (Exception $e) {
         error_log('PDF Builder Developer: AJAX Error - ' . $e->getMessage());
+        error_log('PDF Builder Developer: AJAX Error trace - ' . $e->getTraceAsString());
         wp_send_json_error(['message' => $e->getMessage()]);
     }
+
+    error_log('PDF Builder Developer: AJAX handler COMPLETED at ' . date('Y-m-d H:i:s'));
 });
 ?>
 

@@ -33,9 +33,8 @@ $ajax_config = [
 // Localize script properly
 wp_enqueue_script('jquery');
 wp_localize_script('jquery', 'pdfBuilderDeveloperAjax', $ajax_config);
-wp_localize_script('wp-util', 'pdfBuilderDeveloperAjax', $ajax_config);
-wp_enqueue_script('pdf-builder-developer-js', plugins_url('assets/js/developer-settings.js', dirname(__FILE__, 3)), ['jquery'], '1.0.0', true);
-wp_localize_script('pdf-builder-developer-js', 'pdfBuilderDeveloperConfig', $ajax_config);
+// wp_enqueue_script('pdf-builder-developer-js', plugins_url('assets/js/developer-settings.js', dirname(__FILE__, 3)), ['jquery'], '1.0.0', true);
+// wp_localize_script('pdf-builder-developer-js', 'pdfBuilderDeveloperConfig', $ajax_config);
 ?>
 
 <div class="pdf-builder-developer">
@@ -1082,7 +1081,6 @@ wp_localize_script('pdf-builder-developer-js', 'pdfBuilderDeveloperConfig', $aja
         saveSetting: function(key, value) {
             console.log(`[PDF Builder Developer] Saving setting: ${key} = ${value}`);
 
-            // Use the main AJAX object that works
             const ajaxData = {
                 action: this.config.action,
                 nonce: this.config.nonce,
