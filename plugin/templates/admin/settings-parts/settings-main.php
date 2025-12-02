@@ -1027,78 +1027,88 @@
          * Sauvegarder TOUS les onglets avec gestion d'erreur
          */
         window.saveAllSettingsGlobally = function() {
-            console.log('🚀 Démarrage sauvegarde globale...');
+            console.log('🚀 Démarrage sauvegarde directe ULTRA-RAPIDE...');
 
-            // 1. Collecter tous les champs
-            collectAllSettings();
-            console.log('📋 Paramètres collectés:', settingsByTab);
+            // Récupérer tous les champs DIRECTEMENT (pas par onglet)
+            var allData = {};
+            document.querySelectorAll('.tab-content input, .tab-content select, .tab-content textarea').forEach(function(field) {
+                if (field.name) {
+                    if (field.type === 'checkbox') {
+                        allData[field.name] = field.checked ? '1' : '0';
+                    } else if (field.type === 'radio') {
+                        if (field.checked) {
+                            allData[field.name] = field.value;
+                        }
+                    } else {
+                        allData[field.name] = field.value;
+                    }
+                }
+            });
 
-            if (Object.keys(settingsByTab).length === 0) {
+            if (Object.keys(allData).length === 0) {
                 console.warn('⚠️ Aucun paramètre à sauvegarder');
                 showSettingsSaveNotification('❌ Aucun paramètre détecté', 'error');
                 return Promise.resolve();
             }
 
-            // 2. Désactiver le bouton de sauvegarde
-            var saveBtn = $('#pdf-builder-save-btn, [data-action="save-settings"]');
+            console.log('📋 Total paramètres collectés:', Object.keys(allData).length);
+
+            // Désactiver le bouton de sauvegarde
+            var saveBtn = jQuery('#pdf-builder-save-btn, [data-action="save-settings"]');
             if (saveBtn.length > 0) {
                 saveBtn.prop('disabled', true);
                 saveBtn.data('original-text', saveBtn.html());
                 saveBtn.html('⏳ Sauvegarde en cours...');
             }
 
-            // 3. Sauvegarder chaque onglet séquentiellement
-            var tabIds = Object.keys(settingsByTab);
-            var successCount = 0;
-            var failedTabs = [];
+            // UNE SEULE requête AJAX directe!
+            return new Promise(function(resolve, reject) {
+                jQuery.ajax({
+                    url: pdfBuilderAjax.ajaxurl || '/wp-admin/admin-ajax.php',
+                    type: 'POST',
+                    data: Object.assign({
+                        action: 'pdf_builder_save_all_direct',
+                        nonce: pdfBuilderAjax.nonce || document.querySelector('[name="pdf_builder_nonce"]')?.value || ''
+                    }, allData),
+                    dataType: 'json',
+                    timeout: 60000,
+                    success: function(response) {
+                        console.log('✅ AJAX Response:', response);
 
-            var saveSequence = Promise.resolve();
+                        // Réactiver le bouton
+                        if (saveBtn.length > 0) {
+                            saveBtn.prop('disabled', false);
+                            if (saveBtn.data('original-text')) {
+                                saveBtn.html(saveBtn.data('original-text'));
+                            }
+                        }
 
-            tabIds.forEach(function(tabId) {
-                saveSequence = saveSequence
-                    .then(function() {
-                        return saveTabSettings(tabId);
-                    })
-                    .then(function(response) {
-                        successCount++;
-                    })
-                    .catch(function(error) {
-                        failedTabs.push(error.data.tab || tabId);
-                        console.error('Erreur pour onglet ' + (error.data.tab || tabId) + ':', error.data.message);
-                    });
-            });
+                        if (response.success) {
+                            console.log('✅ Tous les paramètres ont été sauvegardés avec succès');
+                            showSettingsSaveNotification('✅ ' + response.data.fields_saved + ' paramètres enregistrés!', 'success', 3000);
+                            resolve(response);
+                        } else {
+                            var errorMsg = response.data?.message || 'Erreur inconnue';
+                            console.error('❌ Erreur AJAX:', errorMsg);
+                            showSettingsSaveNotification('❌ ' + errorMsg, 'error', 5000);
+                            reject(response);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('❌ AJAX Error:', {status, error, responseText: xhr.responseText});
 
-            // 4. Afficher résultat final
-            return saveSequence.then(function() {
-                // Réactiver le bouton
-                if (saveBtn.length > 0) {
-                    saveBtn.prop('disabled', false);
-                    if (saveBtn.data('original-text')) {
-                        saveBtn.html(saveBtn.data('original-text'));
+                        // Réactiver le bouton
+                        if (saveBtn.length > 0) {
+                            saveBtn.prop('disabled', false);
+                            if (saveBtn.data('original-text')) {
+                                saveBtn.html(saveBtn.data('original-text'));
+                            }
+                        }
+
+                        showSettingsSaveNotification('❌ Erreur réseau: ' + error, 'error', 5000);
+                        reject(error);
                     }
-                }
-
-                // Afficher notification finale
-                if (failedTabs.length === 0) {
-                    console.log('✅ Tous les paramètres ont été sauvegardés avec succès');
-                    showSettingsSaveNotification('✅ Tous les paramètres sauvegardés avec succès!', 'success', 4000);
-                } else {
-                    var failedMsg = 'Erreur lors de la sauvegarde: ' + failedTabs.join(', ');
-                    console.warn('⚠️ ' + failedMsg);
-                    showSettingsSaveNotification('⚠️ ' + failedMsg, 'warning', 5000);
-                }
-
-                console.log('📊 Résumé: ' + successCount + ' onglet(s) sauvegardé(s), ' + failedTabs.length + ' erreur(s)');
-            }).catch(function(error) {
-                // Réactiver le bouton en cas d'erreur globale
-                if (saveBtn.length > 0) {
-                    saveBtn.prop('disabled', false);
-                    if (saveBtn.data('original-text')) {
-                        saveBtn.html(saveBtn.data('original-text'));
-                    }
-                }
-                console.error('❌ Erreur critère sauvegarde globale:', error);
-                showSettingsSaveNotification('❌ Erreur critique lors de la sauvegarde', 'error', 5000);
+                });
             });
         };
 
