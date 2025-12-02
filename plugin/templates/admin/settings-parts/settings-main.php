@@ -1043,67 +1043,249 @@
 
 ?>
 
-<!-- SYSTÈME DE SAUVEGARDE GÉNÉRIQUE POUR TOUS LES ONGLETS -->
+<!-- SYSTÈME ROBUSTE DE SAUVEGARDE GLOBALE VIA BOUTON FLOTTANT -->
 <script type="text/javascript">
     jQuery(document).ready(function($) {
-        // Charger le nonce depuis la page
         var nonce = $('input[name="_wpnonce_pdf_builder"]').val();
         if (!nonce) {
-            console.warn('⚠️ Nonce manquant');
+            console.warn('⚠️ Nonce manquant pour la sauvegarde');
             return;
         }
 
         /**
-         * SYSTÈME GÉNÉRIQUE DE SAUVEGARDE POUR TOUS LES ONGLETS
-         * Sauvegarde automatiquement les champs qui changent
-         * Utilise les data-attributes pour mapper les actions AJAX
+         * SYSTÈME ROBUSTE DE SAUVEGARDE GLOBALE
+         * Tous les champs sont sauvegardés via le bouton "Enregistrer" flottant
+         * Utilise les data-attributes pour organiser par onglet
          */
-        
-        // Surveiller tous les inputs/selects avec data-settings-field
-        $(document).on('change', '[data-settings-field]', function() {
-            var field = $(this);
-            var tabId = field.data('settings-tab') || 'general';
-            var fieldName = field.attr('id') || field.attr('name');
-            var fieldValue = field.val();
 
-            if (!fieldName) {
-                console.warn('⚠️ Champ sans ID/name:', field);
+        // Objets pour stocker les données par onglet
+        var settingsByTab = {};
+
+        /**
+         * Collect tous les champs marqués avec data-settings-field
+         * Organise par onglet via data-settings-tab
+         */
+        function collectAllSettings() {
+            settingsByTab = {};
+
+            $('[data-settings-field="true"]').each(function() {
+                var field = $(this);
+                var tabId = field.data('settings-tab') || 'general';
+                var fieldName = field.attr('id') || field.attr('name');
+                var fieldValue;
+
+                if (!fieldName) {
+                    console.warn('⚠️ Champ sans ID/name:', field);
+                    return; // Skip
+                }
+
+                // Déterminer la valeur selon le type de champ
+                if (field.is(':checkbox')) {
+                    fieldValue = field.is(':checked') ? '1' : '0';
+                } else if (field.is(':radio')) {
+                    fieldValue = field.is(':checked') ? field.val() : null;
+                } else if (field.is('select')) {
+                    fieldValue = field.val();
+                } else {
+                    fieldValue = field.val();
+                }
+
+                // Initialiser le tab s'il n'existe pas
+                if (!settingsByTab[tabId]) {
+                    settingsByTab[tabId] = {};
+                }
+
+                // Stocker la valeur
+                if (fieldValue !== null && fieldValue !== undefined) {
+                    settingsByTab[tabId][fieldName] = fieldValue;
+                }
+            });
+
+            return settingsByTab;
+        }
+
+        /**
+         * Sauvegarder les paramètres d'un onglet spécifique
+         */
+        function saveTabSettings(tabId) {
+            return new Promise(function(resolve, reject) {
+                if (!settingsByTab[tabId] || Object.keys(settingsByTab[tabId]).length === 0) {
+                    console.log('✓ Onglet "' + tabId + '" : aucune donnée à sauvegarder');
+                    resolve({ success: true, data: { message: 'Pas de données pour ' + tabId } });
+                    return;
+                }
+
+                var ajaxData = {
+                    action: 'pdf_builder_save_' + tabId,
+                    nonce: nonce
+                };
+
+                // Merge les données de l'onglet
+                $.extend(ajaxData, settingsByTab[tabId]);
+
+                console.log('📤 Envoi pour onglet "' + tabId + '":', settingsByTab[tabId]);
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: ajaxData,
+                    dataType: 'json',
+                    timeout: 15000, // 15 secondes timeout
+                    success: function(response) {
+                        if (response.success) {
+                            console.log('✅ Onglet "' + tabId + '" sauvegardé avec succès');
+                            resolve(response);
+                        } else {
+                            var errorMsg = response.data && response.data.message ? response.data.message : 'Erreur inconnue';
+                            console.error('❌ Erreur onglet "' + tabId + '":', errorMsg);
+                            reject({ success: false, data: { message: errorMsg, tab: tabId } });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMsg = 'Erreur AJAX: ' + error;
+                        if (status === 'timeout') {
+                            errorMsg = 'Délai d\'expiration dépassé (15s)';
+                        } else if (xhr.status === 0) {
+                            errorMsg = 'Erreur de connexion réseau';
+                        } else if (xhr.status === 403) {
+                            errorMsg = 'Accès refusé - permissions insuffisantes';
+                        } else if (xhr.status === 500) {
+                            errorMsg = 'Erreur serveur (500)';
+                        }
+                        console.error('❌ Erreur AJAX onglet "' + tabId + '":', errorMsg);
+                        reject({ success: false, data: { message: errorMsg, tab: tabId, status: xhr.status } });
+                    }
+                });
+            });
+        }
+
+        /**
+         * Sauvegarder TOUS les onglets avec gestion d'erreur
+         */
+        window.saveAllSettingsGlobally = function() {
+            console.log('🚀 Démarrage sauvegarde globale...');
+
+            // 1. Collecter tous les champs
+            collectAllSettings();
+            console.log('📋 Paramètres collectés:', settingsByTab);
+
+            if (Object.keys(settingsByTab).length === 0) {
+                console.warn('⚠️ Aucun paramètre à sauvegarder');
+                showSettingsSaveNotification('❌ Aucun paramètre détecté', 'error');
+                return Promise.resolve();
+            }
+
+            // 2. Désactiver le bouton de sauvegarde
+            var saveBtn = $('#pdf-builder-save-btn, [data-action="save-settings"]');
+            if (saveBtn.length > 0) {
+                saveBtn.prop('disabled', true);
+                saveBtn.data('original-text', saveBtn.html());
+                saveBtn.html('⏳ Sauvegarde en cours...');
+            }
+
+            // 3. Sauvegarder chaque onglet séquentiellement
+            var tabIds = Object.keys(settingsByTab);
+            var successCount = 0;
+            var failedTabs = [];
+
+            var saveSequence = Promise.resolve();
+
+            tabIds.forEach(function(tabId) {
+                saveSequence = saveSequence
+                    .then(function() {
+                        return saveTabSettings(tabId);
+                    })
+                    .then(function(response) {
+                        successCount++;
+                    })
+                    .catch(function(error) {
+                        failedTabs.push(error.data.tab || tabId);
+                        console.error('Erreur pour onglet ' + (error.data.tab || tabId) + ':', error.data.message);
+                    });
+            });
+
+            // 4. Afficher résultat final
+            return saveSequence.then(function() {
+                // Réactiver le bouton
+                if (saveBtn.length > 0) {
+                    saveBtn.prop('disabled', false);
+                    if (saveBtn.data('original-text')) {
+                        saveBtn.html(saveBtn.data('original-text'));
+                    }
+                }
+
+                // Afficher notification finale
+                if (failedTabs.length === 0) {
+                    console.log('✅ Tous les paramètres ont été sauvegardés avec succès');
+                    showSettingsSaveNotification('✅ Tous les paramètres sauvegardés avec succès!', 'success', 4000);
+                } else {
+                    var failedMsg = 'Erreur lors de la sauvegarde: ' + failedTabs.join(', ');
+                    console.warn('⚠️ ' + failedMsg);
+                    showSettingsSaveNotification('⚠️ ' + failedMsg, 'warning', 5000);
+                }
+
+                console.log('📊 Résumé: ' + successCount + ' onglet(s) sauvegardé(s), ' + failedTabs.length + ' erreur(s)');
+            }).catch(function(error) {
+                // Réactiver le bouton en cas d'erreur globale
+                if (saveBtn.length > 0) {
+                    saveBtn.prop('disabled', false);
+                    if (saveBtn.data('original-text')) {
+                        saveBtn.html(saveBtn.data('original-text'));
+                    }
+                }
+                console.error('❌ Erreur critère sauvegarde globale:', error);
+                showSettingsSaveNotification('❌ Erreur critique lors de la sauvegarde', 'error', 5000);
+            });
+        };
+
+        /**
+         * Système de notification simple (fallback)
+         */
+        window.showSettingsSaveNotification = function(message, type, duration) {
+            type = type || 'info';
+            duration = duration || 3000;
+
+            // Essayer d'utiliser le système de notification global s'il existe
+            if (typeof window.pdfBuilderNotify !== 'undefined' && window.pdfBuilderNotify[type]) {
+                window.pdfBuilderNotify[type](message, duration);
+            } else if (typeof window['show' + type.charAt(0).toUpperCase() + type.slice(1) + 'Notification'] === 'function') {
+                window['show' + type.charAt(0).toUpperCase() + type.slice(1) + 'Notification'](message, duration);
+            } else {
+                // Fallback: alert simple
+                alert(message);
+            }
+        };
+
+        /**
+         * Trouver et binder le bouton flottant "Enregistrer"
+         */
+        function bindSaveButton() {
+            // Chercher le bouton flottant "Enregistrer"
+            var saveBtn = $('#pdf-builder-save-btn');
+
+            if (saveBtn.length === 0) {
+                console.warn('⚠️ Bouton "Enregistrer" flottant non trouvé');
                 return;
             }
 
-            // Construire les données AJAX
-            var ajaxData = {
-                action: 'pdf_builder_save_' + tabId,
-                nonce: nonce
-            };
-            ajaxData[fieldName] = fieldValue;
-
-            // Envoyer la sauvegarde
-            $.ajax({
-                url: ajaxurl,
-                type: 'POST',
-                data: ajaxData,
-                success: function(response) {
-                    if (response.success) {
-                        console.log('✅ [' + tabId + '] ' + fieldName + ' sauvegardé');
-                        field.addClass('pdf-builder-field-saved');
-                        setTimeout(function() { field.removeClass('pdf-builder-field-saved'); }, 1000);
-                    } else {
-                        console.error('❌ Erreur: ' + (response.data.message || 'Erreur inconnue'));
-                        field.addClass('pdf-builder-field-error');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('❌ Erreur AJAX: ' + error);
-                    field.addClass('pdf-builder-field-error');
-                }
+            saveBtn.off('click').on('click', function(e) {
+                e.preventDefault();
+                console.log('🔘 Clic sur bouton "Enregistrer"');
+                window.saveAllSettingsGlobally();
             });
+
+            console.log('✓ Bouton "Enregistrer" bindé avec succès');
+        }
+
+        // Binding initial
+        bindSaveButton();
+
+        // Rebinding après changement d'onglet (fallback si bouton remplacé)
+        $(document).on('click', '[data-tab]', function() {
+            setTimeout(bindSaveButton, 100);
         });
 
-        // Rétro-compatibilité: supporter les champs spécifiques des paramètres généraux
-        $('#company_phone_manual, #company_siret, #company_vat, #company_rcs, #company_capital').attr('data-settings-field', 'true').attr('data-settings-tab', 'general');
-
-        console.log('✅ Système de sauvegarde généralisé initialisé');
+        console.log('✅ Système robuste de sauvegarde globale initialisé');
     });
 </script>
 

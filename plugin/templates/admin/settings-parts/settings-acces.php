@@ -78,8 +78,6 @@
                                                 id="role_<?php echo esc_attr($role_key); ?>"
                                                 name="pdf_builder_allowed_roles[]"
                                                 value="<?php echo esc_attr($role_key); ?>"
-                                                data-settings-field="true"
-                                                data-settings-tab="acces"
                                                 <?php checked($is_selected); ?>
                                                 <?php echo $is_admin ? 'disabled' : ''; ?> />
                                             <label for="role_<?php echo esc_attr($role_key); ?>" class="toggle-slider"></label>

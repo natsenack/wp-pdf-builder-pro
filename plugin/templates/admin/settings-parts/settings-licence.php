@@ -807,7 +807,7 @@
                             <tr>
                                 <th scope="row"><label for="license_reminder_email">Adresse email</label></th>
                                 <td>
-                                    <input type="email" id="license_reminder_email" name="license_reminder_email" data-settings-field="true" data-settings-tab="licence"
+                                    <input type="email" id="license_reminder_email" name="license_reminder_email"
                                         value="<?php echo esc_attr(get_option('pdf_builder_license_reminder_email', get_option('admin_email', ''))); ?>"
                                         placeholder="votre@email.com" class="form-input" />
                                     <p class="description">Adresse email où envoyer les rappels d'expiration de licence</p>

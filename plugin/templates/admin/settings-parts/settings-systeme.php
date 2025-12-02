@@ -34,7 +34,7 @@
                                 <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" data-settings-field="true" data-settings-tab="systeme" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
+                                        <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Améliore les performances en mettant en cache les données</p>
@@ -44,7 +44,7 @@
                                 <th scope="row"><label for="cache_compression">Compression du cache</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="cache_compression" name="cache_compression" value="1" data-settings-field="true" data-settings-tab="systeme" <?php checked(get_option('pdf_builder_cache_compression', true)); ?>>
+                                        <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked(get_option('pdf_builder_cache_compression', true)); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
@@ -54,7 +54,7 @@
                                 <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" data-settings-field="true" data-settings-tab="systeme" <?php checked(get_option('pdf_builder_cache_auto_cleanup', true)); ?>>
+                                        <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked(get_option('pdf_builder_cache_auto_cleanup', true)); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
@@ -63,14 +63,14 @@
                             <tr>
                                 <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
                                 <td>
-                                    <input type="number" id="cache_max_size" name="cache_max_size" data-settings-field="true" data-settings-tab="systeme" value="<?php echo intval(get_option('pdf_builder_cache_max_size', 100)); ?>" min="10" max="1000" step="10" />
+                                    <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo intval(get_option('pdf_builder_cache_max_size', 100)); ?>" min="10" max="1000" step="10" />
                                     <p class="description">Taille maximale du dossier cache en mégaoctets</p>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
                                 <td>
-                                    <input type="number" id="cache_ttl" name="cache_ttl" data-settings-field="true" data-settings-tab="systeme" value="<?php echo intval(get_option('pdf_builder_cache_ttl', 3600)); ?>" min="0" max="86400" />
+                                    <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval(get_option('pdf_builder_cache_ttl', 3600)); ?>" min="0" max="86400" />
                                     <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
                                 </td>
                             </tr>
@@ -205,7 +205,7 @@
                                 <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" data-settings-field="true" data-settings-tab="systeme" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
+                                        <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Active la maintenance automatique hebdomadaire</p>
@@ -359,7 +359,7 @@
                                 </th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="systeme_auto_backup" name="systeme_auto_backup" value="1" data-settings-field="true" data-settings-tab="systeme" <?php checked(get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
+                                        <input type="checkbox" id="systeme_auto_backup" name="systeme_auto_backup" value="1" <?php checked(get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <span>Active la création automatique de sauvegardes</span>
@@ -379,7 +379,7 @@
                                     }
                                     $current_frequency = $stored_value;
                                     ?>
-                                    <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" data-settings-field="true" data-settings-tab="systeme" <?php echo (get_option('pdf_builder_auto_backup', '0') === '0') ? 'disabled' : ''; ?>>
+                                    <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" <?php echo (get_option('pdf_builder_auto_backup', '0') === '0') ? 'disabled' : ''; ?>>
                                         <option value="daily" <?php selected($current_frequency, 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
                                         <option value="weekly" <?php selected($current_frequency, 'weekly'); ?>>📆 Hebdomadaire (tous les dimanches)</option>
                                         <option value="monthly" <?php selected($current_frequency, 'monthly'); ?>>📊 Mensuelle (1er du mois)</option>
@@ -395,7 +395,7 @@
                                 </th>
                                 <td>
                                     <div class="backup-retention-input">
-                                        <input type="number" id="systeme_backup_retention" name="systeme_backup_retention" data-settings-field="true" data-settings-tab="systeme" value="<?php echo esc_attr(get_option('pdf_builder_backup_retention', 30)); ?>" min="1" max="365">
+                                        <input type="number" id="systeme_backup_retention" name="systeme_backup_retention" value="<?php echo esc_attr(get_option('pdf_builder_backup_retention', 30)); ?>" min="1" max="365">
                                         <span>jours</span>
                                     </div>
                                     <p class="description">Nombre de jours avant suppression automatique des anciennes sauvegardes (1-365 jours)</p>
