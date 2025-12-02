@@ -45,7 +45,7 @@ class PDF_Template_Status_Manager {
     }
 
     // Récupération des statuts de commande
-    private function get_order_statuses() {
+    public function get_order_statuses() {
         if (function_exists('wc_get_order_statuses')) {
             return wc_get_order_statuses();
         } elseif (class_exists('WC_Order') && method_exists('WC_Order', 'get_statuses')) {
