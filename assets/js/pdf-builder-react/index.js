@@ -2,6 +2,8 @@
 // PDF Builder React Bundle - Entry Point OPTIMISÉ avec Code Splitting
 // ============================================================================
 
+console.log('🎯 [BUNDLE START] pdf-builder-react/index.js file loaded and executing');
+
 // Import du diagnostic de compatibilité
 import '../fallbacks/browser-compatibility.js';
 
@@ -84,6 +86,8 @@ class ErrorBoundary extends React.Component {
 
 // Flag pour afficher les logs d'initialisation détaillés
 const DEBUG_VERBOSE = false;
+
+console.log('🎯 [BUNDLE INIT] About to define initPDFBuilderReact function');
 
 if (DEBUG_VERBOSE) debugLog('🚀 PDF Builder React bundle starting execution...');
 
