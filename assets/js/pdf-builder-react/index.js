@@ -88,13 +88,16 @@ const DEBUG_VERBOSE = false;
 if (DEBUG_VERBOSE) debugLog('🚀 PDF Builder React bundle starting execution...');
 
 async function initPDFBuilderReact() {
+  console.log('🚀 [initPDFBuilderReact] Function called');
   if (DEBUG_VERBOSE) debugLog('✅ initPDFBuilderReact function called');
 
   try {
     // Vérifier si le container existe
     const container = document.getElementById('pdf-builder-react-root');
+    console.log('🔍 [initPDFBuilderReact] Container found:', !!container);
     if (DEBUG_VERBOSE) debugLog('🔍 Container element:', container);
     if (!container) {
+      console.error('❌ [initPDFBuilderReact] Container #pdf-builder-react-root not found');
       debugError('❌ Container #pdf-builder-react-root not found');
       return false;
     }
@@ -123,22 +126,25 @@ async function initPDFBuilderReact() {
     // Créer et rendre l'application React
     // Essayer createRoot d'abord (React 18), sinon utiliser render (compatibilité)
     let root;
+    console.log('🔧 [initPDFBuilderReact] Checking ReactDOM.createRoot:', typeof ReactDOM.createRoot);
     if (ReactDOM.createRoot) {
       root = ReactDOM.createRoot(container);
+      console.log('✅ [initPDFBuilderReact] Using React 18 createRoot API');
       if (DEBUG_VERBOSE) debugLog('🎨 Using React 18 createRoot API');
     } else {
+      console.log('⚠️ [initPDFBuilderReact] createRoot not available, using render fallback');
       // Fallback pour anciennes versions
       if (DEBUG_VERBOSE) debugLog('🎨 Using React render API (fallback)');
     }
 
-    if (DEBUG_VERBOSE) debugLog('🎨 React root created, rendering component...');
+    console.log('🎨 [initPDFBuilderReact] About to render React component...');
 
     // Récupérer les dimensions dynamiques depuis les paramètres
     const canvasDimensions = getCanvasDimensions();
     const canvasWidth = canvasDimensions.width;
     const canvasHeight = canvasDimensions.height;
 
-    if (DEBUG_VERBOSE) debugLog('📐 Canvas dimensions:', { width: canvasWidth, height: canvasHeight });
+    console.log('📐 [initPDFBuilderReact] Canvas dimensions:', { width: canvasWidth, height: canvasHeight });
 
     const element = React.createElement(ErrorBoundary, null,
       React.createElement(PDFBuilder, { width: canvasWidth, height: canvasHeight })
@@ -146,11 +152,16 @@ async function initPDFBuilderReact() {
 
     if (root) {
       // React 18 API
+      console.log('🎯 [initPDFBuilderReact] Calling root.render()...');
       root.render(element);
+      console.log('✅ [initPDFBuilderReact] root.render() completed');
     } else {
       // Fallback API
+      console.log('🎯 [initPDFBuilderReact] Calling ReactDOM.render()...');
       ReactDOM.render(element, container);
+      console.log('✅ [initPDFBuilderReact] ReactDOM.render() completed');
     }
+    console.log('✅ [initPDFBuilderReact] React rendering completed successfully');
     if (DEBUG_VERBOSE) debugLog('✅ React component rendered successfully');
 
     return true;
