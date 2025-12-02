@@ -183,15 +183,13 @@
 
                 <!-- Section Maintenance -->
                 <section class="system-maintenance-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                    <header>
+                    <section>
                         <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                             <span style="display: inline-flex; align-items: center; gap: 10px;">
                                 🔧 Maintenance
                                 <span class="maintenance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
                             </span>
                         </h3>
-                    </header>
-
                     <main>
                         <table class="form-table">
                         <tr>
@@ -224,6 +222,9 @@
                         </tr>
                     </table>
                     </main>
+
+                    </section>
+
                 </section>
 
                 <!-- Section Sauvegarde -->
