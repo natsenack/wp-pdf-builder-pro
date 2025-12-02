@@ -405,16 +405,24 @@
                 try {
                     const formData = this.collectAllSettings();
 
-                    // Send to server using jQuery AJAX instead of fetch
-                    const response = await jQuery.ajax({
-                        url: PDF_BUILDER_CONFIG.ajax_url,
-                        type: 'POST',
-                        data: {
-                            'action': 'pdf_builder_save_all_settings',
-                            'nonce': PDF_BUILDER_CONFIG.nonce,
-                            ...formData
-                        },
-                        dataType: 'json'
+                    // Send to server using jQuery AJAX wrapped in Promise
+                    const response = await new Promise((resolve, reject) => {
+                        jQuery.ajax({
+                            url: PDF_BUILDER_CONFIG.ajax_url,
+                            type: 'POST',
+                            data: {
+                                'action': 'pdf_builder_save_all_settings',
+                                'nonce': PDF_BUILDER_CONFIG.nonce,
+                                ...formData
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                resolve(data);
+                            },
+                            error: function(xhr, status, error) {
+                                reject(new Error(error || 'AJAX request failed'));
+                            }
+                        });
                     });
 
                     if (response.success) {
@@ -451,16 +459,24 @@
                 const formData = this.collectTabSettings(tabId);
 
                 try {
-                    const response = await jQuery.ajax({
-                        url: PDF_BUILDER_CONFIG.ajax_url,
-                        type: 'POST',
-                        data: {
-                            'action': 'pdf_builder_save_tab_settings',
-                            'tab': tabId,
-                            'nonce': PDF_BUILDER_CONFIG.nonce,
-                            ...formData
-                        },
-                        dataType: 'json'
+                    const response = await new Promise((resolve, reject) => {
+                        jQuery.ajax({
+                            url: PDF_BUILDER_CONFIG.ajax_url,
+                            type: 'POST',
+                            data: {
+                                'action': 'pdf_builder_save_tab_settings',
+                                'tab': tabId,
+                                'nonce': PDF_BUILDER_CONFIG.nonce,
+                                ...formData
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                resolve(data);
+                            },
+                            error: function(xhr, status, error) {
+                                reject(new Error(error || 'AJAX request failed'));
+                            }
+                        });
                     });
 
                     if (response.success && window.showSuccessNotification) {
