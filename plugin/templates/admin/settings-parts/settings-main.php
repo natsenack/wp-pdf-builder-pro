@@ -281,12 +281,53 @@
             init() {
                 console.log('🎯 Initialisation du système centralisé des paramètres PDF Builder');
 
+                // Restaurer l'onglet actif depuis localStorage
+                this.restoreActiveTab();
+
                 // Initialiser tous les composants
                 this.bindTabEvents();
                 this.bindSaveEvents();
                 this.initializePreviews();
 
                 console.log('✅ Système de paramètres PDF Builder initialisé');
+            }
+
+            restoreActiveTab() {
+                try {
+                    const savedTab = localStorage.getItem('pdf_builder_active_tab');
+                    if (savedTab) {
+                        console.log('📂 Onglet actif restauré depuis localStorage:', savedTab);
+
+                        // Vérifier que l'onglet existe
+                        const tabElement = document.querySelector(`[data-tab="${savedTab}"]`);
+                        const contentElement = document.getElementById(savedTab);
+
+                        if (tabElement && contentElement) {
+                            // Désactiver tous les onglets
+                            document.querySelectorAll('.nav-tab').forEach(t => {
+                                t.classList.remove('nav-tab-active');
+                            });
+                            document.querySelectorAll('.tab-content').forEach(c => {
+                                c.classList.remove('active');
+                            });
+
+                            // Activer l'onglet sauvegardé
+                            tabElement.classList.add('nav-tab-active');
+                            contentElement.classList.add('active');
+
+                            console.log('✅ Onglet restauré avec succès:', savedTab);
+                            return;
+                        } else {
+                            console.warn('⚠️ Onglet sauvegardé non trouvé, utilisation de l\'onglet par défaut');
+                        }
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Erreur lors de la restauration de l\'onglet:', e);
+                }
+
+                // Si aucun onglet sauvegardé ou erreur, utiliser l'onglet par défaut (general)
+                console.log('🔄 Utilisation de l\'onglet par défaut');
+                this.switchTab('general');
             }
 
             bindTabEvents() {
@@ -322,6 +363,14 @@
                 if (activeContent) {
                     activeContent.classList.add('active');
                     console.log('Ajouté active à:', tabId);
+                }
+
+                // Sauvegarder l'onglet actif dans localStorage
+                try {
+                    localStorage.setItem('pdf_builder_active_tab', tabId);
+                    console.log('💾 Onglet actif sauvegardé:', tabId);
+                } catch (e) {
+                    console.warn('⚠️ Impossible de sauvegarder l\'onglet actif:', e);
                 }
 
                 // Update save button text
