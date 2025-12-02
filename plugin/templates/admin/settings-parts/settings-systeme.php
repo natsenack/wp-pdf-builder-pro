@@ -198,15 +198,6 @@
 
                 <!-- Section Maintenance Système -->
                 <section class="system-maintenance-section">
-                    <header>
-                        <h3>
-                            <span>
-                                🔧 Maintenance Système
-                                <span class="maintenance-status"><?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
-                            </span>
-                        </h3>
-                    </header>
-
                     <div class="system-section-content">
                         <table class="form-table">
                             <tr>

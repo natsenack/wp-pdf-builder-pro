@@ -3,6 +3,59 @@
    ============================================================================= */
 
 /* =============================================================================
+   GESTION DES ONGLETS
+   ============================================================================= */
+
+.tab-content-wrapper {
+    margin-top: 20px;
+}
+
+/* Masquer tous les onglets par défaut */
+.tab-content {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Afficher seulement l'onglet actif */
+.tab-content.active {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Styles WordPress pour les onglets */
+.nav-tab-wrapper .nav-tab {
+    border-bottom: 1px solid #ccc;
+    background: #f1f1f1;
+    color: #555;
+    text-decoration: none;
+    padding: 8px 12px;
+    margin-right: 4px;
+    border-radius: 4px 4px 0 0;
+}
+
+.nav-tab-wrapper .nav-tab.nav-tab-active {
+    background: #fff;
+    border-bottom: 1px solid #fff;
+    color: #000;
+    font-weight: 600;
+}
+
+/* Forcer l'affichage correct des onglets */
+#pdf-builder-tab-content .tab-content:not(.active) {
+    display: none !important;
+}
+
+#pdf-builder-tab-content .tab-content.active {
+    display: block !important;
+}
+
+/* =============================================================================
    SYSTÈME - Cache, Maintenance & Sauvegarde
    ============================================================================= */
 

@@ -300,13 +300,29 @@
             }
 
             switchTab(tabId) {
+                console.log('🔄 Changement d\'onglet vers:', tabId);
+
                 // Update tabs
-                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('nav-tab-active'));
-                document.querySelector(`[data-tab="${tabId}"]`).classList.add('nav-tab-active');
+                document.querySelectorAll('.nav-tab').forEach(t => {
+                    t.classList.remove('nav-tab-active');
+                    console.log('Retiré nav-tab-active de:', t.dataset.tab);
+                });
+                const activeTab = document.querySelector(`[data-tab="${tabId}"]`);
+                if (activeTab) {
+                    activeTab.classList.add('nav-tab-active');
+                    console.log('Ajouté nav-tab-active à:', tabId);
+                }
 
                 // Update content
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                document.getElementById(tabId).classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => {
+                    c.classList.remove('active');
+                    console.log('Retiré active de:', c.id);
+                });
+                const activeContent = document.getElementById(tabId);
+                if (activeContent) {
+                    activeContent.classList.add('active');
+                    console.log('Ajouté active à:', tabId);
+                }
 
                 // Update save button text
                 if (this.SaveManager) {
@@ -712,6 +728,8 @@
 
         // Initialize the system when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initialisation du système PDF Builder Settings');
+
             const settingsController = new PDF_Builder_Settings_Controller();
             settingsController.init();
 
@@ -720,6 +738,17 @@
                 settingsController.Validator,
                 settingsController.ShapeManager
             );
+
+            // Vérifier l'état initial des onglets
+            console.log('📋 État initial des onglets:');
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                console.log('  Onglet:', tab.dataset.tab, 'active:', tab.classList.contains('nav-tab-active'));
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                console.log('  Contenu:', content.id, 'active:', content.classList.contains('active'));
+            });
+
+            console.log('✅ Système PDF Builder Settings initialisé');
         });
 
     })();
