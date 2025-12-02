@@ -17,10 +17,8 @@ module.exports = {
     library: {
       name: 'pdfBuilderReact',
       type: 'umd',
-      umdNamedDefine: false,
-      export: 'default'
-    },
-    chunkFormat: 'commonjs'
+      umdNamedDefine: false
+    }
   },
   externals: {
     // ❌ REMOVED: React and ReactDOM declared as external
