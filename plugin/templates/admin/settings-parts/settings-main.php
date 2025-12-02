@@ -1041,43 +1041,69 @@
         }
     });
 
-    // ============================================================================
-    // GESTIONNAIRE SIMPLE POUR LES PARAMÈTRES GÉNÉRAUX
-    // ============================================================================
-    // Sauvegarde automatique des champs de l'onglet Général
+?>
+
+<!-- SYSTÈME DE SAUVEGARDE GÉNÉRIQUE POUR TOUS LES ONGLETS -->
+<script type="text/javascript">
     jQuery(document).ready(function($) {
         // Charger le nonce depuis la page
-        const nonce = $('input[name="_wpnonce_pdf_builder"]').val();
+        var nonce = $('input[name="_wpnonce_pdf_builder"]').val();
         if (!nonce) {
-            console.warn('⚠️ Nonce manquant pour les paramètres généraux');
+            console.warn('⚠️ Nonce manquant');
             return;
         }
 
-        // Sauvegarder les champs généraux lors de leur modification
-        $('#company_phone_manual, #company_siret, #company_vat, #company_rcs, #company_capital').on('change', function() {
-            const fieldName = $(this).attr('id');
-            const fieldValue = $(this).val();
+        /**
+         * SYSTÈME GÉNÉRIQUE DE SAUVEGARDE POUR TOUS LES ONGLETS
+         * Sauvegarde automatiquement les champs qui changent
+         * Utilise les data-attributes pour mapper les actions AJAX
+         */
+        
+        // Surveiller tous les inputs/selects avec data-settings-field
+        $(document).on('change', '[data-settings-field]', function() {
+            var field = $(this);
+            var tabId = field.data('settings-tab') || 'general';
+            var fieldName = field.attr('id') || field.attr('name');
+            var fieldValue = field.val();
 
+            if (!fieldName) {
+                console.warn('⚠️ Champ sans ID/name:', field);
+                return;
+            }
+
+            // Construire les données AJAX
+            var ajaxData = {
+                action: 'pdf_builder_save_' + tabId,
+                nonce: nonce
+            };
+            ajaxData[fieldName] = fieldValue;
+
+            // Envoyer la sauvegarde
             $.ajax({
                 url: ajaxurl,
                 type: 'POST',
-                data: {
-                    action: 'pdf_builder_save_general',
-                    nonce: nonce,
-                    [fieldName]: fieldValue
-                },
+                data: ajaxData,
                 success: function(response) {
                     if (response.success) {
-                        console.log('✅ Paramètre ' + fieldName + ' sauvegardé');
+                        console.log('✅ [' + tabId + '] ' + fieldName + ' sauvegardé');
+                        field.addClass('pdf-builder-field-saved');
+                        setTimeout(function() { field.removeClass('pdf-builder-field-saved'); }, 1000);
                     } else {
-                        console.error('❌ Erreur: ' + (response.data?.message || 'Erreur inconnue'));
+                        console.error('❌ Erreur: ' + (response.data.message || 'Erreur inconnue'));
+                        field.addClass('pdf-builder-field-error');
                     }
                 },
-                error: function() {
-                    console.error('❌ Erreur AJAX lors de la sauvegarde');
+                error: function(xhr, status, error) {
+                    console.error('❌ Erreur AJAX: ' + error);
+                    field.addClass('pdf-builder-field-error');
                 }
             });
         });
+
+        // Rétro-compatibilité: supporter les champs spécifiques des paramètres généraux
+        $('#company_phone_manual, #company_siret, #company_vat, #company_rcs, #company_capital').attr('data-settings-field', 'true').attr('data-settings-tab', 'general');
+
+        console.log('✅ Système de sauvegarde généralisé initialisé');
     });
-?>
+</script>
 

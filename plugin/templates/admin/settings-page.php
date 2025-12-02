@@ -11,6 +11,9 @@ if (!defined('ABSPATH')) {
 // Include all settings parts
 $settings_parts_dir = plugin_dir_path(__FILE__) . 'settings-parts/';
 
+// Charger la factory AJAX - génère les handlers pour tous les onglets
+require_once $settings_parts_dir . 'settings-handlers-factory.php';
+
 // Include AJAX handlers first (they need to run before any HTML output)
 require_once $settings_parts_dir . 'settings-ajax.php';
 

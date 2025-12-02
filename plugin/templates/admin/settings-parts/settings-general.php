@@ -43,6 +43,7 @@
                                 <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
                                 <td>
                                     <input type="text" id="company_phone_manual" name="company_phone_manual"
+                                        data-settings-field="true" data-settings-tab="general"
                                         value="<?php echo esc_attr($company_phone_manual); ?>"
                                         placeholder="+33 1 23 45 67 89" />
                                         <p class="description">Téléphone de l'entreprise</p>
@@ -52,6 +53,7 @@
                                 <th scope="row"><label for="company_siret">Numéro SIRET</label></th>
                                 <td>
                                     <input type="text" id="company_siret" name="company_siret"
+                                        data-settings-field="true" data-settings-tab="general"
                                         value="<?php echo esc_attr(get_option('pdf_builder_company_siret', '')); ?>"
                                         placeholder="123 456 789 00012" />
                                     <p class="description">Numéro SIRET de l'entreprise</p>
@@ -62,6 +64,7 @@
                                 <th scope="row"><label for="company_vat">Numéro TVA</label></th>
                                 <td>
                                     <input type="text" id="company_vat" name="company_vat"
+                                        data-settings-field="true" data-settings-tab="general"
                                         value="<?php echo esc_attr(get_option('pdf_builder_company_vat', '')); ?>"
                                         placeholder="FR12345678901, DE123456789, BE0123456789" />
                                     <p class="description">Numéro de TVA intracommunautaire (format européen : 2 lettres pays + 8-12 caractères)</p>
@@ -72,6 +75,7 @@
                                 <th scope="row"><label for="company_rcs">RCS</label></th>
                                 <td>
                                     <input type="text" id="company_rcs" name="company_rcs"
+                                        data-settings-field="true" data-settings-tab="general"
                                         value="<?php echo esc_attr(get_option('pdf_builder_company_rcs', '')); ?>"
                                         placeholder="Lyon B 123 456 789" />
                                     <p class="description">Numéro RCS (Registre du Commerce et des Sociétés)</p>
@@ -82,6 +86,7 @@
                                 <th scope="row"><label for="company_capital">Capital social</label></th>
                                 <td>
                                     <input type="text" id="company_capital" name="company_capital"
+                                        data-settings-field="true" data-settings-tab="general"
                                         value="<?php echo esc_attr(get_option('pdf_builder_company_capital', '')); ?>"
                                         placeholder="10 000 €" />
                                     <p class="description">Montant du capital social de l'entreprise</p>
