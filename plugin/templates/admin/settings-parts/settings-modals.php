@@ -40,7 +40,7 @@
                         </ul>
                     </aside>
                 </article>
-            </div>
+            </main>
             <footer class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
                 <button type="button" class="button button-primary" id="clear-cache-from-modal">🗑️ Vider le cache</button>
@@ -92,7 +92,7 @@
                         </aside>
                     </section>
                 </article>
-            </div>
+            </main>
             <footer class="cache-modal-footer">
                 <button type="button" class="button button-secondary cache-modal-cancel">Fermer</button>
                 <button type="button" class="button button-warning" id="clear-transients-from-modal">🗑️ Vider les transients</button>
