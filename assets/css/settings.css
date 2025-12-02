@@ -1,0 +1,336 @@
+/* =============================================================================
+   SETTINGS.CSS - Styles centralisés pour tous les paramètres PDF Builder
+   ============================================================================= */
+
+/* =============================================================================
+   SYSTÈME - Cache, Maintenance & Sauvegarde
+   ============================================================================= */
+
+.system-cache-section,
+.system-maintenance-section,
+.system-backup-section {
+    margin-bottom: 30px;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.system-cache-section header,
+.system-maintenance-section header,
+.system-backup-section header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    margin: 0;
+}
+
+.system-cache-section h3,
+.system-maintenance-section h3,
+.system-backup-section h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.system-cache-section h3 span:first-child,
+.system-maintenance-section h3 span:first-child,
+.system-backup-section h3 span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cache-performance-status,
+.maintenance-status,
+.backup-status {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.cache-performance-status {
+    background: #28a745;
+}
+
+.maintenance-status {
+    background: #17a2b8;
+}
+
+.backup-status {
+    background: #ffc107;
+    color: #212529;
+}
+
+.system-section-content {
+    padding: 20px;
+}
+
+/* Métriques des sections système */
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.cache-metric-card,
+.maintenance-metric-card,
+.backup-metric-card {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.cache-metric-card:hover,
+.maintenance-metric-card:hover,
+.backup-metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #667eea;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.metric-label {
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metric-hint {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* États spécifiques des métriques */
+.systeme-cache-status .metric-value {
+    color: #28a745;
+    font-weight: 600;
+}
+
+/* Informations sur l'état du cache */
+.cache-status-info,
+.maintenance-status-info,
+.backup-status-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+}
+
+.cache-status-info header,
+.maintenance-status-info header,
+.backup-status-info header {
+    margin-bottom: 15px;
+}
+
+.cache-status-info h4,
+.maintenance-status-info h4,
+.backup-status-info h4 {
+    margin: 0;
+    color: #495057;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Boutons système */
+.system-btn {
+    margin-right: 10px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.system-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.system-btn.danger {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.system-btn.danger:hover {
+    background: #c82333;
+    border-color: #bd2130;
+}
+
+/* Informations de maintenance */
+.maintenance-info-box {
+    margin-top: 8px;
+    padding: 12px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #6c757d;
+    line-height: 1.5;
+}
+
+.maintenance-info-box strong {
+    color: #495057;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.maintenance-info-box em {
+    font-style: italic;
+    color: #9ca3af;
+    display: block;
+    margin-top: 8px;
+}
+
+/* Informations de sauvegarde */
+.backup-info {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #e7f3ff;
+    border: 1px solid #b3d7ff;
+    border-radius: 6px;
+}
+
+.backup-info header {
+    margin-bottom: 10px;
+}
+
+.backup-info h4 {
+    margin: 0;
+    color: #0066cc;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.backup-info ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #495057;
+}
+
+.backup-info li {
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+/* Actions de sauvegarde */
+.backup-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.backup-actions button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.backup-actions button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.backup-actions .button-primary {
+    background: #007cba;
+    border-color: #007cba;
+    color: white;
+}
+
+.backup-actions .button-primary:hover {
+    background: #005a87;
+    border-color: #005a87;
+}
+
+/* Input de rétention des sauvegardes */
+.backup-retention-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.backup-retention-input input {
+    width: 80px;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.backup-retention-input span {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Message d'aide pour la sauvegarde */
+.backup-help-notice {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+}
+
+.backup-help-notice header {
+    margin-bottom: 10px;
+}
+
+.backup-help-notice h4 {
+    margin: 0;
+    color: #856404;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.backup-help-notice p {
+    margin: 0;
+    color: #856404;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .metric-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .system-cache-section h3,
+    .system-maintenance-section h3,
+    .system-backup-section h3 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .backup-actions {
+        flex-direction: column;
+    }
+
+    .backup-actions button {
+        justify-content: center;
+    }
+}

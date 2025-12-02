@@ -35,6 +35,9 @@ class SettingsManager
     {
         // Hooks pour les paramètres - seulement l'enregistrement, pas la page
         add_action('admin_init', [$this, 'registerSettings']);
+
+        // Charger les styles pour les pages d'administration
+        add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
     }
 
     /**
@@ -410,5 +413,28 @@ class SettingsManager
             'export_format' => get_option('pdf_builder_canvas_export_format', 'png'),
             'export_quality' => intval(get_option('pdf_builder_canvas_export_quality', 90)),
         ];
+    }
+
+    /**
+     * Charger les styles d'administration pour les paramètres
+     */
+    public function enqueueAdminStyles($hook)
+    {
+        // Charger les styles seulement sur les pages d'administration du plugin
+        if (strpos($hook, 'pdf-builder') !== false || strpos($hook, 'settings_page_pdf_builder') !== false) {
+            $css_file = plugin_dir_url(dirname(dirname(dirname(__FILE__)))) . 'assets/css/settings.css';
+            $css_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'assets/css/settings.css';
+
+            // Vérifier que le fichier existe avant de le charger
+            if (file_exists($css_path)) {
+                wp_enqueue_style(
+                    'pdf-builder-settings',
+                    $css_file,
+                    array(),
+                    filemtime($css_path),
+                    'all'
+                );
+            }
+        }
     }
 }
