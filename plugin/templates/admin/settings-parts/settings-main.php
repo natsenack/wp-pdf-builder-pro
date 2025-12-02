@@ -815,12 +815,9 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
     try {
         // Log all POST data for debugging
         error_log('PDF Builder Developer: POST data received: ' . print_r($_POST, true));
-        error_log('PDF Builder Developer: REQUEST METHOD: ' . $_SERVER['REQUEST_METHOD']);
-        error_log('PDF Builder Developer: CONTENT TYPE: ' . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
 
         // Verify nonce
         $nonce_value = sanitize_text_field($_POST['nonce'] ?? '');
-        error_log('PDF Builder Developer: Nonce received: ' . $nonce_value);
         $nonce_valid = wp_verify_nonce($nonce_value, 'pdf_builder_settings_ajax');
         error_log('PDF Builder Developer: Nonce verification result: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
 
@@ -830,19 +827,15 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
             return;
         }
 
-        error_log('PDF Builder Developer: Nonce verified successfully');
-
         // Check user capability
         $has_capability = current_user_can('manage_options');
-        error_log('PDF Builder Developer: User capability check: ' . ($has_capability ? 'HAS CAPABILITY' : 'NO CAPABILITY'));
+        error_log('PDF Builder Developer: User capability check: ' . ($has_capability ? 'HAS' : 'NO'));
 
         if (!$has_capability) {
             error_log('PDF Builder Developer: Insufficient permissions');
             wp_send_json_error(['message' => 'Insufficient permissions']);
             return;
         }
-
-        error_log('PDF Builder Developer: User permissions OK');
 
         // Get the setting key and value
         $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
@@ -857,49 +850,32 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
             'pdf_builder_developer_password'
         ];
 
-        $key_allowed = in_array($setting_key, $allowed_keys);
-        error_log('PDF Builder Developer: Setting key validation: ' . ($key_allowed ? 'ALLOWED' : 'NOT ALLOWED'));
-
-        if (!$key_allowed) {
+        if (!in_array($setting_key, $allowed_keys)) {
             error_log("PDF Builder Developer: Invalid setting key: {$setting_key}");
             wp_send_json_error(['message' => 'Invalid setting key']);
             return;
         }
 
-        error_log('PDF Builder Developer: Setting key validated');
-
         // Get existing settings
         $settings = get_option('pdf_builder_settings', []);
-        error_log('PDF Builder Developer: Existing settings loaded: ' . print_r($settings, true));
 
         // Update the specific setting
         $settings[$setting_key] = $setting_value;
-        error_log("PDF Builder Developer: Updated settings array: " . print_r($settings, true));
 
         // Save back to database
         $updated = update_option('pdf_builder_settings', $settings);
-        error_log("PDF Builder Developer: update_option result: " . ($updated ? 'SUCCESS' : 'FAILED'));
+        error_log("PDF Builder Developer: update_option result: " . ($updated ? 'SUCCESS' : 'NO CHANGE'));
 
-        if ($updated) {
-            error_log("PDF Builder Developer: Setting saved successfully - {$setting_key} = {$setting_value}");
-
-            wp_send_json_success([
-                'message' => 'Developer setting saved successfully',
-                'setting' => $setting_key,
-                'value' => $setting_value
-            ]);
-        } else {
-            error_log('PDF Builder Developer: Failed to save setting');
-            wp_send_json_error(['message' => 'Failed to save setting']);
-        }
+        wp_send_json_success([
+            'message' => 'Developer setting saved successfully',
+            'setting' => $setting_key,
+            'value' => $setting_value
+        ]);
 
     } catch (Exception $e) {
         error_log('PDF Builder Developer: AJAX Error - ' . $e->getMessage());
-        error_log('PDF Builder Developer: AJAX Error trace - ' . $e->getTraceAsString());
         wp_send_json_error(['message' => $e->getMessage()]);
     }
-
-    error_log('PDF Builder Developer: AJAX handler COMPLETED at ' . date('Y-m-d H:i:s'));
 });
 ?>
 

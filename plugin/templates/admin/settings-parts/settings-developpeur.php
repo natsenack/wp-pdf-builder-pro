@@ -30,11 +30,9 @@ $ajax_config = [
     ]
 ];
 
-// Localize script properly
+// Enqueue and localize script properly
 wp_enqueue_script('jquery');
-wp_localize_script('jquery', 'pdfBuilderDeveloperAjax', $ajax_config);
-// wp_enqueue_script('pdf-builder-developer-js', plugins_url('assets/js/developer-settings.js', dirname(__FILE__, 3)), ['jquery'], '1.0.0', true);
-// wp_localize_script('pdf-builder-developer-js', 'pdfBuilderDeveloperConfig', $ajax_config);
+wp_localize_script('jquery', 'pdfBuilderDeveloperConfig', $ajax_config);
 ?>
 
 <div class="pdf-builder-developer">
@@ -93,18 +91,20 @@ wp_localize_script('jquery', 'pdfBuilderDeveloperAjax', $ajax_config);
             </p>
         </div>
 
-        <!-- Security Password -->
+        // Security Password
         <div class="dev-control-card">
             <div class="dev-card-icon">🔐</div>
             <h3 class="dev-card-title">Mot de Passe de Sécurité</h3>
-            <div class="dev-password-field">
-                <input type="password" id="pdf-builder-dev-password" name="pdf_builder_developer_password"
-                       placeholder="Mot de passe optionnel pour sécuriser l'accès"
-                       value="<?php echo esc_attr($dev_password); ?>">
-                <button type="button" class="dev-password-toggle" id="dev-password-toggle" title="Afficher/Masquer le mot de passe">
-                    👁️
-                </button>
-            </div>
+            <form style="display: contents;">
+                <div class="dev-password-field">
+                    <input type="password" id="pdf-builder-dev-password" name="pdf_builder_developer_password"
+                           placeholder="Mot de passe optionnel pour sécuriser l'accès"
+                           value="<?php echo esc_attr($dev_password); ?>">
+                    <button type="button" class="dev-password-toggle" id="dev-password-toggle" title="Afficher/Masquer le mot de passe">
+                        👁️
+                    </button>
+                </div>
+            </form>
             <p class="dev-card-description">
                 Protège l'accès aux outils développeur (optionnel).
             </p>
@@ -1013,7 +1013,8 @@ wp_localize_script('jquery', 'pdfBuilderDeveloperAjax', $ajax_config);
             });
 
             // Password toggle
-            this.elements.passwordToggle.on('click', function() {
+            this.elements.passwordToggle.on('click', function(e) {
+                e.preventDefault();
                 const input = self.elements.passwordField[0];
                 const type = input.type === 'password' ? 'text' : 'password';
                 input.type = type;
@@ -1057,6 +1058,12 @@ wp_localize_script('jquery', 'pdfBuilderDeveloperAjax', $ajax_config);
         },
 
         updateUI: function() {
+            // Safety check for config
+            if (!this.config || !this.config.current_values) {
+                console.error('[PDF Builder Developer] Config or current_values is missing');
+                return;
+            }
+
             const devMode = this.config.current_values.dev_mode === '1';
             const debugMode = this.config.current_values.debug_enabled === '1';
 
@@ -1081,6 +1088,13 @@ wp_localize_script('jquery', 'pdfBuilderDeveloperAjax', $ajax_config);
         saveSetting: function(key, value) {
             console.log(`[PDF Builder Developer] Saving setting: ${key} = ${value}`);
 
+            // Safety check for config
+            if (!this.config || !this.config.ajax_url) {
+                console.error('[PDF Builder Developer] Config is not loaded properly');
+                this.showNotification('Erreur : Configuration manquante', 'error');
+                return Promise.reject(new Error('Config not loaded'));
+            }
+
             const ajaxData = {
                 action: this.config.action,
                 nonce: this.config.nonce,
@@ -1089,6 +1103,7 @@ wp_localize_script('jquery', 'pdfBuilderDeveloperAjax', $ajax_config);
             };
 
             console.log('[PDF Builder Developer] AJAX data:', ajaxData);
+            console.log('[PDF Builder Developer] AJAX URL:', this.config.ajax_url);
 
             return $.ajax({
                 url: this.config.ajax_url,
