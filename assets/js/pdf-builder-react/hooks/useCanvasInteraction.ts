@@ -145,8 +145,8 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       }
     };
 
-    document.addEventListener('mousemove', globalMouseMoveRef.current);
-    document.addEventListener('mouseup', globalMouseUpRef.current);
+    document.addEventListener('mousemove', globalMouseMoveRef.current, { passive: false });
+    document.addEventListener('mouseup', globalMouseUpRef.current, { passive: false });
   }, [canvasRef, state.canvas.zoom, state.canvas.pan, state.elements, selectionMode, dispatch]);
 
   const stopGlobalSelectionListeners = useCallback(() => {

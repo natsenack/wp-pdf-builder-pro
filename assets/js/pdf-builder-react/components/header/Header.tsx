@@ -172,7 +172,7 @@ export const Header = memo(function Header({
     };
 
     if (showPredefinedTemplates) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside, { passive: true });
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [showPredefinedTemplates]);
