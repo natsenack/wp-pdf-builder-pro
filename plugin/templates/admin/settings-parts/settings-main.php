@@ -161,13 +161,11 @@
 <input type="hidden" name="_wpnonce_pdf_builder" value="<?php echo wp_create_nonce('pdf_builder_settings'); ?>" />
 
 <script>
-    /**
-     * SYSTÈME JAVASCRIPT CENTRALISÉ DES PARAMÈTRES PDF BUILDER
-     * Propre, organisé et maintenable
-     * Version: 2025-12-02-03-25-00 - VIDAGE CACHE FORCÉ
-     * Cache Buster: <?php echo time(); ?>
-     * Correction finale: Wrapper Promise pour jQuery.ajax
-     */
+    console.log('🧪 TEST SIMPLE: Le script est chargé!');
+    console.log('🧪 document.readyState:', document.readyState);
+    
+    // Test immédiat
+    console.log('🧪 Nombre d\'onglets trouvés immédiatement:', document.querySelectorAll('#pdf-builder-tabs .nav-tab').length);
 
     (function() {
         'use strict';
