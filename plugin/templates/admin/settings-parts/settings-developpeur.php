@@ -112,7 +112,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                         </td>
                     </tr>
                 </table>
-            </div>
+            </section>
 
             <section id="dev-debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">🔍 Paramètres de Debug</h3>
@@ -546,7 +546,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                     </div>
 
                 </div>
-            </div>
+            </section>
 
             <section id="dev-console-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">Console Code</h3>
