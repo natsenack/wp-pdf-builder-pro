@@ -809,13 +809,14 @@
             console.log('🚀 Initialisation du système PDF Builder Settings');
 
             const settingsController = new PDF_Builder_Settings_Controller();
-            settingsController.init();
-
-            // Connect components
+            
+            // Connect components BEFORE init() so dependencies are available
             settingsController.SaveManager.setDependencies(
                 settingsController.Validator,
                 settingsController.ShapeManager
             );
+            
+            settingsController.init();
 
             // Vérifier l'état initial des onglets
             console.log('📋 État initial des onglets:');
@@ -878,6 +879,33 @@
         // Objets pour stocker les données par onglet
         var settingsByTab = {};
         console.log('✅ Système PDF Builder Settings en ligne');
+        
+        // ===== FALLBACK ROBUSTE POUR NAVIGATION DES ONGLETS =====
+        // Si le système vanilla-JS ne fonctionne pas, jQuery prendra le relais
+        console.log('📌 Installation du fallback jQuery pour navigation des onglets');
+        
+        $(document).on('click', '#pdf-builder-tabs .nav-tab', function(e) {
+            e.preventDefault();
+            var tabId = $(this).data('tab');
+            console.log('🔗 [jQuery Fallback] Navigation vers onglet:', tabId);
+            
+            if (!tabId) return;
+            
+            // Enlever les classes active de tous les onglets et contenus
+            $('#pdf-builder-tabs .nav-tab').removeClass('nav-tab-active');
+            $('#pdf-builder-tab-content .tab-content').removeClass('active');
+            
+            // Ajouter la classe active au nouvel onglet et contenu
+            $(this).addClass('nav-tab-active');
+            $('#' + tabId).addClass('active');
+            
+            // Sauvegarder dans localStorage
+            try {
+                localStorage.setItem('pdf_builder_active_tab', tabId);
+            } catch (e) {
+                console.warn('⚠️ Impossible de sauvegarder l\'onglet actif dans localStorage:', e);
+            }
+        });
     });
 </script>
 
