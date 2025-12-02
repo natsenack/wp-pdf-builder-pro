@@ -334,7 +334,7 @@
                     const formData = this.collectAllSettings();
 
                     // Send to server using jQuery AJAX instead of fetch
-                    const response = await $.ajax({
+                    const response = await jQuery.ajax({
                         url: PDF_BUILDER_CONFIG.ajax_url,
                         type: 'POST',
                         data: {
@@ -376,7 +376,7 @@
                 const formData = this.collectTabSettings(tabId);
 
                 try {
-                    const response = await $.ajax({
+                    const response = await jQuery.ajax({
                         url: PDF_BUILDER_CONFIG.ajax_url,
                         type: 'POST',
                         data: {
