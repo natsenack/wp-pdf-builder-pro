@@ -20,15 +20,14 @@ module.exports = {
     }
   },
   externals: {
-    'react': 'React',
     'react-dom': 'ReactDOM'
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {
-      // Override react externals to use our shim wrapper
-      'react$': path.resolve(__dirname, '../../assets/js/pdf-builder-react/react-shim-wrapper.js'),
-      'react-dom$': 'react-dom'
+      // Override react to use our shim wrapper instead of external
+      // Path from dev/config/build/ -> ../../../assets/js/pdf-builder-react/react-shim-wrapper.js
+      'react': path.resolve(__dirname, '../../../assets/js/pdf-builder-react/react-shim-wrapper.js')
     }
   },
   module: {
