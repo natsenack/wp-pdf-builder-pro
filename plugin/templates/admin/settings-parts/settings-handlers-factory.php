@@ -14,11 +14,11 @@ if (!defined('ABSPATH')) {
  * Enregistre automatiquement un handler AJAX pour sauvegarder des champs
  * 
  * @param string $tab_id Identifiant unique de l'onglet (ex: 'licence', 'acces', 'securite')
- * @param array $fields Liste des IDs des champs HTML à gérer
+ * @param array $fields Liste des IDs des champs HTML à gérer (optionnel - si vide, accepte tous)
  * @param callable $sanitizer Fonction de nettoyage personnalisée (optionnel)
  */
 function pdf_builder_register_settings_handler($tab_id, $fields = [], $sanitizer = null) {
-    if (empty($tab_id) || !is_array($fields)) {
+    if (empty($tab_id)) {
         return false;
     }
 
@@ -43,6 +43,15 @@ function pdf_builder_register_settings_handler($tab_id, $fields = [], $sanitizer
 
         // Récupérer et nettoyer les données
         $data = [];
+        
+        // Si aucun champ spécifié, accepter tous les champs POST (sauf action et nonce)
+        if (empty($fields)) {
+            $allowed_posts = $_POST;
+            unset($allowed_posts['action']);
+            unset($allowed_posts['nonce']);
+            $fields = array_keys($allowed_posts);
+        }
+
         foreach ($fields as $field) {
             if (isset($_POST[$field])) {
                 // Appliquer la fonction de nettoyage
@@ -82,60 +91,32 @@ function pdf_builder_register_settings_handler($tab_id, $fields = [], $sanitizer
  * Appelée une seule fois au chargement du plugin
  */
 function pdf_builder_initialize_all_settings_handlers() {
-    // Onglet Licence
-    pdf_builder_register_settings_handler('licence', [
-        'licence_key',
-        'licence_email',
-    ]);
+    // Onglet Général (accepte tous les champs)
+    pdf_builder_register_settings_handler('general', []);
 
-    // Onglet Accès
-    pdf_builder_register_settings_handler('acces', [
-        'acces_admin_only',
-        'acces_user_level',
-        'acces_custom_roles',
-    ]);
+    // Onglet Licence (accepte tous les champs)
+    pdf_builder_register_settings_handler('licence', []);
 
-    // Onglet Sécurité
-    pdf_builder_register_settings_handler('securite', [
-        'securite_two_factor',
-        'securite_encryption',
-        'securite_audit_log',
-    ]);
+    // Onglet Accès (accepte tous les champs)
+    pdf_builder_register_settings_handler('acces', []);
 
-    // Onglet PDF
-    pdf_builder_register_settings_handler('pdf', [
-        'pdf_compression',
-        'pdf_quality',
-        'pdf_metadata',
-    ]);
+    // Onglet Sécurité (accepte tous les champs)
+    pdf_builder_register_settings_handler('securite', []);
 
-    // Onglet Contenu
-    pdf_builder_register_settings_handler('contenu', [
-        'contenu_theme',
-        'contenu_layout',
-        'contenu_custom_css',
-    ]);
+    // Onglet PDF (accepte tous les champs)
+    pdf_builder_register_settings_handler('pdf', []);
 
-    // Onglet Développeur
-    pdf_builder_register_settings_handler('developpeur', [
-        'developpeur_debug',
-        'developpeur_api_key',
-        'developpeur_webhook_url',
-    ]);
+    // Onglet Contenu (accepte tous les champs)
+    pdf_builder_register_settings_handler('contenu', []);
 
-    // Onglet Système
-    pdf_builder_register_settings_handler('systeme', [
-        'systeme_cache_enabled',
-        'systeme_maintenance_mode',
-        'systeme_backup_auto',
-    ]);
+    // Onglet Développeur (accepte tous les champs)
+    pdf_builder_register_settings_handler('developpeur', []);
 
-    // Onglet Modèles
-    pdf_builder_register_settings_handler('templates', [
-        'templates_default',
-        'templates_custom_dir',
-        'templates_public',
-    ]);
+    // Onglet Système (accepte tous les champs)
+    pdf_builder_register_settings_handler('systeme', []);
+
+    // Onglet Modèles (accepte tous les champs)
+    pdf_builder_register_settings_handler('templates', []);
 }
 
 // Initialiser les handlers au chargement du plugin admin

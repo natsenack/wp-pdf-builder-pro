@@ -1071,11 +1071,11 @@
             $('[data-settings-field="true"]').each(function() {
                 var field = $(this);
                 var tabId = field.data('settings-tab') || 'general';
-                var fieldName = field.attr('id') || field.attr('name');
+                var fieldName = field.attr('name'); // Utiliser 'name' plutôt que 'id'
                 var fieldValue;
 
                 if (!fieldName) {
-                    console.warn('⚠️ Champ sans ID/name:', field);
+                    console.warn('⚠️ Champ sans name:', field);
                     return; // Skip
                 }
 
@@ -1095,9 +1095,10 @@
                     settingsByTab[tabId] = {};
                 }
 
-                // Stocker la valeur
+                // Stocker la valeur avec le nom du champ (le handler PHP le préfixera avec pdf_builder_)
                 if (fieldValue !== null && fieldValue !== undefined) {
                     settingsByTab[tabId][fieldName] = fieldValue;
+                    console.log('✓ Collecté ' + tabId + '.' + fieldName + ' = ' + fieldValue);
                 }
             });
 
