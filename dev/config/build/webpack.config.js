@@ -6,10 +6,7 @@ const CompressionPlugin = require('compression-webpack-plugin');
 module.exports = {
   mode: 'production', // Mode production pour l'optimisation
   entry: {
-    'pdf-builder-react': [
-      './assets/js/pdf-builder-react/react-injector.js',  // Load first to inject React globally
-      './assets/js/pdf-builder-react-wrapper.js'          // Then load the actual app
-    ]
+    'pdf-builder-react': './assets/js/pdf-builder-react-wrapper.js'
   },
   target: ['web', 'es6'], // Cibler ES6 pour de meilleures performances
   output: {
@@ -27,7 +24,12 @@ module.exports = {
     'react-dom': 'ReactDOM'
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+    alias: {
+      // Override react externals to use our shim wrapper
+      'react$': path.resolve(__dirname, '../../assets/js/pdf-builder-react/react-shim-wrapper.js'),
+      'react-dom$': 'react-dom'
+    }
   },
   module: {
     rules: [

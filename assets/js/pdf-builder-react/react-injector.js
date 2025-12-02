@@ -1,19 +1,15 @@
 /**
  * React Injector
- * This file is imported first and injects React into the global scope
- * so that all transpiled JSX code can access it as a variable
+ * Ensures React is available globally and in module scopes
+ * Import this first in any bundled code that needs React
  */
 
-// Ensure React is available as a global for all transpiled code
 if (typeof window !== 'undefined' && window.React) {
-  // Create a global React variable accessible to all module scopes
   globalThis.React = window.React;
   globalThis.ReactDOM = window.ReactDOM;
-  
-  console.log('✅ [react-injector] React injected into global scope');
+  console.log('✅ [react-injector] React + ReactDOM injected into global scope');
 } else {
-  console.error('❌ [react-injector] window.React not available!');
+  console.warn('[react-injector] React not yet available on window');
 }
 
-// Export for ES modules too
 export default window.React;
