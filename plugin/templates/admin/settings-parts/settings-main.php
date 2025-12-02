@@ -131,7 +131,7 @@
     </section>
 
     <aside id="pdf-builder-floating-save">
-        <button id="pdf-builder-save-button" class="floating-save-btn" type="button">
+        <button id="pdf-builder-save-btn" class="floating-save-btn" type="button">
             <span class="dashicons dashicons-cloud-upload"></span>
             <span class="btn-text">Enregistrer Tout</span>
             <span class="spinner" style="display: none;"></span>
