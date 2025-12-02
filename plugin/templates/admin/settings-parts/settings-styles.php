@@ -1,21 +1,24 @@
 <?php
 /**
  * Styles CSS pour la page de paramètres
- * Charge le fichier settings.css externe depuis assets/css/
- * Updated: 2025-12-02 18:22:00
+ * Charge le fichier settings.css LOCAL depuis le dossier settings-parts/
  */
 
-// Vérifier que la constante PDF_BUILDER_PRO_ASSETS_URL est définie
-if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
-    // Définition de secours si la constante n'est pas disponible
-    define('PDF_BUILDER_PRO_ASSETS_URL', plugins_url('assets/', dirname(dirname(dirname(dirname(__FILE__))))));
-}
+// Charger le CSS local depuis settings-parts/settings.css
+add_action('admin_head', function() {
+    wp_enqueue_style(
+        'pdf-builder-settings-css',
+        plugins_url('settings.css', __FILE__),
+        array(),
+        filemtime(__FILE__)
+    );
+});
 
-// Enregistrer et charger la feuille de style CSS depuis assets/css/
+// FALLBACK: Charger directement aussi au cas où le hook ne se déclenche pas
 wp_enqueue_style(
     'pdf-builder-settings-css',
-    PDF_BUILDER_PRO_ASSETS_URL . 'css/settings.css',
+    plugins_url('settings.css', __FILE__),
     array(),
-    PDF_BUILDER_VERSION . '-maintenance-buttons-' . time()
+    filemtime(__FILE__)
 );
 ?>

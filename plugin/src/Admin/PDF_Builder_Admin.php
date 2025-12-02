@@ -1140,7 +1140,13 @@ class PdfBuilderAdmin
         }
         pdf_builder_load_core();
 
-        // Enregistrer et charger le script pour la page des paramètres
+        // ✅ CHARGER LE CSS ICI - AVANT TOUT OUTPUT HTML
+        wp_enqueue_style(
+            'pdf-builder-settings-css',
+            PDF_BUILDER_PRO_ASSETS_URL . 'css/settings.css',
+            array(),
+            PDF_BUILDER_PRO_VERSION . '-' . time()
+        );
 
         // Charger l'API globale de l'éditeur React pour la communication avec les modals
         $this->enqueueReactGlobalAPI();
