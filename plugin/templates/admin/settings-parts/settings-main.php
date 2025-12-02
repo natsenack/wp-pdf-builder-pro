@@ -136,6 +136,8 @@
             <span class="spinner" style="display: none;"></span>
         </button>
     </aside>
+
+    <?php require_once __DIR__ . '/settings-modals.php'; ?>
 </main>
 
 <?php // Global variables for JS
@@ -1111,6 +1113,3 @@
         }
     });
 ?>
-
-<?php require_once __DIR__ . '/settings-modals.php'; ?>
-

@@ -9,8 +9,6 @@
             <!-- Sub-tabs for General settings -->
             <nav class="nav-tab-wrapper wp-clearfix sub-tabs" id="general-sub-tabs">
                 <a href="#general-company" class="nav-tab nav-tab-active" data-tab="general-company">🏢 Entreprise</a>
-                <a href="#general-css" class="nav-tab" data-tab="general-css">🎨 CSS</a>
-                <a href="#general-html" class="nav-tab" data-tab="general-html">📄 HTML</a>
             </nav>
 
             <section id="general-tab-content" class="tab-content-wrapper">
@@ -97,95 +95,6 @@
                                                     placeholder="10 000 €" />
                                                 <p class="description">Montant du capital social de l'entreprise</p>
                                                 <div class="company-preview"></div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </article>
-                            </form>
-                        </section>
-                    </div>
-                </div>
-
-                <!-- CSS Customization Sub-tab -->
-                <div id="general-css" class="tab-content">
-                    <div class="tab-content-inner">
-                        <section class="general-section">
-                            <h3>🎨 Personnalisation CSS</h3>
-
-                            <form method="post" action="">
-                                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_css_nonce'); ?>
-                                <input type="hidden" name="current_tab" value="general-css">
-
-                                <article class="general-info-box">
-                                    <h4 class="general-info-title">📝 Styles CSS personnalisés</h4>
-                                    <p class="general-css-description">
-                                    Ajoutez vos propres styles CSS pour personnaliser l'apparence de vos PDFs. Ces styles seront appliqués à tous les documents générés.
-                                    </p>
-
-                                    <table class="form-table">
-                                        <tr>
-                                            <th scope="row"><label for="pdf_builder_custom_css">CSS personnalisé</label></th>
-                                            <td>
-                                                <textarea id="pdf_builder_custom_css" name="pdf_builder_custom_css" rows="10" cols="50" class="textarea-code"><?php echo esc_textarea(get_option('pdf_builder_custom_css', '')); ?></textarea>
-                                                <p class="description">Entrez votre CSS personnalisé ici. Utilisez des sélecteurs spécifiques pour cibler les éléments PDF.</p>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><label for="pdf_builder_css_enabled">Activer le CSS personnalisé</label></th>
-                                            <td>
-                                                <label class="toggle-switch">
-                                                    <input type="checkbox" id="pdf_builder_css_enabled" name="pdf_builder_css_enabled" value="1" <?php checked(get_option('pdf_builder_css_enabled', false)); ?>>
-                                                    <span class="toggle-slider"></span>
-                                                </label>
-                                                <p class="description">Cochez pour activer l'application du CSS personnalisé aux PDFs générés.</p>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </article>
-                            </form>
-                        </section>
-                    </div>
-                </div>
-
-                <!-- HTML Customization Sub-tab -->
-                <div id="general-html" class="tab-content">
-                    <div class="tab-content-inner">
-                        <section class="general-section">
-                            <h3>📄 Personnalisation HTML</h3>
-
-                            <form method="post" action="">
-                                <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_html_nonce'); ?>
-                                <input type="hidden" name="current_tab" value="general-html">
-
-                                <article class="general-info-box">
-                                    <h4 class="general-html-title">📝 Templates HTML personnalisés</h4>
-                                    <p class="general-html-description">
-                                    Définissez des templates HTML personnalisés pour différents types de documents PDF. Utilisez des variables comme {company_name}, {invoice_number}, etc.
-                                    </p>
-
-                                    <table class="form-table">
-                                        <tr>
-                                            <th scope="row"><label for="pdf_builder_invoice_template">Template Facture</label></th>
-                                            <td>
-                                                <textarea id="pdf_builder_invoice_template" name="pdf_builder_invoice_template" rows="8" cols="50" class="textarea-code"><?php echo esc_textarea(get_option('pdf_builder_invoice_template', '')); ?></textarea>
-                                                <p class="description">Template HTML pour les factures. Laissez vide pour utiliser le template par défaut.</p>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><label for="pdf_builder_quote_template">Template Devis</label></th>
-                                            <td>
-                                                <textarea id="pdf_builder_quote_template" name="pdf_builder_quote_template" rows="8" cols="50" class="textarea-code"><?php echo esc_textarea(get_option('pdf_builder_quote_template', '')); ?></textarea>
-                                                <p class="description">Template HTML pour les devis. Laissez vide pour utiliser le template par défaut.</p>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><label for="pdf_builder_html_enabled">Activer les templates HTML personnalisés</label></th>
-                                            <td>
-                                                <label class="toggle-switch">
-                                                    <input type="checkbox" id="pdf_builder_html_enabled" name="pdf_builder_html_enabled" value="1" <?php checked(get_option('pdf_builder_html_enabled', false)); ?>>
-                                                    <span class="toggle-slider"></span>
-                                                </label>
-                                                <p class="description">Cochez pour activer l'utilisation des templates HTML personnalisés.</p>
                                             </td>
                                         </tr>
                                     </table>
