@@ -29,7 +29,7 @@
                                 <span class="cache-performance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_cache_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </span>
                         </h3>
-                                            <main>
+                    <main>
                         <table class="form-table">
                         <tr>
                             <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
@@ -108,10 +108,6 @@
                     </main>
 
                     </header>
-
-<<<<<<< HEAD
-=======
->>>>>>> 53f3245ec0d0e9773a18f39a77a43088b89f9c49
 
                     <!-- Informations sur l'état du cache -->
                     <article class="cache-status-info" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
@@ -194,40 +190,40 @@
                                 <span class="maintenance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
                             </span>
                         </h3>
+                        <main>
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row">Actions de maintenance</th>
+                                    <td>
+                                        <button type="button" id="optimize-db-btn" class="button button-secondary" style="margin-right: 10px;">🗃️ Optimiser la base</button>
+                                        <button type="button" id="repair-templates-btn" class="button button-secondary" style="margin-right: 10px;">🔧 Réparer les templates</button>
+                                        <button type="button" id="remove-temp-btn" class="button button-secondary">🗂️ Supprimer fichiers temp</button>
+                                        <div id="maintenance-results" style="margin-top: 10px;"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
+                                    <td>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <p class="description">Active la maintenance automatique hebdomadaire</p>
+                                        <div style="margin-top: 8px; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; font-size: 12px; color: #6c757d;">
+                                            <strong>ℹ️ Ce que fait la maintenance automatique :</strong><br>
+                                            • Optimisation de la base de données (réparation des tables)<br>
+                                            • Vérification et réparation des templates<br>
+                                            • Suppression des fichiers temporaires (+24h)<br>
+                                            • Nettoyage du cache ancien (+7 jours)<br>
+                                            <em>Exécution tous les dimanches à 02:00. Les logs sont enregistrés automatiquement.</em>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </main>
+
                     </header>
 
-                    <main>
-                        <table class="form-table">
-                        <tr>
-                            <th scope="row">Actions de maintenance</th>
-                            <td>
-                                <button type="button" id="optimize-db-btn" class="button button-secondary" style="margin-right: 10px;">🗃️ Optimiser la base</button>
-                                <button type="button" id="repair-templates-btn" class="button button-secondary" style="margin-right: 10px;">🔧 Réparer les templates</button>
-                                <button type="button" id="remove-temp-btn" class="button button-secondary">🗂️ Supprimer fichiers temp</button>
-                                <div id="maintenance-results" style="margin-top: 10px;"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" <?php checked(get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Active la maintenance automatique hebdomadaire</p>
-                                <div style="margin-top: 8px; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; font-size: 12px; color: #6c757d;">
-                                    <strong>ℹ️ Ce que fait la maintenance automatique :</strong><br>
-                                    • Optimisation de la base de données (réparation des tables)<br>
-                                    • Vérification et réparation des templates<br>
-                                    • Suppression des fichiers temporaires (+24h)<br>
-                                    • Nettoyage du cache ancien (+7 jours)<br>
-                                    <em>Exécution tous les dimanches à 02:00. Les logs sont enregistrés automatiquement.</em>
-                                </div>
-                            </td>
-                        </tr>
-                        </tr>
-                    </table>
-                    </main>
                 </section>
 
                 <!-- Section Sauvegarde -->
