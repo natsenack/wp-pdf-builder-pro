@@ -161,14 +161,23 @@ const exports = {
   updateCanvasDimensions
 };
 
-if (DEBUG_VERBOSE) debugLog('🌐 Exporting for webpack UMD...');
+if (DEBUG_VERBOSE) debugLog('🌐 Exposing on window immediately...');
 
-// ✅ CRITICAL: Assign immediately to window for UMD
+// ✅ CRITICAL: Assign to window IMMEDIATELY and synchronously
+// This must happen before webpack's UMD wrapper tries to export
 if (typeof window !== 'undefined') {
   window.pdfBuilderReact = exports;
-  if (DEBUG_VERBOSE) debugLog('✅ window.pdfBuilderReact assigned');
+  if (DEBUG_VERBOSE) debugLog('✅ window.pdfBuilderReact assigned directly');
+  // Dispatch event to signal that it's ready
+  setTimeout(() => {
+    if (typeof document !== 'undefined') {
+      const event = new Event('pdfBuilderReactReady');
+      document.dispatchEvent(event);
+      if (DEBUG_VERBOSE) debugLog('✅ pdfBuilderReactReady event dispatched');
+    }
+  }, 0);
 }
 
-// Export as named export (NOT default) so webpack UMD doesn't wrap it
-export const pdfBuilderReact = exports;
+// Export for webpack (webpack will use this for UMD)
 export default exports;
+export { exports as pdfBuilderReact };
