@@ -1462,13 +1462,33 @@ class PdfBuilderAdmin
 
             wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
-            // Les paramètres canvas sont maintenant définis dans settings-canvas-params.php
-
-            // Script d'initialisation temporairement désactivé pour diagnostic
-            // $init_script = "
-            // ...
-            // ";
-            // wp_add_inline_script('pdf-builder-react', $init_script);
+            // ✅ RÉACTIVER le script d'initialisation pour charger React
+            $init_script = "
+            (function() {
+                console.log('🚀 PDF Builder React Initializer: Script loaded');
+                
+                // Attendre que le DOM soit prêt
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        console.log('🚀 PDF Builder React Initializer: DOMContentLoaded fired');
+                        if (typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+                            window.pdfBuilderReact.initPDFBuilderReact();
+                        } else {
+                            console.error('❌ PDF Builder React Initializer: pdfBuilderReact not found');
+                        }
+                    });
+                } else {
+                    // DOM est déjà prêt
+                    console.log('🚀 PDF Builder React Initializer: DOM already ready');
+                    if (typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+                        window.pdfBuilderReact.initPDFBuilderReact();
+                    } else {
+                        console.error('❌ PDF Builder React Initializer: pdfBuilderReact not found');
+                    }
+                }
+            })();
+            ";
+            wp_add_inline_script('pdf-builder-react', $init_script);
         }
 
 // Styles pour l'éditeur canvas - Plus nécessaire car nous utilisons seulement l'éditeur React
