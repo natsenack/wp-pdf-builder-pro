@@ -138,6 +138,19 @@
     </aside>
 
     <?php require_once __DIR__ . '/settings-modals.php'; ?>
+
+    <script>
+        // Force masquage des modales - failsafe si CSS ne fonctionne pas
+        document.addEventListener('DOMContentLoaded', function() {
+            // Masquer TOUTES les modales par défaut
+            const modals = document.querySelectorAll('.cache-modal, .canvas-modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none !important';
+                modal.style.visibility = 'hidden';
+            });
+            console.log('[PDF Builder] Modales masquées: ' + modals.length);
+        });
+    </script>
 </main>
 
 <?php // Global variables for JS
