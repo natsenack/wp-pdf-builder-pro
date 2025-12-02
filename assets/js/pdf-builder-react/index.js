@@ -11,7 +11,7 @@ import { debugLog, debugError } from './utils/debug';
 
 // Import React pour les composants
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import ReactDOM from 'react-dom';
 
 console.log('🔧 [WEBPACK BUNDLE] pdf-builder-react/index.js starting execution...');
 console.log('🔧 [WEBPACK BUNDLE] React available:', typeof React);
@@ -121,7 +121,7 @@ async function initPDFBuilderReact() {
     if (DEBUG_VERBOSE) debugLog('🎨 Creating React root...');
 
     // Créer et rendre l'application React
-    const root = createRoot(container);
+    const root = ReactDOM.createRoot(container);
     if (DEBUG_VERBOSE) debugLog('🎨 React root created, rendering component...');
 
     // Récupérer les dimensions dynamiques depuis les paramètres
