@@ -293,7 +293,8 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
   });
 
   // ✅ CORRECTION: Flag pour éviter les boucles infinies lors des mises à jour d'événements
-  const isUpdatingFromEventRef = useRef(false);
+  const isUpdatingFromEventRef = React.useRef(false);
+  const hasInitializedRef = React.useRef(false);
 
   // Function to refresh settings from window object
   const handleRefresh = () => {
@@ -301,8 +302,11 @@ export function CanvasSettingsProvider({ children }: CanvasSettingsProviderProps
     setSettings(windowSettings);
   };
 
-  // Load settings from server on mount - simplified
+  // Load settings from server on mount - simplified - ONLY ONCE
   useEffect(() => {
+    if (hasInitializedRef.current) return; // Éviter les doublons au montage
+    hasInitializedRef.current = true;
+    
     // For now, just use window settings - AJAX calls can be added later if needed
     const windowSettings = loadSettingsFromWindowObj();
     setSettings(windowSettings);

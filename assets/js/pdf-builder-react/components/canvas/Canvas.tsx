@@ -918,10 +918,9 @@ const drawCompanyInfo = (ctx: CanvasRenderingContext2D, element: Element, canvas
 };
 
 const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element, state: BuilderState) => {
-  try {
-    const props = element as OrderNumberElementProperties;
+  const props = element as OrderNumberElementProperties;
 
-    const fontSize = props.fontSize || 14;
+  const fontSize = props.fontSize || 14;
   const fontFamily = props.fontFamily || 'Arial';
   const fontWeight = props.fontWeight || 'normal';
   const fontStyle = props.fontStyle || 'normal';
@@ -1117,9 +1116,6 @@ const drawOrderNumber = (ctx: CanvasRenderingContext2D, element: Element, state:
       ctx.fillText(`Date: ${orderDate}`, element.width - 10, y + 20);
     }
   }
-  } catch {
-    // Erreur silencieuse dans drawOrderNumber
-  }
 };
 
 const drawDocumentType = (ctx: CanvasRenderingContext2D, element: Element, state: BuilderState) => {
@@ -1281,9 +1277,9 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
     // Mettre à jour initialement
     updateViewport();
 
-    // Écouter les changements de scroll et resize
-    window.addEventListener('scroll', updateViewport);
-    window.addEventListener('resize', updateViewport);
+    // Écouter les changements de scroll et resize avec passive: true
+    window.addEventListener('scroll', updateViewport, { passive: true });
+    window.addEventListener('resize', updateViewport, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', updateViewport);
