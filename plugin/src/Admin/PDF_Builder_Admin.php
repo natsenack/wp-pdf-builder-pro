@@ -1140,13 +1140,13 @@ class PdfBuilderAdmin
         }
         pdf_builder_load_core();
 
-        // ✅ CHARGER LE CSS LOCAL ICI - AVANT TOUT OUTPUT HTML
-        wp_enqueue_style(
-            'pdf-builder-settings-css',
-            plugins_url('templates/admin/settings-parts/settings.css', dirname(dirname(dirname(__FILE__)))),
-            array(),
-            filemtime(plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings.css')
-        );
+        // ✅ CHARGER LE CSS LOCAL - EN INLINE CAR wp_enqueue_style() ne fonctionne pas ici
+        $css_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings.css';
+        if (file_exists($css_file)) {
+            echo '<style type="text/css">';
+            echo file_get_contents($css_file);
+            echo '</style>';
+        }
 
         // Charger l'API globale de l'éditeur React pour la communication avec les modals
         $this->enqueueReactGlobalAPI();
