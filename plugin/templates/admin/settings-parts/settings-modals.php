@@ -353,8 +353,11 @@
                     </p>
                 </aside>
                 <form id="zoom-form">
-                    <h4 class="canvas-modal-section-title">🔍 Zoom</h4>
-                    <table class="form-table">
+                    <section>
+                        <header>
+                            <h4 class="canvas-modal-section-title">🔍 Zoom</h4>
+                        </header>
+                        <table class="form-table">
                         <tr>
                             <th scope="row"><label for="zoom_min">Zoom minimum (%)</label></th>
                             <td>
@@ -384,6 +387,7 @@
                             </td>
                         </tr>
                     </table>
+                    </section>
                 </form>
             </main>
             <footer class="canvas-modal-footer">
@@ -496,7 +500,8 @@
                     </p>
                 </aside>
                 <form id="canvas-grille-form">
-                    <table class="form-table">
+                    <section>
+                        <table class="form-table">
                         <tr>
                             <th scope="row"><label for="canvas_guides_enabled">Guides activés</label></th>
                             <td>
@@ -535,6 +540,7 @@
                             </td>
                         </tr>
                     </table>
+                    </section>
                 </form>
             </main>
             <footer class="canvas-modal-footer">
@@ -654,6 +660,12 @@
                 <button type="button" class="canvas-modal-close">&times;</button>
             </header>
             <main class="canvas-modal-body">
+                <aside class="canvas-modal-info">
+                    <p>
+                        <strong>📤 Export & Qualité :</strong> Ces paramètres contrôlent le format et la qualité des fichiers exportés depuis le canvas.
+                        Choisissez le format approprié selon vos besoins (PNG pour la transparence, JPG pour la compatibilité, PDF pour les documents).
+                    </p>
+                </aside>
                 <form id="canvas-export-form">
                     <table class="form-table">
                         <tr>
@@ -831,6 +843,12 @@
                 <button type="button" class="canvas-modal-close">&times;</button>
             </header>
             <main class="canvas-modal-body">
+                <aside class="canvas-modal-info">
+                    <p>
+                        <strong>🐛 Debug & Monitoring :</strong> Ces outils de débogage vous aident à diagnostiquer les problèmes et à surveiller les performances du plugin PDF Builder.
+                        Utilisez-les uniquement en cas de problème ou pour l'optimisation avancée.
+                    </p>
+                </aside>
                 <form id="canvas-debug-form">
                     <table class="form-table">
                         <tr>
