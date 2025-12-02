@@ -476,7 +476,11 @@
                 message += `• ${rec}\n`;
             });
 
-            alert(message);
+            if (window.showInfoNotification) {
+                window.showInfoNotification(message);
+            } else {
+                alert(message);
+            }
         },
 
         resetDeveloperSettings: function() {
@@ -498,17 +502,23 @@
         },
 
         showNotification: function(message, type = 'info') {
-            const notification = $(`<div class="dev-notification ${type}">${message}</div>`);
-            this.elements.notifications.append(notification);
+            // Use centralized notification system
+            if (window.simpleNotificationSystem) {
+                window.simpleNotificationSystem.show(message, type);
+            } else {
+                // Fallback to local system if centralized not available
+                const notification = $(`<div class="dev-notification ${type}">${message}</div>`);
+                this.elements.notifications.append(notification);
 
-            // Animate in
-            setTimeout(() => notification.addClass('show'), 10);
+                // Animate in
+                setTimeout(() => notification.addClass('show'), 10);
 
-            // Auto remove
-            setTimeout(() => {
-                notification.removeClass('show');
-                setTimeout(() => notification.remove(), 300);
-            }, 4000);
+                // Auto remove
+                setTimeout(() => {
+                    notification.removeClass('show');
+                    setTimeout(() => notification.remove(), 300);
+                }, 4000);
+            }
         }
     };
 

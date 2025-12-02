@@ -136,28 +136,132 @@
 
         // Initialize notification functions if not already defined
         if (typeof window.showSuccessNotification === 'undefined') {
-            window.showSuccessNotification = function(message) {
-                console.log('✅ Success:', message);
-                // Use centralized notification system if available, otherwise fallback
-                if (window.simpleNotificationSystem && window.simpleNotificationSystem.success) {
-                    window.simpleNotificationSystem.success(message);
-                } else {
-                    // Fallback: simple console log only
-                    console.log('Notification system not ready, logged to console only');
+            // Initialize centralized notification system
+            window.simpleNotificationSystem = {
+                container: null,
+                
+                init: function() {
+                    if (!this.container) {
+                        this.container = document.createElement('div');
+                        this.container.id = 'pdf-builder-notifications';
+                        this.container.style.cssText = `
+                            position: fixed;
+                            top: 40px;
+                            right: 20px;
+                            z-index: 9999;
+                            max-width: 400px;
+                            pointer-events: none;
+                        `;
+                        document.body.appendChild(this.container);
+                    }
+                },
+                
+                show: function(message, type = 'info') {
+                    this.init();
+                    
+                    const notification = document.createElement('div');
+                    notification.className = `pdf-notification pdf-notification-${type}`;
+                    notification.style.cssText = `
+                        background: white;
+                        border-left: 4px solid ${this.getColor(type)};
+                        border-radius: 4px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                        margin-bottom: 10px;
+                        padding: 12px 16px;
+                        opacity: 0;
+                        transform: translateX(100%);
+                        transition: all 0.3s ease;
+                        pointer-events: auto;
+                        position: relative;
+                    `;
+                    
+                    notification.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span style="flex: 1; font-size: 14px; color: #333;">${message}</span>
+                            <button class="pdf-notification-close" style="
+                                background: none;
+                                border: none;
+                                color: #999;
+                                cursor: pointer;
+                                font-size: 18px;
+                                line-height: 1;
+                                margin-left: 10px;
+                                padding: 0;
+                            ">&times;</button>
+                        </div>
+                    `;
+                    
+                    this.container.appendChild(notification);
+                    
+                    // Animate in
+                    setTimeout(() => {
+                        notification.style.opacity = '1';
+                        notification.style.transform = 'translateX(0)';
+                    }, 10);
+                    
+                    // Auto remove
+                    const removeNotification = () => {
+                        notification.style.opacity = '0';
+                        notification.style.transform = 'translateX(100%)';
+                        setTimeout(() => {
+                            if (notification.parentNode) {
+                                notification.parentNode.removeChild(notification);
+                            }
+                        }, 300);
+                    };
+                    
+                    // Close button
+                    notification.querySelector('.pdf-notification-close').addEventListener('click', removeNotification);
+                    
+                    // Auto remove after 5 seconds
+                    setTimeout(removeNotification, 5000);
+                },
+                
+                getColor: function(type) {
+                    const colors = {
+                        success: '#46b450',
+                        error: '#dc3232',
+                        warning: '#f56e28',
+                        info: '#00a0d2'
+                    };
+                    return colors[type] || colors.info;
+                },
+                
+                success: function(message) {
+                    this.show(message, 'success');
+                },
+                
+                error: function(message) {
+                    this.show(message, 'error');
+                },
+                
+                warning: function(message) {
+                    this.show(message, 'warning');
+                },
+                
+                info: function(message) {
+                    this.show(message, 'info');
                 }
             };
-        }
 
-        if (typeof window.showErrorNotification === 'undefined') {
+            window.showSuccessNotification = function(message) {
+                console.log('✅ Success:', message);
+                window.simpleNotificationSystem.success(message);
+            };
+
             window.showErrorNotification = function(message) {
                 console.error('❌ Error:', message);
-                // Use centralized notification system if available, otherwise fallback
-                if (window.simpleNotificationSystem && window.simpleNotificationSystem.error) {
-                    window.simpleNotificationSystem.error(message);
-                } else {
-                    // Fallback: simple console error only
-                    console.error('Notification system not ready, logged to console only');
-                }
+                window.simpleNotificationSystem.error(message);
+            };
+
+            window.showWarningNotification = function(message) {
+                console.warn('⚠️ Warning:', message);
+                window.simpleNotificationSystem.warning(message);
+            };
+
+            window.showInfoNotification = function(message) {
+                console.log('ℹ️ Info:', message);
+                window.simpleNotificationSystem.info(message);
             };
         }
 

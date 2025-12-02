@@ -226,13 +226,21 @@ jQuery(document).ready(function($) {
                     }, 2000);
                 } else {
                     $results.html('<span style="color: #dc3545;">❌ Échec du nettoyage</span>');
-                    alert('Erreur lors du nettoyage du cache: ' + (response.data || 'Erreur inconnue'));
+                    if (window.showErrorNotification) {
+                        window.showErrorNotification('Erreur lors du nettoyage du cache: ' + (response.data || 'Erreur inconnue'));
+                    } else {
+                        alert('Erreur lors du nettoyage du cache: ' + (response.data || 'Erreur inconnue'));
+                    }
                 }
             },
             error: function(xhr, status, error) {
                 debugLogAjax('pdf_builder_clear_cache error', status, error, xhr && xhr.responseText);
                 $results.html('<span style="color: #dc3545;">❌ Erreur de connexion</span>');
-                alert('Erreur AJAX lors du nettoyage: ' + error);
+                if (window.showErrorNotification) {
+                    window.showErrorNotification('Erreur AJAX lors du nettoyage: ' + error);
+                } else {
+                    alert('Erreur AJAX lors du nettoyage: ' + error);
+                }
             },
             complete: function() {
                 // Réactiver le bouton
@@ -241,7 +249,11 @@ jQuery(document).ready(function($) {
             });
         }).catch(function(err){
             $results.html('<span style="color: #dc3545;">❌ Impossible d\'obtenir nonce</span>');
-            alert('Erreur: ' + (err && err.message ? err.message : err));
+            if (window.showErrorNotification) {
+                window.showErrorNotification('Erreur: ' + (err && err.message ? err.message : err));
+            } else {
+                alert('Erreur: ' + (err && err.message ? err.message : err));
+            }
             $button.prop('disabled', false).text('🗑️ Vider tout le cache');
         });
     });
