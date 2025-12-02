@@ -29,9 +29,7 @@
                                 <span class="cache-performance-status" style="font-size: 12px; background: <?php echo get_option('pdf_builder_cache_enabled', false) ? '#28a745' : '#dc3545'; ?>; color: white; padding: 2px 8px; border-radius: 10px; font-weight: normal;"><?php echo get_option('pdf_builder_cache_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
                             </span>
                         </h3>
-                    </header>
-
-                    <main>
+                                            <main>
                         <table class="form-table">
                         <tr>
                             <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
@@ -108,6 +106,12 @@
                             </td>
                         </tr>
                     </main>
+
+                    </header>
+
+<<<<<<< HEAD
+=======
+>>>>>>> 53f3245ec0d0e9773a18f39a77a43088b89f9c49
 
                     <!-- Informations sur l'état du cache -->
                     <article class="cache-status-info" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
