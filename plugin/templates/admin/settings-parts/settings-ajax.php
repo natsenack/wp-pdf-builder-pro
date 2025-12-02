@@ -1195,6 +1195,11 @@ function pdf_builder_save_all_settings_handler() {
                 continue;
             }
 
+            // CRITICAL: Log debug_javascript explicitly
+            if (strpos($key, 'debug_javascript') !== false) {
+                error_log("🔴 FOUND DEBUG_JAVASCRIPT IN POST: key='{$key}', value='" . (is_array($value) ? json_encode($value) : $value) . "'");
+            }
+
             $processed_fields[] = $key;
             error_log("PROCESSING FIELD: {$key} (original value: " . (is_array($value) ? 'ARRAY' : $value) . ")");
 
@@ -1323,6 +1328,11 @@ function pdf_builder_save_all_settings_handler() {
                 $option_key = strpos($field, 'pdf_builder_') === 0 ? $field : 'pdf_builder_' . $field;
                 $saved_value = get_option($option_key, '');
                 
+                // CRITICAL: Log debug_javascript explicitly
+                if (strpos($field, 'debug_javascript') !== false) {
+                    error_log("🟡 SAVED_OPTIONS LOOP - DEBUG_JAVASCRIPT: field='{$field}', display_key='{$display_key}', option_key='{$option_key}', saved_value='{$saved_value}'");
+                }
+                
                 // Utiliser la clé normalisée (sans préfixe) dans saved_options pour correspondre aux noms de formulaire
                 $saved_options[$display_key] = $saved_value;
                 error_log("SAVED_OPTIONS [{$display_key}] -> option_key[{$option_key}] = '{$saved_value}'");
@@ -1375,6 +1385,17 @@ function pdf_builder_save_all_settings_handler() {
                 'debug_javascript' => $saved_options['debug_javascript'] ?? 'NOT_SET',
                 'pdf_builder_debug_javascript' => $saved_options['pdf_builder_debug_javascript'] ?? 'NOT_SET'
             ]));
+            
+            // CRITICAL: Explicit check for debug_javascript in final response
+            error_log('🟢 FINAL CHECK - debug_javascript keys in saved_options:');
+            foreach ($saved_options as $k => $v) {
+                if (strpos($k, 'debug_javascript') !== false) {
+                    error_log("   FOUND: saved_options['{$k}'] = '{$v}'");
+                }
+            }
+            if (!isset($saved_options['debug_javascript']) && !isset($saved_options['pdf_builder_debug_javascript'])) {
+                error_log("   🔴 NOT FOUND: debug_javascript NOT IN SAVED_OPTIONS");
+            }
         } catch (Exception $e) {
             error_log('PDF Builder SAVE ALL - ERROR building saved_options: ' . $e->getMessage());
             $saved_options = ['error' => 'Failed to build saved options: ' . $e->getMessage()];
