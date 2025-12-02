@@ -1409,7 +1409,12 @@ class PdfBuilderAdmin
                 }
             }
 
-            // ✅ Enqueue AJAX throttle manager FIRST to prevent connection pool exhaustion
+            // ✅ Enqueue React Shim FIRST to ensure hooks are available before bundle execution
+            $shim_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/fallbacks/react-shim.js';
+            $shim_version = $cache_bust;
+            wp_enqueue_script('pdf-builder-react-shim', $shim_url, ['react', 'react-dom'], $shim_version, true);
+
+            // ✅ Enqueue AJAX throttle manager NEXT to prevent connection pool exhaustion
             $throttle_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/ajax-throttle.js';
             $throttle_version = $cache_bust;
             wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $throttle_version, true);
