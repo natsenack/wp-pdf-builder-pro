@@ -121,7 +121,16 @@ async function initPDFBuilderReact() {
     if (DEBUG_VERBOSE) debugLog('🎨 Creating React root...');
 
     // Créer et rendre l'application React
-    const root = ReactDOM.createRoot(container);
+    // Essayer createRoot d'abord (React 18), sinon utiliser render (compatibilité)
+    let root;
+    if (ReactDOM.createRoot) {
+      root = ReactDOM.createRoot(container);
+      if (DEBUG_VERBOSE) debugLog('🎨 Using React 18 createRoot API');
+    } else {
+      // Fallback pour anciennes versions
+      if (DEBUG_VERBOSE) debugLog('🎨 Using React render API (fallback)');
+    }
+
     if (DEBUG_VERBOSE) debugLog('🎨 React root created, rendering component...');
 
     // Récupérer les dimensions dynamiques depuis les paramètres
@@ -131,9 +140,17 @@ async function initPDFBuilderReact() {
 
     if (DEBUG_VERBOSE) debugLog('📐 Canvas dimensions:', { width: canvasWidth, height: canvasHeight });
 
-    root.render(React.createElement(ErrorBoundary, null,
+    const element = React.createElement(ErrorBoundary, null,
       React.createElement(PDFBuilder, { width: canvasWidth, height: canvasHeight })
-    ));
+    );
+
+    if (root) {
+      // React 18 API
+      root.render(element);
+    } else {
+      // Fallback API
+      ReactDOM.render(element, container);
+    }
     if (DEBUG_VERBOSE) debugLog('✅ React component rendered successfully');
 
     return true;
