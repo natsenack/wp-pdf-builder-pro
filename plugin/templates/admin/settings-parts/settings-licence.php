@@ -1,7 +1,7 @@
 ﻿<?php // Licence tab content - Updated: AJAX centralized 2025-12-02 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
             <section id="licence-container" aria-label="Gestion de la Licence">
-                <h2 style="color: #007cba; border-bottom: 2px solid #007cba; padding-bottom: 10px;">🔐 Gestion de la Licence</h2>
+                <h2 class="settings-page-title">🔐 Gestion de la Licence</h2>
 
                 
 
@@ -27,8 +27,8 @@
                     if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
                      // Mode DÉMO : Activation de clés réelles désactivée
                         // Les clés premium réelles seront validées une fois le système de licence en production
-                        wp_die('<div style="background: #fff3cd; border: 2px solid #ffc107; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin: 20px; color: #856404; font-family: Arial, sans-serif;">
-                                <h2 style="margin-top: 0; color: #856404;">⚠️ Mode DÉMO</h2>
+                        wp_die('<div class="alert-demo">
+                                <h2>⚠️ Mode DÉMO</h2>
                                 <p><strong>La validation des clés premium n\'est pas encore active.</strong></p>
                                 <p>Pour tester les fonctionnalités premium, veuillez :</p>
                                 <ol>
@@ -36,7 +36,7 @@
                                     <li>Cliquez sur <strong>Générer une clé de test</strong></li>
                                     <li>La clé TEST s\'activera automatiquement</li>
                                 </ol>
-                                <p><a href="' . admin_url('admin.php?page=pdf-builder-pro-settings&tab=developer') . '" style="background: #ffc107; color: #856404; padding: 10px 15px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -ms-border-radius: 5px; -o-border-radius: 5px; border-radius: 5px; text-decoration: none; font-weight: bold; display: inline-block;">↻ Aller au mode Développeur</a></p>
+                                <p><a href="' . admin_url('admin.php?page=pdf-builder-pro-settings&tab=developer') . '">↻ Aller au mode Développeur</a></p>
                             </div>', 'Activation désactivée', ['response' => 403]);
                     }
 
@@ -62,17 +62,17 @@
                 ?>
 
                     <!-- Statut de la licence -->
-                <section class="licence-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e5e5e5;">
-                        <h3 style="color: #007cba;">📊 Statut de la Licence</h3>
+                <section class="licence-section">
+                        <h3 class="settings-section-title">📊 Statut de la Licence</h3>
 
-                        <section style="display: -webkit-grid; display: -moz-grid; display: -ms-grid; display: grid; -webkit-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -moz-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -ms-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); -webkit-gap: 20px; -moz-gap: 20px; gap: 20px; margin-top: 25px;">
+                        <section class="status-cards-grid">
                             <!-- Carte Statut Principal -->
-                            <article style="border: 3px solid <?php echo $is_premium ? '#28a745' : '#6c757d'; ?>; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, <?php echo $is_premium ? '#d4edda' : '#f8f9fa'; ?> 0%, <?php echo $is_premium ? '#e8f5e9' : '#ffffff'; ?> 100%); -webkit-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -moz-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -ms-box-shadow: 0 4px 6px rgba(0,0,0,0.1); -o-box-shadow: 0 4px 6px rgba(0,0,0,0.1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <aside style="font-size: 13px; color: #666; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Statut</aside>
-                                <p style="font-size: 26px; font-weight: 900; color: <?php echo $is_premium ? '#155724' : '#495057'; ?>; margin-bottom: 8px;">
+                            <article class="status-card<?php echo $is_premium ? ' premium' : ''; ?>">
+                                <aside class="status-card-label">Statut</aside>
+                                <p class="status-card-value<?php echo $is_premium ? ' premium' : ''; ?>">
                                     <?php echo $is_premium ? '✅ Premium Actif' : '○ Gratuit'; ?>
                                 </p>
-                                <aside style="font-size: 12px; color: <?php echo $is_premium ? '#155724' : '#6c757d'; ?>; font-style: italic;">
+                                <aside class="status-card-description<?php echo $is_premium ? ' premium' : ''; ?>">
                                     <?php echo $is_premium ? 'Licence premium activée' : 'Aucune licence premium'; ?>
                                 </aside>
                             </article>
@@ -80,12 +80,12 @@
                             <!-- Carte Mode Test (si applicable) -->
                             <?php if (!empty($test_key)) :
                                 ?>
-                            <article style="border: 3px solid #ffc107; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); -webkit-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -moz-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -ms-box-shadow: 0 4px 6px rgba(255,193,7,0.2); -o-box-shadow: 0 4px 6px rgba(255,193,7,0.2); box-shadow: 0 4px 6px rgba(255,193,7,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <aside style="font-size: 13px; color: #856404; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Mode</aside>
-                                <p style="font-size: 26px; font-weight: 900; color: #856404; margin-bottom: 8px;">
+                            <article class="status-card test">
+                                <aside class="status-card-label">Mode</aside>
+                                <p class="status-card-value test">
                                     🧪 TEST (Dev)
                                 </p>
-                                <aside style="font-size: 12px; color: #856404; font-style: italic;">
+                                <aside class="status-card-description test">
                                     Mode développement actif
                                 </aside>
                             </article>
@@ -95,12 +95,12 @@
                             <!-- Carte Date d'expiration -->
                             <?php if ($is_premium && $license_expires) :
                                 ?>
-                            <article style="border: 3px solid #17a2b8; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #d1ecf1 0%, #e0f7fa 100%); -webkit-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -moz-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -ms-box-shadow: 0 4px 6px rgba(23,162,184,0.2); -o-box-shadow: 0 4px 6px rgba(23,162,184,0.2); box-shadow: 0 4px 6px rgba(23,162,184,0.2); -webkit-transition: -webkit-transform 0.2s; -moz-transition: -moz-transform 0.2s; -o-transition: -o-transform 0.2s; transition: transform 0.2s;">
-                                <aside style="font-size: 13px; color: #0c5460; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Expire le</aside>
-                                <p style="font-size: 26px; font-weight: 900; color: #0c5460; margin-bottom: 8px;">
+                            <article class="status-card expiry">
+                                <aside class="status-card-label">Expire le</aside>
+                                <p class="status-card-value expiry">
                                     <?php echo date('d/m/Y', strtotime($license_expires)); ?>
                                 </p>
-                                <aside style="font-size: 12px; color: #0c5460; font-style: italic;">
+                                <aside class="status-card-description expiry">
                                     <?php
                                     $now = new DateTime();
                                     $expires = new DateTime($license_expires);
@@ -117,7 +117,7 @@
                             endif; ?>
                         </section>
 
-                    <?php
+                        <?php
                         // Bannière d'alerte si expiration dans moins de 30 jours
                         if ($is_premium && !empty($license_expires)) {
                             $now = new DateTime();
@@ -126,12 +126,12 @@
 
                             if (!$diff->invert && $diff->days <= 30 && $diff->days > 0) {
                                 ?>
-                                <aside style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 2px solid #ffc107; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin-top: 20px; -webkit-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -moz-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -ms-box-shadow: 0 3px 8px rgba(255,193,7,0.2); -o-box-shadow: 0 3px 8px rgba(255,193,7,0.2); box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
-                                    <section style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; -webkit-gap: 15px; -moz-gap: 15px; gap: 15px;">
-                                        <span style="font-size: 32px; flex-shrink: 0;">⏰</span>
+                                <aside class="license-alert">
+                                    <section class="license-alert-content">
+                                        <span class="alert-icon">⏰</span>
                                         <span>
-                                            <strong style="font-size: 16px; color: #856404; display: block; margin-bottom: 4px;">Votre licence expire bientôt</strong>
-                                            <p style="margin: 0; color: #856404; font-size: 14px; line-height: 1.5;">
+                                            <strong class="alert-title">Votre licence expire bientôt</strong>
+                                            <p class="alert-text">
                                                 Votre licence Premium expire dans <strong><?php echo $diff->days; ?> jour<?php echo $diff->days > 1 ? 's' : ''; ?></strong> (le <?php echo date('d/m/Y', strtotime($license_expires)); ?>).
                                                 Renouvelez dès maintenant pour continuer à bénéficier de toutes les fonctionnalités premium.
                                             </p>
@@ -141,28 +141,26 @@
                                 <?php
                             }
                         }
-                        ?>
-
-                        <!-- Détails de la clé -->
+                        ?>                        <!-- Détails de la clé -->
                         <?php if ($is_premium || !empty($test_key)) :
                             ?>
-                        <article style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%); border-left: 5px solid #007bff; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border-radius: 8px; padding: 20px; margin-top: 25px; -webkit-box-shadow: 0 2px 4px rgba(0,123,255,0.1); -moz-box-shadow: 0 2px 4px rgba(0,123,255,0.1); -ms-box-shadow: 0 2px 4px rgba(0,123,255,0.1); -o-box-shadow: 0 2px 4px rgba(0,123,255,0.1); box-shadow: 0 2px 4px rgba(0,123,255,0.1);">
-                            <header style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-pack: justify; -webkit-justify-content: space-between; -moz-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 15px;">
-                                <h4 style="margin: 0; color: #004085; font-size: 16px;">🔐 Détails de la Clé</h4>
+                        <article class="license-details-card">
+                            <header class="license-details-header">
+                                <h4>🔐 Détails de la Clé</h4>
                                 <?php if ($is_premium) :
                                     ?>
-                                <button type="button" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 8px 16px !important; font-size: 13px !important;"
+                                <button type="button" class="button button-secondary deactivate-btn"
                                         onclick="showDeactivateModal()">
                                     Désactiver
                                 </button>
                                     <?php
                                 endif; ?>
                             </header>
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <tr style="border-bottom: 1px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Site actuel :</td>
-                                    <td style="padding: 8px 0;">
-                                        <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 3px; border: 1px solid #ddd; color: #007bff;">
+                            <table class="license-details-table">
+                                <tr>
+                                    <td>Site actuel :</td>
+                                    <td>
+                                        <code class="code-inline">
                                             <?php echo esc_html(home_url()); ?>
                                         </code>
                                     </td>
@@ -170,10 +168,10 @@
 
                                 <?php if ($is_premium && $license_key) :
                                     ?>
-                                <tr style="border-bottom: 2px solid #cce5ff;">
-                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Clé Premium :</td>
-                                    <td style="padding: 8px 0; font-family: monospace;">
-                                        <code style="background: #fff; padding: 4px 8px; border-radius: 3px; border: 1px solid #ddd;">
+                                <tr>
+                                    <td>Clé Premium :</td>
+                                    <td>
+                                        <code class="license-key-display">
                                             <?php
                                             $key = $license_key;
                                             $visible_start = substr($key, 0, 6);
@@ -181,7 +179,7 @@
                                             echo $visible_start . '••••••••••••••••' . $visible_end;
                                             ?>
                                         </code>
-                                        <span style="margin-left: 10px; cursor: pointer; color: #007bff;" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>');">📋 Copier</span>
+                                        <span class="copy-link" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>');">📋 Copier</span>
                                     </td>
                                 </tr>
                                     <?php
@@ -189,27 +187,27 @@
 
                                 <?php if (!empty($test_key)) :
                                     ?>
-                                <tr style="border-bottom: 1px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Clé de Test :</td>
-                                    <td style="padding: 8px 0; font-family: monospace;">
-                                        <code style="background: #fff3cd; padding: 4px 8px; border-radius: 3px; border: 1px solid #ffc107;">
+                                <tr>
+                                    <td>Clé de Test :</td>
+                                    <td>
+                                        <code class="test-key-display">
                                             <?php
                                             $test = $test_key;
                                             echo substr($test, 0, 6) . '••••••••••••••••' . substr($test, -6);
                                             ?>
                                         </code>
-                                        <span style="margin-left: 10px; color: #666; font-size: 12px;"> (Mode Développement)</span>
+                                        <span class="test-mode-indicator"> (Mode Développement)</span>
                                     </td>
                                 </tr>
                                     <?php if (!empty($test_key_expires)) :
                                         ?>
-                                <tr style="border-bottom: 1px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500; width: 150px;">Expire le :</td>
-                                    <td style="padding: 8px 0;">
-                                        <p style="margin-bottom: 4px;">
+                                <tr>
+                                    <td>Expire le :</td>
+                                    <td>
+                                        <p class="test-expiry-date">
                                             <strong><?php echo date('d/m/Y', strtotime($test_key_expires)); ?></strong>
                                         </p>
-                                        <p style="font-size: 12px; color: #666;">
+                                        <p class="test-expiry-status">
                                             <?php
                                             $now = new DateTime();
                                             $expires = new DateTime($test_key_expires);
@@ -230,9 +228,9 @@
 
                                 <?php if ($is_premium && $license_activated_at) :
                                     ?>
-                                <tr style="border-bottom: 1px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500;">Activée le :</td>
-                                    <td style="padding: 8px 0;">
+                                <tr>
+                                    <td>Activée le :</td>
+                                    <td>
                                         <?php echo date('d/m/Y à H:i', strtotime($license_activated_at)); ?>
                                     </td>
                                 </tr>
@@ -240,15 +238,15 @@
                                 endif; ?>
 
                                 <tr>
-                                    <td style="padding: 8px 0; font-weight: 500;">Statut :</td>
-                                    <td style="padding: 8px 0;">
+                                    <td>Statut :</td>
+                                    <td>
                                         <?php
                                         if (!empty($test_key)) {
-                                            echo '<span style="background: #ffc107; color: #000; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">🧪 MODE TEST</span>';
+                                            echo '<span class="status-badge status-test">🧪 MODE TEST</span>';
                                         } elseif ($is_premium) {
-                                            echo '<span style="background: #28a745; color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">✅ ACTIVE</span>';
+                                            echo '<span class="status-badge status-active">✅ ACTIVE</span>';
                                         } else {
-                                            echo '<span style="background: #6c757d; color: #fff; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: bold;">○ GRATUIT</span>';
+                                            echo '<span class="status-badge status-free">○ GRATUIT</span>';
                                         }
                                         ?>
                                     </td>
@@ -256,13 +254,13 @@
 
                                 <?php if ($is_premium && !empty($license_expires)) :
                                     ?>
-                                <tr style="border-bottom: 1px solid #e5e5e5;">
-                                    <td style="padding: 8px 0; font-weight: 500;">Expire le :</td>
-                                    <td style="padding: 8px 0;">
-                                        <p style="margin-bottom: 4px;">
+                                <tr>
+                                    <td>Expire le :</td>
+                                    <td>
+                                        <p class="license-expiry-date">
                                             <strong><?php echo date('d/m/Y', strtotime($license_expires)); ?></strong>
                                         </p>
-                                        <p style="font-size: 12px; color: #666;">
+                                        <p class="license-expiry-status">
                                             <?php
                                             $now = new DateTime();
                                             $expires = new DateTime($license_expires);
@@ -288,18 +286,18 @@
                     <?php if (!$is_premium) :
                         ?>
                     <!-- Mode DÉMO : Pas de licence -->
-                    <section class="licence-section" style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
-                        <header style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
-                            <span style="font-size: 50px;">🧪</span>
+                    <section class="licence-section demo-mode">
+                        <header class="demo-header">
+                            <span class="demo-icon">🧪</span>
                             <div>
-                                <h3 style="margin: 0 0 8px 0; color: #856404; font-size: 26px; font-weight: 700;">Mode DÉMO - Clés de Test Uniquement</h3>
-                                <p style="margin: 0; color: #856404; font-size: 15px; line-height: 1.5;">La validation des clés premium n'est pas encore active. Utilisez le mode TEST pour explorer les fonctionnalités.</p>
+                                <h3 class="demo-title">Mode DÉMO - Clés de Test Uniquement</h3>
+                                <p class="demo-description">La validation des clés premium n'est pas encore active. Utilisez le mode TEST pour explorer les fonctionnalités.</p>
                             </div>
                         </header>
 
-                        <article style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 20px; margin-bottom: 20px; color: #856404; font-size: 14px; line-height: 1.6;">
+                        <article class="demo-info">
                             <strong>✓ Comment tester :</strong>
-                            <ol style="margin: 10px 0 0 0; padding-left: 20px;">
+                            <ol>
                                 <li>Allez à l'onglet <strong>Développeur</strong></li>
                                 <li>Cliquez sur <strong>🔑 Générer une clé de test</strong></li>
                                 <li>La clé TEST s'activera automatiquement</li>
@@ -307,7 +305,7 @@
                             </ol>
                         </article>
 
-                        <aside style="background: rgba(220, 53, 69, 0.1); border-left: 4px solid #dc3545; border-radius: 6px; padding: 15px; color: #721c24; font-size: 13px;">
+                        <aside class="demo-warning">
                             <strong>⚠️ Note importante :</strong> Les clés premium réelles seront validées une fois le système de licence en production.
                         </aside>
                     </section>
@@ -315,16 +313,16 @@
                     elseif ($is_test_mode) :
                         ?>
                     <!-- Mode TEST : Gestion de la clé de test -->
-                    <section class="licence-section" style="background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%); border: 2px solid #ffc107; box-shadow: 0 3px 8px rgba(255,193,7,0.2);">
-                        <header style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
-                            <span style="font-size: 50px;">🧪</span>
+                    <section class="licence-section test-mode">
+                        <header class="test-header">
+                            <span class="test-icon">🧪</span>
                             <div>
-                                <h3 style="margin: 0 0 8px 0; color: #856404; font-size: 26px; font-weight: 700;">Gestion de la Clé de Test</h3>
-                                <p style="margin: 0; color: #856404;">Vous testez actuellement avec une clé TEST. Toutes les fonctionnalités premium sont disponibles.</p>
+                                <h3 class="test-title">Gestion de la Clé de Test</h3>
+                                <p class="test-description">Vous testez actuellement avec une clé TEST. Toutes les fonctionnalités premium sont disponibles.</p>
                             </div>
                         </header>
 
-                        <aside style="background: rgba(255,193,7,0.15); border-left: 4px solid #ffc107; border-radius: 6px; padding: 15px; margin-bottom: 20px; color: #856404; font-size: 13px;">
+                        <aside class="test-info">
                             <strong>ℹ️ Mode Test Actif :</strong> Vous pouvez désactiver cette clé à tout moment depuis la section "Détails de la Clé" ci-dessus, ou générer une nouvelle clé de test depuis l'onglet Développeur.
                         </aside>
                     </section>
@@ -332,35 +330,35 @@
                     else :
                         ?>
                     <!-- Mode PREMIUM : Gestion de la licence premium -->
-                    <section class="licence-section" style="background: linear-gradient(135deg, #f0f8f5 0%, #ffffff 100%); border: 2px solid #28a745; box-shadow: 0 3px 8px rgba(40,167,69,0.2);">
-                        <header style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
-                            <span style="font-size: 50px;">🔐</span>
+                    <section class="licence-section premium-mode">
+                        <header class="premium-header">
+                            <span class="premium-icon">🔐</span>
                             <div>
-                                <h3 style="margin: 0 0 8px 0; color: #155724; font-size: 26px; font-weight: 700;">Gestion de la Licence Premium</h3>
-                                <p style="margin: 0; color: #155724;">Votre licence premium est active et valide. Vous pouvez gerer votre licence ci-dessous.</p>
+                                <h3 class="premium-title">Gestion de la Licence Premium</h3>
+                                <p class="premium-description">Votre licence premium est active et valide. Vous pouvez gérer votre licence ci-dessous.</p>
                             </div>
                         </header>
 
                         <!-- Avertissements et informations -->
-                        <aside style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); border: none; border-radius: 8px; padding: 20px; margin-bottom: 20px; color: #fff; box-shadow: 0 3px 8px rgba(255,193,7,0.3);">
-                            <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Savoir :</strong>
-                            <ul style="margin: 12px 0 0 0; padding-left: 20px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                                <li style="margin: 6px 0;">Votre licence reste <strong>active pendant un an</strong> a partir de son activation</li>
-                                <li style="margin: 6px 0;">Meme apres desactivation, la licence reste valide jusqu'a son expiration</li>
-                                <li style="margin: 6px 0;"><strong>Desactivez</strong> pour utiliser la meme cle sur un autre site WordPress</li>
-                                <li style="margin: 6px 0;">Une cle ne peut etre active que sur <strong>un seul site a la fois</strong></li>
+                        <aside class="premium-warning">
+                            <strong>Savoir :</strong>
+                            <ul>
+                                <li>Votre licence reste <strong>active pendant un an</strong> à partir de son activation</li>
+                                <li>Même après désactivation, la licence reste valide jusqu'à son expiration</li>
+                                <li><strong>Désactivez</strong> pour utiliser la même clé sur un autre site WordPress</li>
+                                <li>Une clé ne peut être active que sur <strong>un seul site à la fois</strong></li>
                             </ul>
                         </aside>
 
-                        <article style="margin-top: 20px;">
-                            <button type="button" id="deactivate-license-btn" class="button button-secondary" style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; font-weight: bold !important; padding: 10px 20px !important; display: block !important; visibility: visible !important; opacity: 1 !important;">
-                                Desactiver la Licence
+                        <article>
+                            <button type="button" id="deactivate-license-btn" class="button button-secondary premium-deactivate-btn">
+                                Désactiver la Licence
                             </button>
                         </article>
 
-                        <aside style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); border: none; border-radius: 8px; padding: 22px; margin-top: 20px; color: #fff; box-shadow: 0 3px 8px rgba(23,162,184,0.25);">
-                            <strong style="font-size: 17px; display: flex; align-items: center; gap: 8px; color: #fff;">Conseil :</strong>
-                            <p style="margin: 12px 0 0 0; line-height: 1.6; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">La desactivation permet de reutiliser votre cle sur un autre site, mais ne supprime pas votre acces ici jusqu'a l'expiration de la licence.</p>
+                        <aside class="premium-tip">
+                            <strong>Conseil :</strong>
+                            <p>La désactivation permet de réutiliser votre clé sur un autre site, mais ne supprime pas votre accès ici jusqu'à l'expiration de la licence.</p>
                         </aside>
                     </section>
 
@@ -369,21 +367,21 @@
 
                     <?php if ($is_premium) : ?>
                     <!-- Modal de confirmation pour désactivation -->
-                    <div id="deactivate_modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
-                        <section style="background: white; border-radius: 12px; padding: 40px; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center;">
-                            <span style="font-size: 48px; margin-bottom: 20px;">⚠️</span>
-                            <h2 style="margin: 0 0 15px 0; color: #333; font-size: 24px;">Désactiver la Licence</h2>
-                            <p style="margin: 0 0 20px 0; color: #666; line-height: 1.6;">Êtes-vous sûr de vouloir désactiver cette licence ?</p>
-                            <ul style="text-align: left; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; list-style: none;">
-                                <li style="margin: 8px 0;">✓ Vous pouvez la réactiver plus tard</li>
-                                <li style="margin: 8px 0;">✓ Vous pourrez l'utiliser sur un autre site</li>
-                                <li style="margin: 8px 0;">✓ La licence restera valide jusqu'à son expiration</li>
+                    <div id="deactivate_modal" class="modal-overlay">
+                        <section class="modal-content">
+                            <span class="modal-icon">⚠️</span>
+                            <h2 class="modal-title">Désactiver la Licence</h2>
+                            <p class="modal-description">Êtes-vous sûr de vouloir désactiver cette licence ?</p>
+                            <ul class="modal-list">
+                                <li>✓ Vous pouvez la réactiver plus tard</li>
+                                <li>✓ Vous pourrez l'utiliser sur un autre site</li>
+                                <li>✓ La licence restera valide jusqu'à son expiration</li>
                             </ul>
-                            <aside style="display: flex; gap: 12px; margin-top: 30px;">
-                                <button type="button" style="flex: 1; background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="closeDeactivateModal()">
+                            <aside class="modal-actions">
+                                <button type="button" class="modal-btn cancel" onclick="closeDeactivateModal()">
                                     Annuler
                                 </button>
-                                <button type="button" style="flex: 1; background: #dc3545; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;" onclick="deactivateLicense()">
+                                <button type="button" class="modal-btn danger" onclick="deactivateLicense()">
                                     Désactiver
                                 </button>
                             </aside>
@@ -550,39 +548,39 @@
                     </script>
 
                     <!-- Informations utiles -->
-                    <aside style="background: linear-gradient(135deg, #17a2b8 0%, #6c757d 100%); border: none; border-radius: 12px; padding: 30px; margin-bottom: 30px; color: #fff; box-shadow: 0 4px 12px rgba(23,162,184,0.3);">
-                        <h4 style="margin: 0 0 20px 0; color: #fff; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">Informations Utiles</h4>
-                        <section style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-gap: 15px; -moz-gap: 15px; gap: 15px;">
+                    <aside class="info-section">
+                        <h4 class="info-title">Informations Utiles</h4>
+                        <section class="info-cards">
                             <!-- Site actuel -->
-                            <article style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
-                                <span style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Site actuel</span>
-                                <code style="background: rgba(255,255,255,0.2); padding: 6px 10px; border-radius: 4px; font-family: monospace; color: #fff; display: block; word-break: break-all; font-size: 12px;"><?php echo esc_html(home_url()); ?></code>
+                            <article class="info-card">
+                                <span class="info-card-title">Site actuel</span>
+                                <code class="info-card-code"><?php echo esc_html(home_url()); ?></code>
                             </article>
 
                             <!-- Plan actif -->
-                            <article style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
-                                <span style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Plan actif</span>
-                                <span style="background: rgba(255,255,255,0.3); color: #fff; padding: 6px 12px; border-radius:  4px; font-weight: bold; font-size: 13px; display: inline-block;"><?php echo !empty($test_key) ? '🧪 Mode Test' : ($is_premium ? '⭐ Premium' : '○ Gratuit'); ?></span>
+                            <article class="info-card">
+                                <span class="info-card-title">Plan actif</span>
+                                <span class="info-card-badge"><?php echo !empty($test_key) ? '🧪 Mode Test' : ($is_premium ? '⭐ Premium' : '○ Gratuit'); ?></span>
                             </article>
 
                             <!-- Version du plugin -->
-                            <article style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
-                                <span style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Version du plugin</span>
-                                <span style="font-size: 14px; font-weight: bold;"><?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'N/A'; ?></span>
+                            <article class="info-card">
+                                <span class="info-card-title">Version du plugin</span>
+                                <span class="info-card-version"><?php echo defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'N/A'; ?></span>
                             </article>
 
                             <?php if ($is_premium) :
                                 ?>
                             <!-- Support Premium -->
-                            <article style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
-                                <span style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Support</span>
-                                <a href="https://pdfbuilderpro.com/support" target="_blank" style="color: #fff; text-decoration: underline; font-weight: 600; font-size: 13px;">Contact Support Premium →</a>
+                            <article class="info-card">
+                                <span class="info-card-title">Support</span>
+                                <a href="https://pdfbuilderpro.com/support" target="_blank" class="info-card-link">Contact Support Premium →</a>
                             </article>
 
                             <!-- Documentation -->
-                            <article style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.5);">
-                                <span style="font-size: 12px; text-transform: uppercase; font-weight: 600; opacity: 0.8; margin-bottom: 8px;">Documentation</span>
-                                <a href="https://pdfbuilderpro.com/docs" target="_blank" style="color: #fff; text-decoration: underline; font-weight: 600; font-size: 13px;">Lire la Documentation →</a>
+                            <article class="info-card">
+                                <span class="info-card-title">Documentation</span>
+                                <a href="https://pdfbuilderpro.com/docs" target="_blank" class="info-card-link">Lire la Documentation →</a>
                             </article>
                                 <?php
                             endif; ?>
@@ -590,196 +588,196 @@
                     </aside>
 
                     <!-- Comparaison des fonctionnalités -->
-                    <section class="licence-section" style="margin-top: 40px;">
+                    <section class="licence-section">
                         <h3>Comparaison des Fonctionnalités</h3>
-                        <table class="wp-list-table widefat fixed striped" style="margin-top: 15px; border-collapse: collapse; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                            <thead style="background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white;">
+                        <table class="features-table">
+                            <thead class="features-header">
                                 <tr>
-                                    <th style="width: 35%; padding: 15px; font-weight: 700; text-align: left; border: none;">Fonctionnalité</th>
-                                    <th style="width: 15%; text-align: center; padding: 15px; font-weight: 700; border: none;">Gratuit</th>
-                                    <th style="width: 15%; text-align: center; padding: 15px; font-weight: 700; border: none;">Premium</th>
-                                    <th style="width: 35%; padding: 15px; font-weight: 700; text-align: left; border: none;">Détails</th>
+                                    <th class="feature-name">Fonctionnalité</th>
+                                    <th class="feature-free">Gratuit</th>
+                                    <th class="feature-premium">Premium</th>
+                                    <th class="feature-details">Détails</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td><strong>Nombre de templates</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">1 seul</td>
-                                    <td style="text-align: center; color: #46b450;">✓ Illimité</td>
+                                    <td class="feature-limited">1 seul</td>
+                                    <td class="feature-enabled">✓ Illimité</td>
                                     <td>Templates prédéfinis et personnalisés</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Qualité d'impression</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">72 DPI</td>
-                                    <td style="text-align: center; color: #46b450;">300 DPI</td>
+                                    <td class="feature-limited">72 DPI</td>
+                                    <td class="feature-enabled">300 DPI</td>
                                     <td>Résolution haute qualité pour impression</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Filigrane</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✓ Présent</td>
-                                    <td style="text-align: center; color: #46b450;">✗ Supprimé</td>
+                                    <td class="feature-disabled">✓ Présent</td>
+                                    <td class="feature-enabled">✗ Supprimé</td>
                                     <td>Marque d'eau "PDF Builder Pro" sur tous les PDFs</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Éléments de base</strong></td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-enabled">✓</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>Texte, images, formes géométriques, lignes</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Éléments avancés</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-disabled">✗</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>Codes-barres, QR codes, graphiques, tableaux dynamiques</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Variables WooCommerce</strong></td>
-                                    <td style="text-align: center; color: #46b450;">✓ Basique</td>
-                                    <td style="text-align: center; color: #46b450;">✓ Complet</td>
+                                    <td class="feature-enabled">✓ Basique</td>
+                                    <td class="feature-enabled">✓ Complet</td>
                                     <td>Commandes, clients, produits, métadonnées</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Génération PDF</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">50/mois</td>
-                                    <td style="text-align: center; color: #46b450;">Illimitée</td>
+                                    <td class="feature-limited">50/mois</td>
+                                    <td class="feature-enabled">Illimitée</td>
                                     <td>Limite mensuelle de génération de documents</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Génération en masse</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-disabled">✗</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>Création automatique de multiples PDFs</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>API développeur</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-disabled">✗</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>Accès complet à l'API REST pour intégrations</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>White-label</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-disabled">✗</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>Rebranding complet, suppression des mentions</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Mises à jour automatiques</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-disabled">✗</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>Mises à jour transparentes et corrections de sécurité</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Formats d'export</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">PDF uniquement</td>
-                                    <td style="text-align: center; color: #46b450;">PDF, PNG, JPG</td>
+                                    <td class="feature-limited">PDF uniquement</td>
+                                    <td class="feature-enabled">PDF, PNG, JPG</td>
                                     <td>Export multi-formats pour différents usages</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Fiabilité de génération</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">Générateur unique</td>
-                                    <td style="text-align: center; color: #46b450;">3 générateurs redondants</td>
+                                    <td class="feature-limited">Générateur unique</td>
+                                    <td class="feature-enabled">3 générateurs redondants</td>
                                     <td>Fallback automatique en cas d'erreur</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>API REST</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-disabled">✗</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>API complète pour intégrations et automatisations</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Templates prédéfinis</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">1 template de base</td>
-                                    <td style="text-align: center; color: #46b450;">4 templates professionnels</td>
+                                    <td class="feature-limited">1 template de base</td>
+                                    <td class="feature-enabled">4 templates professionnels</td>
                                     <td>Factures, devis, bons de commande prêts à l'emploi</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>CSS personnalisé</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-disabled">✗</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>Injection de styles CSS avancés pour personnalisation complète</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Intégrations tierces</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-disabled">✗</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>Zapier, webhooks, API externes pour automatisation</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Historique des versions</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-disabled">✗</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>Suivi des modifications et possibilité de rollback</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Analytics & rapports</strong></td>
-                                    <td style="text-align: center; color: #dc3232;">✗</td>
-                                    <td style="text-align: center; color: #46b450;">✓</td>
+                                    <td class="feature-disabled">✗</td>
+                                    <td class="feature-enabled">✓</td>
                                     <td>Statistiques d'usage, performances et métriques détaillées</td>
                                 </tr>
-                                <tr class="feature-hidden" style="display: none;">
+                                <tr class="feature-hidden">
                                     <td><strong>Support technique</strong></td>
-                                    <td style="text-align: center; color: #ffb900;">Communauté</td>
-                                    <td style="text-align: center; color: #46b450;">Prioritaire</td>
+                                    <td class="feature-limited">Communauté</td>
+                                    <td class="feature-enabled">Prioritaire</td>
                                     <td>Support rapide par email avec réponse garantie sous 24h</td>
                                 </tr>
                             </tbody>
                         </table>
 
                         <!-- Bouton toggle pour voir plus/moins de fonctionnalités -->
-                        <aside style="text-align: center;">
-                            <button type="button" id="toggle-features-btn" class="button button-primary" style="width: 100%; padding: 12px 20px; font-size: 14px; font-weight: 600; background: linear-gradient(135deg, #007cba 0%, #005a87 100%); color: white; border: none; border-radius: 0 0 6px 6px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <aside class="toggle-container">
+                            <button type="button" id="toggle-features-btn" class="toggle-features-btn">
                                 <span class="show-text">🔽 Voir plus de fonctionnalités (10 restantes)</span>
-                                <span class="hide-text" style="display: none;">🔼 Voir moins</span>
+                                <span class="hide-text">🔼 Voir moins</span>
                             </button>
                         </aside>
 
-                        <aside style="background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border: 2px solid #ff9800; border-radius: 12px; padding: 20px; margin-top: 20px; position: relative; overflow: hidden; box-shadow: 0 6px 20px rgba(255,152,0,0.2);">
+                        <aside class="promo-section">
                             <!-- Élément décoratif animé -->
-                            <span style="position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: linear-gradient(45deg, #ff9800, #ffb74d); border-radius: 50%; opacity: 0.8; animation: pulse 2s infinite;"></span>
+                            <span class="promo-decoration"></span>
 
-                            <h4 style="color: #e65100; margin: 0 0 18px 0; display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                                <span style="background: linear-gradient(45deg, #ff9800, #ffb74d); color: white; padding: 6px 10px; border-radius: 20px; font-size: 14px; box-shadow: 0 2px 4px rgba(255,152,0,0.3);">💎 PREMIUM</span>
+                            <h4 class="promo-header">
+                                <span class="promo-badge">💎 PREMIUM</span>
                                 <strong>5 bonnes raisons de passer en Premium</strong>
                             </h4>
 
-                            <section style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                                <article style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
-                                    <span style="color: #ff9800; font-size: 16px;">🏢</span>
-                                    <section style="flex: 1;">
-                                        <strong style="color: #e65100; font-size: 12px;">Usage professionnel</strong>
-                                        <p style="color: #5d4037; font-size: 11px; line-height: 1.3;">Qualité 300 DPI sans filigrane</p>
+                            <section class="promo-grid">
+                                <article class="promo-item">
+                                    <span class="promo-icon">🏢</span>
+                                    <section class="promo-content">
+                                        <strong class="promo-title">Usage professionnel</strong>
+                                        <p class="promo-description">Qualité 300 DPI sans filigrane</p>
                                     </section>
                                 </article>
 
-                                <article style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
-                                    <span style="color: #ff9800; font-size: 16px;">⚡</span>
-                                    <section style="flex: 1;">
-                                        <strong style="color: #e65100; font-size: 12px;">Productivité</strong>
-                                        <p style="color: #5d4037; font-size: 11px; line-height: 1.3;">Templates illimités et génération en masse</p>
+                                <article class="promo-item">
+                                    <span class="promo-icon">⚡</span>
+                                    <section class="promo-content">
+                                        <strong class="promo-title">Productivité</strong>
+                                        <p class="promo-description">Templates illimités et génération en masse</p>
                                     </section>
                                 </article>
 
-                                <article style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
-                                    <span style="color: #ff9800; font-size: 16px;">🔧</span>
-                                    <section style="flex: 1;">
-                                        <strong style="color: #e65100; font-size: 12px;">Évolutivité</strong>
-                                        <p style="color: #5d4037; font-size: 11px; line-height: 1.3;">API développeur complète</p>
+                                <article class="promo-item">
+                                    <span class="promo-icon">🔧</span>
+                                    <section class="promo-content">
+                                        <strong class="promo-title">Évolutivité</strong>
+                                        <p class="promo-description">API développeur complète</p>
                                     </section>
                                 </article>
 
-                                <article style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800;">
-                                    <span style="color: #ff9800; font-size: 16px;">🎯</span>
-                                    <section style="flex: 1;">
-                                        <strong style="color: #e65100; font-size: 12px;">Support dédié</strong>
-                                        <p style="color: #5d4037; font-size: 11px; line-height: 1.3;">Réponse sous 24h garantie</p>
+                                <article class="promo-item">
+                                    <span class="promo-icon">🎯</span>
+                                    <section class="promo-content">
+                                        <strong class="promo-title">Support dédié</strong>
+                                        <p class="promo-description">Réponse sous 24h garantie</p>
                                     </section>
                                 </article>
 
-                                <article style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 6px; border-left: 3px solid #ff9800; grid-column: span 2;">
-                                    <span style="color: #ff9800; font-size: 16px;">💰</span>
-                                    <section style="flex: 1;">
-                                        <strong style="color: #e65100; font-size: 12px;">Économique</strong>
-                                        <p style="color: #5d4037; font-size: 11px; line-height: 1.3;">79€ à vie vs coûts récurrents</p>
+                                <article class="promo-item full-width">
+                                    <span class="promo-icon">💰</span>
+                                    <section class="promo-content">
+                                        <strong class="promo-title">Économique</strong>
+                                        <p class="promo-description">79€ à vie vs coûts récurrents</p>
                                     </section>
                                 </article>
                             </section>
@@ -787,12 +785,10 @@
                     </section>
 
                     <!-- Section Rappel par Email -->
-                    <section class="licence-section" style="background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 2px solid #4caf50; margin-top: 30px;">
-                        <h3 style="color: #2e7d32; margin-top: 0; border-bottom: 2px solid #4caf50; padding-bottom: 8px; font-size: 18px;">
-                            📧 Rappels par Email
-                        </h3>
+                    <section class="reminder-section">
+                        <h3 class="reminder-title">📧 Rappels par Email</h3>
 
-                        <p style="color: #2e7d32; margin-bottom: 20px; font-size: 14px;">
+                        <p class="reminder-description">
                             Recevez des rappels automatiques par email concernant l'expiration de votre licence premium.
                         </p>
 
@@ -813,15 +809,15 @@
                                 <td>
                                     <input type="email" id="license_reminder_email" name="license_reminder_email"
                                         value="<?php echo esc_attr(get_option('pdf_builder_license_reminder_email', get_option('admin_email', ''))); ?>"
-                                        placeholder="votre@email.com" style="width: 300px;" />
+                                        placeholder="votre@email.com" class="form-input" />
                                     <p class="description">Adresse email où envoyer les rappels d'expiration de licence</p>
                                 </td>
                             </tr>
                         </table>
 
-                        <aside style="background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4caf50; border-radius: 6px; padding: 15px; margin-top: 20px;">
-                            <h5 style="margin: 0 0 10px 0; color: #2e7d32; font-size: 14px;">ℹ️ Informations sur les rappels</h5>
-                            <ul style="margin: 0; padding-left: 20px; color: #2e7d32; font-size: 13px; line-height: 1.5;">
+                        <aside class="reminder-info">
+                            <h5>ℹ️ Informations sur les rappels</h5>
+                            <ul>
                                 <li>Les rappels sont envoyés automatiquement selon le calendrier ci-dessus</li>
                                 <li>Vous recevrez au maximum 3 emails par période de licence</li>
                                 <li>Les emails sont envoyés depuis votre propre serveur WordPress</li>
@@ -830,85 +826,7 @@
                         </aside>
                     </section>
 
-                    <!-- Styles pour les toggles -->
-                    <style>
-                        /* Styles pour les toggles switches */
-                        .toggle-switch {
-                            position: relative;
-                            width: 50px;
-                            height: 24px;
-                        }
 
-                        .toggle-switch input {
-                            opacity: 0;
-                            width: 0;
-                            height: 0;
-                        }
-
-                        .toggle-slider {
-                            position: absolute;
-                            cursor: pointer;
-                            top: 0;
-                            left: 0;
-                            right: 0;
-                            bottom: 0;
-                            background-color: #ccc;
-                            transition: 0.3s;
-                            border-radius: 24px;
-                            pointer-events: none;
-                        }
-
-                        .toggle-slider:before {
-                            position: absolute;
-                            content: "";
-                            height: 18px;
-                            width: 18px;
-                            left: 3px;
-                            bottom: 3px;
-                            background-color: white;
-                            transition: 0.3s;
-                            border-radius: 50%;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                        }
-
-                        input:checked + .toggle-slider {
-                            background-color: #2271b1;
-                        }
-
-                        input:checked + .toggle-slider:before {
-                            transform: translateX(26px);
-                        }
-
-                        /* Support pour la classe checked en plus de :checked */
-                        .toggle-switch.checked .toggle-slider {
-                            background-color: #2271b1;
-                        }
-
-                        .toggle-switch.checked input + .toggle-slider:before {
-                            transform: translateX(26px);
-                        }
-
-                        .toggle-switch input:disabled + .toggle-slider {
-                            background-color: #d63384;
-                            cursor: not-allowed;
-                            opacity: 0.7;
-                        }
-
-                        .toggle-switch input:disabled:checked + .toggle-slider {
-                            background-color: #d63384;
-                        }
-
-                        /* Classe pour désactiver visuellement les toggles */
-                        .toggle-switch.disabled {
-                            opacity: 0.5;
-                            pointer-events: none;
-                        }
-
-                        /* Animation au survol */
-                        .toggle-slider:hover {
-                            box-shadow: 0 0 8px rgba(34, 113, 177, 0.3);
-                        }
-                    </style>
                     
 
             </section>
