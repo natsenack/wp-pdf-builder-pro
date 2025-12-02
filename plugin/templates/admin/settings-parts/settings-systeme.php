@@ -31,83 +31,6 @@
                         </h3>
                     </header>
 
-                    <article>
-                        <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Améliore les performances en mettant en cache les données</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="cache_compression">Compression du cache</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked(get_option('pdf_builder_cache_compression', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked(get_option('pdf_builder_cache_auto_cleanup', true)); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
-                            <td>
-                                <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo intval(get_option('pdf_builder_cache_max_size', 100)); ?>" min="10" max="1000" step="10" />
-                                <p class="description">Taille maximale du dossier cache en mégaoctets</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
-                            <td>
-                                <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval(get_option('pdf_builder_cache_ttl', 3600)); ?>" min="0" max="86400" />
-                                <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="performance_auto_optimization">Optimisation automatique des performances</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="performance_auto_optimization" name="performance_auto_optimization" value="1" <?php checked(get_option('pdf_builder_performance_auto_optimization', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Optimisation hebdomadaire automatique de la base de données et des ressources système</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Test du système</th>
-                            <td>
-                                <button type="button" id="test-cache-btn" class="button button-secondary" style="background-color: #6c757d; border-color: #6c757d; color: white; font-weight: bold; padding: 10px 15px;">
-                                    🧪 Tester l'intégration du cache
-                                </button>
-                                <span id="cache-test-results" style="margin-left: 10px;"></span>
-                                <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; color: #155724;"></div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Vider le cache</th>
-                            <td>
-                                <button type="button" id="clear-cache-general-btn" class="button button-secondary" style="background-color: #dc3232; border-color: #dc3232; color: white; font-weight: bold; padding: 10px 15px;">
-                                    🗑️ Vider tout le cache
-                                </button>
-                                <span id="clear-cache-general-results" style="margin-left: 10px;"></span>
-                                <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
-                            </td>
-                        </tr>
-                    </article>
 
                     <!-- Informations sur l'état du cache -->
                     <article class="cache-status-info" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px solid #28a745;">
@@ -221,6 +144,83 @@
                                 </tr>
                             </table>
                         </main>
+                    <article>
+                        <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php checked(get_option('pdf_builder_cache_enabled', false)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Améliore les performances en mettant en cache les données</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_compression">Compression du cache</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php checked(get_option('pdf_builder_cache_compression', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php checked(get_option('pdf_builder_cache_auto_cleanup', true)); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
+                            <td>
+                                <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo intval(get_option('pdf_builder_cache_max_size', 100)); ?>" min="10" max="1000" step="10" />
+                                <p class="description">Taille maximale du dossier cache en mégaoctets</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
+                            <td>
+                                <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval(get_option('pdf_builder_cache_ttl', 3600)); ?>" min="0" max="86400" />
+                                <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="performance_auto_optimization">Optimisation automatique des performances</label></th>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="performance_auto_optimization" name="performance_auto_optimization" value="1" <?php checked(get_option('pdf_builder_performance_auto_optimization', '0'), '1'); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <p class="description">Optimisation hebdomadaire automatique de la base de données et des ressources système</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Test du système</th>
+                            <td>
+                                <button type="button" id="test-cache-btn" class="button button-secondary" style="background-color: #6c757d; border-color: #6c757d; color: white; font-weight: bold; padding: 10px 15px;">
+                                    🧪 Tester l'intégration du cache
+                                </button>
+                                <span id="cache-test-results" style="margin-left: 10px;"></span>
+                                <div id="cache-test-output" style="display: none; margin-top: 10px; padding: 15px; background: #e7f5e9; border-left: 4px solid #28a745; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; color: #155724;"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Vider le cache</th>
+                            <td>
+                                <button type="button" id="clear-cache-general-btn" class="button button-secondary" style="background-color: #dc3232; border-color: #dc3232; color: white; font-weight: bold; padding: 10px 15px;">
+                                    🗑️ Vider tout le cache
+                                </button>
+                                <span id="clear-cache-general-results" style="margin-left: 10px;"></span>
+                                <p class="description">Vide tous les transients, caches et données en cache du plugin</p>
+                            </td>
+                        </tr>
+                    </article>
 
                     </section>
 
