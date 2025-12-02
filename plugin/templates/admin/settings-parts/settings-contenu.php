@@ -1,57 +1,57 @@
 <?php // Content tab content - Updated: 2025-11-18 20:20:00 ?>
 
 <style>
-/* Toggle switch styles */
-.toggle-switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-    cursor: pointer;
-}
+    /* Toggle switch styles */
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+        cursor: pointer;
+    }
 
-.toggle-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
 
-.toggle-slider {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    border-radius: 24px;
-    transition: 0.3s;
-}
+    .toggle-slider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        border-radius: 24px;
+        transition: 0.3s;
+    }
 
-.toggle-slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    border-radius: 50%;
-    transition: 0.3s;
-}
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
 
-input:checked + .toggle-slider {
-    background-color: #007cba;
-}
+    input:checked + .toggle-slider {
+        background-color: #007cba;
+    }
 
-input:checked + .toggle-slider:before {
-    transform: translateX(26px);
-}
+    input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+    }
 </style>
 
             <h2>🎨 Contenu & Design</h2>
 
             <!-- Section Canvas -->
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 10px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <section class="canvas-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 10px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                     <span style="display: inline-flex; align-items: center; gap: 10px;">
                         🎨 Canvas
@@ -67,7 +67,7 @@ input:checked + .toggle-slider:before {
                     <!-- Grille de cartes Canvas -->
                     <div class="canvas-settings-grid">
                         <!-- Carte Dimensions & Format -->
-                        <div class="canvas-card" data-category="dimensions">
+                        <article class="canvas-card" data-category="dimensions">
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">📐</span>
@@ -93,10 +93,10 @@ input:checked + .toggle-slider:before {
                                     <span>⚙️</span> Configurer
                                 </button>
                             </div>
-                        </div>
+                        </article>
 
                         <!-- Carte Apparence -->
-                        <div class="canvas-card" data-category="apparence">
+                        <article class="canvas-card" data-category="apparence">
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🎨</span>
@@ -115,10 +115,10 @@ input:checked + .toggle-slider:before {
                                     <span>🎨</span> Configurer
                                 </button>
                             </div>
-                        </div>
+                        </article>
 
                         <!-- Carte Grille & Guides -->
-                        <div class="canvas-card" data-category="grille">
+                        <article class="canvas-card" data-category="grille">
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">📏</span>
@@ -174,10 +174,10 @@ input:checked + .toggle-slider:before {
                                     <span>📏</span> Configurer
                                 </button>
                             </div>
-                        </div>
+                        </article>
 
                         <!-- Carte Zoom -->
-                        <div class="canvas-card" id="zoom-navigation-card" data-category="zoom">
+                        <article class="canvas-card" id="zoom-navigation-card" data-category="zoom">
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🔍</span>
@@ -205,10 +205,10 @@ input:checked + .toggle-slider:before {
                                     <span>🔍</span> Configurer
                                 </button>
                             </div>
-                        </div>
+                        </article>
 
                         <!-- Carte Interactions & Comportement -->
-                        <div class="canvas-card" data-category="interactions">
+                        <article class="canvas-card" data-category="interactions">
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🎯</span>
@@ -269,10 +269,10 @@ input:checked + .toggle-slider:before {
                                     <span>🎯</span> Configurer
                                 </button>
                             </div>
-                        </div>
+                        </article>
 
                         <!-- Carte Export & Qualité -->
-                        <div class="canvas-card" data-category="export">
+                        <article class="canvas-card" data-category="export">
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">📤</span>
@@ -300,10 +300,10 @@ input:checked + .toggle-slider:before {
                                     <span>📤</span> Configurer
                                 </button>
                             </div>
-                        </div>
+                        </article>
 
                         <!-- Carte Performance -->
-                        <div class="canvas-card" data-category="performance">
+                        <article class="canvas-card" data-category="performance">
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">⚡</span>
@@ -342,10 +342,10 @@ input:checked + .toggle-slider:before {
                                     <span>⚡</span> Configurer
                                 </button>
                             </div>
-                        </div>
+                        </article>
 
                         <!-- Carte Debug -->
-                        <div class="canvas-card" data-category="debug">
+                        <article class="canvas-card" data-category="debug">
                             <div class="canvas-card-header">
                                 <div class="canvas-card-header-left">
                                     <span class="canvas-card-icon">🐛</span>
@@ -396,13 +396,13 @@ input:checked + .toggle-slider:before {
                                     <span>🐛</span> Configurer
                                 </button>
                             </div>
-                        </div>
+                        </article>
                     </div>
                 </form>
-            </div>
+            </section>
 
                 <!-- Section Templates -->
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <section class="templates-section" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #e9ecef; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 <h3 style="color: #495057; margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 10px;">
                     <span style="display: inline-flex; align-items: center; gap: 10px;">
                         📋 Templates
@@ -433,5 +433,5 @@ input:checked + .toggle-slider:before {
                         </td>
                     </tr>
                 </table>
-            </div>
+            </section>
 
