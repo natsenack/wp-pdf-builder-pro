@@ -4348,3 +4348,21 @@ input:checked + .toggle-slider:before {
     z-index: 1000;
     pointer-events: none;
 }
+
+/* === MASQUAGE DES MODALES PAR DÉFAUT === */
+/* Les modales doivent être masquées par défaut et ne s'affichent que si activées par JavaScript */
+.cache-modal,
+.canvas-modal {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Afficher la modale SEULEMENT quand elle a la classe "active" ou quand JavaScript les manipule */
+.cache-modal.active,
+.cache-modal[data-active="true"],
+.canvas-modal.active,
+.canvas-modal[data-active="true"] {
+    display: flex !important;
+    visibility: visible !important;
+}
+

@@ -1140,12 +1140,12 @@ class PdfBuilderAdmin
         }
         pdf_builder_load_core();
 
-        // ✅ CHARGER LE CSS ICI - AVANT TOUT OUTPUT HTML
+        // ✅ CHARGER LE CSS LOCAL ICI - AVANT TOUT OUTPUT HTML
         wp_enqueue_style(
             'pdf-builder-settings-css',
-            PDF_BUILDER_PRO_ASSETS_URL . 'css/settings.css',
+            plugins_url('templates/admin/settings-parts/settings.css', dirname(dirname(dirname(__FILE__)))),
             array(),
-            PDF_BUILDER_PRO_VERSION . '-' . time()
+            filemtime(plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings.css')
         );
 
         // Charger l'API globale de l'éditeur React pour la communication avec les modals
