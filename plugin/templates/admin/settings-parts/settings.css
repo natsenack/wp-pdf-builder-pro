@@ -4147,28 +4147,22 @@ input:checked + .toggle-slider:before {
     font-weight: normal;
 }
 /* === RÈGLES SPÉCIFIQUES POUR LES ONGLETS === */
-/* Masquer le contenu système quand l'onglet général est actif */
-#general.tab-content:not(.active) ~ #systeme.tab-content:not(.active) {
+/* Masquer tous les contenus d'onglets par défaut */
+.tab-content {
     display: none !important;
 }
 
-/* Masquer le contenu général quand l'onglet système est actif */
-#systeme.tab-content:not(.active) ~ #general.tab-content:not(.active) {
-    display: none !important;
+/* Afficher seulement l'onglet actif */
+.tab-content.active {
+    display: block !important;
 }
 
-/* Règle générale pour masquer les onglets inactifs */
-.tab-content:not(.active) {
-    display: none !important;
-}
-
-/* Règle spécifique pour l'onglet système */
-#systeme.tab-content:not(.active) {
-    display: none !important;
-}
-
-/* Règle spécifique pour l'onglet général */
+/* Règles spécifiques pour éviter les conflits entre onglets général et système */
 #general.tab-content:not(.active) {
+    display: none !important;
+}
+
+#systeme.tab-content:not(.active) {
     display: none !important;
 }
 
