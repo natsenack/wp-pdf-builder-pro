@@ -1411,6 +1411,11 @@ class PdfBuilderAdmin
 
             wp_enqueue_script('pdf-builder-react', $react_script_url, [], $version_param, true);
 
+            // ✅ Enqueue the initialization helper script that checks for pdfBuilderReact
+            $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-init.js';
+            $init_helper_version = $cache_bust;
+            wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react'], $init_helper_version, true);
+
             // Charger les scripts de l'API Preview pour l'éditeur React
             // ✅ Use file modification time for stable cache busting
             $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.js';
@@ -1471,25 +1476,50 @@ class PdfBuilderAdmin
             $init_script = "
             (function() {
                 console.log('🚀 PDF Builder React Initializer: Script loaded');
+                let initialized = false;
+                let initAttempts = 0;
+                const MAX_ATTEMPTS = 300; // 30 seconds max (300 * 100ms)
                 
                 // Fonction pour initialiser React quand il est prêt
                 function initializeReactWhenReady() {
+                    initAttempts++;
+                    
                     if (typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-                        console.log('✅ pdfBuilderReact is available, initializing...');
-                        window.pdfBuilderReact.initPDFBuilderReact();
+                        if (!initialized) {
+                            console.log('✅ pdfBuilderReact is available, initializing... (attempt ' + initAttempts + ')');
+                            window.pdfBuilderReact.initPDFBuilderReact();
+                            initialized = true;
+                        }
                     } else {
-                        console.warn('⏳ Waiting for pdfBuilderReact to load...');
-                        // Attendre 100ms et réessayer
-                        setTimeout(initializeReactWhenReady, 100);
+                        if (initAttempts % 50 === 0 || initAttempts <= 5) {
+                            console.warn('⏳ Waiting for pdfBuilderReact to load... (attempt ' + initAttempts + '/' + MAX_ATTEMPTS + ')');
+                        }
+                        
+                        if (initAttempts < MAX_ATTEMPTS) {
+                            setTimeout(initializeReactWhenReady, 100);
+                        } else {
+                            console.error('❌ TIMEOUT: pdfBuilderReact did not initialize after ' + MAX_ATTEMPTS + ' attempts');
+                        }
                     }
                 }
                 
+                // Écouter l'événement d'initialisation du bundle
+                document.addEventListener('pdfBuilderReactReady', function() {
+                    console.log('📢 pdfBuilderReactReady event received');
+                    initializeReactWhenReady();
+                });
+                
                 // Attendre que le DOM soit prêt
                 if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', initializeReactWhenReady);
+                    document.addEventListener('DOMContentLoaded', function() {
+                        console.log('✅ DOMContentLoaded fired');
+                        // Lancer le polling après un court délai pour laisser les scripts se charger
+                        setTimeout(initializeReactWhenReady, 200);
+                    });
                 } else {
                     // DOM est déjà prêt
-                    initializeReactWhenReady();
+                    console.log('✅ DOM already ready');
+                    setTimeout(initializeReactWhenReady, 200);
                 }
             })();
             ";
