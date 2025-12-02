@@ -1,32 +1,32 @@
 <?php
     /**
-     * PDF Builder Pro - Main Settings Logic (CENTRALIZED JS VERSION)
-     * Core settings processing with CLEAN, CENTRALIZED JavaScript
-     * Updated: 2025-12-02 03:25:00 - FORCE CACHE CLEAR
+     * PDF Builder Pro - Logique principale des paramètres (VERSION JS CENTRALISÉE)
+     * Traitement des paramètres principal avec JavaScript NETTOYÉ, CENTRALISÉ
+     * Mis à jour: 2025-12-02 03:25:00 - VIDAGE CACHE FORCÉ
      * Cache Buster: <?php echo time(); ?>
-     * Final Fix: Promise wrapper for jQuery.ajax - VERSION 2 - FORCE RELOAD
+     * Correction finale: Wrapper Promise pour jQuery.ajax - VERSION 2 - RECHARGEMENT FORCÉ
      */
 
     // Logs
-    error_log('PDF Builder: CENTRALIZED JS settings-main.php loaded');
+    error_log('PDF Builder: JS centralisé settings-main.php chargé');
 
-    // Security checks
+    // Vérifications de sécurité
     if (!defined('ABSPATH')) {
-        exit('Direct access forbidden');
+        exit('Accès direct interdit');
     }
 
     if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) {
-        wp_die(__('You do not have permission to access this page.', 'pdf-builder-pro'));
+        wp_die(__('Vous n\'avez pas la permission d\'accéder à cette page.', 'pdf-builder-pro'));
     }
 
-    // Load dependencies
+    // Charger les dépendances
     require_once dirname(__FILE__) . '/settings-styles.php';
 
-    // Enable centralized JavaScript system
+    // Activer le système JavaScript centralisé
     $centralized_js_mode = true;
     $notices = [];
 
-    // Load current settings - DIRECTLY FROM DATABASE OPTIONS
+    // Charger les paramètres actuels - DIRECTEMENT DES OPTIONS DE BASE DE DONNÉES
     $settings = get_option('pdf_builder_settings', []);
     $company_phone_manual = get_option('pdf_builder_company_phone_manual', '');
     $company_siret = get_option('pdf_builder_company_siret', '');
@@ -34,22 +34,22 @@
     $company_rcs = get_option('pdf_builder_company_rcs', '');
     $company_capital = get_option('pdf_builder_company_capital', '');
 
-    // DEBUG: Log loaded values for troubleshooting
+    // DEBUG: Journaliser les valeurs chargées pour le dépannage
     if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log('PDF Builder SETTINGS LOADED:');
+        error_log('PARAMÈTRES PDF Builder CHARGÉS:');
         error_log(' - company_siret: ' . $company_siret);
         error_log(' - company_vat: ' . $company_vat);
         error_log(' - company_rcs: ' . $company_rcs);
         error_log(' - company_capital: ' . $company_capital);
     }
 
-    // Add nonce for AJAX
+    // Ajouter nonce pour AJAX
     wp_nonce_field('pdf_builder_settings', '_wpnonce_pdf_builder');
 
-    // Log AJAX handlers registration
-    error_log('PDF Builder: Registering AJAX handlers...');
+    // Journaliser l'enregistrement des gestionnaires AJAX
+    error_log('PDF Builder: Enregistrement des gestionnaires AJAX...');
 
-    // Basic form processing fallback (NO AJAX)
+    // Traitement de formulaire basique de secours (PAS AJAX)
     if (isset($_POST['submit']) && isset($_POST['_wpnonce'])) {
         if (wp_verify_nonce($_POST['_wpnonce'], 'pdf_builder_settings')) {
             update_option('pdf_builder_company_phone_manual', sanitize_text_field($_POST['company_phone_manual'] ?? ''));
@@ -58,7 +58,7 @@
             update_option('pdf_builder_company_rcs', sanitize_text_field($_POST['company_rcs'] ?? ''));
             update_option('pdf_builder_company_capital', sanitize_text_field($_POST['company_capital'] ?? ''));
 
-            $notices[] = '<div class="notice notice-success"><p>Settings saved (fallback mode)!</p></div>';
+            $notices[] = '<div class="notice notice-success"><p>Paramètres sauvegardés (mode de secours)!</p></div>';
         }
     }
 
@@ -66,19 +66,19 @@
 ?>
 <main class="wrap" id="pdf-builder-settings-wrapper">
     <header class="pdf-builder-header">
-        <h1><?php _e('⚙️ PDF Builder Pro Settings (JS CENTRALIZED)', 'pdf-builder-pro'); ?></h1>
+        <h1><?php _e('⚙️ Paramètres PDF Builder Pro (JS CENTRALISÉ)', 'pdf-builder-pro'); ?></h1>
     </header>
 
     <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs">
-        <a href="#general" class="nav-tab nav-tab-active" data-tab="general">⚙️ General</a>
+        <a href="#general" class="nav-tab nav-tab-active" data-tab="general">⚙️ Général</a>
         <a href="#licence" class="nav-tab" data-tab="licence">🔑 Licence</a>
-        <a href="#systeme" class="nav-tab" data-tab="systeme">🖥️ System</a>
-        <a href="#acces" class="nav-tab" data-tab="acces">🔐 Access</a>
-        <a href="#securite" class="nav-tab" data-tab="securite">🛡️ Security</a>
+        <a href="#systeme" class="nav-tab" data-tab="systeme">🖥️ Système</a>
+        <a href="#acces" class="nav-tab" data-tab="acces">🔐 Accès</a>
+        <a href="#securite" class="nav-tab" data-tab="securite">🛡️ Sécurité</a>
         <a href="#pdf" class="nav-tab" data-tab="pdf">📄 PDF</a>
-        <a href="#contenu" class="nav-tab" data-tab="contenu">🎨 Content</a>
-        <a href="#templates" class="nav-tab" data-tab="templates">📋 Templates</a>
-        <a href="#developpeur" class="nav-tab" data-tab="developpeur">🛠️ Developer</a>
+        <a href="#contenu" class="nav-tab" data-tab="contenu">🎨 Contenu</a>
+        <a href="#templates" class="nav-tab" data-tab="templates">📋 Modèles</a>
+        <a href="#developpeur" class="nav-tab" data-tab="developpeur">🛠️ Développeur</a>
     </nav>
 
     <section id="pdf-builder-tab-content" class="tab-content-wrapper">
@@ -121,22 +121,22 @@
 
 <script>
     /**
-     * CENTRALIZED PDF BUILDER SETTINGS JAVASCRIPT SYSTEM
-     * Clean, organized, and maintainable
-     * Version: 2025-12-02-03-25-00 - FORCE CACHE CLEAR
+     * SYSTÈME JAVASCRIPT CENTRALISÉ DES PARAMÈTRES PDF BUILDER
+     * Propre, organisé et maintenable
+     * Version: 2025-12-02-03-25-00 - VIDAGE CACHE FORCÉ
      * Cache Buster: <?php echo time(); ?>
-     * Final Fix: Promise wrapper for jQuery.ajax
+     * Correction finale: Wrapper Promise pour jQuery.ajax
      */
 
     (function() {
         'use strict';
 
-        // Global config from PHP
+        // Configuration globale depuis PHP
         const PDF_BUILDER_CONFIG = <?php echo json_encode($js_config); ?>;
 
-        // Initialize notification functions if not already defined
+        // Initialiser les fonctions de notification si pas déjà définies
         if (typeof window.showSuccessNotification === 'undefined') {
-            // Initialize centralized notification system
+            // Initialiser le système de notification centralisé
             window.simpleNotificationSystem = {
                 container: null,
                 
@@ -193,13 +193,13 @@
                     
                     this.container.appendChild(notification);
                     
-                    // Animate in
+                    // Animer l'entrée
                     setTimeout(() => {
                         notification.style.opacity = '1';
                         notification.style.transform = 'translateX(0)';
                     }, 10);
                     
-                    // Auto remove
+                    // Suppression automatique
                     const removeNotification = () => {
                         notification.style.opacity = '0';
                         notification.style.transform = 'translateX(100%)';
@@ -210,10 +210,10 @@
                         }, 300);
                     };
                     
-                    // Close button
+                    // Bouton de fermeture
                     notification.querySelector('.pdf-notification-close').addEventListener('click', removeNotification);
                     
-                    // Auto remove after 5 seconds
+                    // Suppression automatique après 5 secondes
                     setTimeout(removeNotification, 5000);
                 },
                 
@@ -245,17 +245,17 @@
             };
 
             window.showSuccessNotification = function(message) {
-                console.log('✅ Success:', message);
+                console.log('✅ Succès:', message);
                 window.simpleNotificationSystem.success(message);
             };
 
             window.showErrorNotification = function(message) {
-                console.error('❌ Error:', message);
+                console.error('❌ Erreur:', message);
                 window.simpleNotificationSystem.error(message);
             };
 
             window.showWarningNotification = function(message) {
-                console.warn('⚠️ Warning:', message);
+                console.warn('⚠️ Avertissement:', message);
                 window.simpleNotificationSystem.warning(message);
             };
 
@@ -266,8 +266,8 @@
         }
 
         /**
-         * MAIN SETTINGS CONTROLLER CLASS
-         * Centralized control for all settings functionality
+         * CLASSE CONTRÔLEUR PRINCIPAL DES PARAMÈTRES
+         * Contrôle centralisé pour toutes les fonctionnalités des paramètres
          */
         class PDF_Builder_Settings_Controller {
             constructor() {
@@ -279,14 +279,14 @@
             }
 
             init() {
-                console.log('🎯 Initializing Centralized PDF Builder Settings System');
+                console.log('🎯 Initialisation du système centralisé des paramètres PDF Builder');
 
-                // Initialize all components
+                // Initialiser tous les composants
                 this.bindTabEvents();
                 this.bindSaveEvents();
                 this.initializePreviews();
 
-                console.log('✅ PDF Builder Settings System Initialized');
+                console.log('✅ Système de paramètres PDF Builder initialisé');
             }
 
             bindTabEvents() {
@@ -324,30 +324,30 @@
         }
 
         /**
-         * SETTINGS VALIDATOR CLASS
-         * Centralized validation system
+         * CLASSE VALIDATEUR DES PARAMÈTRES
+         * Système de validation centralisé
          */
         class SettingsValidator {
             constructor() {
                 this.rules = {
                     phone: {
                         pattern: /^[\d\s\-\+\(\)]{10,}$/,
-                        message: 'Invalid phone number'
+                        message: 'Numéro de téléphone invalide'
                     },
                     siret: {
                         pattern: /^\d{14}$/,
-                        message: 'SIRET must be exactly 14 digits'
+                        message: 'Le SIRET doit contenir exactement 14 chiffres'
                     },
                     vat: {
                         pattern: /^[A-Z]{2}[\w\d]{8,12}$/i,
-                        message: 'Invalid VAT number format'
+                        message: 'Format de numéro TVA invalide'
                     }
                 };
             }
 
             validateField(field, value) {
                 const rule = this.rules[field];
-                if (!rule) return true; // No validation rule
+                if (!rule) return true; // Aucune règle de validation
 
                 return rule.pattern.test(value) || value === '';
             }
@@ -398,8 +398,8 @@
         }
 
         /**
-         * SETTINGS UI MANAGER
-         * Handles all UI updates and interactions
+         * GESTIONNAIRE UI DES PARAMÈTRES
+         * Gère toutes les mises à jour et interactions UI
          */
         class SettingsUI {
             constructor() {
@@ -422,8 +422,8 @@
         }
 
         /**
-         * SETTINGS SAVER
-         * Centralized save functionality for all tabs
+         * SAUVEGARDEUR DES PARAMÈTRES
+         * Fonctionnalité de sauvegarde centralisée pour tous les onglets
          */
         class SettingsSaver {
             constructor() {
@@ -455,13 +455,13 @@
             }
 
             async saveAllSettings() {
-                console.log('💾 Saving all settings...');
+                console.log('💾 Sauvegarde de tous les paramètres...');
 
                 if (this.ui && this.saveButton) {
                     this.ui.setButtonState(this.saveButton, 'loading');
                 }
 
-                // Store context and notification functions to avoid 'this' issues in callbacks
+                // Stocker le contexte et les fonctions de notification pour éviter les problèmes 'this' dans les callbacks
                 const self = this;
                 const showSuccess = window.showSuccessNotification;
                 const showError = window.showErrorNotification;
@@ -469,7 +469,7 @@
                 try {
                     const formData = this.collectAllSettings();
 
-                    // DEBUG LOGS POUR LE TOGGLE DEBUG JAVASCRIPT
+                    // LOGS DEBUG POUR LE TOGGLE DEBUG JAVASCRIPT
                     if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                         console.log('🚀 [DEBUG JS TOGGLE] Données collectées avant envoi:', formData);
                         console.log('🚀 [DEBUG JS TOGGLE] debug_javascript dans formData:', formData['pdf_builder_debug_javascript'] || 'NON TROUVÉ');
@@ -484,8 +484,8 @@
                         console.log('🚀 [DEBUG JS TOGGLE] Données AJAX complètes:', ajaxData);
                     }
 
-                    // Send to server using jQuery AJAX wrapped in Promise
-                    // FIXED: Using arrow functions to preserve context
+                    // Envoyer au serveur en utilisant jQuery AJAX wrappé dans Promise
+                    // CORRIGÉ: Utilisation de fonctions fléchées pour préserver le contexte
                     const response = await new Promise((resolve, reject) => {
                         jQuery.ajax({
                             url: PDF_BUILDER_CONFIG.ajax_url,
@@ -497,9 +497,9 @@
                             },
                             dataType: 'json',
                             success: (data) => {
-                                console.log('[AJAX Success] Response received:', data);
+                                console.log('[AJAX Succès] Réponse reçue:', data);
                                 
-                                // DEBUG LOGS POUR LE TOGGLE DEBUG JAVASCRIPT
+                                // LOGS DEBUG POUR LE TOGGLE DEBUG JAVASCRIPT
                                 if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                     console.log('✅ [DEBUG JS TOGGLE] Réponse serveur reçue:', data);
                                     console.log('✅ [DEBUG JS TOGGLE] debug_javascript dans saved_settings:', data.data?.saved_settings?.debug_javascript || 'NON TROUVÉ');
@@ -509,31 +509,31 @@
                                 resolve(data);
                             },
                             error: (xhr, status, error) => {
-                                console.error('[AJAX Error] Error details:', {status, error, responseText: xhr.responseText});
+                                console.error('[AJAX Erreur] Détails de l\'erreur:', {status, error, responseText: xhr.responseText});
                                 
-                                // DEBUG LOGS POUR LE TOGGLE DEBUG JAVASCRIPT
+                                // LOGS DEBUG POUR LE TOGGLE DEBUG JAVASCRIPT
                                 if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                                     console.error('❌ [DEBUG JS TOGGLE] Erreur AJAX:', {status, error, responseText: xhr.responseText});
                                 }
                                 
-                                reject(new Error(error || 'AJAX request failed'));
+                                reject(new Error(error || 'Échec de la requête AJAX'));
                             }
                         });
                     });
 
                     if (response.success) {
-                        console.log('✅ All settings saved successfully!');
+                        console.log('✅ Tous les paramètres sauvegardés avec succès!');
                         if (typeof showSuccess === 'function') {
-                            showSuccess('✅ All settings saved successfully!');
+                            showSuccess('✅ Tous les paramètres sauvegardés avec succès!');
                         }
                     } else {
-                        throw new Error(response.data?.message || 'Save failed');
+                        throw new Error(response.data?.message || 'Échec de la sauvegarde');
                     }
 
                 } catch (error) {
-                    console.error('Save error:', error);
+                    console.error('Erreur de sauvegarde:', error);
                     if (typeof showError === 'function') {
-                        showError('❌ Error saving settings: ' + error.message);
+                        showError('❌ Erreur lors de la sauvegarde des paramètres: ' + error.message);
                     }
                 } finally {
                     if (this.ui && this.saveButton) {
@@ -543,16 +543,16 @@
             }
 
             async saveTabSettings(tabId) {
-                console.log('💾 Saving tab settings:', tabId);
+                console.log('💾 Sauvegarde des paramètres de l\'onglet:', tabId);
 
                 if (this.validator && !this.validator.validateTab(tabId)) {
                     if (window.showErrorNotification) {
-                        window.showErrorNotification('❌ Please fix validation errors');
+                        window.showErrorNotification('❌ Veuillez corriger les erreurs de validation');
                     }
                     return;
                 }
 
-                // Store notification functions to avoid context issues
+                // Stocker les fonctions de notification pour éviter les problèmes de contexte
                 const showSuccess = window.showSuccessNotification;
                 const showError = window.showErrorNotification;
                 const formData = this.collectTabSettings(tabId);
@@ -570,24 +570,24 @@
                             },
                             dataType: 'json',
                             success: (data) => {
-                                console.log('[AJAX Success] Tab save response:', data);
+                                console.log('[AJAX Succès] Réponse de sauvegarde d\'onglet:', data);
                                 resolve(data);
                             },
                             error: (xhr, status, error) => {
-                                console.error('[AJAX Error] Tab save failed:', {status, error});
-                                reject(new Error(error || 'AJAX request failed'));
+                                console.error('[AJAX Erreur] Échec de la sauvegarde d\'onglet:', {status, error});
+                                reject(new Error(error || 'Échec de la requête AJAX'));
                             }
                         });
                     });
 
                     if (response.success && typeof showSuccess === 'function') {
-                        showSuccess(`✅ ${tabId.charAt(0).toUpperCase() + tabId.slice(1)} settings saved!`);
+                        showSuccess(`✅ Paramètres ${tabId.charAt(0).toUpperCase() + tabId.slice(1)} sauvegardés!`);
                     }
 
                 } catch (error) {
-                    console.error('Tab save error:', error);
+                    console.error('Erreur de sauvegarde d\'onglet:', error);
                     if (typeof showError === 'function') {
-                        showError('❌ Error saving settings');
+                        showError('❌ Erreur lors de la sauvegarde des paramètres');
                     }
                 }
             }
@@ -595,7 +595,7 @@
             collectAllSettings() {
                 const formData = {};
 
-                // Collect from all tab contents
+                // Collecter depuis tous les contenus d'onglets
                 document.querySelectorAll('.tab-content input, .tab-content select, .tab-content textarea').forEach(field => {
                     if (field.name) {
                         if (field.type === 'checkbox') {
@@ -606,7 +606,7 @@
                     }
                 });
 
-                // DEBUG LOGS POUR LE TOGGLE DEBUG JAVASCRIPT
+                // LOGS DEBUG POUR LE TOGGLE DEBUG JAVASCRIPT
                 if (window.pdfBuilderCanvasSettings?.debug?.javascript) {
                     console.log('🔍 [DEBUG JS TOGGLE] CollectAllSettings - Champs collectés:', Object.keys(formData));
                     console.log('🔍 [DEBUG JS TOGGLE] debug_javascript dans formData:', formData['pdf_builder_debug_javascript'] || 'NON TROUVÉ');
@@ -650,14 +650,14 @@
 
             updateButtonText(tabId) {
                 const tabNames = {
-                    'general': 'Enregistrer General',
+                    'general': 'Enregistrer Général',
                     'licence': 'Enregistrer Licence',
                     'systeme': 'Enregistrer Système',
                     'acces': 'Enregistrer Accès',
                     'securite': 'Enregistrer Sécurité',
                     'pdf': 'Enregistrer PDF',
                     'contenu': 'Enregistrer Contenu',
-                    'templates': 'Enregistrer Templates',
+                    'templates': 'Enregistrer Modèles',
                     'developpeur': 'Enregistrer Développeur'
                 };
 
@@ -669,8 +669,8 @@
         }
 
         /**
-         * SETTINGS PREVIEW MANAGER
-         * Handles live previews for settings
+         * GESTIONNAIRE D'APERÇU DES PARAMÈTRES
+         * Gère les aperçus en direct pour les paramètres
          */
         class SettingsPreview {
             constructor() {
@@ -678,19 +678,19 @@
             }
 
             init() {
-                // Phone preview
+                // Aperçu téléphone
                 this.bindPreview('company_phone_manual', '.company-phone-preview', (val) => val);
 
-                // SIRET preview
+                // Aperçu SIRET
                 this.bindPreview('company_siret', '.company-siret-preview', (val) => val);
 
-                // VAT preview
+                // Aperçu TVA
                 this.bindPreview('company_vat', '.company-vat-preview', (val) => val);
 
-                // RCS preview
+                // Aperçu RCS
                 this.bindPreview('company_rcs', '.company-rcs-preview', (val) => val);
 
-                // Capital preview
+                // Aperçu capital
                 this.bindPreview('company_capital', '.company-capital-preview', (val) => val ? val + ' €' : '');
             }
 
@@ -726,7 +726,7 @@
 </script>
 
 <style>
-    /* Centralized Settings Styles */
+    /* Styles centralisés des paramètres */
     .tab-content-wrapper {
         margin-top: 20px;
     }
@@ -798,31 +798,31 @@
 </style>
 <?php
 
-    // Include diagnostic if needed
+    // Inclure le diagnostic si nécessaire
     if (isset($_GET['debug']) && $_GET['debug'] === 'true') {
         require_once __DIR__ . '/tab-diagnostic.php';
     }
 
-    // AJAX HANDLERS - Centralized save functionality is handled in settings-ajax.php
+    // GESTIONNAIRES AJAX - Fonctionnalité de sauvegarde centralisée gérée dans settings-ajax.php
 
     add_action('wp_ajax_pdf_builder_save_tab_settings', function() {
         try {
-            // Verify nonce
+            // Vérifier le nonce
             if (!wp_verify_nonce(sanitize_text_field($_POST['nonce'] ?? ''), 'pdf_builder_settings_ajax')) {
-                wp_send_json_error(['message' => 'Security check failed']);
+                wp_send_json_error(['message' => 'Échec de vérification de sécurité']);
                 return;
             }
 
             $tab = sanitize_text_field($_POST['tab'] ?? 'unknown');
 
-            // Collect tab-specific data
+            // Collecter les données spécifiques à l'onglet
             $updated_fields = [];
             foreach ($_POST as $key => $value) {
                 if (in_array($key, ['action', 'nonce', 'tab'])) continue;
                 $updated_fields[$key] = sanitize_text_field($value);
             }
 
-            // Process based on tab
+            // Traiter selon l'onglet
             switch ($tab) {
                 case 'general':
                     update_option('pdf_builder_company_phone_manual', $updated_fields['company_phone_manual'] ?? '');
@@ -832,10 +832,10 @@
                     update_option('pdf_builder_company_capital', $updated_fields['company_capital'] ?? '');
                     break;
                 case 'acces':
-                    // Handle access roles (array of roles)
+                    // Gérer les rôles d'accès (tableau de rôles)
                     if (isset($_POST['pdf_builder_allowed_roles']) && is_array($_POST['pdf_builder_allowed_roles'])) {
                         $allowed_roles = array_map('sanitize_text_field', $_POST['pdf_builder_allowed_roles']);
-                        // Always include administrator
+                        // Toujours inclure administrator
                         if (!in_array('administrator', $allowed_roles)) {
                             $allowed_roles[] = 'administrator';
                         }
@@ -843,7 +843,7 @@
                     }
                     break;
                 default:
-                    // General settings handler for other tabs
+                    // Gestionnaire de paramètres général pour les autres onglets
                     foreach ($updated_fields as $key => $value) {
                         if (strpos($key, 'pdf_builder_') === 0 || strpos($key, 'systeme_') === 0) {
                             update_option('pdf_builder_' . str_replace(['pdf_builder_', 'systeme_'], '', $key), $value);
@@ -853,7 +853,7 @@
             }
 
             wp_send_json_success([
-                'message' => ucfirst($tab) . ' settings saved successfully',
+                'message' => ucfirst($tab) . ' paramètres sauvegardés avec succès',
                 'tab' => $tab
             ]);
 
@@ -864,19 +864,19 @@
 
     add_action('wp_ajax_pdf_builder_deactivate_license', function() {
         try {
-            // Verify nonce
+            // Vérifier le nonce
             if (!wp_verify_nonce(sanitize_text_field($_POST['nonce'] ?? ''), 'pdf_builder_deactivate')) {
-                wp_send_json_error(['message' => 'Security check failed']);
+                wp_send_json_error(['message' => 'Échec de vérification de sécurité']);
                 return;
             }
 
-            // Check user capability
+            // Vérifier la capacité utilisateur
             if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => 'Insufficient permissions']);
+                wp_send_json_error(['message' => 'Permissions insuffisantes']);
                 return;
             }
 
-            // Clear all license data
+            // Effacer toutes les données de licence
             delete_option('pdf_builder_license_key');
             delete_option('pdf_builder_license_status');
             delete_option('pdf_builder_license_expires');
@@ -885,59 +885,59 @@
             delete_option('pdf_builder_license_test_key_expires');
             delete_option('pdf_builder_license_test_mode_enabled');
 
-            // Reset to free mode
+            // Réinitialiser en mode gratuit
             update_option('pdf_builder_license_status', 'free');
 
-            error_log('PDF Builder: License deactivated successfully via AJAX');
+            error_log('PDF Builder: Licence désactivée avec succès via AJAX');
 
             wp_send_json_success([
-                'message' => 'License deactivated successfully',
+                'message' => 'Licence désactivée avec succès',
                 'status' => 'free'
             ]);
 
         } catch (Exception $e) {
-            error_log('PDF Builder: License deactivation error - ' . $e->getMessage());
+            error_log('PDF Builder: Erreur de désactivation de licence - ' . $e->getMessage());
             wp_send_json_error(['message' => $e->getMessage()]);
         }
     });
 
-    // Developer Settings AJAX Handler
-    error_log('PDF Builder: Registering developer settings AJAX handler at line ' . __LINE__);
+    // Gestionnaire AJAX des paramètres développeur
+    error_log('PDF Builder: Enregistrement du gestionnaire AJAX des paramètres développeur à la ligne ' . __LINE__);
     add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
-        error_log('PDF Builder Developer: AJAX handler STARTED at ' . date('Y-m-d H:i:s'));
+        error_log('PDF Builder Développeur: Gestionnaire AJAX DÉMARRÉ à ' . date('Y-m-d H:i:s'));
 
         try {
-            // Log all POST data for debugging
-            error_log('PDF Builder Developer: POST data received: ' . print_r($_POST, true));
+            // Journaliser toutes les données POST pour le débogage
+            error_log('PDF Builder Développeur: Données POST reçues: ' . print_r($_POST, true));
 
-            // Verify nonce
+            // Vérifier le nonce
             $nonce_value = sanitize_text_field($_POST['nonce'] ?? '');
             $nonce_valid = wp_verify_nonce($nonce_value, 'pdf_builder_settings_ajax');
-            error_log('PDF Builder Developer: Nonce verification result: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
+            error_log('PDF Builder Développeur: Résultat de vérification du nonce: ' . ($nonce_valid ? 'VALIDE' : 'INVALIDE'));
 
             if (!$nonce_valid) {
-                error_log('PDF Builder Developer: Nonce verification failed');
-                wp_send_json_error(['message' => 'Security check failed']);
+                error_log('PDF Builder Développeur: Échec de vérification du nonce');
+                wp_send_json_error(['message' => 'Échec de vérification de sécurité']);
                 return;
             }
 
-            // Check user capability
+            // Vérifier la capacité utilisateur
             $has_capability = current_user_can('manage_options');
-            error_log('PDF Builder Developer: User capability check: ' . ($has_capability ? 'HAS' : 'NO'));
+            error_log('PDF Builder Développeur: Vérification de capacité utilisateur: ' . ($has_capability ? 'A' : 'NON'));
 
             if (!$has_capability) {
-                error_log('PDF Builder Developer: Insufficient permissions');
-                wp_send_json_error(['message' => 'Insufficient permissions']);
+                error_log('PDF Builder Développeur: Permissions insuffisantes');
+                wp_send_json_error(['message' => 'Permissions insuffisantes']);
                 return;
             }
 
-            // Get the setting key and value
+            // Obtenir la clé et la valeur du paramètre
             $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
             $setting_value = sanitize_text_field($_POST['setting_value'] ?? '');
 
-            error_log("PDF Builder Developer: Setting key: '{$setting_key}', value: '{$setting_value}'");
+            error_log("PDF Builder Développeur: Clé paramètre: '{$setting_key}', valeur: '{$setting_value}'");
 
-            // Validate setting key (only allow developer settings)
+            // Valider la clé de paramètre (autoriser seulement les paramètres développeur)
             $allowed_keys = [
                 'pdf_builder_developer_enabled',
                 'pdf_builder_canvas_debug_enabled',
@@ -945,29 +945,29 @@
             ];
 
             if (!in_array($setting_key, $allowed_keys)) {
-                error_log("PDF Builder Developer: Invalid setting key: {$setting_key}");
-                wp_send_json_error(['message' => 'Invalid setting key']);
+                error_log("PDF Builder Développeur: Clé paramètre invalide: {$setting_key}");
+                wp_send_json_error(['message' => 'Clé paramètre invalide']);
                 return;
             }
 
-            // Get existing settings
+            // Obtenir les paramètres existants
             $settings = get_option('pdf_builder_settings', []);
 
-            // Update the specific setting
+            // Mettre à jour le paramètre spécifique
             $settings[$setting_key] = $setting_value;
 
-            // Save back to database
+            // Sauvegarder en base de données
             $updated = update_option('pdf_builder_settings', $settings);
-            error_log("PDF Builder Developer: update_option result: " . ($updated ? 'SUCCESS' : 'NO CHANGE'));
+            error_log("PDF Builder Développeur: Résultat update_option: " . ($updated ? 'SUCCÈS' : 'AUCUN CHANGEMENT'));
 
             wp_send_json_success([
-                'message' => 'Developer setting saved successfully',
+                'message' => 'Paramètre développeur sauvegardé avec succès',
                 'setting' => $setting_key,
                 'value' => $setting_value
             ]);
 
         } catch (Exception $e) {
-            error_log('PDF Builder Developer: AJAX Error - ' . $e->getMessage());
+            error_log('PDF Builder Développeur: Erreur AJAX - ' . $e->getMessage());
             wp_send_json_error(['message' => $e->getMessage()]);
         }
     });
