@@ -1467,33 +1467,33 @@ class PdfBuilderAdmin
 
             wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
-            // ✅ RÉACTIVER le script d'initialisation pour charger React
+            // ✅ Script d'initialisation qui attend le chargement du bundle React
             $init_script = "
             (function() {
                 console.log('🚀 PDF Builder React Initializer: Script loaded');
                 
-                // Attendre que le DOM soit prêt
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', function() {
-                        console.log('🚀 PDF Builder React Initializer: DOMContentLoaded fired');
-                        if (typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-                            window.pdfBuilderReact.initPDFBuilderReact();
-                        } else {
-                            console.error('❌ PDF Builder React Initializer: pdfBuilderReact not found');
-                        }
-                    });
-                } else {
-                    // DOM est déjà prêt
-                    console.log('🚀 PDF Builder React Initializer: DOM already ready');
+                // Fonction pour initialiser React quand il est prêt
+                function initializeReactWhenReady() {
                     if (typeof window.pdfBuilderReact !== 'undefined' && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+                        console.log('✅ pdfBuilderReact is available, initializing...');
                         window.pdfBuilderReact.initPDFBuilderReact();
                     } else {
-                        console.error('❌ PDF Builder React Initializer: pdfBuilderReact not found');
+                        console.warn('⏳ Waiting for pdfBuilderReact to load...');
+                        // Attendre 100ms et réessayer
+                        setTimeout(initializeReactWhenReady, 100);
                     }
+                }
+                
+                // Attendre que le DOM soit prêt
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initializeReactWhenReady);
+                } else {
+                    // DOM est déjà prêt
+                    initializeReactWhenReady();
                 }
             })();
             ";
-            wp_add_inline_script('pdf-builder-react', $init_script);
+            wp_add_inline_script('pdf-builder-react', $init_script, 'after');
         }
 
 // Styles pour l'éditeur canvas - Plus nécessaire car nous utilisons seulement l'éditeur React
