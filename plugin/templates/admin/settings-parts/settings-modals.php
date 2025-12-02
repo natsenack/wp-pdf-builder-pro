@@ -15,30 +15,30 @@
                     </p>
                 </aside>
                 <article id="cache-size-details">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
-                        <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <section style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                        <article style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
                             <h4 style="margin-top: 0; color: #495057;">[DOSSIER APERCUS] Dossier des aperçus</h4>
                             <div style="font-size: 18px; font-weight: bold; color: #28a745;" id="previews-cache-size">
                                 Calcul en cours...
                             </div>
                             <div style="color: #666; font-size: 12px;">wp-content/cache/wp-pdf-builder-previews/</div>
-                        </div>
-                        <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                        </article>
+                        <article style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
                             <h4 style="margin-top: 0; color: #495057;">[DOSSIER PRINCIPAL] Dossier principal</h4>
                             <div style="font-size: 18px; font-weight: bold; color: #28a745;" id="main-cache-size">
                                 Calcul en cours...
                             </div>
                             <div style="color: #666; font-size: 12px;">wp-content/uploads/pdf-builder-cache/</div>
-                        </div>
-                    </div>
-                    <div style="margin-top: 20px; padding: 15px; background: #e7f5e9; border: 1px solid #28a745; border-radius: 8px;">
+                        </article>
+                    </section>
+                    <aside style="margin-top: 20px; padding: 15px; background: #e7f5e9; border: 1px solid #28a745; border-radius: 8px;">
                         <h4 style="margin-top: 0; color: #155724;">💡 Recommandations</h4>
                         <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #155724;">
                             <li>Une taille de cache normale est inférieure à 100 Mo</li>
                             <li>Si la taille dépasse 500 Mo, considérez un nettoyage manuel</li>
                             <li>Le cache est automatiquement nettoyé selon les paramètres configurés</li>
                         </ul>
-                    </div>
+                    </aside>
                 </article>
             </div>
             <footer class="cache-modal-footer">
@@ -65,8 +65,8 @@
                     </p>
                 </aside>
                 <article id="cache-transients-details">
-                    <div style="margin-top: 20px;">
-                        <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <section style="margin-top: 20px;">
+                        <article style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
                             <h4 style="margin-top: 0; color: #495057;">📊 Statistiques des transients</h4>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
                                 <div style="text-align: center;">
@@ -82,15 +82,15 @@
                                     <div style="color: #666; font-size: 12px;">PDF Builder</div>
                                 </div>
                             </div>
-                        </div>
-                        <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 8px;">
+                        </article>
+                        <aside style="margin-top: 20px; padding: 15px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 8px;">
                             <h4 style="margin-top: 0; color: #8b4513;">⚠️ Note importante</h4>
                             <p style="margin: 10px 0 0 0; color: #5d4e37;">
                                 Les transients expirent automatiquement. Un nombre élevé de transients n'est généralement pas préoccupant,
                                 mais si vous remarquez des problèmes de performance, vous pouvez les vider manuellement.
                             </p>
-                        </div>
-                    </div>
+                        </aside>
+                    </section>
                 </article>
             </div>
             <footer class="cache-modal-footer">
@@ -667,33 +667,35 @@
                     </p>
                 </aside>
                 <form id="canvas-export-form">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_export_format">Format d'export par défaut</label></th>
-                            <td>
-                                <select id="canvas_export_format" name="canvas_export_format">
-                                    <option value="png" <?php selected(get_option('pdf_builder_canvas_export_format', 'png'), 'png'); ?>>PNG</option>
-                                    <option value="jpg" <?php selected(get_option('pdf_builder_canvas_export_format', 'png'), 'jpg'); ?>>JPG</option>
-                                    <option value="pdf" <?php selected(get_option('pdf_builder_canvas_export_format', 'png'), 'pdf'); ?>>PDF</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_export_quality">Qualité d'export (%)</label></th>
-                            <td>
-                                <input type="number" id="canvas_export_quality" name="canvas_export_quality" value="<?php echo intval(get_option('pdf_builder_canvas_export_quality', 90)); ?>" min="1" max="100" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_export_transparent">Fond transparent</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_export_transparent" name="canvas_export_transparent" value="1" <?php checked(get_option('pdf_builder_canvas_export_transparent', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                    </table>
+                    <section>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="canvas_export_format">Format d'export par défaut</label></th>
+                                <td>
+                                    <select id="canvas_export_format" name="canvas_export_format">
+                                        <option value="png" <?php selected(get_option('pdf_builder_canvas_export_format', 'png'), 'png'); ?>>PNG</option>
+                                        <option value="jpg" <?php selected(get_option('pdf_builder_canvas_export_format', 'png'), 'jpg'); ?>>JPG</option>
+                                        <option value="pdf" <?php selected(get_option('pdf_builder_canvas_export_format', 'png'), 'pdf'); ?>>PDF</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_export_quality">Qualité d'export (%)</label></th>
+                                <td>
+                                    <input type="number" id="canvas_export_quality" name="canvas_export_quality" value="<?php echo intval(get_option('pdf_builder_canvas_export_quality', 90)); ?>" min="1" max="100" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_export_transparent">Fond transparent</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_export_transparent" name="canvas_export_transparent" value="1" <?php checked(get_option('pdf_builder_canvas_export_transparent', '0'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                    </section>
                 </form>
             </main>
             <footer class="canvas-modal-footer">
@@ -850,35 +852,37 @@
                     </p>
                 </aside>
                 <form id="canvas-debug-form">
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="canvas_debug_enabled">Debug activé</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_debug_enabled" name="canvas_debug_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_debug_enabled', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_performance_monitoring">Monitoring performance</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_performance_monitoring" name="canvas_performance_monitoring" value="1" <?php checked(get_option('pdf_builder_canvas_performance_monitoring', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="canvas_error_reporting">Rapport d'erreurs</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="canvas_error_reporting" name="canvas_error_reporting" value="1" <?php checked(get_option('pdf_builder_canvas_error_reporting', '0'), '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </td>
-                        </tr>
-                    </table>
+                    <section>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="canvas_debug_enabled">Debug activé</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_debug_enabled" name="canvas_debug_enabled" value="1" <?php checked(get_option('pdf_builder_canvas_debug_enabled', '0'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_performance_monitoring">Monitoring performance</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_performance_monitoring" name="canvas_performance_monitoring" value="1" <?php checked(get_option('pdf_builder_canvas_performance_monitoring', '0'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="canvas_error_reporting">Rapport d'erreurs</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="canvas_error_reporting" name="canvas_error_reporting" value="1" <?php checked(get_option('pdf_builder_canvas_error_reporting', '0'), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                    </section>
                 </form>
             </main>
             <footer class="canvas-modal-footer">
