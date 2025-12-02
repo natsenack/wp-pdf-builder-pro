@@ -194,6 +194,12 @@ if (function_exists('add_action')) {
  * Enregistrer les handlers AJAX
  */
 function pdf_builder_register_ajax_handlers() {
+    // Charger le factory des handlers AJAX des paramètres
+    require_once plugin_dir_path(__FILE__) . 'templates/admin/settings-parts/settings-handlers-factory.php';
+
+    // Initialiser tous les handlers AJAX des paramètres
+    pdf_builder_initialize_all_settings_handlers();
+
     // Le nouveau système AJAX gère maintenant tous les handlers
     // Les anciens handlers sont conservés pour la compatibilité mais redirigés vers le nouveau système
 
