@@ -1286,6 +1286,10 @@ class PdfBuilderAdmin
                 ]
             ]);
         }
+
+        // Définir la version du cache bust pour tous les scripts
+        $version_param = PDF_BUILDER_PRO_VERSION . '-' . time();
+
 // Scripts JavaScript - VERSION VANILLA JS + CANVAS API UNIQUEMENT
 
         // wp_enqueue_script('pdf-builder-vanilla-bundle', $script_url, ['jquery'], $version_param, true); // Script non disponible
