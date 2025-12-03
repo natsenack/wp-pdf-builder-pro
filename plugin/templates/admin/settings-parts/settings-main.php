@@ -312,41 +312,6 @@ wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $js_config
         }
     });
 
-    add_action('wp_ajax_pdf_builder_deactivate_license', function() {
-        try {
-            // Vérifier le nonce
-            if (!wp_verify_nonce(sanitize_text_field($_POST['nonce'] ?? ''), 'pdf_builder_deactivate')) {
-                wp_send_json_error(['message' => 'Échec de vérification de sécurité']);
-                return;
-            }
-
-            // Vérifier la capacité utilisateur
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => 'Permissions insuffisantes']);
-                return;
-            }
-
-            // Effacer toutes les données de licence
-            delete_option('pdf_builder_license_key');
-            delete_option('pdf_builder_license_status');
-            delete_option('pdf_builder_license_expires');
-            delete_option('pdf_builder_license_activated_at');
-            delete_option('pdf_builder_license_test_key');
-            delete_option('pdf_builder_license_test_key_expires');
-            delete_option('pdf_builder_license_test_mode_enabled');
-
-            // Réinitialiser en mode gratuit
-            update_option('pdf_builder_license_status', 'free');
-
-            error_log('PDF Builder: Licence désactivée avec succès via AJAX');
-
-            wp_send_json_success([
-                'message' => 'Licence désactivée avec succès',
-                'status' => 'free'
-            ]);
-
-    });
-
 ?><!-- LOG JUSTE AVANT LE SCRIPT -->
 <script>console.log('📍 LOG JUSTE AVANT LE SCRIPT - PHP execution OK jusqu\'ici');</script>
 
