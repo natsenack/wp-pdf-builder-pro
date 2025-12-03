@@ -127,7 +127,8 @@
         function delegatedClickHandler(e) {
             // Trouver l'élément .nav-tab le plus proche (supporte <a> > <span> etc.)
             const anchor = e.target.closest && e.target.closest('.nav-tab');
-            if (!anchor || !tabsContainer.contains(anchor)) return;
+            const tabsRoot = document.getElementById('pdf-builder-tabs');
+            if (!anchor || !tabsRoot || !tabsRoot.contains(anchor)) return;
 
             // Si l'href est un #hash, empêcher la navigation par défaut
             if (anchor.tagName === 'A' && anchor.getAttribute('href') && anchor.getAttribute('href').startsWith('#')) {
@@ -147,8 +148,18 @@
 
         // Utiliser capture=true pour exécuter notre handler avant d'autres handlers qui pourraient bloquer la propagation
         // mais toujours respecter les comportements éventuels (nous prévenons par défaut seulement si le lien est un hash)
-        tabsContainer.removeEventListener('click', delegatedClickHandler, true);
-        tabsContainer.addEventListener('click', delegatedClickHandler, true);
+        // Installer le handler sur document pour survivre aux remplacements du container
+        try {
+            if (!window.PDFBuilderTabsDelegationInstalled) {
+                document.removeEventListener('click', delegatedClickHandler, true);
+                document.addEventListener('click', delegatedClickHandler, true);
+                window.PDFBuilderTabsDelegationInstalled = true;
+            }
+        } catch (e) {
+            // fallback: attacher sur container si document fail
+            tabsContainer.removeEventListener('click', delegatedClickHandler, true);
+            tabsContainer.addEventListener('click', delegatedClickHandler, true);
+        }
         logDiagnostic('Event listener de délégation ajouté au container');
 
         // Observer les changements DOM pour mettre à jour tabButtons et tabContents si nécessaire

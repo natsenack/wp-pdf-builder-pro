@@ -80,7 +80,8 @@
                 // Click events via delegation - robust if DOM changes
                 const delegatedHandler = (e) => {
                     const anchor = e.target.closest && e.target.closest('.nav-tab');
-                    if (!anchor || !this.tabsContainer.contains(anchor)) return;
+                        const tabsRoot = document.getElementById('pdf-builder-tabs');
+                        if (!anchor || !tabsRoot || !tabsRoot.contains(anchor)) return;
 
                     if (anchor.tagName === 'A' && anchor.getAttribute('href') && anchor.getAttribute('href').startsWith('#')) {
                         e.preventDefault();
@@ -97,8 +98,16 @@
                 };
 
                 // Add capturing delegation so our handler runs before many other non-capturing handlers
-                this.tabsContainer.removeEventListener('click', delegatedHandler, true);
-                this.tabsContainer.addEventListener('click', delegatedHandler, true);
+                try {
+                    if (!window.PDFBuilderTabsDelegationInstalled) {
+                        document.removeEventListener('click', delegatedHandler, true);
+                        document.addEventListener('click', delegatedHandler, true);
+                        window.PDFBuilderTabsDelegationInstalled = true;
+                    }
+                } catch(e) {
+                    this.tabsContainer.removeEventListener('click', delegatedHandler, true);
+                    this.tabsContainer.addEventListener('click', delegatedHandler, true);
+                }
 
                 // Setup mutation observer to refresh references when DOM changes
                 const observer = new MutationObserver((mutations) => {

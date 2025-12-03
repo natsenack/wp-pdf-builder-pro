@@ -371,6 +371,22 @@
             }
         }, 1000);
 
+        // Test dynamique: remplacer le container des onglets après un délai (simule un rendu SPA/React)
+        setTimeout(function() {
+            try {
+                const tabsContainer = document.getElementById('pdf-builder-tabs');
+                if (tabsContainer) {
+                    tabsContainer.innerHTML = `
+                        <a href="#general" class="nav-tab nav-tab-active" data-tab="general">Général (R)</a>
+                        <a href="#licence" class="nav-tab" data-tab="licence">Licence (R)</a>
+                        <a href="#systeme" class="nav-tab" data-tab="systeme">Système (R)</a>
+                        <a href="#acces" class="nav-tab" data-tab="acces">Accès (R)</a>
+                    `;
+                    addLog('Container des onglets remplacé dynamiquement (test)', 'warning');
+                }
+            } catch(e) { addLog('Erreur test dynamique: ' + (e.message || e), 'error'); }
+        }, 2000);
+
     })();
     </script>
 
