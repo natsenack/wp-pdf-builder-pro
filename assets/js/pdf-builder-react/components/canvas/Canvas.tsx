@@ -2837,10 +2837,8 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
 
   // Calculate canvas display size based on zoom
   const zoomScale = state.canvas.zoom / 100;
-  const maxDisplayWidth = 1200;
-  const maxDisplayHeight = 800;
-  const displayWidth = Math.min(width * zoomScale, maxDisplayWidth);
-  const displayHeight = Math.min(height * zoomScale, maxDisplayHeight);
+  const displayWidth = width * zoomScale;
+  const displayHeight = height * zoomScale;
 
   debugLog(`[Canvas] Rendering canvas element - Display size: ${displayWidth}x${displayHeight}, Border: ${borderStyle}, Drag over: ${isDragOver}`);
 
@@ -2866,11 +2864,7 @@ export const Canvas = function Canvas({ width, height, className }: CanvasProps)
           cursor: 'crosshair',
           backgroundColor: canvasSettings?.canvasBackgroundColor || '#ffffff',
           boxShadow: canvasSettings?.shadowEnabled ? '2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)' : 'none',
-          transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-          position: 'relative',
-          maxWidth: '100%',
-          maxHeight: '100%',
-          objectFit: 'contain'
+          transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
         }}
       />
       {contextMenu.isVisible && (

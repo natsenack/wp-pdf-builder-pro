@@ -310,13 +310,12 @@ class AjaxHandler
 
             // Vérifier le nonce depuis les paramètres GET ou POST
             $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
-            if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
-                $this->debug_log('ajaxGetTemplate: Invalid nonce: ' . $nonce);
+            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
+            if (!wp_verify_nonce($nonce, 'pdf_builder_template_' . $template_id)) {
+                $this->debug_log('ajaxGetTemplate: Invalid nonce: ' . $nonce . ' for template_id: ' . $template_id);
                 wp_send_json_error('Nonce invalide');
                 return;
             }
-
-            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
             $this->debug_log('ajaxGetTemplate: Template ID = ' . $template_id);
 
             if (!$template_id) {

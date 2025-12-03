@@ -219,12 +219,10 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 backgroundColor: canvasSettings.containerBackgroundColor || '#f8f8f8',
                 border: '1px solid #e0e0e0',
                 borderRadius: '4px',
-                overflow: 'hidden',
+                overflow: 'visible',
                 position: 'relative',
                 paddingTop: '20px',
-                paddingBottom: '20px',
-                maxWidth: '100%',
-                maxHeight: '100%'
+                paddingBottom: '20px'
               }}
             >
               {/* Indicateur de dimensions avec format et DPI */}
