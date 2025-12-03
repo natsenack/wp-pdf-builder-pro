@@ -194,11 +194,8 @@ if (function_exists('add_action')) {
  * Enregistrer les handlers AJAX
  */
 function pdf_builder_register_ajax_handlers() {
-    // Initialiser tous les handlers AJAX des paramètres
-    pdf_builder_initialize_all_settings_handlers();
-
-    // Le nouveau système AJAX gère maintenant tous les handlers
-    // Les anciens handlers sont conservés pour la compatibilité mais redirigés vers le nouveau système
+    // Simplified AJAX handlers registration - complex factory system removed
+    // All handlers are now registered directly without factory initialization
 
     // Handlers principaux gérés par PDF_Builder_Ajax_Handler
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
