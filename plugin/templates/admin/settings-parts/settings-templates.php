@@ -7,7 +7,6 @@
  */
 
 require_once __DIR__ . '/settings-helpers.php';
- */
 
 // =============================================================================
 // CLASSE UTILITAIRE POUR LA GESTION DES STATUTS ET PLUGINS
