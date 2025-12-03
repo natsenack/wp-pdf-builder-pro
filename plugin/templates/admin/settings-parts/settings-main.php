@@ -52,12 +52,35 @@ $settings = get_option('pdf_builder_settings', array());
 
     <!-- Fallback minimal pour navigation des onglets: exécuté seulement si le script principal ne s'est pas chargé -->
     <script>
+    // LOGS JS DIRECTS DANS LE HTML POUR DIAGNOSTIC
+    console.log('📄 PDF Builder - PAGE HTML CHARGÉE - settings-main.php');
+    console.log('📄 PDF Builder - Vérification éléments DOM au chargement HTML:', {
+        wrapper: !!document.getElementById('pdf-builder-settings-wrapper'),
+        tabs: !!document.getElementById('pdf-builder-tabs'),
+        content: !!document.getElementById('pdf-builder-tab-content'),
+        navTabs: document.querySelectorAll('#pdf-builder-tabs .nav-tab').length,
+        tabContents: document.querySelectorAll('#pdf-builder-tab-content .tab-content').length
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('📄 PDF Builder - DOM CONTENT LOADED - HTML ready');
+        
+        // Vérifier que les scripts externes sont chargés
+        setTimeout(function() {
+            console.log('📄 PDF Builder - TIMEOUT CHECK - Scripts externes chargés?', {
+                pdfBuilderConfig: typeof PDF_BUILDER_CONFIG !== 'undefined',
+                debug: !!(typeof PDF_BUILDER_CONFIG !== 'undefined' && PDF_BUILDER_CONFIG.debug),
+                tabsInitialized: !!window.PDF_BUILDER_TABS_INITIALIZED
+            });
+        }, 200);
+    });
+    
     (function() {
         // Si le script en file est chargé, ne rien faire
         if (typeof window.PDF_BUILDER_CONFIG !== 'undefined') return;
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.warn('PDF Builder: Script principal non détecté — activation du fallback minimal');
+            console.warn('📄 PDF Builder: Script principal non détecté — activation du fallback minimal');
 
             const tabsContainer = document.getElementById('pdf-builder-tabs');
             const contentContainer = document.getElementById('pdf-builder-tab-content');
@@ -101,7 +124,7 @@ $js_config = array(
 
 // Enqueue jQuery d'abord, puis notre script
 wp_enqueue_script('jquery');
-$script_path = plugins_url('/assets/js/settings-tabs.js', dirname(dirname(dirname(dirname(__FILE__)))));
+$script_path = plugins_url('settings-tabs.js', __FILE__); // Même dossier que settings-main.php
 error_log('PDF Builder: Enqueue script path: ' . $script_path);
 wp_enqueue_script('pdf-builder-settings-tabs', $script_path, array('jquery'), time(), true);
 // Localiser la config APRES enqueue mais AVANT le script se charge

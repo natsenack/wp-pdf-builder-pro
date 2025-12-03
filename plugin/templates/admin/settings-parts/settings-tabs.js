@@ -22,25 +22,25 @@ console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
         const container = document.getElementById('pdf-builder-settings-wrapper');
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
-        
+
         console.log('PDF Builder - DIAGNOSTIC DES ÉLÉMENTS DOM (PLUGIN):');
         console.log('  - Container principal:', container ? '✅ Trouvé' : '❌ Non trouvé');
         console.log('  - Container onglets:', tabsContainer ? '✅ Trouvé' : '❌ Non trouvé');
         console.log('  - Container contenu:', contentContainer ? '✅ Trouvé' : '❌ Non trouvé');
-        
+
         if (tabsContainer) {
             const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
             if (DEBUG) console.log('  - Boutons onglets trouvés:', tabButtons.length);
-            
+
             tabButtons.forEach(function(btn, index) {
                 console.log('    ' + (index + 1) + '. ' + btn.textContent.trim() + ' (data-tab: ' + btn.getAttribute('data-tab') + ')');
             });
         }
-        
+
         if (contentContainer) {
             const tabContents = contentContainer.querySelectorAll('.tab-content');
             if (DEBUG) console.log('  - Contenus onglets trouvés:', tabContents.length);
-            
+
             tabContents.forEach(function(content, index) {
                 console.log('    ' + (index + 1) + '. #' + content.id + ' - ' + (content.classList.contains('active') ? 'ACTIF' : 'inactif'));
             });
@@ -50,7 +50,7 @@ console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
     // --- copy the same main script to keep it independent of the root build ---
     function switchTab(tabId) {
         console.log('PDF Builder - SWITCH TAB: Début du changement vers "' + tabId + '"');
-        
+
         const tabButtons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
         const tabContents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
 
@@ -58,24 +58,24 @@ console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
         const currentActiveContent = document.querySelector('#pdf-builder-tab-content .tab-content.active');
         console.log('PDF Builder - État actuel - Bouton actif:', currentActiveBtn ? currentActiveBtn.getAttribute('data-tab') : 'aucun');
         console.log('PDF Builder - État actuel - Contenu actif:', currentActiveContent ? currentActiveContent.id : 'aucun');
-        
+
         console.log('PDF Builder - Désactivation de tous les onglets...');
         tabButtons.forEach(function(btn, index) {
             const wasActive = btn.classList.contains('nav-tab-active');
             btn.classList.remove('nav-tab-active');
             console.log('  Bouton ' + (index + 1) + ' ("' + btn.getAttribute('data-tab') + '"): ' + (wasActive ? 'était actif' : 'inactif') + ' -> désactivé');
         });
-        
+
         tabContents.forEach(function(content, index) {
             const wasActive = content.classList.contains('active');
             content.classList.remove('active');
             console.log('  Contenu ' + (index + 1) + ' ("' + content.id + '"): ' + (wasActive ? 'était actif' : 'inactif') + ' -> désactivé');
         });
-        
+
         console.log('PDF Builder - Activation de l\'onglet cible "' + tabId + '"...');
         const targetBtn = document.querySelector('[data-tab="' + tabId + '"]');
         let targetContent = document.getElementById(tabId) || document.getElementById('tab-' + tabId);
-        
+
         if (targetBtn) {
             targetBtn.classList.add('nav-tab-active');
             console.log('  ✅ Bouton trouvé et activé: "' + targetBtn.textContent.trim() + '"');
@@ -83,7 +83,7 @@ console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
             console.error('  ❌ ERREUR: Bouton avec data-tab="' + tabId + '" non trouvé!');
             console.log('  Boutons disponibles:', Array.from(tabButtons).map(btn => btn.getAttribute('data-tab')));
         }
-        
+
         if (targetContent) {
             targetContent.classList.add('active');
             console.log('  ✅ Contenu trouvé et activé: "#' + targetContent.id + '"');
@@ -91,16 +91,16 @@ console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
             console.error('  ❌ ERREUR: Contenu avec id="' + tabId + '" ou "tab-' + tabId + '" non trouvé!');
             console.log('  Contenus disponibles:', Array.from(tabContents).map(content => content.id));
         }
-        
+
         try {
             localStorage.setItem('pdf_builder_active_tab', tabId);
             console.log('PDF Builder - Onglet "' + tabId + '" sauvegardé en localStorage');
         } catch(e) {
             console.warn('PDF Builder - Impossible de sauvegarder en localStorage:', e.message);
         }
-        
+
         console.log('PDF Builder - SWITCH TAB: Terminé pour "' + tabId + '"');
-        
+
         // Vérification finale
         const newActiveBtn = document.querySelector('#pdf-builder-tabs .nav-tab.nav-tab-active');
         const newActiveContent = document.querySelector('#pdf-builder-tab-content .tab-content.active');
@@ -111,13 +111,13 @@ console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
     function handleTabClick(event) {
         console.log('PDF Builder - CLIC DÉTECTÉ SUR ONGLET:', event.target);
         console.log('PDF Builder - Event type:', event.type, 'isTrusted:', event.isTrusted);
-        
+
         // Use currentTarget to always reference the element the listener was attached to
         const el = event.currentTarget || event.target;
         console.log('PDF Builder - Élément cliqué (currentTarget):', el);
         console.log('PDF Builder - data-tab attribute:', el.getAttribute('data-tab'));
         console.log('PDF Builder - Texte du bouton:', el.textContent ? el.textContent.trim() : 'N/A');
-        
+
         // Vérifier les styles CSS qui pourraient bloquer les clics
         const computedStyle = window.getComputedStyle(el);
         console.log('PDF Builder - Styles CSS de l\'élément cliqué:', {
@@ -128,7 +128,7 @@ console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
             zIndex: computedStyle.zIndex,
             position: computedStyle.position
         });
-        
+
         // Vérifier si l'élément est dans le viewport et cliquable
         const rect = el.getBoundingClientRect();
         console.log('PDF Builder - Position et taille de l\'élément:', {
@@ -138,7 +138,7 @@ console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
             height: rect.height,
             visible: rect.width > 0 && rect.height > 0 && rect.top >= 0 && rect.left >= 0
         });
-        
+
         const tabId = el.getAttribute('data-tab');
         if (!tabId) {
             console.error('PDF Builder - ERREUR: Aucun attribut data-tab trouvé sur l\'élément cliqué!');
@@ -146,17 +146,17 @@ console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
             console.log('PDF Builder - Attributs disponibles:', Array.from(el.attributes).map(attr => attr.name + '=' + attr.value));
             return;
         }
-        
+
         console.log('PDF Builder - ONGLET CLIQUE: "' + tabId + '"');
-        
+
         // Prevent the default navigation and propagation after we know we have a data-tab
         event.preventDefault();
         event.stopPropagation();
         console.log('PDF Builder - Event preventDefault/stopPropagation appliqués');
-        
+
         console.log('PDF Builder - LANCEMENT du switch vers "' + tabId + '"');
         switchTab(tabId);
-        
+
         console.log('PDF Builder - CLIC TRAITÉ POUR ONGLET "' + tabId + '"');
     }
 
