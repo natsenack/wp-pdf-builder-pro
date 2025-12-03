@@ -1,24 +1,24 @@
 <?php // Acces tab content - Updated: 2025-11-18 20:20:00
 
-require_once __DIR__ . '/settings-helpers.php';
+    require_once __DIR__ . '/settings-helpers.php';
 
-global $wp_roles;
-$all_roles = $wp_roles->roles;
-$allowed_roles = pdf_builder_safe_get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
-if (!is_array($allowed_roles)) {
-    $allowed_roles = ['administrator', 'editor', 'shop_manager'];
-}
+    global $wp_roles;
+    $all_roles = $wp_roles->roles;
+    $allowed_roles = pdf_builder_safe_get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
+    if (!is_array($allowed_roles)) {
+        $allowed_roles = ['administrator', 'editor', 'shop_manager'];
+    }
 
-$role_descriptions = [
-    'administrator' => 'Accès complet à toutes les fonctionnalités',
-    'editor' => 'Peut publier et gérer les articles',
-    'author' => 'Peut publier ses propres articles',
-    'contributor' => 'Peut soumettre des articles pour révision',
-    'subscriber' => 'Peut uniquement lire les articles',
-    'shop_manager' => 'Gestionnaire de boutique WooCommerce',
-    'customer' => 'Client WooCommerce',
-];
-?>
+    $role_descriptions = [
+        'administrator' => 'Accès complet à toutes les fonctionnalités',
+        'editor' => 'Peut publier et gérer les articles',
+        'author' => 'Peut publier ses propres articles',
+        'contributor' => 'Peut soumettre des articles pour révision',
+        'subscriber' => 'Peut uniquement lire les articles',
+        'shop_manager' => 'Gestionnaire de boutique WooCommerce',
+        'customer' => 'Client WooCommerce',
+    ];
+    ?>
             <h2>👥 Gestion des Rôles et Permissions</h2>
 
             <!-- Message de confirmation que l'onglet est chargé -->
@@ -123,5 +123,5 @@ $role_descriptions = [
 
             </div> <!-- Fin disposition en colonnes -->
 
-</php>
+</div>
 

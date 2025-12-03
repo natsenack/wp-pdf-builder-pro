@@ -95,7 +95,7 @@ try {
             console.log('✅ PDF Builder: Onglet activé visuellement', tabId);
 
             // Activer le contenu correspondant
-            const content = document.getElementById(tabId);
+            const content = document.getElementById('tab-content-' + tabId);
             if (content) {
                 content.classList.add('active');
                 console.log('✅ PDF Builder: Contenu activé', tabId);
@@ -119,7 +119,7 @@ try {
 
             if (savedTab) {
                 const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
-                const savedContent = document.getElementById(savedTab);
+                const savedContent = document.getElementById('tab-content-' + savedTab);
                 console.log('📂 PDF Builder: Éléments trouvés pour restauration', {
                     savedTabElement: !!savedTabElement,
                     savedContent: !!savedContent,

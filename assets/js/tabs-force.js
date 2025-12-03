@@ -35,7 +35,7 @@
         
         // Activer l'onglet cible
         const targetBtn = document.querySelector(`[data-tab="${tabId}"]`);
-        const targetContent = document.getElementById(tabId) || document.getElementById(`tab-${tabId}`);
+        const targetContent = document.getElementById('tab-content-' + tabId) || document.getElementById(tabId) || document.getElementById(`tab-${tabId}`);
         
         if (targetBtn) {
             targetBtn.classList.add('nav-tab-active');
