@@ -1331,6 +1331,14 @@ class PdfBuilderAdmin
 
         // Charger le script JavaScript pour la page de paramètres
         if ($hook === 'pdf-builder_page_pdf-builder-settings') {
+            // ✅ Charger le CSS des onglets
+            wp_enqueue_style(
+                'pdf-builder-settings',
+                PDF_BUILDER_PRO_ASSETS_URL . 'css/settings.css',
+                [],
+                PDF_BUILDER_PRO_VERSION
+            );
+
             // NOTE: Notification UI assets have been removed and are not enqueued
             wp_enqueue_script(
                 'pdf-builder-settings-page',
