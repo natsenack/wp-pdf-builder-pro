@@ -42,7 +42,7 @@ function pdf_builder_load_settings_assets($hook) {
         PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js',
         array('jquery'),
         PDF_BUILDER_VERSION . '-' . time(),
-        false
+        false // Chargé dans le header pour une exécution précoce
     );
 }
 

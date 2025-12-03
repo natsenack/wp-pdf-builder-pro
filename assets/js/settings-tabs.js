@@ -1,5 +1,5 @@
 /**
- * Paramètres PDF Builder Pro - Navigation des onglets (Version simplifiée)
+ * Paramètres PDF Builder Pro - Navigation des onglets
  */
 
 (function() {
@@ -14,40 +14,23 @@
         };
     }
 
-    // Système de navigation des onglets simplifié
+    // Système de navigation des onglets
     function initTabs() {
-        console.log('🔧 PDF BUILDER DEBUG: initTabs() called');
-
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
 
-        console.log('📍 tabsContainer:', tabsContainer);
-        console.log('📍 contentContainer:', contentContainer);
-
         if (!tabsContainer || !contentContainer) {
-            console.log('❌ PDF Builder: Conteneurs non trouvés');
             return;
         }
 
-        console.log('✅ PDF Builder: Conteneurs trouvés, ajout des gestionnaires');
-
         // Gestionnaire de clic pour les onglets
         tabsContainer.addEventListener('click', function(e) {
-            console.log('🖱️ PDF BUILDER DEBUG: Click detected on tabs container');
-
             const tab = e.target.closest('.nav-tab');
-            console.log('🎯 tab element:', tab);
-
-            if (!tab) {
-                console.log('❌ No .nav-tab element found');
-                return;
-            }
+            if (!tab) return;
 
             e.preventDefault();
 
             const tabId = tab.getAttribute('data-tab');
-            console.log('📋 tabId:', tabId);
-
             if (!tabId) return;
 
             // Désactiver tous les onglets
@@ -66,7 +49,7 @@
             tab.setAttribute('aria-selected', 'true');
 
             // Activer le contenu correspondant
-            const content = document.getElementById('tab-content-' + tabId);
+            const content = document.getElementById(tabId);
             if (content) {
                 content.classList.add('active');
             }
@@ -84,7 +67,7 @@
             const savedTab = localStorage.getItem('pdf_builder_active_tab');
             if (savedTab) {
                 const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
-                const savedContent = document.getElementById('tab-content-' + savedTab);
+                const savedContent = document.getElementById(savedTab);
                 if (savedTabElement && savedContent) {
                     savedTabElement.click();
                     return;
