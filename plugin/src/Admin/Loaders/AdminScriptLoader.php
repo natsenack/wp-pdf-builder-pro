@@ -147,18 +147,39 @@ class AdminScriptLoader
 
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
-        // Script d'initialisation avec debug
+        // Script d'initialisation avec debug - exécuté immédiatement après la localisation
         $init_script = "
         (function() {
-            console.log('🔧 [WP] Localized data:', window.pdfBuilderData);
-            if (window.pdfBuilderData) {
-                console.log('✅ [WP] ajaxUrl:', window.pdfBuilderData.ajaxUrl);
-                console.log('✅ [WP] nonce:', window.pdfBuilderData.nonce);
-            } else {
-                console.error('❌ [WP] pdfBuilderData not found on window');
-            }
+            console.log('🔧 [WP] Script d\'initialisation exécuté');
+            console.log('🔧 [WP] Vérification window.pdfBuilderData dans 100ms...');
+            setTimeout(function() {
+                console.log('🔧 [WP] Localized data après timeout:', window.pdfBuilderData);
+                if (window.pdfBuilderData) {
+                    console.log('✅ [WP] ajaxUrl:', window.pdfBuilderData.ajaxUrl);
+                    console.log('✅ [WP] nonce:', window.pdfBuilderData.nonce);
+                    console.log('✅ [WP] version:', window.pdfBuilderData.version);
+                    console.log('✅ [WP] templateId:', window.pdfBuilderData.templateId);
+                } else {
+                    console.error('❌ [WP] pdfBuilderData not found on window après timeout');
+                    console.log('❌ [WP] window keys:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
+                }
+            }, 100);
         })();
         ";
         wp_add_inline_script('pdf-builder-react', $init_script, 'after');
+
+        // Script de diagnostic supplémentaire qui s'exécute plus tôt
+        $diagnostic_script = "
+        jQuery(document).ready(function($) {
+            console.log('🔧 [WP] Document ready - vérification pdfBuilderData');
+            setTimeout(function() {
+                console.log('🔧 [WP] pdfBuilderData dans document ready:', window.pdfBuilderData);
+                if (!window.pdfBuilderData) {
+                    console.error('❌ [WP] pdfBuilderData toujours undefined dans document ready');
+                }
+            }, 500);
+        });
+        ";
+        wp_add_inline_script('jquery', $diagnostic_script, 'after');
     }
 }
