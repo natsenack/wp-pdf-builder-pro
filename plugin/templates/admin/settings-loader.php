@@ -50,6 +50,9 @@ function pdf_builder_load_settings_assets($hook) {
     // Charger le JavaScript pour la navigation par onglets
     $script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js';
     
+    // LOG AVANT L'ENREGISTREMENT
+    error_log('🔧 PDF BUILDER ASSETS: Tentative d\'enregistrement du script: ' . $script_url);
+    
     wp_enqueue_script(
         'pdf-builder-settings-tabs',
         $script_url,
@@ -58,8 +61,15 @@ function pdf_builder_load_settings_assets($hook) {
         true
     );
 
-    // LOG POUR CONFIRMER L'ENREGISTREMENT DU SCRIPT
-    error_log('📜 PDF BUILDER ASSETS: Script settings-tabs.js enregistré pour ' . $hook);
+    // LOG APRÈS L'ENREGISTREMENT
+    error_log('✅ PDF BUILDER ASSETS: Script enregistré avec succès: pdf-builder-settings-tabs');
+    
+    // AJOUTER UN SCRIPT INLINE POUR VÉRIFIER LE CHARGEMENT
+    wp_add_inline_script('pdf-builder-settings-tabs', '
+        console.log("🔥 PDF BUILDER INLINE: Script settings-tabs.js chargé via wp_enqueue_script");
+        console.log("📍 Script URL:", "' . $script_url . '");
+        console.log("📅 Version:", "' . PDF_BUILDER_VERSION . '-' . time() . '");
+    ');
 }
 
 // Enregistrer le hook pour charger les assets

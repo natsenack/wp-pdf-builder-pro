@@ -4,9 +4,18 @@
 
 // DEBUG: Force console output to verify script is loaded
 console.log('🔥 PDF BUILDER DEBUG: settings-tabs.js LOADED - ' + new Date().toLocaleTimeString() + ' - CACHE BUSTER: ' + Date.now());
+console.log('📍 PDF BUILDER DEBUG: Script execution started');
+
+// Vérifier si jQuery est disponible
+console.log('📍 PDF BUILDER DEBUG: jQuery available:', typeof jQuery !== 'undefined' ? 'YES' : 'NO');
+
+// Vérifier si WordPress est disponible
+console.log('📍 PDF BUILDER DEBUG: WordPress available:', typeof wp !== 'undefined' ? 'YES' : 'NO');
 
 (function() {
     'use strict';
+
+    console.log('🔧 PDF BUILDER DEBUG: IIFE (Immediately Invoked Function Expression) started');
 
     // Définition de PDF_BUILDER_CONFIG si elle n'existe pas
     if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
