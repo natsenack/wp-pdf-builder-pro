@@ -110,6 +110,7 @@ console.log('🔍 PDF BUILDER DEBUG: Vérification immédiate du bouton flottant
 console.log('  - Bouton save-all:', document.getElementById('pdf-builder-save-all'));
 console.log('  - Container flottant:', document.getElementById('pdf-builder-save-floating'));
 console.log('  - Body children count:', document.body.children.length);
+alert('🚨 DEBUG: Bouton flottant chargé dans HTML - Vérifiez la console pour les détails');
 </script>
 
 <!-- Updated: 2025-12-03 16:00:00 - Bouton flottant ajouté -->
