@@ -26,6 +26,30 @@ $nonce = wp_create_nonce('pdf_builder_nonce');
 
 // DEBUG: Force output to verify file is loaded
 echo "<script>console.log('🔥 PDF BUILDER DEBUG: settings-main.php LOADED - " . date('H:i:s') . " - CACHE BUSTER: " . time() . "');</script>";
+echo "<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 PDF BUILDER DEBUG: DOM loaded, checking tabs...');
+    const tabsContainer = document.getElementById('pdf-builder-tabs');
+    const contentContainer = document.getElementById('pdf-builder-tab-content');
+    console.log('📍 Tabs container:', tabsContainer);
+    console.log('📍 Content container:', contentContainer);
+    if (tabsContainer) {
+        const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
+        console.log('📍 Tab buttons found:', tabButtons.length);
+        tabButtons.forEach((btn, i) => {
+            console.log('  ' + (i+1) + '. ' + btn.textContent + ' (data-tab: ' + btn.getAttribute('data-tab') + ')');
+        });
+    }
+    if (contentContainer) {
+        const tabContents = contentContainer.querySelectorAll('.tab-content');
+        console.log('📍 Tab contents found:', tabContents.length);
+        tabContents.forEach((content, i) => {
+            console.log('  ' + (i+1) + '. #' + content.id + ' - ' + (content.classList.contains('active') ? 'ACTIVE' : 'inactive'));
+        });
+    }
+    console.log('🔧 PDF BUILDER DEBUG: Checking if PDFBuilderTabsAPI exists:', typeof window.PDFBuilderTabsAPI);
+});
+</script>";
 ?>
 <div class="wrap">
 <h1>PDF Builder Pro Settings</h1>

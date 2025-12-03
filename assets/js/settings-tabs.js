@@ -2,6 +2,9 @@
  * Paramètres PDF Builder Pro - Navigation des onglets (Version simplifiée)
  */
 
+// DEBUG: Force console output to verify script is loaded
+console.log('🔥 PDF BUILDER DEBUG: settings-tabs.js LOADED - ' + new Date().toLocaleTimeString() + ' - CACHE BUSTER: ' + Date.now());
+
 (function() {
     'use strict';
 
@@ -16,22 +19,38 @@
 
     // Système de navigation des onglets simplifié
     function initTabs() {
+        console.log('🔧 PDF BUILDER DEBUG: initTabs() called');
+
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
 
+        console.log('📍 tabsContainer:', tabsContainer);
+        console.log('📍 contentContainer:', contentContainer);
+
         if (!tabsContainer || !contentContainer) {
-            console.log('PDF Builder: Conteneurs non trouvés');
+            console.log('❌ PDF Builder: Conteneurs non trouvés');
             return;
         }
 
+        console.log('✅ PDF Builder: Conteneurs trouvés, ajout des gestionnaires');
+
         // Gestionnaire de clic pour les onglets
         tabsContainer.addEventListener('click', function(e) {
+            console.log('🖱️ PDF BUILDER DEBUG: Click detected on tabs container');
+
             const tab = e.target.closest('.nav-tab');
-            if (!tab) return;
+            console.log('🎯 tab element:', tab);
+
+            if (!tab) {
+                console.log('❌ No .nav-tab element found');
+                return;
+            }
 
             e.preventDefault();
 
             const tabId = tab.getAttribute('data-tab');
+            console.log('📋 tabId:', tabId);
+
             if (!tabId) return;
 
             // Désactiver tous les onglets
