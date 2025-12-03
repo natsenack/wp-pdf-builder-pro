@@ -1,11 +1,12 @@
 # Script de deploiement simplifie - Envoie UNIQUEMENT les fichiers modifies
+# NOTE: Mode 'test' retiré — ce script effectue désormais le déploiement réel FTP par défaut.
 #commande possible - a lire absolument
 # Usage: .\deploy-simple.ps1
 #.\build\deploy-simple.ps1
 
 param(
     [Parameter(Mandatory=$false)]
-    [ValidateSet("test", "plugin")]
+    [ValidateSet("plugin")]
     [string]$Mode = "plugin",
     [switch]$SkipConnectionTest,
     [switch]$FastMode
@@ -145,10 +146,7 @@ $uploadCount = 0
 $errorCount = 0
 $startTime = Get-Date
 
-if ($Mode -eq "test") {
-    Write-Host "`nMODE TEST - Pas d'upload reel" -ForegroundColor Yellow
-} else {
-    Write-Host "`n3 Upload FTP des fichiers modifies..." -ForegroundColor Magenta
+Write-Host "`n3 Upload FTP des fichiers modifies..." -ForegroundColor Magenta
 
     # Test connexion FTP rapide (optionnel - skip si -SkipConnectionTest)
     if (!$SkipConnectionTest) {
@@ -403,7 +401,6 @@ if ($Mode -eq "test") {
             Remove-Job $job
         }
     }
-}
 
 $totalTime = (Get-Date) - $startTime
 Write-Host "`nUpload termine:" -ForegroundColor White
@@ -519,11 +516,7 @@ Write-Host "Resume:" -ForegroundColor Cyan
 Write-Host "   Compilation: OK" -ForegroundColor Green
 
 # Afficher le statut FTP selon le mode
-if ($Mode -eq "test") {
-    Write-Host "   Upload FTP: TEST (pas d'upload reel)" -ForegroundColor Yellow
-} else {
-    Write-Host "   Upload FTP: OK ($uploadCount fichiers)" -ForegroundColor Green
-}
+Write-Host "   Upload FTP: OK ($uploadCount fichiers)" -ForegroundColor Green
 
 # Afficher le statut Git selon les résultats
 if ($commitCreated -and $pushSuccess) {

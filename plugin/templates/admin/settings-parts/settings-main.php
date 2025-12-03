@@ -8,6 +8,9 @@ $settings = get_option('pdf_builder_settings', array());
         <h1>Paramètres PDF Builder Pro</h1>
     </header>
 
+    <!-- Monitor root: track JS event listener additions and stopPropagation usage -->
+    <script src="<?php echo plugin_dir_url( __FILE__ ) . '../../../assets/js/tabs-root-monitor.js'; ?>" defer></script>
+
     <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">Général</a>
         <a href="#licence" class="nav-tab" data-tab="licence" role="tab" aria-selected="false" aria-controls="licence">Licence</a>
