@@ -19,25 +19,25 @@ $settings = get_option('pdf_builder_settings', array());
     <!-- LOG APRES HEADER -->
     <script>console.log('📍 LOG APRES HEADER - HTML parsing OK jusqu\'ici');</script>
 
-    <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs">
-        <a href="#general" class="nav-tab nav-tab-active" data-tab="general">General</a>
-        <a href="#licence" class="nav-tab" data-tab="licence">Licence</a>
-        <a href="#systeme" class="nav-tab" data-tab="systeme">Systeme</a>
-        <a href="#acces" class="nav-tab" data-tab="acces">Acces</a>
-        <a href="#securite" class="nav-tab" data-tab="securite">Securite</a>
-        <a href="#pdf" class="nav-tab" data-tab="pdf">PDF</a>
-        <a href="#contenu" class="nav-tab" data-tab="contenu">Contenu</a>
-        <a href="#templates" class="nav-tab" data-tab="templates">Modeles</a>
-        <a href="#developpeur" class="nav-tab" data-tab="developpeur">Developpeur</a>
+    <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
+        <a href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">Général</a>
+        <a href="#licence" class="nav-tab" data-tab="licence" role="tab" aria-selected="false" aria-controls="licence">Licence</a>
+        <a href="#systeme" class="nav-tab" data-tab="systeme" role="tab" aria-selected="false" aria-controls="systeme">Système</a>
+        <a href="#acces" class="nav-tab" data-tab="acces" role="tab" aria-selected="false" aria-controls="acces">Accès</a>
+        <a href="#securite" class="nav-tab" data-tab="securite" role="tab" aria-selected="false" aria-controls="securite">Sécurité</a>
+        <a href="#pdf" class="nav-tab" data-tab="pdf" role="tab" aria-selected="false" aria-controls="pdf">PDF</a>
+        <a href="#contenu" class="nav-tab" data-tab="contenu" role="tab" aria-selected="false" aria-controls="contenu">Contenu</a>
+        <a href="#templates" class="nav-tab" data-tab="templates" role="tab" aria-selected="false" aria-controls="templates">Modèles</a>
+        <a href="#developpeur" class="nav-tab" data-tab="developpeur" role="tab" aria-selected="false" aria-controls="developpeur">Développeur</a>
     </nav>
 
     <!-- LOG APRES NAV -->
     <script>console.log('📍 LOG APRES NAV - HTML parsing OK jusqu\'ici');</script>
 
-    <section id="pdf-builder-tab-content" class="tab-content-wrapper">
+    <section id="pdf-builder-tab-content" class="tab-content-wrapper" role="tabpanel" aria-live="polite">
         <!-- LOG AVANT GENERAL -->
         <script>console.log('📍 LOG AVANT GENERAL - Inclusion du fichier general');</script>
-        <div id="general" class="tab-content active">
+        <div id="general" class="tab-content active" role="tabpanel" aria-labelledby="tab-general">
             <?php require_once 'settings-general.php'; ?>
         </div>
         <!-- LOG APRES GENERAL -->
@@ -45,7 +45,7 @@ $settings = get_option('pdf_builder_settings', array());
 
         <!-- LOG AVANT LICENCE -->
         <script>console.log('📍 LOG AVANT LICENCE - Inclusion du fichier licence');</script>
-        <div id="licence" class="tab-content">
+        <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
             <?php require_once 'settings-licence.php'; ?>
         </div>
         <!-- LOG APRES LICENCE -->
@@ -53,27 +53,27 @@ $settings = get_option('pdf_builder_settings', array());
 
         <!-- LOG AVANT SYSTEME -->
         <script>console.log('📍 LOG AVANT SYSTEME - Inclusion du fichier systeme');</script>
-        <div id="systeme" class="tab-content">
+        <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
             <?php require_once 'settings-systeme.php'; ?>
         </div>
         <!-- LOG APRES SYSTEME -->
         <script>console.log('📍 LOG APRES SYSTEME - Fichier systeme inclus');</script>
-        <div id="acces" class="tab-content">
+        <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
             <?php require_once 'settings-acces.php'; ?>
         </div>
-        <div id="securite" class="tab-content">
+        <div id="securite" class="tab-content" role="tabpanel" aria-labelledby="tab-securite">
             <?php require_once 'settings-securite.php'; ?>
         </div>
-        <div id="pdf" class="tab-content">
+        <div id="pdf" class="tab-content" role="tabpanel" aria-labelledby="tab-pdf">
             <?php require_once 'settings-pdf.php'; ?>
         </div>
-        <div id="contenu" class="tab-content">
+        <div id="contenu" class="tab-content" role="tabpanel" aria-labelledby="tab-contenu">
             <?php require_once 'settings-contenu.php'; ?>
         </div>
-        <div id="templates" class="tab-content">
+        <div id="templates" class="tab-content" role="tabpanel" aria-labelledby="tab-templates">
             <?php require_once 'settings-templates.php'; ?>
         </div>
-        <div id="developpeur" class="tab-content">
+        <div id="developpeur" class="tab-content" role="tabpanel" aria-labelledby="tab-developpeur">
             <?php require_once 'settings-developpeur.php'; ?>
         </div>
     </section>

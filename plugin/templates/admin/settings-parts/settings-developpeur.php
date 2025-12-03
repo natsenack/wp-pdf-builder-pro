@@ -1,5 +1,39 @@
 <?php // Developer tab content - Updated: 2025-11-18 20:20:00
 
+/**
+ * Safe wrapper for get_option that works even when WordPress is not fully loaded
+ */
+function pdf_builder_safe_pdf_builder_safe_get_option($option, $default = '') {
+    if (function_exists('get_option')) {
+        return pdf_builder_safe_get_option($option, $default);
+    }
+    return $default;
+}
+
+/**
+ * Safe wrapper for checked function
+ */
+function pdf_builder_safe_checked($checked, $current = true, $echo = true) {
+    if (function_exists('checked')) {
+        return checked($checked, $current, $echo);
+    }
+    $result = checked($checked, $current, false);
+    if ($echo) echo $result;
+    return $result;
+}
+
+/**
+ * Safe wrapper for selected function
+ */
+function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
+    if (function_exists('selected')) {
+        return selected($selected, $current, $echo);
+    }
+    $result = selected($selected, $current, false);
+    if ($echo) echo $result;
+    return $result;
+}
+
 // Variables nécessaires pour l'onglet développeur
 $license_test_mode = (isset($settings) && isset($settings['pdf_builder_license_test_mode_enabled'])) ? $settings['pdf_builder_license_test_mode_enabled'] : false;
 $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_test_key'])) ? $settings['pdf_builder_license_test_key'] : '';
@@ -643,7 +677,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                             <strong>Instructions :</strong><br>
                             1. Ouvrez l'éditeur PDF dans un nouvel onglet<br>
                             2. Cliquez sur "Tester FPS"<br>
-                            3. Observez le FPS affiché (devrait être proche de la cible configurée : <?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS)<br>
+                            3. Observez le FPS affiché (devrait être proche de la cible configurée : <?php echo intval(pdf_builder_safe_get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS)<br>
                             <strong>💡 Conseil :</strong> Utilisez les DevTools (F12 → Performance) pour un monitoring avancé
                         </div>
                         <p class="description">Teste la fluidité du canvas et vérifie que le FPS cible est atteint</p>
@@ -662,11 +696,11 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
                             • Upload max : <?php echo ini_get('upload_max_filesize'); ?><br>
                             • Post max : <?php echo ini_get('post_max_size'); ?><br>
                             <strong>Paramètres Performance :</strong><br>
-                            • FPS cible : <?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS<br>
-                            • Mémoire JS : <?php echo intval(get_option('pdf_builder_canvas_memory_limit_js', 256)); ?> MB<br>
-                            • Mémoire PHP : <?php echo intval(get_option('pdf_builder_canvas_memory_limit_php', 256)); ?> MB<br>
-                            • Lazy Loading Éditeur : <?php echo get_option('pdf_builder_canvas_lazy_loading_editor', '1') == '1' ? 'Activé' : 'Désactivé'; ?><br>
-                            • Lazy Loading Plugin : <?php echo get_option('pdf_builder_canvas_lazy_loading_plugin', '1') == '1' ? 'Activé' : 'Désactivé'; ?>
+                            • FPS cible : <?php echo intval(pdf_builder_safe_get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS<br>
+                            • Mémoire JS : <?php echo intval(pdf_builder_safe_get_option('pdf_builder_canvas_memory_limit_js', 256)); ?> MB<br>
+                            • Mémoire PHP : <?php echo intval(pdf_builder_safe_get_option('pdf_builder_canvas_memory_limit_php', 256)); ?> MB<br>
+                            • Lazy Loading Éditeur : <?php echo pdf_builder_safe_get_option('pdf_builder_canvas_lazy_loading_editor', '1') == '1' ? 'Activé' : 'Désactivé'; ?><br>
+                            • Lazy Loading Plugin : <?php echo pdf_builder_safe_get_option('pdf_builder_canvas_lazy_loading_plugin', '1') == '1' ? 'Activé' : 'Désactivé'; ?>
                         </div>
                         <p class="description">Affiche les informations système et configuration actuelle</p>
                     </td>
@@ -725,7 +759,7 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
 
             // Simuler un test FPS (en réalité, cela nécessiterait l'accès au canvas)
             setTimeout(function() {
-                const targetFps = <?php echo intval(get_option('pdf_builder_canvas_fps_target', 60)); ?>;
+                const targetFps = <?php echo intval(pdf_builder_safe_get_option('pdf_builder_canvas_fps_target', 60)); ?>;
                 const simulatedFps = Math.max(10, Math.min(targetFps + (Math.random() * 10 - 5), targetFps + 15));
 
                 if (simulatedFps >= targetFps - 5) {

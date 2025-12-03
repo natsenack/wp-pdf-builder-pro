@@ -1,4 +1,39 @@
-﻿<?php // Acces tab content - Updated: 2025-11-18 20:20:00 ?>
+<?php // Acces tab content - Updated: 2025-11-18 20:20:00
+
+/**
+ * Safe wrapper for get_option that works even when WordPress is not fully loaded
+ */
+function pdf_builder_safe_pdf_builder_safe_get_option($option, $default = '') {
+    if (function_exists('get_option')) {
+        return pdf_builder_safe_get_option($option, $default);
+    }
+    return $default;
+}
+
+/**
+ * Safe wrapper for checked function
+ */
+function pdf_builder_safe_pdf_builder_safe_checked($checked, $current = true, $echo = true) {
+    if (function_exists('checked')) {
+        return pdf_builder_safe_checked($checked, $current, $echo);
+    }
+    $result = pdf_builder_safe_checked($checked, $current, false);
+    if ($echo) echo $result;
+    return $result;
+}
+
+/**
+ * Safe wrapper for selected function
+ */
+function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
+    if (function_exists('selected')) {
+        return selected($selected, $current, $echo);
+    }
+    $result = selected($selected, $current, false);
+    if ($echo) echo $result;
+    return $result;
+}
+?>
             <h2>👥 Gestion des Rôles et Permissions</h2>
 
             <!-- Message de confirmation que l'onglet est chargé -->
@@ -9,7 +44,7 @@
             <?php
                 global $wp_roles;
                 $all_roles = $wp_roles->roles;
-                $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
+                $allowed_roles = pdf_builder_safe_get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
                 if (!is_array($allowed_roles)) {
                     $allowed_roles = ['administrator', 'editor', 'shop_manager'];
                 }
@@ -78,7 +113,7 @@
                                                 id="role_<?php echo esc_attr($role_key); ?>"
                                                 name="pdf_builder_allowed_roles[]"
                                                 value="<?php echo esc_attr($role_key); ?>"
-                                                <?php checked($is_selected); ?>
+                                                <?php pdf_builder_safe_checked($is_selected); ?>
                                                 <?php echo $is_admin ? 'disabled' : ''; ?> />
                                             <label for="role_<?php echo esc_attr($role_key); ?>" class="toggle-slider"></label>
                                         </div>

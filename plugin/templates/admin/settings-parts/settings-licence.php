@@ -1,4 +1,49 @@
-﻿<?php // Licence tab content - Updated: AJAX centralized 2025-12-02 ?>
+<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
+
+/**
+ * Safe wrapper for get_option that works even when WordPress is not fully loaded
+ */
+function pdf_builder_safe_pdf_builder_safe_get_option($option, $default = '') {
+    if (function_exists('get_option')) {
+        return pdf_builder_safe_get_option($option, $default);
+    }
+    return $default;
+}
+
+/**
+ * Safe wrapper for checked function
+ */
+function pdf_builder_safe_pdf_builder_safe_checked($checked, $current = true, $echo = true) {
+    if (function_exists('checked')) {
+        return pdf_builder_safe_checked($checked, $current, $echo);
+    }
+    $result = pdf_builder_safe_checked($checked, $current, false);
+    if ($echo) echo $result;
+    return $result;
+}
+
+/**
+ * Safe wrapper for selected function
+ */
+function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
+    if (function_exists('selected')) {
+        return selected($selected, $current, $echo);
+    }
+    $result = selected($selected, $current, false);
+    if ($echo) echo $result;
+    return $result;
+}
+
+/**
+ * Safe wrapper for esc_attr
+ */
+function pdf_builder_safe_pdf_builder_safe_esc_attr($text) {
+    if (function_exists('esc_attr')) {
+        return pdf_builder_safe_esc_attr($text);
+    }
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}
+?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
             <section id="licence-container" aria-label="Gestion de la Licence">
                 <h2 class="settings-page-title">🔐 Gestion de la Licence</h2>
@@ -6,13 +51,13 @@
                 
 
                 <?php
-                    $license_status = get_option('pdf_builder_license_status', 'free');
-                    $license_key = get_option('pdf_builder_license_key', '');
-                    $license_expires = get_option('pdf_builder_license_expires', '');
-                    $license_activated_at = get_option('pdf_builder_license_activated_at', '');
-                    $test_mode_enabled = get_option('pdf_builder_license_test_mode_enabled', false);
-                    $test_key = get_option('pdf_builder_license_test_key', '');
-                    $test_key_expires = get_option('pdf_builder_license_test_key_expires', '');
+                    $license_status = pdf_builder_safe_get_option('pdf_builder_license_status', 'free');
+                    $license_key = pdf_builder_safe_get_option('pdf_builder_license_key', '');
+                    $license_expires = pdf_builder_safe_get_option('pdf_builder_license_expires', '');
+                    $license_activated_at = pdf_builder_safe_get_option('pdf_builder_license_activated_at', '');
+                    $test_mode_enabled = pdf_builder_safe_get_option('pdf_builder_license_test_mode_enabled', false);
+                    $test_key = pdf_builder_safe_get_option('pdf_builder_license_test_key', '');
+                    $test_key_expires = pdf_builder_safe_get_option('pdf_builder_license_test_key_expires', '');
                     // Email notifications removed — no UI or settings for license expiration notifications
                     // is_premium si vraie licence OU si clé de test existe
                     $is_premium = ($license_status !== 'free' && $license_status !== 'expired') || (!empty($test_key));
@@ -798,7 +843,7 @@
                                 <td>
                                     <label class="toggle-switch">
                                         <input type="checkbox" id="license_email_reminders" name="license_email_reminders"
-                                            value="1" <?php checked(get_option('pdf_builder_license_email_reminders', '0'), '1'); ?> />
+                                            value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_license_email_reminders', '0'), '1'); ?> />
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Recevoir des rappels par email 30 jours, 7 jours et 1 jour avant l'expiration</p>
@@ -808,7 +853,7 @@
                                 <th scope="row"><label for="license_reminder_email">Adresse email</label></th>
                                 <td>
                                     <input type="email" id="license_reminder_email" name="license_reminder_email"
-                                        value="<?php echo esc_attr(get_option('pdf_builder_license_reminder_email', get_option('admin_email', ''))); ?>"
+                                        value="<?php echo pdf_builder_safe_esc_attr(pdf_builder_safe_get_option('pdf_builder_license_reminder_email', pdf_builder_safe_get_option('admin_email', ''))); ?>"
                                         placeholder="votre@email.com" class="form-input" />
                                     <p class="description">Adresse email où envoyer les rappels d'expiration de licence</p>
                                 </td>
