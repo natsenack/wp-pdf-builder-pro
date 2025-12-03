@@ -50,47 +50,42 @@ $settings = get_option('pdf_builder_settings', array());
         </div>
     </section>
 
-    <!-- Fallback JavaScript pour la navigation des onglets (sans dépendances) -->
+    <!-- Fallback minimal pour navigation des onglets: exécuté seulement si le script principal ne s'est pas chargé -->
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('PDF Builder: Fallback navigation des onglets activée');
-        
-        const tabButtons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
-        const tabContents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
-        
-        console.log('PDF Builder: Trouvé', tabButtons.length, 'onglets et', tabContents.length, 'contenus');
-        
-        tabButtons.forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const tabId = btn.getAttribute('data-tab');
-                console.log('PDF Builder: Clic sur onglet', tabId);
-                
-                // Désactiver tous les onglets
-                tabButtons.forEach(function(b) { b.classList.remove('nav-tab-active'); });
-                tabContents.forEach(function(c) { c.classList.remove('active'); });
-                
-                // Activer l'onglet cliqué
-                btn.classList.add('nav-tab-active');
-                const targetContent = document.getElementById(tabId);
-                if (targetContent) {
-                    targetContent.classList.add('active');
-                    console.log('PDF Builder: Onglet', tabId, 'activé');
-                }
-                
-                // Sauvegarder en localStorage
-                try {
-                    localStorage.setItem('pdf_builder_active_tab', tabId);
-                } catch(e) {
-                    console.warn('PDF Builder: Impossible de sauvegarder l\'onglet');
-                }
+    (function() {
+        // Si le script en file est chargé, ne rien faire
+        if (typeof window.PDF_BUILDER_CONFIG !== 'undefined') return;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.warn('PDF Builder: Script principal non détecté — activation du fallback minimal');
+
+            const tabsContainer = document.getElementById('pdf-builder-tabs');
+            const contentContainer = document.getElementById('pdf-builder-tab-content');
+            if (!tabsContainer || !contentContainer) return;
+
+            const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
+            const tabContents = contentContainer.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const tabId = btn.getAttribute('data-tab');
+                    if (!tabId) return;
+
+                    tabButtons.forEach(function(b) { b.classList.remove('nav-tab-active'); });
+                    tabContents.forEach(function(c) { c.classList.remove('active'); });
+
+                    btn.classList.add('nav-tab-active');
+                    const target = document.getElementById(tabId) || document.getElementById('tab-' + tabId);
+                    if (target) target.classList.add('active');
+
+                    try { localStorage.setItem('pdf_builder_active_tab', tabId); } catch (err) { /* ignore */ }
+                }, false);
             });
         });
-        
-        console.log('PDF Builder: Navigation des onglets initialisée avec succès');
-    });
+    })();
     </script>
 </main>
 

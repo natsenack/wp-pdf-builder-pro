@@ -28,7 +28,7 @@
         
         if (tabsContainer) {
             const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
-            console.log('  - Boutons onglets trouvés:', tabButtons.length);
+            if (DEBUG) console.log('  - Boutons onglets trouvés:', tabButtons.length);
             
             tabButtons.forEach(function(btn, index) {
                 console.log('    ' + (index + 1) + '. ' + btn.textContent.trim() + ' (data-tab: ' + btn.getAttribute('data-tab') + ')');
@@ -37,7 +37,7 @@
         
         if (contentContainer) {
             const tabContents = contentContainer.querySelectorAll('.tab-content');
-            console.log('  - Contenus onglets trouvés:', tabContents.length);
+            if (DEBUG) console.log('  - Contenus onglets trouvés:', tabContents.length);
             
             tabContents.forEach(function(content, index) {
                 console.log('    ' + (index + 1) + '. #' + content.id + ' - ' + (content.classList.contains('active') ? 'ACTIF' : 'inactif'));
@@ -47,10 +47,18 @@
 
     // Fonction principale de switch d'onglet avec logs détaillés
     function switchTab(tabId) {
-        console.log('PDF Builder - SWITCH TAB: Début du changement vers "' + tabId + '"');
+        if (DEBUG) console.log('PDF Builder - SWITCH TAB: Début du changement vers "' + tabId + '"');
         
         const tabButtons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
         const tabContents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
+
+        // Log current active states
+        const currentActiveBtn = document.querySelector('#pdf-builder-tabs .nav-tab.nav-tab-active');
+        const currentActiveContent = document.querySelector('#pdf-builder-tab-content .tab-content.active');
+        if (DEBUG) console.log('PDF Builder - Current Active:', {
+            btn: currentActiveBtn ? currentActiveBtn.getAttribute('data-tab') : null,
+            content: currentActiveContent ? currentActiveContent.id : null
+        });
         
         console.log('PDF Builder - Éléments trouvés: ' + tabButtons.length + ' boutons, ' + tabContents.length + ' contenus');
         
@@ -58,12 +66,12 @@
         console.log('PDF Builder - Désactivation de tous les onglets...');
         tabButtons.forEach(function(btn, index) {
             btn.classList.remove('nav-tab-active');
-            console.log('  ' + (index + 1) + '. "' + btn.textContent.trim() + '" désactivé');
+            if (DEBUG) console.log('  ' + (index + 1) + '. "' + btn.textContent.trim() + '" désactivé');
         });
         
         tabContents.forEach(function(content, index) {
             content.classList.remove('active');
-            console.log('  ' + (index + 1) + '. "#' + content.id + '" désactivé');
+            if (DEBUG) console.log('  ' + (index + 1) + '. "#' + content.id + '" désactivé');
         });
         
         // Activer l'onglet cible
@@ -77,14 +85,14 @@
         
         if (targetBtn) {
             targetBtn.classList.add('nav-tab-active');
-            console.log('  ✅ Bouton trouvé et activé: "' + targetBtn.textContent.trim() + '"');
+            if (DEBUG) console.log('  ✅ Bouton trouvé et activé: "' + targetBtn.textContent.trim() + '"');
         } else {
             console.error('  ❌ ERREUR: Bouton avec data-tab="' + tabId + '" non trouvé!');
         }
         
         if (targetContent) {
             targetContent.classList.add('active');
-            console.log('  ✅ Contenu trouvé et activé: "#' + targetContent.id + '"');
+            if (DEBUG) console.log('  ✅ Contenu trouvé et activé: "#' + targetContent.id + '"');
         } else {
             console.error('  ❌ ERREUR: Contenu avec id="' + tabId + '" non trouvé!');
         }
@@ -92,12 +100,12 @@
         // Sauvegarder en localStorage
         try {
             localStorage.setItem('pdf_builder_active_tab', tabId);
-            console.log('PDF Builder - Onglet "' + tabId + '" sauvegardé en localStorage');
+            if (DEBUG) console.log('PDF Builder - Onglet "' + tabId + '" sauvegardé en localStorage');
         } catch(e) {
             console.warn('PDF Builder - Impossible de sauvegarder en localStorage:', e.message);
         }
         
-        console.log('PDF Builder - SWITCH TAB: Terminé pour "' + tabId + '"');
+        if (DEBUG) console.log('PDF Builder - SWITCH TAB: Terminé pour "' + tabId + '"');
     }
 
     // Gestionnaire d'événements avec logs
@@ -130,6 +138,13 @@
 
     // Initialisation principale
     function initializeTabs() {
+        // Avoid double initialization when fallback AND main script run
+        if (window.PDF_BUILDER_TABS_INITIALIZED) {
+            if (DEBUG) console.log('PDF Builder - initializeTabs() déjà initialisé, sortie rapide');
+            return true;
+        }
+        window.PDF_BUILDER_TABS_INITIALIZED = true;
+
         console.log('PDF Builder - INITIALISATION DES ONGLETS');
         
         // Vérifier que les éléments DOM existent
