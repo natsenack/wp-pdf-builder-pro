@@ -204,7 +204,40 @@ class PdfBuilderAdmin
 
         $this->dashboard_data_provider = new \PDF_Builder\Admin\Providers\DashboardDataProvider();
 
+        // Initialiser le AdminPageRenderer
+        if (!class_exists('\PDF_Builder\Admin\Renderers\AdminPageRenderer')) {
+            require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Renderers/AdminPageRenderer.php';
+        }
+
+        $this->admin_page_renderer = new \PDF_Builder\Admin\Renderers\AdminPageRenderer($this);
+
         $this->initHooks();
+    }
+
+    /**
+     * Récupère les statistiques du tableau de bord
+     */
+    public function getDashboardStats()
+    {
+        if ($this->dashboard_data_provider) {
+            return $this->dashboard_data_provider->getDashboardStats();
+        }
+        return [
+            'templates' => 0,
+            'documents' => 0,
+            'today' => 0
+        ];
+    }
+
+    /**
+     * Récupère la version du plugin
+     */
+    public function getPluginVersion()
+    {
+        if ($this->dashboard_data_provider) {
+            return $this->dashboard_data_provider->getPluginVersion();
+        }
+        return '1.0.0';
     }
 
     /**
