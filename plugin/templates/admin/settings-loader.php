@@ -49,6 +49,14 @@ function pdf_builder_load_settings_assets($hook) {
 
     // Charger le JavaScript pour la navigation par onglets
     $script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js';
+    
+    wp_enqueue_script(
+        'pdf-builder-settings-tabs',
+        $script_url,
+        array('jquery'),
+        PDF_BUILDER_VERSION . '-' . time(),
+        true
+    );
 
     // LOG POUR CONFIRMER L'ENREGISTREMENT DU SCRIPT
     error_log('📜 PDF BUILDER ASSETS: Script settings-tabs.js enregistré pour ' . $hook);
