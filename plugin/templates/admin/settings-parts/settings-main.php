@@ -78,12 +78,15 @@ $settings = get_option('pdf_builder_settings', array());
         </div>
     </section>
 
+    <!-- LOG AVANT SCRIPT INLINE -->
+    <script>console.log('📍 LOG AVANT SCRIPT INLINE - On va maintenant exécuter le script inline');</script>
+
     <!-- SCRIPT DE NAVIGATION DIRECT INLINE - SOLUTION DE SECOURS -->
     <script>
+    console.log('🔥 PDF BUILDER - NAVIGATION DIRECT INLINE - VERSION SECOURS');
+    
     (function() {
         'use strict';
-        
-        console.log('🔥 PDF BUILDER - NAVIGATION DIRECT INLINE - VERSION SECOURS');
         
         function switchTab(tabId) {
             console.log('📍 SWITCH DIRECT vers:', tabId);
