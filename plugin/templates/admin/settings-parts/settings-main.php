@@ -60,63 +60,68 @@ $settings = get_option('pdf_builder_settings', array());
 
     <!-- Fallback minimal pour navigation des onglets: exécuté seulement si le script principal ne s'est pas chargé -->
     <script>
-    // LOGS JS DIRECTS DANS LE HTML POUR DIAGNOSTIC
-    console.log('📄 PDF Builder - PAGE HTML CHARGÉE - settings-main.php');
-    console.log('📄 PDF Builder - Vérification éléments DOM au chargement HTML:', {
-        wrapper: !!document.getElementById('pdf-builder-settings-wrapper'),
-        tabs: !!document.getElementById('pdf-builder-tabs'),
-        content: !!document.getElementById('pdf-builder-tab-content'),
-        navTabs: document.querySelectorAll('#pdf-builder-tabs .nav-tab').length,
-        tabContents: document.querySelectorAll('#pdf-builder-tab-content .tab-content').length
-    });
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('📄 PDF Builder - DOM CONTENT LOADED - HTML ready');
-        
-        // Vérifier que les scripts externes sont chargés
-        setTimeout(function() {
-            console.log('📄 PDF Builder - TIMEOUT CHECK - Scripts externes chargés?', {
-                pdfBuilderConfig: typeof PDF_BUILDER_CONFIG !== 'undefined',
-                debug: !!(typeof PDF_BUILDER_CONFIG !== 'undefined' && PDF_BUILDER_CONFIG.debug),
-                tabsInitialized: !!window.PDF_BUILDER_TABS_INITIALIZED
-            });
-        }, 200);
-    });
-    
-    (function() {
-        // Si le script en file est chargé, ne rien faire
-        if (typeof window.PDF_BUILDER_CONFIG !== 'undefined') return;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.warn('📄 PDF Builder: Script principal non détecté — activation du fallback minimal');
-
-            const tabsContainer = document.getElementById('pdf-builder-tabs');
-            const contentContainer = document.getElementById('pdf-builder-tab-content');
-            if (!tabsContainer || !contentContainer) return;
-
-            const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
-            const tabContents = contentContainer.querySelectorAll('.tab-content');
-
-            tabButtons.forEach(function(btn) {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const tabId = btn.getAttribute('data-tab');
-                    if (!tabId) return;
-
-                    tabButtons.forEach(function(b) { b.classList.remove('nav-tab-active'); });
-                    tabContents.forEach(function(c) { c.classList.remove('active'); });
-
-                    btn.classList.add('nav-tab-active');
-                    const target = document.getElementById(tabId) || document.getElementById('tab-' + tabId);
-                    if (target) target.classList.add('active');
-
-                    try { localStorage.setItem('pdf_builder_active_tab', tabId); } catch (err) { /* ignore */ }
-                }, false);
-            });
+    try {
+        // LOGS JS DIRECTS DANS LE HTML POUR DIAGNOSTIC
+        console.log('📄 PDF Builder - PAGE HTML CHARGÉE - settings-main.php');
+        console.log('📄 PDF Builder - Vérification éléments DOM au chargement HTML:', {
+            wrapper: !!document.getElementById('pdf-builder-settings-wrapper'),
+            tabs: !!document.getElementById('pdf-builder-tabs'),
+            content: !!document.getElementById('pdf-builder-tab-content'),
+            navTabs: document.querySelectorAll('#pdf-builder-tabs .nav-tab').length,
+            tabContents: document.querySelectorAll('#pdf-builder-tab-content .tab-content').length
         });
-    })();
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 PDF Builder - DOM CONTENT LOADED - HTML ready');
+            
+            // Vérifier que les scripts externes sont chargés
+            setTimeout(function() {
+                console.log('📄 PDF Builder - TIMEOUT CHECK - Scripts externes chargés?', {
+                    pdfBuilderConfig: typeof PDF_BUILDER_CONFIG !== 'undefined',
+                    debug: !!(typeof PDF_BUILDER_CONFIG !== 'undefined' && PDF_BUILDER_CONFIG.debug),
+                    tabsInitialized: !!window.PDF_BUILDER_TABS_INITIALIZED
+                });
+            }, 200);
+        });
+        
+        (function() {
+            // Si le script en file est chargé, ne rien faire
+            if (typeof window.PDF_BUILDER_CONFIG !== 'undefined') return;
+
+            document.addEventListener('DOMContentLoaded', function() {
+                console.warn('📄 PDF Builder: Script principal non détecté — activation du fallback minimal');
+
+                const tabsContainer = document.getElementById('pdf-builder-tabs');
+                const contentContainer = document.getElementById('pdf-builder-tab-content');
+                if (!tabsContainer || !contentContainer) return;
+
+                const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
+                const tabContents = contentContainer.querySelectorAll('.tab-content');
+
+                tabButtons.forEach(function(btn) {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const tabId = btn.getAttribute('data-tab');
+                        if (!tabId) return;
+
+                        tabButtons.forEach(function(b) { b.classList.remove('nav-tab-active'); });
+                        tabContents.forEach(function(c) { c.classList.remove('active'); });
+
+                        btn.classList.add('nav-tab-active');
+                        const target = document.getElementById(tabId) || document.getElementById('tab-' + tabId);
+                        if (target) target.classList.add('active');
+
+                        try { localStorage.setItem('pdf_builder_active_tab', tabId); } catch (err) { /* ignore */ }
+                    }, false);
+                });
+            });
+        })();
+    } catch (error) {
+        console.error('💥 ERREUR FATALE dans le script HTML principal:', error);
+        console.error('💥 Stack trace:', error.stack);
+    }
     </script>
 </main>
 
