@@ -105,6 +105,13 @@ document.addEventListener('DOMContentLoaded', function() {
     </button>
 </div>
 
+<script>
+console.log('🔍 PDF BUILDER DEBUG: Vérification immédiate du bouton flottant');
+console.log('  - Bouton save-all:', document.getElementById('pdf-builder-save-all'));
+console.log('  - Container flottant:', document.getElementById('pdf-builder-save-floating'));
+console.log('  - Body children count:', document.body.children.length);
+</script>
+
 <!-- Updated: 2025-12-03 16:00:00 - Bouton flottant ajouté -->
 </div>
 
