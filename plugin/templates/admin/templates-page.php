@@ -111,15 +111,7 @@ var pdfBuilderAjax = {
 
         <!-- Message pour utilisateurs gratuits sans templates -->
         <?php if (!$is_premium && $templates_count === 0): ?>
-            <div class="notice notice-success" style="margin: 15px 0; padding: 15px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;">
-                <h4 style="margin: 0 0 10px 0; color: #155724;">
-                    <span class="dashicons dashicons-yes" style="margin-right: 5px;"></span>
-                    <?php _e('Créez Votre Premier Template', 'pdf-builder-pro'); ?>
-                </h4>
-                <p style="margin: 0; color: #155724;">
-                    <?php _e('Commencez par créer votre premier template personnalisé. Passez en Premium pour accéder à des modèles prédéfinis !', 'pdf-builder-pro'); ?>
-                </p>
-            </div>
+            <!-- Message supprimé selon demande utilisateur -->
         <?php endif; ?>
 
         <!-- Section de filtrage -->
