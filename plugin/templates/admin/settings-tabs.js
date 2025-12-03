@@ -20,21 +20,56 @@
         return;
     }
 
-    // Otherwise, fallback minimal manager
-    console.warn('PDF Builder: settings-tabs.js (template) loaded but PDFBuilderTabsAPI is NOT present. Minimal fallback engaged.');
-    const buttons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
-    const contents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
-    function switchTabFallback(tabId) {
-        buttons.forEach(b => b.classList.remove('nav-tab-active'));
-        contents.forEach(c => c.classList.remove('active'));
-        const btn = document.querySelector('#pdf-builder-tabs [data-tab="' + tabId + '"]');
-        const content = document.getElementById(tabId);
-        if (btn) { btn.classList.add('nav-tab-active'); }
-        if (content) { content.classList.add('active'); }
-    }
-    buttons.forEach(btn => btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const id = btn.getAttribute('data-tab');
-        switchTabFallback(id);
-    }));
+    // Otherwise, we will attempt to wait for the canonical manager before binding fallback
+    console.warn('PDF Builder: settings-tabs.js (template) loaded but PDFBuilderTabsAPI is NOT present yet. Waiting before minimal fallback binding.');
+
+    (function waitForCanonicalThenBindFallback() {
+        var attempts = 0;
+        var maxAttempts = 20; // 5s at 250ms intervals
+        var buttons = null;
+        var contents = null;
+
+        function tryBind() {
+            attempts++;
+            if (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function') {
+                console.log('PDF Builder: Canonical manager present; shim will not bind fallback');
+                return;
+            }
+
+            // If we reached max attempts, attach the fallback once
+            if (attempts >= maxAttempts) {
+                if (!window.PDFBuilderShimFallbackBound) {
+                    console.log('PDF Builder: Binding minimal fallback (shim) after timeout');
+                    buttons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+                    contents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
+                    function switchTabFallback(tabId) {
+                        Array.prototype.forEach.call(buttons, function(b) { b.classList.remove('nav-tab-active'); });
+                        Array.prototype.forEach.call(contents, function(c) { c.classList.remove('active'); });
+                        var btn = document.querySelector('#pdf-builder-tabs [data-tab="' + tabId + '"]');
+                        var content = document.getElementById(tabId);
+                        if (btn) { btn.classList.add('nav-tab-active'); }
+                        if (content) { content.classList.add('active'); }
+                    }
+                    Array.prototype.forEach.call(buttons, function(btn) {
+                        btn.removeEventListener('click', function(){});
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            var id = this.getAttribute('data-tab');
+                            switchTabFallback(id);
+                        });
+                    });
+                    window.PDFBuilderShimFallbackBound = true;
+                }
+                return;
+            }
+
+            // retry
+            setTimeout(tryBind, 250);
+        }
+
+        // Start checks
+        tryBind();
+        document.addEventListener('DOMContentLoaded', function(){ setTimeout(tryBind, 100); });
+        window.addEventListener('load', function(){ setTimeout(tryBind, 100); });
+    })();
 })();
