@@ -6,12 +6,6 @@
  * Updated: 2025-12-02 - Code réorganisé pour une meilleure lisibilité
  */
 
-// DEBUG: Force output to verify this file is being loaded
-echo "<!-- TEMPLATES TAB DEBUG: settings-templates.php LOADED at " . date('H:i:s') . " -->";
-echo "<div style='background: #ffeaa7; border: 2px solid #d63031; padding: 10px; margin: 10px 0; border-radius: 4px; font-weight: bold; color: #2d3436;'>";
-echo "🔥 TEMPLATES TAB: FILE LOADED SUCCESSFULLY - " . date('H:i:s') . " - WooCommerce: " . (class_exists('WooCommerce') ? 'YES' : 'NO');
-echo "</div>";
-
 require_once __DIR__ . '/settings-helpers.php';
 
 // =============================================================================

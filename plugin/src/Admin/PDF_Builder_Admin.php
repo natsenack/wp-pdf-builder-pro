@@ -522,10 +522,17 @@ class PdfBuilderAdmin
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
-        echo '<div class="wrap">';
-        echo '<h1>Gestion des Templates PDF</h1>';
-        echo '<p>Interface de gestion des templates sera chargée ici.</p>';
-        echo '</div>';
+        // Inclure le fichier des paramètres avec les onglets (même logique que settings_page)
+        $settings_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-main.php';
+        if (file_exists($settings_file)) {
+            include $settings_file;
+        } else {
+            // Fallback si le fichier n'existe pas
+            echo '<div class="wrap">';
+            echo '<h1>Gestion des Templates PDF</h1>';
+            echo '<p>Erreur: Fichier de paramètres introuvable.</p>';
+            echo '</div>';
+        }
     }
 
     /**
