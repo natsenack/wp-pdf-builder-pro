@@ -204,7 +204,133 @@ try {
                 });
                 alert('Les mappings de templates ont été réinitialisés. N\'oubliez pas de sauvegarder vos modifications.');
             }
+        },
+        saveAllSettings: function() {
+            console.log('💾 PDF Builder: Sauvegarde globale déclenchée');
+
+            const saveBtn = document.getElementById('pdf-builder-save-all');
+            const statusIndicator = document.getElementById('save-status-indicator');
+            const statusText = document.getElementById('save-status-text');
+
+            if (!saveBtn || !statusIndicator || !statusText) {
+                console.error('❌ PDF Builder: Éléments du bouton de sauvegarde non trouvés');
+                return;
+            }
+
+            // Désactiver le bouton et afficher l'état de sauvegarde
+            saveBtn.classList.add('saving');
+            saveBtn.disabled = true;
+            statusText.textContent = 'Sauvegarde en cours...';
+            statusIndicator.classList.add('visible');
+
+            // Collecter toutes les données des formulaires
+            const formData = new FormData();
+            formData.append('action', 'pdf_builder_save_all_settings');
+            formData.append('nonce', window.pdfBuilderSettings?.nonce || '');
+
+            // Collecter les données de tous les onglets
+            const tabs = ['general', 'licence', 'systeme', 'acces', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
+
+            tabs.forEach(tabId => {
+                // Chercher tous les inputs, selects, textareas dans l'onglet
+                const tabElement = document.getElementById(tabId);
+                if (tabElement) {
+                    const inputs = tabElement.querySelectorAll('input, select, textarea');
+                    inputs.forEach(input => {
+                        if (input.name && input.type !== 'submit' && input.type !== 'button') {
+                            if (input.type === 'checkbox') {
+                                formData.append(input.name, input.checked ? '1' : '0');
+                            } else if (input.type === 'radio') {
+                                if (input.checked) {
+                                    formData.append(input.name, input.value);
+                                }
+                            } else {
+                                formData.append(input.name, input.value);
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Envoyer la requête AJAX
+            fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('📨 PDF Builder: Réponse sauvegarde', data);
+
+                if (data.success) {
+                    statusText.textContent = 'Sauvegardé avec succès !';
+                    statusIndicator.classList.add('success');
+                    statusIndicator.classList.remove('error');
+
+                    // Afficher un message de succès
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sauvegardé !',
+                            text: 'Tous les paramètres ont été sauvegardés avec succès.',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        alert('Tous les paramètres ont été sauvegardés avec succès !');
+                    }
+                } else {
+                    throw new Error(data.data || 'Erreur inconnue');
+                }
+            })
+            .catch(error => {
+                console.error('❌ PDF Builder: Erreur sauvegarde', error);
+                statusText.textContent = 'Erreur lors de la sauvegarde';
+                statusIndicator.classList.add('error');
+                statusIndicator.classList.remove('success');
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erreur',
+                        text: 'Une erreur s\'est produite lors de la sauvegarde : ' + error.message,
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    alert('Erreur lors de la sauvegarde : ' + error.message);
+                }
+            })
+            .finally(() => {
+                // Réactiver le bouton après un délai
+                setTimeout(() => {
+                    saveBtn.classList.remove('saving');
+                    saveBtn.disabled = false;
+                    statusIndicator.classList.remove('visible', 'success', 'error');
+                    statusText.textContent = 'Prêt à enregistrer';
+                }, 3000);
+            });
         }
     };
+
+    // Initialiser le bouton de sauvegarde flottant
+    function initSaveButton() {
+        const saveBtn = document.getElementById('pdf-builder-save-all');
+        if (saveBtn) {
+            console.log('💾 PDF Builder: Bouton de sauvegarde flottant trouvé, configuration');
+            saveBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                PDFBuilderTabsAPI.saveAllSettings();
+            });
+        } else {
+            console.warn('⚠️ PDF Builder: Bouton de sauvegarde flottant non trouvé');
+        }
+    }
+
+    // Initialiser au chargement du DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 PDF Builder: DOM chargé, initialisation des onglets');
+        initTabs();
+        initSaveButton();
+    });
 
 })();
