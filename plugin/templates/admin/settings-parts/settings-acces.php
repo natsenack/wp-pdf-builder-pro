@@ -123,4 +123,5 @@ $role_descriptions = [
 
             </div> <!-- Fin disposition en colonnes -->
 
+</php>
 
