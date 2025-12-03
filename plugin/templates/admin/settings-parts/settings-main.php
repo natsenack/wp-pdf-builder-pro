@@ -138,8 +138,7 @@ $settings = get_option('pdf_builder_settings', array());
 
             // Gestionnaire de clic
             function handleTabClick(event) {
-                event.preventDefault();
-                event.stopPropagation();
+                    event.preventDefault();
 
                 const tabId = this.getAttribute('data-tab');
                 console.log('PDF Builder: Clic détecté sur onglet', tabId);
@@ -181,21 +180,52 @@ $settings = get_option('pdf_builder_settings', array());
             return true;
         }
 
-        // Exécution immédiate
-        console.log('PDF Builder: Tentative d\'initialisation immédiate...');
-        initTabNavigation();
+        // Exécution contrôlée: attendre le manager canonical avant d'attacher nos propres handlers
+        console.log('PDF Builder: Tentative d\'initialisation contrôlée (attente du manager canonical)...');
 
-        // Fallbacks multiples
-        setTimeout(initTabNavigation, 500);
-        setTimeout(initTabNavigation, 1000);
-        setTimeout(initTabNavigation, 2000);
-        setTimeout(initTabNavigation, 5000);
+        // Pour éviter le double-binding, attendre que window.PDFBuilderTabsAPI soit présent
+        // Essayer pendant 5 secondes (250ms * 20). Si le canonical n'arrive pas, on bind le fallback.
+        (function waitForCanonicalAndInit() {
+            var attempts = 0;
+            var maxAttempts = 20; // 20 * 250ms = 5s
 
-        // Aussi au chargement du DOM si pas déjà fait
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('PDF Builder: DOM chargé, vérification...');
-            setTimeout(initTabNavigation, 100);
-        });
+            function check() {
+                attempts++;
+                // Si le manager canonical est présent, on l'utilise et on synchronise l'état
+                if (window.PDF_BUILDER_TABS_INITIALIZED || (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function')) {
+                    console.log('PDF Builder: Manager global détecté pendant attente, fallback inline désactivé');
+                    try {
+                        const saved = (window.PDFBuilderTabsAPI && window.PDFBuilderTabsAPI.getActiveTab) ? window.PDFBuilderTabsAPI.getActiveTab() : null;
+                        if (saved && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function') {
+                            window.PDFBuilderTabsAPI.switchToTab(saved);
+                        }
+                    } catch (e) {
+                        console.log('PDF Builder: Erreur lors de la synchronisation avec le manager global', e && e.message ? e.message : e);
+                    }
+                    return;
+                }
+
+                if (attempts >= maxAttempts) {
+                    // Pas de manager canonical après attente raisonnable: binder notre fallback (une seule fois)
+                    if (!window.PDFBuilderInlineFallbackBound) {
+                        console.log('PDF Builder: Aucune détection du manager canonical — binding fallback (inline)');
+                        initTabNavigation();
+                        window.PDFBuilderInlineFallbackBound = true; // Guard global pour éviter multiples binds
+                    } else {
+                        console.log('PDF Builder: Fallback inline déjà attaché, skipping');
+                    }
+                    return;
+                }
+
+                // Réessayer plus tard
+                setTimeout(check, 250);
+            }
+
+            // Initial check + event-based triggers
+            check();
+            document.addEventListener('DOMContentLoaded', function() { setTimeout(check, 100); });
+            window.addEventListener('load', function() { setTimeout(check, 100); });
+        })();
 
         // Et aussi au chargement complet de la page
         window.addEventListener('load', function() {

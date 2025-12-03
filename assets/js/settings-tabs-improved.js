@@ -6,6 +6,12 @@
 (function() {
     'use strict';
 
+    // Si un manager canonical est présent, sortir pour éviter conflits
+    if (typeof window !== 'undefined' && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function') {
+        console.log('PDF Builder: settings-tabs-improved.js chargé mais un manager canonical est présent — exit to avoid conflict');
+        return;
+    }
+
     // Configuration globale
     const CONFIG = {
         debug: !!(typeof window.PDF_BUILDER_CONFIG !== 'undefined' && window.PDF_BUILDER_CONFIG.debug),
