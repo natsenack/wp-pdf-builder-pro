@@ -29,9 +29,9 @@ $settings = get_option('pdf_builder_settings', array());
             <?php require_once 'settings-general.php'; ?>
         </div>
 
-        <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
-            <?php require_once 'settings-licence.php'; ?>
-        </div>
+        <!--<div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
+            <?php //require_once 'settings-licence.php'; ?>
+        </div>-->
 
         <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
             <?php require_once 'settings-systeme.php'; ?>
