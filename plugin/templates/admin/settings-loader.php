@@ -71,25 +71,11 @@ function pdf_builder_load_settings_assets($hook) {
     echo 'Test HTTP: <strong>' . (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200 ? '<span style="color: green;">OK (200)</span>' : '<span style="color: red;">ERREUR</span>') . '</strong><br>';
 
     echo '<script>console.log("🔧 PDF BUILDER: Test inline script - si vous voyez ça, les scripts inline marchent");</script>';
-    echo '<script src="' . $script_url . '"></script>';
+    echo '<script src="' . $script_url . '?v=' . time() . '"></script>';
     echo '<script>console.log("🔧 PDF BUILDER: Test après chargement du script externe");</script>';
 
     // LOG POUR CONFIRMER L'ENREGISTREMENT DU SCRIPT
     error_log('📜 PDF BUILDER ASSETS: Script settings-tabs.js enregistré pour ' . $hook);
-
-    // Localiser les variables JavaScript
-    wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderSettings', array(
-        'ajaxurl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('pdf_builder_settings'),
-        'strings' => array(
-            'loading' => __('Chargement...', 'pdf-builder-pro'),
-            'error' => __('Erreur', 'pdf-builder-pro'),
-            'success' => __('Succès', 'pdf-builder-pro'),
-            'saving' => __('Sauvegarde en cours...', 'pdf-builder-pro'),
-            'saved' => __('Paramètres sauvegardés', 'pdf-builder-pro'),
-        ),
-        'debug' => defined('WP_DEBUG') && WP_DEBUG
-    ));
 }
 
 // Enregistrer le hook pour charger les assets
