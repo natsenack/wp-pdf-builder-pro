@@ -480,5 +480,14 @@ class PdfBuilderAdmin
     {
         if (!$this->checkAdminPermissions()) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
 
-
+        // Utiliser le renderer pour afficher la page d'administration
+        if ($this->admin_page_renderer) {
+            echo $this->admin_page_renderer->renderAdminPage();
+        } else {
+            // Fallback si le renderer n'est pas disponible
+            echo '<div class="wrap"><h1>PDF Builder Pro</h1><p>Erreur: Renderer non disponible.</p></div>';
+        }
+    }
+}
