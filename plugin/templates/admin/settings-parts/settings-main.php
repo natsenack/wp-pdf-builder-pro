@@ -54,7 +54,7 @@ $settings = get_option('pdf_builder_settings', array());
         <!-- LOG AVANT SYSTEME -->
         <script>console.log('📍 LOG AVANT SYSTEME - Inclusion du fichier systeme');</script>
         <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
-            <?php require_once 'settings-systeme.php'; ?>
+            <?php require_once 'settings-systeme-test.php'; ?>
         </div>
         <!-- LOG APRES SYSTEME -->
         <script>console.log('📍 LOG APRES SYSTEME - Fichier systeme inclus');</script>
@@ -80,6 +80,9 @@ $settings = get_option('pdf_builder_settings', array());
 
     <!-- LOG AVANT SCRIPT INLINE -->
     <script>console.log('📍 LOG AVANT SCRIPT INLINE - On va maintenant exécuter le script inline');</script>
+
+    <!-- LOG APRÈS TOUS LES FICHIERS -->
+    <script>console.log('✅ TOUS LES FICHIERS INCLUS - Le script inline devrait maintenant s\'exécuter');</script>
 
     <!-- SCRIPT DE NAVIGATION DIRECT INLINE - SOLUTION DE SECOURS -->
     <script>
