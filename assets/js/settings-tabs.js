@@ -123,12 +123,61 @@
         
         logDiagnostic(tabButtons.length + ' onglets et ' + tabContents.length + ' contenus trouvés');
         
-        // Attacher les événements de clic
-        tabButtons.forEach(function(btn) {
-            btn.removeEventListener('click', handleTabClick);
-            btn.addEventListener('click', handleTabClick);
-            logDiagnostic('Event listener ajouté pour: ' + btn.getAttribute('data-tab'));
+        // Attacher les événements de clic via délégation (plus robuste si DOM est modifié)
+        function delegatedClickHandler(e) {
+            // Trouver l'élément .nav-tab le plus proche (supporte <a> > <span> etc.)
+            const anchor = e.target.closest && e.target.closest('.nav-tab');
+            if (!anchor || !tabsContainer.contains(anchor)) return;
+
+            // Si l'href est un #hash, empêcher la navigation par défaut
+            if (anchor.tagName === 'A' && anchor.getAttribute('href') && anchor.getAttribute('href').startsWith('#')) {
+                e.preventDefault();
+            }
+
+            // Eviter de bloquer d'autres handlers; nous utilisons capture si nécessaire
+            const tabId = anchor.getAttribute('data-tab');
+            if (!tabId) {
+                logDiagnostic('Delegate: Aucun data-tab sur l\'élément', anchor);
+                return;
+            }
+
+            logDiagnostic('Delegate: Clic sur onglet', tabId);
+            switchTab(tabId);
+        }
+
+        // Utiliser capture=true pour exécuter notre handler avant d'autres handlers qui pourraient bloquer la propagation
+        // mais toujours respecter les comportements éventuels (nous prévenons par défaut seulement si le lien est un hash)
+        tabsContainer.removeEventListener('click', delegatedClickHandler, true);
+        tabsContainer.addEventListener('click', delegatedClickHandler, true);
+        logDiagnostic('Event listener de délégation ajouté au container');
+
+        // Observer les changements DOM pour mettre à jour tabButtons et tabContents si nécessaire
+        const observer = new MutationObserver(function(mutations) {
+            let shouldRefresh = false;
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList' && (mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0)) {
+                    shouldRefresh = true;
+                    break;
+                }
+                if (mutation.type === 'attributes' && (mutation.attributeName === 'class' || mutation.attributeName === 'data-tab')) {
+                    shouldRefresh = true;
+                    break;
+                }
+            }
+            if (shouldRefresh) {
+                logDiagnostic('DOM modifié - refresh des sélecteurs d\'onglets');
+                // Mettre à jour les caches
+                tabButtons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+                tabContents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
+            }
         });
+        try {
+            observer.observe(tabsContainer, { childList: true, subtree: true, attributes: true });
+            observer.observe(contentContainer, { childList: true, subtree: true, attributes: true });
+            logDiagnostic('MutationObserver configuré pour surveiller les modifications des onglets et contenus');
+        } catch (e) {
+            logDiagnostic('MutationObserver non supporté ou erreur: ' + (e && e.message ? e.message : e));
+        }
         
         // Restaurer l'onglet sauvegardé
         try {
@@ -152,7 +201,17 @@
         }
         
         logDiagnostic('ONGLETS INITIALISÉS AVEC SUCCÈS');
+        try { window.PDF_BUILDER_TABS_INITIALIZED = true; } catch(e) {}
         return true;
+    }
+
+    // Exposer une API globale pour interopérer avec d'autres scripts
+    try {
+        window.PDFBuilderTabsAPI = window.PDFBuilderTabsAPI || {};
+        window.PDFBuilderTabsAPI.switchToTab = switchTab;
+        window.PDFBuilderTabsAPI.getActiveTab = function() { return localStorage.getItem('pdf_builder_active_tab'); };
+    } catch (e) {
+        logDiagnostic('Impossible d\'exposer l\'API globale:', e.message || e);
     }
 
     // Démarrage quand le DOM est prêt

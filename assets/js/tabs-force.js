@@ -51,7 +51,18 @@
             log('❌ Contenu non trouvé pour:', tabId);
         }
         
-        // Déclencher événement
+        // Si un manager global existe, déléguer l'action
+        if (window.PDF_BUILDER_TABS && typeof window.PDF_BUILDER_TABS.switchToTab === 'function') {
+            try {
+                window.PDF_BUILDER_TABS.switchToTab(tabId);
+                log('Délégué switchTab au manager global');
+                return;
+            } catch (e) {
+                log('Erreur lors de l\'appel du manager global:', e.message || e);
+            }
+        }
+
+        // Déclencher événement si aucun manager global
         document.dispatchEvent(new CustomEvent('pdfBuilderTabChanged', {
             detail: { tabId: tabId, source: 'force' }
         }));
@@ -71,6 +82,11 @@
         }
         
         log('CLIC détecté sur:', tabId);
+        // Si un manager global existe, utilisez son API pour s'assurer d'un comportement centralisé
+        if (window.PDF_BUILDER_TABS && typeof window.PDF_BUILDER_TABS.switchToTab === 'function') {
+            window.PDF_BUILDER_TABS.switchToTab(tabId);
+            return;
+        }
         switchTab(tabId);
     }
 

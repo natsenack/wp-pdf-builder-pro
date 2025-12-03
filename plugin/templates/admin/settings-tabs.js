@@ -77,19 +77,52 @@
         }
 
         bindEvents() {
-            // Click events on tab buttons
-            this.tabButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                // Click events via delegation - robust if DOM changes
+                const delegatedHandler = (e) => {
+                    const anchor = e.target.closest && e.target.closest('.nav-tab');
+                    if (!anchor || !this.tabsContainer.contains(anchor)) return;
 
-                    const tabId = button.getAttribute('data-tab');
-                    if (tabId) {
-                        this.log('Tab clicked:', tabId);
-                        this.setActiveTab(tabId, true);
+                    if (anchor.tagName === 'A' && anchor.getAttribute('href') && anchor.getAttribute('href').startsWith('#')) {
+                        e.preventDefault();
+                    }
+
+                    const tabId = anchor.getAttribute('data-tab');
+                    if (!tabId) {
+                        this.log('Delegate: no data-tab on element', anchor);
+                        return;
+                    }
+
+                    this.log('Delegate: Tab clicked', tabId);
+                    this.setActiveTab(tabId, true);
+                };
+
+                // Add capturing delegation so our handler runs before many other non-capturing handlers
+                this.tabsContainer.removeEventListener('click', delegatedHandler, true);
+                this.tabsContainer.addEventListener('click', delegatedHandler, true);
+
+                // Setup mutation observer to refresh references when DOM changes
+                const observer = new MutationObserver((mutations) => {
+                    let reset = false;
+                    for (const m of mutations) {
+                        if (m.type === 'childList' && (m.addedNodes.length || m.removedNodes.length)) {
+                            reset = true; break;
+                        }
+                        if (m.type === 'attributes' && (m.attributeName === 'class' || m.attributeName === 'data-tab')) {
+                            reset = true; break;
+                        }
+                    }
+                    if (reset) {
+                        this.tabButtons = this.tabsContainer.querySelectorAll('.nav-tab');
+                        this.tabContents = this.contentContainer.querySelectorAll('.tab-content');
+                        this.log('MutationObserver: refresh des sélecteurs d\'onglets');
                     }
                 });
-            });
+                try {
+                    observer.observe(this.tabsContainer, { childList: true, subtree: true, attributes: true });
+                    observer.observe(this.contentContainer, { childList: true, subtree: true, attributes: true });
+                } catch(e) {
+                    this.log('MutationObserver erreur:', e && e.message ? e.message : e);
+                }
 
             // Keyboard navigation
             this.tabsContainer.addEventListener('keydown', (e) => {
@@ -300,6 +333,15 @@
 
         // Mark as initialized for fallback detection
         window.PDF_BUILDER_TABS_INITIALIZED = true;
+
+        // Exposer l'API globale pour interop
+        try {
+            window.PDFBuilderTabsAPI = window.PDFBuilderTabsAPI || {};
+            window.PDFBuilderTabsAPI.switchToTab = (tabId) => window.PDF_BUILDER_TABS && window.PDF_BUILDER_TABS.switchToTab ? window.PDF_BUILDER_TABS.switchToTab(tabId) : null;
+            window.PDFBuilderTabsAPI.getActiveTab = () => window.PDF_BUILDER_TABS && window.PDF_BUILDER_TABS.getActiveTab ? window.PDF_BUILDER_TABS.getActiveTab() : null;
+        } catch(e) {
+            console.log('PDF Builder: Impossible d\'exposer l\'API globale', e && e.message ? e.message : e);
+        }
 
         console.log('🔄 PDF Builder Tabs: Initialization complete');
     });

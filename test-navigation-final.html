@@ -241,6 +241,8 @@
     </div>
 
     <!-- Navigation JavaScript - Version Finale -->
+    <!-- Charger le script principal de navigation (assets) -->
+    <script src="assets/js/settings-tabs.js"></script>
     <script>
     (function() {
         'use strict';
@@ -370,6 +372,23 @@
         }, 1000);
 
     })();
+    </script>
+
+    <!-- Test automatique: parcours des onglets via l'API si disponible -->
+    <script>
+        (function() {
+            if (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function') {
+                const ids = ['general','licence','systeme','acces','securite','pdf','contenu','templates','developpeur'];
+                let i=0;
+                const interval = setInterval(() => {
+                    if (i >= ids.length) { clearInterval(interval); return; }
+                    const id = ids[i++];
+                    try { window.PDFBuilderTabsAPI.switchToTab(id); } catch(e) { console.warn('Switch via API failed', e); }
+                }, 400);
+            } else {
+                console.log('API non disponible pour le test automatique');
+            }
+        })();
     </script>
 </body>
 </html>

@@ -67,6 +67,19 @@ $settings = get_option('pdf_builder_settings', array());
 
         // Fonction principale d'initialisation
         function initTabNavigation() {
+            // Si le manager principal est présent, ne pas attacher nos propres handlers
+            if (window.PDF_BUILDER_TABS_INITIALIZED || (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function')) {
+                console.log('PDF Builder: Manager global détecté, fallback inline désactivé');
+                try {
+                    const saved = (window.PDFBuilderTabsAPI && window.PDFBuilderTabsAPI.getActiveTab) ? window.PDFBuilderTabsAPI.getActiveTab() : null;
+                    if (saved && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function') {
+                        window.PDFBuilderTabsAPI.switchToTab(saved);
+                    }
+                } catch (e) {
+                    console.log('PDF Builder: Erreur lors de la synchronisation avec le manager global', e && e.message ? e.message : e);
+                }
+                return true;
+            }
             console.log('PDF Builder: Initialisation forcée de la navigation');
 
             const tabsContainer = document.getElementById('pdf-builder-tabs');
