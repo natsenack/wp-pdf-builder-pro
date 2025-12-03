@@ -60,31 +60,31 @@
     Accepte des wildcards : "*admin.js", "*style.css", etc.
 
 .EXAMPLE
-    .\deploy.ps1 -Mode test
-    .\deploy.ps1 -Mode plugin
-    .\deploy.ps1 -Mode plugin -FullSync
-    .\deploy.ps1 -Mode plugin -Force
-    .\deploy.ps1 -Mode plugin -Diagnostic
-    .\deploy.ps1 -Diagnostic -AutoFix
-    .\deploy.ps1 -DailyDeploy
+    .\deploy-all.ps1 -Mode test
+    .\deploy-all.ps1 -Mode plugin
+    .\deploy-all.ps1 -Mode plugin -FullSync
+    .\deploy-all.ps1 -Mode plugin -Force
+    .\deploy-all.ps1 -Mode plugin -Diagnostic
+    .\deploy-all.ps1 -Diagnostic -AutoFix
+    .\deploy-all.ps1 -DailyDeploy
     
     # Filtres dossiers
-    .\deploy.ps1 -Mode plugin -FolderFilter assets      # Envoyer seulement assets/
-    .\deploy.ps1 -Mode plugin -FolderFilter core        # Envoyer seulement core/
-    .\deploy.ps1 -Mode plugin -FolderFilter languages   # Envoyer seulement languages/
-    .\deploy.ps1 -Mode plugin -FolderFilter custom -CustomFolders "assets/js","core/managers"  # Dossiers personnalisés
+    .\deploy-all.ps1 -Mode plugin -FolderFilter assets      # Envoyer seulement assets/
+    .\deploy-all.ps1 -Mode plugin -FolderFilter core        # Envoyer seulement core/
+    .\deploy-all.ps1 -Mode plugin -FolderFilter languages   # Envoyer seulement languages/
+    .\deploy-all.ps1 -Mode plugin -FolderFilter custom -CustomFolders "assets/js","core/managers"  # Dossiers personnalisés
     
     # Filtres fichiers
-    .\deploy.ps1 -Mode plugin -FileFilter assets        # Envoyer seulement les assets
-    .\deploy.ps1 -Mode plugin -FileFilter js            # Envoyer seulement les fichiers JS
-    .\deploy.ps1 -Mode plugin -FileFilter css           # Envoyer seulement les CSS
-    .\deploy.ps1 -Mode plugin -FileFilter php           # Envoyer seulement les PHP
-    .\deploy.ps1 -Mode plugin -FileFilter languages     # Envoyer seulement les traductions
-    .\deploy.ps1 -Mode plugin -FileFilter custom -CustomFilter "*admin.js","*style.css"  # Fichiers personnalisés
+    .\deploy-all.ps1 -Mode plugin -FileFilter assets        # Envoyer seulement les assets
+    .\deploy-all.ps1 -Mode plugin -FileFilter js            # Envoyer seulement les fichiers JS
+    .\deploy-all.ps1 -Mode plugin -FileFilter css           # Envoyer seulement les CSS
+    .\deploy-all.ps1 -Mode plugin -FileFilter php           # Envoyer seulement les PHP
+    .\deploy-all.ps1 -Mode plugin -FileFilter languages     # Envoyer seulement les traductions
+    .\deploy-all.ps1 -Mode plugin -FileFilter custom -CustomFilter "*admin.js","*style.css"  # Fichiers personnalisés
     
     # Combinaisons
-    .\deploy.ps1 -Mode plugin -FolderFilter assets -FileFilter js    # Assets + JS seulement
-    .\deploy.ps1 -Mode plugin -FolderFilter core -FileFilter php     # Core + PHP seulement
+    .\deploy-all.ps1 -Mode plugin -FolderFilter assets -FileFilter js    # Assets + JS seulement
+    .\deploy-all.ps1 -Mode plugin -FolderFilter core -FileFilter php     # Core + PHP seulement
 #>
 
 param(
