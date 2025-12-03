@@ -6,10 +6,6 @@
  * Updated: 2025-12-02 - Code réorganisé pour une meilleure lisibilité
  */
 
-// DEBUG: Vérifier que le fichier se charge
-echo "<!-- DEBUG: settings-templates.php LOADED at " . date('H:i:s') . " -->";
-echo "<script>console.log('🔥 TEMPLATES TAB: settings-templates.php loaded');</script>";
-
 require_once __DIR__ . '/settings-helpers.php';
 
 // =============================================================================
@@ -72,7 +68,7 @@ class PDF_Template_Status_Manager {
 
     // Détection des statuts personnalisés
     private function detect_custom_statuses() {
-        $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed', 'draft', 'checkout-draft'];
+        $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed', 'draft', 'checkout-draft'];    
 
         foreach ($this->order_statuses as $status_key => $status_name) {
             $clean_status_key = str_replace('wc-', '', $status_key);
@@ -386,7 +382,7 @@ class PDF_Template_Status_Manager {
     }
 
     public function is_custom_status($status_key) {
-        $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed', 'draft', 'checkout-draft'];
+        $default_statuses = ['pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed', 'draft', 'checkout-draft'];    
         $clean_status_key = str_replace('wc-', '', $status_key);
         return !in_array($clean_status_key, $default_statuses);
     }
@@ -407,15 +403,7 @@ $current_mappings = $status_manager->get_current_mappings();
 // AFFICHAGE HTML
 // =============================================================================
 ?>
-<!-- DEBUG: Templates tab content START -->
 <section class="templates-status-wrapper">
-    <!-- DEBUG MESSAGE -->
-    <div style="background: #f0f8ff; border: 1px solid #007cba; padding: 10px; margin: 10px 0; border-radius: 4px;">
-        <strong>🔧 DEBUG:</strong> Templates tab content loaded at <?php echo date('H:i:s'); ?>
-        <br><strong>WooCommerce active:</strong> <?php echo $woocommerce_active ? 'YES' : 'NO'; ?>
-        <br><strong>Order statuses found:</strong> <?php echo count($order_statuses); ?>
-        <br><strong>Templates found:</strong> <?php echo count($templates); ?>
-    </div>
     <!-- En-tête -->
     <header>
         <h2 style="display: flex; justify-content: space-between; align-items: center;">
@@ -454,8 +442,8 @@ $current_mappings = $status_manager->get_current_mappings();
                                     <?php echo esc_html($status_label); ?>
                                     <?php if ($is_custom_status): ?>
                                         <?php
-                                        $detected_plugin = isset($status_plugins[$status_key]) ? $status_plugins[$status_key] : 'Plugin inconnu';
-                                        $tooltip_text = "Slug personnalisé détecté - ajouté par: {$detected_plugin}";
+                                        $detected_plugin = isset($status_plugins[$status_key]) ? $status_plugins[$status_key] : 'Plugin inconnu'
+;                                                                                                                                                                                       $tooltip_text = "Slug personnalisé détecté - ajouté par: {$detected_plugin}";
                                         ?>
                                         <span class="custom-status-indicator"
                                               data-tooltip="<?php echo esc_attr($tooltip_text); ?>"
@@ -475,7 +463,7 @@ $current_mappings = $status_manager->get_current_mappings();
                                     <option value="">-- Aucun template --</option>
                                     <?php foreach ($templates as $template_id => $template_title): ?>
                                         <option value="<?php echo esc_attr($template_id); ?>"
-                                                <?php pdf_builder_safe_selected($current_mappings[$status_key] ?? '', $template_id); ?>>
+                                                <?php pdf_builder_safe_selected($current_mappings[$status_key] ?? '', $template_id); ?>>        
                                             <?php echo esc_html($template_title); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -484,7 +472,7 @@ $current_mappings = $status_manager->get_current_mappings();
 
                             <!-- Aperçu du template assigné -->
                             <div class="template-preview">
-                                <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>
+                                <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>      
                                     <p class="current-template">
                                         <strong>Assigné :</strong> <?php echo esc_html($templates[$current_mappings[$status_key]]); ?>
                                         <span class="assigned-badge">✅</span>
