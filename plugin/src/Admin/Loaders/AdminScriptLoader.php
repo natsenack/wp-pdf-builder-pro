@@ -30,11 +30,15 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
+        error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook);
+
         // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
 
         // Charger SETTINGS CSS et JS pour les pages settings
         if (strpos($hook, 'pdf-builder') !== false || strpos($hook, 'settings') !== false) {
+            error_log('[WP AdminScriptLoader] Loading settings scripts for hook: ' . $hook);
+
             wp_enqueue_style(
                 'pdf-builder-settings-tabs',
                 PDF_BUILDER_PRO_ASSETS_URL . 'css/settings-tabs.css',
@@ -90,7 +94,10 @@ class AdminScriptLoader
 
         // Scripts pour l'éditeur React
         if ($hook === 'pdf-builder_page_pdf-builder-react-editor') {
+            error_log('[WP AdminScriptLoader] Loading React editor scripts for hook: ' . $hook);
             $this->loadReactEditorScripts();
+        } else {
+            error_log('[WP AdminScriptLoader] NOT loading React editor scripts, hook is: ' . $hook);
         }
     }
 
@@ -99,24 +106,30 @@ class AdminScriptLoader
      */
     private function loadReactEditorScripts()
     {
+        error_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s'));
+
         $cache_bust = time();
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
 
         // AJAX throttle manager
         $throttle_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/ajax-throttle.js';
         wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $cache_bust, true);
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url);
 
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js';
         wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle'], $cache_bust, true);
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
         // Bundle React
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
 
         // Init helper
         $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
         wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react'], $cache_bust, true);
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
 
         // Scripts de l'API Preview
         $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.js';
@@ -135,51 +148,69 @@ class AdminScriptLoader
             'isEdit' => isset($_GET['template_id']) && intval($_GET['template_id']) > 0,
         ];
 
+        error_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true));
+
         // Charger les données du template si template_id est fourni
         if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
             $template_id = intval($_GET['template_id']);
+            error_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id);
             $existing_template_data = $this->admin->getTemplateProcessor()->loadTemplateRobust($template_id);
             if ($existing_template_data && isset($existing_template_data['elements'])) {
                 $localize_data['initialElements'] = $existing_template_data['elements'];
                 $localize_data['initialTemplate'] = $existing_template_data;
+                error_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id);
+            } else {
+                error_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true));
             }
         }
 
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
+        error_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react with data: ' . json_encode($localize_data));
 
         // Script d'initialisation avec debug - exécuté immédiatement après la localisation
         $init_script = "
-        (function() {
-            console.log('🔧 [WP] Script d\'initialisation exécuté');
-            console.log('🔧 [WP] Vérification window.pdfBuilderData dans 100ms...');
-            setTimeout(function() {
-                console.log('🔧 [WP] Localized data après timeout:', window.pdfBuilderData);
-                if (window.pdfBuilderData) {
-                    console.log('✅ [WP] ajaxUrl:', window.pdfBuilderData.ajaxUrl);
-                    console.log('✅ [WP] nonce:', window.pdfBuilderData.nonce);
-                    console.log('✅ [WP] version:', window.pdfBuilderData.version);
-                    console.log('✅ [WP] templateId:', window.pdfBuilderData.templateId);
-                } else {
-                    console.error('❌ [WP] pdfBuilderData not found on window après timeout');
-                    console.log('❌ [WP] window keys:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
-                }
-            }, 100);
-        })();
+        console.log('🔧 [WP] Script d\'initialisation exécuté à ' + new Date().toISOString());
+        console.log('🔧 [WP] Vérification window.pdfBuilderData dans 100ms...');
+        setTimeout(function() {
+            console.log('🔧 [WP] Localized data après timeout:', window.pdfBuilderData);
+            if (window.pdfBuilderData) {
+                console.log('✅ [WP] ajaxUrl:', window.pdfBuilderData.ajaxUrl);
+                console.log('✅ [WP] nonce:', window.pdfBuilderData.nonce);
+                console.log('✅ [WP] version:', window.pdfBuilderData.version);
+                console.log('✅ [WP] templateId:', window.pdfBuilderData.templateId);
+                console.log('✅ [WP] Toutes les clés:', Object.keys(window.pdfBuilderData));
+            } else {
+                console.error('❌ [WP] pdfBuilderData not found on window après timeout');
+                console.log('❌ [WP] window keys avec pdfBuilder:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
+                console.log('❌ [WP] Toutes les clés window:', Object.keys(window));
+            }
+        }, 100);
         ";
         wp_add_inline_script('pdf-builder-react', $init_script, 'after');
+        error_log('[WP AdminScriptLoader] wp_add_inline_script called for pdf-builder-react');
 
         // Script de diagnostic supplémentaire qui s'exécute plus tôt
         $diagnostic_script = "
         jQuery(document).ready(function($) {
-            console.log('🔧 [WP] Document ready - vérification pdfBuilderData');
+            console.log('🔧 [WP] Document ready - vérification pdfBuilderData à ' + new Date().toISOString());
             setTimeout(function() {
                 console.log('🔧 [WP] pdfBuilderData dans document ready:', window.pdfBuilderData);
                 if (!window.pdfBuilderData) {
                     console.error('❌ [WP] pdfBuilderData toujours undefined dans document ready');
+                    console.log('❌ [WP] Vérification des scripts chargés...');
+                    var scripts = document.getElementsByTagName('script');
+                    for (var i = 0; i < scripts.length; i++) {
+                        if (scripts[i].src && scripts[i].src.includes('pdf-builder-react')) {
+                            console.log('❌ [WP] Script trouvé:', scripts[i].src);
+                        }
+                    }
+                } else {
+                    console.log('✅ [WP] pdfBuilderData trouvé dans document ready');
                 }
             }, 500);
         });
         ";
         wp_add_inline_script('jquery', $diagnostic_script, 'after');
+        error_log('[WP AdminScriptLoader] Diagnostic script added to jquery');
     }
 }
