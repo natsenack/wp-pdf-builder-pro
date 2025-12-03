@@ -222,7 +222,9 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 overflow: 'hidden',
                 position: 'relative',
                 paddingTop: '20px',
-                paddingBottom: '20px'
+                paddingBottom: '20px',
+                maxWidth: '100%',
+                maxHeight: '100%'
               }}
             >
               {/* Indicateur de dimensions avec format et DPI */}

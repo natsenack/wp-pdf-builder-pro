@@ -598,6 +598,9 @@ class PdfBuilderAdmin
             border: 1px solid #ccd0d4;
             border-radius: 8px;
             min-height: 600px;
+            max-width: 100%;
+            max-height: 80vh;
+            overflow: hidden;
         }
 
         .pdf-builder-loading {
