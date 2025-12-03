@@ -297,6 +297,12 @@
                                 <p class="canvas-modal-description">Qualité d'impression (plus élevé = meilleure qualité)</p>
                             </td>
                         </tr>
+<?php
+/**
+ * Canvas Configuration Modals
+ * Updated: 2025-12-03 00:30:00
+ */
+?>
                         <tr>
                             <th scope="row"><label>Dimensions calculées</label></th>
                             <td>
@@ -960,3 +966,4 @@
         console.error('💥 Stack trace:', error.stack);
     }
 </script>
+<?php
