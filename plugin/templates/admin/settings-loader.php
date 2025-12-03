@@ -13,21 +13,10 @@ if (!defined('ABSPATH')) {
  * Charger les assets pour la page de paramètres
  */
 function pdf_builder_load_settings_assets($hook) {
-    // LOG GÉNÉRAL POUR TOUS LES HOOKS
-    error_log('🔍 PDF BUILDER ASSETS: Hook détecté: ' . $hook);
-
-    // VÉRIFIER LES CONSTANTES
-    error_log('📋 PDF BUILDER ASSETS: PDF_BUILDER_PLUGIN_URL = ' . (defined('PDF_BUILDER_PLUGIN_URL') ? PDF_BUILDER_PLUGIN_URL : 'NON DÉFINI'));
-    error_log('📋 PDF BUILDER ASSETS: PDF_BUILDER_VERSION = ' . (defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'NON DÉFINI'));
-
     // Charger seulement sur la page de paramètres PDF Builder
     if ($hook !== 'pdf-builder_page_pdf-builder-settings') {
-        error_log('⚠️ PDF BUILDER ASSETS: Hook ignoré (pas la bonne page): ' . $hook . ' (attendu: pdf-builder_page_pdf-builder-settings)');
         return;
     }
-
-    // LOG POUR CONFIRMER LE CHARGEMENT DES ASSETS
-    error_log('🎯 PDF BUILDER ASSETS: Chargement des assets pour la page ' . $hook);
 
     // Charger les styles CSS
     wp_enqueue_style(
@@ -49,10 +38,7 @@ function pdf_builder_load_settings_assets($hook) {
 
     // Charger le JavaScript pour la navigation par onglets
     $script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js';
-    
-    // LOG AVANT L'ENREGISTREMENT
-    error_log('🔧 PDF BUILDER ASSETS: Tentative d\'enregistrement du script: ' . $script_url);
-    
+
     wp_enqueue_script(
         'pdf-builder-settings-tabs',
         $script_url,
@@ -61,14 +47,14 @@ function pdf_builder_load_settings_assets($hook) {
         true
     );
 
-    // LOG APRÈS L'ENREGISTREMENT
-    error_log('✅ PDF BUILDER ASSETS: Script enregistré avec succès: pdf-builder-settings-tabs');
-    
-    // AJOUTER UN SCRIPT INLINE POUR VÉRIFIER LE CHARGEMENT
+    // AJOUTER LES LOGS JAVASCRIPT DIRECTEMENT
     wp_add_inline_script('pdf-builder-settings-tabs', '
-        console.log("🔥 PDF BUILDER INLINE: Script settings-tabs.js chargé via wp_enqueue_script");
-        console.log("📍 Script URL:", "' . $script_url . '");
-        console.log("📅 Version:", "' . PDF_BUILDER_VERSION . '-' . time() . '");
+        console.log("🔥 PDF BUILDER DEBUG: Hook détecté:", "' . $hook . '");
+        console.log("📋 PDF BUILDER DEBUG: PDF_BUILDER_PLUGIN_URL =", "' . (defined('PDF_BUILDER_PLUGIN_URL') ? PDF_BUILDER_PLUGIN_URL : 'NON DÉFINI') . '");
+        console.log("📋 PDF BUILDER DEBUG: PDF_BUILDER_VERSION =", "' . (defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'NON DÉFINI') . '");
+        console.log("🎯 PDF BUILDER DEBUG: Chargement des assets pour la page:", "' . $hook . '");
+        console.log("🔧 PDF BUILDER DEBUG: Script URL:", "' . $script_url . '");
+        console.log("📅 PDF BUILDER DEBUG: Version avec cache buster:", "' . PDF_BUILDER_VERSION . '-' . time() . '");
     ');
 }
 
