@@ -455,7 +455,7 @@ if ($cache_last_cleanup !== 'Jamais') {
                     </p>
                 </aside>
 
-            <!-- Modales de cache et canvas - chargées SEULEMENT dans le tab Système -->
-            <?php require_once __DIR__ . '/settings-modals.php'; ?>
+            <!-- Modales de cache et canvas - DÉPLACÉES vers la fin de settings-main.php pour éviter les conflits de structure -->
+            <?php // require_once __DIR__ . '/settings-modals.php'; // Désactivé - les modales sont maintenant dans settings-main.php ?>
 
 

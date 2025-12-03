@@ -61,6 +61,9 @@ $settings = get_option('pdf_builder_settings', array());
         </div>
     </section>
 
+    <!-- Modales de configuration - Chargées après tous les onglets pour éviter les conflits de structure -->
+    <?php require_once 'settings-modals.php'; ?>
+
     <!-- Navigation JavaScript - Gérée par assets/js/settings-tabs.js -->
     <!-- Le fichier settings-tabs.js fournit PDFBuilderTabsAPI avec switchToTab(), getActiveTab() -->
 
