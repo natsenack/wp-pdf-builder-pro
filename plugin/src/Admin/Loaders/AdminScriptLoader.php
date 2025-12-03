@@ -153,7 +153,7 @@ class AdminScriptLoader
         error_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react with data: ' . json_encode($localize_data));
 
         // Also set window.pdfBuilderData directly
-        wp_add_inline_script('pdf-builder-react', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
+        wp_add_inline_script('pdf-builder-react', 'console.log("🔧 [WP INLINE] Setting window.pdfBuilderData"); window.pdfBuilderData = ' . wp_json_encode($localize_data) . '; console.log("🔧 [WP INLINE] window.pdfBuilderData set to", window.pdfBuilderData);', 'before');
         error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
         wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
