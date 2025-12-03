@@ -1,6 +1,5 @@
-/**
- * Paramètres PDF Builder Pro - Navigation des onglets (plugin copy)
- */
+// LOG ABSOLU AU DÉBUT DU FICHIER - SI ÇA N'APPARAÎT PAS, LE SCRIPT NE SE CHARGE PAS
+console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
 
 (function() {
     'use strict';
