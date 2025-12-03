@@ -15,7 +15,7 @@ function pdf_builder_safe_get_option($option, $default = '') {
 /**
  * Safe wrapper for checked function
  */
-function pdf_builder_safe_pdf_builder_safe_checked($checked, $current = true, $echo = true) {
+function pdf_builder_safe_checked($checked, $current = true, $echo = true) {
     if (function_exists('checked')) {
         return pdf_builder_safe_checked($checked, $current, $echo);
     }
@@ -27,7 +27,7 @@ function pdf_builder_safe_pdf_builder_safe_checked($checked, $current = true, $e
 /**
  * Safe wrapper for selected function
  */
-function pdf_builder_safe_pdf_builder_safe_selected($selected, $current = true, $echo = true) {
+function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
     if (function_exists('selected')) {
         return pdf_builder_safe_selected($selected, $current, $echo);
     }
@@ -55,7 +55,7 @@ function pdf_builder_safe_pdf_builder_safe_selected($selected, $current = true, 
                                 <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php pdf_builder_safe_pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_cache_enabled', false)); ?>>
+                                        <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_cache_enabled', false)); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Améliore les performances en mettant en cache les données</p>

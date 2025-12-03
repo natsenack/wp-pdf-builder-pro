@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Navigation Onglets PDF Builder</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .nav-tab-wrapper { border-bottom: 1px solid #ccc; margin-bottom: 20px; }
+        .nav-tab { display: inline-block; padding: 8px 16px; text-decoration: none; background: #f1f1f1; border: 1px solid #ccc; border-bottom: none; margin-right: 4px; }
+        .nav-tab-active { background: #fff; border-bottom: 1px solid #fff; }
+        .tab-content { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; }
+        .tab-content.active { display: block; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>Test Navigation Onglets PDF Builder</h1>
+
+    <div id="test-results"></div>
+
+    <!-- Simuler la structure HTML des paramètres -->
+    <main class="wrap" id="pdf-builder-settings-wrapper">
+        <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
+            <a href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">Général</a>
+            <a href="#licence" class="nav-tab" data-tab="licence" role="tab" aria-selected="false" aria-controls="licence">Licence</a>
+            <a href="#systeme" class="nav-tab" data-tab="systeme" role="tab" aria-selected="false" aria-controls="systeme">Système</a>
+        </nav>
+
+        <section id="pdf-builder-tab-content" class="tab-content-wrapper" role="tabpanel" aria-live="polite">
+            <div id="general" class="tab-content active" role="tabpanel" aria-labelledby="tab-general">
+                <h2>Contenu Général</h2>
+                <p>Ceci est le contenu de l'onglet Général.</p>
+            </div>
+            <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
+                <h2>Contenu Licence</h2>
+                <p>Ceci est le contenu de l'onglet Licence.</p>
+            </div>
+            <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
+                <h2>Contenu Système</h2>
+                <p>Ceci est le contenu de l'onglet Système.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Charger le script settings-tabs.js -->
+    <script>
+        // Simuler PDF_BUILDER_CONFIG pour le debug
+        window.PDF_BUILDER_CONFIG = { debug: true };
+
+        // Charger le contenu du script settings-tabs.js
+        <?php
+        $script_path = 'i:\\wp-pdf-builder-pro\\plugin\\templates\\admin\\settings-parts\\settings-tabs.js';
+        if (file_exists($script_path)) {
+            echo file_get_contents($script_path);
+        } else {
+            echo "console.error('Script non trouvé');";
+        }
+        ?>
+    </script>
+
+    <script>
+        // Tests automatiques
+        setTimeout(function() {
+            const results = document.getElementById('test-results');
+
+            function addResult(message, success) {
+                const div = document.createElement('div');
+                div.className = 'test-result ' + (success ? 'success' : 'error');
+                div.textContent = message;
+                results.appendChild(div);
+            }
+
+            // Test 1: Vérifier que les éléments DOM sont présents
+            const container = document.getElementById('pdf-builder-settings-wrapper');
+            const tabsContainer = document.getElementById('pdf-builder-tabs');
+            const contentContainer = document.getElementById('pdf-builder-tab-content');
+
+            addResult('Éléments DOM principaux trouvés: ' + (container && tabsContainer && contentContainer ? 'OUI' : 'NON'), container && tabsContainer && contentContainer);
+
+            // Test 2: Vérifier que les onglets sont présents
+            const tabButtons = tabsContainer ? tabsContainer.querySelectorAll('.nav-tab') : [];
+            addResult('Boutons onglets trouvés: ' + tabButtons.length, tabButtons.length === 3);
+
+            // Test 3: Vérifier que les contenus sont présents
+            const tabContents = contentContainer ? contentContainer.querySelectorAll('.tab-content') : [];
+            addResult('Contenus onglets trouvés: ' + tabContents.length, tabContents.length === 3);
+
+            // Test 4: Vérifier que l'onglet actif est correct
+            const activeTab = tabsContainer ? tabsContainer.querySelector('.nav-tab-active') : null;
+            const activeContent = contentContainer ? contentContainer.querySelector('.tab-content.active') : null;
+            addResult('Onglet actif initial: ' + (activeTab ? activeTab.getAttribute('data-tab') : 'AUCUN'), activeTab && activeTab.getAttribute('data-tab') === 'general');
+            addResult('Contenu actif initial: ' + (activeContent ? activeContent.id : 'AUCUN'), activeContent && activeContent.id === 'general');
+
+            // Test 5: Tester le changement d'onglet
+            setTimeout(function() {
+                const licenceTab = tabsContainer.querySelector('[data-tab="licence"]');
+                if (licenceTab) {
+                    licenceTab.click();
+                    setTimeout(function() {
+                        const newActiveTab = tabsContainer.querySelector('.nav-tab-active');
+                        const newActiveContent = contentContainer.querySelector('.tab-content.active');
+                        addResult('Changement vers licence - Onglet actif: ' + (newActiveTab ? newActiveTab.getAttribute('data-tab') : 'AUCUN'), newActiveTab && newActiveTab.getAttribute('data-tab') === 'licence');
+                        addResult('Changement vers licence - Contenu actif: ' + (newActiveContent ? newActiveContent.id : 'AUCUN'), newActiveContent && newActiveContent.id === 'licence');
+                    }, 100);
+                } else {
+                    addResult('Test changement onglet: IMPOSSIBLE - Bouton licence non trouvé', false);
+                }
+            }, 500);
+
+        }, 1000);
+    </script>
+</body>
+</html>

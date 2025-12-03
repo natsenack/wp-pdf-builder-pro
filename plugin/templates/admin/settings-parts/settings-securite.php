@@ -3,7 +3,7 @@
 /**
  * Safe wrapper for get_option that works even when WordPress is not fully loaded
  */
-function pdf_builder_safe_pdf_builder_safe_get_option($option, $default = '') {
+function pdf_builder_safe_get_option($option, $default = '') {
     if (function_exists('get_option')) {
         return pdf_builder_safe_get_option($option, $default);
     }
@@ -13,7 +13,7 @@ function pdf_builder_safe_pdf_builder_safe_get_option($option, $default = '') {
 /**
  * Safe wrapper for checked function
  */
-function pdf_builder_safe_pdf_builder_safe_checked($checked, $current = true, $echo = true) {
+function pdf_builder_safe_checked($checked, $current = true, $echo = true) {
     if (function_exists('checked')) {
         return pdf_builder_safe_checked($checked, $current, $echo);
     }
@@ -25,7 +25,7 @@ function pdf_builder_safe_pdf_builder_safe_checked($checked, $current = true, $e
 /**
  * Safe wrapper for selected function
  */
-function pdf_builder_safe_pdf_builder_safe_selected($selected, $current = true, $echo = true) {
+function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
     if (function_exists('selected')) {
         return pdf_builder_safe_selected($selected, $current, $echo);
     }

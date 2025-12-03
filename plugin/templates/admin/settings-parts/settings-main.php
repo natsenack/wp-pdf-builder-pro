@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!defined('ABSPATH')) exit('Direct access forbidden');
 if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) wp_die('Access denied');
 $settings = get_option('pdf_builder_settings', array());
@@ -422,3 +422,15 @@ wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $js_config
         }
     });
 ?>
+
+<!-- CHARGEMENT DU SCRIPT DE NAVIGATION DES ONGLES -->
+<script>
+<?php
+$script_path = plugin_dir_path(__FILE__) . 'settings-tabs.js';
+if (file_exists($script_path)) {
+    echo file_get_contents($script_path);
+} else {
+    echo "console.error('PDF Builder: Script settings-tabs.js non trouvé à: " . $script_path . "');";
+}
+?>
+</script>

@@ -3,7 +3,7 @@
 /**
  * Safe wrapper for get_option that works even when WordPress is not fully loaded
  */
-function pdf_builder_safe_pdf_builder_safe_get_option($option, $default = '') {
+function pdf_builder_safe_get_option($option, $default = '') {
     if (function_exists('get_option')) {
         return pdf_builder_safe_get_option($option, $default);
     }

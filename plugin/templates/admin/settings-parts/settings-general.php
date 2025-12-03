@@ -7,9 +7,9 @@
 /**
  * Safe wrapper for get_option that works even when WordPress is not fully loaded
  */
-function pdf_builder_safe_pdf_builder_safe_get_option($option, $default = '') {
+function pdf_builder_safe_get_option($option, $default = '') {
     if (function_exists('get_option')) {
-        return pdf_builder_safe_get_option($option, $default);
+        return get_option($option, $default);
     }
     return $default;
 }
@@ -41,9 +41,9 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
 /**
  * Safe wrapper for get_bloginfo
  */
-function pdf_builder_safe_pdf_builder_safe_get_bloginfo($show = '') {
+function pdf_builder_safe_get_bloginfo($show = '') {
     if (function_exists('get_bloginfo')) {
-        return pdf_builder_safe_get_bloginfo($show);
+        return get_bloginfo($show);
     }
     return '';
 }
@@ -51,9 +51,9 @@ function pdf_builder_safe_pdf_builder_safe_get_bloginfo($show = '') {
 /**
  * Safe wrapper for esc_html
  */
-function pdf_builder_safe_pdf_builder_safe_esc_html($text) {
+function pdf_builder_safe_esc_html($text) {
     if (function_exists('esc_html')) {
-        return pdf_builder_safe_esc_html($text);
+        return esc_html($text);
     }
     return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
@@ -61,9 +61,9 @@ function pdf_builder_safe_pdf_builder_safe_esc_html($text) {
 /**
  * Safe wrapper for esc_attr
  */
-function pdf_builder_safe_pdf_builder_safe_esc_attr($text) {
+function pdf_builder_safe_esc_attr($text) {
     if (function_exists('esc_attr')) {
-        return pdf_builder_safe_esc_attr($text);
+        return esc_attr($text);
     }
     return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
