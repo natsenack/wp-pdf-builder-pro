@@ -364,13 +364,7 @@ try {
                 PDFBuilderTabsAPI.saveAllSettings();
             });
 
-            // Ajouter un style visible pour le debug
-            saveBtn.style.backgroundColor = '#ff6b6b';
-            saveBtn.style.color = 'white';
-            saveBtn.style.border = '2px solid #ff0000';
-            saveBtn.style.zIndex = '10000';
-
-            console.log('✅ PDF Builder: Bouton configuré avec style debug rouge');
+            console.log('✅ PDF Builder: Bouton configuré');
         } else {
             console.warn('⚠️ PDF Builder: Bouton de sauvegarde flottant non trouvé - création du bouton réel');
 
@@ -388,24 +382,18 @@ try {
                 right: 20px;
                 z-index: 9999;
                 display: block;
-                background: rgba(255, 0, 0, 0.1);
-                border: 2px solid red;
-                padding: 5px;
             `;
 
             const saveBtn = document.createElement('button');
             saveBtn.id = 'pdf-builder-save-all';
             saveBtn.className = 'button button-primary';
-            saveBtn.textContent = '🚨 DEBUG: Enregistrer les paramètres';
+            saveBtn.textContent = 'Enregistrer les paramètres';
             saveBtn.style.cssText = `
                 padding: 12px 20px;
                 font-size: 16px;
                 box-shadow: 0 4px 8px rgba(0,0,0,0.2);
                 border-radius: 8px;
                 transition: all 0.3s ease;
-                background: #ff6b6b !important;
-                color: white !important;
-                border: 2px solid #ff0000 !important;
             `;
 
             saveBtn.addEventListener('click', function(e) {
