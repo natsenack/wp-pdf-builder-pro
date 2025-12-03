@@ -1,5 +1,7 @@
 /**
  * Paramètres PDF Builder Pro - Navigation des onglets
+ * Version: 2.0.0 - Nettoyée (sans logs de debug)
+ * Date: 2025-12-03
  */
 
 (function() {
