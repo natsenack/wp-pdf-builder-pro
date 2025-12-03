@@ -41,42 +41,23 @@ try {
 
     // Système de navigation des onglets simplifié
     function initTabs() {
-        console.log('🔧 PDF Builder: Initialisation du système d\'onglets');
-
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
 
         if (!tabsContainer || !contentContainer) {
-            console.error('❌ PDF Builder: Conteneurs non trouvés', {
-                tabsContainer: !!tabsContainer,
-                contentContainer: !!contentContainer
-            });
+            console.error('❌ PDF Builder: Conteneurs non trouvés');
             return;
         }
 
-        console.log('✅ PDF Builder: Conteneurs trouvés, configuration des gestionnaires d\'événements');
-
         // Gestionnaire de clic pour les onglets
         tabsContainer.addEventListener('click', function(e) {
-            console.log('🖱️ PDF Builder: Clic détecté sur les onglets');
-
             const tab = e.target.closest('.nav-tab');
-            if (!tab) {
-                console.log('⚠️ PDF Builder: Clic en dehors d\'un onglet');
-                return;
-            }
+            if (!tab) return;
 
             e.preventDefault();
 
             const tabId = tab.getAttribute('data-tab');
-            console.log('📋 PDF Builder: Onglet cliqué', { tabId, tabElement: tab });
-
-            if (!tabId) {
-                console.error('❌ PDF Builder: Aucun data-tab trouvé sur l\'onglet');
-                return;
-            }
-
-            console.log('🔄 PDF Builder: Changement d\'onglet vers', tabId);
+            if (!tabId) return;
 
             // Désactiver tous les onglets
             tabsContainer.querySelectorAll('.nav-tab').forEach(t => {
@@ -92,26 +73,16 @@ try {
             // Activer l'onglet cliqué
             tab.classList.add('nav-tab-active');
             tab.setAttribute('aria-selected', 'true');
-            console.log('✅ PDF Builder: Onglet activé visuellement', tabId);
 
             // Activer le contenu correspondant
             const content = document.getElementById(tabId);
-            console.log('🔍 PDF Builder: Recherche élément avec ID:', tabId);
-            console.log('📋 PDF Builder: Élément trouvé:', content);
             if (content) {
                 content.classList.add('active');
-                console.log('✅ PDF Builder: Contenu activé', tabId);
-            } else {
-                console.error('❌ PDF Builder: Contenu non trouvé pour', tabId);
-                // Debug: lister tous les éléments avec classe tab-content
-                const allTabs = document.querySelectorAll('.tab-content');
-                console.log('📊 PDF Builder: Tous les onglets trouvés:', Array.from(allTabs).map(el => ({id: el.id, classes: el.className})));
             }
 
             // Sauvegarder dans localStorage
             try {
                 localStorage.setItem('pdf_builder_active_tab', tabId);
-                console.log('💾 PDF Builder: Onglet sauvegardé dans localStorage', tabId);
             } catch (e) {
                 console.error('❌ PDF Builder: Erreur localStorage', e);
             }
@@ -120,26 +91,13 @@ try {
         // Restaurer l'onglet sauvegardé
         try {
             const savedTab = localStorage.getItem('pdf_builder_active_tab');
-            console.log('🔍 PDF Builder: Vérification localStorage', { savedTab });
-
             if (savedTab) {
                 const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
                 const savedContent = document.getElementById(savedTab);
-                console.log('📂 PDF Builder: Éléments trouvés pour restauration', {
-                    savedTabElement: !!savedTabElement,
-                    savedContent: !!savedContent,
-                    tabId: savedTab
-                });
-
                 if (savedTabElement && savedContent) {
-                    console.log('🔄 PDF Builder: Restauration de l\'onglet sauvegardé', savedTab);
                     savedTabElement.click();
                     return;
-                } else {
-                    console.warn('⚠️ PDF Builder: Impossible de restaurer l\'onglet sauvegardé', savedTab);
                 }
-            } else {
-                console.log('ℹ️ PDF Builder: Aucun onglet sauvegardé trouvé');
             }
         } catch (e) {
             console.error('❌ PDF Builder: Erreur lors de la restauration localStorage', e);
@@ -148,10 +106,7 @@ try {
         // Activer le premier onglet par défaut
         const firstTab = tabsContainer.querySelector('.nav-tab');
         if (firstTab) {
-            console.log('🏠 PDF Builder: Activation du premier onglet par défaut');
             firstTab.click();
-        } else {
-            console.error('❌ PDF Builder: Aucun onglet trouvé pour l\'activation par défaut');
         }
     }
 
@@ -167,22 +122,15 @@ try {
     // Exposer une API simple
     window.PDFBuilderTabsAPI = {
         switchToTab: function(tabId) {
-            console.log('🔧 PDF Builder: API switchToTab appelée', tabId);
             const tab = document.querySelector('[data-tab="' + tabId + '"]');
             if (tab) {
-                console.log('✅ PDF Builder: Onglet trouvé via API, déclenchement clic');
                 tab.click();
-            } else {
-                console.error('❌ PDF Builder: Onglet non trouvé via API', tabId);
             }
         },
         getActiveTab: function() {
             try {
-                const activeTab = localStorage.getItem('pdf_builder_active_tab');
-                console.log('📖 PDF Builder: API getActiveTab', activeTab);
-                return activeTab;
+                return localStorage.getItem('pdf_builder_active_tab');
             } catch (e) {
-                console.error('❌ PDF Builder: Erreur API getActiveTab', e);
                 return null;
             }
         },
@@ -197,7 +145,6 @@ try {
         },
         resetTemplatesStatus: function() {
             if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les mappings de templates ? Cette action ne peut pas être annulée.')) {
-                // Réinitialiser tous les selects
                 const selects = document.querySelectorAll('#templates-status-form select[name^="order_status_templates"]');
                 selects.forEach(select => {
                     select.value = '';
@@ -206,22 +153,18 @@ try {
             }
         },
         saveAllSettings: function() {
-            console.log('💾 PDF Builder: Sauvegarde globale déclenchée');
-
             const saveBtn = document.getElementById('pdf-builder-save-all');
             const statusIndicator = document.getElementById('save-status-indicator');
             const statusText = document.getElementById('save-status-text');
 
-            if (!saveBtn || !statusIndicator || !statusText) {
-                console.error('❌ PDF Builder: Éléments du bouton de sauvegarde non trouvés');
-                return;
-            }
+            if (!saveBtn) return;
 
             // Désactiver le bouton et afficher l'état de sauvegarde
             saveBtn.classList.add('saving');
             saveBtn.disabled = true;
-            statusText.textContent = 'Sauvegarde en cours...';
-            statusIndicator.classList.add('visible');
+
+            if (statusText) statusText.textContent = 'Sauvegarde en cours...';
+            if (statusIndicator) statusIndicator.classList.add('visible');
 
             // Collecter toutes les données des formulaires
             const formData = new FormData();
@@ -232,7 +175,6 @@ try {
             const tabs = ['general', 'licence', 'systeme', 'acces', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
 
             tabs.forEach(tabId => {
-                // Chercher tous les inputs, selects, textareas dans l'onglet
                 const tabElement = document.getElementById(tabId);
                 if (tabElement) {
                     const inputs = tabElement.querySelectorAll('input, select, textarea');
@@ -260,14 +202,7 @@ try {
             })
             .then(response => response.json())
             .then(data => {
-                console.log('📨 PDF Builder: Réponse sauvegarde', data);
-
                 if (data.success) {
-                    statusText.textContent = 'Sauvegardé avec succès !';
-                    statusIndicator.classList.add('success');
-                    statusIndicator.classList.remove('error');
-
-                    // Afficher un message de succès
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
                             icon: 'success',
@@ -284,11 +219,6 @@ try {
                 }
             })
             .catch(error => {
-                console.error('❌ PDF Builder: Erreur sauvegarde', error);
-                statusText.textContent = 'Erreur lors de la sauvegarde';
-                statusIndicator.classList.add('error');
-                statusIndicator.classList.remove('success');
-
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
                         icon: 'error',
@@ -305,8 +235,8 @@ try {
                 setTimeout(() => {
                     saveBtn.classList.remove('saving');
                     saveBtn.disabled = false;
-                    statusIndicator.classList.remove('visible', 'success', 'error');
-                    statusText.textContent = 'Prêt à enregistrer';
+                    if (statusIndicator) statusIndicator.classList.remove('visible', 'success', 'error');
+                    if (statusText) statusText.textContent = 'Prêt à enregistrer';
                 }, 3000);
             });
         }
@@ -316,64 +246,20 @@ try {
     function initSaveButton() {
         console.log('🔍 PDF Builder: Recherche du bouton de sauvegarde flottant...');
 
-        // Log détaillé du DOM au moment de la recherche
-        console.log('📊 PDF Builder: Analyse détaillée du DOM:');
-        console.log('   - Body existe:', !!document.body);
-        console.log('   - Body children:', document.body ? document.body.children.length : 'N/A');
-        console.log('   - Total éléments avec ID:', document.querySelectorAll('[id]').length);
-
         const saveBtn = document.getElementById('pdf-builder-save-all');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
 
-        console.log('🎯 PDF Builder: Recherche spécifique des éléments:');
-        console.log('   - Recherche ID: pdf-builder-save-all');
-        console.log('   - Résultat:', saveBtn);
-        console.log('   - Recherche ID: pdf-builder-save-floating');
-        console.log('   - Résultat:', floatingContainer);
-
-        console.log('📋 PDF Builder: État du DOM:', {
-            saveBtn: !!saveBtn,
-            floatingContainer: !!floatingContainer,
-            body: !!document.body,
-            allButtons: document.querySelectorAll('button').length,
-            allDivs: document.querySelectorAll('div').length
-        });
-
-        // Chercher tous les éléments qui contiennent "save" dans leur ID
-        const allSaveElements = Array.from(document.querySelectorAll('[id*="save"]'));
-        console.log('💾 PDF Builder: Éléments avec "save" dans l\'ID:', allSaveElements.map(el => ({id: el.id, tag: el.tagName, text: el.textContent?.substring(0, 50)})));
-
-        // Chercher tous les éléments qui contiennent "pdf-builder" dans leur ID
-        const allPdfElements = Array.from(document.querySelectorAll('[id*="pdf-builder"]'));
-        console.log('🏗️ PDF Builder: Éléments avec "pdf-builder" dans l\'ID:', allPdfElements.map(el => ({id: el.id, tag: el.tagName})));
-
-        // Chercher tous les éléments avec position fixed
-        const fixedElements = Array.from(document.querySelectorAll('[style*="position: fixed"], [style*="position:fixed"]'));
-        console.log('📌 PDF Builder: Éléments en position fixed:', fixedElements.map(el => ({id: el.id, tag: el.tagName, style: el.getAttribute('style')})));
-
         if (saveBtn) {
             console.log('💾 PDF Builder: Bouton de sauvegarde flottant trouvé, configuration');
-            console.log('   - Bouton:', saveBtn);
-            console.log('   - Texte du bouton:', saveBtn.textContent);
-            console.log('   - Style du bouton:', saveBtn.getAttribute('style'));
-            console.log('   - Parent:', saveBtn.parentElement);
-
             saveBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('🖱️ PDF Builder: Clic sur le bouton de sauvegarde');
                 PDFBuilderTabsAPI.saveAllSettings();
             });
-
             console.log('✅ PDF Builder: Bouton configuré');
         } else {
-            console.warn('⚠️ PDF Builder: Bouton de sauvegarde flottant non trouvé - création du bouton réel');
-
-            // Essayer de trouver tous les éléments avec des IDs similaires
-            const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id);
-            console.log('📝 PDF Builder: IDs trouvés dans le document:', allIds.filter(id => id.includes('save') || id.includes('pdf')));
+            console.log('⚠️ PDF Builder: Bouton de sauvegarde flottant non trouvé - création du bouton réel');
 
             // Créer le vrai bouton de sauvegarde flottant
-            console.log('🔧 PDF Builder: Création du bouton de sauvegarde flottant...');
             const floatingContainer = document.createElement('div');
             floatingContainer.id = 'pdf-builder-save-floating';
             floatingContainer.style.cssText = `
@@ -398,7 +284,6 @@ try {
 
             saveBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('🖱️ Bouton de sauvegarde flottant cliqué');
                 PDFBuilderTabsAPI.saveAllSettings();
             });
 
@@ -413,16 +298,12 @@ try {
 
             // Réessayer dans 1 seconde
             setTimeout(function() {
-                console.log('🔄 PDF Builder: Nouvelle tentative de recherche du bouton...');
                 const retryBtn = document.getElementById('pdf-builder-save-all');
                 if (retryBtn) {
-                    console.log('✅ PDF Builder: Bouton trouvé à la deuxième tentative');
                     retryBtn.addEventListener('click', function(e) {
                         e.preventDefault();
                         PDFBuilderTabsAPI.saveAllSettings();
                     });
-                } else {
-                    console.error('❌ PDF Builder: Bouton toujours introuvable après retry');
                 }
             }, 1000);
         }
@@ -430,15 +311,12 @@ try {
 
     // Initialiser au chargement du DOM
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 PDF Builder: DOM chargé, initialisation des onglets');
         initTabs();
-        // Délai pour s'assurer que le bouton flottant est rendu
         setTimeout(initSaveButton, 100);
     });
 
     // Aussi essayer au chargement complet de la fenêtre
     window.addEventListener('load', function() {
-        console.log('🏁 PDF Builder: Fenêtre chargée, vérification bouton sauvegarde');
         setTimeout(initSaveButton, 100);
     });
 
