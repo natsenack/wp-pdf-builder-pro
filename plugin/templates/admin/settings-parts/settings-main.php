@@ -70,8 +70,95 @@ $settings = get_option('pdf_builder_settings', array());
 
         console.log('PDF Builder: Script de navigation chargé');
 
+        // 🔥 LOGS RACINE - Diagnostic complet du système de navigation
+        console.log('🔥 ROOT NAVIGATION: Script de navigation chargé - TIMESTAMP:', Date.now());
+
+        // LOG RACINE - État initial du DOM
+        console.log('🔥 ROOT NAVIGATION: Vérification DOM initial');
+        const rootTabsContainer = document.getElementById('pdf-builder-tabs');
+        const rootContentContainer = document.getElementById('pdf-builder-tab-content');
+        console.log('🔥 ROOT NAVIGATION: Container tabs trouvé:', !!rootTabsContainer);
+        console.log('🔥 ROOT NAVIGATION: Container content trouvé:', !!rootContentContainer);
+
+        if (rootTabsContainer) {
+            const rootTabButtons = rootTabsContainer.querySelectorAll('.nav-tab');
+            console.log('🔥 ROOT NAVIGATION: Nombre de boutons onglet:', rootTabButtons.length);
+            rootTabButtons.forEach((btn, index) => {
+                console.log('🔥 ROOT NAVIGATION: Bouton', index + 1, '- data-tab:', btn.getAttribute('data-tab'), '- text:', btn.textContent.trim());
+            });
+        }
+
+        if (rootContentContainer) {
+            const rootTabContents = rootContentContainer.querySelectorAll('.tab-content');
+            console.log('🔥 ROOT NAVIGATION: Nombre de contenus onglet:', rootTabContents.length);
+            rootTabContents.forEach((content, index) => {
+                console.log('🔥 ROOT NAVIGATION: Contenu', index + 1, '- id:', content.id, '- active:', content.classList.contains('active'));
+            });
+        }
+
+        // LOG RACINE - État des variables globales
+        console.log('🔥 ROOT NAVIGATION: État des variables globales au chargement:');
+        console.log('🔥 ROOT NAVIGATION: window.PDF_BUILDER_TABS_INITIALIZED:', window.PDF_BUILDER_TABS_INITIALIZED);
+        console.log('🔥 ROOT NAVIGATION: window.PDFBuilderTabsAPI:', !!window.PDFBuilderTabsAPI);
+        console.log('🔥 ROOT NAVIGATION: window.PDFBuilderInlineFallbackBound:', window.PDFBuilderInlineFallbackBound);
+
+        // LOG RACINE - Événements de clic globaux
+        document.addEventListener('click', function(e) {
+            if (e.target.closest && e.target.closest('#pdf-builder-tabs')) {
+                console.log('🔥 ROOT NAVIGATION: Clic détecté dans #pdf-builder-tabs:', {
+                    target: e.target.tagName + (e.target.id ? '#' + e.target.id : '') + (e.target.className ? '.' + e.target.className : ''),
+                    closestNavTab: !!e.target.closest('.nav-tab'),
+                    dataTab: e.target.closest('.nav-tab') ? e.target.closest('.nav-tab').getAttribute('data-tab') : null,
+                    timestamp: Date.now(),
+                    eventPhase: e.eventPhase,
+                    defaultPrevented: e.defaultPrevented,
+                    propagationStopped: e.cancelBubble
+                });
+            }
+        }, true); // Capture phase pour voir tous les clics
+
+        // LOG RACINE - Changements DOM
+        const rootObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.target.id === 'pdf-builder-tabs' || mutation.target.id === 'pdf-builder-tab-content') {
+                    console.log('🔥 ROOT NAVIGATION: Mutation DOM détectée:', {
+                        type: mutation.type,
+                        target: mutation.target.id,
+                        addedNodes: mutation.addedNodes.length,
+                        removedNodes: mutation.removedNodes.length,
+                        attributeName: mutation.attributeName,
+                        timestamp: Date.now()
+                    });
+                }
+            });
+        });
+
+        if (rootTabsContainer) {
+            rootObserver.observe(rootTabsContainer, { childList: true, subtree: true, attributes: true });
+        }
+        if (rootContentContainer) {
+            rootObserver.observe(rootContentContainer, { childList: true, subtree: true, attributes: true });
+        }
+
+        // LOG RACINE - Chargement des scripts
+        window.addEventListener('load', function() {
+            console.log('🔥 ROOT NAVIGATION: Window load - État final:');
+            console.log('🔥 ROOT NAVIGATION: PDF_BUILDER_TABS_INITIALIZED:', window.PDF_BUILDER_TABS_INITIALIZED);
+            console.log('🔥 ROOT NAVIGATION: PDFBuilderTabsAPI:', !!window.PDFBuilderTabsAPI);
+            console.log('🔥 ROOT NAVIGATION: PDFBuilderInlineFallbackBound:', window.PDFBuilderInlineFallbackBound);
+
+            // Vérifier les event listeners
+            const tabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+            console.log('🔥 ROOT NAVIGATION: Vérification des event listeners sur', tabs.length, 'onglets:');
+            tabs.forEach((tab, index) => {
+                const listeners = tab._pdfBuilderInlineFallbackHandler || 'AUCUN';
+                console.log('🔥 ROOT NAVIGATION: Onglet', index + 1, '- data-tab:', tab.getAttribute('data-tab'), '- handler:', typeof listeners);
+            });
+        });
+
         // Fonction principale d'initialisation
         function initTabNavigation() {
+            console.log('📋 INLINE NAVIGATION: initTabNavigation appelée - TIMESTAMP:', Date.now());
             // Si le manager principal est présent, ne pas attacher nos propres handlers
             if (window.PDF_BUILDER_TABS_INITIALIZED || (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function')) {
                 console.log('PDF Builder: Manager global détecté, fallback inline désactivé');
@@ -109,7 +196,7 @@ $settings = get_option('pdf_builder_settings', array());
 
             // Fonction de changement d'onglet
             function switchTab(tabId) {
-                console.log('PDF Builder: Changement vers', tabId);
+                console.log('📋 INLINE NAVIGATION: switchTab appelée avec tabId:', tabId, '- TIMESTAMP:', Date.now());
 
                 // Désactiver tous les onglets
                 tabs.forEach(function(tab) {
@@ -143,7 +230,7 @@ $settings = get_option('pdf_builder_settings', array());
                     event.preventDefault();
 
                 const tabId = this.getAttribute('data-tab');
-                console.log('PDF Builder: Clic détecté sur onglet', tabId);
+                console.log('📋 INLINE NAVIGATION: handleTabClick déclenché - tabId:', tabId, '- event.target:', event.target, '- TIMESTAMP:', Date.now());
 
                 if (tabId) {
                     switchTab(tabId);
@@ -194,6 +281,12 @@ $settings = get_option('pdf_builder_settings', array());
 
             function check() {
                 attempts++;
+                console.log('📋 INLINE NAVIGATION: Tentative', attempts, '/', maxAttempts, '- État:', {
+                    PDF_BUILDER_TABS_INITIALIZED: window.PDF_BUILDER_TABS_INITIALIZED,
+                    PDFBuilderTabsAPI: !!window.PDFBuilderTabsAPI,
+                    PDFBuilderInlineFallbackBound: window.PDFBuilderInlineFallbackBound,
+                    timestamp: Date.now()
+                });
                 // Si le manager canonical est présent, on l'utilise et on synchronise l'état
                 if (window.PDF_BUILDER_TABS_INITIALIZED || (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function')) {
                     console.log('PDF Builder: Manager global détecté pendant attente, fallback inline désactivé');
