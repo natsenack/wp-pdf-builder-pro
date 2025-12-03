@@ -6,6 +6,10 @@
  * Updated: 2025-12-02 - Code réorganisé pour une meilleure lisibilité
  */
 
+// DEBUG: Vérifier que le fichier se charge
+echo "<!-- DEBUG: settings-templates.php LOADED at " . date('H:i:s') . " -->";
+echo "<script>console.log('🔥 TEMPLATES TAB: settings-templates.php loaded');</script>";
+
 require_once __DIR__ . '/settings-helpers.php';
 
 // =============================================================================
@@ -403,7 +407,15 @@ $current_mappings = $status_manager->get_current_mappings();
 // AFFICHAGE HTML
 // =============================================================================
 ?>
+<!-- DEBUG: Templates tab content START -->
 <section class="templates-status-wrapper">
+    <!-- DEBUG MESSAGE -->
+    <div style="background: #f0f8ff; border: 1px solid #007cba; padding: 10px; margin: 10px 0; border-radius: 4px;">
+        <strong>🔧 DEBUG:</strong> Templates tab content loaded at <?php echo date('H:i:s'); ?>
+        <br><strong>WooCommerce active:</strong> <?php echo $woocommerce_active ? 'YES' : 'NO'; ?>
+        <br><strong>Order statuses found:</strong> <?php echo count($order_statuses); ?>
+        <br><strong>Templates found:</strong> <?php echo count($templates); ?>
+    </div>
     <!-- En-tête -->
     <header>
         <h2 style="display: flex; justify-content: space-between; align-items: center;">
