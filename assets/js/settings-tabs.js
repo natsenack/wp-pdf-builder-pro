@@ -2,34 +2,8 @@
  * Paramètres PDF Builder Pro - Navigation des onglets (Version simplifiée)
  */
 
-// TEST TRÈS SIMPLE - ALERT POUR CONFIRMER L'EXÉCUTION
-alert('🚨 ALERT TEST: Script settings-tabs.js s\'exécute !');
-
-// Test console.log basique
-console.log('🚀 CONSOLE TEST: Script settings-tabs.js chargé et exécuté');
-
-// Test de variable globale
-window.PDF_BUILDER_TEST = 'OK';
-console.log('🚀 TEST VARIABLE GLOBALE:', window.PDF_BUILDER_TEST);
-
-try {
-    // DEBUG: Force console output to verify script is loaded
-    console.log('🔥 PDF BUILDER DEBUG: settings-tabs.js LOADED - ' + new Date().toLocaleTimeString() + ' - CACHE BUSTER: ' + Date.now());
-    console.log('📍 PDF BUILDER DEBUG: Script execution started - File loaded successfully');
-
-    // Vérifier si jQuery est disponible
-    console.log('📍 PDF BUILDER DEBUG: jQuery available:', typeof jQuery !== 'undefined' ? 'YES' : 'NO');
-
-    // Vérifier si WordPress est disponible
-    console.log('📍 PDF BUILDER DEBUG: WordPress available:', typeof wp !== 'undefined' ? 'YES' : 'NO');
-
-    (function() {
-        'use strict';
-
-        console.log('🔧 PDF BUILDER DEBUG: IIFE (Immediately Invoked Function Expression) started');
-
-        // Test immédiat pour confirmer que le code s'exécute
-        console.log('✅ PDF BUILDER DEBUG: Code execution confirmed - IIFE running');
+(function() {
+    'use strict';
 
     // Définition de PDF_BUILDER_CONFIG si elle n'existe pas
     if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
@@ -167,9 +141,3 @@ try {
     };
 
 })();
-
-} catch (error) {
-    console.error('❌ PDF BUILDER ERROR: Erreur dans settings-tabs.js:', error.message);
-    console.error('❌ PDF BUILDER ERROR: Stack trace:', error.stack);
-    console.error('❌ PDF BUILDER ERROR: Ligne:', error.lineNumber, 'Colonne:', error.columnNumber);
-}
