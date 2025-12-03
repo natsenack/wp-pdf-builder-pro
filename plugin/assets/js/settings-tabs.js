@@ -246,6 +246,13 @@ try {
     function initSaveButton() {
         console.log('🔍 PDF Builder: Recherche du bouton de sauvegarde flottant...');
 
+        // Nettoyer les boutons existants pour éviter les doublons
+        const existingButtons = document.querySelectorAll('#pdf-builder-save-floating');
+        existingButtons.forEach(btn => {
+            console.log('🧹 PDF Builder: Suppression du bouton flottant existant');
+            btn.remove();
+        });
+
         const saveBtn = document.getElementById('pdf-builder-save-all');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
 
