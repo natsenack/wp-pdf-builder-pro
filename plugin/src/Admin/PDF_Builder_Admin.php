@@ -64,6 +64,14 @@ class PdfBuilderAdmin
     private $pdf_generator = null;
     private $utils = null;
     private $thumbnail_manager = null;
+    private $script_loader = null;
+    private $style_builder = null;
+    private $table_renderer = null;
+    private $react_transformer = null;
+    private $filesystem_helper = null;
+    private $maintenance_manager = null;
+    private $logger_service = null;
+    private $parameter_validator = null;
 
     /**
      * Obtenir l'instance unique de la classe (Singleton)
@@ -169,6 +177,16 @@ class PdfBuilderAdmin
 
         // Initialiser le manager de thumbnails
         $this->thumbnail_manager = \PDF_Builder\Managers\PdfBuilderThumbnailManager::getInstance();
+
+        // Initialiser les nouveaux services et loaders
+        $this->script_loader = new \PDF_Builder\Admin\Loaders\AdminScriptLoader($this);
+        $this->style_builder = new \PDF_Builder\Admin\Builders\StyleBuilder();
+        $this->table_renderer = new \PDF_Builder\Admin\Renderers\TableRenderer();
+        $this->react_transformer = new \PDF_Builder\Admin\Transformers\ReactDataTransformer();
+        $this->filesystem_helper = new \PDF_Builder\Admin\Helpers\FileSystemHelper();
+        $this->maintenance_manager = new \PDF_Builder\Admin\Managers\MaintenanceManager();
+        $this->logger_service = new \PDF_Builder\Admin\Services\LoggerService();
+        $this->parameter_validator = new \PDF_Builder\Admin\Validators\ParameterValidator();
 
         $this->initHooks();
     }
