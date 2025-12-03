@@ -434,30 +434,7 @@ function pdf_builder_safe_esc_attr($text) {
                     </div>
                     <?php endif; ?>
 
-                    <script>
-                        function showDeactivateModal() {
-                            var modal = document.getElementById('deactivate_modal');
-                            if (modal) {
-                                modal.style.display = 'flex';
-                            }
-                            return false;
-                        }
-
-                        function closeDeactivateModal() {
-                            var modal = document.getElementById('deactivate_modal');
-                            if (modal) {
-                                modal.style.display = 'none';
-                            }
-                        }
-
-                        // Fermer la modale si on clique en dehors
-                        document.addEventListener('click', function(event) {
-                            var modal = document.getElementById('deactivate_modal');
-                            if (event.target === modal) {
-                                closeDeactivateModal();
-                            }
-                        });
-                    </script>
+                    <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 
                     <!-- Informations utiles -->
                     <aside class="info-section">
@@ -743,63 +720,5 @@ function pdf_builder_safe_esc_attr($text) {
 
             </section>
 
-                <script>
-                 // Gestion AJAX pour la désactivation de licence
-                 function deactivateLicense() {
-                        if (!confirm('Êtes-vous sûr de vouloir désactiver cette licence ? Vous pourrez la réactiver plus tard.')) {
-                            return;
-                        }
-
-                        const button = document.querySelector('#deactivate-license-btn') ||
-                                    document.querySelector('[onclick="deactivateLicense()"]');
-
-                        if (button) {
-                            button.textContent = '⏳ Désactivation...';
-                            button.disabled = true;
-                        }
-
-                        const formData = new FormData();
-                        formData.append('action', 'pdf_builder_deactivate_license');
-                        formData.append('nonce', '<?php echo wp_create_nonce('pdf_builder_deactivate'); ?>');
-
-                        fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert('✅ Licence désactivée avec succès. La page va se recharger.');
-                                location.reload();
-                            } else {
-                                alert('❌ Erreur lors de la désactivation: ' + (data.data || 'Erreur inconnue'));
-                                if (button) {
-                                    button.textContent = 'Désactiver la Licence';
-                                    button.disabled = false;
-                                }
-                            }
-                            closeDeactivateModal();
-                        })
-                        .catch(error => {
-                            console.error('Erreur AJAX:', error);
-                            alert('❌ Erreur de connexion. Veuillez réessayer.');
-                            if (button) {
-                                button.textContent = 'Désactiver la Licence';
-                                button.disabled = false;
-                            }
-                            closeDeactivateModal();
-                        });
-                    }
-
-                    // Event listener pour le bouton ajouté dans la section premium
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const deactivateBtn = document.getElementById('deactivate-license-btn');
-                        if (deactivateBtn) {
-                            deactivateBtn.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                showDeactivateModal();
-                            });
-                        }
-                    });
-                </script>
+                    <!-- JavaScript AJAX déplacé vers settings-main.php pour éviter les conflits -->
 

@@ -136,17 +136,4 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                 </section>
             </form>
 
-            <script>
-            function toggleAdvancedSection() {
-                const section = document.getElementById('advanced-section');
-                const toggle = document.getElementById('advanced-toggle');
-
-                if (section.style.display === 'none') {
-                    section.style.display = 'block';
-                    toggle.textContent = '▲';
-                } else {
-                    section.style.display = 'none';
-                    toggle.textContent = '▼';
-                }
-            }
-            </script>
+            <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->

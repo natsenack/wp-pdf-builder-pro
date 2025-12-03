@@ -527,44 +527,4 @@ $current_mappings = $status_manager->get_current_mappings();
 <!-- Styles CSS -->
 
 
-<!-- JavaScript simplifié pour les templates -->
-<script>
-(function() {
-    'use strict';
-
-    // Gestionnaire simplifié des templates
-    const TemplateManager = {
-        resetTemplates: function() {
-            if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les assignations de templates ?')) {
-                document.querySelectorAll('.template-select').forEach(select => {
-                    select.value = '';
-                });
-            }
-        },
-
-        addVisualFeedback: function() {
-            document.querySelectorAll('.template-select').forEach(select => {
-                select.addEventListener('change', function() {
-                    this.style.borderColor = '#007cba';
-                    setTimeout(() => {
-                        this.style.borderColor = '#ddd';
-                    }, 1000);
-                });
-            });
-        },
-
-        init: function() {
-            this.addVisualFeedback();
-        }
-    };
-
-    // Fonction globale simplifiée
-    window.resetTemplatesStatus = function() {
-        TemplateManager.resetTemplates();
-    };
-
-    // Initialisation directe (sans DOMContentLoaded)
-    TemplateManager.init();
-
-})();
-</script>
+<!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
