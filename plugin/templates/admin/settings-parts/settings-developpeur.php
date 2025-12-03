@@ -711,3 +711,4 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
          </form>
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
+

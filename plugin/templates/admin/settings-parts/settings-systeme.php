@@ -458,3 +458,4 @@ if ($cache_last_cleanup !== 'Jamais') {
             <!-- Modales de cache et canvas - chargées SEULEMENT dans le tab Système -->
             <?php require_once __DIR__ . '/settings-modals.php'; ?>
 
+

@@ -206,3 +206,5 @@ $gdpr_consent_marketing = pdf_builder_safe_get_option('pdf_builder_gdpr_consent_
                         </div>
                 </div>
             </form>
+
+            <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
