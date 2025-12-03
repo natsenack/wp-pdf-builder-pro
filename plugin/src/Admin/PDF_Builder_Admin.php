@@ -339,8 +339,8 @@ class PdfBuilderAdmin
      */
     private function initHooks()
     {
-        // 🔧 MIGRATION BASE DE DONNÉES
-        add_action('admin_init', [$this, 'run_database_migrations']);
+        // 🔧 MIGRATION BASE DE DONNÉES - Gérée automatiquement par PDF_Builder_Migration_System
+        // add_action('admin_init', [$this, 'run_database_migrations']);
 
         // 🔧 MISE À JOUR DES NOMS DE TEMPLATES (TEMPORAIRE)
         // Désactiver temporairement la mise à jour automatique des noms
