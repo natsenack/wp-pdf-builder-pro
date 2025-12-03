@@ -78,6 +78,131 @@ $settings = get_option('pdf_builder_settings', array());
         </div>
     </section>
 
+    <!-- SCRIPT DE NAVIGATION DIRECT INLINE - SOLUTION DE SECOURS -->
+    <script>
+    (function() {
+        'use strict';
+        
+        console.log('🔥 PDF BUILDER - NAVIGATION DIRECT INLINE - VERSION SECOURS');
+        
+        function switchTab(tabId) {
+            console.log('📍 SWITCH DIRECT vers:', tabId);
+            
+            const tabButtons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+            const tabContents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
+            
+            console.log('📍 Éléments trouvés:', tabButtons.length, 'boutons,', tabContents.length, 'contenus');
+            
+            // Désactiver tous
+            tabButtons.forEach(function(btn) {
+                btn.classList.remove('nav-tab-active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            tabContents.forEach(function(content) {
+                content.classList.remove('active');
+            });
+            
+            // Activer l'onglet cible
+            const targetBtn = document.querySelector('[data-tab="' + tabId + '"]');
+            let targetContent = document.getElementById(tabId);
+            if (!targetContent) {
+                targetContent = document.getElementById('tab-' + tabId);
+            }
+            
+            if (targetBtn) {
+                targetBtn.classList.add('nav-tab-active');
+                targetBtn.setAttribute('aria-selected', 'true');
+                console.log('✅ Bouton activé:', targetBtn.textContent.trim());
+            } else {
+                console.log('❌ ERREUR: Bouton non trouvé pour', tabId);
+            }
+            
+            if (targetContent) {
+                targetContent.classList.add('active');
+                console.log('✅ Contenu activé:', targetContent.id);
+            } else {
+                console.log('❌ ERREUR: Contenu non trouvé pour', tabId);
+            }
+            
+            // Déclencher événement
+            document.dispatchEvent(new CustomEvent('pdfBuilderTabChanged', {
+                detail: { tabId: tabId, source: 'inline' }
+            }));
+        }
+        
+        function handleTabClick(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const tabId = event.currentTarget.getAttribute('data-tab');
+            if (!tabId) {
+                console.log('❌ ERREUR: Aucun data-tab trouvé');
+                return;
+            }
+            
+            console.log('🖱️ CLIC DIRECT détecté sur:', tabId);
+            switchTab(tabId);
+        }
+        
+        function initializeTabs() {
+            console.log('📍 INITIALISATION NAVIGATION DIRECT');
+            
+            const tabsContainer = document.getElementById('pdf-builder-tabs');
+            const contentContainer = document.getElementById('pdf-builder-tab-content');
+            
+            if (!tabsContainer || !contentContainer) {
+                console.log('❌ ERREUR: Containers non trouvés');
+                return false;
+            }
+            
+            const tabButtons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+            console.log('📍', tabButtons.length, 'boutons onglets trouvés');
+            
+            // Attacher les événements
+            tabButtons.forEach(function(btn) {
+                btn.removeEventListener('click', handleTabClick);
+                btn.addEventListener('click', handleTabClick);
+                console.log('📍 Event listener ajouté à:', btn.getAttribute('data-tab'));
+            });
+            
+            // Activer le premier onglet
+            if (tabButtons[0]) {
+                const firstTab = tabButtons[0].getAttribute('data-tab');
+                console.log('📍 Activation premier onglet:', firstTab);
+                setTimeout(function() {
+                    switchTab(firstTab);
+                }, 100);
+            }
+            
+            console.log('✅ NAVIGATION DIRECT INITIALISÉE');
+            return true;
+        }
+        
+        // Démarrage
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('📍 DOM chargé - initialisation navigation directe');
+                setTimeout(initializeTabs, 50);
+            });
+        } else {
+            console.log('📍 DOM déjà chargé - initialisation immédiate');
+            setTimeout(initializeTabs, 50);
+        }
+        
+        // Nouvelle tentative après délai
+        setTimeout(function() {
+            console.log('📍 Nouvelle tentative d\'initialisation...');
+            initializeTabs();
+        }, 500);
+        
+        // Export pour diagnostic
+        window.PDF_BUILDER_DIRECT = {
+            switchTab: switchTab,
+            initialize: initializeTabs
+        };
+        
+    })();
+    </script>
 
 </main>
 
