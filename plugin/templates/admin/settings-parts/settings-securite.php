@@ -5,7 +5,7 @@
  */
 function pdf_builder_safe_get_option($option, $default = '') {
     if (function_exists('get_option')) {
-        return pdf_builder_safe_get_option($option, $default);
+        return get_option($option, $default);
     }
     return $default;
 }
@@ -15,9 +15,9 @@ function pdf_builder_safe_get_option($option, $default = '') {
  */
 function pdf_builder_safe_checked($checked, $current = true, $echo = true) {
     if (function_exists('checked')) {
-        return pdf_builder_safe_checked($checked, $current, $echo);
+        return checked($checked, $current, $echo);
     }
-    $result = pdf_builder_safe_checked($checked, $current, false);
+    $result = checked($checked, $current, false);
     if ($echo) echo $result;
     return $result;
 }

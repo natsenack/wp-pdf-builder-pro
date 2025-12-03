@@ -58,7 +58,6 @@ $settings = get_option('pdf_builder_settings', array());
         </div>
         <!-- LOG APRES SYSTEME -->
         <script>console.log('📍 LOG APRES SYSTEME - Fichier systeme inclus');</script>
-
         <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
             <?php require_once 'settings-acces.php'; ?>
         </div>

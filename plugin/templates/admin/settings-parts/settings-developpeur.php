@@ -5,7 +5,7 @@
  */
 function pdf_builder_safe_get_option($option, $default = '') {
     if (function_exists('get_option')) {
-        return pdf_builder_safe_get_option($option, $default);
+        return get_option($option, $default);
     }
     return $default;
 }
