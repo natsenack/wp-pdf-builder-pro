@@ -29,6 +29,10 @@ function pdf_builder_load_settings_assets($hook) {
 
     echo "<script>console.log('✅ BONNE PAGE DÉTECTÉE: {$hook}');</script>";
 
+    // VÉRIFIER LES CONSTANTES AVANT LE CHARGEMENT
+    echo "<script>console.log('📋 CONSTANTES - URL:', '" . (defined('PDF_BUILDER_PLUGIN_URL') ? PDF_BUILDER_PLUGIN_URL : 'NON DÉFINIE') . "');</script>";
+    echo "<script>console.log('📋 CONSTANTES - VERSION:', '" . (defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'NON DÉFINIE') . "');</script>";
+
     // Charger les styles CSS
     wp_enqueue_style(
         'pdf-builder-settings',
@@ -50,6 +54,8 @@ function pdf_builder_load_settings_assets($hook) {
     // Charger le JavaScript pour la navigation par onglets
     $script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js';
 
+    echo "<script>console.log('🔧 AVANT wp_enqueue_script - URL:', '{$script_url}');</script>";
+
     wp_enqueue_script(
         'pdf-builder-settings-tabs',
         $script_url,
@@ -57,6 +63,8 @@ function pdf_builder_load_settings_assets($hook) {
         PDF_BUILDER_VERSION . '-' . time(),
         true
     );
+
+    echo "<script>console.log('✅ APRÈS wp_enqueue_script - Script enregistré');</script>";
 
     // AJOUTER LES LOGS JAVASCRIPT DIRECTEMENT
     wp_add_inline_script('pdf-builder-settings-tabs', '
