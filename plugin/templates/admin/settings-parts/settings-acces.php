@@ -121,61 +121,6 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                     <?php
                                 endforeach; ?>
                             </div>
-
-                            
-
-                            <script>
-                                // Fonctions simplifiées pour la gestion des rôles
-                                function updateSelectedCount() {
-                                    const checkedBoxes = document.querySelectorAll('.toggle-switch input[type="checkbox"]:checked');
-                                    const selectedCount = document.getElementById('selected-count');
-                                    if (selectedCount) {
-                                        selectedCount.textContent = checkedBoxes.length;
-                                    }
-                                }
-
-                                // Boutons de contrôle rapide (simplifiés)
-                                const selectAllBtn = document.getElementById('select-all-roles');
-                                const selectCommonBtn = document.getElementById('select-common-roles');
-                                const selectNoneBtn = document.getElementById('select-none-roles');
-
-                                if (selectAllBtn) {
-                                    selectAllBtn.addEventListener('click', function() {
-                                        const toggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]:not([disabled])');
-                                        toggles.forEach(checkbox => checkbox.checked = true);
-                                        updateSelectedCount();
-                                    });
-                                }
-
-                                if (selectCommonBtn) {
-                                    selectCommonBtn.addEventListener('click', function() {
-                                        const commonRoles = ['administrator', 'editor', 'shop_manager'];
-                                        const toggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
-                                        toggles.forEach(checkbox => {
-                                            if (!checkbox.disabled) {
-                                                checkbox.checked = commonRoles.includes(checkbox.value);
-                                            }
-                                        });
-                                        updateSelectedCount();
-                                    });
-                                }
-
-                                if (selectNoneBtn) {
-                                    selectNoneBtn.addEventListener('click', function() {
-                                        const toggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]:not([disabled])');
-                                        toggles.forEach(checkbox => checkbox.checked = false);
-                                        updateSelectedCount();
-                                    });
-                                }
-
-                                // Mise à jour du compteur lors des changements
-                                document.querySelectorAll('.toggle-switch input[type="checkbox"]').forEach(checkbox => {
-                                    checkbox.addEventListener('change', updateSelectedCount);
-                                });
-
-                                // Initialisation
-                                updateSelectedCount();
-                            </script>
                         </section>
 
                     </div> <!-- Fin colonne principale -->
