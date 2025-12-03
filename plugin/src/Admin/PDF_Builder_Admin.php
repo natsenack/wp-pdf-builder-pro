@@ -587,7 +587,7 @@ class PdfBuilderAdmin
             </div>
 
             <!-- Main React Editor Container -->
-            <div id="pdf-builder-react-editor" class="pdf-builder-react-editor" style="display: none;">
+            <div id="pdf-builder-react-editor" class="pdf-builder-react-editor" style="display: none; position: relative;">
                 <div id="pdf-builder-react-root"></div>
             </div>
         </div>
