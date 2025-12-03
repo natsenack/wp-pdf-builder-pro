@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic Navigation PDF Builder Pro</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f1f1f1;
+        }
+
+        .diagnostic-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .diagnostic-header {
+            background: #23282d;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .diagnostic-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .diagnostic-content {
+            padding: 20px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .test-header {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+            color: #23282d;
+        }
+
+        .test-content {
+            padding: 15px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-pass { background: #28a745; }
+        .status-fail { background: #dc3545; }
+        .status-warning { background: #ffc107; }
+
+        .diagnostic-log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .log-info { background: #e7f3ff; color: #0066cc; }
+        .log-success { background: #e8f5e8; color: #155724; }
+        .log-error { background: #f8d7da; color: #721c24; }
+        .log-warning { background: #fff3cd; color: #856404; }
+
+        .action-btn {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            background: #005a87;
+        }
+
+        .action-btn.danger {
+            background: #dc3545;
+        }
+
+        .action-btn.danger:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagnostic-container">
+        <header class="diagnostic-header">
+            <h1>🔍 Diagnostic Navigation PDF Builder Pro</h1>
+        </header>
+
+        <div class="diagnostic-content">
+            <div class="test-section">
+                <div class="test-header">Test 1: Structure HTML</div>
+                <div class="test-content">
+                    <div id="html-structure-test">
+                        <span class="status-indicator status-warning"></span>
+                        Analyse en cours...
+                    </div>
+                    <button class="action-btn" onclick="runHTMLStructureTest()">Lancer le test</button>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <div class="test-header">Test 2: Événements JavaScript</div>
+                <div class="test-content">
+                    <div id="js-events-test">
+                        <span class="status-indicator status-warning"></span>
+                        Analyse en cours...
+                    </div>
+                    <button class="action-btn" onclick="runJSEventsTest()">Lancer le test</button>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <div class="test-header">Test 3: Styles CSS</div>
+                <div class="test-content">
+                    <div id="css-styles-test">
+                        <span class="status-indicator status-warning"></span>
+                        Analyse en cours...
+                    </div>
+                    <button class="action-btn" onclick="runCSSStylesTest()">Lancer le test</button>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <div class="test-header">Test 4: Simulation Navigation</div>
+                <div class="test-content">
+                    <div id="navigation-simulation-test">
+                        <span class="status-indicator status-warning"></span>
+                        Analyse en cours...
+                    </div>
+                    <button class="action-btn" onclick="runNavigationSimulation()">Simuler la navigation</button>
+                    <button class="action-btn danger" onclick="resetNavigation()">Réinitialiser</button>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <div class="test-header">Logs de Diagnostic</div>
+                <div class="test-content">
+                    <div id="diagnostic-log" class="diagnostic-log"></div>
+                    <button class="action-btn" onclick="clearLogs()">Effacer les logs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Structure de test identique à celle du plugin -->
+    <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder" style="display: none;">
+        <a href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">Général</a>
+        <a href="#licence" class="nav-tab" data-tab="licence" role="tab" aria-selected="false" aria-controls="licence">Licence</a>
+        <a href="#systeme" class="nav-tab" data-tab="systeme" role="tab" aria-selected="false" aria-controls="systeme">Système</a>
+        <a href="#acces" class="nav-tab" data-tab="acces" role="tab" aria-selected="false" aria-controls="acces">Accès</a>
+        <a href="#securite" class="nav-tab" data-tab="securite" role="tab" aria-selected="false" aria-controls="securite">Sécurité</a>
+        <a href="#pdf" class="nav-tab" data-tab="pdf" role="tab" aria-selected="false" aria-controls="pdf">PDF</a>
+        <a href="#contenu" class="nav-tab" data-tab="contenu" role="tab" aria-selected="false" aria-controls="contenu">Contenu</a>
+        <a href="#templates" class="nav-tab" data-tab="templates" role="tab" aria-selected="false" aria-controls="templates">Modèles</a>
+        <a href="#developpeur" class="nav-tab" data-tab="developpeur" role="tab" aria-selected="false" aria-controls="developpeur">Développeur</a>
+    </nav>
+
+    <section id="pdf-builder-tab-content" class="tab-content-wrapper" role="tabpanel" aria-live="polite" style="display: none;">
+        <div id="general" class="tab-content active" role="tabpanel" aria-labelledby="tab-general">
+            <h2>Contenu Général</h2>
+            <p>Ceci est l'onglet Général.</p>
+        </div>
+
+        <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
+            <h2>Contenu Licence</h2>
+            <p>Ceci est l'onglet Licence.</p>
+        </div>
+
+        <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
+            <h2>Contenu Système</h2>
+            <p>Ceci est l'onglet Système.</p>
+        </div>
+
+        <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
+            <h2>Contenu Accès</h2>
+            <p>Ceci est l'onglet Accès.</p>
+        </div>
+
+        <div id="securite" class="tab-content" role="tabpanel" aria-labelledby="tab-securite">
+            <h2>Contenu Sécurité</h2>
+            <p>Ceci est l'onglet Sécurité.</p>
+        </div>
+
+        <div id="pdf" class="tab-content" role="tabpanel" aria-labelledby="tab-pdf">
+            <h2>Contenu PDF</h2>
+            <p>Ceci est l'onglet PDF.</p>
+        </div>
+
+        <div id="contenu" class="tab-content" role="tabpanel" aria-labelledby="tab-contenu">
+            <h2>Contenu Contenu</h2>
+            <p>Ceci est l'onglet Contenu.</p>
+        </div>
+
+        <div id="templates" class="tab-content" role="tabpanel" aria-labelledby="tab-templates">
+            <h2>Contenu Modèles</h2>
+            <p>Ceci est l'onglet Modèles.</p>
+        </div>
+
+        <div id="developpeur" class="tab-content" role="tabpanel" aria-labelledby="tab-developpeur">
+            <h2>Contenu Développeur</h2>
+            <p>Ceci est l'onglet Développeur.</p>
+        </div>
+    </section>
+
+    <style>
+    /* Styles pour la navigation par onglets */
+    .tab-content {
+        display: none;
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        margin: 10px 0;
+        background: #fff;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .nav-tab {
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        padding: 8px 16px;
+        margin-right: 4px;
+        background: #f1f1f1;
+        color: #666;
+        border: 1px solid #ccc;
+        border-bottom: none;
+    }
+    .nav-tab-active {
+        background: #fff;
+        border-bottom: 1px solid #fff;
+        color: #23282d;
+        font-weight: bold;
+    }
+    </style>
+
+    <script>
+    let diagnosticLogs = [];
+
+    function addLog(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = {
+            timestamp: timestamp,
+            message: message,
+            type: type
+        };
+
+        diagnosticLogs.push(logEntry);
+
+        const logContainer = document.getElementById('diagnostic-log');
+        const logDiv = document.createElement('div');
+        logDiv.className = 'log-entry log-' + type;
+        logDiv.textContent = `[${timestamp}] ${message}`;
+        logContainer.appendChild(logDiv);
+        logContainer.scrollTop = logContainer.scrollHeight;
+
+        console.log('Diagnostic:', message);
+    }
+
+    function updateTestStatus(testId, status, message) {
+        const testDiv = document.getElementById(testId);
+        const indicator = testDiv.querySelector('.status-indicator');
+
+        indicator.className = 'status-indicator status-' + status;
+        testDiv.innerHTML = `<span class="status-indicator status-${status}"></span>${message}`;
+    }
+
+    function runHTMLStructureTest() {
+        addLog('=== Test Structure HTML ===', 'info');
+
+        const tabsContainer = document.getElementById('pdf-builder-tabs');
+        const contentContainer = document.getElementById('pdf-builder-tab-content');
+
+        if (!tabsContainer) {
+            updateTestStatus('html-structure-test', 'fail', 'ÉCHEC: Conteneur d\'onglets non trouvé');
+            addLog('Conteneur d\'onglets non trouvé', 'error');
+            return;
+        }
+
+        if (!contentContainer) {
+            updateTestStatus('html-structure-test', 'fail', 'ÉCHEC: Conteneur de contenu non trouvé');
+            addLog('Conteneur de contenu non trouvé', 'error');
+            return;
+        }
+
+        const tabs = tabsContainer.querySelectorAll('.nav-tab');
+        const contents = contentContainer.querySelectorAll('.tab-content');
+
+        addLog(`Onglets trouvés: ${tabs.length}`, 'info');
+        addLog(`Contenus trouvés: ${contents.length}`, 'info');
+
+        if (tabs.length !== 9) {
+            updateTestStatus('html-structure-test', 'fail', `ÉCHEC: ${tabs.length}/9 onglets trouvés`);
+            addLog(`Nombre incorrect d'onglets: ${tabs.length}/9`, 'error');
+            return;
+        }
+
+        if (contents.length !== 9) {
+            updateTestStatus('html-structure-test', 'fail', `ÉCHEC: ${contents.length}/9 contenus trouvés`);
+            addLog(`Nombre incorrect de contenus: ${contents.length}/9`, 'error');
+            return;
+        }
+
+        // Vérifier les attributs data-tab
+        let missingDataTab = 0;
+        tabs.forEach((tab, index) => {
+            const dataTab = tab.getAttribute('data-tab');
+            if (!dataTab) {
+                missingDataTab++;
+                addLog(`Onglet ${index + 1} sans attribut data-tab`, 'error');
+            } else {
+                addLog(`Onglet ${index + 1}: data-tab="${dataTab}"`, 'info');
+            }
+        });
+
+        if (missingDataTab > 0) {
+            updateTestStatus('html-structure-test', 'fail', `ÉCHEC: ${missingDataTab} onglets sans data-tab`);
+            return;
+        }
+
+        updateTestStatus('html-structure-test', 'pass', 'SUCCÈS: Structure HTML correcte');
+        addLog('Structure HTML validée', 'success');
+    }
+
+    function runJSEventsTest() {
+        addLog('=== Test Événements JavaScript ===', 'info');
+
+        const tabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+
+        if (tabs.length === 0) {
+            updateTestStatus('js-events-test', 'fail', 'ÉCHEC: Aucun onglet trouvé');
+            addLog('Aucun onglet trouvé pour tester les événements', 'error');
+            return;
+        }
+
+        // Tester les événements de clic
+        let eventsAttached = 0;
+        tabs.forEach((tab, index) => {
+            const eventListeners = getEventListeners ? getEventListeners(tab) : null;
+            if (eventListeners && eventListeners.click) {
+                eventsAttached++;
+                addLog(`Événement click détecté sur onglet ${index + 1}`, 'success');
+            } else {
+                addLog(`Aucun événement click détecté sur onglet ${index + 1}`, 'warning');
+            }
+        });
+
+        if (eventsAttached === tabs.length) {
+            updateTestStatus('js-events-test', 'pass', `SUCCÈS: ${eventsAttached}/${tabs.length} événements attachés`);
+        } else {
+            updateTestStatus('js-events-test', 'warning', `PARTIEL: ${eventsAttached}/${tabs.length} événements attachés`);
+        }
+
+        addLog(`Test des événements terminé: ${eventsAttached}/${tabs.length} événements attachés`, 'info');
+    }
+
+    function runCSSStylesTest() {
+        addLog('=== Test Styles CSS ===', 'info');
+
+        const activeTab = document.querySelector('.nav-tab-active');
+        const activeContent = document.querySelector('.tab-content.active');
+        const hiddenContents = document.querySelectorAll('.tab-content:not(.active)');
+
+        if (!activeTab) {
+            updateTestStatus('css-styles-test', 'fail', 'ÉCHEC: Aucun onglet actif trouvé');
+            addLog('Aucun onglet actif trouvé', 'error');
+            return;
+        }
+
+        if (!activeContent) {
+            updateTestStatus('css-styles-test', 'fail', 'ÉCHEC: Aucun contenu actif trouvé');
+            addLog('Aucun contenu actif trouvé', 'error');
+            return;
+        }
+
+        addLog(`Onglet actif: ${activeTab.getAttribute('data-tab')}`, 'info');
+        addLog(`Contenu actif: ${activeContent.id}`, 'info');
+        addLog(`Contenus masqués: ${hiddenContents.length}`, 'info');
+
+        // Vérifier les styles computed
+        const activeContentStyle = window.getComputedStyle(activeContent);
+        const hiddenContentStyle = hiddenContents.length > 0 ? window.getComputedStyle(hiddenContents[0]) : null;
+
+        if (activeContentStyle.display === 'block') {
+            addLog('Contenu actif correctement affiché (display: block)', 'success');
+        } else {
+            addLog(`Contenu actif mal affiché (display: ${activeContentStyle.display})`, 'error');
+        }
+
+        if (hiddenContentStyle && hiddenContentStyle.display === 'none') {
+            addLog('Contenus inactifs correctement masqués (display: none)', 'success');
+        } else if (hiddenContentStyle) {
+            addLog(`Contenus inactifs mal masqués (display: ${hiddenContentStyle.display})`, 'error');
+        }
+
+        updateTestStatus('css-styles-test', 'pass', 'SUCCÈS: Styles CSS corrects');
+        addLog('Test des styles CSS terminé', 'success');
+    }
+
+    function runNavigationSimulation() {
+        addLog('=== Simulation Navigation ===', 'info');
+
+        const tabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+        if (tabs.length === 0) {
+            updateTestStatus('navigation-simulation-test', 'fail', 'ÉCHEC: Aucun onglet trouvé');
+            addLog('Aucun onglet trouvé pour la simulation', 'error');
+            return;
+        }
+
+        // Simuler des clics sur tous les onglets
+        let simulationCount = 0;
+        const totalTabs = tabs.length;
+
+        tabs.forEach((tab, index) => {
+            setTimeout(() => {
+                const tabId = tab.getAttribute('data-tab');
+                addLog(`Simulation clic sur onglet: ${tabId}`, 'info');
+
+                // Simuler le clic
+                tab.click();
+
+                simulationCount++;
+
+                // Vérifier le résultat après un court délai
+                setTimeout(() => {
+                    const activeTab = document.querySelector('.nav-tab-active');
+                    const activeContent = document.querySelector('.tab-content.active');
+
+                    if (activeTab && activeTab === tab) {
+                        addLog(`✓ Onglet ${tabId} correctement activé`, 'success');
+                    } else {
+                        addLog(`✗ Onglet ${tabId} non activé correctement`, 'error');
+                    }
+
+                    if (activeContent && activeContent.id === tabId) {
+                        addLog(`✓ Contenu ${tabId} correctement affiché`, 'success');
+                    } else {
+                        addLog(`✗ Contenu ${tabId} non affiché correctement`, 'error');
+                    }
+
+                    if (simulationCount === totalTabs) {
+                        updateTestStatus('navigation-simulation-test', 'pass', `SUCCÈS: ${simulationCount}/${totalTabs} navigations simulées`);
+                        addLog('Simulation de navigation terminée', 'success');
+                    }
+                }, 100);
+
+            }, index * 200); // Délai entre chaque simulation
+        });
+    }
+
+    function resetNavigation() {
+        addLog('=== Réinitialisation Navigation ===', 'warning');
+
+        // Réinitialiser tous les onglets
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('nav-tab-active');
+            tab.setAttribute('aria-selected', 'false');
+        });
+
+        // Réinitialiser tous les contenus
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+
+        // Activer le premier onglet
+        const firstTab = document.querySelector('.nav-tab');
+        const firstContent = document.querySelector('.tab-content');
+
+        if (firstTab && firstContent) {
+            firstTab.classList.add('nav-tab-active');
+            firstTab.setAttribute('aria-selected', 'true');
+            firstContent.classList.add('active');
+
+            addLog('Navigation réinitialisée à l\'onglet par défaut', 'success');
+        } else {
+            addLog('Impossible de réinitialiser la navigation', 'error');
+        }
+    }
+
+    function clearLogs() {
+        diagnosticLogs = [];
+        document.getElementById('diagnostic-log').innerHTML = '';
+        addLog('Logs effacés', 'info');
+    }
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+        addLog('Page de diagnostic chargée', 'success');
+
+        // Afficher les éléments de test
+        document.getElementById('pdf-builder-tabs').style.display = 'block';
+        document.getElementById('pdf-builder-tab-content').style.display = 'block';
+
+        // Initialiser les tests de base
+        setTimeout(() => {
+            runHTMLStructureTest();
+            runCSSStylesTest();
+        }, 500);
+    });
+    </script>
+</body>
+</html>
