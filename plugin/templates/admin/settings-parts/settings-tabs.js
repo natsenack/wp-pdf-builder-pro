@@ -1,3 +1,8 @@
+// SCRIPT DE TEST ABSOLU - SI ÇA N'APPARAÎT PAS, LE FICHIER NE SE CHARGE PAS DU TOUT
+console.log('🔥🔥🔥 PDF BUILDER - SCRIPT TABS CHARGÉ - FICHIER settings-tabs.js TROUVÉ ET EXÉCUTÉ');
+console.log('🔥🔥🔥 URL du script:', document.currentScript ? document.currentScript.src : 'N/A');
+console.log('🔥🔥🔥 Timestamp chargement:', new Date().toISOString());
+
 // LOG ABSOLU AU DÉBUT DU FICHIER - SI ÇA N'APPARAÎT PAS, LE SCRIPT NE SE CHARGE PAS
 console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
 
