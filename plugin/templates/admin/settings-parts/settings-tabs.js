@@ -166,50 +166,157 @@ console.log('🚀 PDF BUILDER SCRIPT LOADED - settings-tabs.js - TOP OF FILE');
     }
 
     function initializeTabs() {
-        if (window.PDF_BUILDER_TABS_INITIALIZED) return true;
+        console.log('PDF Builder - INITIALIZE TABS: Démarrage de l\'initialisation');
+
+        if (window.PDF_BUILDER_TABS_INITIALIZED) {
+            console.log('PDF Builder - INITIALIZE TABS: Déjà initialisé, skip');
+            return true;
+        }
         window.PDF_BUILDER_TABS_INITIALIZED = true;
 
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
-        if (!tabsContainer || !contentContainer) return false;
+
+        console.log('PDF Builder - INITIALIZE TABS: Recherche des containers...');
+        console.log('PDF Builder - Container onglets:', tabsContainer ? '✅ Trouvé' : '❌ Non trouvé');
+        console.log('PDF Builder - Container contenu:', contentContainer ? '✅ Trouvé' : '❌ Non trouvé');
+
+        if (!tabsContainer || !contentContainer) {
+            console.error('PDF Builder - INITIALIZE TABS: Containers manquants, annulation');
+            return false;
+        }
 
         const tabButtons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
         const tabContents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
-        if (tabButtons.length === 0 || tabContents.length === 0) return false;
 
+        console.log('PDF Builder - INITIALIZE TABS: ' + tabButtons.length + ' boutons onglets trouvés');
+        console.log('PDF Builder - INITIALIZE TABS: ' + tabContents.length + ' contenus onglets trouvés');
+
+        if (tabButtons.length === 0 || tabContents.length === 0) {
+            console.error('PDF Builder - INITIALIZE TABS: Aucun bouton ou contenu trouvé, annulation');
+            return false;
+        }
+
+        console.log('PDF Builder - INITIALIZE TABS: Attachement des événements...');
+
+        // Utiliser un seul event listener sur le container pour la délégation
         tabsContainer.addEventListener('click', function(e) {
+            console.log('PDF Builder - CONTAINER CLICK: Clic détecté dans le container onglets');
             const anchor = e.target.closest('.nav-tab');
             if (anchor && tabsContainer.contains(anchor)) {
+                console.log('PDF Builder - CONTAINER CLICK: Clic sur un onglet détecté');
                 handleTabClick.call(anchor, e);
+            } else {
+                console.log('PDF Builder - CONTAINER CLICK: Clic hors onglet ignoré');
             }
         });
 
-        tabButtons.forEach(function(btn) {
+        // Attacher aussi directement aux boutons pour être sûr
+        tabButtons.forEach(function(btn, index) {
+            console.log('PDF Builder - INITIALIZE TABS: Configuration bouton ' + (index + 1) + ': ' + btn.getAttribute('data-tab'));
             btn.removeEventListener('click', handleTabClick);
             btn.addEventListener('click', handleTabClick);
+            btn.setAttribute('data-event-attached', 'true');
         });
+
+        console.log('PDF Builder - INITIALIZE TABS: Événements attachés, activation onglet initial...');
 
         try {
             const savedTab = localStorage.getItem('pdf_builder_active_tab');
             if (savedTab && document.getElementById(savedTab)) {
+                console.log('PDF Builder - INITIALIZE TABS: Activation onglet sauvegardé: ' + savedTab);
                 switchTab(savedTab);
             } else {
                 const firstTab = tabButtons[0].getAttribute('data-tab');
+                console.log('PDF Builder - INITIALIZE TABS: Activation premier onglet: ' + firstTab);
                 switchTab(firstTab);
             }
         } catch(e) {
+            console.error('PDF Builder - INITIALIZE TABS: Erreur activation onglet initial:', e);
             const firstTab = tabButtons[0].getAttribute('data-tab');
             switchTab(firstTab);
         }
 
+        console.log('PDF Builder - INITIALIZE TABS: Initialisation terminée avec succès ✅');
         return true;
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    // Attendre que le DOM soit prêt et que les éléments soient disponibles
+    function waitForElements() {
+        return new Promise((resolve) => {
+            function checkElements() {
+                const tabsContainer = document.getElementById('pdf-builder-tabs');
+                const contentContainer = document.getElementById('pdf-builder-tab-content');
+
+                if (tabsContainer && contentContainer) {
+                    const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
+                    const tabContents = contentContainer.querySelectorAll('.tab-content');
+
+                    if (tabButtons.length > 0 && tabContents.length > 0) {
+                        console.log('PDF Builder - WAIT FOR ELEMENTS: Tous les éléments sont prêts');
+                        resolve();
+                        return;
+                    }
+                }
+
+                console.log('PDF Builder - WAIT FOR ELEMENTS: Éléments pas encore prêts, retry...');
+                setTimeout(checkElements, 100);
+            }
+
+            // Démarrer immédiatement la vérification
+            checkElements();
+        });
+    }
+
+    // Initialisation principale
+    async function initPDFBuilderTabs() {
+        console.log('PDF Builder - INIT: Démarrage de l\'initialisation asynchrone');
+
+        try {
+            // Attendre que les éléments soient disponibles
+            await waitForElements();
+
+            // Petit délai supplémentaire pour être sûr
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            console.log('PDF Builder - INIT: Éléments disponibles, lancement initializeTabs...');
+
+            // Initialiser les onglets
+            const success = initializeTabs();
+
+            if (success) {
+                console.log('PDF Builder - INIT: Initialisation réussie ✅');
+                debugElements();
+            } else {
+                console.error('PDF Builder - INIT: Échec de l\'initialisation ❌');
+            }
+
+        } catch (error) {
+            console.error('PDF Builder - INIT: Erreur lors de l\'initialisation:', error);
+        }
+    }
+
+    // Démarrer l'initialisation quand le DOM est prêt
+    if (document.readyState === 'loading') {
+        console.log('PDF Builder - DOM loading, attente DOMContentLoaded...');
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('PDF Builder - DOMContentLoaded déclenché');
+            setTimeout(initPDFBuilderTabs, 100);
+        });
+    } else {
+        console.log('PDF Builder - DOM déjà prêt, initialisation immédiate...');
+        setTimeout(initPDFBuilderTabs, 100);
+    }
+
+    // Fallback: essayer aussi au window load
+    window.addEventListener('load', function() {
+        console.log('PDF Builder - Window load déclenché');
         setTimeout(function() {
-            debugElements();
-            initializeTabs();
-        }, 100);
+            if (!window.PDF_BUILDER_TABS_INITIALIZED) {
+                console.log('PDF Builder - Fallback initialization au window load');
+                initPDFBuilderTabs();
+            }
+        }, 500);
     });
 
 })();

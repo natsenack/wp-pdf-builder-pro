@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic Navigation Onglets PDF Builder</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .diagnostic-section { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .diagnostic-section h2 { color: #333; border-bottom: 2px solid #007cba; padding-bottom: 10px; }
+        .status { padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .test-button { background: #007cba; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .test-button:hover { background: #005a87; }
+        .nav-tab-wrapper { border-bottom: 1px solid #ccc; margin-bottom: 20px; background: white; padding: 0; }
+        .nav-tab { display: inline-block; padding: 8px 16px; text-decoration: none; background: #f1f1f1; border: 1px solid #ccc; border-bottom: none; margin-right: 4px; color: #333; }
+        .nav-tab-active { background: #fff; border-bottom: 1px solid #fff; }
+        .tab-content { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; background: white; }
+        .tab-content.active { display: block; }
+        .console-output { background: #000; color: #0f0; font-family: monospace; padding: 10px; border-radius: 4px; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Diagnostic Navigation Onglets PDF Builder</h1>
+
+    <div class="diagnostic-section">
+        <h2>1. Test de Chargement du Script</h2>
+        <div id="script-test" class="status info">Test en cours...</div>
+        <button class="test-button" onclick="testScriptLoading()">Tester le chargement du script</button>
+    </div>
+
+    <div class="diagnostic-section">
+        <h2>2. Test des Éléments DOM</h2>
+        <div id="dom-test" class="status info">Test en cours...</div>
+        <button class="test-button" onclick="testDOMElements()">Tester les éléments DOM</button>
+    </div>
+
+    <div class="diagnostic-section">
+        <h2>3. Simulation de la Navigation</h2>
+        <div id="nav-test" class="status info">Test en cours...</div>
+
+        <!-- Simuler la structure HTML exacte -->
+        <main class="wrap" id="pdf-builder-settings-wrapper">
+            <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
+                <a href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">Général</a>
+                <a href="#licence" class="nav-tab" data-tab="licence" role="tab" aria-selected="false" aria-controls="licence">Licence</a>
+                <a href="#systeme" class="nav-tab" data-tab="systeme" role="tab" aria-selected="false" aria-controls="systeme">Système</a>
+            </nav>
+
+            <section id="pdf-builder-tab-content" class="tab-content-wrapper" role="tabpanel" aria-live="polite">
+                <div id="general" class="tab-content active" role="tabpanel" aria-labelledby="tab-general">
+                    <h3>Contenu Général</h3>
+                    <p>Ceci est le contenu de l'onglet Général.</p>
+                </div>
+                <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
+                    <h3>Contenu Licence</h3>
+                    <p>Ceci est le contenu de l'onglet Licence.</p>
+                </div>
+                <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
+                    <h3>Contenu Système</h3>
+                    <p>Ceci est le contenu de l'onglet Système.</p>
+                </div>
+            </section>
+        </main>
+
+        <button class="test-button" onclick="testTabNavigation()">Tester la navigation manuelle</button>
+        <button class="test-button" onclick="simulateClick('licence')">Aller à Licence</button>
+        <button class="test-button" onclick="simulateClick('systeme')">Aller à Système</button>
+        <button class="test-button" onclick="simulateClick('general')">Retour à Général</button>
+    </div>
+
+    <div class="diagnostic-section">
+        <h2>4. Console JavaScript</h2>
+        <div id="console-output" class="console-output">Console output will appear here...</div>
+        <button class="test-button" onclick="clearConsole()">Effacer console</button>
+    </div>
+
+    <!-- Charger le script settings-tabs.js -->
+    <script>
+        // Variables globales pour les tests
+        let consoleMessages = [];
+        let originalConsoleLog = console.log;
+        let originalConsoleError = console.error;
+        let originalConsoleWarn = console.warn;
+
+        // Intercepter les messages console
+        console.log = function(...args) {
+            consoleMessages.push({type: 'log', message: args.join(' '), timestamp: new Date().toISOString()});
+            updateConsoleDisplay();
+            originalConsoleLog.apply(console, args);
+        };
+
+        console.error = function(...args) {
+            consoleMessages.push({type: 'error', message: args.join(' '), timestamp: new Date().toISOString()});
+            updateConsoleDisplay();
+            originalConsoleError.apply(console, args);
+        };
+
+        console.warn = function(...args) {
+            consoleMessages.push({type: 'warn', message: args.join(' '), timestamp: new Date().toISOString()});
+            updateConsoleWarn.apply(console, args);
+        };
+
+        function updateConsoleDisplay() {
+            const output = document.getElementById('console-output');
+            output.innerHTML = consoleMessages.map(msg => {
+                const typeClass = msg.type === 'error' ? 'color: #f88;' : msg.type === 'warn' ? 'color: #ff8;' : 'color: #8f8;';
+                return `<div style="${typeClass}">[${msg.timestamp}] ${msg.message}</div>`;
+            }).join('');
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearConsole() {
+            consoleMessages = [];
+            updateConsoleDisplay();
+        }
+
+        // Tests de diagnostic
+        function testScriptLoading() {
+            const testDiv = document.getElementById('script-test');
+            const scriptLoaded = typeof window.PDF_BUILDER_CONFIG !== 'undefined' ||
+                               document.querySelector('script[src*="settings-tabs"]') ||
+                               consoleMessages.some(msg => msg.message.includes('PDF Builder'));
+
+            if (scriptLoaded) {
+                testDiv.className = 'status success';
+                testDiv.textContent = '✅ Script chargé avec succès';
+            } else {
+                testDiv.className = 'status error';
+                testDiv.textContent = '❌ Script non chargé - Vérifiez la console pour les erreurs';
+            }
+        }
+
+        function testDOMElements() {
+            const testDiv = document.getElementById('dom-test');
+            const container = document.getElementById('pdf-builder-settings-wrapper');
+            const tabsContainer = document.getElementById('pdf-builder-tabs');
+            const contentContainer = document.getElementById('pdf-builder-tab-content');
+
+            let results = [];
+            results.push(container ? '✅ Container principal trouvé' : '❌ Container principal manquant');
+            results.push(tabsContainer ? '✅ Container onglets trouvé' : '❌ Container onglets manquant');
+            results.push(contentContainer ? '✅ Container contenu trouvé' : '❌ Container contenu manquant');
+
+            if (tabsContainer) {
+                const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
+                results.push(`📊 ${tabButtons.length} boutons onglets trouvés`);
+            }
+
+            if (contentContainer) {
+                const tabContents = contentContainer.querySelectorAll('.tab-content');
+                results.push(`📊 ${tabContents.length} contenus onglets trouvés`);
+            }
+
+            testDiv.className = 'status ' + (container && tabsContainer && contentContainer ? 'success' : 'error');
+            testDiv.innerHTML = results.join('<br>');
+        }
+
+        function testTabNavigation() {
+            const testDiv = document.getElementById('nav-test');
+            const tabsContainer = document.getElementById('pdf-builder-tabs');
+            const contentContainer = document.getElementById('pdf-builder-tab-content');
+
+            if (!tabsContainer || !contentContainer) {
+                testDiv.className = 'status error';
+                testDiv.textContent = '❌ Éléments DOM manquants pour la navigation';
+                return;
+            }
+
+            // Tester si les événements sont attachés
+            const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
+            let eventAttached = false;
+
+            tabButtons.forEach(button => {
+                if (button.onclick || button.getAttribute('data-event-attached')) {
+                    eventAttached = true;
+                }
+            });
+
+            if (eventAttached) {
+                testDiv.className = 'status success';
+                testDiv.textContent = '✅ Événements de navigation attachés';
+            } else {
+                testDiv.className = 'status warning';
+                testDiv.textContent = '⚠️ Aucun événement détecté - Navigation manuelle possible';
+            }
+        }
+
+        function simulateClick(tabId) {
+            console.log(`🔄 Simulation du clic sur l'onglet: ${tabId}`);
+            const tabButton = document.querySelector(`[data-tab="${tabId}"]`);
+            const tabContent = document.getElementById(tabId);
+
+            if (tabButton && tabContent) {
+                // Retirer la classe active de tous les onglets
+                document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('nav-tab-active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+                // Ajouter la classe active à l'onglet cliqué
+                tabButton.classList.add('nav-tab-active');
+                tabContent.classList.add('active');
+
+                console.log(`✅ Onglet ${tabId} activé manuellement`);
+            } else {
+                console.error(`❌ Impossible de trouver l'onglet ${tabId}`);
+            }
+        }
+
+        // Tests automatiques au chargement
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                testScriptLoading();
+                testDOMElements();
+                testTabNavigation();
+            }, 1000);
+        });
+    </script>
+
+    <!-- CHARGER LE SCRIPT PDF BUILDER -->
+    <script>
+        <?php
+        $script_path = 'i:\\wp-pdf-builder-pro\\plugin\\templates\\admin\\settings-parts\\settings-tabs.js';
+        if (file_exists($script_path)) {
+            echo file_get_contents($script_path);
+        } else {
+            echo "console.error('Script settings-tabs.js non trouvé');";
+        }
+        ?>
+    </script>
+</body>
+</html>
