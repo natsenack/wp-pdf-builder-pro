@@ -51,12 +51,15 @@
                         if (content) { content.classList.add('active'); }
                     }
                     Array.prototype.forEach.call(buttons, function(btn) {
-                        btn.removeEventListener('click', function(){});
-                        btn.addEventListener('click', function(e) {
+                        // Cleanup any prior shim handler on the button
+                        try { if (btn._pdfBuilderShimFallbackHandler && typeof btn._pdfBuilderShimFallbackHandler === 'function') { btn.removeEventListener('click', btn._pdfBuilderShimFallbackHandler); } } catch (e) {}
+                        // Attach and keep a reference to handler for canonical cleanup
+                        btn._pdfBuilderShimFallbackHandler = function(e) {
                             e.preventDefault();
                             var id = this.getAttribute('data-tab');
                             switchTabFallback(id);
-                        });
+                        };
+                        btn.addEventListener('click', btn._pdfBuilderShimFallbackHandler);
                     });
                     window.PDFBuilderShimFallbackBound = true;
                 }

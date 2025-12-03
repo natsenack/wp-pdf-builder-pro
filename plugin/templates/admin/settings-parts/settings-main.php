@@ -8,8 +8,10 @@ $settings = get_option('pdf_builder_settings', array());
         <h1>Paramètres PDF Builder Pro</h1>
     </header>
 
-    <!-- Monitor root: track JS event listener additions and stopPropagation usage -->
-    <script src="<?php echo esc_url( defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL . 'js/tabs-root-monitor.js' : plugin_dir_url( __FILE__ ) . '../../../assets/js/tabs-root-monitor.js' ); ?>" defer></script>
+    <!-- Monitor root: track JS event listener additions and stopPropagation usage (load only in debug) -->
+    <?php if (get_option('pdf_builder_debug_javascript', '0') === '1'): ?>
+        <script src="<?php echo esc_url( defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL . 'js/tabs-root-monitor.js' : plugin_dir_url( __FILE__ ) . '../../../assets/js/tabs-root-monitor.js' ); ?>" defer></script>
+    <?php endif; ?>
 
     <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">Général</a>
@@ -151,10 +153,11 @@ $settings = get_option('pdf_builder_settings', array());
             // Attacher les événements - FORCER l'attachement
             console.log('PDF Builder: Attachement des événements...');
             tabs.forEach(function(tab, index) {
-                // Supprimer les anciens événements pour éviter les doublons
-                tab.removeEventListener('click', handleTabClick);
-                // Attacher le nouvel événement
-                tab.addEventListener('click', handleTabClick);
+                // Supprimer les anciens événements pour éviter les doublons (si présent)
+                try { if (tab._pdfBuilderInlineFallbackHandler && typeof tab._pdfBuilderInlineFallbackHandler === 'function') { tab.removeEventListener('click', tab._pdfBuilderInlineFallbackHandler); } } catch (e) {}
+                // Attacher le nouvel événement et conserver une référence pour que le manager canonical puisse l'enlever si besoin
+                tab._pdfBuilderInlineFallbackHandler = handleTabClick;
+                tab.addEventListener('click', tab._pdfBuilderInlineFallbackHandler);
                 console.log('PDF Builder: Événement attaché à onglet', index + 1, ':', tab.getAttribute('data-tab'));
             });
 
