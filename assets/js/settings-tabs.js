@@ -2,8 +2,11 @@
  * Paramètres PDF Builder Pro - Navigation des onglets (Version simplifiée)
  */
 
-// TEST TRÈS SIMPLE AU DÉBUT
-console.log('🚀 TEST DE BASE: Script settings-tabs.js chargé et exécuté');
+// TEST TRÈS SIMPLE - ALERT POUR CONFIRMER L'EXÉCUTION
+alert('🚨 ALERT TEST: Script settings-tabs.js s\'exécute !');
+
+// Test console.log basique
+console.log('🚀 CONSOLE TEST: Script settings-tabs.js chargé et exécuté');
 
 // Test de variable globale
 window.PDF_BUILDER_TEST = 'OK';
