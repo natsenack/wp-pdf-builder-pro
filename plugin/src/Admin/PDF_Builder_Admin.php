@@ -534,16 +534,80 @@ class PdfBuilderAdmin
     /**
      * Page de l'éditeur React
      */
+    /**
+     * Page de l'éditeur React unifié
+     */
     public function reactEditorPage()
     {
         if (!$this->checkAdminPermissions()) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
-        echo '<div class="wrap">';
-        echo '<h1>Éditeur PDF React</h1>';
-        echo '<p>L\'éditeur React sera chargé ici.</p>';
-        echo '</div>';
+        // Get template ID and type from URL parameters
+        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
+        $template_type = isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom';
+
+        // Validate template type
+        $valid_types = ['custom', 'predefined', 'system'];
+        if (!in_array($template_type, $valid_types)) {
+            $template_type = 'custom';
+        }
+
+        // Enqueue React scripts are now handled in enqueueAdminScripts()
+
+        ?>
+        <div class="wrap">
+            <!-- Loading State -->
+            <div id="pdf-builder-react-loading" class="pdf-builder-loading">
+                <div class="spinner is-active"></div>
+                <p><?php esc_html_e('Initialisation de l\'éditeur React...', 'pdf-builder-pro'); ?></p>
+            </div>
+
+            <!-- Main React Editor Container -->
+            <div id="pdf-builder-react-editor" class="pdf-builder-react-editor" style="display: none;">
+                <div id="pdf-builder-react-root"></div>
+            </div>
+        </div>
+
+        <style>
+        .pdf-builder-react-editor {
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            border-radius: 8px;
+            min-height: 600px;
+        }
+
+        .pdf-builder-loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .pdf-builder-loading .spinner {
+            float: none;
+            margin: 0 auto 20px;
+        }
+        </style>
+
+        <script>
+        // Écouter l'événement de disponibilité de React
+        document.addEventListener('pdfBuilderReactReady', function() {
+            console.log('🎯 [PDF Builder] React is ready, initializing editor...');
+            if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
+                window.pdfBuilderReact.initPDFBuilderReact();
+            } else {
+                console.error('❌ [PDF Builder] React API not available');
+            }
+        });
+
+        // Fallback: essayer d'initialiser après un délai
+        setTimeout(function() {
+            if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
+                console.log('🔄 [PDF Builder] Fallback initialization...');
+                window.pdfBuilderReact.initPDFBuilderReact();
+            }
+        }, 3000);
+        </script>
+        <?php
     }
 
     /**
