@@ -9,14 +9,25 @@ if (!defined('ABSPATH')) {
     exit('Direct access forbidden');
 }
 
+// LOG DE BASE - LE FICHIER SE CHARGE-T-IL ?
+add_action('admin_init', function() {
+    echo "<script>console.log('🔥 SETTINGS-LOADER.PHP CHARGÉ - " . time() . "');</script>";
+});
+
 /**
  * Charger les assets pour la page de paramètres
  */
 function pdf_builder_load_settings_assets($hook) {
+    // LOG DU HOOK ACTUEL
+    echo "<script>console.log('🔥 HOOK ACTUEL: {$hook}');</script>";
+
     // Charger seulement sur la page de paramètres PDF Builder
-    if ($hook !== 'pdf-builder_page_pdf-builder-settings') {
+    if ($hook !== 'pdf-builder-pro_page_pdf-builder-settings') {
+        echo "<script>console.log('❌ HOOK IGNORÉ: {$hook} (attendu: pdf-builder-pro_page_pdf-builder-settings)');</script>";
         return;
     }
+
+    echo "<script>console.log('✅ BONNE PAGE DÉTECTÉE: {$hook}');</script>";
 
     // Charger les styles CSS
     wp_enqueue_style(
