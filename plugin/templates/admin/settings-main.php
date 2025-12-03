@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </button>
 </div>
 
-<!-- Updated: 2025-12-03 16:00:00 - Bouton flottant défini uniquement en HTML -->
+<!-- Updated: 2025-12-03 23:20:00 - Bouton flottant défini uniquement en HTML - Cache bust: <?php echo time(); ?> -->
 </div>
 
 <!-- JavaScript moved to settings-parts/settings-main.php to avoid conflicts -->
