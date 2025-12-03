@@ -3,8 +3,7 @@ if (!defined('ABSPATH')) exit('Direct access forbidden');
 if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) wp_die('Access denied');
 $settings = get_option('pdf_builder_settings', array());
 ?>
-<!-- DEBUG: Settings page loaded -->
-<script>console.log('✅ settings-main.php template loaded');</script>
+<!-- Settings page loaded -->
 <main class="wrap" id="pdf-builder-settings-wrapper">
     <header class="pdf-builder-header">
         <h1>Paramètres PDF Builder Pro</h1>
@@ -84,25 +83,18 @@ $settings = get_option('pdf_builder_settings', array());
 <!-- Script de secours inline (APRÈS le main pour que les éléments existent) -->
 <script>
 (function() {
-    console.log('🟢 settings-main.php: Vérification du chargement des scripts');
-    
     // Vérifier si settings-tabs.js est chargé
     setTimeout(function() {
-        console.log('🟡 Après 1 seconde - PDFBuilderTabsAPI chargé?', !!window.PDFBuilderTabsAPI);
-        
         if (!window.PDFBuilderTabsAPI) {
-            console.warn('⚠️ PDFBuilderTabsAPI non trouvé, initialiser fallback');
             initMinimalTabs();
         }
     }, 1000);
-    
+
     function initMinimalTabs() {
-        console.log('🔵 Initialisation fallback minimal tabs');
         const tabsContainer = document.getElementById('pdf-builder-tabs');
         const contentContainer = document.getElementById('pdf-builder-tab-content');
 
         if (!tabsContainer || !contentContainer) {
-            console.error('🔴 Conteneurs non trouvés');
             return;
         }
 
@@ -114,8 +106,6 @@ $settings = get_option('pdf_builder_settings', array());
             e.preventDefault();
             const tabId = tab.getAttribute('data-tab');
             if (!tabId) return;
-
-            console.log('📋 Clic sur onglet:', tabId);
 
             // Désactiver tous les onglets
             tabsContainer.querySelectorAll('.nav-tab').forEach(t => {
@@ -136,7 +126,6 @@ $settings = get_option('pdf_builder_settings', array());
             const content = document.getElementById(tabId);
             if (content) {
                 content.classList.add('active');
-                console.log('✅ Onglet activé:', tabId);
             }
 
             // Sauvegarder dans localStorage
@@ -164,7 +153,6 @@ $settings = get_option('pdf_builder_settings', array());
         // Activer le premier onglet par défaut
         const firstTab = tabsContainer.querySelector('.nav-tab');
         if (firstTab) {
-            console.log('📋 Activation du premier onglet');
             firstTab.click();
         }
     }
