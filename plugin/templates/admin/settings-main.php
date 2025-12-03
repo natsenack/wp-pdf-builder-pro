@@ -2,6 +2,14 @@
 if (!defined('ABSPATH')) exit('No direct access');
 if (!is_user_logged_in() || !current_user_can('manage_options')) wp_die('Access denied');
 
+// FORCE COMPLETE PAGE RELOAD TO BYPASS CACHE
+echo "<script>
+if (!sessionStorage.getItem('pdf_builder_cache_busted')) {
+    sessionStorage.setItem('pdf_builder_cache_busted', 'true');
+    window.location.reload(true);
+}
+</script>";
+
 // FORCE NO-CACHE HEADERS
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
