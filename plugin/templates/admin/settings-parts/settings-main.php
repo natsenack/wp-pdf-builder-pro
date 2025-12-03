@@ -65,8 +65,56 @@ $settings = get_option('pdf_builder_settings', array());
 
     <!-- Navigation JavaScript simplifiée -->
     <script>
-    console.log('🚨 WORDPRESS INLINE SCRIPT: Chargé');
-    alert('🚨 Script inline WordPress chargé!');
+    // Système de navigation simplifié - juste pour éviter les conflits
+    (function() {
+        'use strict';
+
+        // Attendre que le système principal soit chargé
+        function checkForMainSystem() {
+            if (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function') {
+                // Système principal chargé, rien à faire
+                return;
+            }
+
+            // Si pas chargé après 2 secondes, initialiser un système minimal
+            setTimeout(function() {
+                if (!window.PDFBuilderTabsAPI) {
+                    initMinimalTabs();
+                }
+            }, 2000);
+        }
+
+        function initMinimalTabs() {
+            const tabsContainer = document.getElementById('pdf-builder-tabs');
+            const contentContainer = document.getElementById('pdf-builder-tab-content');
+
+            if (!tabsContainer || !contentContainer) return;
+
+            tabsContainer.addEventListener('click', function(e) {
+                const tab = e.target.closest('.nav-tab');
+                if (!tab) return;
+
+                e.preventDefault();
+                const tabId = tab.getAttribute('data-tab');
+                if (!tabId) return;
+
+                // Désactiver tous
+                tabsContainer.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('nav-tab-active'));
+                contentContainer.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                // Activer le bon
+                tab.classList.add('nav-tab-active');
+                const content = document.getElementById(tabId);
+                if (content) content.classList.add('active');
+            });
+
+            // Activer le premier onglet
+            const firstTab = tabsContainer.querySelector('.nav-tab');
+            if (firstTab) firstTab.click();
+        }
+
+        document.addEventListener('DOMContentLoaded', checkForMainSystem);
+    })();
     </script>
 
         // LOG RACINE - État initial du DOM
