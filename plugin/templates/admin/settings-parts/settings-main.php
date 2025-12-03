@@ -85,8 +85,8 @@ $settings = get_option('pdf_builder_settings', array());
     <script>
     console.log('🔥 PDF BUILDER - NAVIGATION DIRECT INLINE - VERSION SECOURS');
     
+    try {
     (function() {
-        'use strict';
         
         function switchTab(tabId) {
             console.log('📍 SWITCH DIRECT vers:', tabId);
@@ -205,6 +205,9 @@ $settings = get_option('pdf_builder_settings', array());
         };
         
     })();
+    } catch(error) {
+        console.error('🔥 PDF BUILDER - ERREUR dans script inline:', error);
+    }
     </script>
 
 </main>
