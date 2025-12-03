@@ -1145,13 +1145,8 @@ class PdfBuilderAdmin
         // Charger l'API globale de l'éditeur React pour la communication avec les modals
         $this->enqueueReactGlobalAPI();
 
-        ?>
-        <div class="wrap">
-        <?php
+        // Inclure directement settings-page.php (qui inclut settings-main.php avec son propre <main class="wrap">)
         include plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-page.php';
-        ?>
-        </div>
-        <?php
     }
 
     /**
