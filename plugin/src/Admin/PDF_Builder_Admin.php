@@ -497,4 +497,49 @@ class PdfBuilderAdmin
             echo '<div class="wrap"><h1>PDF Builder Pro</h1><p>Erreur: Renderer non disponible.</p></div>';
         }
     }
+
+    /**
+     * Page de l'éditeur React
+     */
+    public function reactEditorPage()
+    {
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
+
+        echo '<div class="wrap">';
+        echo '<h1>Éditeur PDF React</h1>';
+        echo '<p>L\'éditeur React sera chargé ici.</p>';
+        echo '</div>';
+    }
+
+    /**
+     * Page de gestion des templates
+     */
+    public function templatesPage()
+    {
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
+
+        echo '<div class="wrap">';
+        echo '<h1>Gestion des Templates PDF</h1>';
+        echo '<p>Interface de gestion des templates sera chargée ici.</p>';
+        echo '</div>';
+    }
+
+    /**
+     * Page des paramètres
+     */
+    public function settings_page()
+    {
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
+
+        echo '<div class="wrap">';
+        echo '<h1>Paramètres PDF Builder Pro</h1>';
+        echo '<p>Interface de configuration sera chargée ici.</p>';
+        echo '</div>';
+    }
 }
