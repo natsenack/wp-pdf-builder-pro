@@ -584,6 +584,15 @@ $current_mappings = $status_manager->get_current_mappings();
 </div>
 
 <p class="submit"><button type="submit" class="button button-primary">Save Settings</button></p>
+
+<!-- Bouton de sauvegarde flottant -->
+<div id="pdf-builder-floating-save-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: none;">
+    <button id="pdf-builder-floating-save-btn" class="button button-primary" style="padding: 12px 20px; font-size: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px; transition: all 0.3s ease;">
+        💾 Enregistrer
+    </button>
+</div>
+
+<!-- Updated: 2025-12-03 16:00:00 - Bouton flottant ajouté -->
 </div>
 
 <!-- JavaScript moved to settings-parts/settings-main.php to avoid conflicts -->
