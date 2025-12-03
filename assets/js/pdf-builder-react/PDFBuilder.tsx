@@ -5,6 +5,8 @@ import { PDFBuilderContent } from './components/PDFBuilderContent';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas';
 
 console.log('🔧 [PDFBuilder.tsx] Import successful. React:', typeof React, 'useState:', typeof useState, 'useEffect:', typeof useEffect);
+console.log('🔧 [PDFBuilder.tsx] window.pdfBuilderData at import time:', window.pdfBuilderData);
+console.log('🔧 [PDFBuilder.tsx] window keys at import time:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
 
 interface PDFBuilderProps {
   width?: number;
@@ -18,6 +20,9 @@ export function PDFBuilder({
   className
 }: PDFBuilderProps) {
   console.log('🔧 PDFBuilder: Component initialized with props:', { initialWidth, initialHeight, className });
+  console.log('🔧 PDFBuilder: window.pdfBuilderData at component init:', window.pdfBuilderData);
+  console.log('🔧 PDFBuilder: window.pdfBuilderData?.ajaxUrl:', window.pdfBuilderData?.ajaxUrl);
+  console.log('🔧 PDFBuilder: window.pdfBuilderData?.nonce:', window.pdfBuilderData?.nonce);
 
   const [dimensions, setDimensions] = useState({
     width: initialWidth,
