@@ -69,7 +69,7 @@ function pdf_builder_load_settings_assets($hook) {
         $script_url,
         array('jquery'),
         PDF_BUILDER_VERSION . '-' . time(),
-        true
+        false  // CHANGÉ: false = charger dans le header au lieu du footer
     );
 
     echo "<script>console.log('✅ APRÈS wp_enqueue_script - Script enregistré');</script>";
