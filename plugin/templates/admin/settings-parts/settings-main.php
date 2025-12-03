@@ -4,20 +4,10 @@ if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) wp_die('Acc
 $settings = get_option('pdf_builder_settings', array());
 ?>
 <main class="wrap" id="pdf-builder-settings-wrapper">
-    <!-- SCRIPT DE TEST AU DÉBUT ABSOLU -->
-    <script>
-    console.log('🔥 PDF BUILDER - SCRIPT DE TEST AU DÉBUT DU HTML - SI ÇA APPARAÎT PAS, LA PAGE NE SE CHARGE PAS');
-    console.log('🔥 URL actuelle:', window.location.href);
-    console.log('🔥 User Agent:', navigator.userAgent);
-    console.log('🔥 Timestamp:', new Date().toISOString());
-    </script>
-
+<main class="wrap" id="pdf-builder-settings-wrapper">
     <header class="pdf-builder-header">
         <h1>Parametres PDF Builder Pro</h1>
     </header>
-
-    <!-- LOG APRES HEADER -->
-    <script>console.log('📍 LOG APRES HEADER - HTML parsing OK jusqu\'ici');</script>
 
     <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">Général</a>
@@ -31,33 +21,44 @@ $settings = get_option('pdf_builder_settings', array());
         <a href="#developpeur" class="nav-tab" data-tab="developpeur" role="tab" aria-selected="false" aria-controls="developpeur">Développeur</a>
     </nav>
 
-    <!-- LOG APRES NAV -->
-    <script>console.log('📍 LOG APRES NAV - HTML parsing OK jusqu\'ici');</script>
-
     <section id="pdf-builder-tab-content" class="tab-content-wrapper" role="tabpanel" aria-live="polite">
         <!-- LOG AVANT GENERAL -->
         <script>console.log('📍 LOG AVANT GENERAL - Inclusion du fichier general');</script>
         <div id="general" class="tab-content active" role="tabpanel" aria-labelledby="tab-general">
             <?php require_once 'settings-general.php'; ?>
         </div>
-        <!-- LOG APRES GENERAL -->
-        <script>console.log('📍 LOG APRES GENERAL - Fichier general inclus');</script>
 
-        <!-- LOG AVANT LICENCE -->
-        <script>console.log('📍 LOG AVANT LICENCE - Inclusion du fichier licence');</script>
         <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
             <?php require_once 'settings-licence.php'; ?>
         </div>
-        <!-- LOG APRES LICENCE -->
-        <script>console.log('📍 LOG APRES LICENCE - Fichier licence inclus');</script>
 
-        <!-- LOG AVANT SYSTEME -->
-        <script>console.log('📍 LOG AVANT SYSTEME - Inclusion du fichier systeme');</script>
         <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
             <?php require_once 'settings-systeme.php'; ?>
         </div>
-        <!-- LOG APRES SYSTEME -->
-        <script>console.log('📍 LOG APRES SYSTEME - Fichier systeme inclus');</script>
+
+        <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
+            <?php require_once 'settings-acces.php'; ?>
+        </div>
+
+        <div id="securite" class="tab-content" role="tabpanel" aria-labelledby="tab-securite">
+            <?php require_once 'settings-securite.php'; ?>
+        </div>
+
+        <div id="pdf" class="tab-content" role="tabpanel" aria-labelledby="tab-pdf">
+            <?php require_once 'settings-pdf.php'; ?>
+        </div>
+
+        <div id="contenu" class="tab-content" role="tabpanel" aria-labelledby="tab-contenu">
+            <?php require_once 'settings-contenu.php'; ?>
+        </div>
+
+        <div id="templates" class="tab-content" role="tabpanel" aria-labelledby="tab-templates">
+            <?php require_once 'settings-templates.php'; ?>
+        </div>
+
+        <div id="developpeur" class="tab-content" role="tabpanel" aria-labelledby="tab-developpeur">
+            <?php require_once 'settings-developpeur.php'; ?>
+        </div>
         <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
             <?php require_once 'settings-acces.php'; ?>
         </div>
@@ -78,12 +79,6 @@ $settings = get_option('pdf_builder_settings', array());
         </div>
     </section>
 
-    <!-- LOG AVANT SCRIPT INLINE -->
-    <script>console.log('📍 LOG AVANT SCRIPT INLINE - On va maintenant exécuter le script inline');</script>
-
-    <!-- LOG APRÈS TOUS LES FICHIERS -->
-    <script>console.log('✅ TOUS LES FICHIERS INCLUS - Le script inline devrait maintenant s\'exécuter');</script>
-
     <!-- SCRIPT DE NAVIGATION DIRECT INLINE - SOLUTION DE SECOURS -->
     <script>
     console.log('🔥 PDF BUILDER - NAVIGATION DIRECT INLINE - VERSION SECOURS');
@@ -92,12 +87,10 @@ $settings = get_option('pdf_builder_settings', array());
     (function() {
         
         function switchTab(tabId) {
-            console.log('📍 SWITCH DIRECT vers:', tabId);
+            console.log('📍 SWITCH vers:', tabId);
             
             const tabButtons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
             const tabContents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
-            
-            console.log('📍 Éléments trouvés:', tabButtons.length, 'boutons,', tabContents.length, 'contenus');
             
             // Désactiver tous
             tabButtons.forEach(function(btn) {
@@ -111,29 +104,15 @@ $settings = get_option('pdf_builder_settings', array());
             // Activer l'onglet cible
             const targetBtn = document.querySelector('[data-tab="' + tabId + '"]');
             let targetContent = document.getElementById(tabId);
-            if (!targetContent) {
-                targetContent = document.getElementById('tab-' + tabId);
-            }
             
             if (targetBtn) {
                 targetBtn.classList.add('nav-tab-active');
                 targetBtn.setAttribute('aria-selected', 'true');
-                console.log('✅ Bouton activé:', targetBtn.textContent.trim());
-            } else {
-                console.log('❌ ERREUR: Bouton non trouvé pour', tabId);
             }
             
             if (targetContent) {
                 targetContent.classList.add('active');
-                console.log('✅ Contenu activé:', targetContent.id);
-            } else {
-                console.log('❌ ERREUR: Contenu non trouvé pour', tabId);
             }
-            
-            // Déclencher événement
-            document.dispatchEvent(new CustomEvent('pdfBuilderTabChanged', {
-                detail: { tabId: tabId, source: 'inline' }
-            }));
         }
         
         function handleTabClick(event) {
@@ -141,63 +120,49 @@ $settings = get_option('pdf_builder_settings', array());
             event.stopPropagation();
             
             const tabId = event.currentTarget.getAttribute('data-tab');
-            if (!tabId) {
-                console.log('❌ ERREUR: Aucun data-tab trouvé');
-                return;
-            }
+            if (!tabId) return;
             
-            console.log('🖱️ CLIC DIRECT détecté sur:', tabId);
             switchTab(tabId);
         }
         
         function initializeTabs() {
-            console.log('📍 INITIALISATION NAVIGATION DIRECT');
-            
             const tabsContainer = document.getElementById('pdf-builder-tabs');
             const contentContainer = document.getElementById('pdf-builder-tab-content');
             
             if (!tabsContainer || !contentContainer) {
-                console.log('❌ ERREUR: Containers non trouvés');
                 return false;
             }
             
             const tabButtons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
-            console.log('📍', tabButtons.length, 'boutons onglets trouvés');
             
             // Attacher les événements
             tabButtons.forEach(function(btn) {
                 btn.removeEventListener('click', handleTabClick);
                 btn.addEventListener('click', handleTabClick);
-                console.log('📍 Event listener ajouté à:', btn.getAttribute('data-tab'));
             });
             
             // Activer le premier onglet
             if (tabButtons[0]) {
                 const firstTab = tabButtons[0].getAttribute('data-tab');
-                console.log('📍 Activation premier onglet:', firstTab);
                 setTimeout(function() {
                     switchTab(firstTab);
                 }, 100);
             }
             
-            console.log('✅ NAVIGATION DIRECT INITIALISÉE');
             return true;
         }
         
         // Démarrage
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('📍 DOM chargé - initialisation navigation directe');
                 setTimeout(initializeTabs, 50);
             });
         } else {
-            console.log('📍 DOM déjà chargé - initialisation immédiate');
             setTimeout(initializeTabs, 50);
         }
         
         // Nouvelle tentative après délai
         setTimeout(function() {
-            console.log('📍 Nouvelle tentative d\'initialisation...');
             initializeTabs();
         }, 500);
         
