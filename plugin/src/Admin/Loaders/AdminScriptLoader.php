@@ -123,23 +123,8 @@ class AdminScriptLoader
 
         // Bundle React
         $react_script_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-react.js';
-        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
-
-        // Init helper
-        $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
-        wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react'], $cache_bust, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
-
-        // Scripts de l'API Preview
-        $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.js';
-        $preview_client_mtime = file_exists($preview_client_path) ? filemtime($preview_client_path) : time();
-        $version_param_api = PDF_BUILDER_PRO_VERSION . '-' . $preview_client_mtime;
         
-        wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param_api, true);
-        wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param_api, true);
-
-        // Localize script data
+        // Localize script data BEFORE enqueuing
         $localize_data = [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_templates'),
@@ -166,6 +151,22 @@ class AdminScriptLoader
 
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
         error_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react with data: ' . json_encode($localize_data));
+
+        wp_enqueue_script('pdf-builder-react', $react_script_url, ['pdf-builder-wrap'], $version_param, true);
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react: ' . $react_script_url);
+
+        // Init helper
+        $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.js';
+        wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react'], $cache_bust, true);
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
+
+        // Scripts de l'API Preview
+        $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.js';
+        $preview_client_mtime = file_exists($preview_client_path) ? filemtime($preview_client_path) : time();
+        $version_param_api = PDF_BUILDER_PRO_VERSION . '-' . $preview_client_mtime;
+        
+        wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-api-client.js', ['jquery'], $version_param_api, true);
+        wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-preview-integration.js', ['pdf-preview-api-client'], $version_param_api, true);
 
         // Script d'initialisation avec debug - exécuté immédiatement après la localisation
         $init_script = "
