@@ -65,6 +65,37 @@
             EventTarget.prototype.__pb_addEventListenerPatched = true;
         }
     })();
+    
+    // Auto reinitialize tab manager on mutations to the nav/container
+    (function(){
+        try {
+            const navRoot = document.getElementById('pdf-builder-tabs');
+            const contentRoot = document.getElementById('pdf-builder-tab-content');
+            const root = navRoot || contentRoot || document.body;
+
+            const reinit = () => {
+                if (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.initialize === 'function') {
+                    logRoot('Reinit: calling window.PDFBuilderTabsAPI.initialize()');
+                    try { window.PDFBuilderTabsAPI.initialize(); } catch(e) { logRoot('Reinit error', e); }
+                } else if (window.PDF_BUILDER_TABS && typeof window.PDF_BUILDER_TABS.init === 'function') {
+                    logRoot('Reinit: calling window.PDF_BUILDER_TABS.init()');
+                    try { window.PDF_BUILDER_TABS.init(); } catch(e) { logRoot('Reinit error', e); }
+                }
+            };
+
+            const mo = new MutationObserver(function(mutations) {
+                for (const m of mutations) {
+                    if (m.type === 'childList' || (m.type === 'attributes' && (m.attributeName === 'class' || m.attributeName === 'data-tab'))) {
+                        logRoot('Mutation detected: re-initializing');
+                        setTimeout(reinit, 50);
+                        break;
+                    }
+                }
+            });
+            mo.observe(root, { childList: true, subtree: true, attributes: true });
+            logRoot('tabs-root-monitor: MutationObserver registered on root');
+        } catch(e) { logRoot('tabs-root-monitor: Failed to register reinit observer', e); }
+    })();
 
     (function() {
         if (!Event.prototype.__pb_stopPatched) {
@@ -78,6 +109,13 @@
                         stack: (new Error()).stack.split('\n').slice(1,6).map(s=>s.trim())
                     });
                 } catch(e){}
+                // If this is a click event inside PDF Builder tabs, block the external stopImmediatePropagation
+                try {
+                    if (this.type === 'click' && this.target && this.target.closest && this.target.closest('#pdf-builder-tabs')) {
+                        logRoot('BLOCKED stopImmediatePropagation for click inside #pdf-builder-tabs', { target: elementSummary(this.target) });
+                        return; // swallow it
+                    }
+                } catch(e) {}
                 return origStopImmediate.apply(this, arguments);
             };
 
@@ -95,6 +133,23 @@
             };
 
             Event.prototype.__pb_stopPatched = true;
+        }
+    })();
+
+    // Optional aggressive patch to stopPropagation as well for clicks inside nav
+    (function(){
+        if (!Event.prototype.__pb_stopPatched2) {
+            const origStop = Event.prototype.stopPropagation;
+            Event.prototype.stopPropagation = function() {
+                try {
+                    if (this.type === 'click' && this.target && this.target.closest && this.target.closest('#pdf-builder-tabs')) {
+                        logRoot('BLOCKED stopPropagation for click inside #pdf-builder-tabs', { target: elementSummary(this.target) });
+                        return; // swallow it
+                    }
+                } catch(e) {}
+                return origStop.apply(this, arguments);
+            };
+            Event.prototype.__pb_stopPatched2 = true;
         }
     })();
 

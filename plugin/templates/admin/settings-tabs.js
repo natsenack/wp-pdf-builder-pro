@@ -4,152 +4,40 @@
  * Updated: 2025-12-03 01:35:00
  */
 
-(function($) {
+/**
+ * This file was a duplicate of `assets/js/settings-tabs.js`.
+ * To avoid duplication, it will now only act as a shim: if the canonical
+ * `PDFBuilderTabsAPI` is not present, it logs a warning, otherwise it defers to it.
+ */
+
+(function() {
     'use strict';
 
-    // Configuration
-    const CONFIG = {
-        debug: true, // Set to false in production
-        animationDuration: 200,
-        storageKey: 'pdf_builder_active_tab'
-    };
+    // Shim: do nothing if canonical manager present
+    if (window && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function') {
+        // Nothing to do, main script will handle tabs
+        console.log('PDF Builder: settings-tabs.js (template) shim loaded — canonical manager detected. No action.');
+        return;
+    }
 
-    // Main Tabs Manager Class
-    class PDFBuilderTabsManager {
-        constructor() {
-            this.tabsContainer = null;
-            this.contentContainer = null;
-            this.tabButtons = null;
-            this.tabContents = null;
-            this.activeTab = null;
-            this.initialized = false;
-
-            this.init();
-        }
-
-        init() {
-            if (this.initialized) return;
-
-            this.log('Initializing PDF Builder Tabs Manager...');
-
-            // Find containers
-            this.tabsContainer = document.getElementById('pdf-builder-tabs');
-            this.contentContainer = document.getElementById('pdf-builder-tab-content');
-
-            if (!this.tabsContainer || !this.contentContainer) {
-                this.log('ERROR: Required containers not found', {
-                    tabsContainer: !!this.tabsContainer,
-                    contentContainer: !!this.contentContainer
-                });
-                return;
-            }
-
-            // Get tab elements
-            this.tabButtons = this.tabsContainer.querySelectorAll('.nav-tab');
-            this.tabContents = this.contentContainer.querySelectorAll('.tab-content');
-
-            this.log('Found elements:', {
-                tabButtons: this.tabButtons.length,
-                tabContents: this.tabContents.length
-            });
-
-            if (this.tabButtons.length === 0 || this.tabContents.length === 0) {
-                this.log('ERROR: No tab buttons or contents found');
-                return;
-            }
-
-            // Determine initial active tab
-            this.activeTab = this.getStoredActiveTab() || this.getDefaultActiveTab();
-
-            // Bind events
-            this.bindEvents();
-
-            // Set initial state
-            this.setActiveTab(this.activeTab, false);
-
-            this.initialized = true;
-            this.log('PDF Builder Tabs Manager initialized successfully');
-
-            // Dispatch custom event
-            document.dispatchEvent(new CustomEvent('pdfBuilderTabsReady', {
-                detail: { manager: this }
-            }));
-        }
-
-        bindEvents() {
-                // Click events via delegation - robust if DOM changes
-                const delegatedHandler = (e) => {
-                    const anchor = e.target.closest && e.target.closest('.nav-tab');
-                        const tabsRoot = document.getElementById('pdf-builder-tabs');
-                        if (!anchor || !tabsRoot || !tabsRoot.contains(anchor)) return;
-
-                    if (anchor.tagName === 'A' && anchor.getAttribute('href') && anchor.getAttribute('href').startsWith('#')) {
-                        e.preventDefault();
-                    }
-
-                    const tabId = anchor.getAttribute('data-tab');
-                    if (!tabId) {
-                        this.log('Delegate: no data-tab on element', anchor);
-                        return;
-                    }
-
-                    this.log('Delegate: Tab clicked', tabId);
-                    this.setActiveTab(tabId, true);
-                };
-
-                // Add capturing delegation so our handler runs before many other non-capturing handlers
-                try {
-                    if (!window.PDFBuilderTabsDelegationInstalled) {
-                        document.removeEventListener('click', delegatedHandler, true);
-                        document.addEventListener('click', delegatedHandler, true);
-                        window.PDFBuilderTabsDelegationInstalled = true;
-                    }
-                } catch(e) {
-                    this.tabsContainer.removeEventListener('click', delegatedHandler, true);
-                    this.tabsContainer.addEventListener('click', delegatedHandler, true);
-                }
-
-                // Setup mutation observer to refresh references when DOM changes
-                const observer = new MutationObserver((mutations) => {
-                    let reset = false;
-                    for (const m of mutations) {
-                        if (m.type === 'childList' && (m.addedNodes.length || m.removedNodes.length)) {
-                            reset = true; break;
-                        }
-                        if (m.type === 'attributes' && (m.attributeName === 'class' || m.attributeName === 'data-tab')) {
-                            reset = true; break;
-                        }
-                    }
-                    if (reset) {
-                        this.tabButtons = this.tabsContainer.querySelectorAll('.nav-tab');
-                        this.tabContents = this.contentContainer.querySelectorAll('.tab-content');
-                        this.log('MutationObserver: refresh des sélecteurs d\'onglets');
-                    }
-                });
-                try {
-                    observer.observe(this.tabsContainer, { childList: true, subtree: true, attributes: true });
-                    observer.observe(this.contentContainer, { childList: true, subtree: true, attributes: true });
-                } catch(e) {
-                    this.log('MutationObserver erreur:', e && e.message ? e.message : e);
-                }
-
-            // Keyboard navigation
-            this.tabsContainer.addEventListener('keydown', (e) => {
-                this.handleKeyboardNavigation(e);
-            });
-
-            // Hash change (for direct links)
-            window.addEventListener('hashchange', () => {
-                const hashTab = this.getTabFromHash();
-                if (hashTab && hashTab !== this.activeTab) {
-                    this.setActiveTab(hashTab, true);
-                }
-            });
-
-            this.log('Event listeners bound');
-        }
-
-        setActiveTab(tabId, animate = true) {
+    // Otherwise, fallback minimal manager
+    console.warn('PDF Builder: settings-tabs.js (template) loaded but PDFBuilderTabsAPI is NOT present. Minimal fallback engaged.');
+    const buttons = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+    const contents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
+    function switchTabFallback(tabId) {
+        buttons.forEach(b => b.classList.remove('nav-tab-active'));
+        contents.forEach(c => c.classList.remove('active'));
+        const btn = document.querySelector('#pdf-builder-tabs [data-tab="' + tabId + '"]');
+        const content = document.getElementById(tabId);
+        if (btn) { btn.classList.add('nav-tab-active'); }
+        if (content) { content.classList.add('active'); }
+    }
+    buttons.forEach(btn => btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = btn.getAttribute('data-tab');
+        switchTabFallback(id);
+    }));
+})();
             if (!tabId) return;
 
             this.log('Setting active tab:', tabId);

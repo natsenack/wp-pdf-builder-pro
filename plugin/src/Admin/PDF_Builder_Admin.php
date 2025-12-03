@@ -1349,6 +1349,15 @@ class PdfBuilderAdmin
                 true
             );
 
+            // Charger le manager d'onglets (canonical)
+            wp_enqueue_script(
+                'pdf-builder-settings-tabs',
+                PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.js',
+                ['jquery'],
+                PDF_BUILDER_PRO_VERSION . '-' . time(),
+                true
+            );
+
             // Localiser les variables AJAX pour les fonctionnalités de cache
             wp_localize_script('pdf-builder-settings-page', 'pdfBuilderAjax', [
                 'ajaxurl' => admin_url('admin-ajax.php'),
