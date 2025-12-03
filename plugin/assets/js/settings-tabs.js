@@ -314,15 +314,46 @@ try {
 
     // Initialiser le bouton de sauvegarde flottant
     function initSaveButton() {
+        console.log('🔍 PDF Builder: Recherche du bouton de sauvegarde flottant...');
         const saveBtn = document.getElementById('pdf-builder-save-all');
+        const floatingContainer = document.getElementById('pdf-builder-save-floating');
+
+        console.log('📋 PDF Builder: État du DOM:', {
+            saveBtn: !!saveBtn,
+            floatingContainer: !!floatingContainer,
+            body: !!document.body,
+            allButtons: document.querySelectorAll('button').length,
+            allDivs: document.querySelectorAll('div').length
+        });
+
         if (saveBtn) {
             console.log('💾 PDF Builder: Bouton de sauvegarde flottant trouvé, configuration');
             saveBtn.addEventListener('click', function(e) {
                 e.preventDefault();
+                console.log('🖱️ PDF Builder: Clic sur le bouton de sauvegarde');
                 PDFBuilderTabsAPI.saveAllSettings();
             });
         } else {
-            console.warn('⚠️ PDF Builder: Bouton de sauvegarde flottant non trouvé');
+            console.warn('⚠️ PDF Builder: Bouton de sauvegarde flottant non trouvé - vérification du HTML');
+
+            // Essayer de trouver tous les éléments avec des IDs similaires
+            const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id);
+            console.log('📝 PDF Builder: IDs trouvés dans le document:', allIds.filter(id => id.includes('save') || id.includes('pdf')));
+
+            // Réessayer dans 1 seconde
+            setTimeout(function() {
+                console.log('🔄 PDF Builder: Nouvelle tentative de recherche du bouton...');
+                const retryBtn = document.getElementById('pdf-builder-save-all');
+                if (retryBtn) {
+                    console.log('✅ PDF Builder: Bouton trouvé à la deuxième tentative');
+                    retryBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        PDFBuilderTabsAPI.saveAllSettings();
+                    });
+                } else {
+                    console.error('❌ PDF Builder: Bouton toujours introuvable après retry');
+                }
+            }, 1000);
         }
     }
 
@@ -330,7 +361,14 @@ try {
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🚀 PDF Builder: DOM chargé, initialisation des onglets');
         initTabs();
-        initSaveButton();
+        // Délai pour s'assurer que le bouton flottant est rendu
+        setTimeout(initSaveButton, 100);
+    });
+
+    // Aussi essayer au chargement complet de la fenêtre
+    window.addEventListener('load', function() {
+        console.log('🏁 PDF Builder: Fenêtre chargée, vérification bouton sauvegarde');
+        setTimeout(initSaveButton, 100);
     });
 
 })();
