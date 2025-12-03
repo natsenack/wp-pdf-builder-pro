@@ -128,7 +128,7 @@ class AdminScriptLoader
 
         // Localize script data
         $localize_data = [
-            'ajaxurl' => admin_url('admin-ajax.php'),
+            'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_templates'),
             'version' => PDF_BUILDER_PRO_VERSION,
             'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 0,
@@ -147,8 +147,18 @@ class AdminScriptLoader
 
         wp_localize_script('pdf-builder-react', 'pdfBuilderData', $localize_data);
 
-        // Script d'initialisation
-        $init_script = "(function() {})();";
+        // Script d'initialisation avec debug
+        $init_script = "
+        (function() {
+            console.log('🔧 [WP] Localized data:', window.pdfBuilderData);
+            if (window.pdfBuilderData) {
+                console.log('✅ [WP] ajaxUrl:', window.pdfBuilderData.ajaxUrl);
+                console.log('✅ [WP] nonce:', window.pdfBuilderData.nonce);
+            } else {
+                console.error('❌ [WP] pdfBuilderData not found on window');
+            }
+        })();
+        ";
         wp_add_inline_script('pdf-builder-react', $init_script, 'after');
     }
 }
