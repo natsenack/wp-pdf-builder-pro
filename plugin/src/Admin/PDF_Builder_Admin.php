@@ -74,6 +74,12 @@ class PdfBuilderAdmin
     private $parameter_validator = null;
 
     /**
+     * Handlers et providers spécialisés
+     */
+    private $maintenance_action_handler = null;
+    private $dashboard_data_provider = null;
+
+    /**
      * Obtenir l'instance unique de la classe (Singleton)
      */
     public static function getInstance($core = null)
@@ -187,6 +193,8 @@ class PdfBuilderAdmin
         $this->maintenance_manager = new \PDF_Builder\Admin\Managers\MaintenanceManager();
         $this->logger_service = new \PDF_Builder\Admin\Services\LoggerService();
         $this->parameter_validator = new \PDF_Builder\Admin\Validators\ParameterValidator();
+        $this->maintenance_action_handler = new \PDF_Builder\Admin\Handlers\MaintenanceActionHandler();
+        $this->dashboard_data_provider = new \PDF_Builder\Admin\Providers\DashboardDataProvider();
 
         $this->initHooks();
     }
@@ -1251,21 +1259,8 @@ class PdfBuilderAdmin
      */
     private function loadAdminScripts($hook = null)
     {
-        if ($this->adminScriptLoader) {
-            return $this->adminScriptLoader->loadAdminScripts($hook);
-        }
-
-        // Fallback si AdminScriptLoader n'est pas disponible
-        wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
-
-    /**
-     * Méthode commune pour charger les scripts admin
-     * @deprecated Utiliser AdminScriptLoader à la place
-     */
-    private function loadAdminScripts($hook = null)
-    {
-        if ($this->adminScriptLoader) {
-            return $this->adminScriptLoader->loadAdminScripts($hook);
+        if ($this->script_loader) {
+            return $this->script_loader->loadAdminScripts($hook);
         }
 
         // Fallback si AdminScriptLoader n'est pas disponible
@@ -1931,29 +1926,18 @@ class PdfBuilderAdmin
     }
 
     /**
-     * Transforme les éléments du format PHP vers le format React
-     */
-    /**
      * Transforme les éléments du template pour React
      * @deprecated Utiliser ReactDataTransformer à la place
      */
     private function transformElementsForReact($elements)
     {
-        if ($this->reactDataTransformer) {
-            return $this->reactDataTransformer->transform($elements);
+        if ($this->react_transformer) {
+            return $this->react_transformer->transform($elements);
         }
         
         // Fallback si ReactDataTransformer n'est pas disponible
         return is_array($elements) ? $elements : [];
     }
-
-    /**
-     * Retourne un template de facture par défaut
-     */
-    /**
-     * Nettoie et valide une valeur de paramètre selon son type
-     */
-
 
     /**
      * Filter canvas parameters from POST data
@@ -1970,23 +1954,7 @@ class PdfBuilderAdmin
         return $post_data;
     }
 
-    /**
-     * Sauvegarder les paramètres de rendu Canvas
-     */
 
-
-
-
-
-    /**
-     * Marque un template comme corrompu pour réparation future
-     */
-    /**
-     * Charge un template de manière robuste avec récupération automatique
-     */
-    /**
-     * Enregistre les changements de permissions des rôles dans les logs
-     */
     private function logRolePermissionsChange($old_roles, $new_roles)
     {
         $current_user = wp_get_current_user();
@@ -2057,19 +2025,10 @@ class PdfBuilderAdmin
      */
     private function getDirectorySize($directory)
     {
-        $size = 0;
-        if (!is_dir($directory)) {
-            return $size;
+        if ($this->maintenance_action_handler) {
+            return $this->maintenance_action_handler->getDirectorySize($directory);
         }
-
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS));
-        foreach ($iterator as $file) {
-            if ($file->isFile()) {
-                $size += $file->getSize();
-            }
-        }
-
-        return $size;
+        return 0;
     }
 
     /**
@@ -2144,88 +2103,6 @@ class PdfBuilderAdmin
     /**
      * Supprime les fichiers temporaires
      */
-    private function performClearTempFiles()
-    {
-        $temp_dir = sys_get_temp_dir() . '/pdf-builder/';
-        $cleared_files = 0;
-        $total_size = 0;
-        if (is_dir($temp_dir)) {
-            $files = glob($temp_dir . '*');
-            foreach ($files as $file) {
-                if (is_file($file) && filemtime($file) < time() - 86400) {
-                    // Fichiers de plus de 24h
-                    $size = filesize($file);
-                    if (unlink($file)) {
-                        $cleared_files++;
-                        $total_size += $size;
-                    }
-                }
-            }
-        }
-
-        return array(
-            'success' => true,
-            'message' => sprintf(__('Fichiers temporaires nettoyés. %d fichiers supprimés, %s libérés.', 'pdf-builder-pro'), $cleared_files, size_format($total_size))
-        );
-    }
-
-    /**
-     * Répare les templates corrompus
-     */
-    private function performRepairTemplates()
-    {
-        $templates = get_option('pdf_builder_templates', []);
-        $repaired_count = 0;
-        if (is_array($templates)) {
-            foreach ($templates as $key => $template) {
-        // Vérifier et réparer la structure des templates
-                if (!isset($template['name']) || !isset($template['data'])) {
-                    unset($templates[$key]);
-                    $repaired_count++;
-                }
-            }
-        }
-
-        update_option('pdf_builder_templates', $templates);
-        return array(
-            'success' => true,
-            'message' => sprintf(__('Templates réparés. %d templates corrompus supprimés.', 'pdf-builder-pro'), $repaired_count)
-        );
-    }
-
-    /**
-     * Réinitialise tous les paramètres aux valeurs par défaut
-     */
-    private function performResetSettings()
-    {
-        // Liste des options à réinitialiser
-        $options_to_reset = [
-            'pdf_builder_settings',
-            'pdf_builder_allowed_roles',
-            'pdf_builder_templates',
-            'pdf_builder_admin_email',
-            
-            'pdf_builder_default_canvas_width',
-            'pdf_builder_default_canvas_height',
-            'pdf_builder_show_grid',
-            'pdf_builder_snap_to_grid',
-            'pdf_builder_snap_to_elements'
-        ];
-        $reset_count = 0;
-        foreach ($options_to_reset as $option) {
-            if (delete_option($option)) {
-                $reset_count++;
-            }
-        }
-
-        // Vider le cache
-        wp_cache_flush();
-        return array(
-            'success' => true,
-            'message' => sprintf(__('Paramètres réinitialisés avec succès. %d options supprimées.', 'pdf-builder-pro'), $reset_count)
-        );
-    }
-
     /**
      * Détecte le type de document basé sur le statut de la commande
      */
@@ -2888,163 +2765,26 @@ class PdfBuilderAdmin
      */
     private function createDefaultTemplate($template_id)
     {
-        // Template par défaut avec quelques éléments de base
-        $default_template = [
-            'id' => $template_id,
-            'name' => 'Template par défaut',
-            'description' => 'Template créé automatiquement',
-            'elements' => [
-                [
-                    'id' => 'title',
-                    'type' => 'text',
-                    'content' => 'PDF Builder Pro',
-                    'position' => ['x' => 50, 'y' => 50],
-                    'size' => ['width' => 200, 'height' => 40],
-                    'style' => [
-                        'fontSize' => 24,
-                        'fontWeight' => 'bold',
-                        'color' => '#000000',
-                        'textAlign' => 'center'
-                    ]
-                ],
-                [
-                    'id' => 'subtitle',
-                    'type' => 'text',
-                    'content' => 'Éditeur de PDF professionnel',
-                    'position' => ['x' => 50, 'y' => 100],
-                    'size' => ['width' => 200, 'height' => 30],
-                    'style' => [
-                        'fontSize' => 16,
-                        'color' => '#666666',
-                        'textAlign' => 'center'
-                    ]
-                ]
-            ],
-            'pages' => [
-                [
-                    'id' => 1,
-                    'name' => 'Page 1',
-                    'width' => 595, // A4 width in points
-                    'height' => 842, // A4 height in points
-                    'orientation' => 'portrait',
-                    'margins' => [
-                        'top' => 28,
-                        'right' => 28,
-                        'bottom' => 28,
-                        'left' => 28
-                    ],
-                    'backgroundColor' => '#ffffff'
-                ]
-            ],
-            'created_at' => current_time('mysql'),
-            'updated_at' => current_time('mysql')
-        ];
-
-        // Sauvegarder le template par défaut en base de données
-        try {
-            global $wpdb;
-            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-            // Vérifier si le template existe déjà
-            $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id));
-
-            if ($existing) {
-                // Mettre à jour le template existant
-                $wpdb->update(
-                    $table_templates,
-                    [
-                        'name' => $default_template['name'],
-                        'template_data' => wp_json_encode($default_template),
-                        'updated_at' => current_time('mysql')
-                    ],
-                    ['id' => $template_id],
-                    ['%s', '%s', '%s'],
-                    ['%d']
-                );
-            } else {
-                // Insérer un nouveau template
-                $wpdb->insert(
-                    $table_templates,
-                    [
-                        'id' => $template_id,
-                        'name' => $default_template['name'],
-                        'template_data' => wp_json_encode($default_template),
-                        'created_at' => current_time('mysql'),
-                        'updated_at' => current_time('mysql')
-                    ],
-                    ['%d', '%s', '%s', '%s', '%s']
-                );
-            }
-        } catch (Exception $e) {
-            // Si la sauvegarde échoue, retourner quand même le template par défaut
-            
+        if ($this->dashboard_data_provider) {
+            return $this->dashboard_data_provider->createDefaultTemplate($template_id);
         }
-
-        return $default_template;
+        return [];
     }
 
-    /**
-     * Récupère les statistiques pour le tableau de bord
-     */
     private function getDashboardStats()
     {
-        global $wpdb;
-
-        // Nombre de templates
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        $templates_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_templates");
-
-        // Nombre total de documents générés (logs)
-        $table_logs = $wpdb->prefix . 'pdf_builder_logs';
-        $documents_count = 0;
-        $today_count = 0;
-
-        if ($wpdb->get_var("SHOW TABLES LIKE '$table_logs'") == $table_logs) {
-            // Vérifier si la colonne log_message existe
-            $columns = $wpdb->get_results("DESCRIBE $table_logs");
-            $has_log_message = false;
-            foreach ($columns as $column) {
-                if ($column->Field === 'log_message') {
-                    $has_log_message = true;
-                    break;
-                }
-            }
-
-            if ($has_log_message) {
-                $documents_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_logs WHERE log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%'");
-
-                // Documents générés aujourd'hui
-                $today = date('Y-m-d');
-                $today_count = $wpdb->get_var($wpdb->prepare(
-                    "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s AND (log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%')",
-                    $today
-                ));
-            } else {
-                // Si la colonne n'existe pas, compter tous les logs
-                $documents_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_logs");
-
-                // Documents d'aujourd'hui
-                $today = date('Y-m-d');
-                $today_count = $wpdb->get_var($wpdb->prepare(
-                    "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s",
-                    $today
-                ));
-            }
+        if ($this->dashboard_data_provider) {
+            return $this->dashboard_data_provider->getDashboardStats();
         }
-
-        return [
-            'templates' => (int) $templates_count,
-            'documents' => (int) $documents_count,
-            'today' => (int) $today_count
-        ];
+        return ['templates' => 0, 'documents' => 0, 'today' => 0];
     }
 
-    /**
-     * Récupère la version du plugin depuis le header
-     */
     private function getPluginVersion()
     {
-        return pdf_builder_get_version();
+        if ($this->dashboard_data_provider) {
+            return $this->dashboard_data_provider->getPluginVersion();
+        }
+        return 'unknown';
     }
 
     /**
