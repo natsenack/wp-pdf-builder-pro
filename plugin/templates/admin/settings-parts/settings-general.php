@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '/settings-helpers.php';
+?>
             <h2>🏠 Paramètres Généraux</h2>
 
             <!-- Pas de sous-onglets pour la page générale, juste le contenu direct -->
