@@ -315,8 +315,21 @@ try {
     // Initialiser le bouton de sauvegarde flottant
     function initSaveButton() {
         console.log('🔍 PDF Builder: Recherche du bouton de sauvegarde flottant...');
+
+        // Log détaillé du DOM au moment de la recherche
+        console.log('📊 PDF Builder: Analyse détaillée du DOM:');
+        console.log('   - Body existe:', !!document.body);
+        console.log('   - Body children:', document.body ? document.body.children.length : 'N/A');
+        console.log('   - Total éléments avec ID:', document.querySelectorAll('[id]').length);
+
         const saveBtn = document.getElementById('pdf-builder-save-all');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
+
+        console.log('🎯 PDF Builder: Recherche spécifique des éléments:');
+        console.log('   - Recherche ID: pdf-builder-save-all');
+        console.log('   - Résultat:', saveBtn);
+        console.log('   - Recherche ID: pdf-builder-save-floating');
+        console.log('   - Résultat:', floatingContainer);
 
         console.log('📋 PDF Builder: État du DOM:', {
             saveBtn: !!saveBtn,
@@ -326,19 +339,73 @@ try {
             allDivs: document.querySelectorAll('div').length
         });
 
+        // Chercher tous les éléments qui contiennent "save" dans leur ID
+        const allSaveElements = Array.from(document.querySelectorAll('[id*="save"]'));
+        console.log('💾 PDF Builder: Éléments avec "save" dans l\'ID:', allSaveElements.map(el => ({id: el.id, tag: el.tagName, text: el.textContent?.substring(0, 50)})));
+
+        // Chercher tous les éléments qui contiennent "pdf-builder" dans leur ID
+        const allPdfElements = Array.from(document.querySelectorAll('[id*="pdf-builder"]'));
+        console.log('🏗️ PDF Builder: Éléments avec "pdf-builder" dans l\'ID:', allPdfElements.map(el => ({id: el.id, tag: el.tagName})));
+
+        // Chercher tous les éléments avec position fixed
+        const fixedElements = Array.from(document.querySelectorAll('[style*="position: fixed"], [style*="position:fixed"]'));
+        console.log('📌 PDF Builder: Éléments en position fixed:', fixedElements.map(el => ({id: el.id, tag: el.tagName, style: el.getAttribute('style')})));
+
         if (saveBtn) {
             console.log('💾 PDF Builder: Bouton de sauvegarde flottant trouvé, configuration');
+            console.log('   - Bouton:', saveBtn);
+            console.log('   - Texte du bouton:', saveBtn.textContent);
+            console.log('   - Style du bouton:', saveBtn.getAttribute('style'));
+            console.log('   - Parent:', saveBtn.parentElement);
+
             saveBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 console.log('🖱️ PDF Builder: Clic sur le bouton de sauvegarde');
                 PDFBuilderTabsAPI.saveAllSettings();
             });
+
+            // Ajouter un style visible pour le debug
+            saveBtn.style.backgroundColor = '#ff6b6b';
+            saveBtn.style.color = 'white';
+            saveBtn.style.border = '2px solid #ff0000';
+            saveBtn.style.zIndex = '10000';
+
+            console.log('✅ PDF Builder: Bouton configuré avec style debug rouge');
         } else {
             console.warn('⚠️ PDF Builder: Bouton de sauvegarde flottant non trouvé - vérification du HTML');
 
             // Essayer de trouver tous les éléments avec des IDs similaires
             const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id);
             console.log('📝 PDF Builder: IDs trouvés dans le document:', allIds.filter(id => id.includes('save') || id.includes('pdf')));
+
+            // Créer un bouton de debug si rien n'est trouvé
+            console.log('🔧 PDF Builder: Création d\'un bouton de debug temporaire...');
+            const debugBtn = document.createElement('button');
+            debugBtn.id = 'debug-save-btn';
+            debugBtn.textContent = '🔧 DEBUG: Bouton de sauvegarde';
+            debugBtn.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                right: 20px;
+                background: #ff0000;
+                color: white;
+                border: 2px solid #000;
+                padding: 10px;
+                z-index: 10001;
+                font-size: 14px;
+                cursor: pointer;
+            `;
+            debugBtn.onclick = function() {
+                console.log('🖱️ DEBUG: Clic sur bouton debug');
+                alert('Bouton debug cliqué ! Les vrais éléments n\'existent pas.');
+            };
+
+            if (document.body) {
+                document.body.appendChild(debugBtn);
+                console.log('✅ PDF Builder: Bouton debug créé et ajouté au DOM');
+            } else {
+                console.error('❌ PDF Builder: Impossible de créer le bouton debug - body inexistant');
+            }
 
             // Réessayer dans 1 seconde
             setTimeout(function() {
