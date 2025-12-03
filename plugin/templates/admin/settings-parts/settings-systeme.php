@@ -1,15 +1,24 @@
 <?php // Systeme tab content - Updated: 2025-11-18 20:20:00
 
-    // Fonction pour calculer la taille d'un répertoire
+    // Fonction pour calculer la taille d'un répertoire (version sécurisée)
     function pdf_builder_get_directory_size($directory) {
         $size = 0;
-        if (is_dir($directory)) {
-            $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
-            foreach ($iterator as $file) {
-                if ($file->isFile()) {
-                    $size += $file->getSize();
+        try {
+            if (is_dir($directory) && is_readable($directory)) {
+                $iterator = new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
+                    RecursiveIteratorIterator::LEAVES_ONLY
+                );
+                foreach ($iterator as $file) {
+                    if ($file->isFile() && $file->isReadable()) {
+                        $size += $file->getSize();
+                    }
                 }
             }
+        } catch (Exception $e) {
+            // En cas d'erreur, retourner 0
+            error_log('PDF Builder: Erreur calcul taille répertoire ' . $directory . ': ' . $e->getMessage());
+            $size = 0;
         }
         return $size;
     }
@@ -118,7 +127,7 @@
                                         $cache_size = 0;
                                         $cache_dirs = [
                                             WP_CONTENT_DIR . '/cache/wp-pdf-builder-previews/',
-                                            wp_upload_dir()['basedir'] . '/pdf-builder-cache'
+                                            (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-cache'
                                         ];
 
                                         // Calculer la taille totale du cache
@@ -165,7 +174,7 @@
                                         <?php
                                         $last_cleanup = get_option('pdf_builder_cache_last_cleanup', 'Jamais');
                                         if ($last_cleanup !== 'Jamais') {
-                                            $last_cleanup = human_time_diff(strtotime($last_cleanup)) . ' ago';
+                                            $last_cleanup = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_cleanup)) : $last_cleanup) . ' ago';
                                         }
                                         echo $last_cleanup;
                                         ?>
@@ -238,7 +247,7 @@
                                         <?php
                                         $last_maintenance = get_option('pdf_builder_last_maintenance', 'Jamais');
                                         if ($last_maintenance !== 'Jamais') {
-                                            $last_maintenance = human_time_diff(strtotime($last_maintenance)) . ' ago';
+                                            $last_maintenance = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_maintenance)) : $last_maintenance) . ' ago';
                                         }
                                         echo $last_maintenance;
                                         ?>
@@ -261,7 +270,7 @@
                                         <?php
                                         $next_maintenance = get_option('pdf_builder_next_maintenance', 'Non planifiée');
                                         if ($next_maintenance !== 'Non planifiée') {
-                                            $next_maintenance = date_i18n('d/m/Y H:i', strtotime($next_maintenance));
+                                            $next_maintenance = function_exists('date_i18n') ? date_i18n('d/m/Y H:i', strtotime($next_maintenance)) : date('d/m/Y H:i', strtotime($next_maintenance));
                                         }
                                         echo $next_maintenance;
                                         ?>
@@ -414,7 +423,7 @@
                                         <?php
                                         $last_backup = get_option('pdf_builder_last_backup', 'Jamais');
                                         if ($last_backup !== 'Jamais') {
-                                            $last_backup = human_time_diff(strtotime($last_backup)) . ' ago';
+                                            $last_backup = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_backup)) : $last_backup) . ' ago';
                                         }
                                         echo $last_backup;
                                         ?>
@@ -425,7 +434,7 @@
                                 <div class="backup-metric-card" data-metric="total-backups">
                                     <div class="metric-value">
                                         <?php
-                                        $backup_dir = wp_upload_dir()['basedir'] . '/pdf-builder-backups';
+                                        $backup_dir = (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-backups';
                                         $backup_count = 0;
                                         if (is_dir($backup_dir)) {
                                             $files = glob($backup_dir . '/*.json');
