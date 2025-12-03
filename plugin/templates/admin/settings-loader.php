@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function pdf_builder_load_settings_assets($hook) {
     // Charger seulement sur la page de paramètres PDF Builder
-    if ($hook !== 'toplevel_page_pdf-builder-settings') {
+    if ($hook !== 'toplevel_page_pdf-builder-pro') {
         return;
     }
 
