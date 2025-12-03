@@ -2,6 +2,11 @@
 if (!defined('ABSPATH')) exit('No direct access');
 if (!is_user_logged_in() || !current_user_can('manage_options')) wp_die('Access denied');
 
+// FORCE NO-CACHE HEADERS
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 // Include helper functions
 require_once __DIR__ . '/settings-parts/settings-helpers.php';
 
