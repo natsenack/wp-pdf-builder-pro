@@ -1,28 +1,5 @@
 <?php // Systeme tab content - Updated: 2025-11-18 20:20:00
 
-    // Fonction pour calculer la taille d'un répertoire (version sécurisée)
-    function pdf_builder_get_directory_size($directory) {
-        $size = 0;
-        try {
-            if (is_dir($directory) && is_readable($directory)) {
-                $iterator = new RecursiveIteratorIterator(
-                    new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
-                    RecursiveIteratorIterator::LEAVES_ONLY
-                );
-                foreach ($iterator as $file) {
-                    if ($file->isFile() && $file->isReadable()) {
-                        $size += $file->getSize();
-                    }
-                }
-            }
-        } catch (Exception $e) {
-            // En cas d'erreur, retourner 0
-            error_log('PDF Builder: Erreur calcul taille répertoire ' . $directory . ': ' . $e->getMessage());
-            $size = 0;
-        }
-        return $size;
-    }
-
 ?>
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
@@ -130,20 +107,24 @@
                                             (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-cache'
                                         ];
 
-                                        // Calculer la taille totale du cache
+                                        // Version simplifiée : compter juste les fichiers
+                                        $cache_file_count = 0;
                                         foreach ($cache_dirs as $dir) {
-                                            if (is_dir($dir)) {
-                                                $cache_size += pdf_builder_get_directory_size($dir);
+                                            if (is_dir($dir) && is_readable($dir)) {
+                                                try {
+                                                    $files = glob($dir . '/*');
+                                                    if ($files) {
+                                                        $cache_file_count += count($files);
+                                                    }
+                                                } catch (Exception $e) {
+                                                    // Ignorer les erreurs
+                                                }
                                             }
                                         }
 
-                                        // Afficher la taille avec l'unité appropriée et décimales
+                                        // Afficher le nombre de fichiers
                                         echo '<span id="cache-size-display">';
-                                        if ($cache_size < 1048576) { // < 1 Mo
-                                            echo number_format($cache_size / 1024, 1) . ' Ko';
-                                        } else {
-                                            echo number_format($cache_size / 1048576, 1) . ' Mo';
-                                        }
+                                        echo $cache_file_count . ' fichiers';
                                         echo '</span>';
                                         ?>
                                     </div>
