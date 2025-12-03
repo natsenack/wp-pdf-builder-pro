@@ -53,6 +53,14 @@ function pdf_builder_load_settings_assets($hook) {
 
     // Charger le JavaScript pour la navigation par onglets
     $script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js';
+    
+    // VÉRIFIER SI LE FICHIER EXISTE
+    $script_path = str_replace(site_url(), ABSPATH, $script_url);
+    $script_path = str_replace('https://threeaxe.fr', ABSPATH, $script_path); // Correction pour le domaine
+    $file_exists = file_exists($script_path);
+    
+    echo "<script>console.log('📁 FICHIER SCRIPT - Chemin local:', '{$script_path}');</script>";
+    echo "<script>console.log('📁 FICHIER SCRIPT - Existe:', '" . ($file_exists ? 'OUI' : 'NON') . "');</script>";
 
     echo "<script>console.log('🔧 AVANT wp_enqueue_script - URL:', '{$script_url}');</script>";
 
@@ -65,8 +73,31 @@ function pdf_builder_load_settings_assets($hook) {
     );
 
     echo "<script>console.log('✅ APRÈS wp_enqueue_script - Script enregistré');</script>";
-
-    // AJOUTER LES LOGS JAVASCRIPT DIRECTEMENT
+    
+    // TEST DE CHARGEMENT DU SCRIPT AVEC FETCH
+    echo "<script>
+    fetch('{$script_url}')
+    .then(response => {
+        console.log('🌐 FETCH SCRIPT - Status:', response.status);
+        console.log('🌐 FETCH SCRIPT - OK:', response.ok);
+        if (!response.ok) {
+            console.error('❌ SCRIPT NON CHARGÉ - Erreur HTTP:', response.status);
+        } else {
+            console.log('✅ SCRIPT CHARGÉ - HTTP 200');
+        }
+        return response.text();
+    })
+    .then(text => {
+        console.log('📄 CONTENU SCRIPT - Longueur:', text.length, 'caractères');
+        if (text.length < 100) {
+            console.warn('⚠️ CONTENU SCRIPT TROP COURT - Possible erreur 404');
+            console.log('📄 CONTENU:', text);
+        }
+    })
+    .catch(error => {
+        console.error('❌ ERREUR FETCH SCRIPT:', error.message);
+    });
+    </script>";    // AJOUTER LES LOGS JAVASCRIPT DIRECTEMENT
     wp_add_inline_script('pdf-builder-settings-tabs', '
         console.log("🔥 PDF BUILDER DEBUG: Hook détecté:", "' . $hook . '");
         console.log("📋 PDF BUILDER DEBUG: PDF_BUILDER_PLUGIN_URL =", "' . (defined('PDF_BUILDER_PLUGIN_URL') ? PDF_BUILDER_PLUGIN_URL : 'NON DÉFINI') . '");
