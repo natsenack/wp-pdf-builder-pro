@@ -401,6 +401,17 @@ function pdf_builder_load_core()
         }
     }
 
+    // Charger les providers Admin depuis src/Admin/Providers/
+    $admin_providers = array(
+        'DashboardDataProvider.php'
+    );
+    foreach ($admin_providers as $provider) {
+        $provider_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Providers/' . $provider;
+        if (file_exists($provider_path)) {
+            require_once $provider_path;
+        }
+    }
+
     // Forcer le déploiement - marqueur de test
 
     // Charger les utilitaires essentiels depuis src/utilities/
