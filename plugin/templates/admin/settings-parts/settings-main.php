@@ -16,6 +16,9 @@ $settings = get_option('pdf_builder_settings', array());
         <h1>Parametres PDF Builder Pro</h1>
     </header>
 
+    <!-- LOG APRES HEADER -->
+    <script>console.log('📍 LOG APRES HEADER - HTML parsing OK jusqu\'ici');</script>
+
     <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general">General</a>
         <a href="#licence" class="nav-tab" data-tab="licence">Licence</a>
@@ -28,16 +31,33 @@ $settings = get_option('pdf_builder_settings', array());
         <a href="#developpeur" class="nav-tab" data-tab="developpeur">Developpeur</a>
     </nav>
 
+    <!-- LOG APRES NAV -->
+    <script>console.log('📍 LOG APRES NAV - HTML parsing OK jusqu\'ici');</script>
+
     <section id="pdf-builder-tab-content" class="tab-content-wrapper">
+        <!-- LOG AVANT GENERAL -->
+        <script>console.log('📍 LOG AVANT GENERAL - Inclusion du fichier general');</script>
         <div id="general" class="tab-content active">
             <?php require_once 'settings-general.php'; ?>
         </div>
+        <!-- LOG APRES GENERAL -->
+        <script>console.log('📍 LOG APRES GENERAL - Fichier general inclus');</script>
+
+        <!-- LOG AVANT LICENCE -->
+        <script>console.log('📍 LOG AVANT LICENCE - Inclusion du fichier licence');</script>
         <div id="licence" class="tab-content">
             <?php require_once 'settings-licence.php'; ?>
         </div>
+        <!-- LOG APRES LICENCE -->
+        <script>console.log('📍 LOG APRES LICENCE - Fichier licence inclus');</script>
+
+        <!-- LOG AVANT SYSTEME -->
+        <script>console.log('📍 LOG AVANT SYSTEME - Inclusion du fichier systeme');</script>
         <div id="systeme" class="tab-content">
             <?php require_once 'settings-systeme.php'; ?>
         </div>
+        <!-- LOG APRES SYSTEME -->
+        <script>console.log('📍 LOG APRES SYSTEME - Fichier systeme inclus');</script>
         <div id="acces" class="tab-content">
             <?php require_once 'settings-acces.php'; ?>
         </div>
@@ -89,10 +109,21 @@ $settings = get_option('pdf_builder_settings', array());
             navTabs: document.querySelectorAll('#pdf-builder-tabs .nav-tab').length,
             tabContents: document.querySelectorAll('#pdf-builder-tab-content .tab-content').length
         });
-        
+
+        // LOG DES ÉLÉMENTS TROUVÉS
+        const foundTabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
+        const foundContents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
+        console.log('📄 PDF Builder - DÉTAIL ÉLÉMENTS TROUVÉS:');
+        foundTabs.forEach((tab, i) => {
+            console.log(`  Tab ${i+1}: ${tab.textContent.trim()} (data-tab: ${tab.getAttribute('data-tab')})`);
+        });
+        foundContents.forEach((content, i) => {
+            console.log(`  Content ${i+1}: #${content.id} (${content.classList.contains('active') ? 'actif' : 'inactif'})`);
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📄 PDF Builder - DOM CONTENT LOADED - HTML ready');
-            
+
             // Vérifier que les scripts externes sont chargés
             setTimeout(function() {
                 console.log('📄 PDF Builder - TIMEOUT CHECK - Scripts externes chargés?', {
@@ -100,41 +131,83 @@ $settings = get_option('pdf_builder_settings', array());
                     debug: !!(typeof PDF_BUILDER_CONFIG !== 'undefined' && PDF_BUILDER_CONFIG.debug),
                     tabsInitialized: !!window.PDF_BUILDER_TABS_INITIALIZED
                 });
+
+                // TESTER LA NAVIGATION MANUELLEMENT
+                console.log('📄 PDF Builder - TEST NAVIGATION MANUELLE');
+                const testTab = document.querySelector('[data-tab="systeme"]');
+                if (testTab) {
+                    console.log('📄 PDF Builder - Clic simulé sur onglet Systeme');
+                    testTab.click();
+                } else {
+                    console.log('📄 PDF Builder - ERREUR: Onglet Systeme non trouvé pour test');
+                }
             }, 200);
         });
-        
+
         (function() {
             // Si le script en file est chargé, ne rien faire
-            if (typeof window.PDF_BUILDER_CONFIG !== 'undefined') return;
+            if (typeof window.PDF_BUILDER_CONFIG !== 'undefined') {
+                console.log('📄 PDF Builder - SCRIPT EXTERNE DÉTECTÉ, fallback ignoré');
+                return;
+            }
+
+            console.log('📄 PDF Builder - SCRIPT EXTERNE NON DÉTECTÉ, activation fallback');
 
             document.addEventListener('DOMContentLoaded', function() {
                 console.warn('📄 PDF Builder: Script principal non détecté — activation du fallback minimal');
 
                 const tabsContainer = document.getElementById('pdf-builder-tabs');
                 const contentContainer = document.getElementById('pdf-builder-tab-content');
-                if (!tabsContainer || !contentContainer) return;
+                if (!tabsContainer || !contentContainer) {
+                    console.error('📄 PDF Builder - ERREUR: Containers non trouvés', {tabsContainer, contentContainer});
+                    return;
+                }
+
+                console.log('📄 PDF Builder - Fallback: Containers trouvés, ajout des event listeners');
 
                 const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
                 const tabContents = contentContainer.querySelectorAll('.tab-content');
 
-                tabButtons.forEach(function(btn) {
+                console.log(`📄 PDF Builder - Fallback: ${tabButtons.length} boutons et ${tabContents.length} contenus trouvés`);
+
+                tabButtons.forEach(function(btn, index) {
+                    console.log(`📄 PDF Builder - Fallback: Ajout listener au bouton ${index + 1}: ${btn.getAttribute('data-tab')}`);
                     btn.addEventListener('click', function(e) {
+                        console.log('📄 PDF Builder - Fallback: CLIC DÉTECTÉ sur bouton', btn.getAttribute('data-tab'));
+
                         e.preventDefault();
                         e.stopPropagation();
 
                         const tabId = btn.getAttribute('data-tab');
-                        if (!tabId) return;
+                        if (!tabId) {
+                            console.error('📄 PDF Builder - Fallback: ERREUR - Pas de data-tab');
+                            return;
+                        }
+
+                        console.log('📄 PDF Builder - Fallback: Changement vers onglet:', tabId);
 
                         tabButtons.forEach(function(b) { b.classList.remove('nav-tab-active'); });
                         tabContents.forEach(function(c) { c.classList.remove('active'); });
 
                         btn.classList.add('nav-tab-active');
                         const target = document.getElementById(tabId) || document.getElementById('tab-' + tabId);
-                        if (target) target.classList.add('active');
+                        if (target) {
+                            target.classList.add('active');
+                            console.log('📄 PDF Builder - Fallback: Onglet activé avec succès:', tabId);
+                        } else {
+                            console.error('📄 PDF Builder - Fallback: ERREUR - Contenu non trouvé:', tabId);
+                        }
 
-                        try { localStorage.setItem('pdf_builder_active_tab', tabId); } catch (err) { /* ignore */ }
+                        try {
+                            localStorage.setItem('pdf_builder_active_tab', tabId);
+                            console.log('📄 PDF Builder - Fallback: Sauvegardé en localStorage:', tabId);
+                        } catch (err) {
+                            console.warn('📄 PDF Builder - Fallback: Erreur localStorage:', err.message);
+                        }
                     }, false);
                 });
+
+                console.log('📄 PDF Builder - Fallback: Initialisation terminée');
             });
         })();
     } catch (error) {
