@@ -65,6 +65,17 @@ $settings = get_option('pdf_builder_settings', array());
 
         console.log('PDF Builder: Initialisation de la navigation par onglets');
 
+        // Vérifier que les éléments existent
+        if ($('#pdf-builder-tabs .nav-tab').length === 0) {
+            console.error('PDF Builder: Aucun onglet trouvé!');
+            return;
+        }
+
+        if ($('#pdf-builder-tab-content .tab-content').length === 0) {
+            console.error('PDF Builder: Aucun contenu d\'onglet trouvé!');
+            return;
+        }
+
         function switchTab(tabId) {
             console.log('PDF Builder: Changement vers onglet:', tabId);
 
@@ -116,6 +127,12 @@ $settings = get_option('pdf_builder_settings', array());
         console.log('PDF Builder: Navigation initialisée');
         console.log('PDF Builder: Onglets trouvés:', $('#pdf-builder-tabs .nav-tab').length);
         console.log('PDF Builder: Contenus trouvés:', $('#pdf-builder-tab-content .tab-content').length);
+
+        // Forcer l'affichage de l'onglet actif initial
+        const activeTab = $('#pdf-builder-tabs .nav-tab-active').data('tab');
+        if (activeTab) {
+            switchTab(activeTab);
+        }
     });
     </script>
 
