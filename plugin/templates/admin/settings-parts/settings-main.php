@@ -78,143 +78,7 @@ $settings = get_option('pdf_builder_settings', array());
         </div>
     </section>
 
-    <!-- SCRIPT DE DIAGNOSTIC AVANT LE SCRIPT PRINCIPAL -->
-    <script>
-    console.log('🔍 DIAGNOSTIC: Script juste avant le script principal - HTML parsing OK');
-    console.log('🔍 DIAGNOSTIC: Timestamp:', new Date().toISOString());
-    </script>
 
-    <!-- AFFICHAGE DE L'URL DU SCRIPT POUR DIAGNOSTIC -->
-    <div style="background: #f0f0f0; border: 1px solid #ccc; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 12px;">
-        <strong>🔍 URL du script settings-tabs.js qui devrait se charger :</strong><br>
-        <?php
-        $script_path = plugins_url('settings-tabs.js', __FILE__);
-        echo htmlspecialchars($script_path);
-        ?><br>
-        <strong>📁 Chemin local du fichier :</strong><br>
-        <?php echo htmlspecialchars(__FILE__); ?><br>
-        <strong>🔗 URL de base plugins :</strong><br>
-        <?php echo htmlspecialchars(plugins_url('', __FILE__)); ?>
-    </div>
-
-    <!-- Fallback minimal pour navigation des onglets: exécuté seulement si le script principal ne s'est pas chargé -->
-    <script>
-    try {
-        // LOGS JS DIRECTS DANS LE HTML POUR DIAGNOSTIC
-        console.log('📄 PDF Builder - PAGE HTML CHARGÉE - settings-main.php');
-        console.log('📄 PDF Builder - Vérification éléments DOM au chargement HTML:', {
-            wrapper: !!document.getElementById('pdf-builder-settings-wrapper'),
-            tabs: !!document.getElementById('pdf-builder-tabs'),
-            content: !!document.getElementById('pdf-builder-tab-content'),
-            navTabs: document.querySelectorAll('#pdf-builder-tabs .nav-tab').length,
-            tabContents: document.querySelectorAll('#pdf-builder-tab-content .tab-content').length
-        });
-
-        // LOG DES ÉLÉMENTS TROUVÉS
-        const foundTabs = document.querySelectorAll('#pdf-builder-tabs .nav-tab');
-        const foundContents = document.querySelectorAll('#pdf-builder-tab-content .tab-content');
-        console.log('📄 PDF Builder - DÉTAIL ÉLÉMENTS TROUVÉS:');
-        foundTabs.forEach((tab, i) => {
-            console.log(`  Tab ${i+1}: ${tab.textContent.trim()} (data-tab: ${tab.getAttribute('data-tab')})`);
-        });
-        foundContents.forEach((content, i) => {
-            console.log(`  Content ${i+1}: #${content.id} (${content.classList.contains('active') ? 'actif' : 'inactif'})`);
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📄 PDF Builder - DOM CONTENT LOADED - HTML ready');
-
-            // Vérifier que les scripts externes sont chargés
-            setTimeout(function() {
-                console.log('📄 PDF Builder - TIMEOUT CHECK - Scripts externes chargés?', {
-                    pdfBuilderConfig: typeof PDF_BUILDER_CONFIG !== 'undefined',
-                    debug: !!(typeof PDF_BUILDER_CONFIG !== 'undefined' && PDF_BUILDER_CONFIG.debug),
-                    tabsInitialized: !!window.PDF_BUILDER_TABS_INITIALIZED
-                });
-
-                // TESTER LA NAVIGATION MANUELLEMENT
-                console.log('📄 PDF Builder - TEST NAVIGATION MANUELLE');
-                const testTab = document.querySelector('[data-tab="systeme"]');
-                if (testTab) {
-                    console.log('📄 PDF Builder - Clic simulé sur onglet Systeme');
-                    testTab.click();
-                } else {
-                    console.log('📄 PDF Builder - ERREUR: Onglet Systeme non trouvé pour test');
-                }
-            }, 200);
-        });
-
-        (function() {
-            // Si le script en file est chargé, ne rien faire
-            if (typeof window.PDF_BUILDER_CONFIG !== 'undefined') {
-                console.log('📄 PDF Builder - SCRIPT EXTERNE DÉTECTÉ, fallback ignoré');
-                return;
-            }
-
-            console.log('📄 PDF Builder - SCRIPT EXTERNE NON DÉTECTÉ, activation fallback');
-
-            document.addEventListener('DOMContentLoaded', function() {
-                console.warn('📄 PDF Builder: Script principal non détecté — activation du fallback minimal');
-
-                const tabsContainer = document.getElementById('pdf-builder-tabs');
-                const contentContainer = document.getElementById('pdf-builder-tab-content');
-                if (!tabsContainer || !contentContainer) {
-                    console.error('📄 PDF Builder - ERREUR: Containers non trouvés', {tabsContainer, contentContainer});
-                    return;
-                }
-
-                console.log('📄 PDF Builder - Fallback: Containers trouvés, ajout des event listeners');
-
-                const tabButtons = tabsContainer.querySelectorAll('.nav-tab');
-                const tabContents = contentContainer.querySelectorAll('.tab-content');
-
-                console.log(`📄 PDF Builder - Fallback: ${tabButtons.length} boutons et ${tabContents.length} contenus trouvés`);
-
-                tabButtons.forEach(function(btn, index) {
-                    console.log(`📄 PDF Builder - Fallback: Ajout listener au bouton ${index + 1}: ${btn.getAttribute('data-tab')}`);
-                    btn.addEventListener('click', function(e) {
-                        console.log('📄 PDF Builder - Fallback: CLIC DÉTECTÉ sur bouton', btn.getAttribute('data-tab'));
-
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        const tabId = btn.getAttribute('data-tab');
-                        if (!tabId) {
-                            console.error('📄 PDF Builder - Fallback: ERREUR - Pas de data-tab');
-                            return;
-                        }
-
-                        console.log('📄 PDF Builder - Fallback: Changement vers onglet:', tabId);
-
-                        tabButtons.forEach(function(b) { b.classList.remove('nav-tab-active'); });
-                        tabContents.forEach(function(c) { c.classList.remove('active'); });
-
-                        btn.classList.add('nav-tab-active');
-                        const target = document.getElementById(tabId) || document.getElementById('tab-' + tabId);
-                        if (target) {
-                            target.classList.add('active');
-                            console.log('📄 PDF Builder - Fallback: Onglet activé avec succès:', tabId);
-                        } else {
-                            console.error('📄 PDF Builder - Fallback: ERREUR - Contenu non trouvé:', tabId);
-                        }
-
-                        try {
-                            localStorage.setItem('pdf_builder_active_tab', tabId);
-                            console.log('📄 PDF Builder - Fallback: Sauvegardé en localStorage:', tabId);
-                        } catch (err) {
-                            console.warn('📄 PDF Builder - Fallback: Erreur localStorage:', err.message);
-                        }
-                    }, false);
-                });
-
-                console.log('📄 PDF Builder - Fallback: Initialisation terminée');
-            });
-        })();
-    } catch (error) {
-        console.error('💥 ERREUR FATALE dans le script HTML principal:', error);
-        console.error('💥 Stack trace:', error.stack);
-    }
-    </script>
 </main>
 
 <?php
@@ -229,11 +93,21 @@ $js_config = array(
 
 // Enqueue jQuery d'abord, puis notre script
 wp_enqueue_script('jquery');
-$script_path = plugins_url('settings-tabs.js', __FILE__); // Même dossier que settings-main.php
+
+// Chemin correct vers le script settings-tabs.js dans le dossier assets/js
+$script_path = plugins_url('../assets/js/settings-tabs.js', __FILE__);
 error_log('PDF Builder: Enqueue script path: ' . $script_path);
 error_log('PDF Builder: __FILE__ value: ' . __FILE__);
 error_log('PDF Builder: plugin_dir_path: ' . plugin_dir_path(__FILE__));
-error_log('PDF Builder: plugins_url base: ' . plugins_url('', __FILE__));
+
+// Vérifier que le fichier existe
+$script_file = plugin_dir_path(__FILE__) . '../assets/js/settings-tabs.js';
+if (file_exists($script_file)) {
+    error_log('PDF Builder: Script file found: ' . $script_file);
+} else {
+    error_log('PDF Builder: Script file NOT found: ' . $script_file);
+}
+
 wp_enqueue_script('pdf-builder-settings-tabs', $script_path, array('jquery'), time(), true);
 // Localiser la config APRES enqueue mais AVANT le script se charge
 wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $js_config);
@@ -242,10 +116,8 @@ wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $js_config
 
 <?php
 
-    // Inclure le diagnostic si nécessaire
-    if (isset($_GET['debug']) && $_GET['debug'] === 'true') {
-        require_once __DIR__ . '/tab-diagnostic.php';
-    }
+    // Inclure le diagnostic pour diagnostic
+    require_once __DIR__ . '/diagnostic-tabs.php';
 
     // GESTIONNAIRES AJAX - Fonctionnalité de sauvegarde centralisée gérée dans settings-ajax.php
 
@@ -312,29 +184,4 @@ wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $js_config
         }
     });
 
-?><!-- LOG JUSTE AVANT LE SCRIPT -->
-<script>console.log('📍 LOG JUSTE AVANT LE SCRIPT - PHP execution OK jusqu\'ici');</script>
 
-<!-- CHARGEMENT DU SCRIPT DE NAVIGATION DES ONGLES -->
-<script>
-<?php
-echo "// DEBUG: PHP execution reached script loading section\n";
-$script_path = plugin_dir_path(__FILE__) . 'settings-tabs.js';
-echo "// DEBUG: Chemin du script: " . $script_path . "\n";
-echo "// DEBUG: Fichier existe: " . (file_exists($script_path) ? 'OUI' : 'NON') . "\n";
-echo "// DEBUG: plugin_dir_path(__FILE__): " . plugin_dir_path(__FILE__) . "\n";
-echo "// DEBUG: __FILE__: " . __FILE__ . "\n";
-
-if (file_exists($script_path)) {
-    echo "// DEBUG: Chargement du script...\n";
-    $content = file_get_contents($script_path);
-    echo "// DEBUG: Taille du fichier: " . strlen($content) . " caractères\n";
-    echo $content;
-    echo "\n// DEBUG: Script chargé avec succès\n";
-} else {
-    echo "console.error('PDF Builder: Script settings-tabs.js non trouvé à: " . $script_path . "');\n";
-    echo "console.error('PDF Builder: plugin_dir_path: " . plugin_dir_path(__FILE__) . "');\n";
-    echo "console.error('PDF Builder: __FILE__: " . __FILE__ . "');\n";
-}
-?>
-</script>
