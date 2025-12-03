@@ -7,6 +7,24 @@ console.log('🎯 PDF BUILDER TABS: Script chargé et exécuté !');
 console.log('📍 PDF BUILDER TABS: URL actuelle:', window.location.href);
 console.log('🔍 PDF BUILDER TABS: User Agent:', navigator.userAgent);
 
+// Test de visibilité des logs
+console.warn('🚨 PDF BUILDER TABS: LOG WARNING POUR TEST VISIBILITÉ');
+console.error('💥 PDF BUILDER TABS: LOG ERROR POUR TEST VISIBILITÉ');
+
+// Test de l'API console
+if (typeof console === 'undefined') {
+    alert('Console non disponible !');
+} else {
+    console.log('✅ Console disponible');
+}
+
+// LOG QUI S'AFFICHE QUAND MÊME SI LE SCRIPT PLANTE
+try {
+    console.log('🔄 PDF BUILDER TABS: Début de l\'exécution du script');
+} catch (e) {
+    console.error('❌ PDF BUILDER TABS: Erreur immédiate:', e);
+}
+
 (function() {
     'use strict';
 
