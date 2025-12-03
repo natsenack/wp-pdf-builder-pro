@@ -5,6 +5,15 @@
 (function() {
     'use strict';
 
+    // Définition de PDF_BUILDER_CONFIG si elle n'existe pas
+    if (typeof window.PDF_BUILDER_CONFIG === 'undefined') {
+        window.PDF_BUILDER_CONFIG = {
+            debug: false,
+            ajaxurl: '',
+            nonce: ''
+        };
+    }
+
     // Système de navigation des onglets simplifié
     function initTabs() {
         const tabsContainer = document.getElementById('pdf-builder-tabs');

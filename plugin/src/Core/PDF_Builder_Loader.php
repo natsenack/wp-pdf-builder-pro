@@ -245,7 +245,7 @@ class PDF_Builder_Loader {
      * Charge l'interface admin
      */
     private function load_admin_interface() {
-        $this->require_file('src/Admin/PdfBuilderAdmin.php');
+        $this->require_file('src/Admin/PDF_Builder_Admin.php');
     }
 
     /**

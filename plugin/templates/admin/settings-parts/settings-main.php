@@ -23,11 +23,43 @@ $settings = get_option('pdf_builder_settings', array());
         <a id="tab-developpeur" href="#developpeur" class="nav-tab" data-tab="developpeur" role="tab" aria-selected="false" aria-controls="developpeur">Développeur</a>
     </nav>
 
-    <!-- Section des onglets temporairement supprimée - à remettre plus tard -->
-    <div class="notice notice-info">
-        <p>⚠️ La section des paramètres par onglets a été temporairement supprimée pour éviter les problèmes de logs.</p>
-        <p>Elle sera remise en place ultérieurement.</p>
-    </div>
+    <section id="pdf-builder-tab-content" class="tab-content-wrapper" role="tabpanel" aria-live="polite">
+        <div id="general" class="tab-content active" role="tabpanel" aria-labelledby="tab-general">
+            <?php require_once 'settings-general.php'; ?>
+        </div>
+
+        <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
+            <?php require_once 'settings-licence.php'; ?>
+        </div>
+
+        <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
+            <?php require_once 'settings-systeme.php'; ?>
+        </div>
+
+        <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
+            <?php require_once 'settings-acces.php'; ?>
+        </div>
+
+        <div id="securite" class="tab-content" role="tabpanel" aria-labelledby="tab-securite">
+            <?php require_once 'settings-securite.php'; ?>
+        </div>
+
+        <div id="pdf" class="tab-content" role="tabpanel" aria-labelledby="tab-pdf">
+            <?php require_once 'settings-pdf.php'; ?>
+        </div>
+
+        <div id="contenu" class="tab-content" role="tabpanel" aria-labelledby="tab-contenu">
+            <?php require_once 'settings-contenu.php'; ?>
+        </div>
+
+        <div id="templates" class="tab-content" role="tabpanel" aria-labelledby="tab-templates">
+            <?php require_once 'settings-templates.php'; ?>
+        </div>
+
+        <div id="developpeur" class="tab-content" role="tabpanel" aria-labelledby="tab-developpeur">
+            <?php require_once 'settings-developpeur.php'; ?>
+        </div>
+    </section>
 
     <!-- Navigation JavaScript - Gérée par assets/js/settings-tabs.js -->
     <!-- Le fichier settings-tabs.js fournit PDFBuilderTabsAPI avec switchToTab(), getActiveTab() -->
