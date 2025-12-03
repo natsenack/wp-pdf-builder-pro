@@ -1339,35 +1339,17 @@ class PdfBuilderAdmin
                 PDF_BUILDER_PRO_VERSION
             );
 
-            // NOTE: Notification UI assets have been removed and are not enqueued
-            wp_enqueue_script(
-                'pdf-builder-settings-page',
-                plugins_url('templates/admin/js/settings-page.js', PDF_BUILDER_PLUGIN_FILE),
-                ['jquery'],
-                PDF_BUILDER_PRO_VERSION . '-' . time(),
-                true
-            );
-
-            // Charger le script d'initialisation différée
-            wp_enqueue_script(
-                'pdf-builder-settings-init',
-                plugins_url('templates/admin/js/settings-init.js', PDF_BUILDER_PLUGIN_FILE),
-                ['jquery', 'pdf-builder-settings-page'],
-                PDF_BUILDER_PRO_VERSION . '-' . time(),
-                true
-            );
-
-            // Charger le manager d'onglets (canonical)
+            // Charger le manager d'onglets (canonical) - aucune dépendance externe
             wp_enqueue_script(
                 'pdf-builder-settings-tabs',
                 PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.js',
-                ['jquery'],
+                [],
                 PDF_BUILDER_PRO_VERSION . '-' . time(),
                 true
             );
 
             // Localiser les variables AJAX pour les fonctionnalités de cache
-            wp_localize_script('pdf-builder-settings-page', 'pdfBuilderAjax', [
+            wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', [
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_settings'),
                 // Nonce spécifique pour les actions de cache/maintenance
