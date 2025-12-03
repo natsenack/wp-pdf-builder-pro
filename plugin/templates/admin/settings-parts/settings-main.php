@@ -46,7 +46,7 @@ $settings = get_option('pdf_builder_settings', array());
         <!-- LOG AVANT LICENCE -->
         <script>console.log('📍 LOG AVANT LICENCE - Inclusion du fichier licence');</script>
         <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
-            <?php require_once 'settings-licence-test.php'; ?>
+            <?php require_once 'settings-licence.php'; ?>
         </div>
         <!-- LOG APRES LICENCE -->
         <script>console.log('📍 LOG APRES LICENCE - Fichier licence inclus');</script>
@@ -54,45 +54,28 @@ $settings = get_option('pdf_builder_settings', array());
         <!-- LOG AVANT SYSTEME -->
         <script>console.log('📍 LOG AVANT SYSTEME - Inclusion du fichier systeme');</script>
         <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
-            <?php require_once 'settings-systeme-test.php'; ?>
+            <?php require_once 'settings-systeme.php'; ?>
         </div>
         <!-- LOG APRES SYSTEME -->
         <script>console.log('📍 LOG APRES SYSTEME - Fichier systeme inclus');</script>
+
         <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
-            <div class="pdf-builder-section">
-                <h2>Test Accès</h2>
-                <p>Fichier de test minimal pour l'onglet Accès.</p>
-            </div>
+            <?php require_once 'settings-acces.php'; ?>
         </div>
         <div id="securite" class="tab-content" role="tabpanel" aria-labelledby="tab-securite">
-            <div class="pdf-builder-section">
-                <h2>Test Sécurité</h2>
-                <p>Fichier de test minimal pour l'onglet Sécurité.</p>
-            </div>
+            <?php require_once 'settings-securite.php'; ?>
         </div>
         <div id="pdf" class="tab-content" role="tabpanel" aria-labelledby="tab-pdf">
-            <div class="pdf-builder-section">
-                <h2>Test PDF</h2>
-                <p>Fichier de test minimal pour l'onglet PDF.</p>
-            </div>
+            <?php require_once 'settings-pdf.php'; ?>
         </div>
         <div id="contenu" class="tab-content" role="tabpanel" aria-labelledby="tab-contenu">
-            <div class="pdf-builder-section">
-                <h2>Test Contenu</h2>
-                <p>Fichier de test minimal pour l'onglet Contenu.</p>
-            </div>
+            <?php require_once 'settings-contenu.php'; ?>
         </div>
         <div id="templates" class="tab-content" role="tabpanel" aria-labelledby="tab-templates">
-            <div class="pdf-builder-section">
-                <h2>Test Templates</h2>
-                <p>Fichier de test minimal pour l'onglet Templates.</p>
-            </div>
+            <?php require_once 'settings-templates.php'; ?>
         </div>
         <div id="developpeur" class="tab-content" role="tabpanel" aria-labelledby="tab-developpeur">
-            <div class="pdf-builder-section">
-                <h2>Test Développeur</h2>
-                <p>Fichier de test minimal pour l'onglet Développeur.</p>
-            </div>
+            <?php require_once 'settings-developpeur.php'; ?>
         </div>
     </section>
 
