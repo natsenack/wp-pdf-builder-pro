@@ -93,11 +93,11 @@ class AdminScriptLoader
         wp_add_inline_script('pdf-preview-api-client', 'var pdfBuilderTemplatesNonce = "' . wp_create_nonce('pdf_builder_templates') . '";');
 
         // Scripts pour l'éditeur React
-        if ($hook === 'pdf-builder_page_pdf-builder-react-editor') {
-            error_log('[WP AdminScriptLoader] Loading React editor scripts for hook: ' . $hook);
+        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
+            error_log('[WP AdminScriptLoader] Loading React editor scripts for page: ' . $_GET['page']);
             $this->loadReactEditorScripts();
         } else {
-            error_log('[WP AdminScriptLoader] NOT loading React editor scripts, hook is: ' . $hook);
+            error_log('[WP AdminScriptLoader] NOT loading React editor scripts, page is: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', hook: ' . $hook);
         }
     }
 
