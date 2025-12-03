@@ -19,8 +19,8 @@ function pdf_builder_load_settings_assets($hook) {
     echo 'Hook détecté: <strong>' . $hook . '</strong><br>';
     echo 'PDF_BUILDER_PLUGIN_URL: <strong>' . (defined('PDF_BUILDER_PLUGIN_URL') ? PDF_BUILDER_PLUGIN_URL : '<span style="color: red;">NON DÉFINI</span>') . '</strong><br>';
     echo 'PDF_BUILDER_VERSION: <strong>' . (defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : '<span style="color: red;">NON DÉFINI</span>') . '</strong><br>';
-    echo 'Page attendue: <strong>toplevel_page_pdf-builder-pro</strong><br>';
-    echo 'Hook correspond: <strong>' . (($hook === 'toplevel_page_pdf-builder-pro') ? '<span style="color: green;">OUI</span>' : '<span style="color: red;">NON</span>') . '</strong>';
+    echo 'Page attendue: <strong>pdf-builder_page_pdf-builder-settings</strong><br>';
+    echo 'Hook correspond: <strong>' . (($hook === 'pdf-builder_page_pdf-builder-settings') ? '<span style="color: green;">OUI</span>' : '<span style="color: red;">NON</span>') . '</strong>';
     echo '</div>';
 
     // LOG GÉNÉRAL POUR TOUS LES HOOKS
@@ -31,8 +31,8 @@ function pdf_builder_load_settings_assets($hook) {
     error_log('📋 PDF BUILDER ASSETS: PDF_BUILDER_VERSION = ' . (defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : 'NON DÉFINI'));
 
     // Charger seulement sur la page de paramètres PDF Builder
-    if ($hook !== 'toplevel_page_pdf-builder-pro') {
-        error_log('⚠️ PDF BUILDER ASSETS: Hook ignoré (pas la bonne page): ' . $hook);
+    if ($hook !== 'pdf-builder_page_pdf-builder-settings') {
+        error_log('⚠️ PDF BUILDER ASSETS: Hook ignoré (pas la bonne page): ' . $hook . ' (attendu: pdf-builder_page_pdf-builder-settings)');
         return;
     }
 
