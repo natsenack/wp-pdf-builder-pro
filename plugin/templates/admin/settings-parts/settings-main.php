@@ -108,9 +108,46 @@ if (file_exists($script_file)) {
     error_log('PDF Builder: Script file NOT found: ' . $script_file);
 }
 
-wp_enqueue_script('pdf-builder-settings-tabs', $script_path, array('jquery'), time(), true);
-// Localiser la config APRES enqueue mais AVANT le script se charge
-wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $js_config);
+// Ajouter un script de diagnostic pour vérifier le chargement
+add_action('wp_head', function() {
+    echo '<script>';
+    echo 'console.log("🔥 PDF BUILDER - DIAGNOSTIC HEAD: Vérification chargement script");';
+    echo 'console.log("🔥 PDF BUILDER - jQuery chargé:", typeof jQuery !== "undefined");';
+    echo 'console.log("🔥 PDF BUILDER - PDF_BUILDER_CONFIG:", typeof PDF_BUILDER_CONFIG !== "undefined");';
+    echo 'setTimeout(function() {';
+    echo '    console.log("🔥 PDF BUILDER - Vérification script settings-tabs après 2s");';
+    echo '    console.log("🔥 PDF BUILDER - jQuery.version:", jQuery.fn.jquery);';
+    echo '    console.log("🔥 PDF BUILDER - Scripts chargés:", document.scripts.length);';
+    echo '    for (var i = 0; i < document.scripts.length; i++) {';
+    echo '        if (document.scripts[i].src && document.scripts[i].src.indexOf("settings-tabs") > -1) {';
+    echo '            console.log("🔥 PDF BUILDER - Script settings-tabs trouvé:", document.scripts[i].src);';
+    echo '        }';
+    echo '    }';
+    echo '}, 2000);';
+    echo '</script>';
+});
+
+// TEMPORAIRE: Charger le script directement pour diagnostic
+$direct_script_path = plugin_dir_path(__FILE__) . '../assets/js/settings-tabs.js';
+if (file_exists($direct_script_path)) {
+    echo '<script>';
+    echo 'console.log("🔥 PDF BUILDER - CHARGEMENT DIRECT FORCE DU SCRIPT");';
+    echo 'window.PDF_BUILDER_CONFIG = ' . json_encode($js_config) . ';';
+    echo file_get_contents($direct_script_path);
+    echo '</script>';
+} else {
+    echo '<script>console.error("🔥 PDF BUILDER - Script direct non trouvé:", "' . $direct_script_path . '");</script>';
+    
+    // Fallback: charger le script de force
+    $force_script_path = plugin_dir_path(__FILE__) . '../assets/js/tabs-force.js';
+    if (file_exists($force_script_path)) {
+        echo '<script>';
+        echo 'console.log("🔥 PDF BUILDER - CHARGEMENT SCRIPT FORCE EN FALLBACK");';
+        echo 'window.PDF_BUILDER_CONFIG = ' . json_encode($js_config) . ';';
+        echo file_get_contents($force_script_path);
+        echo '</script>';
+    }
+}
 ?>
 
 
