@@ -427,10 +427,21 @@ wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $js_config
 <script>
 <?php
 $script_path = plugin_dir_path(__FILE__) . 'settings-tabs.js';
+echo "// DEBUG: Chemin du script: " . $script_path . "\n";
+echo "// DEBUG: Fichier existe: " . (file_exists($script_path) ? 'OUI' : 'NON') . "\n";
+echo "// DEBUG: plugin_dir_path(__FILE__): " . plugin_dir_path(__FILE__) . "\n";
+echo "// DEBUG: __FILE__: " . __FILE__ . "\n";
+
 if (file_exists($script_path)) {
-    echo file_get_contents($script_path);
+    echo "// DEBUG: Chargement du script...\n";
+    $content = file_get_contents($script_path);
+    echo "// DEBUG: Taille du fichier: " . strlen($content) . " caractères\n";
+    echo $content;
+    echo "\n// DEBUG: Script chargé avec succès\n";
 } else {
-    echo "console.error('PDF Builder: Script settings-tabs.js non trouvé à: " . $script_path . "');";
+    echo "console.error('PDF Builder: Script settings-tabs.js non trouvé à: " . $script_path . "');\n";
+    echo "console.error('PDF Builder: plugin_dir_path: " . plugin_dir_path(__FILE__) . "');\n";
+    echo "console.error('PDF Builder: __FILE__: " . __FILE__ . "');\n";
 }
 ?>
 </script>
