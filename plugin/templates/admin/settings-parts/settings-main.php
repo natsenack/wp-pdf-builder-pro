@@ -145,6 +145,9 @@ $js_config = array(
 wp_enqueue_script('jquery');
 $script_path = plugins_url('settings-tabs.js', __FILE__); // Même dossier que settings-main.php
 error_log('PDF Builder: Enqueue script path: ' . $script_path);
+error_log('PDF Builder: __FILE__ value: ' . __FILE__);
+error_log('PDF Builder: plugin_dir_path: ' . plugin_dir_path(__FILE__));
+error_log('PDF Builder: plugins_url base: ' . plugins_url('', __FILE__));
 wp_enqueue_script('pdf-builder-settings-tabs', $script_path, array('jquery'), time(), true);
 // Localiser la config APRES enqueue mais AVANT le script se charge
 wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $js_config);
