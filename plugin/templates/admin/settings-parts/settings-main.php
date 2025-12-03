@@ -58,6 +58,12 @@ $settings = get_option('pdf_builder_settings', array());
         </div>
     </section>
 
+    <!-- SCRIPT DE DIAGNOSTIC AVANT LE SCRIPT PRINCIPAL -->
+    <script>
+    console.log('🔍 DIAGNOSTIC: Script juste avant le script principal - HTML parsing OK');
+    console.log('🔍 DIAGNOSTIC: Timestamp:', new Date().toISOString());
+    </script>
+
     <!-- Fallback minimal pour navigation des onglets: exécuté seulement si le script principal ne s'est pas chargé -->
     <script>
     try {
