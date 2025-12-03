@@ -57,9 +57,18 @@ function pdf_builder_load_settings_assets($hook) {
         'all'
     );
 
+    // TEST DE CHARGEMENT DU FICHIER JS
+    $js_file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/js/settings-tabs.js';
+    echo 'Fichier JS existe: <strong>' . (file_exists($js_file_path) ? '<span style="color: green;">OUI</span>' : '<span style="color: red;">NON</span>') . '</strong><br>';
+    echo 'Chemin du fichier: <strong>' . $js_file_path . '</strong><br>';
+
     // Charger le JavaScript pour la navigation par onglets
     $script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js';
-    error_log('📜 PDF BUILDER ASSETS: URL du script générée: ' . $script_url);
+    echo 'URL générée: <strong>' . $script_url . '</strong><br>';
+
+    // TEST DE RÉCUPÉRATION HTTP
+    $response = wp_remote_get($script_url);
+    echo 'Test HTTP: <strong>' . (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200 ? '<span style="color: green;">OK (200)</span>' : '<span style="color: red;">ERREUR</span>') . '</strong><br>';
 
     wp_enqueue_script(
         'pdf-builder-settings-tabs',
