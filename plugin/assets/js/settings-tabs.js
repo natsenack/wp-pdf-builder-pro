@@ -96,11 +96,16 @@ try {
 
             // Activer le contenu correspondant
             const content = document.getElementById(tabId);
+            console.log('🔍 PDF Builder: Recherche élément avec ID:', tabId);
+            console.log('📋 PDF Builder: Élément trouvé:', content);
             if (content) {
                 content.classList.add('active');
                 console.log('✅ PDF Builder: Contenu activé', tabId);
             } else {
                 console.error('❌ PDF Builder: Contenu non trouvé pour', tabId);
+                // Debug: lister tous les éléments avec classe tab-content
+                const allTabs = document.querySelectorAll('.tab-content');
+                console.log('📊 PDF Builder: Tous les onglets trouvés:', Array.from(allTabs).map(el => ({id: el.id, classes: el.className})));
             }
 
             // Sauvegarder dans localStorage
