@@ -94,7 +94,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
 
                 <!-- Section Avancée (repliable) -->
                 <section class="pdf-section">
-                    <h3 style="color: #495057; margin-top: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px; cursor: pointer;" onclick="toggleAdvancedSection()">
+                    <h3 style="color: #495057; margin-top: 30px; border-bottom: 2px solid #6c757d; padding-bottom: 10px; cursor: pointer;" onclick="PDFBuilderTabsAPI.toggleAdvancedSection()">
                         🔧 Options avancées <span id="advanced-toggle" style="float: right;">▼</span>
                     </h3>
 

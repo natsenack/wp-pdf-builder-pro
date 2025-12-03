@@ -515,7 +515,7 @@ $current_mappings = $status_manager->get_current_mappings();
 
                 <!-- Actions -->
                 <section class="templates-status-actions">
-                    <button type="button" class="button button-secondary" onclick="resetTemplatesStatus()">
+                    <button type="button" class="button button-secondary" onclick="PDFBuilderTabsAPI.resetTemplatesStatus()">
                         [RESET] Réinitialiser
                     </button>
                 </section>

@@ -93,6 +93,25 @@
             } catch (e) {
                 return null;
             }
+        },
+        toggleAdvancedSection: function() {
+            const section = document.getElementById('advanced-section');
+            const toggle = document.getElementById('advanced-toggle');
+            if (section && toggle) {
+                const isVisible = section.style.display !== 'none';
+                section.style.display = isVisible ? 'none' : 'block';
+                toggle.textContent = isVisible ? '▼' : '▲';
+            }
+        },
+        resetTemplatesStatus: function() {
+            if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les mappings de templates ? Cette action ne peut pas être annulée.')) {
+                // Réinitialiser tous les selects
+                const selects = document.querySelectorAll('#templates-status-form select[name^="order_status_templates"]');
+                selects.forEach(select => {
+                    select.value = '';
+                });
+                alert('Les mappings de templates ont été réinitialisés. N\'oubliez pas de sauvegarder vos modifications.');
+            }
         }
     };
 
