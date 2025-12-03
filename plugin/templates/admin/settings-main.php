@@ -99,9 +99,9 @@ document.addEventListener('DOMContentLoaded', function() {
 <p class="submit"><button type="submit" class="button button-primary">Save Settings</button></p>
 
 <!-- Bouton de sauvegarde flottant -->
-<div id="pdf-builder-floating-save-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: block;">
-    <button id="pdf-builder-floating-save-btn" class="button button-primary" style="padding: 12px 20px; font-size: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px; transition: all 0.3s ease;">
-        💾 TEST VISIBLE v2 - Enregistrer
+<div id="pdf-builder-save-floating" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: block;">
+    <button id="pdf-builder-save-all" class="button button-primary" style="padding: 12px 20px; font-size: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px; transition: all 0.3s ease;">
+        💾 Enregistrer les paramètres
     </button>
 </div>
 
