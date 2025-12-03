@@ -13,16 +13,6 @@ if (!defined('ABSPATH')) {
  * Charger les assets pour la page de paramètres
  */
 function pdf_builder_load_settings_assets($hook) {
-    // AFFICHAGE DIRECT SUR LA PAGE POUR DIAGNOSTIC
-    echo '<div style="background: #ffeaa7; border: 2px solid #d63031; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 12px;">';
-    echo '<strong>🔍 PDF BUILDER DEBUG:</strong><br>';
-    echo 'Hook détecté: <strong>' . $hook . '</strong><br>';
-    echo 'PDF_BUILDER_PLUGIN_URL: <strong>' . (defined('PDF_BUILDER_PLUGIN_URL') ? PDF_BUILDER_PLUGIN_URL : '<span style="color: red;">NON DÉFINI</span>') . '</strong><br>';
-    echo 'PDF_BUILDER_VERSION: <strong>' . (defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : '<span style="color: red;">NON DÉFINI</span>') . '</strong><br>';
-    echo 'Page attendue: <strong>pdf-builder_page_pdf-builder-settings</strong><br>';
-    echo 'Hook correspond: <strong>' . (($hook === 'pdf-builder_page_pdf-builder-settings') ? '<span style="color: green;">OUI</span>' : '<span style="color: red;">NON</span>') . '</strong>';
-    echo '</div>';
-
     // LOG GÉNÉRAL POUR TOUS LES HOOKS
     error_log('🔍 PDF BUILDER ASSETS: Hook détecté: ' . $hook);
 
@@ -57,23 +47,8 @@ function pdf_builder_load_settings_assets($hook) {
         'all'
     );
 
-    // TEST DE CHARGEMENT DU FICHIER JS
-    $js_file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/js/settings-tabs.js';
-    echo 'Fichier JS existe: <strong>' . (file_exists($js_file_path) ? '<span style="color: green;">OUI</span>' : '<span style="color: red;">NON</span>') . '</strong><br>';
-    echo 'Chemin du fichier: <strong>' . $js_file_path . '</strong><br>';
-
     // Charger le JavaScript pour la navigation par onglets
     $script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js';
-    echo 'URL générée: <strong>' . $script_url . '</strong><br>';
-
-    // TEST DE RÉCUPÉRATION HTTP
-    $response = wp_remote_get($script_url);
-    echo 'Test HTTP: <strong>' . (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200 ? '<span style="color: green;">OK (200)</span>' : '<span style="color: red;">ERREUR</span>') . '</strong><br>';
-
-    echo '<script>console.log("🔧 PDF BUILDER: Test inline script - si vous voyez ça, les scripts inline marchent");</script>';
-    // REMOVED: Inline script loading - now handled by PDF_Builder_Admin.php with wp_enqueue_script
-    // echo '<script src="' . $script_url . '?v=' . time() . '"></script>';
-    echo '<script>console.log("🔧 PDF BUILDER: Script settings-tabs.js chargé via wp_enqueue_script dans PDF_Builder_Admin.php");</script>';
 
     // LOG POUR CONFIRMER L'ENREGISTREMENT DU SCRIPT
     error_log('📜 PDF BUILDER ASSETS: Script settings-tabs.js enregistré pour ' . $hook);
