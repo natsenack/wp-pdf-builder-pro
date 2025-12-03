@@ -22,8 +22,8 @@ function pdf_builder_load_settings_assets($hook) {
     echo "<script>console.log('🔥 HOOK ACTUEL: {$hook}');</script>";
 
     // Charger seulement sur la page de paramètres PDF Builder
-    if ($hook !== 'pdf-builder-pro_page_pdf-builder-settings') {
-        echo "<script>console.log('❌ HOOK IGNORÉ: {$hook} (attendu: pdf-builder-pro_page_pdf-builder-settings)');</script>";
+    if ($hook !== 'pdf-builder_page_pdf-builder-settings') {
+        echo "<script>console.log('❌ HOOK IGNORÉ: {$hook} (attendu: pdf-builder_page_pdf-builder-settings)');</script>";
         return;
     }
 
