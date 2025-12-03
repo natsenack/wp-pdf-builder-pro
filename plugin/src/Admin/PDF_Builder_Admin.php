@@ -199,7 +199,7 @@ class PdfBuilderAdmin
 
         // Charger le DashboardDataProvider si nécessaire
         if (!class_exists('\PDF_Builder\Admin\Providers\DashboardDataProvider')) {
-            require_once plugin_dir_path(__FILE__) . 'Providers/DashboardDataProvider.php';
+            require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'plugin/src/Admin/Providers/DashboardDataProvider.php';
         }
 
         $this->dashboard_data_provider = new \PDF_Builder\Admin\Providers\DashboardDataProvider();
