@@ -372,39 +372,55 @@ try {
 
             console.log('✅ PDF Builder: Bouton configuré avec style debug rouge');
         } else {
-            console.warn('⚠️ PDF Builder: Bouton de sauvegarde flottant non trouvé - vérification du HTML');
+            console.warn('⚠️ PDF Builder: Bouton de sauvegarde flottant non trouvé - création du bouton réel');
 
             // Essayer de trouver tous les éléments avec des IDs similaires
             const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id);
             console.log('📝 PDF Builder: IDs trouvés dans le document:', allIds.filter(id => id.includes('save') || id.includes('pdf')));
 
-            // Créer un bouton de debug si rien n'est trouvé
-            console.log('🔧 PDF Builder: Création d\'un bouton de debug temporaire...');
-            const debugBtn = document.createElement('button');
-            debugBtn.id = 'debug-save-btn';
-            debugBtn.textContent = '🔧 DEBUG: Bouton de sauvegarde';
-            debugBtn.style.cssText = `
+            // Créer le vrai bouton de sauvegarde flottant
+            console.log('🔧 PDF Builder: Création du bouton de sauvegarde flottant...');
+            const floatingContainer = document.createElement('div');
+            floatingContainer.id = 'pdf-builder-save-floating';
+            floatingContainer.style.cssText = `
                 position: fixed;
-                bottom: 100px;
+                bottom: 20px;
                 right: 20px;
-                background: #ff0000;
-                color: white;
-                border: 2px solid #000;
-                padding: 10px;
-                z-index: 10001;
-                font-size: 14px;
-                cursor: pointer;
+                z-index: 9999;
+                display: block;
+                background: rgba(255, 0, 0, 0.1);
+                border: 2px solid red;
+                padding: 5px;
             `;
-            debugBtn.onclick = function() {
-                console.log('🖱️ DEBUG: Clic sur bouton debug');
-                alert('Bouton debug cliqué ! Les vrais éléments n\'existent pas.');
-            };
+
+            const saveBtn = document.createElement('button');
+            saveBtn.id = 'pdf-builder-save-all';
+            saveBtn.className = 'button button-primary';
+            saveBtn.textContent = '🚨 DEBUG: Enregistrer les paramètres';
+            saveBtn.style.cssText = `
+                padding: 12px 20px;
+                font-size: 16px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                background: #ff6b6b !important;
+                color: white !important;
+                border: 2px solid #ff0000 !important;
+            `;
+
+            saveBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🖱️ Bouton de sauvegarde flottant cliqué');
+                PDFBuilderTabsAPI.saveAllSettings();
+            });
+
+            floatingContainer.appendChild(saveBtn);
 
             if (document.body) {
-                document.body.appendChild(debugBtn);
-                console.log('✅ PDF Builder: Bouton debug créé et ajouté au DOM');
+                document.body.appendChild(floatingContainer);
+                console.log('✅ PDF Builder: Bouton de sauvegarde flottant créé et ajouté au DOM');
             } else {
-                console.error('❌ PDF Builder: Impossible de créer le bouton debug - body inexistant');
+                console.error('❌ PDF Builder: Impossible de créer le bouton - body inexistant');
             }
 
             // Réessayer dans 1 seconde
