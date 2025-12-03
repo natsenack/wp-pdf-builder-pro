@@ -64,6 +64,19 @@ $settings = get_option('pdf_builder_settings', array());
     console.log('🔍 DIAGNOSTIC: Timestamp:', new Date().toISOString());
     </script>
 
+    <!-- AFFICHAGE DE L'URL DU SCRIPT POUR DIAGNOSTIC -->
+    <div style="background: #f0f0f0; border: 1px solid #ccc; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 12px;">
+        <strong>🔍 URL du script settings-tabs.js qui devrait se charger :</strong><br>
+        <?php
+        $script_path = plugins_url('settings-tabs.js', __FILE__);
+        echo htmlspecialchars($script_path);
+        ?><br>
+        <strong>📁 Chemin local du fichier :</strong><br>
+        <?php echo htmlspecialchars(__FILE__); ?><br>
+        <strong>🔗 URL de base plugins :</strong><br>
+        <?php echo htmlspecialchars(plugins_url('', __FILE__)); ?>
+    </div>
+
     <!-- Fallback minimal pour navigation des onglets: exécuté seulement si le script principal ne s'est pas chargé -->
     <script>
     try {
