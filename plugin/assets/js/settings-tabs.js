@@ -242,88 +242,43 @@ try {
         }
     };
 
-    // Initialiser le bouton de sauvegarde flottant
-    function initSaveButton() {
-        console.log('🔍 PDF Builder: Recherche du bouton de sauvegarde flottant...');
+    // Indicateur pour éviter les initialisations multiples
+    let saveButtonInitialized = false;
 
-        // Nettoyer les boutons existants pour éviter les doublons
-        const existingButtons = document.querySelectorAll('#pdf-builder-save-floating');
-        existingButtons.forEach(btn => {
-            console.log('🧹 PDF Builder: Suppression du bouton flottant existant');
-            btn.remove();
-        });
+    // Initialiser le bouton de sauvegarde flottant (utilise seulement le bouton HTML existant)
+    function initSaveButton() {
+        // Éviter les initialisations multiples
+        if (saveButtonInitialized) {
+            console.log('🔄 PDF Builder: Bouton déjà initialisé, ignoré');
+            return;
+        }
+
+        console.log('🔍 PDF Builder: Recherche du bouton de sauvegarde flottant HTML...');
 
         const saveBtn = document.getElementById('pdf-builder-save-all');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
 
-        if (saveBtn) {
-            console.log('💾 PDF Builder: Bouton de sauvegarde flottant trouvé, configuration');
+        if (saveBtn && floatingContainer) {
+            console.log('💾 PDF Builder: Bouton de sauvegarde flottant HTML trouvé, configuration');
             saveBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 PDFBuilderTabsAPI.saveAllSettings();
             });
-            console.log('✅ PDF Builder: Bouton configuré');
+            console.log('✅ PDF Builder: Bouton HTML configuré avec succès');
         } else {
-            console.log('⚠️ PDF Builder: Bouton de sauvegarde flottant non trouvé - création du bouton réel');
-
-            // Créer le vrai bouton de sauvegarde flottant
-            const floatingContainer = document.createElement('div');
-            floatingContainer.id = 'pdf-builder-save-floating';
-            floatingContainer.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 9999;
-                display: block;
-            `;
-
-            const saveBtn = document.createElement('button');
-            saveBtn.id = 'pdf-builder-save-all';
-            saveBtn.className = 'button button-primary';
-            saveBtn.textContent = 'Enregistrer les paramètres';
-            saveBtn.style.cssText = `
-                padding: 12px 20px;
-                font-size: 16px;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                border-radius: 8px;
-                transition: all 0.3s ease;
-            `;
-
-            saveBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                PDFBuilderTabsAPI.saveAllSettings();
-            });
-
-            floatingContainer.appendChild(saveBtn);
-
-            if (document.body) {
-                document.body.appendChild(floatingContainer);
-                console.log('✅ PDF Builder: Bouton de sauvegarde flottant créé et ajouté au DOM');
-            } else {
-                console.error('❌ PDF Builder: Impossible de créer le bouton - body inexistant');
-            }
-
-            // Réessayer dans 1 seconde
-            setTimeout(function() {
-                const retryBtn = document.getElementById('pdf-builder-save-all');
-                if (retryBtn) {
-                    retryBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        PDFBuilderTabsAPI.saveAllSettings();
-                    });
-                }
-            }, 1000);
+            console.error('❌ PDF Builder: Bouton de sauvegarde flottant HTML non trouvé');
+            console.error('   - Conteneur #pdf-builder-save-floating:', floatingContainer ? 'trouvé' : 'manquant');
+            console.error('   - Bouton #pdf-builder-save-all:', saveBtn ? 'trouvé' : 'manquant');
         }
+
+        // Marquer comme initialisé
+        saveButtonInitialized = true;
+        console.log('🔒 PDF Builder: Initialisation du bouton HTML terminée');
     }
 
     // Initialiser au chargement du DOM
     document.addEventListener('DOMContentLoaded', function() {
         initTabs();
-        setTimeout(initSaveButton, 100);
-    });
-
-    // Aussi essayer au chargement complet de la fenêtre
-    window.addEventListener('load', function() {
         setTimeout(initSaveButton, 100);
     });
 
