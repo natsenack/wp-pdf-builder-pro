@@ -556,7 +556,7 @@ class PdfBuilderAdmin
         // Prepare localization data
         $localize_data = [
             'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_templates'),
+            'nonce' => wp_create_nonce('pdf_builder_template_' . $template_id),
             'version' => PDF_BUILDER_PRO_VERSION,
             'templateId' => $template_id,
             'isEdit' => $template_id > 0,
