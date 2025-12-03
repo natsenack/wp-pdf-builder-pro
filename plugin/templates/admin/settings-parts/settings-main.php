@@ -60,80 +60,132 @@ $settings = get_option('pdf_builder_settings', array());
 
     <!-- Navigation JavaScript simplifiée -->
     <script>
-    jQuery(document).ready(function($) {
+    (function() {
         'use strict';
 
-        console.log('PDF Builder: Initialisation de la navigation par onglets');
+        console.log('PDF Builder: Script de navigation chargé');
 
-        // Vérifier que les éléments existent
-        if ($('#pdf-builder-tabs .nav-tab').length === 0) {
-            console.error('PDF Builder: Aucun onglet trouvé!');
-            return;
-        }
+        function initTabNavigation() {
+            console.log('PDF Builder: Initialisation de la navigation par onglets');
 
-        if ($('#pdf-builder-tab-content .tab-content').length === 0) {
-            console.error('PDF Builder: Aucun contenu d\'onglet trouvé!');
-            return;
-        }
+            // Vérifier que les éléments existent
+            const tabsContainer = document.getElementById('pdf-builder-tabs');
+            const contentContainer = document.getElementById('pdf-builder-tab-content');
 
-        function switchTab(tabId) {
-            console.log('PDF Builder: Changement vers onglet:', tabId);
-
-            // Désactiver tous les onglets
-            $('#pdf-builder-tabs .nav-tab').removeClass('nav-tab-active').attr('aria-selected', 'false');
-            $('#pdf-builder-tab-content .tab-content').removeClass('active');
-
-            // Activer l'onglet cible
-            const targetBtn = $('[data-tab="' + tabId + '"]');
-            const targetContent = $('#' + tabId);
-
-            if (targetBtn.length) {
-                targetBtn.addClass('nav-tab-active').attr('aria-selected', 'true');
-                console.log('PDF Builder: Onglet activé:', tabId);
-            } else {
-                console.error('PDF Builder: Onglet non trouvé:', tabId);
+            if (!tabsContainer) {
+                console.error('PDF Builder: Conteneur d\'onglets non trouvé!');
+                return false;
             }
 
-            if (targetContent.length) {
-                targetContent.addClass('active');
-                console.log('PDF Builder: Contenu activé:', tabId);
-            } else {
-                console.error('PDF Builder: Contenu non trouvé:', tabId);
+            if (!contentContainer) {
+                console.error('PDF Builder: Conteneur de contenu non trouvé!');
+                return false;
             }
+
+            const tabs = tabsContainer.querySelectorAll('.nav-tab');
+            const contents = contentContainer.querySelectorAll('.tab-content');
+
+            console.log('PDF Builder: Onglets trouvés:', tabs.length);
+            console.log('PDF Builder: Contenus trouvés:', contents.length);
+
+            if (tabs.length === 0 || contents.length === 0) {
+                console.error('PDF Builder: Éléments insuffisants pour la navigation');
+                return false;
+            }
+
+            function switchTab(tabId) {
+                console.log('PDF Builder: Changement vers onglet:', tabId);
+
+                // Désactiver tous les onglets
+                tabs.forEach(function(tab) {
+                    tab.classList.remove('nav-tab-active');
+                    tab.setAttribute('aria-selected', 'false');
+                });
+
+                // Désactiver tous les contenus
+                contents.forEach(function(content) {
+                    content.classList.remove('active');
+                });
+
+                // Activer l'onglet cible
+                const targetTab = tabsContainer.querySelector('[data-tab="' + tabId + '"]');
+                const targetContent = document.getElementById(tabId);
+
+                if (targetTab) {
+                    targetTab.classList.add('nav-tab-active');
+                    targetTab.setAttribute('aria-selected', 'true');
+                    console.log('PDF Builder: Onglet activé:', tabId);
+                } else {
+                    console.error('PDF Builder: Onglet cible non trouvé:', tabId);
+                }
+
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                    console.log('PDF Builder: Contenu activé:', tabId);
+                } else {
+                    console.error('PDF Builder: Contenu cible non trouvé:', tabId);
+                }
+            }
+
+            function handleTabClick(event) {
+                event.preventDefault();
+                const tabId = event.currentTarget.getAttribute('data-tab');
+                console.log('PDF Builder: Clic sur onglet:', tabId);
+                if (tabId) {
+                    switchTab(tabId);
+                }
+            }
+
+            // Attacher les événements aux onglets
+            tabs.forEach(function(tab) {
+                tab.addEventListener('click', handleTabClick);
+                console.log('PDF Builder: Événement attaché à onglet:', tab.getAttribute('data-tab'));
+            });
+
+            // Gestionnaire pour le bouton flottant de sauvegarde
+            const saveBtn = document.getElementById('pdf-builder-save-all');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', function() {
+                    if (confirm('Voulez-vous sauvegarder tous les paramètres ?')) {
+                        alert('Fonction de sauvegarde globale à implémenter');
+                    }
+                });
+            }
+
+            // Forcer l'affichage de l'onglet actif initial
+            const activeTab = tabsContainer.querySelector('.nav-tab-active');
+            if (activeTab) {
+                const activeTabId = activeTab.getAttribute('data-tab');
+                if (activeTabId) {
+                    switchTab(activeTabId);
+                }
+            }
+
+            console.log('PDF Builder: Navigation initialisée avec succès');
+            return true;
         }
 
-        function handleTabClick(event) {
-            event.preventDefault();
-            const tabId = $(this).data('tab');
-            console.log('PDF Builder: Clic sur onglet:', tabId);
-            if (tabId) {
-                switchTab(tabId);
-            }
+        // Attendre que le DOM soit chargé
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('PDF Builder: DOM chargé, initialisation...');
+                initTabNavigation();
+            });
+        } else {
+            // DOM déjà chargé
+            console.log('PDF Builder: DOM déjà chargé, initialisation...');
+            initTabNavigation();
         }
 
-        // Attacher les événements aux onglets
-        $('#pdf-builder-tabs .nav-tab').on('click', handleTabClick);
-        console.log('PDF Builder: Événements attachés à', $('#pdf-builder-tabs .nav-tab').length, 'onglets');
-
-        // Gestionnaire pour le bouton flottant de sauvegarde
-        $('#pdf-builder-save-all').on('click', function() {
-            if (confirm('Voulez-vous sauvegarder tous les paramètres ?')) {
-                // Simuler la sauvegarde - à implémenter selon le système AJAX existant
-                alert('Fonction de sauvegarde globale à implémenter');
+        // Fallback: essayer d'initialiser après un court délai
+        setTimeout(function() {
+            if (!document.querySelector('#pdf-builder-tabs .nav-tab-active + .active')) {
+                console.log('PDF Builder: Tentative d\'initialisation retardée...');
+                initTabNavigation();
             }
-        });
+        }, 1000);
 
-        // Test initial
-        console.log('PDF Builder: Navigation initialisée');
-        console.log('PDF Builder: Onglets trouvés:', $('#pdf-builder-tabs .nav-tab').length);
-        console.log('PDF Builder: Contenus trouvés:', $('#pdf-builder-tab-content .tab-content').length);
-
-        // Forcer l'affichage de l'onglet actif initial
-        const activeTab = $('#pdf-builder-tabs .nav-tab-active').data('tab');
-        if (activeTab) {
-            switchTab(activeTab);
-        }
-    });
+    })();
     </script>
 
     <!-- Bouton flottant de sauvegarde -->
