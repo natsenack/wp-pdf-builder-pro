@@ -59,22 +59,40 @@ $settings = get_option('pdf_builder_settings', array());
         <!-- LOG APRES SYSTEME -->
         <script>console.log('📍 LOG APRES SYSTEME - Fichier systeme inclus');</script>
         <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
-            <?php require_once 'settings-acces.php'; ?>
+            <div class="pdf-builder-section">
+                <h2>Test Accès</h2>
+                <p>Fichier de test minimal pour l'onglet Accès.</p>
+            </div>
         </div>
         <div id="securite" class="tab-content" role="tabpanel" aria-labelledby="tab-securite">
-            <?php require_once 'settings-securite.php'; ?>
+            <div class="pdf-builder-section">
+                <h2>Test Sécurité</h2>
+                <p>Fichier de test minimal pour l'onglet Sécurité.</p>
+            </div>
         </div>
         <div id="pdf" class="tab-content" role="tabpanel" aria-labelledby="tab-pdf">
-            <?php require_once 'settings-pdf.php'; ?>
+            <div class="pdf-builder-section">
+                <h2>Test PDF</h2>
+                <p>Fichier de test minimal pour l'onglet PDF.</p>
+            </div>
         </div>
         <div id="contenu" class="tab-content" role="tabpanel" aria-labelledby="tab-contenu">
-            <?php require_once 'settings-contenu.php'; ?>
+            <div class="pdf-builder-section">
+                <h2>Test Contenu</h2>
+                <p>Fichier de test minimal pour l'onglet Contenu.</p>
+            </div>
         </div>
         <div id="templates" class="tab-content" role="tabpanel" aria-labelledby="tab-templates">
-            <?php require_once 'settings-templates.php'; ?>
+            <div class="pdf-builder-section">
+                <h2>Test Templates</h2>
+                <p>Fichier de test minimal pour l'onglet Templates.</p>
+            </div>
         </div>
         <div id="developpeur" class="tab-content" role="tabpanel" aria-labelledby="tab-developpeur">
-            <?php require_once 'settings-developpeur.php'; ?>
+            <div class="pdf-builder-section">
+                <h2>Test Développeur</h2>
+                <p>Fichier de test minimal pour l'onglet Développeur.</p>
+            </div>
         </div>
     </section>
 
