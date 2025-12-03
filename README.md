@@ -24,7 +24,7 @@ Le plugin suit une structure organisée pour séparer clairement les fichiers de
 │   ├── 📁 templates/                  ← Templates système
 │   ├── 📁 uploads/                    ← Fichiers uploadés
 │   └── 📁 vendor/                     ← Dépendances PHP (Composer)
-├── 📁 assets/                     ← CSS/JS/Images (sources)
+├── 📁 assets/                     ← CSS/JS/Images (sources-dev)
 ├── 📁 dev/                         ← Outils de développement
 │   ├── analyze-bundle.js
 │   ├── cleanup-license.php
