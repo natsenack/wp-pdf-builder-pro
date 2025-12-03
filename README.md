@@ -6,25 +6,32 @@ Le plugin suit une structure organisée pour séparer clairement les fichiers de
 
 ```
 📂 wp-pdf-builder-pro/
-├── 📄 .htaccess                    ← Sécurité
-├── 📄 bootstrap.php               ← Démarrage du plugin
-├── 📄 pdf-builder-pro.php         ← Fichier principal WordPress
-├── 📄 README.md                   ← Cette documentation
-├── 📄 settings-page.php           ← Page de paramètres
-├── 📄 template-editor.php         ← Éditeur de templates
-├── 📄 woocommerce-elements.css    ← Styles WooCommerce
-├── 📁 assets/                     ← CSS/JS/Images (production)
-├── 📁 config/                     ← Configuration
-├── 📁 core/                       ← Noyau du système
-├── 📁 database/                   ← Gestion base de données
-├── 📁 includes/                   ← Code PHP modulaire
-├── 📁 languages/                  ← Traductions i18n
-├── 📁 lib/                        ← Bibliothèques externes
-├── 📁 resources/                  ← Ressources de développement
-├── 📁 src/                        ← Code source TypeScript/React
-├── 📁 templates/                  ← Templates système
-├── 📁 uploads/                    ← Fichiers uploadés
-├── 📁 vendor/                     ← Dépendances PHP (Composer)
+├── 📁 plugin/                     ← Fichiers du plugin WordPress (production)
+│   ├── 📄 .htaccess                    ← Sécurité
+│   ├── 📄 bootstrap.php               ← Démarrage du plugin
+│   ├── 📄 pdf-builder-pro.php         ← Fichier principal WordPress
+│   ├── 📄 README.md                   ← Cette documentation
+│   ├── 📄 settings-page.php           ← Page de paramètres
+│   ├── 📄 template-editor.php         ← Éditeur de templates
+│   ├── 📄 woocommerce-elements.css    ← Styles WooCommerce
+│   ├── 📁 assets/                     ← CSS/JS/Images (production)
+│   ├── 📁 config/                     ← Configuration
+│   ├── 📁 core/                       ← Noyau du système
+│   ├── 📁 database/                   ← Gestion base de données
+│   ├── 📁 includes/                   ← Code PHP modulaire
+│   ├── 📁 languages/                  ← Traductions i18n
+│   ├── 📁 lib/                        ← Bibliothèques externes
+│   ├── 📁 templates/                  ← Templates système
+│   ├── 📁 uploads/                    ← Fichiers uploadés
+│   └── 📁 vendor/                     ← Dépendances PHP (Composer)
+├── 📁 assets/                     ← CSS/JS/Images (sources)
+├── 📁 dev/                         ← Outils de développement
+│   ├── analyze-bundle.js
+│   ├── cleanup-license.php
+│   ├── config/
+│   │   ├── config.php
+│   │   └── README.md
+│   └── tools/
 ├── 📁 docs/                       ← Documentation détaillée
 │   ├── phases/                    ← Documentation des phases
 │   └── reports/                   ← Rapports de test et audit
@@ -34,22 +41,35 @@ Le plugin suit une structure organisée pour séparer clairement les fichiers de
 │   ├── security/                  ← Tests sécurité
 │   └── compatibility/             ← Tests compatibilité
 ├── 📁 tools/                      ← Scripts de déploiement
+├── 📁 build/                      ← Scripts et logs de déploiement
+│   ├── deploy-all.ps1
+│   ├── deploy-file.ps1
+│   ├── deploy-simple.ps1
+│   ├── DEPLOYMENT.md
+│   ├── backups/
+│   ├── build/
+│   └── logs/
+├── 📁 backups/                    ← Sauvegardes
+│   └── pdf-builder-backups/
 └── 📁 node_modules/               ← Dépendances JS (non déployés)
 ```
 
 ### 🚀 Fichiers de Production (Déployés)
 Seuls ces fichiers sont déployés sur le serveur WordPress :
-- `.htaccess`, `bootstrap.php`, `pdf-builder-pro.php`, `README.md`
-- Dossiers : `assets/`, `config/`, `core/`, `database/`, `includes/`, `languages/`, `lib/`, `templates/`, `uploads/`, `vendor/`
+- `plugin/.htaccess`, `plugin/bootstrap.php`, `plugin/pdf-builder-pro.php`, `plugin/README.md`
+- Dossiers : `plugin/assets/`, `plugin/config/`, `plugin/core/`, `plugin/database/`, `plugin/includes/`, `plugin/languages/`, `plugin/lib/`, `plugin/templates/`, `plugin/uploads/`, `plugin/vendor/`
 
 ### 🛠️ Fichiers de Développement (Locaux uniquement)
 Ces dossiers ne sont **jamais** déployés :
 - `docs/` - Documentation développeur et rapports
 - `tests/` - Suite complète de tests automatisés
 - `tools/` - Scripts de déploiement FTP
-- `resources/` - Ressources de développement
+- `dev/` - Outils de développement
+- `assets/` - Sources CSS/JS/Images
 - `src/` - Code source TypeScript/React
 - `node_modules/` - Dépendances JavaScript
+- `build/` - Scripts et logs de déploiement
+- `backups/` - Sauvegardes
 
 ## 🎯 Migration Vanilla JS - Phase 1 Terminée
 
@@ -160,10 +180,10 @@ cd tools/
 - Déploie automatiquement uniquement les fichiers de production
 
 **Fichiers déployés automatiquement :**
-- ✅ Tous les `*.php` du répertoire racine
-- ✅ `assets/css/**`, `assets/js/**`, `assets/images/**`
-- ✅ `includes/**`, `languages/**`, `vendor/**`
-- ❌ `node_modules/**`, `src/**`, `tools/**`, `docs/**`, etc.
+- ✅ Tous les `*.php` du dossier `plugin/`
+- ✅ `plugin/assets/css/**`, `plugin/assets/js/**`, `plugin/assets/images/**`
+- ✅ `plugin/includes/**`, `plugin/languages/**`, `plugin/vendor/**`
+- ❌ `node_modules/**`, `src/**`, `tools/**`, `docs/**`, `assets/**`, `dev/**`, `tests/**`, `build/**`, `backups/**`
 
 ### Déploiement manuel :
 
@@ -190,11 +210,7 @@ npm run build
 
 # 2. Le dossier dist/ contient les fichiers compilés
 # 3. Copier UNIQUEMENT ces fichiers sur votre serveur :
-#    - dist/
-#    - includes/
-#    - languages/
-#    - assets/ (CSS/JS compilés seulement)
-#    - *.php
+#    - plugin/ (dossier complet)
 #    - *.md (README, etc.)
 
 # ❌ NE PAS copier :
@@ -203,6 +219,13 @@ npm run build
 #    - package.json
 #    - webpack.config.js
 #    - tsconfig.json
+#    - assets/
+#    - dev/
+#    - docs/
+#    - tests/
+#    - tools/
+#    - build/
+#    - backups/
 ```
 
 ### Déploiement automatique complet :
@@ -243,7 +266,7 @@ FTP_PASSWORD=votre-mot-de-passe
 └── 📁 vendor/                     ← Dépendances PHP
 ```
 
-**Note :** Les dossiers `tools/`, `docs/`, `build-tools/`, `dev-tools/`, `src/`, `dist/`, `archive/` et `node_modules/` restent locaux et ne sont jamais déployés.
+**Note :** Les dossiers `tools/`, `docs/`, `build/`, `dev/`, `src/`, `assets/`, `tests/`, `backups/` et `node_modules/` restent locaux et ne sont jamais déployés.
 
 ## ⚠️ Important : Gestion des dépendances
 
