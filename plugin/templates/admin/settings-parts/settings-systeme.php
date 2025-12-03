@@ -17,9 +17,9 @@ function pdf_builder_safe_get_option($option, $default = '') {
  */
 function pdf_builder_safe_checked($checked, $current = true, $echo = true) {
     if (function_exists('checked')) {
-        return pdf_builder_safe_checked($checked, $current, $echo);
+        return checked($checked, $current, $echo);
     }
-    $result = pdf_builder_safe_checked($checked, $current, false);
+    $result = checked($checked, $current, false);
     if ($echo) echo $result;
     return $result;
 }
@@ -29,9 +29,9 @@ function pdf_builder_safe_checked($checked, $current = true, $echo = true) {
  */
 function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
     if (function_exists('selected')) {
-        return pdf_builder_safe_selected($selected, $current, $echo);
+        return selected($selected, $current, $echo);
     }
-    $result = pdf_builder_safe_selected($selected, $current, false);
+    $result = selected($selected, $current, false);
     if ($echo) echo $result;
     return $result;
 }
