@@ -279,7 +279,8 @@ try {
     // Initialiser au chargement du DOM
     document.addEventListener('DOMContentLoaded', function() {
         initTabs();
-        setTimeout(initSaveButton, 100);
+        // Délai plus long pour s'assurer que le HTML est complètement chargé
+        setTimeout(initSaveButton, 500);
     });
 
 })();
