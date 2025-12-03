@@ -83,7 +83,7 @@ $settings = get_option('pdf_builder_settings', array());
     </style>
 </main>
 
-<!-- Bouton de sauvegarde flottant global -->
+<!-- Bouton de sauvegarde flottant global - Updated: 2025-12-03 15:20:00 -->
 <div id="pdf-builder-save-floating" class="pdf-builder-save-floating">
     <button type="button" id="pdf-builder-save-all" class="button button-primary button-hero pdf-builder-save-btn">
         <span class="dashicons dashicons-yes"></span>
