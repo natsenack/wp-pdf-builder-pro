@@ -3,6 +3,8 @@ if (!defined('ABSPATH')) exit('Direct access forbidden');
 if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) wp_die('Access denied');
 $settings = get_option('pdf_builder_settings', array());
 ?>
+<!-- DEBUG: Settings page loaded -->
+<script>console.log('✅ settings-main.php template loaded');</script>
 <main class="wrap" id="pdf-builder-settings-wrapper">
     <header class="pdf-builder-header">
         <h1>Paramètres PDF Builder Pro</h1>
