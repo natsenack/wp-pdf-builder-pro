@@ -125,83 +125,56 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                             
 
                             <script>
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    const roleToggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
+                                // Fonctions simplifiées pour la gestion des rôles
+                                function updateSelectedCount() {
+                                    const checkedBoxes = document.querySelectorAll('.toggle-switch input[type="checkbox"]:checked');
                                     const selectedCount = document.getElementById('selected-count');
-                                    const selectAllBtn = document.getElementById('select-all-roles');
-                                    const selectCommonBtn = document.getElementById('select-common-roles');
-                                    const selectNoneBtn = document.getElementById('select-none-roles');
-
-                                    // Fonction pour mettre à jour le compteur
-                                    function updateSelectedCount() {
-                                        const checkedBoxes = document.querySelectorAll('.toggle-switch input[type="checkbox"]:checked');
-                                        if (selectedCount) {
-                                            selectedCount.textContent = checkedBoxes.length;
-
-                                        }
+                                    if (selectedCount) {
+                                        selectedCount.textContent = checkedBoxes.length;
                                     }
+                                }
 
-                                    // Bouton Sélectionner Tout
-                                    if (selectAllBtn) {
-                                        selectAllBtn.addEventListener('click', function() {
-                                            const togglesLength = roleToggles.length;
-                                            for (let i = 0; i < togglesLength; i++) {
-                                                const checkbox = roleToggles[i];
-                                                if (!checkbox.disabled) {
-                                                    checkbox.checked = true;
-                                                }
-                                            }
-                                            // Différer la mise à jour du compteur pour éviter les violations de performance
-                                            requestAnimationFrame(updateSelectedCount);
-                                        });
-                                    }
+                                // Boutons de contrôle rapide (simplifiés)
+                                const selectAllBtn = document.getElementById('select-all-roles');
+                                const selectCommonBtn = document.getElementById('select-common-roles');
+                                const selectNoneBtn = document.getElementById('select-none-roles');
 
-                                    // Bouton Rôles Courants
-                                    if (selectCommonBtn) {
-                                        selectCommonBtn.addEventListener('click', function() {
-                                            const commonRoles = ['administrator', 'editor', 'shop_manager'];
-                                            const togglesLength = roleToggles.length;
-                                            for (let i = 0; i < togglesLength; i++) {
-                                                const checkbox = roleToggles[i];
-                                                const isCommon = commonRoles.includes(checkbox.value);
-                                                if (!checkbox.disabled) {
-                                                    checkbox.checked = isCommon;
-                                                }
-                                            }
-                                            // Différer la mise à jour du compteur pour éviter les violations de performance
-                                            requestAnimationFrame(updateSelectedCount);
-                                        });
-                                    }
-
-                                    // Bouton Désélectionner Tout
-                                    if (selectNoneBtn) {
-                                        selectNoneBtn.addEventListener('click', function() {
-                                            const togglesLength = roleToggles.length;
-                                            for (let i = 0; i < togglesLength; i++) {
-                                                const checkbox = roleToggles[i];
-                                                if (!checkbox.disabled) {
-                                                    checkbox.checked = false;
-                                                }
-                                            }
-                                            // Différer la mise à jour du compteur pour éviter les violations de performance
-                                            requestAnimationFrame(updateSelectedCount);
-                                        });
-                                    }
-
-                                    // Mettre à jour le compteur quand un toggle change (avec debounce pour éviter les appels trop fréquents)
-                                    let updateTimeout;
-                                    roleToggles.forEach(function(checkbox) {
-                                        checkbox.addEventListener('change', function() {
-                                            // Debounce les appels pour éviter les appels trop fréquents
-                                            clearTimeout(updateTimeout);
-                                            updateTimeout = setTimeout(updateSelectedCount, 10);
-                                        });
+                                if (selectAllBtn) {
+                                    selectAllBtn.addEventListener('click', function() {
+                                        const toggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]:not([disabled])');
+                                        toggles.forEach(checkbox => checkbox.checked = true);
+                                        updateSelectedCount();
                                     });
+                                }
 
-                                    // Initialiser le compteur
-                                    updateSelectedCount();
+                                if (selectCommonBtn) {
+                                    selectCommonBtn.addEventListener('click', function() {
+                                        const commonRoles = ['administrator', 'editor', 'shop_manager'];
+                                        const toggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]');
+                                        toggles.forEach(checkbox => {
+                                            if (!checkbox.disabled) {
+                                                checkbox.checked = commonRoles.includes(checkbox.value);
+                                            }
+                                        });
+                                        updateSelectedCount();
+                                    });
+                                }
 
+                                if (selectNoneBtn) {
+                                    selectNoneBtn.addEventListener('click', function() {
+                                        const toggles = document.querySelectorAll('.toggle-switch input[type="checkbox"]:not([disabled])');
+                                        toggles.forEach(checkbox => checkbox.checked = false);
+                                        updateSelectedCount();
+                                    });
+                                }
+
+                                // Mise à jour du compteur lors des changements
+                                document.querySelectorAll('.toggle-switch input[type="checkbox"]').forEach(checkbox => {
+                                    checkbox.addEventListener('change', updateSelectedCount);
                                 });
+
+                                // Initialisation
+                                updateSelectedCount();
                             </script>
                         </section>
 

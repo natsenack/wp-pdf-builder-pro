@@ -527,18 +527,13 @@ $current_mappings = $status_manager->get_current_mappings();
 <!-- Styles CSS -->
 
 
-<!-- JavaScript -->
+<!-- JavaScript simplifié pour les templates -->
 <script>
 (function() {
     'use strict';
 
-    /**
-     * Gestionnaire des templates par statut
-     */
-    const TemplateStatusManager = {
-        /**
-         * Réinitialise tous les templates
-         */
+    // Gestionnaire simplifié des templates
+    const TemplateManager = {
         resetTemplates: function() {
             if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les assignations de templates ?')) {
                 document.querySelectorAll('.template-select').forEach(select => {
@@ -547,9 +542,6 @@ $current_mappings = $status_manager->get_current_mappings();
             }
         },
 
-        /**
-         * Ajoute un feedback visuel lors du changement de template
-         */
         addVisualFeedback: function() {
             document.querySelectorAll('.template-select').forEach(select => {
                 select.addEventListener('change', function() {
@@ -561,23 +553,18 @@ $current_mappings = $status_manager->get_current_mappings();
             });
         },
 
-        /**
-         * Initialise le gestionnaire
-         */
         init: function() {
             this.addVisualFeedback();
         }
     };
 
-    // Fonction globale pour la compatibilité
+    // Fonction globale simplifiée
     window.resetTemplatesStatus = function() {
-        TemplateStatusManager.resetTemplates();
+        TemplateManager.resetTemplates();
     };
 
-    // Initialisation
-    document.addEventListener('DOMContentLoaded', function() {
-        TemplateStatusManager.init();
-    });
+    // Initialisation directe (sans DOMContentLoaded)
+    TemplateManager.init();
 
 })();
 </script>
