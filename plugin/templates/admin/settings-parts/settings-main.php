@@ -63,19 +63,108 @@ $settings = get_option('pdf_builder_settings', array());
     <!-- Navigation JavaScript - Gérée par assets/js/settings-tabs.js -->
     <!-- Le fichier settings-tabs.js fournit PDFBuilderTabsAPI avec switchToTab(), getActiveTab() -->
 
-
-
+    <!-- Styles inline de secours (au cas où le CSS ne chargerait pas) -->
     <style>
     /* Styles pour la navigation par onglets */
-    .tab-content {
+    #pdf-builder-tab-content .tab-content {
         display: none;
         padding: 20px 0;
     }
-    .tab-content.active {
+    #pdf-builder-tab-content .tab-content.active {
         display: block;
     }
-    .nav-tab {
+    #pdf-builder-tabs .nav-tab {
         cursor: pointer;
     }
     </style>
+
+    <!-- Script de secours inline (debugg Onload des scripts) -->
+    <script>
+    (function() {
+        console.log('🟢 settings-main.php: Vérification du chargement des scripts');
+        
+        // Vérifier si settings-tabs.js est chargé
+        setTimeout(function() {
+            console.log('🟡 Après 1 seconde - PDFBuilderTabsAPI chargé?', !!window.PDFBuilderTabsAPI);
+            
+            if (!window.PDFBuilderTabsAPI) {
+                console.warn('⚠️ PDFBuilderTabsAPI non trouvé, initialiser fallback');
+                initMinimalTabs();
+            }
+        }, 1000);
+        
+        function initMinimalTabs() {
+            console.log('🔵 Initialisation fallback minimal tabs');
+            const tabsContainer = document.getElementById('pdf-builder-tabs');
+            const contentContainer = document.getElementById('pdf-builder-tab-content');
+
+            if (!tabsContainer || !contentContainer) {
+                console.error('🔴 Conteneurs non trouvés');
+                return;
+            }
+
+            // Gestionnaire de clic pour les onglets
+            tabsContainer.addEventListener('click', function(e) {
+                const tab = e.target.closest('.nav-tab');
+                if (!tab) return;
+
+                e.preventDefault();
+                const tabId = tab.getAttribute('data-tab');
+                if (!tabId) return;
+
+                console.log('📋 Clic sur onglet:', tabId);
+
+                // Désactiver tous les onglets
+                tabsContainer.querySelectorAll('.nav-tab').forEach(t => {
+                    t.classList.remove('nav-tab-active');
+                    t.setAttribute('aria-selected', 'false');
+                });
+
+                // Désactiver tous les contenus
+                contentContainer.querySelectorAll('.tab-content').forEach(c => {
+                    c.classList.remove('active');
+                });
+
+                // Activer l'onglet cliqué
+                tab.classList.add('nav-tab-active');
+                tab.setAttribute('aria-selected', 'true');
+
+                // Activer le contenu correspondant
+                const content = document.getElementById(tabId);
+                if (content) {
+                    content.classList.add('active');
+                    console.log('✅ Onglet activé:', tabId);
+                }
+
+                // Sauvegarder dans localStorage
+                try {
+                    localStorage.setItem('pdf_builder_active_tab', tabId);
+                } catch (e) {
+                    // Ignore
+                }
+            });
+
+            // Restaurer l'onglet sauvegardé
+            try {
+                const savedTab = localStorage.getItem('pdf_builder_active_tab');
+                if (savedTab) {
+                    const savedTabElement = tabsContainer.querySelector('[data-tab="' + savedTab + '"]');
+                    if (savedTabElement) {
+                        savedTabElement.click();
+                        return;
+                    }
+                }
+            } catch (e) {
+                // Ignore
+            }
+
+            // Activer le premier onglet par défaut
+            const firstTab = tabsContainer.querySelector('.nav-tab');
+            if (firstTab) {
+                console.log('📋 Activation du premier onglet');
+                firstTab.click();
+            }
+        }
+    })();
+    </script>
 </main>
