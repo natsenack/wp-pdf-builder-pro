@@ -123,5 +123,3 @@
 
             </div> <!-- Fin disposition en colonnes -->
 
-</div>
-
