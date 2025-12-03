@@ -103,7 +103,7 @@
                                         <?php
                                         $cache_size = 0;
                                         $cache_dirs = [
-                                            WP_CONTENT_DIR . '/cache/wp-pdf-builder-previews/',
+                                            (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '') . '/cache/wp-pdf-builder-previews/',
                                             (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-cache'
                                         ];
 
@@ -135,8 +135,14 @@
                                     <div class="metric-value">
                                         <?php
                                         $transient_count = 0;
-                                        global $wpdb;
-                                        $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+                                        if (isset($GLOBALS['wpdb']) && function_exists('get_option')) {
+                                            global $wpdb;
+                                            try {
+                                                $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+                                            } catch (Exception $e) {
+                                                $transient_count = 0;
+                                            }
+                                        }
                                         echo intval($transient_count);
                                         ?>
                                     </div>
@@ -251,7 +257,7 @@
                                         <?php
                                         $next_maintenance = get_option('pdf_builder_next_maintenance', 'Non planifiée');
                                         if ($next_maintenance !== 'Non planifiée') {
-                                            $next_maintenance = function_exists('date_i18n') ? date_i18n('d/m/Y H:i', strtotime($next_maintenance)) : date('d/m/Y H:i', strtotime($next_maintenance));
+                                            $next_maintenance = (function_exists('date_i18n') ? date_i18n('d/m/Y H:i', strtotime($next_maintenance)) : date('d/m/Y H:i', strtotime($next_maintenance)));
                                         }
                                         echo $next_maintenance;
                                         ?>
