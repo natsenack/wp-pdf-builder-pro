@@ -196,6 +196,12 @@ class PdfBuilderAdmin
         $this->logger_service = new \PDF_Builder\Admin\Services\LoggerService();
         $this->parameter_validator = new \PDF_Builder\Admin\Validators\ParameterValidator();
         $this->maintenance_action_handler = new \PDF_Builder\Admin\Handlers\MaintenanceActionHandler();
+
+        // Charger le DashboardDataProvider si nécessaire
+        if (!class_exists('\PDF_Builder\Admin\Providers\DashboardDataProvider')) {
+            require_once plugin_dir_path(__FILE__) . 'Providers/DashboardDataProvider.php';
+        }
+
         $this->dashboard_data_provider = new \PDF_Builder\Admin\Providers\DashboardDataProvider();
 
         $this->initHooks();
