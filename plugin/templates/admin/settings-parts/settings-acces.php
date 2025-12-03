@@ -33,6 +33,23 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
     if ($echo) echo $result;
     return $result;
 }
+
+global $wp_roles;
+$all_roles = $wp_roles->roles;
+$allowed_roles = pdf_builder_safe_get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
+if (!is_array($allowed_roles)) {
+    $allowed_roles = ['administrator', 'editor', 'shop_manager'];
+}
+
+$role_descriptions = [
+    'administrator' => 'Accès complet à toutes les fonctionnalités',
+    'editor' => 'Peut publier et gérer les articles',
+    'author' => 'Peut publier ses propres articles',
+    'contributor' => 'Peut soumettre des articles pour révision',
+    'subscriber' => 'Peut uniquement lire les articles',
+    'shop_manager' => 'Gestionnaire de boutique WooCommerce',
+    'customer' => 'Client WooCommerce',
+];
 ?>
             <h2>👥 Gestion des Rôles et Permissions</h2>
 
@@ -40,25 +57,6 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
             <aside class="access-success-notice">
                 ✅ Section Rôles chargée - Utilise le bouton "Enregistrer" flottant pour sauvegarder
             </aside>
-
-            <?php
-                global $wp_roles;
-                $all_roles = $wp_roles->roles;
-                $allowed_roles = pdf_builder_safe_get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
-                if (!is_array($allowed_roles)) {
-                    $allowed_roles = ['administrator', 'editor', 'shop_manager'];
-                }
-
-                $role_descriptions = [
-                    'administrator' => 'Accès complet à toutes les fonctionnalités',
-                    'editor' => 'Peut publier et gérer les articles',
-                    'author' => 'Peut publier ses propres articles',
-                    'contributor' => 'Peut soumettre des articles pour révision',
-                    'subscriber' => 'Peut uniquement lire les articles',
-                    'shop_manager' => 'Gestionnaire de boutique WooCommerce',
-                    'customer' => 'Client WooCommerce',
-                ];
-            ?>
 
             <p>Sélectionnez les rôles WordPress qui auront accès à PDF Builder Pro.</p>
 
