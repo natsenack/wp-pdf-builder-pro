@@ -5,6 +5,9 @@
 (function() {
     'use strict';
 
+    // LOG NON CONDITIONNEL POUR CONFIRMER LE CHARGEMENT
+    console.log('PDF Builder: SCRIPT CHARGÉ - settings-tabs.js (plugin version)');
+
     const DEBUG = !!(typeof PDF_BUILDER_CONFIG !== 'undefined' && PDF_BUILDER_CONFIG.debug);
     if (DEBUG) {
         console.log('PDF Builder (plugin): settings-tabs.js DEBUG MODE ACTIVÉ');

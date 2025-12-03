@@ -95,7 +95,7 @@ $js_config = array(
     'nonce' => wp_create_nonce('pdf_builder_settings_ajax'),
     'ajax_url' => admin_url('admin-ajax.php'),
     // activer/désactiver le debug JS depuis les options (pdf_builder_debug_javascript)
-    'debug' => !empty($settings['pdf_builder_debug_javascript']) ? true : false,
+    'debug' => true, // FORCÉ À TRUE TEMPORAIREMENT POUR DIAGNOSTIC
     'debug_verbose' => !empty($settings['pdf_builder_debug_javascript_verbose']) ? true : false,
 );
 
