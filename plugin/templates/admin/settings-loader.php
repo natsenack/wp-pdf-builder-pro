@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 // LOG DE BASE - LE FICHIER SE CHARGE-T-IL ?
 add_action('admin_init', function() {
-    echo "<script>console.log('🔥 SETTINGS-LOADER.PHP CHARGÉ - " . time() . "');</script>";
+    echo "<script>console.log('🔥 SETTINGS-LOADER.PHP CHARGÉ - " . time() . " - FORCE DEPLOY');</script>";
 });
 
 /**
