@@ -46,7 +46,7 @@ $settings = get_option('pdf_builder_settings', array());
         <!-- LOG AVANT LICENCE -->
         <script>console.log('📍 LOG AVANT LICENCE - Inclusion du fichier licence');</script>
         <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
-            <?php require_once 'settings-licence.php'; ?>
+            <?php require_once 'settings-licence-test.php'; ?>
         </div>
         <!-- LOG APRES LICENCE -->
         <script>console.log('📍 LOG APRES LICENCE - Fichier licence inclus');</script>
