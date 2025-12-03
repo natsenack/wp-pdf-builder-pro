@@ -1,73 +1,202 @@
-<?php
-if (!defined('ABSPATH')) exit('Direct access forbidden');
-if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) wp_die('Access denied');
-$settings = get_option('pdf_builder_settings', array());
-?>
-<main class="wrap" id="pdf-builder-settings-wrapper">
-    <header class="pdf-builder-header">
-        <h1>Paramètres PDF Builder Pro</h1>
-    </header>
-
-    <!-- Monitor root: track JS event listener additions and stopPropagation usage (load only in debug) -->
-    <?php if (get_option('pdf_builder_debug_javascript', '0') === '1'): ?>
-        <script src="<?php echo esc_url( defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL . 'js/tabs-root-monitor.js' : plugin_dir_url( __FILE__ ) . '../../../assets/js/tabs-root-monitor.js' ); ?>" defer></script>
-    <?php endif; ?>
-
-    <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
-        <a href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">Général</a>
-        <a href="#licence" class="nav-tab" data-tab="licence" role="tab" aria-selected="false" aria-controls="licence">Licence</a>
-        <a href="#systeme" class="nav-tab" data-tab="systeme" role="tab" aria-selected="false" aria-controls="systeme">Système</a>
-        <a href="#acces" class="nav-tab" data-tab="acces" role="tab" aria-selected="false" aria-controls="acces">Accès</a>
-        <a href="#securite" class="nav-tab" data-tab="securite" role="tab" aria-selected="false" aria-controls="securite">Sécurité</a>
-        <a href="#pdf" class="nav-tab" data-tab="pdf" role="tab" aria-selected="false" aria-controls="pdf">PDF</a>
-        <a href="#contenu" class="nav-tab" data-tab="contenu" role="tab" aria-selected="false" aria-controls="contenu">Contenu</a>
-        <a href="#templates" class="nav-tab" data-tab="templates" role="tab" aria-selected="false" aria-controls="templates">Modèles</a>
-        <a href="#developpeur" class="nav-tab" data-tab="developpeur" role="tab" aria-selected="false" aria-controls="developpeur">Développeur</a>
-    </nav>
-
-    <section id="pdf-builder-tab-content" class="tab-content-wrapper" role="tabpanel" aria-live="polite">
-        <div id="general" class="tab-content active" role="tabpanel" aria-labelledby="tab-general">
-            <?php require_once 'settings-general.php'; ?>
-        </div>
-
-        <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
-            <?php require_once 'settings-licence.php'; ?>
-        </div>
-
-        <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
-            <?php require_once 'settings-systeme.php'; ?>
-        </div>
-
-        <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
-            <?php require_once 'settings-acces.php'; ?>
-        </div>
-
-        <div id="securite" class="tab-content" role="tabpanel" aria-labelledby="tab-securite">
-            <?php require_once 'settings-securite.php'; ?>
-        </div>
-
-        <div id="pdf" class="tab-content" role="tabpanel" aria-labelledby="tab-pdf">
-            <?php require_once 'settings-pdf.php'; ?>
-        </div>
-
-        <div id="contenu" class="tab-content" role="tabpanel" aria-labelledby="tab-contenu">
-            <?php require_once 'settings-contenu.php'; ?>
-        </div>
-
-        <div id="templates" class="tab-content" role="tabpanel" aria-labelledby="tab-templates">
-            <?php require_once 'settings-templates.php'; ?>
-        </div>
-
-        <div id="developpeur" class="tab-content" role="tabpanel" aria-labelledby="tab-developpeur">
-            <?php require_once 'settings-developpeur.php'; ?>
-        </div>
-    </section>
-
-    <!-- Navigation JavaScript simplifiée -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Navigation PDF Builder - Debug</title>
     <script>
-    console.log('🚨 WORDPRESS INLINE SCRIPT: Chargé');
-    alert('🚨 Script inline WordPress chargé!');
+        // LOG ABSOLU - Test si le HTML se charge
+        console.log('🚀 HTML CHARGÉ: Début du document HTML - TIMESTAMP:', Date.now());
+        alert('🚀 HTML chargé et script exécuté!');
     </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f1f1f1;
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .pdf-builder-header {
+            background: #23282d;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .nav-tab-wrapper {
+            border-bottom: 1px solid #ccc;
+            margin: 0;
+            padding: 0 20px;
+            background: #f9f9f9;
+        }
+
+        .nav-tab {
+            display: inline-block;
+            padding: 10px 15px;
+            text-decoration: none;
+            background: #e5e5e5;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            margin-right: 5px;
+            color: #333;
+            cursor: pointer;
+            position: relative;
+            top: 1px;
+        }
+
+        .nav-tab:hover {
+            background: #ddd;
+        }
+
+        .nav-tab-active {
+            background: #fff;
+            border-bottom: 1px solid #fff;
+            margin-bottom: -1px;
+        }
+
+        .tab-content-wrapper {
+            padding: 20px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .debug-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 400px;
+            height: 80vh;
+            background: #000;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 11px;
+            padding: 10px;
+            overflow-y: auto;
+            border-radius: 5px;
+            z-index: 10000;
+        }
+
+        .debug-panel h3 {
+            margin: 0 0 10px 0;
+            color: #ff0;
+        }
+
+        .clear-debug {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #f00;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header class="pdf-builder-header">
+            <h1>Paramètres PDF Builder Pro - TEST DEBUG</h1>
+        </header>
+
+        <nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs" role="tablist" aria-label="Onglets des paramètres PDF Builder">
+            <a href="#general" class="nav-tab nav-tab-active" data-tab="general" role="tab" aria-selected="true" aria-controls="general">Général</a>
+            <a href="#licence" class="nav-tab" data-tab="licence" role="tab" aria-selected="false" aria-controls="licence">Licence</a>
+            <a href="#systeme" class="nav-tab" data-tab="systeme" role="tab" aria-selected="false" aria-controls="systeme">Système</a>
+            <a href="#acces" class="nav-tab" data-tab="acces" role="tab" aria-selected="false" aria-controls="acces">Accès</a>
+        </nav>
+
+        <section id="pdf-builder-tab-content" class="tab-content-wrapper" role="tabpanel" aria-live="polite">
+            <div id="general" class="tab-content active" role="tabpanel" aria-labelledby="tab-general">
+                <h2>Contenu Général</h2>
+                <p>Ceci est l'onglet <strong>Général</strong>.</p>
+                <p>Test de navigation avec logs détaillés.</p>
+            </div>
+
+            <div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
+                <h2>Contenu Licence</h2>
+                <p>Ceci est l'onglet <strong>Licence</strong>.</p>
+            </div>
+
+            <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
+                <h2>Contenu Système</h2>
+                <p>Ceci est l'onglet <strong>Système</strong>.</p>
+            </div>
+
+            <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
+                <h2>Contenu Accès</h2>
+                <p>Ceci est l'onglet <strong>Accès</strong>.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Debug Panel -->
+    <div class="debug-panel">
+        <button class="clear-debug" onclick="clearDebug()">Clear</button>
+        <h3>🔥 DEBUG LOGS</h3>
+        <div id="debug-output"></div>
+    </div>
+
+    <!-- Charger settings-tabs.js -->
+    <script>
+        // LOG ABSOLU - Test si ce script s'exécute
+        console.log('🚀 TEST ABSOLU: Début du script settings-tabs.js - TIMESTAMP:', Date.now());
+        alert('🚀 Script settings-tabs.js chargé!');
+    </script>
+    <script src="assets/js/settings-tabs.js"></script>
+    <script>
+        // LOG ABSOLU - Test si settings-tabs.js s'est chargé
+        console.log('🚀 TEST ABSOLU: Après chargement de settings-tabs.js - TIMESTAMP:', Date.now());
+        alert('🚀 Après chargement de settings-tabs.js!');
+    </script>
+
+    <!-- Script inline avec logs détaillés -->
+    <script>
+    (function() {
+        'use strict';
+
+        // Rediriger console.log vers le panel debug
+        const originalLog = console.log;
+        const debugOutput = document.getElementById('debug-output');
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.map(arg =>
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            const div = document.createElement('div');
+            div.textContent = '[' + new Date().toLocaleTimeString() + '] ' + message;
+            div.style.marginBottom = '2px';
+            div.style.borderBottom = '1px solid #333';
+            div.style.paddingBottom = '2px';
+            debugOutput.appendChild(div);
+            debugOutput.scrollTop = debugOutput.scrollHeight;
+        };
+
+        window.clearDebug = function() {
+            debugOutput.innerHTML = '';
+        };
+
+        console.log('PDF Builder: Script de navigation chargé');
+
+        // 🔥 LOGS RACINE - Diagnostic complet du système de navigation
+        console.log('🔥 ROOT NAVIGATION: Script de navigation chargé - TIMESTAMP:', Date.now());
 
         // LOG RACINE - État initial du DOM
         console.log('🔥 ROOT NAVIGATION: Vérification DOM initial');
@@ -155,26 +284,27 @@ $settings = get_option('pdf_builder_settings', array());
         // Fonction principale d'initialisation
         function initTabNavigation() {
             console.log('📋 INLINE NAVIGATION: initTabNavigation appelée - TIMESTAMP:', Date.now());
+
             // Si le manager principal est présent, ne pas attacher nos propres handlers
             if (window.PDF_BUILDER_TABS_INITIALIZED || (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function')) {
-                console.log('PDF Builder: Manager global détecté, fallback inline désactivé');
+                console.log('📋 INLINE NAVIGATION: Manager global détecté, fallback inline désactivé');
                 try {
                     const saved = (window.PDFBuilderTabsAPI && window.PDFBuilderTabsAPI.getActiveTab) ? window.PDFBuilderTabsAPI.getActiveTab() : null;
                     if (saved && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function') {
                         window.PDFBuilderTabsAPI.switchToTab(saved);
                     }
                 } catch (e) {
-                    console.log('PDF Builder: Erreur lors de la synchronisation avec le manager global', e && e.message ? e.message : e);
+                    console.log('📋 INLINE NAVIGATION: Erreur lors de la synchronisation avec le manager global', e && e.message ? e.message : e);
                 }
                 return true;
             }
-            console.log('PDF Builder: Initialisation forcée de la navigation');
+            console.log('📋 INLINE NAVIGATION: Initialisation forcée de la navigation');
 
             const tabsContainer = document.getElementById('pdf-builder-tabs');
             const contentContainer = document.getElementById('pdf-builder-tab-content');
 
             if (!tabsContainer || !contentContainer) {
-                console.error('PDF Builder: Conteneurs non trouvés, retry dans 1s...');
+                console.error('📋 INLINE NAVIGATION: Conteneurs non trouvés, retry dans 1s...');
                 setTimeout(initTabNavigation, 1000);
                 return;
             }
@@ -182,10 +312,10 @@ $settings = get_option('pdf_builder_settings', array());
             const tabs = tabsContainer.querySelectorAll('.nav-tab');
             const contents = contentContainer.querySelectorAll('.tab-content');
 
-            console.log('PDF Builder: Trouvé', tabs.length, 'onglets et', contents.length, 'contenus');
+            console.log('📋 INLINE NAVIGATION: Trouvé', tabs.length, 'onglets et', contents.length, 'contenus');
 
             if (tabs.length === 0 || contents.length === 0) {
-                console.error('PDF Builder: Éléments manquants, retry dans 1s...');
+                console.error('📋 INLINE NAVIGATION: Éléments manquants, retry dans 1s...');
                 setTimeout(initTabNavigation, 1000);
                 return;
             }
@@ -212,12 +342,12 @@ $settings = get_option('pdf_builder_settings', array());
                 if (targetTab) {
                     targetTab.classList.add('nav-tab-active');
                     targetTab.setAttribute('aria-selected', 'true');
-                    console.log('PDF Builder: Onglet', tabId, 'activé');
+                    console.log('📋 INLINE NAVIGATION: Onglet', tabId, 'activé');
                 }
 
                 if (targetContent) {
                     targetContent.classList.add('active');
-                    console.log('PDF Builder: Contenu', tabId, 'affiché');
+                    console.log('📋 INLINE NAVIGATION: Contenu', tabId, 'affiché');
                 }
             }
 
@@ -234,14 +364,14 @@ $settings = get_option('pdf_builder_settings', array());
             }
 
             // Attacher les événements - FORCER l'attachement
-            console.log('PDF Builder: Attachement des événements...');
+            console.log('📋 INLINE NAVIGATION: Attachement des événements...');
             tabs.forEach(function(tab, index) {
                 // Supprimer les anciens événements pour éviter les doublons (si présent)
                 try { if (tab._pdfBuilderInlineFallbackHandler && typeof tab._pdfBuilderInlineFallbackHandler === 'function') { tab.removeEventListener('click', tab._pdfBuilderInlineFallbackHandler); } } catch (e) {}
                 // Attacher le nouvel événement et conserver une référence pour que le manager canonical puisse l'enlever si besoin
                 tab._pdfBuilderInlineFallbackHandler = handleTabClick;
                 tab.addEventListener('click', tab._pdfBuilderInlineFallbackHandler);
-                console.log('PDF Builder: Événement attaché à onglet', index + 1, ':', tab.getAttribute('data-tab'));
+                console.log('📋 INLINE NAVIGATION: Événement attaché à onglet', index + 1, ':', tab.getAttribute('data-tab'));
             });
 
             // Bouton de sauvegarde
@@ -250,7 +380,7 @@ $settings = get_option('pdf_builder_settings', array());
                 saveBtn.addEventListener('click', function() {
                     alert('Sauvegarde globale à implémenter');
                 });
-                console.log('PDF Builder: Bouton de sauvegarde configuré');
+                console.log('📋 INLINE NAVIGATION: Bouton de sauvegarde configuré');
             }
 
             // Activer l'onglet par défaut
@@ -262,12 +392,12 @@ $settings = get_option('pdf_builder_settings', array());
                 }
             }
 
-            console.log('PDF Builder: Navigation initialisée avec succès!');
+            console.log('📋 INLINE NAVIGATION: Navigation initialisée avec succès!');
             return true;
         }
 
         // Exécution contrôlée: attendre le manager canonical avant d'attacher nos propres handlers
-        console.log('PDF Builder: Tentative d\'initialisation contrôlée (attente du manager canonical)...');
+        console.log('📋 INLINE NAVIGATION: Tentative d\'initialisation contrôlée (attente du manager canonical)...');
 
         // Pour éviter le double-binding, attendre que window.PDFBuilderTabsAPI soit présent
         // Essayer pendant 5 secondes (250ms * 20). Si le canonical n'arrive pas, on bind le fallback.
@@ -283,16 +413,17 @@ $settings = get_option('pdf_builder_settings', array());
                     PDFBuilderInlineFallbackBound: window.PDFBuilderInlineFallbackBound,
                     timestamp: Date.now()
                 });
+
                 // Si le manager canonical est présent, on l'utilise et on synchronise l'état
                 if (window.PDF_BUILDER_TABS_INITIALIZED || (window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function')) {
-                    console.log('PDF Builder: Manager global détecté pendant attente, fallback inline désactivé');
+                    console.log('📋 INLINE NAVIGATION: Manager global détecté pendant attente, fallback inline désactivé');
                     try {
                         const saved = (window.PDFBuilderTabsAPI && window.PDFBuilderTabsAPI.getActiveTab) ? window.PDFBuilderTabsAPI.getActiveTab() : null;
                         if (saved && window.PDFBuilderTabsAPI && typeof window.PDFBuilderTabsAPI.switchToTab === 'function') {
                             window.PDFBuilderTabsAPI.switchToTab(saved);
                         }
                     } catch (e) {
-                        console.log('PDF Builder: Erreur lors de la synchronisation avec le manager global', e && e.message ? e.message : e);
+                        console.log('📋 INLINE NAVIGATION: Erreur lors de la synchronisation avec le manager global', e && e.message ? e.message : e);
                     }
                     return;
                 }
@@ -300,11 +431,11 @@ $settings = get_option('pdf_builder_settings', array());
                 if (attempts >= maxAttempts) {
                     // Pas de manager canonical après attente raisonnable: binder notre fallback (une seule fois)
                     if (!window.PDFBuilderInlineFallbackBound) {
-                        console.log('PDF Builder: Aucune détection du manager canonical — binding fallback (inline)');
+                        console.log('📋 INLINE NAVIGATION: Aucune détection du manager canonical — binding fallback (inline)');
                         initTabNavigation();
                         window.PDFBuilderInlineFallbackBound = true; // Guard global pour éviter multiples binds
                     } else {
-                        console.log('PDF Builder: Fallback inline déjà attaché, skipping');
+                        console.log('📋 INLINE NAVIGATION: Fallback inline déjà attaché, skipping');
                     }
                     return;
                 }
@@ -321,60 +452,11 @@ $settings = get_option('pdf_builder_settings', array());
 
         // Et aussi au chargement complet de la page
         window.addEventListener('load', function() {
-            console.log('PDF Builder: Page chargée, vérification finale...');
+            console.log('📋 INLINE NAVIGATION: Page chargée, vérification finale...');
             setTimeout(initTabNavigation, 100);
         });
 
     })();
     </script>
-
-    <!-- Bouton flottant de sauvegarde -->
-    <button type="button" id="pdf-builder-save-all" class="pdf-builder-floating-save-btn" title="Sauvegarder tous les paramètres">
-        💾 Enregistrer
-    </button>
-
-    <style>
-    /* Styles pour la navigation par onglets */
-    .tab-content {
-        display: none;
-        padding: 20px 0;
-    }
-    .tab-content.active {
-        display: block;
-    }
-    .nav-tab {
-        cursor: pointer;
-        text-decoration: none;
-    }
-    .nav-tab-active {
-        background: #fff;
-        border-bottom: 1px solid #fff;
-        color: #23282d;
-    }
-
-    .pdf-builder-floating-save-btn {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: #007cba;
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 12px 20px;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        z-index: 9999;
-        transition: all 0.3s ease;
-    }
-    .pdf-builder-floating-save-btn:hover {
-        background: #005a87;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-    }
-    .pdf-builder-floating-save-btn:active {
-        transform: translateY(0);
-    }
-    </style>
-</main>
+</body>
+</html>

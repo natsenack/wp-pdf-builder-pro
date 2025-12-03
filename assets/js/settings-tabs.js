@@ -2,6 +2,10 @@
  * Paramètres PDF Builder Pro - Navigation des onglets (Version simplifiée)
  */
 
+// 🚨 LOG ABSOLU - Test si ce fichier se charge dans WordPress
+console.log('🚨 WORDPRESS SETTINGS-TABS.JS: Fichier chargé!');
+alert('🚨 settings-tabs.js chargé dans WordPress!');
+
 (function() {
     'use strict';
 
