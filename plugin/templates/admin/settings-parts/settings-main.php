@@ -31,11 +31,11 @@ $settings = get_option('pdf_builder_settings', array());
 
         <!--<div id="licence" class="tab-content" role="tabpanel" aria-labelledby="tab-licence">
             <?php //require_once 'settings-licence.php'; ?>
-        </div>-->
+        </div>
 
         <div id="systeme" class="tab-content" role="tabpanel" aria-labelledby="tab-systeme">
-            <?php require_once 'settings-systeme.php'; ?>
-        </div>
+            <?php //require_once 'settings-systeme.php'; ?>
+        </div>-->
 
         <div id="acces" class="tab-content" role="tabpanel" aria-labelledby="tab-acces">
             <?php require_once 'settings-acces.php'; ?>
