@@ -4,6 +4,14 @@ if (!is_user_logged_in() || !current_user_can('pdf_builder_access')) wp_die('Acc
 $settings = get_option('pdf_builder_settings', array());
 ?>
 <main class="wrap" id="pdf-builder-settings-wrapper">
+    <!-- SCRIPT DE TEST AU DÉBUT ABSOLU -->
+    <script>
+    console.log('🔥 PDF BUILDER - SCRIPT DE TEST AU DÉBUT DU HTML - SI ÇA APPARAÎT PAS, LA PAGE NE SE CHARGE PAS');
+    console.log('🔥 URL actuelle:', window.location.href);
+    console.log('🔥 User Agent:', navigator.userAgent);
+    console.log('🔥 Timestamp:', new Date().toISOString());
+    </script>
+
     <header class="pdf-builder-header">
         <h1>Parametres PDF Builder Pro</h1>
     </header>
