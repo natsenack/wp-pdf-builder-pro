@@ -21,15 +21,33 @@ $nonce = wp_create_nonce('pdf_builder_nonce');
 </nav>
 
 <div id="pdf-builder-tab-content">
-<div id="tab-content-general" class="tab-content active"><h2>General</h2><p>Content</p></div>
-<div id="tab-content-licence" class="tab-content"><h2>License</h2><p>Content</p></div>
-<div id="tab-content-systeme" class="tab-content"><h2>System</h2><p>Content</p></div>
-<div id="tab-content-acces" class="tab-content"><h2>Access</h2><p>Content</p></div>
-<div id="tab-content-securite" class="tab-content"><h2>Security</h2><p>Content</p></div>
-<div id="tab-content-pdf" class="tab-content"><h2>PDF</h2><p>Content</p></div>
-<div id="tab-content-contenu" class="tab-content"><h2>Content</h2><p>Content</p></div>
-<div id="tab-content-templates" class="tab-content"><h2>Templates</h2><p>Content</p></div>
-<div id="tab-content-developpeur" class="tab-content"><h2>Developer</h2><p>Content</p></div>
+<div id="tab-content-general" class="tab-content active">
+<?php include __DIR__ . '/settings-parts/settings-general.php'; ?>
+</div>
+<div id="tab-content-licence" class="tab-content">
+<?php include __DIR__ . '/settings-parts/settings-licence.php'; ?>
+</div>
+<div id="tab-content-systeme" class="tab-content">
+<?php include __DIR__ . '/settings-parts/settings-systeme.php'; ?>
+</div>
+<div id="tab-content-acces" class="tab-content">
+<?php include __DIR__ . '/settings-parts/settings-acces.php'; ?>
+</div>
+<div id="tab-content-securite" class="tab-content">
+<?php include __DIR__ . '/settings-parts/settings-securite.php'; ?>
+</div>
+<div id="tab-content-pdf" class="tab-content">
+<?php include __DIR__ . '/settings-parts/settings-pdf.php'; ?>
+</div>
+<div id="tab-content-contenu" class="tab-content">
+<?php include __DIR__ . '/settings-parts/settings-contenu.php'; ?>
+</div>
+<div id="tab-content-templates" class="tab-content">
+<?php include __DIR__ . '/settings-parts/settings-templates.php'; ?>
+</div>
+<div id="tab-content-developpeur" class="tab-content">
+<?php include __DIR__ . '/settings-parts/settings-developpeur.php'; ?>
+</div>
 </div>
 
 <p class="submit"><button type="submit" class="button button-primary">Save Settings</button></p>
