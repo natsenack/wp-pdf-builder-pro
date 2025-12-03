@@ -2,6 +2,11 @@
  * Paramètres PDF Builder Pro - Navigation des onglets (Version simplifiée)
  */
 
+// LOG IMMÉDIAT AU CHARGEMENT DU SCRIPT
+console.log('🎯 PDF BUILDER TABS: Script chargé et exécuté !');
+console.log('📍 PDF BUILDER TABS: URL actuelle:', window.location.href);
+console.log('🔍 PDF BUILDER TABS: User Agent:', navigator.userAgent);
+
 (function() {
     'use strict';
 
@@ -13,6 +18,8 @@
             nonce: ''
         };
     }
+
+    console.log('⚙️ PDF BUILDER TABS: Configuration définie', window.PDF_BUILDER_CONFIG);
 
     // Système de navigation des onglets simplifié
     function initTabs() {

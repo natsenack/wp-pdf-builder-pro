@@ -18,6 +18,9 @@ function pdf_builder_load_settings_assets($hook) {
         return;
     }
 
+    // LOG POUR CONFIRMER LE CHARGEMENT DES ASSETS
+    error_log('🎯 PDF BUILDER ASSETS: Chargement des assets pour la page ' . $hook);
+
     // Charger les styles CSS
     wp_enqueue_style(
         'pdf-builder-settings',
@@ -44,6 +47,9 @@ function pdf_builder_load_settings_assets($hook) {
         PDF_BUILDER_VERSION . '-' . time(),
         true
     );
+
+    // LOG POUR CONFIRMER L'ENREGISTREMENT DU SCRIPT
+    error_log('📜 PDF BUILDER ASSETS: Script settings-tabs.js enregistré pour ' . $hook);
 
     // Localiser les variables JavaScript
     wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderSettings', array(
