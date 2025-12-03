@@ -127,6 +127,11 @@ class PDF_Template_Status_Manager {
     private function load_mappings() {
         $this->current_mappings = pdf_builder_safe_get_option('pdf_builder_order_status_templates', []);
 
+        // S'assurer que c'est un tableau
+        if (!is_array($this->current_mappings)) {
+            $this->current_mappings = [];
+        }
+
         // Nettoyer les mappings obsolètes
         if (!empty($this->current_mappings) && !empty($this->order_statuses)) {
             $valid_statuses = array_keys($this->order_statuses);
