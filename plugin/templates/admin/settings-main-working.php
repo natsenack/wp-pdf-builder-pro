@@ -97,26 +97,7 @@ $nonce = wp_create_nonce('pdf_builder_nonce');
 .nav-tab { cursor: pointer; }
 </style>
 
-<script>
-(function() {
-  var tabs = document.querySelectorAll('.nav-tab');
-  var panes = document.querySelectorAll('.tab-pane');
-  
-  tabs.forEach(function(tab) {
-    tab.addEventListener('click', function(e) {
-      e.preventDefault();
-      var tabName = this.getAttribute('data-tab');
-      
-      tabs.forEach(function(t) { t.classList.remove('nav-tab-active'); });
-      panes.forEach(function(p) { p.classList.remove('active'); });
-      
-      this.classList.add('nav-tab-active');
-      var pane = document.getElementById('tab-' + tabName);
-      if (pane) pane.classList.add('active');
-    });
-  });
-})();
-</script>
+<!-- JavaScript moved to settings-main.php to avoid conflicts -->
 
 </body>
 </html>

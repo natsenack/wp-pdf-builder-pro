@@ -99,7 +99,50 @@ $settings = get_option('pdf_builder_settings', array());
             document.querySelectorAll('#pdf-builder-tabs .nav-tab').forEach(function(btn) {
                 btn.addEventListener('click', handleTabClick);
             });
+
+            // Gestionnaire pour le bouton flottant de sauvegarde
+            const saveBtn = document.getElementById('pdf-builder-save-all');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', function() {
+                    if (confirm('Voulez-vous sauvegarder tous les paramètres ?')) {
+                        // Simuler la sauvegarde - à implémenter selon le système AJAX existant
+                        alert('Fonction de sauvegarde globale à implémenter');
+                    }
+                });
+            }
         });
     })();
     </script>
+
+    <!-- Bouton flottant de sauvegarde -->
+    <button type="button" id="pdf-builder-save-all" class="pdf-builder-floating-save-btn" title="Sauvegarder tous les paramètres">
+        💾 Enregistrer
+    </button>
+
+    <style>
+    .pdf-builder-floating-save-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #007cba;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 9999;
+        transition: all 0.3s ease;
+    }
+    .pdf-builder-floating-save-btn:hover {
+        background: #005a87;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    }
+    .pdf-builder-floating-save-btn:active {
+        transform: translateY(0);
+    }
+    </style>
 </main>
