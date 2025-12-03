@@ -13,6 +13,16 @@ if (!defined('ABSPATH')) {
  * Charger les assets pour la page de paramètres
  */
 function pdf_builder_load_settings_assets($hook) {
+    // AFFICHAGE DIRECT SUR LA PAGE POUR DIAGNOSTIC
+    echo '<div style="background: #ffeaa7; border: 2px solid #d63031; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 12px;">';
+    echo '<strong>🔍 PDF BUILDER DEBUG:</strong><br>';
+    echo 'Hook détecté: <strong>' . $hook . '</strong><br>';
+    echo 'PDF_BUILDER_PLUGIN_URL: <strong>' . (defined('PDF_BUILDER_PLUGIN_URL') ? PDF_BUILDER_PLUGIN_URL : '<span style="color: red;">NON DÉFINI</span>') . '</strong><br>';
+    echo 'PDF_BUILDER_VERSION: <strong>' . (defined('PDF_BUILDER_VERSION') ? PDF_BUILDER_VERSION : '<span style="color: red;">NON DÉFINI</span>') . '</strong><br>';
+    echo 'Page attendue: <strong>toplevel_page_pdf-builder-pro</strong><br>';
+    echo 'Hook correspond: <strong>' . (($hook === 'toplevel_page_pdf-builder-pro') ? '<span style="color: green;">OUI</span>' : '<span style="color: red;">NON</span>') . '</strong>';
+    echo '</div>';
+
     // LOG GÉNÉRAL POUR TOUS LES HOOKS
     error_log('🔍 PDF BUILDER ASSETS: Hook détecté: ' . $hook);
 
