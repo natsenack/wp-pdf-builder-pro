@@ -70,13 +70,9 @@ function pdf_builder_load_settings_assets($hook) {
     $response = wp_remote_get($script_url);
     echo 'Test HTTP: <strong>' . (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200 ? '<span style="color: green;">OK (200)</span>' : '<span style="color: red;">ERREUR</span>') . '</strong><br>';
 
-    wp_enqueue_script(
-        'pdf-builder-settings-tabs',
-        $script_url,
-        array('jquery'),
-        PDF_BUILDER_VERSION . '-' . time(),
-        true
-    );
+    echo '<script>console.log("🔧 PDF BUILDER: Test inline script - si vous voyez ça, les scripts inline marchent");</script>';
+    echo '<script src="' . $script_url . '"></script>';
+    echo '<script>console.log("🔧 PDF BUILDER: Test après chargement du script externe");</script>';
 
     // LOG POUR CONFIRMER L'ENREGISTREMENT DU SCRIPT
     error_log('📜 PDF BUILDER ASSETS: Script settings-tabs.js enregistré pour ' . $hook);
