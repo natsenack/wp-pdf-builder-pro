@@ -465,8 +465,6 @@ class PdfBuilderCore
         $cache_bust = time();
         $version_param = $this->version . '-' . $cache_bust;
         wp_enqueue_script('pdf-builder-react-api-only', $react_script_url, ['react', 'react-dom'], $version_param, true);
-
-        // Les paramètres canvas sont maintenant définis dans settings-canvas-params.php
     }
 
     /**

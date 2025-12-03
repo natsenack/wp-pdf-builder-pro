@@ -246,8 +246,6 @@ class Canvas_Manager
         if (!$current_screen || $current_screen->base !== 'pdf-builder-pro_page_pdf-builder-settings') {
             return;
         }
-
-        // Les paramètres canvas sont maintenant centralisés dans settings-canvas-params.php
     }
 
     /**

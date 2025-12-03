@@ -22,8 +22,8 @@ class PDF_Builder_TestCase extends WP_UnitTestCase {
         wp_set_current_user($admin_user);
 
         // Ensure our plugin functions are loaded
-        if (!function_exists('pdf_builder_register_settings_handler')) {
-            require_once plugin_dir_path(dirname(__DIR__)) . 'plugin/templates/admin/settings-parts/settings-handlers-factory.php';
+        if (!function_exists('pdf_builder_switch_tab')) {
+            require_once plugin_dir_path(dirname(__DIR__)) . 'plugin/templates/admin/settings-parts/settings-main.php';
         }
     }
 

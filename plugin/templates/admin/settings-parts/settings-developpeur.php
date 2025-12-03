@@ -747,6 +747,49 @@ $license_test_key = (isset($settings) && isset($settings['pdf_builder_license_te
 (function() {
     'use strict';
 
+    // Gestion simplifiée du toggle Mode Développeur
+    const developerEnabledToggle = document.getElementById('developer_enabled');
+    const devSections = [
+        'dev-license-section',
+        'dev-debug-section',
+        'dev-logs-section',
+        'dev-optimizations-section',
+        'dev-logs-viewer-section',
+        'dev-tools-section',
+        'dev-shortcuts-section',
+        'dev-todo-section',
+        'dev-notifications-test-section'
+    ];
+
+    // Fonction globale simplifiée pour mettre à jour les sections développeur
+    window.updateDeveloperSections = function() {
+        if (!developerEnabledToggle) return;
+
+        const isEnabled = developerEnabledToggle.checked;
+        devSections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.style.display = isEnabled ? 'block' : 'none';
+            }
+        });
+
+        // Mettre à jour l'indicateur de statut
+        const statusIndicator = document.querySelector('.developer-status-indicator');
+        if (statusIndicator) {
+            statusIndicator.textContent = isEnabled ? 'ACTIF' : 'INACTIF';
+            statusIndicator.style.background = isEnabled ? '#28a745' : '#dc3545';
+            statusIndicator.style.color = 'white';
+        }
+    };
+
+    if (developerEnabledToggle) {
+        // Appliquer l'état initial
+        window.updateDeveloperSections();
+
+        // Écouter les changements du toggle
+        developerEnabledToggle.addEventListener('change', window.updateDeveloperSections);
+    }
+
     // Toggle mot de passe simplifié
     const togglePasswordBtn = document.getElementById('toggle_password');
     const passwordField = document.getElementById('developer_password');

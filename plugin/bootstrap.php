@@ -483,9 +483,6 @@ function pdf_builder_load_core()
     }
 
     // Charger les handlers AJAX pour les paramètres
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'templates/admin/settings-parts/settings-ajax.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'templates/admin/settings-parts/settings-ajax.php';
-    }
 
     // Enregistrer les scripts pour la page de paramètres
     add_action('admin_enqueue_scripts', function() {

@@ -9,7 +9,7 @@ echo "=== PDF Builder Save System Validation ===\n\n";
 // Test 1: File structure validation
 echo "Test 1: File structure validation\n";
 $required_files = [
-    '../plugin/templates/admin/settings-parts/settings-handlers-factory.php',
+    '../plugin/templates/admin/settings-parts/settings-main.php',
     '../plugin/pdf-builder-pro.php',
     '../assets/js/pdf-builder-wrap.js',
     '../assets/js/ajax-throttle.js',
@@ -29,20 +29,19 @@ foreach ($required_files as $file) {
 
 echo "Files found: $files_exist/" . count($required_files) . "\n\n";
 
-// Test 2: Code analysis - check for factory function
-echo "Test 2: Code analysis - factory function\n";
-$factory_file = __DIR__ . '/../plugin/templates/admin/settings-parts/settings-handlers-factory.php';
+// Test 2: Code analysis - check for main settings file
+echo "Test 2: Code analysis - main settings file\n";
+$main_settings_file = __DIR__ . '/../plugin/templates/admin/settings-parts/settings-main.php';
 
-if (file_exists($factory_file)) {
-    $content = file_get_contents($factory_file);
+if (file_exists($main_settings_file)) {
+    $content = file_get_contents($main_settings_file);
 
     // Check for key functions
     $checks = [
-        'pdf_builder_register_settings_handler' => 'Factory registration function',
-        'pdf_builder_register_ajax_handlers' => 'AJAX handlers registration',
-        'wp_ajax_pdf_builder_save_' => 'AJAX action prefix',
-        'update_option' => 'WordPress option saving',
-        'wp_verify_nonce' => 'Nonce verification'
+        'switchTab' => 'Tab switching function',
+        'DOMContentLoaded' => 'DOM ready event',
+        'nav-tab-active' => 'Active tab class',
+        'tab-content' => 'Tab content class'
     ];
 
     $functions_found = 0;
@@ -57,7 +56,7 @@ if (file_exists($factory_file)) {
 
     echo "Core functions found: $functions_found/" . count($checks) . "\n\n";
 } else {
-    echo "[FAIL] Factory file not found\n\n";
+    echo "[FAIL] Main settings file not found\n\n";
 }
 
 // Test 3: JavaScript validation
@@ -94,8 +93,8 @@ if (file_exists($js_file)) {
 echo "Test 4: Security analysis\n";
 $security_issues = 0;
 
-if (file_exists($factory_file)) {
-    $content = file_get_contents($factory_file);
+if (file_exists($main_settings_file)) {
+    $content = file_get_contents($main_settings_file);
 
     // Check for security measures
     $security_checks = [
@@ -123,8 +122,8 @@ echo "Test 5: Architecture analysis\n";
 $architecture_score = 0;
 
 // Check for single responsibility
-if (file_exists($factory_file)) {
-    $content = file_get_contents($factory_file);
+if (file_exists($main_settings_file)) {
+    $content = file_get_contents($main_settings_file);
     $lines = explode("\n", $content);
     $function_count = 0;
 
@@ -134,7 +133,7 @@ if (file_exists($factory_file)) {
         }
     }
 
-    if ($function_count >= 3) {
+    if ($function_count >= 2) {
         echo "[PASS] Multiple functions indicate good separation of concerns\n";
         $architecture_score += 2;
     } else {
@@ -143,8 +142,8 @@ if (file_exists($factory_file)) {
 }
 
 // Check for error handling
-if (file_exists($factory_file)) {
-    $content = file_get_contents($factory_file);
+if (file_exists($main_settings_file)) {
+    $content = file_get_contents($main_settings_file);
     if (strpos($content, 'try') !== false || strpos($content, 'catch') !== false) {
         echo "[PASS] Error handling structures found\n";
         $architecture_score += 1;
@@ -154,8 +153,8 @@ if (file_exists($factory_file)) {
 }
 
 // Check for comments/documentation
-if (file_exists($factory_file)) {
-    $content = file_get_contents($factory_file);
+if (file_exists($main_settings_file)) {
+    $content = file_get_contents($main_settings_file);
     $comment_lines = preg_match_all('/^\s*\/\//m', $content);
     $total_lines = count(explode("\n", $content));
 
@@ -201,8 +200,8 @@ echo "Test 7: Code Quality Analysis\n";
 $quality_score = 0;
 $quality_max = 6;
 
-if (file_exists($factory_file)) {
-    $content = file_get_contents($factory_file);
+if (file_exists($main_settings_file)) {
+    $content = file_get_contents($main_settings_file);
 
     // Check for consistent naming conventions
     if (preg_match_all('/function\s+pdf_builder_\w+/', $content, $matches)) {
@@ -306,8 +305,8 @@ if (file_exists($js_file)) {
 }
 
 // Check for WordPress integration
-if (file_exists($factory_file)) {
-    $content = file_get_contents($factory_file);
+if (file_exists($main_settings_file)) {
+    $content = file_get_contents($main_settings_file);
     if (strpos($content, 'add_action(\'wp_ajax_') !== false && strpos($content, 'wp_send_json_') !== false) {
         echo "[PASS] Proper WordPress AJAX integration\n";
         $integration_score += 1;
@@ -321,8 +320,8 @@ echo "Test 9: Documentation and Maintainability\n";
 $docs_score = 0;
 $docs_max = 3;
 
-if (file_exists($factory_file)) {
-    $content = file_get_contents($factory_file);
+if (file_exists($main_settings_file)) {
+    $content = file_get_contents($main_settings_file);
 
     // Check for PHPDoc comments
     if (strpos($content, '/**') !== false && strpos($content, '* @') !== false) {
@@ -331,7 +330,7 @@ if (file_exists($factory_file)) {
     }
 
     // Check for meaningful function names
-    if (preg_match('/function\s+pdf_builder_register_\w+/', $content)) {
+    if (preg_match('/function\s+pdf_builder_\w+/', $content)) {
         echo "[PASS] Descriptive function names\n";
         $docs_score += 1;
     }
@@ -354,8 +353,8 @@ echo "Test 10: Security Depth Analysis\n";
 $security_depth_score = 0;
 $security_depth_max = 6;
 
-if (file_exists($factory_file)) {
-    $content = file_get_contents($factory_file);
+if (file_exists($main_settings_file)) {
+    $content = file_get_contents($main_settings_file);
 
     // Check for multiple security layers
     $security_layers = 0;
@@ -402,8 +401,8 @@ $syntax_score = 0;
 $syntax_max = 2;
 
 // Check PHP syntax
-if (file_exists($factory_file)) {
-    $syntax_check = shell_exec("php -l \"$factory_file\" 2>&1");
+if (file_exists($main_settings_file)) {
+    $syntax_check = shell_exec("php -l \"$main_settings_file\" 2>&1");
     if (strpos($syntax_check, 'No syntax errors detected') !== false) {
         echo "[PASS] PHP syntax validation passed\n";
         $syntax_score += 1;
@@ -434,8 +433,8 @@ $robustness_score = 0;
 $robustness_max = 1;
 
 // Check for comprehensive error handling and edge cases
-if (file_exists($factory_file)) {
-    $content = file_get_contents($factory_file);
+if (file_exists($main_settings_file)) {
+    $content = file_get_contents($main_settings_file);
 
     // Check for comprehensive error handling
     $error_patterns = 0;

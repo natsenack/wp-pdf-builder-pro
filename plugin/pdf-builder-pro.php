@@ -194,9 +194,6 @@ if (function_exists('add_action')) {
  * Enregistrer les handlers AJAX
  */
 function pdf_builder_register_ajax_handlers() {
-    // Charger le factory des handlers AJAX des paramètres
-    require_once plugin_dir_path(__FILE__) . 'templates/admin/settings-parts/settings-handlers-factory.php';
-
     // Initialiser tous les handlers AJAX des paramètres
     pdf_builder_initialize_all_settings_handlers();
 
@@ -207,8 +204,7 @@ function pdf_builder_register_ajax_handlers() {
     add_action('wp_ajax_nopriv_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
     add_action('wp_ajax_wp_pdf_preview_image', 'pdf_builder_handle_preview_ajax');
 
-    // REMOVED: Duplicate settings handlers - now handled by the factory system
-    // The factory system (settings-handlers-factory.php) provides unified, well-factored handlers
+    // REMOVED: Duplicate settings handlers - now handled by unified AJAX system
 
     // Handlers de cache - maintenant gérés par le système de cache intelligent
     add_action('wp_ajax_pdf_builder_get_cache_status', 'pdf_builder_get_cache_status_ajax');
@@ -616,7 +612,8 @@ function pdf_builder_init()
     require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Unified_Ajax_Handler.php';
 
     // Charger les handlers AJAX des paramètres
-    require_once plugin_dir_path(__FILE__) . 'templates/admin/settings-parts/settings-ajax.php';
+    require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Nonce_Manager.php';
+    require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Unified_Ajax_Handler.php';
 
     // Initialiser le système de nonce unifié
     $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();

@@ -252,7 +252,7 @@ class PDF_Builder_Loader {
      * Charge le gestionnaire de paramètres
      */
     private function load_settings_manager() {
-        $this->require_file('templates/admin/settings-parts/settings-ajax.php');
+        // Settings handlers are now managed by unified AJAX system
     }
 
     /**
