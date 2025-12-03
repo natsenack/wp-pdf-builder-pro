@@ -1,0 +1,196 @@
+/**
+ * PDF Builder Pro - Styles pour les onglets de paramètres
+ */
+
+/* Styles pour les onglets WordPress */
+.nav-tab-wrapper {
+    border-bottom: 1px solid #c3c4c7;
+    margin-bottom: 20px;
+    padding-bottom: 0;
+}
+
+.nav-tab {
+    border: 1px solid #c3c4c7;
+    border-bottom: none;
+    background: #f1f1f1;
+    color: #50575e;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.71428571;
+    margin-left: 0;
+    margin-right: 4px;
+    padding: 8px 12px;
+    text-decoration: none;
+    transition: all 0.1s ease-in-out;
+    vertical-align: top;
+}
+
+.nav-tab:hover {
+    background: #e9e9e9;
+    color: #1d2327;
+}
+
+.nav-tab.nav-tab-active,
+.nav-tab.nav-tab-active:hover {
+    background: #fff;
+    border-bottom: 1px solid #fff;
+    color: #1d2327;
+    margin-bottom: -1px;
+}
+
+.nav-tab:focus {
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+}
+
+/* Styles pour le contenu des onglets */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Styles pour les sections dans les onglets */
+.tab-section {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.tab-section h3 {
+    border-bottom: 1px solid #dcdcde;
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+}
+
+.tab-section h4 {
+    margin: 20px 0 10px 0;
+}
+
+/* Styles pour les formulaires dans les onglets */
+.form-table {
+    margin-bottom: 20px;
+}
+
+.form-table th {
+    font-weight: 600;
+    padding: 10px 10px 10px 0;
+    text-align: left;
+    vertical-align: top;
+    width: 200px;
+}
+
+.form-table td {
+    padding: 10px 0;
+}
+
+.form-table input[type="text"],
+.form-table input[type="password"],
+.form-table input[type="email"],
+.form-table input[type="number"],
+.form-table select,
+.form-table textarea {
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Styles pour les boutons */
+.button-primary {
+    background: #2271b1;
+    border: 1px solid #2271b1;
+    border-radius: 2px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 2.15384615;
+    margin: 0;
+    padding: 0 12px 2px;
+    text-decoration: none;
+    text-shadow: none;
+    vertical-align: top;
+}
+
+.button-primary:hover,
+.button-primary:focus {
+    background: #135e96;
+    border-color: #135e96;
+    color: #fff;
+}
+
+.button-secondary {
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+    border-radius: 2px;
+    color: #2271b1;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 2.15384615;
+    margin: 0 0 0 10px;
+    padding: 0 12px 2px;
+    text-decoration: none;
+    vertical-align: top;
+}
+
+.button-secondary:hover,
+.button-secondary:focus {
+    background: #f0f0f1;
+    border-color: #8c8f94;
+    color: #135e96;
+}
+
+/* Styles pour les messages */
+.notice {
+    background: #fff;
+    border-left: 4px solid #72aee6;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    margin: 20px 0;
+    padding: 12px;
+}
+
+.notice-success {
+    border-left-color: #00a32a;
+}
+
+.notice-error {
+    border-left-color: #d63638;
+}
+
+.notice-warning {
+    border-left-color: #dba617;
+}
+
+.notice-info {
+    border-left-color: #72aee6;
+}
+
+/* Styles responsives */
+@media screen and (max-width: 782px) {
+    .nav-tab {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+
+    .form-table th {
+        width: 100%;
+        display: block;
+        padding-bottom: 5px;
+    }
+
+    .form-table td {
+        width: 100%;
+        display: block;
+        padding-top: 0;
+    }
+}

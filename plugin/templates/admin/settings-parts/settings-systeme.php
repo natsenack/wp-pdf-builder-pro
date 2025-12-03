@@ -1,7 +1,5 @@
 <?php // Systeme tab content - Updated: 2025-11-18 20:20:00
 
-?>
-<?php
 /**
  * Safe wrapper for get_option that works even when WordPress is not fully loaded
  */
@@ -35,6 +33,75 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
     if ($echo) echo $result;
     return $result;
 }
+
+// Préparer toutes les variables nécessaires
+$cache_enabled = pdf_builder_safe_get_option('pdf_builder_cache_enabled', false);
+$cache_compression = pdf_builder_safe_get_option('pdf_builder_cache_compression', true);
+$cache_auto_cleanup = pdf_builder_safe_get_option('pdf_builder_cache_auto_cleanup', true);
+$cache_max_size = intval(pdf_builder_safe_get_option('pdf_builder_cache_max_size', 100));
+$cache_ttl = intval(pdf_builder_safe_get_option('pdf_builder_cache_ttl', 3600));
+$performance_auto_optimization = pdf_builder_safe_get_option('pdf_builder_performance_auto_optimization', '0');
+$auto_maintenance = pdf_builder_safe_get_option('pdf_builder_auto_maintenance', '0');
+$last_maintenance = pdf_builder_safe_get_option('pdf_builder_last_maintenance', 'Jamais');
+$next_maintenance = pdf_builder_safe_get_option('pdf_builder_next_maintenance', 'Non planifiée');
+$auto_backup = pdf_builder_safe_get_option('pdf_builder_auto_backup', '0');
+$auto_backup_frequency = pdf_builder_safe_get_option('pdf_builder_auto_backup_frequency', 'daily');
+$backup_retention = pdf_builder_safe_get_option('pdf_builder_backup_retention', 30);
+$last_backup = pdf_builder_safe_get_option('pdf_builder_last_backup', 'Jamais');
+$cache_last_cleanup = pdf_builder_safe_get_option('pdf_builder_cache_last_cleanup', 'Jamais');
+
+// Calculer les métriques de cache
+$cache_file_count = 0;
+$cache_dirs = [
+    (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '') . '/cache/wp-pdf-builder-previews/',
+    (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-cache'
+];
+
+foreach ($cache_dirs as $dir) {
+    if (is_dir($dir) && is_readable($dir)) {
+        try {
+            $files = glob($dir . '/*');
+            if ($files) {
+                $cache_file_count += count($files);
+            }
+        } catch (Exception $e) {
+            // Ignorer les erreurs
+        }
+    }
+}
+
+// Calculer les transients
+$transient_count = 0;
+if (isset($GLOBALS['wpdb']) && function_exists('get_option')) {
+    global $wpdb;
+    try {
+        $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+    } catch (Exception $e) {
+        $transient_count = 0;
+    }
+}
+
+// Calculer le nombre de sauvegardes
+$backup_count = 0;
+$backup_dir = (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-backups';
+if (is_dir($backup_dir)) {
+    $files = glob($backup_dir . '/*.json');
+    $backup_count = count($files);
+}
+
+// Formater les dates
+if ($last_maintenance !== 'Jamais') {
+    $last_maintenance = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_maintenance)) : $last_maintenance) . ' ago';
+}
+if ($next_maintenance !== 'Non planifiée') {
+    $next_maintenance = (function_exists('date_i18n') ? date_i18n('d/m/Y H:i', strtotime($next_maintenance)) : date('d/m/Y H:i', strtotime($next_maintenance)));
+}
+if ($last_backup !== 'Jamais') {
+    $last_backup = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_backup)) : $last_backup) . ' ago';
+}
+if ($cache_last_cleanup !== 'Jamais') {
+    $cache_last_cleanup = (function_exists('human_time_diff') ? human_time_diff(strtotime($cache_last_cleanup)) : $cache_last_cleanup) . ' ago';
+}
 ?>
             <h2>⚙️ Système - Performance, Maintenance & Sauvegarde</h2>
 
@@ -44,7 +111,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                         <h3>
                             <span>
                                 📋 Cache & Performance - ⚠️ En attente d'implémentation
-                                <span class="cache-performance-status"><?php echo pdf_builder_safe_get_option('pdf_builder_cache_enabled', false) ? 'ACTIF' : 'INACTIF'; ?></span>
+                                <span class="cache-performance-status"><?php echo $cache_enabled ? 'ACTIF' : 'INACTIF'; ?></span>
                             </span>
                         </h3>
                     </header>
@@ -55,7 +122,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                 <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_cache_enabled', false)); ?>>
+                                        <input type="checkbox" id="general_cache_enabled" name="pdf_builder_cache_enabled" value="1" <?php pdf_builder_safe_checked($cache_enabled); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Améliore les performances en mettant en cache les données</p>
@@ -65,7 +132,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                 <th scope="row"><label for="cache_compression">Compression du cache</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_cache_compression', true)); ?>>
+                                        <input type="checkbox" id="cache_compression" name="cache_compression" value="1" <?php pdf_builder_safe_checked($cache_compression); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
@@ -75,7 +142,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                 <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_cache_auto_cleanup', true)); ?>>
+                                        <input type="checkbox" id="cache_auto_cleanup" name="cache_auto_cleanup" value="1" <?php pdf_builder_safe_checked($cache_auto_cleanup); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
@@ -84,14 +151,14 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                             <tr>
                                 <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
                                 <td>
-                                    <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo intval(pdf_builder_safe_get_option('pdf_builder_cache_max_size', 100)); ?>" min="10" max="1000" step="10" />
+                                    <input type="number" id="cache_max_size" name="cache_max_size" value="<?php echo $cache_max_size; ?>" min="10" max="1000" step="10" />
                                     <p class="description">Taille maximale du dossier cache en mégaoctets</p>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
                                 <td>
-                                    <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo intval(pdf_builder_safe_get_option('pdf_builder_cache_ttl', 3600)); ?>" min="0" max="86400" />
+                                    <input type="number" id="cache_ttl" name="cache_ttl" value="<?php echo $cache_ttl; ?>" min="0" max="86400" />
                                     <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
                                 </td>
                             </tr>
@@ -99,7 +166,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                 <th scope="row"><label for="performance_auto_optimization">Optimisation automatique des performances</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="performance_auto_optimization" name="performance_auto_optimization" value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_performance_auto_optimization', '0'), '1'); ?>>
+                                        <input type="checkbox" id="performance_auto_optimization" name="performance_auto_optimization" value="1" <?php pdf_builder_safe_checked($performance_auto_optimization, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Optimisation hebdomadaire automatique de la base de données et des ressources système</p>
@@ -135,71 +202,28 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                             <div class="metric-grid">
                                 <div class="cache-metric-card" data-metric="size">
                                     <div class="metric-value">
-                                        <?php
-                                        $cache_size = 0;
-                                        $cache_dirs = [
-                                            (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '') . '/cache/wp-pdf-builder-previews/',
-                                            (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-cache'
-                                        ];
-
-                                        // Version simplifiée : compter juste les fichiers
-                                        $cache_file_count = 0;
-                                        foreach ($cache_dirs as $dir) {
-                                            if (is_dir($dir) && is_readable($dir)) {
-                                                try {
-                                                    $files = glob($dir . '/*');
-                                                    if ($files) {
-                                                        $cache_file_count += count($files);
-                                                    }
-                                                } catch (Exception $e) {
-                                                    // Ignorer les erreurs
-                                                }
-                                            }
-                                        }
-
-                                        // Afficher le nombre de fichiers
-                                        echo '<span id="cache-size-display">';
-                                        echo $cache_file_count . ' fichiers';
-                                        echo '</span>';
-                                        ?>
+                                        <span id="cache-size-display"><?php echo $cache_file_count; ?> fichiers</span>
                                     </div>
                                     <div class="metric-label">Taille du cache</div>
                                     <div class="metric-hint">Cliquez pour détails</div>
                                 </div>
                                 <div class="cache-metric-card" data-metric="transients">
                                     <div class="metric-value">
-                                        <?php
-                                        $transient_count = 0;
-                                        if (isset($GLOBALS['wpdb']) && function_exists('get_option')) {
-                                            global $wpdb;
-                                            try {
-                                                $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-                                            } catch (Exception $e) {
-                                                $transient_count = 0;
-                                            }
-                                        }
-                                        echo intval($transient_count);
-                                        ?>
+                                        <?php echo intval($transient_count); ?>
                                     </div>
                                     <div class="metric-label">Transients actifs</div>
                                     <div class="metric-hint">Cliquez pour détails</div>
                                 </div>
                                 <div class="cache-metric-card systeme-cache-status" data-metric="status">
                                     <div class="cache-enabled-indicator metric-value">
-                                    <?php echo pdf_builder_safe_get_option('pdf_builder_cache_enabled', false) ? 'Cache activé' : 'Cache désactivé'; ?>
+                                    <?php echo $cache_enabled ? 'Cache activé' : 'Cache désactivé'; ?>
                                     </div>
                                     <div class="metric-label">État du cache</div>
                                     <div class="metric-hint">Cliquez pour configurer</div>
                                 </div>
                                 <div class="cache-metric-card" data-metric="cleanup">
                                     <div class="metric-value">
-                                        <?php
-                                        $last_cleanup = pdf_builder_safe_get_option('pdf_builder_cache_last_cleanup', 'Jamais');
-                                        if ($last_cleanup !== 'Jamais') {
-                                            $last_cleanup = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_cleanup)) : $last_cleanup) . ' ago';
-                                        }
-                                        echo $last_cleanup;
-                                        ?>
+                                        <?php echo $cache_last_cleanup; ?>
                                     </div>
                                     <div class="metric-label">Dernier nettoyage</div>
                                     <div class="metric-hint">Cliquez pour nettoyer</div>
@@ -213,7 +237,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                     <h3>
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             🔧 Maintenance
-                            <span class="maintenance-status"><?php echo pdf_builder_safe_get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
+                            <span class="maintenance-status"><?php echo $auto_maintenance === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
                         </span>
                     </h3>
 
@@ -236,7 +260,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                 <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_auto_maintenance', '0'), '1'); ?>>
+                                        <input type="checkbox" id="systeme_auto_maintenance" name="systeme_auto_maintenance" value="1" <?php pdf_builder_safe_checked($auto_maintenance, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Active la maintenance automatique hebdomadaire</p>
@@ -266,13 +290,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                         </div>
                                     </div>
                                     <div class="metric-value">
-                                        <?php
-                                        $last_maintenance = pdf_builder_safe_get_option('pdf_builder_last_maintenance', 'Jamais');
-                                        if ($last_maintenance !== 'Jamais') {
-                                            $last_maintenance = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_maintenance)) : $last_maintenance) . ' ago';
-                                        }
-                                        echo $last_maintenance;
-                                        ?>
+                                        <?php echo $last_maintenance; ?>
                                     </div>
                                     <div class="metric-label">Dernière exécution</div>
                                     <div class="metric-action">
@@ -289,13 +307,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                         </div>
                                     </div>
                                     <div class="metric-value">
-                                        <?php
-                                        $next_maintenance = pdf_builder_safe_get_option('pdf_builder_next_maintenance', 'Non planifiée');
-                                        if ($next_maintenance !== 'Non planifiée') {
-                                            $next_maintenance = (function_exists('date_i18n') ? date_i18n('d/m/Y H:i', strtotime($next_maintenance)) : date('d/m/Y H:i', strtotime($next_maintenance)));
-                                        }
-                                        echo $next_maintenance;
-                                        ?>
+                                        <?php echo $next_maintenance; ?>
                                     </div>
                                     <div class="metric-label">Prochaine exécution</div>
                                     <div class="metric-action">
@@ -307,15 +319,15 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                 <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="status" data-action="toggle-maintenance" title="Activer/désactiver la maintenance automatique">
                                     <div class="metric-card-header">
                                         <div class="metric-icon">
-                                            <?php echo pdf_builder_safe_get_option('pdf_builder_auto_maintenance', '0') === '1' ? '✅' : '❌'; ?>
+                                            <?php echo $auto_maintenance === '1' ? '✅' : '❌'; ?>
                                         </div>
-                                        <div class="metric-status" data-status="<?php echo pdf_builder_safe_get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'active' : 'inactive'; ?>">
+                                        <div class="metric-status" data-status="<?php echo $auto_maintenance === '1' ? 'active' : 'inactive'; ?>">
                                             <span class="status-indicator"></span>
                                         </div>
                                     </div>
                                     <div class="metric-value">
-                                        <span class="status-badge <?php echo pdf_builder_safe_get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'status-active' : 'status-inactive'; ?>">
-                                            <?php echo pdf_builder_safe_get_option('pdf_builder_auto_maintenance', '0') === '1' ? 'Activée' : 'Désactivée'; ?>
+                                        <span class="status-badge <?php echo $auto_maintenance === '1' ? 'status-active' : 'status-inactive'; ?>">
+                                            <?php echo $auto_maintenance === '1' ? 'Activée' : 'Désactivée'; ?>
                                         </span>
                                     </div>
                                     <div class="metric-label">Maintenance auto</div>
@@ -351,7 +363,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                         <h3>
                             <span>
                                 💾 Gestion des Sauvegardes
-                                <span class="backup-status"><?php echo pdf_builder_safe_get_option('pdf_builder_auto_backup', '0') === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
+                                <span class="backup-status"><?php echo $auto_backup === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
                             </span>
                         </h3>
                     </header>
@@ -390,7 +402,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                 </th>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" id="systeme_auto_backup" name="systeme_auto_backup" value="1" <?php pdf_builder_safe_checked(pdf_builder_safe_get_option('pdf_builder_auto_backup', '0'), '1'); ?>>
+                                        <input type="checkbox" id="systeme_auto_backup" name="systeme_auto_backup" value="1" <?php pdf_builder_safe_checked($auto_backup, '1'); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <span>Active la création automatique de sauvegardes</span>
@@ -401,22 +413,13 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                     <label for="systeme_auto_backup_frequency">Fréquence des sauvegardes</label>
                                 </th>
                                 <td>
-                                    <?php
-                                    // S'assurer que l'option existe avec une valeur par défaut
-                                    $stored_value = pdf_builder_safe_get_option('pdf_builder_auto_backup_frequency');
-                                    if (empty($stored_value)) {
-                                        update_option('pdf_builder_auto_backup_frequency', 'daily');
-                                        $stored_value = 'daily';
-                                    }
-                                    $current_frequency = $stored_value;
-                                    ?>
-                                    <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" <?php echo (pdf_builder_safe_get_option('pdf_builder_auto_backup', '0') === '0') ? 'disabled' : ''; ?>>
-                                        <option value="daily" <?php pdf_builder_safe_selected($current_frequency, 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
-                                        <option value="weekly" <?php pdf_builder_safe_selected($current_frequency, 'weekly'); ?>>📆 Hebdomadaire (tous les dimanches)</option>
-                                        <option value="monthly" <?php pdf_builder_safe_selected($current_frequency, 'monthly'); ?>>📊 Mensuelle (1er du mois)</option>
+                                    <select id="systeme_auto_backup_frequency" name="systeme_auto_backup_frequency" <?php echo ($auto_backup === '0') ? 'disabled' : ''; ?>>
+                                        <option value="daily" <?php pdf_builder_safe_selected($auto_backup_frequency, 'daily'); ?>>📅 Quotidienne (tous les jours)</option>
+                                        <option value="weekly" <?php pdf_builder_safe_selected($auto_backup_frequency, 'weekly'); ?>>📆 Hebdomadaire (tous les dimanches)</option>
+                                        <option value="monthly" <?php pdf_builder_safe_selected($auto_backup_frequency, 'monthly'); ?>>📊 Mensuelle (1er du mois)</option>
                                     </select>
                                     <!-- Champ hidden pour garantir que la valeur est toujours soumise, même si le select est disabled -->
-                                    <input type="hidden" name="systeme_auto_backup_frequency_hidden" value="<?php echo esc_attr($current_frequency); ?>" id="systeme_auto_backup_frequency_hidden">
+                                    <input type="hidden" name="systeme_auto_backup_frequency_hidden" value="<?php echo esc_attr($auto_backup_frequency); ?>" id="systeme_auto_backup_frequency_hidden">
                                     <p class="description">Détermine la fréquence de création automatique des sauvegardes</p>
                                 </td>
                             </tr>
@@ -426,7 +429,7 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                                 </th>
                                 <td>
                                     <div class="backup-retention-input">
-                                        <input type="number" id="systeme_backup_retention" name="systeme_backup_retention" value="<?php echo esc_attr(pdf_builder_safe_get_option('pdf_builder_backup_retention', 30)); ?>" min="1" max="365">
+                                        <input type="number" id="systeme_backup_retention" name="systeme_backup_retention" value="<?php echo esc_attr($backup_retention); ?>" min="1" max="365">
                                         <span>jours</span>
                                     </div>
                                     <p class="description">Nombre de jours avant suppression automatique des anciennes sauvegardes (1-365 jours)</p>
@@ -442,42 +445,28 @@ function pdf_builder_safe_selected($selected, $current = true, $echo = true) {
                             <div class="metric-grid">
                                 <div class="backup-metric-card" data-metric="last-backup">
                                     <div class="metric-value">
-                                        <?php
-                                        $last_backup = pdf_builder_safe_get_option('pdf_builder_last_backup', 'Jamais');
-                                        if ($last_backup !== 'Jamais') {
-                                            $last_backup = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_backup)) : $last_backup) . ' ago';
-                                        }
-                                        echo $last_backup;
-                                        ?>
+                                        <?php echo $last_backup; ?>
                                     </div>
                                     <div class="metric-label">Dernière sauvegarde</div>
                                     <div class="metric-hint">Cliquez pour créer</div>
                                 </div>
                                 <div class="backup-metric-card" data-metric="total-backups">
                                     <div class="metric-value">
-                                        <?php
-                                        $backup_dir = (function_exists('wp_upload_dir') ? wp_upload_dir()['basedir'] : '') . '/pdf-builder-backups';
-                                        $backup_count = 0;
-                                        if (is_dir($backup_dir)) {
-                                            $files = glob($backup_dir . '/*.json');
-                                            $backup_count = count($files);
-                                        }
-                                        echo $backup_count;
-                                        ?>
+                                        <?php echo $backup_count; ?>
                                     </div>
                                     <div class="metric-label">Total sauvegardes</div>
                                     <div class="metric-hint">Cliquez pour lister</div>
                                 </div>
                                 <div class="backup-metric-card" data-metric="auto-status">
                                     <div class="metric-value">
-                                        <?php echo pdf_builder_safe_get_option('pdf_builder_auto_backup', '0') === '1' ? 'Activée' : 'Désactivée'; ?>
+                                        <?php echo $auto_backup === '1' ? 'Activée' : 'Désactivée'; ?>
                                     </div>
                                     <div class="metric-label">Sauvegarde auto</div>
                                     <div class="metric-hint">Cliquez pour configurer</div>
                                 </div>
                                 <div class="backup-metric-card" data-metric="retention">
                                     <div class="metric-value">
-                                        <?php echo pdf_builder_safe_get_option('pdf_builder_backup_retention', 30); ?>j
+                                        <?php echo $backup_retention; ?>j
                                     </div>
                                     <div class="metric-label">Rétention</div>
                                     <div class="metric-hint">Cliquez pour modifier</div>

@@ -8,7 +8,7 @@ $nonce = wp_create_nonce('pdf_builder_nonce');
 <div class="wrap">
 <h1>PDF Builder Pro Settings</h1>
 
-<nav class="nav-tab-wrapper wp-clearfix">
+<nav class="nav-tab-wrapper wp-clearfix" id="pdf-builder-tabs">
 <a href="#" class="nav-tab nav-tab-active" data-tab="general">General</a>
 <a href="#" class="nav-tab" data-tab="licence">License</a>
 <a href="#" class="nav-tab" data-tab="systeme">System</a>
@@ -20,22 +20,19 @@ $nonce = wp_create_nonce('pdf_builder_nonce');
 <a href="#" class="nav-tab" data-tab="developpeur">Developer</a>
 </nav>
 
-<div id="tab-general" class="tab-pane active"><h2>General</h2><p>Content</p></div>
-<div id="tab-licence" class="tab-pane"><h2>License</h2><p>Content</p></div>
-<div id="tab-systeme" class="tab-pane"><h2>System</h2><p>Content</p></div>
-<div id="tab-acces" class="tab-pane"><h2>Access</h2><p>Content</p></div>
-<div id="tab-securite" class="tab-pane"><h2>Security</h2><p>Content</p></div>
-<div id="tab-pdf" class="tab-pane"><h2>PDF</h2><p>Content</p></div>
-<div id="tab-contenu" class="tab-pane"><h2>Content</h2><p>Content</p></div>
-<div id="tab-templates" class="tab-pane"><h2>Templates</h2><p>Content</p></div>
-<div id="tab-developpeur" class="tab-pane"><h2>Developer</h2><p>Content</p></div>
+<div id="pdf-builder-tab-content">
+<div id="general" class="tab-content active"><h2>General</h2><p>Content</p></div>
+<div id="licence" class="tab-content"><h2>License</h2><p>Content</p></div>
+<div id="systeme" class="tab-content"><h2>System</h2><p>Content</p></div>
+<div id="acces" class="tab-content"><h2>Access</h2><p>Content</p></div>
+<div id="securite" class="tab-content"><h2>Security</h2><p>Content</p></div>
+<div id="pdf" class="tab-content"><h2>PDF</h2><p>Content</p></div>
+<div id="contenu" class="tab-content"><h2>Content</h2><p>Content</p></div>
+<div id="templates" class="tab-content"><h2>Templates</h2><p>Content</p></div>
+<div id="developpeur" class="tab-content"><h2>Developer</h2><p>Content</p></div>
+</div>
 
 <p class="submit"><button type="submit" class="button button-primary">Save Settings</button></p>
 </div>
-
-<style>
-.tab-pane { display: none; padding: 20px; }
-.tab-pane.active { display: block; }
-</style>
 
 <!-- JavaScript moved to settings-parts/settings-main.php to avoid conflicts -->
