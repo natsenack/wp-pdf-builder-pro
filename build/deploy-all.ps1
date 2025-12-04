@@ -799,7 +799,7 @@ switch ($Mode) {
             ".git",                      # Git files
             ".vscode",                   # VS Code config
             "*.log",                     # Log files
-            "temp",                      # Temp files
+            "\temp",                     # Temp folder (exact match)
             "*.tmp",                     # Temp files
             "build/backups",             # Backups locaux
             "build/logs",                # Logs locaux
