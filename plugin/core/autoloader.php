@@ -45,8 +45,12 @@ class PdfBuilderAutoloader
      */
     public static function autoload($class)
     {
+        // Debug: log all autoload calls
+        error_log("Autoloader called for class: $class");
+
         // Skip Dompdf classes to avoid conflicts
         if (strpos($class, 'Dompdf') !== false) {
+            error_log("Autoloader skipping Dompdf class: $class");
             return false;
         }
 
