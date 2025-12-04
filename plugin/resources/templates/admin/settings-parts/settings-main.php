@@ -95,7 +95,7 @@ $settings = get_option('pdf_builder_settings', array());
 <style>
 .pdf-builder-save-floating {
     position: fixed;
-    bottom: 60px;
+    bottom: 20px;
     right: 20px;
     z-index: 9999;
     display: flex;
@@ -113,8 +113,8 @@ $settings = get_option('pdf_builder_settings', array());
     border-radius: 25px !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
     transition: all 0.3s ease !important;
-    min-width: 120px;
-    max-width: 140px;
+    min-width: 160px;
+    max-width: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -172,13 +172,13 @@ $settings = get_option('pdf_builder_settings', array());
 /* Responsive */
 @media (max-width: 782px) {
     .pdf-builder-save-floating {
-        bottom: 50px;
+        bottom: 10px;
         right: 10px;
     }
 
     .pdf-builder-save-btn {
         font-size: 13px !important;
-        min-width: 120px;
+        min-width: 160px;
     }
 }
 </style>
