@@ -134,6 +134,7 @@ $settings = get_option('pdf_builder_settings', array());
     width: 16px !important;
     height: 16px !important;
     flex-shrink: 0;
+    margin-right: 4px;
 }
 
 .pdf-builder-save-btn:hover {
@@ -149,22 +150,6 @@ $settings = get_option('pdf_builder_settings', array());
     opacity: 0.6;
     cursor: not-allowed;
     transform: none !important;
-}
-
-.pdf-builder-save-btn .dashicons {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-}
-}
-
-.pdf-builder-save-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
-}
-
-.pdf-builder-save-btn:active {
-    transform: translateY(0);
 }
 
 .pdf-builder-save-btn.saving {
