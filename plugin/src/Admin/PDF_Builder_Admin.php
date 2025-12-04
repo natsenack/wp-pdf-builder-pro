@@ -630,12 +630,12 @@ class PdfBuilderAdmin
             border: 4px solid #f3f3f3 !important;
             border-top: 4px solid #007cba !important;
             border-radius: 50% !important;
-            animation: pdf-spinner 1s linear infinite !important;
+            animation: pdf-spinner-<?php echo time(); ?> 1s linear infinite !important;
             float: none !important;
             margin: 0 !important;
         }
 
-        @keyframes pdf-spinner {
+        @keyframes pdf-spinner-<?php echo time(); ?> {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
