@@ -78,32 +78,37 @@ class PdfBuilderPreviewGenerator
      */
     private function initDompdf()
     {
-        // Charger Dompdf de manière isolée pour éviter les conflits avec d'autres plugins
-        $vendor_dir = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/';
+        // Utiliser l'autoload isolé pour éviter les conflits avec autres plugins
+        $isolated_autoloader = \PDF_Builder\pdf_builder_get_isolated_autoloader();
 
-        // Liste des classes Dompdf nécessaires, dans l'ordre de dépendance
+        // Classes nécessaires pour Dompdf (dans l'ordre de dépendance)
         $required_classes = array(
-            'Dompdf\\Cpdf',
-            'Dompdf\\Adapter\\CPDF',
+            'Dompdf\\Options',
+            'Dompdf\\Helpers',
+            'Dompdf\\Css\\Color',
+            'Dompdf\\Css\\Style',
             'Dompdf\\Css\\Stylesheet',
-            'Dompdf\\Css\\AttributeTranslator',
-            'Dompdf\\FrameDecorator\\AbstractFrameDecorator',
-            'Dompdf\\FrameReflower\\AbstractFrameReflower',
-            'Dompdf\\Renderer\\AbstractRenderer',
+            'Dompdf\\Adapter\\CPDF',
+            'Dompdf\\Canvas',
+            'Dompdf\\Frame',
+            'Dompdf\\Frame\\FrameTree',
+            'Dompdf\\FontMetrics',
             'Dompdf\\Dompdf'
         );
 
-        // Charger les classes une par une si elles n'existent pas déjà
+        // Charger les classes nécessaires une par une
         foreach ($required_classes as $class_name) {
+            if (!$isolated_autoloader->canLoadClass($class_name) && !class_exists($class_name)) {
+                // Classe pas dans notre autoload isolé et pas déjà chargée
+                continue;
+            }
+
             if (!class_exists($class_name)) {
-                $class_file = $this->getDompdfClassFile($class_name, $vendor_dir);
-                if ($class_file && file_exists($class_file)) {
-                    require_once $class_file;
-                }
+                $isolated_autoloader->loadClassManually($class_name);
             }
         }
 
-        // Vérifier que Dompdf est maintenant disponible
+        // Vérifier que Dompdf est disponible
         if (!class_exists('Dompdf\\Dompdf')) {
             throw new Exception('Impossible de charger Dompdf. Vérifiez que les fichiers vendor sont présents.');
         }
@@ -114,37 +119,9 @@ class PdfBuilderPreviewGenerator
 
         $this->dompdf = new Dompdf\Dompdf();
         $this->dompdf->set_option('isRemoteEnabled', true);
-        $this->dompdf->set_option('isHtml5ParserEnabled', true);
+        $this->dompdf->set_option('isHtml5ParserEnabled', false); // Désactiver pour éviter les conflits HTML5
         $this->dompdf->set_option('defaultFont', 'Arial');
         $this->dompdf->setPaper($pdf_page_size, $pdf_orientation);
-    }
-
-    /**
-     * Obtient le chemin du fichier pour une classe Dompdf
-     */
-    private function getDompdfClassFile($class_name, $vendor_dir)
-    {
-        // Convertir le namespace en chemin de fichier
-        $relative_path = str_replace('\\', '/', $class_name) . '.php';
-        $full_path = $vendor_dir . strtolower($relative_path);
-
-        // Gestion des cas spéciaux
-        $class_map = array(
-            'Dompdf\\Cpdf' => 'dompdf/lib/Cpdf.php',
-            'Dompdf\\Adapter\\CPDF' => 'dompdf/src/Adapter/CPDF.php',
-            'Dompdf\\Css\\Stylesheet' => 'dompdf/src/Css/Stylesheet.php',
-            'Dompdf\\Css\\AttributeTranslator' => 'dompdf/src/Css/AttributeTranslator.php',
-            'Dompdf\\FrameDecorator\\AbstractFrameDecorator' => 'dompdf/src/FrameDecorator/AbstractFrameDecorator.php',
-            'Dompdf\\FrameReflower\\AbstractFrameReflower' => 'dompdf/src/FrameReflower/AbstractFrameReflower.php',
-            'Dompdf\\Renderer\\AbstractRenderer' => 'dompdf/src/Renderer/AbstractRenderer.php',
-            'Dompdf\\Dompdf' => 'dompdf/src/Dompdf.php'
-        );
-
-        if (isset($class_map[$class_name])) {
-            return $vendor_dir . $class_map[$class_name];
-        }
-
-        return $full_path;
     }
 
     /**

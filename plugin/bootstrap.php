@@ -19,6 +19,18 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 }
 
 // ============================================================================
+// CHARGEMENT DE L'AUTOLOAD ISOLÉ
+// ============================================================================
+
+// Charger l'autoload isolé pour éviter les conflits avec autres plugins
+$isolated_autoloader_path = PDF_BUILDER_PLUGIN_DIR . 'src/IsolatedAutoloader.php';
+if (file_exists($isolated_autoloader_path)) {
+    require_once $isolated_autoloader_path;
+    // Initialiser l'autoload isolé
+    \PDF_Builder\pdf_builder_get_isolated_autoloader();
+}
+
+// ============================================================================
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
 
