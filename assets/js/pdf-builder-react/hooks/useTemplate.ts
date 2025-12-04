@@ -50,7 +50,14 @@ export function useTemplate() {
         const templateData = window.pdfBuilderData.existingTemplate;
         console.log('🔄 [useTemplate] templateData:', templateData);
         console.log('🔄 [useTemplate] templateData.name:', templateData?.name);
+        console.log('🔄 [useTemplate] templateData._db_name:', templateData?._db_name);
         console.log('🔄 [useTemplate] templateData keys:', Object.keys(templateData || {}));
+
+        // Utiliser le nom du JSON en priorité, sinon le nom de la DB, sinon fallback
+        const templateName = templateData?.name ||
+                           templateData?._db_name ||
+                           `Template ${templateId}`;
+        console.log('🔄 [useTemplate] Final template name:', templateName);
         // console.log('📋 [LOAD TEMPLATE] Utilisation des données localisées pour template:', templateId, 'Nom:', templateData.name);
 
         // Parse JSON strings if needed
@@ -133,7 +140,7 @@ export function useTemplate() {
           type: 'LOAD_TEMPLATE',
           payload: {
             id: templateId,
-            name: templateData.name || `Template ${templateId}`,
+            name: templateName,
             elements: enrichedElements,
             canvas: canvasData,
             lastSaved: lastSavedDate

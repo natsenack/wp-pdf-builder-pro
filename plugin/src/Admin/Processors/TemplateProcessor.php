@@ -61,6 +61,9 @@ class TemplateProcessor
                 if (!isset($template_data['name']) || empty($template_data['name'])) {
                     $template_data['name'] = !empty($template['name']) ? $template['name'] : 'Template ' . $template_id;
                 }
+                // Ajouter les métadonnées du template
+                $template_data['_db_name'] = $template['name'] ?? '';
+                $template_data['_db_id'] = $template['id'];
                 return $template_data;
             }
 
@@ -73,6 +76,9 @@ class TemplateProcessor
                     if (isset($template['name']) && !isset($template_data['name'])) {
                         $template_data['name'] = $template['name'];
                     }
+                    // Ajouter les métadonnées du template
+                    $template_data['_db_name'] = $template['name'] ?? '';
+                    $template_data['_db_id'] = $template['id'];
                     return $template_data;
                 }
             }
@@ -86,6 +92,9 @@ class TemplateProcessor
                     if (isset($template['name']) && !isset($template_data['name'])) {
                         $template_data['name'] = $template['name'];
                     }
+                    // Ajouter les métadonnées du template
+                    $template_data['_db_name'] = $template['name'] ?? '';
+                    $template_data['_db_id'] = $template['id'];
                     return $template_data;
                 }
             }
