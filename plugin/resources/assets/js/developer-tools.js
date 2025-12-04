@@ -994,21 +994,25 @@ Notifications actives: ${activeNotifications}
         }
     }
 
-    // Initialize when document is ready
-    $(document).ready(() => {
-        // Initialize only on developer-related pages or when settings are available
+        // Initialize when document is ready
         const shouldInitialize =
-            window.location.href.indexOf('pdf-builder-developer') !== -1 ||
-            window.location.href.indexOf('developer') !== -1 ||
-            window.location.href.indexOf('pdf-builder-settings') !== -1 ||
+            window.location.href.indexOf('pdf-builder') !== -1 ||
+            window.location.href.indexOf('admin.php') !== -1 ||
             typeof pdfBuilderAjax !== 'undefined' ||
             typeof pdf_builder_ajax !== 'undefined';
 
+        console.log('Developer Tools: shouldInitialize check:', shouldInitialize);
+        console.log('Developer Tools: current URL:', window.location.href);
+        console.log('Developer Tools: pdfBuilderAjax defined:', typeof pdfBuilderAjax);
+        console.log('Developer Tools: pdf_builder_ajax defined:', typeof pdf_builder_ajax);
+
         if (shouldInitialize) {
+            console.log('Developer Tools: Initializing...');
             setTimeout(() => {
                 new PDFBuilderDeveloper();
             }, 1000); // Reduced delay for better UX
+        } else {
+            console.log('Developer Tools: NOT initializing - conditions not met');
         }
-    });
 
 })(jQuery);
