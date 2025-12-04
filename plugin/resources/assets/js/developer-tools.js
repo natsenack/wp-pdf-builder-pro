@@ -669,10 +669,9 @@
         }
 
         testNotification(type) {
-            if (window.pdfBuilderDebugSettings?.javascript) {
-                console.log('PDF Builder Developer Tools: testNotification called with type:', type);
-                console.log('PDF Builder Developer Tools: debug settings:', window.pdfBuilderDebugSettings);
-            }
+            console.log('Developer Tools: testNotification called with type:', type);
+            console.log('Developer Tools: window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
+            console.log('Developer Tools: window.showSuccessNotification exists:', typeof window.showSuccessNotification);
 
             const messages = {
                 success: 'Opération réussie ! Les données ont été sauvegardées.',
@@ -685,14 +684,19 @@
 
             // Try to use the real notification system first
             const notificationFunction = window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`];
+            console.log('Developer Tools: notificationFunction for', type, ':', typeof notificationFunction);
+
             if (notificationFunction && typeof notificationFunction === 'function') {
+                console.log('Developer Tools: Calling notification function for', type);
                 notificationFunction(messages[type], { duration: 4000 });
                 this.addNotificationLog(`✅ ${type} notification affichée via système réel`, 'success');
             } else if (window.pdfBuilderNotify && window.pdfBuilderNotify[type]) {
                 // Fallback to the old system
+                console.log('Developer Tools: Using fallback notification system for', type);
                 window.pdfBuilderNotify[type](messages[type], 4000);
                 this.addNotificationLog(`✅ ${type} notification affichée via fallback`, 'success');
             } else {
+                console.error('Developer Tools: No notification system available for', type);
                 this.showError(`Système de notification ${type} non disponible`);
                 this.addNotificationLog(`❌ ${type} notification échouée`, 'error');
             }

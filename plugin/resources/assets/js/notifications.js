@@ -8,6 +8,10 @@
 (function($) {
     'use strict';
 
+    console.log('Notifications.js loaded');
+    console.log('window.pdfBuilderNotifications:', window.pdfBuilderNotifications);
+    console.log('window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
+
     /**
      * Classe principale pour la gestion des notifications frontend
      */
@@ -527,11 +531,13 @@
 
     // Alias pour la compatibilité - définis immédiatement
     window.showSuccessNotification = function(message, options) {
-        console.trace('showSuccessNotification called with:', message);
+        console.log('Global showSuccessNotification called with:', message);
+        console.log('Global: window.pdfBuilderNotificationsInstance exists:', !!window.pdfBuilderNotificationsInstance);
+
         if (window.pdfBuilderNotificationsInstance) {
             return window.pdfBuilderNotificationsInstance.success(message, options);
         } else {
-            console.warn('PDF Builder Notifications: Instance not ready, initializing...');
+            console.warn('Global: Instance not ready, initializing...');
             // Initialize if not ready - ensure data is available
             if (!window.pdfBuilderNotificationsInstance) {
                 // Wait for DOM ready if not ready yet
