@@ -735,6 +735,10 @@ $filesToDeploy = Get-ChildItem -Path $LocalPath -Recurse -File
 $totalFiles = $filesToDeploy.Count
 $totalSize = ($filesToDeploy | Measure-Object -Property Length -Sum).Sum
 
+# DEBUG: Compter les fichiers templates
+$templateFiles = $filesToDeploy | Where-Object { $_.FullName -like "*resources*templates*" }
+Write-Host "   DEBUG: Fichiers templates détectés: $($templateFiles.Count)" -ForegroundColor Yellow
+
 # Logique de synchronisation intelligente
 if (-not $FullSync -and -not $IsTestMode -and $Mode -eq "plugin") {
     Write-Host "🔍 Mode synchronisation intelligente activé" -ForegroundColor Cyan
@@ -776,6 +780,10 @@ if ($FullSync -or $Force) {
     Write-Host "🔄 Mode synchronisation complète activé" -ForegroundColor Yellow
     Write-Host "   • Tous les fichiers seront transférés" -ForegroundColor White
 }
+
+# DEBUG: Après synchronisation intelligente
+$templateFilesAfterSync = $filesToDeploy | Where-Object { $_.FullName -like "*resources*templates*" }
+Write-Host "   DEBUG: Fichiers templates après synchro intelligente: $($templateFilesAfterSync.Count)" -ForegroundColor Yellow
 
 Write-Host "📈 Statistiques :" -ForegroundColor White
 Write-Host "   • Nombre de fichiers : $totalFiles" -ForegroundColor White
@@ -830,6 +838,10 @@ $filteredFiles = $filesToDeploy | Where-Object {
     }
     $include
 }
+
+# DEBUG: Après exclusions
+$templateFilesAfterExclude = $filteredFiles | Where-Object { $_.FullName -like "*resources*templates*" }
+Write-Host "   DEBUG: Fichiers templates après exclusions: $($templateFilesAfterExclude.Count)" -ForegroundColor Yellow
 
 # Appliquer le filtre de fichiers sélectionnés
 if ($FileFilter -ne "all") {
@@ -910,6 +922,10 @@ $finalSize = ($filteredFiles | Measure-Object -Property Length -Sum).Sum
 if ($finalFileCount -ne $totalFiles) {
     Write-Host "   • Après filtrage : $finalFileCount fichiers ($([math]::Round($finalSize / 1048576, 2)) MB)" -ForegroundColor Yellow
 }
+
+# DEBUG: Juste avant l'aperçu
+$templateFilesBeforePreview = $filteredFiles | Where-Object { $_.FullName -like "*resources*templates*" }
+Write-Host "   DEBUG: Fichiers templates juste avant aperçu: $($templateFilesBeforePreview.Count)" -ForegroundColor Yellow
 
 # 3. Lister les fichiers (aperçu)
 Write-Host "`n📋 APERCU DES FICHIERS :" -ForegroundColor Cyan
@@ -1151,6 +1167,16 @@ Write-Host "   Configuration: 5 uploads simultanés (optimisé pour la stabilit�
 Write-Host "🔄 Tri des fichiers par priorité (les modifiés récemment en premier)..." -ForegroundColor Cyan
 $filteredFiles = $filteredFiles | Sort-Object -Property LastWriteTime -Descending
 
+# DEBUG: Fichiers templates finaux avant upload
+$templateFilesFinal = $filteredFiles | Where-Object { $_.FullName -like "*resources*templates*" }
+Write-Host "   DEBUG: Fichiers templates finaux avant upload: $($templateFilesFinal.Count)" -ForegroundColor Yellow
+if ($templateFilesFinal.Count -gt 0) {
+    Write-Host "   DEBUG: Liste des fichiers templates:" -ForegroundColor Cyan
+    $templateFilesFinal | Select-Object -First 3 | ForEach-Object { 
+        Write-Host "     - $($_.FullName.Replace($LocalPath, '').TrimStart('\'))" -ForegroundColor White
+    }
+}
+
 $maxParallelJobs = 5
 $runningJobs = @()
 $processedFiles = 0
@@ -1158,6 +1184,12 @@ $lastProgressUpdate = Get-Date
 
 foreach ($file in $filteredFiles) {
     $relativePath = $file.FullName.Replace($LocalPath, "").TrimStart("\").Replace("\", "/")
+    
+    # DEBUG: Log des fichiers templates
+    if ($relativePath -like "resources/templates/*") {
+        Write-Host "   DEBUG: Upload template - RelativePath: $relativePath" -ForegroundColor Magenta
+        Write-Host "   DEBUG: Upload template - FullPath: $($file.FullName)" -ForegroundColor Magenta
+    }
     
     # Attendre si on a trop de jobs
     while ($runningJobs.Count -ge $maxParallelJobs) {
