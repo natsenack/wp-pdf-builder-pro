@@ -10,6 +10,40 @@ console.log('🔧 Current location:', window.location.href);
 console.log('🔧 pdfBuilderAjax defined:', typeof pdfBuilderAjax);
 console.log('🔧 pdf_builder_ajax defined:', typeof pdf_builder_ajax);
 
+// Assurer que les données nécessaires sont disponibles
+if (typeof window.pdfBuilderNotifications === 'undefined') {
+    console.log('🔧 Setting up fallback pdfBuilderNotifications');
+    window.pdfBuilderNotifications = {
+        ajax_url: (window.ajaxurl || (window.location.origin + '/wp-admin/admin-ajax.php')),
+        nonce: 'fallback-nonce',
+        settings: {
+            enabled: true,
+            position: 'top-right',
+            duration: 5000,
+            max_notifications: 5,
+            animation: 'slide',
+            theme: 'modern'
+        },
+        strings: {
+            success: 'Succès',
+            error: 'Erreur',
+            warning: 'Avertissement',
+            info: 'Information',
+            close: 'Fermer'
+        }
+    };
+}
+
+if (typeof window.pdfBuilderDebugSettings === 'undefined') {
+    console.log('🔧 Setting up fallback pdfBuilderDebugSettings');
+    window.pdfBuilderDebugSettings = {
+        javascript: true,
+        javascript_verbose: true,
+        php: false,
+        ajax: true
+    };
+}
+
 (function($) {
     'use strict';
 
@@ -1001,24 +1035,19 @@ Notifications actives: ${activeNotifications}
     }
 
         // Initialize when document is ready
-        const shouldInitialize =
-            window.location.href.indexOf('pdf-builder') !== -1 ||
-            window.location.href.indexOf('admin.php') !== -1 ||
-            typeof pdfBuilderAjax !== 'undefined' ||
-            typeof pdf_builder_ajax !== 'undefined';
+        const shouldInitialize = window.location.href.indexOf('wp-admin') !== -1 ||
+                                window.location.href.indexOf('admin.php') !== -1;
 
         console.log('Developer Tools: shouldInitialize check:', shouldInitialize);
         console.log('Developer Tools: current URL:', window.location.href);
-        console.log('Developer Tools: pdfBuilderAjax defined:', typeof pdfBuilderAjax);
-        console.log('Developer Tools: pdf_builder_ajax defined:', typeof pdf_builder_ajax);
 
         if (shouldInitialize) {
             console.log('Developer Tools: Initializing...');
             setTimeout(() => {
                 new PDFBuilderDeveloper();
-            }, 1000); // Reduced delay for better UX
+            }, 500); // Reduced delay for better UX
         } else {
-            console.log('Developer Tools: NOT initializing - conditions not met');
+            console.log('Developer Tools: NOT initializing - not on admin page');
         }
 
 })(jQuery);
