@@ -155,7 +155,6 @@
          * Afficher une notification
          */
         show(message, type = 'info', options = {}) {
-        show(message, type = 'info', options = {}) {
             if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('PDF Builder Notifications: show() called with:', { message, type, options, settings: this.settings });
             }
