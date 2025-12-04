@@ -272,8 +272,10 @@ try {
                 PDFBuilderTabsAPI.saveAllSettings();
             });
             console.log('✅ PDF Builder: Bouton HTML configuré avec succès');
+            saveButtonInitialized = true;
+            console.log('🔒 PDF Builder: Initialisation du bouton HTML terminée');
         } else {
-            console.warn('⚠️ PDF Builder: Bouton de sauvegarde flottant HTML non trouvé (normal si pas encore chargé)');
+            console.log('⏳ PDF Builder: Bouton de sauvegarde flottant HTML pas encore trouvé, nouvelle tentative dans 1s');
             if (floatingContainer) {
                 console.log('   - Conteneur #pdf-builder-save-floating: trouvé');
             } else {
@@ -284,18 +286,16 @@ try {
             } else {
                 console.log('   - Bouton #pdf-builder-save-floating-btn: manquant');
             }
+            // Réessayer dans 1 seconde
+            setTimeout(initSaveButton, 1000);
         }
-
-        // Marquer comme initialisé
-        saveButtonInitialized = true;
-        console.log('🔒 PDF Builder: Initialisation du bouton HTML terminée');
     }
 
     // Initialiser au chargement du DOM
     document.addEventListener('DOMContentLoaded', function() {
         initTabs();
-        // Délai plus long pour s'assurer que le HTML est complètement chargé
-        setTimeout(initSaveButton, 500);
+        // Commencer la recherche du bouton de sauvegarde
+        initSaveButton();
     });
 
 })();
