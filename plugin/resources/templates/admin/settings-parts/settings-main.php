@@ -121,8 +121,6 @@ $settings = get_option('pdf_builder_settings', array());
     gap: 6px;
     cursor: pointer;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .pdf-builder-save-btn .dashicons {
