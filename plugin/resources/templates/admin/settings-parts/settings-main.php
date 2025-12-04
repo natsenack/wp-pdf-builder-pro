@@ -95,7 +95,7 @@ $settings = get_option('pdf_builder_settings', array());
 <style>
 .pdf-builder-save-floating {
     position: fixed;
-    bottom: 20px;
+    bottom: 60px;
     right: 20px;
     z-index: 9999;
     display: flex;
@@ -172,7 +172,7 @@ $settings = get_option('pdf_builder_settings', array());
 /* Responsive */
 @media (max-width: 782px) {
     .pdf-builder-save-floating {
-        bottom: 10px;
+        bottom: 50px;
         right: 10px;
     }
 
