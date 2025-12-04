@@ -267,12 +267,12 @@
         // Préparer les données pour AJAX
         const ajaxData = {
             action: 'pdf_builder_save_all_settings',
-            nonce: pdfBuilderSettings ? pdfBuilderSettings.nonce : '',
+            nonce: pdfBuilderAjax ? pdfBuilderAjax.nonce : '',
             form_data: JSON.stringify(formData)
         };
 
         // Envoyer via AJAX
-        fetch(ajaxurl || '/wp-admin/admin-ajax.php', {
+        fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
