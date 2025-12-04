@@ -162,9 +162,7 @@ class PdfBuilderAdmin
         // Try-catch pour la création du template_processor
         try {
             $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
-            $this->debug_log('PDF_Builder_Admin constructor: template_processor created successfully');
         } catch (Exception $e) {
-            $this->debug_log('PDF_Builder_Admin constructor: ERROR creating template_processor: ' . $e->getMessage());
             $this->template_processor = null;
         }
 
@@ -173,10 +171,6 @@ class PdfBuilderAdmin
         
         $this->pdf_generator = new \PDF_Builder\Admin\Generators\PDFGenerator($this);
         $this->utils = new Utils($this);
-
-        // Debug logging
-        $this->debug_log('PDF_Builder_Admin constructor: data_utils created: ' . (isset($this->data_utils) ? 'YES' : 'NO'));
-        $this->debug_log('PDF_Builder_Admin constructor: template_processor created: ' . (isset($this->template_processor) ? 'YES' : 'NO'));
 
         // Initialiser l'intégration WooCommerce si disponible
         if (class_exists('PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration')) {
@@ -253,15 +247,6 @@ class PdfBuilderAdmin
             return $this->dashboard_data_provider->getPluginVersion();
         }
         return '1.0.0';
-    }
-
-    /**
-     * Log de debug conditionnel
-     */
-    public function debug_log($message)
-    {
-        // Temporairement activé pour le débogage
-        error_log('[PDF Builder Admin] ' . $message);
     }
 
     /**

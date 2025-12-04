@@ -26,21 +26,7 @@ class AjaxHandler
     public function __construct($admin)
     {
         $this->admin = $admin;
-        error_log('[PDF Builder] AjaxHandler constructor called, admin instance: ' . (isset($this->admin) ? 'SET' : 'NOT SET'));
-        if (isset($this->admin)) {
-            error_log('[PDF Builder] AjaxHandler admin has template_processor: ' . (isset($this->admin->template_processor) ? 'YES' : 'NO'));
-        }
         $this->registerHooks();
-    }
-
-    /**
-     * Log de debug conditionnel
-     */
-    private function debug_log($message)
-    {
-        if (get_option('pdf_builder_debug_javascript', '0') === '1') {
-            error_log('[PDF Builder AJAX] ' . $message);
-        }
     }
 
     /**
@@ -176,28 +162,13 @@ class AjaxHandler
      */
     public function ajaxSaveTemplateV3()
     {
-        // Fonction utilitaire pour les logs conditionnels
-        $debugLog = function($message) {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                $this->debug_log('' . $message);
-            }
-        };
-
-        $debugLog('AjaxHandler ajaxSaveTemplateV3 called');
-
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
-        $debugLog('Template manager instance: ' . ($template_manager ? get_class($template_manager) : 'null'));
         
         if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
-            $debugLog('Delegating to template_manager');
             $template_manager->ajaxSaveTemplateV3();
             return;
         }
-
-        $debugLog('Template manager not available, using fallback');
-        $debugLog('template_manager: ' . ($template_manager ? 'exists' : 'null'));
-        $debugLog('method_exists check: ' . (method_exists($template_manager, 'ajaxSaveTemplateV3') ? 'yes' : 'no'));
 
         // Implémentation de secours
         try {
@@ -300,14 +271,9 @@ class AjaxHandler
      */
     public function ajaxGetTemplate()
     {
-        error_log('[PDF Builder] ajaxGetTemplate called - START');
-        $this->debug_log('ajaxGetTemplate called with GET: ' . print_r($_GET, true));
-        $this->debug_log('ajaxGetTemplate called with POST: ' . print_r($_POST, true));
-
         try {
             // Vérifier les permissions
             if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                $this->debug_log('ajaxGetTemplate: Insufficient permissions');
                 wp_send_json_error('Permissions insuffisantes');
                 return;
             }
@@ -316,46 +282,23 @@ class AjaxHandler
             $nonce = isset($_GET['nonce']) ? $_GET['nonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
             if (!wp_verify_nonce($nonce, 'pdf_builder_template_' . $template_id)) {
-                $this->debug_log('ajaxGetTemplate: Invalid nonce: ' . $nonce . ' for template_id: ' . $template_id);
                 wp_send_json_error('Nonce invalide');
                 return;
             }
-            $this->debug_log('ajaxGetTemplate: Template ID = ' . $template_id);
 
             if (!$template_id) {
-                $this->debug_log('ajaxGetTemplate: Missing template ID');
                 wp_send_json_error('ID de template manquant');
                 return;
             }
 
-            error_log('[PDF Builder] About to call loadTemplateRobust for template ID: ' . $template_id);
-
-            // Debug: vérifier l'état de l'admin et template_processor
-            error_log('[PDF Builder] Admin instance: ' . (isset($this->admin) ? 'SET' : 'NOT SET'));
-            error_log('[PDF Builder] Admin class: ' . (isset($this->admin) ? get_class($this->admin) : 'N/A'));
-            error_log('[PDF Builder] Template processor: ' . (isset($this->admin->template_processor) ? 'SET' : 'NOT SET'));
-            if (isset($this->admin->template_processor)) {
-                error_log('[PDF Builder] Template processor class: ' . get_class($this->admin->template_processor));
-            }
-
             // Vérifier que template_processor existe
             if (!isset($this->admin->template_processor) || !$this->admin->template_processor) {
-                error_log('[PDF Builder] ERROR: template_processor not available');
-                error_log('[PDF Builder] Admin instance: ' . (isset($this->admin) ? 'EXISTS' : 'NULL'));
-                if (isset($this->admin)) {
-                    error_log('[PDF Builder] Admin class: ' . get_class($this->admin));
-                    error_log('[PDF Builder] Admin properties: ' . print_r(get_object_vars($this->admin), true));
-                }
                 wp_send_json_error('Erreur interne: template_processor non disponible');
                 return;
             }
 
             // Charger le template en utilisant le template processor
-            $this->debug_log('ajaxGetTemplate: Calling loadTemplateRobust for template ID ' . $template_id);
             $template = $this->admin->template_processor->loadTemplateRobust($template_id);
-            $this->debug_log('ajaxGetTemplate: loadTemplateRobust returned: ' . (is_array($template) ? 'array with ' . count($template) . ' keys' : gettype($template)));
-
-            error_log('[PDF Builder] loadTemplateRobust completed for template ID: ' . $template_id);
 
             if ($template) {
                 // Récupérer le nom du template depuis les données JSON en priorité, sinon depuis la DB
@@ -376,19 +319,16 @@ class AjaxHandler
                     }
                 }
 
-                $this->debug_log('ajaxGetTemplate: Template loaded successfully, name: ' . $template_name);
                 wp_send_json_success([
                     'template' => $template,
                     'template_name' => $template_name,
                     'message' => 'Template chargé avec succès'
                 ]);
             } else {
-                $this->debug_log('ajaxGetTemplate: Template not found');
                 wp_send_json_error('Template introuvable');
             }
 
         } catch (Exception $e) {
-            $this->debug_log('ajaxGetTemplate: Exception caught: ' . $e->getMessage());
             wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
         }
     }
@@ -783,12 +723,10 @@ class AjaxHandler
      */
     public function ajaxSaveCanvasSettings()
     {
-        $this->debug_log('ajaxSaveCanvasSettings called');
         
         try {
             // Vérifier les permissions
             if (!is_user_logged_in()) {
-                $this->debug_log('User not logged in');
                 wp_send_json_error('Utilisateur non connecté');
                 return;
             }
@@ -799,18 +737,14 @@ class AjaxHandler
                 !wp_verify_nonce($nonce, 'pdf_builder_order_actions') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_templates') &&
                 !wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
-                $this->debug_log('Invalid nonce: ' . $nonce);
                 wp_send_json_error('Nonce invalide');
                 return;
             }
 
             // Récupérer la catégorie
             $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
-            $this->debug_log('Saving category: ' . $category);
-            $this->debug_log('Full POST data: ' . print_r($_POST, true));
-
+            
             if (empty($category)) {
-                $this->debug_log('Empty category');
                 wp_send_json_error('Catégorie manquante');
                 return;
             }
@@ -927,7 +861,6 @@ class AjaxHandler
                 ];
                 if (isset($savedData)) {
                     $response['saved'] = $savedData;
-                    $this->debug_log('Returning saved data for ' . $category . ': ' . print_r($savedData, true));
                 }
                 wp_send_json_success($response);
             } else {
@@ -980,7 +913,6 @@ class AjaxHandler
 
     private function saveDimensionsSettings()
     {
-        $this->debug_log('saveDimensionsSettings called with POST: ' . print_r($_POST, true));
         $updated = 0;
 
         // Format du document
@@ -990,7 +922,6 @@ class AjaxHandler
             $valid_formats = ['A4', 'A3', 'A5', 'Letter', 'Legal', 'Tabloid'];
             if (in_array($format, $valid_formats)) {
                 update_option('pdf_builder_canvas_format', $format);
-                $this->debug_log('Updated canvas_format to: ' . $format);
                 $updated++;
             }
         }
@@ -1011,12 +942,10 @@ class AjaxHandler
                 // Recalculer les dimensions en pixels basées sur le nouveau DPI
                 $this->updateCanvasDimensionsFromFormat($dpi);
 
-                $this->debug_log('Updated canvas_dpi to: ' . $dpi);
                 $updated++;
             }
         }
 
-        $this->debug_log('saveDimensionsSettings updated ' . $updated . ' settings');
         return $updated > 0;
     }
 
@@ -1095,7 +1024,6 @@ class AjaxHandler
 
     private function saveApparenceSettings()
     {
-        $this->debug_log('saveApparenceSettings called with POST: ' . print_r($_POST, true));
         $updated = 0;
 
         // Couleur de fond du canvas
@@ -1103,7 +1031,6 @@ class AjaxHandler
             $old_value = get_option('pdf_builder_canvas_bg_color', '#ffffff');
             update_option('pdf_builder_canvas_bg_color', sanitize_hex_color($_POST['canvas_bg_color']));
             $new_value = get_option('pdf_builder_canvas_bg_color', '#ffffff');
-            $this->debug_log('Updated canvas_bg_color from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
@@ -1112,7 +1039,6 @@ class AjaxHandler
             $old_value = get_option('pdf_builder_canvas_border_color', '#cccccc');
             update_option('pdf_builder_canvas_border_color', sanitize_hex_color($_POST['canvas_border_color']));
             $new_value = get_option('pdf_builder_canvas_border_color', '#cccccc');
-            $this->debug_log('Updated canvas_border_color from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
@@ -1123,7 +1049,6 @@ class AjaxHandler
             if ($width >= 0 && $width <= 10) {
                 update_option('pdf_builder_canvas_border_width', $width);
                 $new_value = get_option('pdf_builder_canvas_border_width', '1');
-                $this->debug_log('Updated canvas_border_width from ' . $old_value . ' to ' . $new_value);
                 $updated++;
             }
         }
@@ -1133,13 +1058,11 @@ class AjaxHandler
             $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
             update_option('pdf_builder_canvas_shadow_enabled', '1');
             $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
-            $this->debug_log('Updated canvas_shadow_enabled from ' . $old_value . ' to ' . $new_value);
             $updated++;
         } else {
             $old_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
             update_option('pdf_builder_canvas_shadow_enabled', '0');
             $new_value = get_option('pdf_builder_canvas_shadow_enabled', '0');
-            $this->debug_log('Updated canvas_shadow_enabled from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
@@ -1148,11 +1071,9 @@ class AjaxHandler
             $old_value = get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa');
             update_option('pdf_builder_canvas_container_bg_color', sanitize_hex_color($_POST['canvas_container_bg_color']));
             $new_value = get_option('pdf_builder_canvas_container_bg_color', '#f8f9fa');
-            $this->debug_log('Updated canvas_container_bg_color from ' . $old_value . ' to ' . $new_value);
             $updated++;
         }
 
-        $this->debug_log('saveApparenceSettings updated ' . $updated . ' settings');
         return $updated > 0;
     }
 
@@ -1201,75 +1122,59 @@ class AjaxHandler
 
     private function saveInteractionsSettings()
     {
-        $this->debug_log('saveInteractionsSettings called with POST: ' . print_r($_POST, true));
         $updated = 0;
-
-        // Debug log
-        $this->debug_log('saveInteractionsSettings called with POST data: ' . print_r($_POST, true));
 
         // Glisser-déposer activé
         if (isset($_POST['canvas_drag_enabled'])) {
             update_option('pdf_builder_canvas_drag_enabled', '1');
             $updated++;
-            $this->debug_log('Updated canvas_drag_enabled to: 1');
         } else {
             update_option('pdf_builder_canvas_drag_enabled', '0');
             $updated++;
-            $this->debug_log('Updated canvas_drag_enabled to: 0');
         }
 
         // Redimensionnement activé
         if (isset($_POST['canvas_resize_enabled'])) {
             update_option('pdf_builder_canvas_resize_enabled', '1');
             $updated++;
-            $this->debug_log('Updated canvas_resize_enabled to: 1');
         } else {
             update_option('pdf_builder_canvas_resize_enabled', '0');
             $updated++;
-            $this->debug_log('Updated canvas_resize_enabled to: 0');
         }
 
         // Rotation activée
         if (isset($_POST['canvas_rotate_enabled'])) {
             update_option('pdf_builder_canvas_rotate_enabled', '1');
             $updated++;
-            $this->debug_log('Updated canvas_rotate_enabled to: 1');
         } else {
             update_option('pdf_builder_canvas_rotate_enabled', '0');
             $updated++;
-            $this->debug_log('Updated canvas_rotate_enabled to: 0');
         }
 
         // Sélection multiple
         if (isset($_POST['canvas_multi_select'])) {
             update_option('pdf_builder_canvas_multi_select', '1');
             $updated++;
-            $this->debug_log('Updated canvas_multi_select to: 1');
         } else {
             update_option('pdf_builder_canvas_multi_select', '0');
             $updated++;
-            $this->debug_log('Updated canvas_multi_select to: 0');
         }
 
         // Mode de sélection
         if (isset($_POST['canvas_selection_mode'])) {
             update_option('pdf_builder_canvas_selection_mode', sanitize_text_field($_POST['canvas_selection_mode']));
             $updated++;
-            $this->debug_log('Updated canvas_selection_mode to: ' . $_POST['canvas_selection_mode']);
         }
 
         // Raccourcis clavier
         if (isset($_POST['canvas_keyboard_shortcuts'])) {
             update_option('pdf_builder_canvas_keyboard_shortcuts', '1');
             $updated++;
-            $this->debug_log('Updated canvas_keyboard_shortcuts to: 1');
         } else {
             update_option('pdf_builder_canvas_keyboard_shortcuts', '0');
             $updated++;
-            $this->debug_log('Updated canvas_keyboard_shortcuts to: 0');
         }
 
-        $this->debug_log('saveInteractionsSettings updated ' . $updated . ' settings');
         return $updated > 0;
     }
 
