@@ -279,6 +279,16 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
                     $settings[$option_key] = $option_value;
+                    // DEBUG SPECIFIC FOR JAVASCRIPT DEBUG
+                    if ($key === 'debug_javascript') {
+                        error_log("[DEBUG JAVASCRIPT TOGGLE] Processing debug_javascript:");
+                        error_log("  - key: '$key'");
+                        error_log("  - option_key: '$option_key'");
+                        error_log("  - isset in flattened_data: " . (isset($flattened_data[$key]) ? 'YES' : 'NO'));
+                        error_log("  - value in flattened_data: '" . ($flattened_data[$key] ?? 'NULL') . "'");
+                        error_log("  - calculated option_value: $option_value");
+                        error_log("  - will save to settings['$option_key'] = $option_value");
+                    }
                 } else {
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
@@ -374,6 +384,14 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         // Save the settings array
         update_option('pdf_builder_settings', $settings);
         error_log("[AJAX HANDLER] Saved " . count($settings) . " settings to pdf_builder_settings option");
+
+        // DEBUG: Check if debug_javascript was saved
+        $saved_settings_check = get_option('pdf_builder_settings', []);
+        if (isset($saved_settings_check['pdf_builder_debug_javascript'])) {
+            error_log("[DEBUG JAVASCRIPT TOGGLE] VERIFICATION: pdf_builder_debug_javascript = " . $saved_settings_check['pdf_builder_debug_javascript'] . " in saved settings");
+        } else {
+            error_log("[DEBUG JAVASCRIPT TOGGLE] VERIFICATION: pdf_builder_debug_javascript NOT FOUND in saved settings");
+        }
 
         return [
             'saved_count' => $saved_count,
