@@ -832,6 +832,10 @@ $filteredFiles = $filesToDeploy | Where-Object {
     $include = $true
     foreach ($pattern in $excludePatterns) {
         if ($_.FullName -like "*$pattern*") {
+            # DEBUG: Log des exclusions de templates
+            if ($_.FullName -like "*resources*templates*") {
+                Write-Host "   DEBUG: Template exclu par pattern '$pattern': $($_.FullName)" -ForegroundColor Red
+            }
             $include = $false
             break
         }
