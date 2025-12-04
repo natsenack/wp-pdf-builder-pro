@@ -46,7 +46,7 @@ export function useTemplate() {
     try {
       // ✅ PRIORITÉ: Utiliser les données localisées si disponibles (plus rapide et fiable)
       if (window.pdfBuilderData?.existingTemplate && window.pdfBuilderData?.hasExistingData) {
-        console.log('🔄 [useTemplate] Using localized data for template:', templateId);
+        console.log('🔄 [useTemplate] USING LOCALIZED DATA PATH for template:', templateId);
         const templateData = window.pdfBuilderData.existingTemplate;
         console.log('🔄 [useTemplate] templateData:', templateData);
         console.log('🔄 [useTemplate] templateData.name:', templateData?.name);
@@ -153,7 +153,7 @@ export function useTemplate() {
       }
 
       // ✅ FALLBACK: Utiliser AJAX si les données localisées ne sont pas disponibles
-      console.log('🔄 [useTemplate] Localized data not available, using AJAX for template:', templateId);
+      console.log('🔄 [useTemplate] USING AJAX FALLBACK PATH for template:', templateId);
       console.log('🔄 [useTemplate] Checking window.pdfBuilderData again:', window.pdfBuilderData);
       console.log('🔄 [useTemplate] ajaxUrl for AJAX call:', window.pdfBuilderData?.ajaxUrl);
       console.log('🔄 [useTemplate] nonce for AJAX call:', window.pdfBuilderData?.nonce);
