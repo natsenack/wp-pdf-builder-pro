@@ -20,15 +20,28 @@ class PdfBuilderTemplateManager
     private $main;
 
     /**
-     * Vérifier si le mode debug est activé (WP_DEBUG ou mode développeur)
+     * Vérifier si le mode debug est activé (WP_DEBUG ou debug PHP activé)
      */
     private static function isDebugMode()
     {
-        // Vérifier si le mode développeur est activé
+        // Vérifier d'abord si le debug PHP est explicitement activé dans les paramètres
         $settings = get_option('pdf_builder_settings', []);
-        $developer_mode = isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0';
+        $php_debug_enabled = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
         
-        return $developer_mode || (defined('WP_DEBUG') && WP_DEBUG);
+        if ($php_debug_enabled) {
+            return true;
+        }
+        
+        // Fallback: vérifier si le mode développeur est activé avec un niveau de log suffisant
+        $developer_mode = isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0';
+        if ($developer_mode) {
+            $log_level = isset($settings['pdf_builder_log_level']) ? intval($settings['pdf_builder_log_level']) : 0;
+            // Les logs de template nécessitent au minimum le niveau 3 (Info complète)
+            return $log_level >= 3;
+        }
+        
+        // Dernier fallback: WP_DEBUG
+        return defined('WP_DEBUG') && WP_DEBUG;
     }
 
     /**
