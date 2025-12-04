@@ -1321,6 +1321,8 @@ foreach ($file in $filteredFiles) {
 
 # Attendre tous les jobs restants
 Write-Host "`n   Finalisation..." -ForegroundColor Gray
+$failedFiles = @()  # Liste des fichiers qui ont échoué pour retry final
+
 while ($runningJobs.Count -gt 0) {
     $completedJobs = @($runningJobs | Where-Object { $_.State -ne "Running" })
     if ($completedJobs.Count -gt 0) {
@@ -1337,6 +1339,12 @@ while ($runningJobs.Count -gt 0) {
                     $errorCount++
                     $retryInfo = if ($result.Retries) { " (après $($result.Retries) tentatives)" } else { "" }
                     Write-Log "❌ Erreur upload $($result.RelativePath)$retryInfo`: $($result.Error)" -Level "ERROR" -Color "Red"
+                    
+                    # Ajouter à la liste des fichiers à réessayer
+                    $failedFiles += @{
+                        FilePath = $result.RelativePath
+                        LocalPath = Join-Path $LocalPath $result.RelativePath.Replace("/", "\")
+                    }
                 }
             }
             Remove-Job -Job $job -ErrorAction SilentlyContinue
@@ -1359,6 +1367,78 @@ while ($runningJobs.Count -gt 0) {
         }
     }
     Start-Sleep -Milliseconds 50
+}
+
+# 🚀 RETRY FINAL : Réessayer les fichiers échoués un par un avec plus de patience
+if ($failedFiles.Count -gt 0) {
+    Write-Host "`n`n🔄 RETRY FINAL : Réessai des $($failedFiles.Count) fichiers échoués..." -ForegroundColor Yellow
+    Write-Host "   Configuration: Upload séquentiel avec 5 tentatives max, timeout 60s" -ForegroundColor Gray
+    
+    $retrySuccessCount = 0
+    $retryErrorCount = 0
+    
+    foreach ($failedFile in $failedFiles) {
+        $relativePath = $failedFile.FilePath
+        $localFilePath = $failedFile.LocalPath
+        
+        Write-Host "   🔄 Retry: $relativePath" -ForegroundColor Cyan
+        
+        $fileUploaded = $false
+        $maxFinalRetries = 5
+        
+        for ($retry = 1; $retry -le $maxFinalRetries; $retry++) {
+            try {
+                $ftpUri = "ftp://$FtpHost$FtpPath/$relativePath"
+                
+                $ftpRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+                $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
+                $ftpRequest.UseBinary = $true
+                $ftpRequest.UsePassive = $true
+                $ftpRequest.EnableSsl = $false
+                $ftpRequest.Timeout = 60000  # 60 secondes timeout pour retry final
+                
+                if (Test-Path $localFilePath) {
+                    $fileBytes = [System.IO.File]::ReadAllBytes($localFilePath)
+                    $ftpRequest.ContentLength = $fileBytes.Length
+                    
+                    $requestStream = $ftpRequest.GetRequestStream()
+                    $requestStream.Write($fileBytes, 0, $fileBytes.Length)
+                    $requestStream.Close()
+                    
+                    $response = $ftpRequest.GetResponse()
+                    $response.Close()
+                    
+                    Write-Host "     ✅ Réussi à la tentative $retry" -ForegroundColor Green
+                    $fileUploaded = $true
+                    $retrySuccessCount++
+                    $totalSize += $fileBytes.Length
+                    break
+                } else {
+                    Write-Host "     ❌ Fichier local manquant: $localFilePath" -ForegroundColor Red
+                    break
+                }
+            } catch {
+                if ($retry -lt $maxFinalRetries) {
+                    $waitTime = $retry * 3  # Attente progressive: 3s, 6s, 9s, 12s
+                    Write-Host "     ⏳ Tentative $retry échouée, attente ${waitTime}s: $($_.Exception.Message)" -ForegroundColor Yellow
+                    Start-Sleep -Seconds $waitTime
+                } else {
+                    Write-Host "     ❌ Échec définitif après $maxFinalRetries tentatives: $($_.Exception.Message)" -ForegroundColor Red
+                    $retryErrorCount++
+                }
+            }
+        }
+        
+        if ($fileUploaded) {
+            $errorCount--  # Retirer de la liste des erreurs
+            $successCount++ # Ajouter aux succès
+        }
+    }
+    
+    Write-Host "`n   📊 Résultats retry final:" -ForegroundColor White
+    Write-Host "     • Réussis: $retrySuccessCount" -ForegroundColor Green
+    Write-Host "     • Échoués: $retryErrorCount" -ForegroundColor Red
 }
 
 Write-Host "`n"

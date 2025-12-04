@@ -599,7 +599,7 @@ function pdf_builder_init()
     }
 
     // Initialiser notre autoloader personnalisé
-    require_once plugin_dir_path(__FILE__) . 'src/Core/autoloader.php';
+    require_once plugin_dir_path(__FILE__) . 'src/Core/core/autoloader.php';
     if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
         \PDF_Builder\Core\PdfBuilderAutoloader::init(plugin_dir_path(__FILE__));
     }
