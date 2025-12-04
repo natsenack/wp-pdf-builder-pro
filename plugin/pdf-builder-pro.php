@@ -15,6 +15,7 @@
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
+define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PDF_BUILDER_VERSION', '1.1.0');
 
 // Premium features constant (set to false for free version)
