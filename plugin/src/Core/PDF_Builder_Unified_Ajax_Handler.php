@@ -419,7 +419,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_guides_enabled', 'canvas_drag_enabled',
                 'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts',
                 'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin',
-                'canvas_debug_enabled', 'canvas_performance_monitoring', 'canvas_error_reporting', 'canvas_shadow_enabled'
+                'canvas_debug_enabled', 'canvas_performance_monitoring', 'canvas_error_reporting', 'canvas_shadow_enabled',
+                // Additional toggles from templates
+                'license_test_mode', 'force_https', 'performance_monitoring',
+                'enable_logging', 'gdpr_enabled', 'gdpr_consent_required', 'gdpr_audit_enabled', 'gdpr_encryption_enabled',
+                'gdpr_consent_analytics', 'gdpr_consent_templates', 'gdpr_consent_marketing',
+                'pdf_metadata_enabled', 'pdf_print_optimized'
             ],
             'array_fields' => ['order_status_templates']
         ];
