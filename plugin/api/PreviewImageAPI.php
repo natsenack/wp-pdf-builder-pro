@@ -61,17 +61,33 @@ class PreviewImageAPI
         // pour éviter les conflits de double enregistrement
 
 
-        // Nettoyage automatique du cache
+        // Nettoyage automatique du cache avec gestion d'erreur
         add_action('wp_pdf_cleanup_preview_cache', array(__CLASS__, 'cleanup_cache'));
-        wp_clear_scheduled_hook('wp_pdf_cleanup_preview_cache');
-        if (!wp_next_scheduled('wp_pdf_cleanup_preview_cache')) {
-            wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
+
+        // Essayer de planifier l'événement cron avec gestion d'erreur
+        try {
+            wp_clear_scheduled_hook('wp_pdf_cleanup_preview_cache');
+            if (!wp_next_scheduled('wp_pdf_cleanup_preview_cache')) {
+                $result = wp_schedule_event(time(), 'hourly', 'wp_pdf_cleanup_preview_cache');
+                if (!$result) {
+                    error_log('PDF Builder: Impossible de planifier wp_pdf_cleanup_preview_cache - cron system unavailable');
+                }
+            }
+        } catch (Exception $e) {
+            error_log('PDF Builder: Exception lors de la planification du cron preview cache: ' . $e->getMessage());
         }
 
-        // Nettoyage du cache intelligent
+        // Nettoyage du cache intelligent avec gestion d'erreur
         add_action('wp_pdf_cleanup_intelligent_cache', array(__CLASS__, 'cleanup_intelligent_cache'));
-        if (!wp_next_scheduled('wp_pdf_cleanup_intelligent_cache')) {
-            wp_schedule_event(time(), 'daily', 'wp_pdf_cleanup_intelligent_cache');
+        try {
+            if (!wp_next_scheduled('wp_pdf_cleanup_intelligent_cache')) {
+                $result = wp_schedule_event(time(), 'daily', 'wp_pdf_cleanup_intelligent_cache');
+                if (!$result) {
+                    error_log('PDF Builder: Impossible de planifier wp_pdf_cleanup_intelligent_cache - cron system unavailable');
+                }
+            }
+        } catch (Exception $e) {
+            error_log('PDF Builder: Exception lors de la planification du cron intelligent cache: ' . $e->getMessage());
         }
     }
 

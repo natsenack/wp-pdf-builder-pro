@@ -45,7 +45,11 @@ require_once __DIR__ . '/settings-helpers.php';
                                 <th scope="row"><label for="company_phone_manual">Téléphone</label></th>
                                 <td>
                                     <input type="text" id="company_phone_manual" name="company_phone_manual"
-                                        value="<?php echo pdf_builder_safe_esc_attr(pdf_builder_safe_get_option('pdf_builder_company_phone_manual', '')); ?>"
+                                        value="<?php 
+                                        $phone_value = pdf_builder_safe_get_option('pdf_builder_company_phone_manual', '');
+                                        error_log("PDF Builder Template: company_phone_manual value = '{$phone_value}'");
+                                        echo pdf_builder_safe_esc_attr($phone_value); 
+                                        ?>"
                                         placeholder="+33 1 23 45 67 89" />
                                         <p class="description">Téléphone de l'entreprise</p>
                                 </td>
