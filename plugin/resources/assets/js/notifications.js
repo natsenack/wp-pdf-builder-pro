@@ -14,7 +14,8 @@
     class PDF_Builder_Notifications {
 
         constructor() {
-            this.settings = window.pdfBuilderNotifications?.settings || {};
+            // Wait for localized data if not available yet
+            this.settings = window.pdfBuilderNotifications?.settings || { enabled: true, position: 'top-right', duration: 5000 };
             this.strings = window.pdfBuilderNotifications?.strings || {};
             this.ajaxUrl = window.pdfBuilderNotifications?.ajax_url || '';
             this.nonce = window.pdfBuilderNotifications?.nonce || '';
@@ -22,6 +23,7 @@
             this.container = null;
             this.initialized = false;
 
+            console.log('PDF Builder Notifications: Constructor called, settings:', this.settings);
             this.init();
         }
 
@@ -150,8 +152,15 @@
          * Afficher une notification
          */
         show(message, type = 'info', options = {}) {
+            console.log('PDF Builder Notifications: show() called with:', { message, type, options, settings: this.settings });
+
             // Notifications enabled by default if not explicitly disabled
-            if (this.settings.enabled === false) return;
+            if (this.settings.enabled === false) {
+                console.log('PDF Builder Notifications: Notifications disabled');
+                return;
+            }
+
+            console.log('PDF Builder Notifications: Creating notification element...');
 
             const notificationOptions = Object.assign({
                 message: message,
@@ -230,11 +239,18 @@
          * Ajouter une notification au conteneur
          */
         addToContainer(notification) {
-            if (!this.container) return;
+            console.log('PDF Builder Notifications: addToContainer called, container exists:', !!this.container);
+
+            if (!this.container) {
+                console.error('PDF Builder Notifications: No container found!');
+                return;
+            }
 
             // Limiter le nombre de notifications
             const maxNotifications = this.settings.max_notifications || 5;
             const existingNotifications = this.container.querySelectorAll('.pdf-builder-notification');
+
+            console.log('PDF Builder Notifications: Adding notification, current count:', existingNotifications.length);
 
             if (existingNotifications.length >= maxNotifications) {
                 // Supprimer la plus ancienne
@@ -245,6 +261,8 @@
             // Ajouter la nouvelle notification
             this.container.appendChild(notification);
             this.notifications.push(notification);
+
+            console.log('PDF Builder Notifications: Notification added to DOM');
 
             // Ajouter le bouton "Tout fermer" si plusieurs notifications
             this.updateDismissAllButton();
@@ -497,9 +515,20 @@
             return window.pdfBuilderNotificationsInstance.success(message, options);
         } else {
             console.warn('PDF Builder Notifications: Instance not ready, initializing...');
-            // Initialize if not ready
+            // Initialize if not ready - ensure data is available
             if (!window.pdfBuilderNotificationsInstance) {
-                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                // Wait for DOM ready if not ready yet
+                if (document.readyState === 'loading') {
+                    $(document).ready(function() {
+                        if (!window.pdfBuilderNotificationsInstance) {
+                            window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                        }
+                        window.pdfBuilderNotificationsInstance.success(message, options);
+                    });
+                    return; // Don't return anything, async call
+                } else {
+                    window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                }
             }
             return window.pdfBuilderNotificationsInstance.success(message, options);
         }
@@ -510,9 +539,20 @@
             return window.pdfBuilderNotificationsInstance.error(message, options);
         } else {
             console.warn('PDF Builder Notifications: Instance not ready, initializing...');
-            // Initialize if not ready
+            // Initialize if not ready - ensure data is available
             if (!window.pdfBuilderNotificationsInstance) {
-                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                // Wait for DOM ready if not ready yet
+                if (document.readyState === 'loading') {
+                    $(document).ready(function() {
+                        if (!window.pdfBuilderNotificationsInstance) {
+                            window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                        }
+                        window.pdfBuilderNotificationsInstance.error(message, options);
+                    });
+                    return; // Don't return anything, async call
+                } else {
+                    window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                }
             }
             return window.pdfBuilderNotificationsInstance.error(message, options);
         }
@@ -523,9 +563,20 @@
             return window.pdfBuilderNotificationsInstance.warning(message, options);
         } else {
             console.warn('PDF Builder Notifications: Instance not ready, initializing...');
-            // Initialize if not ready
+            // Initialize if not ready - ensure data is available
             if (!window.pdfBuilderNotificationsInstance) {
-                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                // Wait for DOM ready if not ready yet
+                if (document.readyState === 'loading') {
+                    $(document).ready(function() {
+                        if (!window.pdfBuilderNotificationsInstance) {
+                            window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                        }
+                        window.pdfBuilderNotificationsInstance.warning(message, options);
+                    });
+                    return; // Don't return anything, async call
+                } else {
+                    window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                }
             }
             return window.pdfBuilderNotificationsInstance.warning(message, options);
         }
@@ -536,9 +587,20 @@
             return window.pdfBuilderNotificationsInstance.info(message, options);
         } else {
             console.warn('PDF Builder Notifications: Instance not ready, initializing...');
-            // Initialize if not ready
+            // Initialize if not ready - ensure data is available
             if (!window.pdfBuilderNotificationsInstance) {
-                window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                // Wait for DOM ready if not ready yet
+                if (document.readyState === 'loading') {
+                    $(document).ready(function() {
+                        if (!window.pdfBuilderNotificationsInstance) {
+                            window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                        }
+                        window.pdfBuilderNotificationsInstance.info(message, options);
+                    });
+                    return; // Don't return anything, async call
+                } else {
+                    window.pdfBuilderNotificationsInstance = new PDF_Builder_Notifications();
+                }
             }
             return window.pdfBuilderNotificationsInstance.info(message, options);
         }

@@ -74,6 +74,14 @@ class AdminScriptLoader
                 true
             );
 
+            // Charger le CSS des notifications
+            wp_enqueue_style(
+                'pdf-builder-notifications',
+                PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.css',
+                [],
+                PDF_BUILDER_PRO_VERSION
+            );
+
             // Localize notifications data pour les pages de paramètres
             wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
                 'ajax_url' => admin_url('admin-ajax.php'),
@@ -182,6 +190,11 @@ class AdminScriptLoader
         $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js';
         wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery'], $cache_bust, true);
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url);
+
+        // Notifications CSS
+        $notifications_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.css';
+        wp_enqueue_style('pdf-builder-notifications', $notifications_css_url, [], $cache_bust);
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url);
 
         // Localize notifications data
         wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
