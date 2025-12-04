@@ -225,8 +225,16 @@ export function useTemplate() {
         throw new Error(result.data || 'Erreur lors du chargement du template');
       }
 
+      console.log('🔄 [useTemplate] AJAX result:', result);
+      console.log('🔄 [useTemplate] result.data:', result.data);
+      console.log('🔄 [useTemplate] result.template:', result.template);
+      console.log('🔄 [useTemplate] result.template_name:', result.template_name);
+
       const templateData = result.data ? result.data.template : result.template;
       const ajaxTemplateName = result.data ? (result.data.template_name || result.data.name) : (result.name || result.template_name);
+
+      console.log('🔄 [useTemplate] templateData:', templateData);
+      console.log('🔄 [useTemplate] ajaxTemplateName:', ajaxTemplateName);
 
       // Appliquer la même logique de fallback que pour les données localisées
       const templateName = (ajaxTemplateName && ajaxTemplateName.trim() !== '') ?
