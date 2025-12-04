@@ -1047,5 +1047,5 @@ class PDF_Builder_Predefined_Templates_Manager
         return $json_data;
     }
 }
-// Initialiser le gestionnaire
-new PDF_Builder_Predefined_Templates_Manager();
+// Initialisation gérée par PDF_Builder_Admin.php
+// new PDF_Builder_Predefined_Templates_Manager();
