@@ -11,12 +11,12 @@ use PDF_Builder\Canvas\Canvas_Manager;
  * @package PDF_Builder
  * @since 1.1.0
  */
-class CanvasAjaxHandler
+class Canvas_AJAX_Handler
 {
     /**
      * Enregistre les handlers AJAX
      */
-    public static function registerHooks()
+    public static function register_hooks()
     {
         // REMOVED: pdf_builder_get_canvas_settings is now handled by PDF_Builder_Admin
         // REMOVED: pdf_builder_save_canvas_settings is now handled by AjaxHandler to avoid conflicts

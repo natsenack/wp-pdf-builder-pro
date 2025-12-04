@@ -838,7 +838,7 @@ function pdf_builder_load_bootstrap()
         // Les utilitaires sont déjà chargés ci-dessus dans le même hook 'init'
         if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
             // Fallback: charger manuellement si la classe n'est pas trouvée
-            $gdpr_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_GDPR_Manager.php';
+            $gdpr_path = PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/PDF_Builder_GDPR_Manager.php';
             if (file_exists($gdpr_path)) {
                 require_once $gdpr_path;
             }

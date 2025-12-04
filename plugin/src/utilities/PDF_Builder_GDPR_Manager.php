@@ -7,7 +7,7 @@
  * @since 1.6.11
  */
 
-namespace PDF_Builder;
+namespace PDF_Builder\Utilities;
 
 if (!defined('ABSPATH')) {
     exit;
