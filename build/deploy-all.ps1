@@ -803,7 +803,7 @@ switch ($Mode) {
             ".git",                      # Git files
             ".vscode",                   # VS Code config
             "*.log",                     # Log files
-            "\temp",                     # Temp folder (exact match)
+            "temp",                      # Temp folder
             "*.tmp",                     # Temp files
             "build/backups",             # Backups locaux
             "build/logs",                # Logs locaux
