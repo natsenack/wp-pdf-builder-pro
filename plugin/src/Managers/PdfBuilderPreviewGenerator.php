@@ -78,33 +78,29 @@ class PdfBuilderPreviewGenerator
      */
     private function initDompdf()
     {
-        // Utiliser l'autoload isolé pour éviter les conflits avec autres plugins
-        $isolated_autoloader = \PDF_Builder\pdf_builder_get_isolated_autoloader();
+        // Charger Dompdf de manière directe pour éviter les conflits d'autoload
+        $vendor_dir = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/';
 
-        // Classes nécessaires pour Dompdf (dans l'ordre de dépendance)
-        $required_classes = array(
-            'Dompdf\\Options',
-            'Dompdf\\Helpers',
-            'Dompdf\\Css\\Color',
-            'Dompdf\\Css\\Style',
-            'Dompdf\\Css\\Stylesheet',
-            'Dompdf\\Adapter\\CPDF',
-            'Dompdf\\Canvas',
-            'Dompdf\\Frame',
-            'Dompdf\\Frame\\FrameTree',
-            'Dompdf\\FontMetrics',
-            'Dompdf\\Dompdf'
+        // Liste des fichiers à charger dans l'ordre de dépendance
+        $files_to_load = array(
+            'dompdf/src/Options.php',
+            'dompdf/src/Helpers.php',
+            'dompdf/src/Css/Color.php',
+            'dompdf/src/Css/Style.php',
+            'dompdf/src/Css/Stylesheet.php',
+            'dompdf/src/Adapter/CPDF.php',
+            'dompdf/src/Canvas.php',
+            'dompdf/src/Frame.php',
+            'dompdf/src/Frame/FrameTree.php',
+            'dompdf/src/FontMetrics.php',
+            'dompdf/src/Dompdf.php'
         );
 
-        // Charger les classes nécessaires une par une
-        foreach ($required_classes as $class_name) {
-            if (!$isolated_autoloader->canLoadClass($class_name) && !class_exists($class_name)) {
-                // Classe pas dans notre autoload isolé et pas déjà chargée
-                continue;
-            }
-
-            if (!class_exists($class_name)) {
-                $isolated_autoloader->loadClassManually($class_name);
+        // Charger chaque fichier seulement s'il n'est pas déjà chargé
+        foreach ($files_to_load as $file_path) {
+            $full_path = $vendor_dir . $file_path;
+            if (file_exists($full_path) && !class_exists($this->getClassNameFromPath($file_path))) {
+                require_once $full_path;
             }
         }
 
@@ -122,6 +118,24 @@ class PdfBuilderPreviewGenerator
         $this->dompdf->set_option('isHtml5ParserEnabled', false); // Désactiver pour éviter les conflits HTML5
         $this->dompdf->set_option('defaultFont', 'Arial');
         $this->dompdf->setPaper($pdf_page_size, $pdf_orientation);
+    }
+
+    /**
+     * Extrait le nom de la classe depuis le chemin du fichier
+     */
+    private function getClassNameFromPath($file_path)
+    {
+        // Convertir dompdf/src/Dompdf.php en Dompdf\Dompdf
+        $path_parts = explode('/', $file_path);
+        $filename = str_replace('.php', '', end($path_parts));
+
+        // Pour les sous-dossiers
+        if (count($path_parts) > 2) {
+            $sub_path = implode('\\', array_slice($path_parts, 1, -1));
+            return 'Dompdf\\' . $sub_path . '\\' . $filename;
+        }
+
+        return 'Dompdf\\' . $filename;
     }
 
     /**
