@@ -581,8 +581,10 @@ class PdfBuilderAdmin
         <div class="wrap">
             <!-- Loading State -->
             <div id="pdf-builder-react-loading" class="pdf-builder-loading">
-                <div class="spinner is-active"></div>
-                <p><?php esc_html_e('Initialisation de l\'éditeur React...', 'pdf-builder-pro'); ?></p>
+                <div class="loading-content">
+                    <div class="spinner is-active"></div>
+                    <p><?php esc_html_e('Initialisation de l\'éditeur React...', 'pdf-builder-pro'); ?></p>
+                </div>
             </div>
 
             <!-- Main React Editor Container -->
@@ -605,7 +607,7 @@ class PdfBuilderAdmin
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -614,15 +616,35 @@ class PdfBuilderAdmin
             text-align: center;
         }
 
+        .pdf-builder-loading .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
         .pdf-builder-loading .spinner {
-            float: none;
-            margin: 0 auto 20px;
+            width: 40px !important;
+            height: 40px !important;
+            border: 4px solid #f3f3f3 !important;
+            border-top: 4px solid #007cba !important;
+            border-radius: 50% !important;
+            animation: pdf-spinner 1s linear infinite !important;
+            float: none !important;
+            margin: 0 !important;
+        }
+
+        @keyframes pdf-spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .pdf-builder-loading p {
             color: #666;
             font-size: 16px;
             margin: 0;
+            font-weight: 500;
+            animation: none !important; /* Empêcher l'animation du texte */
         }
         </style>
 
