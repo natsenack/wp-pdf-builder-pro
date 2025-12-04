@@ -284,7 +284,6 @@
             // Ajouter le bouton "Tout fermer" si plusieurs notifications
             this.updateDismissAllButton();
         }
-        }
 
         /**
          * Mettre à jour le bouton "Tout fermer" - Désactivé
