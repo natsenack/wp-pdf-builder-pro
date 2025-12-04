@@ -426,19 +426,21 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'gdpr_consent_analytics', 'gdpr_consent_templates', 'gdpr_consent_marketing',
                 'pdf_metadata_enabled', 'pdf_print_optimized'
             ],
-            'array_fields' => ['order_status_templates']
+            'array_fields' => ['order_status_templates', 'pdf_builder_allowed_roles']
         ];
 
-        // LOG SPÉCIFIQUE POUR DEBUG JAVASCRIPT
-        error_log("=== UNIFIED HANDLER DEBUG JAVASCRIPT ANALYSIS ===");
-        error_log("pdf_builder_debug_javascript in POST: " . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
-        error_log("debug_javascript in POST: " . (isset($_POST['debug_javascript']) ? $_POST['debug_javascript'] : 'NOT_SET'));
+        // LOG SPÉCIFIQUE POUR DEBUG JAVASCRIPT - seulement si activé
+        if (isset($_POST['pdf_builder_debug_javascript']) && $_POST['pdf_builder_debug_javascript'] == '1') {
+            error_log("=== UNIFIED HANDLER DEBUG JAVASCRIPT ANALYSIS ===");
+            error_log("pdf_builder_debug_javascript in POST: " . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
+            error_log("debug_javascript in POST: " . (isset($_POST['debug_javascript']) ? $_POST['debug_javascript'] : 'NOT_SET'));
 
-        // DEBUG: Log all debug-related fields
-        $debug_fields = array_filter($_POST, function($key) {
-            return strpos($key, 'debug') !== false;
-        }, ARRAY_FILTER_USE_KEY);
-        error_log("All debug fields in POST: " . json_encode($debug_fields));
+            // DEBUG: Log all debug-related fields
+            $debug_fields = array_filter($_POST, function($key) {
+                return strpos($key, 'debug') !== false;
+            }, ARRAY_FILTER_USE_KEY);
+            error_log("All debug fields in POST: " . json_encode($debug_fields));
+        }
 
         // FIRST: Handle all boolean fields - set to 0 if not present in POST (unchecked checkboxes)
         foreach ($field_rules['bool_fields'] as $bool_field) {
@@ -457,7 +459,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $option_key = 'pdf_builder_' . $bool_field;
                     $settings[$option_key] = $option_value;
                     // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
-                    if ($bool_field === 'debug_javascript') {
+                    if ($bool_field === 'debug_javascript' && isset($_POST['pdf_builder_debug_javascript']) && $_POST['pdf_builder_debug_javascript'] == '1') {
                         error_log("[UNIFIED DEBUG JAVASCRIPT] Processing debug_javascript (present in POST):");
                         error_log("  - field: '$bool_field'");
                         error_log("  - option_key: '$option_key'");
@@ -483,7 +485,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $option_key = 'pdf_builder_' . $bool_field;
                     $settings[$option_key] = $option_value;
                     // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
-                    if ($bool_field === 'debug_javascript') {
+                    if ($bool_field === 'debug_javascript' && isset($_POST['pdf_builder_debug_javascript']) && $_POST['pdf_builder_debug_javascript'] == '1') {
                         error_log("[UNIFIED DEBUG JAVASCRIPT] Processing debug_javascript (NOT in POST - unchecked):");
                         error_log("  - field: '$bool_field'");
                         error_log("  - option_key: '$option_key'");
@@ -504,7 +506,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                 continue;
             }
 
-            error_log("[UNIFIED HANDLER] Processing non-bool field: '$key' = '$value'");
+            // Debug log only if JavaScript debug is enabled
+            if (isset($_POST['pdf_builder_debug_javascript']) && $_POST['pdf_builder_debug_javascript'] == '1') {
+                $display_value = is_array($value) ? 'Array(' . count($value) . ')' : $value;
+                error_log("[UNIFIED HANDLER] Processing non-bool field: '$key' = '$display_value'");
+            }
 
             $option_key = '';
             $option_value = null;
@@ -596,12 +602,14 @@ class PDF_Builder_Unified_Ajax_Handler {
         update_option('pdf_builder_settings', $settings);
         error_log('[PDF Builder AJAX] Saved ' . count($settings) . ' settings to pdf_builder_settings option');
 
-        // DEBUG: Check if debug_javascript was saved
-        $saved_settings_check = get_option('pdf_builder_settings', []);
-        if (isset($saved_settings_check['pdf_builder_debug_javascript'])) {
-            error_log('[UNIFIED DEBUG JAVASCRIPT] VERIFICATION: pdf_builder_debug_javascript = ' . $saved_settings_check['pdf_builder_debug_javascript'] . ' in saved settings');
-        } else {
-            error_log('[UNIFIED DEBUG JAVASCRIPT] VERIFICATION: pdf_builder_debug_javascript NOT FOUND in saved settings');
+        // DEBUG: Check if debug_javascript was saved - only if debug is enabled
+        if (isset($_POST['pdf_builder_debug_javascript']) && $_POST['pdf_builder_debug_javascript'] == '1') {
+            $saved_settings_check = get_option('pdf_builder_settings', []);
+            if (isset($saved_settings_check['pdf_builder_debug_javascript'])) {
+                error_log('[UNIFIED DEBUG JAVASCRIPT] VERIFICATION: pdf_builder_debug_javascript = ' . $saved_settings_check['pdf_builder_debug_javascript'] . ' in saved settings');
+            } else {
+                error_log('[UNIFIED DEBUG JAVASCRIPT] VERIFICATION: pdf_builder_debug_javascript NOT FOUND in saved settings');
+            }
         }
 
         return $saved_count;
