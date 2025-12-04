@@ -8,9 +8,11 @@
 (function($) {
     'use strict';
 
-    console.log('Notifications.js loaded');
-    console.log('window.pdfBuilderNotifications:', window.pdfBuilderNotifications);
-    console.log('window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
+    // LOG INCONDITIONNEL - toujours affiché
+    console.log('🚨 NOTIFICATIONS.JS LOADED - Version avec debug étendu');
+    console.log('📊 window.pdfBuilderNotifications:', window.pdfBuilderNotifications);
+    console.log('🔧 window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
+    console.log('⚙️ document.readyState:', document.readyState);
 
     /**
      * Classe principale pour la gestion des notifications frontend
@@ -628,6 +630,12 @@
             return window.pdfBuilderNotificationsInstance.info(message, options);
         }
     };
+
+    console.log('🎯 GLOBAL NOTIFICATION FUNCTIONS DEFINED');
+    console.log('✅ window.showSuccessNotification:', typeof window.showSuccessNotification);
+    console.log('✅ window.showErrorNotification:', typeof window.showErrorNotification);
+    console.log('✅ window.showWarningNotification:', typeof window.showWarningNotification);
+    console.log('✅ window.showInfoNotification:', typeof window.showInfoNotification);
 
     // Initialisation automatique
     $(document).ready(function() {

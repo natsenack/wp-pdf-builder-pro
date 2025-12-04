@@ -7,6 +7,10 @@
 (function($) {
     'use strict';
 
+    // LOG INCONDITIONNEL - toujours affiché
+    console.log('🛠️ DEVELOPER-TOOLS.JS LOADED - Version avec debug étendu');
+    console.log('🔧 window.pdfBuilderDebugSettings:', window.pdfBuilderDebugSettings);
+
     class PDFBuilderDeveloper {
         constructor() {
             this.init();
@@ -58,6 +62,7 @@
             }
 
             // Module initialized - no unconditional logging
+            console.log('✅ PDFBuilderDeveloper MODULE INITIALIZED');
         }
 
         bindEvents() {
@@ -122,6 +127,8 @@
             $(document).on('click', '#test_notification_all', (e) => this.testAllNotifications());
             $(document).on('click', '#test_notification_clear', (e) => this.clearAllNotifications());
             $(document).on('click', '#test_notification_stats', (e) => this.showNotificationStats());
+
+            console.log('🎯 NOTIFICATION EVENT HANDLERS ATTACHED');
         }
 
         // Ensure all dev sections are closed by default and set correct toggle icons
