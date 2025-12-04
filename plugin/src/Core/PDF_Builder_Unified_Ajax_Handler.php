@@ -350,14 +350,16 @@ class PDF_Builder_Unified_Ajax_Handler {
         // }
 
         try {
-            // Vérifier si les données sont envoyées en JSON (nouveau format)
+            // Check if data is sent as flattened POST data (new format) or JSON (legacy)
             $form_data_json = $_POST['form_data'] ?? '';
             error_log('[PDF Builder AJAX] handle_save_all_settings called with form_data: ' . substr($form_data_json, 0, 500));
+
             if (!empty($form_data_json)) {
+                // Legacy JSON format
                 $saved_count = $this->save_all_settings_from_json($form_data_json);
             } else {
-                // Ancien format - sauvegarde spécifique
-                $saved_count = $this->save_all_settings();
+                // New flattened format - save all settings from POST data
+                $saved_count = $this->save_all_settings_from_flattened_data();
             }
 
             error_log('[PDF Builder AJAX] Saved ' . $saved_count . ' settings');
@@ -379,9 +381,206 @@ class PDF_Builder_Unified_Ajax_Handler {
     }
 
     /**
-     * Sauvegarde tous les paramètres
+     * Sauvegarde tous les paramètres depuis les données POST aplaties
      */
-    private function save_all_settings() {
+    private function save_all_settings_from_flattened_data() {
+        $saved_count = 0;
+        $settings = get_option('pdf_builder_settings', []);
+
+        error_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST)));
+
+        // Define field type rules (same as in Ajax_Handlers.php)
+        $field_rules = [
+            'text_fields' => [
+                'company_phone_manual', 'company_siret', 'company_vat', 'company_rcs', 'company_capital',
+                'pdf_quality', 'default_format', 'default_orientation', 'default_template', 'systeme_auto_backup_frequency',
+                'pdf_builder_developer_password',
+                // Canvas text fields
+                'canvas_bg_color', 'canvas_border_color', 'canvas_container_bg_color', 'canvas_selection_mode', 'canvas_export_format',
+                'default_canvas_format', 'default_canvas_orientation', 'default_canvas_unit'
+            ],
+            'int_fields' => [
+                'cache_max_size', 'cache_ttl', 'systeme_backup_retention',
+                // Canvas int fields
+                'zoom_min', 'zoom_max', 'zoom_default', 'zoom_step', 'canvas_grid_size', 'canvas_export_quality',
+                'canvas_fps_target', 'canvas_memory_limit_js', 'canvas_memory_limit_php', 'canvas_dpi',
+                'canvas_width', 'canvas_height', 'canvas_border_width'
+            ],
+            'bool_fields' => [
+                'pdf_builder_cache_enabled', 'cache_compression', 'cache_auto_cleanup', 'performance_auto_optimization',
+                'systeme_auto_maintenance', 'systeme_auto_backup', 'template_library_enabled',
+                'pdf_builder_developer_enabled', 'pdf_builder_license_test_mode_enabled', 'pdf_builder_canvas_debug_enabled',
+                // Debug fields - AJOUTÉ POUR CORRIGER LE TOGGLE DEBUG JAVASCRIPT
+                'debug_javascript', 'pdf_builder_debug_javascript', 'debug_javascript_verbose', 'pdf_builder_debug_javascript_verbose',
+                'debug_ajax', 'pdf_builder_debug_ajax', 'debug_performance', 'pdf_builder_debug_performance',
+                'debug_database', 'pdf_builder_debug_database', 'debug_php_errors', 'pdf_builder_debug_php_errors',
+                // Canvas bool fields
+                'canvas_grid_enabled', 'canvas_snap_to_grid', 'canvas_guides_enabled', 'canvas_drag_enabled',
+                'canvas_resize_enabled', 'canvas_rotate_enabled', 'canvas_multi_select', 'canvas_keyboard_shortcuts',
+                'canvas_export_transparent', 'canvas_lazy_loading_editor', 'canvas_preload_critical', 'canvas_lazy_loading_plugin',
+                'canvas_debug_enabled', 'canvas_performance_monitoring', 'canvas_error_reporting', 'canvas_shadow_enabled'
+            ],
+            'array_fields' => ['order_status_templates']
+        ];
+
+        // LOG SPÉCIFIQUE POUR DEBUG JAVASCRIPT
+        error_log("=== UNIFIED HANDLER DEBUG JAVASCRIPT ANALYSIS ===");
+        error_log("pdf_builder_debug_javascript in POST: " . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
+        error_log("debug_javascript in POST: " . (isset($_POST['debug_javascript']) ? $_POST['debug_javascript'] : 'NOT_SET'));
+
+        // DEBUG: Log all debug-related fields
+        $debug_fields = array_filter($_POST, function($key) {
+            return strpos($key, 'debug') !== false;
+        }, ARRAY_FILTER_USE_KEY);
+        error_log("All debug fields in POST: " . json_encode($debug_fields));
+
+        // Process all POST fields
+        foreach ($_POST as $key => $value) {
+            // Skip WordPress internal fields
+            if (in_array($key, ['action', 'nonce', 'current_tab'])) {
+                continue;
+            }
+
+            error_log("[UNIFIED HANDLER] Processing field: '$key' = '$value'");
+
+            $option_key = '';
+            $option_value = null;
+
+            if (in_array($key, $field_rules['text_fields'])) {
+                // Special handling for canvas fields
+                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
+                    $option_key = 'pdf_builder_canvas_' . $key;
+                    $option_value = sanitize_text_field($value ?? '');
+                    update_option($option_key, $option_value); // Canvas fields saved separately
+                } elseif (strpos($key, 'pdf_builder_') === 0) {
+                    // Already prefixed, save as-is
+                    $option_key = $key;
+                    $option_value = sanitize_text_field($value ?? '');
+                    $settings[$option_key] = $option_value;
+                } elseif (strpos($key, 'debug_') === 0) {
+                    // Debug fields need pdf_builder_ prefix
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = sanitize_text_field($value ?? '');
+                    $settings[$option_key] = $option_value;
+                } else {
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = sanitize_text_field($value ?? '');
+                    $settings[$option_key] = $option_value;
+                }
+                $saved_count++;
+            } elseif (in_array($key, $field_rules['int_fields'])) {
+                // Special handling for canvas fields
+                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
+                    $option_key = 'pdf_builder_canvas_' . $key;
+                    $option_value = intval($value ?? 0);
+                    update_option($option_key, $option_value); // Canvas fields saved separately
+                } elseif (strpos($key, 'pdf_builder_') === 0) {
+                    // Already prefixed, save as-is
+                    $option_key = $key;
+                    $option_value = intval($value ?? 0);
+                    $settings[$option_key] = $option_value;
+                } elseif (strpos($key, 'debug_') === 0) {
+                    // Debug fields need pdf_builder_ prefix
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = intval($value ?? 0);
+                    $settings[$option_key] = $option_value;
+                } else {
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = intval($value ?? 0);
+                    $settings[$option_key] = $option_value;
+                }
+                $saved_count++;
+            } elseif (in_array($key, $field_rules['bool_fields'])) {
+                // Special handling for canvas fields
+                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
+                    $option_key = 'pdf_builder_canvas_' . $key;
+                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
+                    update_option($option_key, $option_value); // Canvas fields saved separately
+                } elseif (strpos($key, 'pdf_builder_') === 0) {
+                    // Already prefixed, save as-is
+                    $option_key = $key;
+                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
+                    $settings[$option_key] = $option_value;
+                } elseif (strpos($key, 'debug_') === 0) {
+                    // Debug fields need pdf_builder_ prefix
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
+                    $settings[$option_key] = $option_value;
+
+                    // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+                    if ($key === 'debug_javascript') {
+                        error_log("[UNIFIED DEBUG JAVASCRIPT] Processing debug_javascript:");
+                        error_log("  - key: '$key'");
+                        error_log("  - option_key: '$option_key'");
+                        error_log("  - isset in POST: " . (isset($_POST[$key]) ? 'YES' : 'NO'));
+                        error_log("  - value in POST: '" . ($_POST[$key] ?? 'NULL') . "'");
+                        error_log("  - calculated option_value: $option_value");
+                        error_log("  - will save to settings['$option_key'] = $option_value");
+                    }
+                } else {
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
+                    $settings[$option_key] = $option_value;
+                }
+                $saved_count++;
+
+                // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
+                if (strpos($key, 'debug_javascript') !== false) {
+                    error_log("[UNIFIED DEBUG JAVASCRIPT] Bool field processed: key='$key', option_key='$option_key', value='$option_value'");
+                }
+            } elseif (in_array($key, $field_rules['array_fields'])) {
+                if (is_array($value)) {
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = array_map('sanitize_text_field', $value);
+                    $settings[$option_key] = $option_value;
+                } else {
+                    $option_key = 'pdf_builder_' . $key;
+                    $option_value = [];
+                    $settings[$option_key] = $option_value;
+                }
+                $saved_count++;
+            } else {
+                // Pour les champs non définis, essayer de deviner le type
+                if (strpos($key, 'pdf_builder_') === 0) {
+                    // Already prefixed, save as-is
+                    $option_key = $key;
+                    if (is_numeric($value)) {
+                        $option_value = intval($value);
+                    } elseif (is_array($value)) {
+                        $option_value = array_map('sanitize_text_field', $value);
+                    } else {
+                        $option_value = sanitize_text_field($value ?? '');
+                    }
+                } else {
+                    // Add prefix
+                    $option_key = 'pdf_builder_' . $key;
+                    if (is_numeric($value)) {
+                        $option_value = intval($value);
+                    } elseif (is_array($value)) {
+                        $option_value = array_map('sanitize_text_field', $value);
+                    } else {
+                        $option_value = sanitize_text_field($value ?? '');
+                    }
+                }
+                $settings[$option_key] = $option_value;
+                $saved_count++;
+            }
+        }
+
+        // Save the settings array
+        update_option('pdf_builder_settings', $settings);
+        error_log('[PDF Builder AJAX] Saved ' . count($settings) . ' settings to pdf_builder_settings option');
+
+        // DEBUG: Check if debug_javascript was saved
+        $saved_settings_check = get_option('pdf_builder_settings', []);
+        if (isset($saved_settings_check['pdf_builder_debug_javascript'])) {
+            error_log('[UNIFIED DEBUG JAVASCRIPT] VERIFICATION: pdf_builder_debug_javascript = ' . $saved_settings_check['pdf_builder_debug_javascript'] . ' in saved settings');
+        } else {
+            error_log('[UNIFIED DEBUG JAVASCRIPT] VERIFICATION: pdf_builder_debug_javascript NOT FOUND in saved settings');
+        }
+
+        return $saved_count;
+    }
 
         $settings = [
             // Général - Informations entreprise
