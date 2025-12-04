@@ -545,10 +545,13 @@ function pdf_builder_load_core()
             );
 
             // Localiser les variables nécessaires
-            wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderAjax', [
-                'ajaxurl' => admin_url('admin-ajax.php'),
+            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
+            $localize_data = [
+                'ajaxUrl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_ajax'),
                 'version' => PDF_BUILDER_VERSION,
+                'templateId' => $template_id,
+                'isEdit' => $template_id > 0,
                 'timestamp' => time(),
                 'debug' => WP_DEBUG,
                 'strings' => [
@@ -556,7 +559,15 @@ function pdf_builder_load_core()
                     'error' => __('Erreur', 'pdf-builder-pro'),
                     'success' => __('Succès', 'pdf-builder-pro'),
                 ]
-            ]);
+            ];
+
+            // Charger les données du template si template_id est fourni
+            if ($template_id > 0) {
+                // On ne peut pas accéder à $this->template_processor ici, donc on fait un appel AJAX simple
+                // Les données seront chargées via AJAX dans l'app React
+            }
+
+            wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderData', $localize_data);
         }
     });    // Charger le handler AJAX pour générer les styles des éléments
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php')) {
