@@ -78,19 +78,34 @@ class PdfBuilderPreviewGenerator
      */
     private function initDompdf()
     {
-        // Charger l'autoload seulement si Dompdf n'est pas déjà disponible
-        if (!class_exists('Dompdf\Dompdf')) {
-            $autoload_path = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
-            if (file_exists($autoload_path)) {
-                require_once $autoload_path;
-            } else {
-                throw new Exception('Dompdf autoload not found. Please ensure vendor dependencies are installed.');
+        // Charger Dompdf de manière isolée pour éviter les conflits avec d'autres plugins
+        $vendor_dir = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/';
+
+        // Liste des classes Dompdf nécessaires, dans l'ordre de dépendance
+        $required_classes = array(
+            'Dompdf\\Cpdf',
+            'Dompdf\\Adapter\\CPDF',
+            'Dompdf\\Css\\Stylesheet',
+            'Dompdf\\Css\\AttributeTranslator',
+            'Dompdf\\FrameDecorator\\AbstractFrameDecorator',
+            'Dompdf\\FrameReflower\\AbstractFrameReflower',
+            'Dompdf\\Renderer\\AbstractRenderer',
+            'Dompdf\\Dompdf'
+        );
+
+        // Charger les classes une par une si elles n'existent pas déjà
+        foreach ($required_classes as $class_name) {
+            if (!class_exists($class_name)) {
+                $class_file = $this->getDompdfClassFile($class_name, $vendor_dir);
+                if ($class_file && file_exists($class_file)) {
+                    require_once $class_file;
+                }
             }
         }
 
         // Vérifier que Dompdf est maintenant disponible
-        if (!class_exists('Dompdf\Dompdf')) {
-            throw new Exception('Dompdf class not found after loading autoload.');
+        if (!class_exists('Dompdf\\Dompdf')) {
+            throw new Exception('Impossible de charger Dompdf. Vérifiez que les fichiers vendor sont présents.');
         }
 
         // Récupérer les paramètres PDF depuis les options pour la prévisualisation
@@ -102,6 +117,34 @@ class PdfBuilderPreviewGenerator
         $this->dompdf->set_option('isHtml5ParserEnabled', true);
         $this->dompdf->set_option('defaultFont', 'Arial');
         $this->dompdf->setPaper($pdf_page_size, $pdf_orientation);
+    }
+
+    /**
+     * Obtient le chemin du fichier pour une classe Dompdf
+     */
+    private function getDompdfClassFile($class_name, $vendor_dir)
+    {
+        // Convertir le namespace en chemin de fichier
+        $relative_path = str_replace('\\', '/', $class_name) . '.php';
+        $full_path = $vendor_dir . strtolower($relative_path);
+
+        // Gestion des cas spéciaux
+        $class_map = array(
+            'Dompdf\\Cpdf' => 'dompdf/lib/Cpdf.php',
+            'Dompdf\\Adapter\\CPDF' => 'dompdf/src/Adapter/CPDF.php',
+            'Dompdf\\Css\\Stylesheet' => 'dompdf/src/Css/Stylesheet.php',
+            'Dompdf\\Css\\AttributeTranslator' => 'dompdf/src/Css/AttributeTranslator.php',
+            'Dompdf\\FrameDecorator\\AbstractFrameDecorator' => 'dompdf/src/FrameDecorator/AbstractFrameDecorator.php',
+            'Dompdf\\FrameReflower\\AbstractFrameReflower' => 'dompdf/src/FrameReflower/AbstractFrameReflower.php',
+            'Dompdf\\Renderer\\AbstractRenderer' => 'dompdf/src/Renderer/AbstractRenderer.php',
+            'Dompdf\\Dompdf' => 'dompdf/src/Dompdf.php'
+        );
+
+        if (isset($class_map[$class_name])) {
+            return $vendor_dir . $class_map[$class_name];
+        }
+
+        return $full_path;
     }
 
     /**
