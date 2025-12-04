@@ -79,9 +79,9 @@ class PdfBuilderPreviewGenerator
     private function initDompdf()
     {
         // Vérifier si Dompdf est déjà chargé par un autre autoloader
-        if (class_exists('Dompdf\\Dompdf')) {
+        if (class_exists('\Dompdf\Dompdf')) {
             // Dompdf est déjà disponible, utiliser directement
-            $this->dompdf = new Dompdf\Dompdf();
+            $this->dompdf = new \Dompdf\Dompdf();
             $this->dompdf->set_option('isRemoteEnabled', true);
             $this->dompdf->set_option('isHtml5ParserEnabled', false); // Désactiver pour éviter les conflits HTML5
             $this->dompdf->set_option('defaultFont', 'Arial');
@@ -112,7 +112,7 @@ class PdfBuilderPreviewGenerator
         }
 
         // Vérifier que Dompdf est disponible
-        if (!class_exists('Dompdf\\Dompdf')) {
+        if (!class_exists('\Dompdf\Dompdf')) {
             throw new Exception('Impossible de charger Dompdf via Composer. Vérifiez que le package est installé.');
         }
 
@@ -120,7 +120,7 @@ class PdfBuilderPreviewGenerator
         $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
         $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
 
-        $this->dompdf = new Dompdf\Dompdf();
+        $this->dompdf = new \Dompdf\Dompdf();
         $this->dompdf->set_option('isRemoteEnabled', true);
         $this->dompdf->set_option('isHtml5ParserEnabled', false); // Désactiver pour éviter les conflits HTML5
         $this->dompdf->set_option('defaultFont', 'Arial');
