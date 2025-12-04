@@ -20,6 +20,18 @@ class PdfBuilderTemplateManager
     private $main;
 
     /**
+     * Vérifier si le mode debug est activé (WP_DEBUG ou mode développeur)
+     */
+    private static function isDebugMode()
+    {
+        // Vérifier si le mode développeur est activé
+        $settings = get_option('pdf_builder_settings', []);
+        $developer_mode = isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0';
+        
+        return $developer_mode || (defined('WP_DEBUG') && WP_DEBUG);
+    }
+
+    /**
      * Constructeur
      */
     public function __construct($main_instance = null)
@@ -65,9 +77,14 @@ class PdfBuilderTemplateManager
      */
     public function ajaxSaveTemplateV3()
     {
+        // Fonction helper pour vérifier si le mode debug est activé
+        $isDebugMode = function() {
+            return self::isDebugMode();
+        };
+
         // Fonction utilitaire pour les logs conditionnels
-        $debugLog = function($message) {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
+        $debugLog = function($message) use ($isDebugMode) {
+            if ($isDebugMode()) {
                 error_log('PDF Builder Save: ' . $message);
             }
         };
@@ -83,7 +100,7 @@ class PdfBuilderTemplateManager
             $debugLog('SERVER CONTENT_TYPE: ' . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
 
             // Write to uploads directory for guaranteed access (only in debug mode)
-            if (defined('WP_DEBUG') && WP_DEBUG) {
+            if (self::isDebugMode()) {
                 $upload_dir = wp_upload_dir();
                 $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                 file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVE START - REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
@@ -228,7 +245,7 @@ class PdfBuilderTemplateManager
                 
 
                 // Log détaillé des éléments pour vérifier les propriétés (only in debug mode)
-                if (defined('WP_DEBUG') && WP_DEBUG) {
+                if (self::isDebugMode()) {
                     $upload_dir = wp_upload_dir();
                     $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                     file_put_contents($log_file, date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
@@ -409,7 +426,7 @@ class PdfBuilderTemplateManager
                     }
                     
                     // ✅ CRITICAL: Log what was actually saved - especially order_number elements (only in debug mode)
-                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                    if (self::isDebugMode()) {
                         $upload_dir = wp_upload_dir();
                         $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                         file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
@@ -466,7 +483,7 @@ class PdfBuilderTemplateManager
                     \update_post_meta($template_id, '_pdf_template_data', $template_data);
                     
                     // Log what was actually saved (only in debug mode)
-                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                    if (self::isDebugMode()) {
                         $upload_dir = wp_upload_dir();
                         $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                         file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
@@ -776,7 +793,7 @@ class PdfBuilderTemplateManager
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
         // Log pour débogage (only in debug mode)
-        if (defined('WP_DEBUG') && WP_DEBUG) {
+        if (self::isDebugMode()) {
             $log_file = WP_CONTENT_DIR . '/debug_pdf_template.log';
             file_put_contents($log_file, date('Y-m-d H:i:s') . " - Loading template ID: $template_id\n", FILE_APPEND);
             file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table: $table_templates\n", FILE_APPEND);
