@@ -68,7 +68,7 @@ class PdfBuilderTemplateManager
         // Fonction utilitaire pour les logs conditionnels
         $debugLog = function($message) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                $this->debug_log('' . $message);
+                error_log('PDF Builder Save: ' . $message);
             }
         };
 
@@ -76,8 +76,11 @@ class PdfBuilderTemplateManager
         $debugLog('ajaxSaveTemplateV3 method called');
 
         try {
-            // Log pour debug
-            $debugLog('ajaxSaveTemplateV3 started');
+            // Log pour debug - TEMPORAIRE
+            error_log('PDF Builder Save: ajaxSaveTemplateV3 started');
+            error_log('PDF Builder Save: REQUEST: ' . print_r($_REQUEST, true));
+            error_log('PDF Builder Save: POST keys: ' . implode(', ', array_keys($_POST)));
+            error_log('PDF Builder Save: SERVER CONTENT_TYPE: ' . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
 
             // Write to uploads directory for guaranteed access
             $upload_dir = wp_upload_dir();

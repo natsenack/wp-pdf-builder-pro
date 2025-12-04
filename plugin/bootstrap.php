@@ -206,9 +206,6 @@ if (function_exists('add_action')) {
             if (defined('REST_REQUEST') && REST_REQUEST) return;
 
             $force = get_option('pdf_builder_force_https', '0');
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('[PDF Builder HTTPS] template_redirect fired. force=' . $force . ', is_ssl=' . (is_ssl() ? '1' : '0') . ', X-Forwarded-Proto=' . ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') . ', CFVisit=' . ($_SERVER['HTTP_CF_VISITOR'] ?? ''));
-            }
             if ($force === '1' || $force === 1) {
                 // Consider common reverse proxy headers to detect SSL
                 $is_forwarded_ssl = (
@@ -239,9 +236,6 @@ if (function_exists('add_action')) {
         if (defined('REST_REQUEST') && REST_REQUEST) return;
 
         $force = get_option('pdf_builder_force_https', '0');
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('[PDF Builder HTTPS] admin_init fired. force=' . $force . ', is_ssl=' . (is_ssl() ? '1' : '0') . ', X-Forwarded-Proto=' . ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') . ', CFVisit=' . ($_SERVER['HTTP_CF_VISITOR'] ?? ''));
-        }
         if ($force === '1' || $force === 1) {
             $is_forwarded_ssl = (
                 (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
