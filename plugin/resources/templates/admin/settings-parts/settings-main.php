@@ -129,6 +129,7 @@ $settings = get_option('pdf_builder_settings', array());
     height: 16px !important;
     flex-shrink: 0;
     margin-right: 4px;
+    vertical-align: middle;
 }
 
 .pdf-builder-save-btn:hover {
