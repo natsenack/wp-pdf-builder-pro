@@ -559,7 +559,7 @@ class PdfBuilderAdmin
             <!-- Loading State -->
             <div id="pdf-builder-react-loading" class="pdf-builder-loading">
                 <div class="loading-content">
-                    <div class="spinner is-active"></div>
+                    <div id="pdf-builder-loading-spinner" class="spinner is-active"></div>
                     <p><?php esc_html_e('Initialisation de l\'éditeur React...', 'pdf-builder-pro'); ?></p>
                 </div>
             </div>
@@ -612,6 +612,19 @@ class PdfBuilderAdmin
             margin: 0 !important;
         }
 
+        /* Style spécifique pour notre spinner avec ID unique */
+        #pdf-builder-loading-spinner {
+            width: 40px !important;
+            height: 40px !important;
+            border: 4px solid #f3f3f3 !important;
+            border-top: 4px solid #007cba !important;
+            border-radius: 50% !important;
+            animation: pdf-spinner-<?php echo time(); ?> 1s linear infinite !important;
+            float: none !important;
+            margin: 0 !important;
+            display: block !important;
+        }
+
         @keyframes pdf-spinner-<?php echo time(); ?> {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -623,6 +636,8 @@ class PdfBuilderAdmin
             margin: 0;
             font-weight: 500;
             animation: none !important; /* Empêcher l'animation du texte */
+            transform: none !important; /* S'assurer que le texte ne tourne pas */
+            display: block !important;
         }
         </style>
 
