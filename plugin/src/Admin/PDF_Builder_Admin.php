@@ -612,7 +612,7 @@ class PdfBuilderAdmin
 
         <script>
         // Écouter l'événement de disponibilité de React
-        document.addEventListener('pdfBuilderReactReady', function() {
+        document.addEventListener('pdfBuilderReactLoaded', function() {
             console.log('🎯 [PDF Builder] React is ready, initializing editor...');
             if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
                 window.pdfBuilderReact.initPDFBuilderReact();
