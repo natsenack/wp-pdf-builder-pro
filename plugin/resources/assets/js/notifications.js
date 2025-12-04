@@ -248,7 +248,6 @@
          * Ajouter une notification au conteneur
          */
         addToContainer(notification) {
-        addToContainer(notification) {
             if (window.pdfBuilderDebugSettings?.javascript) {
                 console.log('PDF Builder Notifications: addToContainer called, container exists:', !!this.container);
             }
