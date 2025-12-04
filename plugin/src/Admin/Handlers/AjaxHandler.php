@@ -326,6 +326,14 @@ class AjaxHandler
 
             error_log('[PDF Builder] About to call loadTemplateRobust for template ID: ' . $template_id);
 
+            // Debug: vérifier l'état de l'admin et template_processor
+            error_log('[PDF Builder] Admin instance: ' . (isset($this->admin) ? 'SET' : 'NOT SET'));
+            error_log('[PDF Builder] Admin class: ' . (isset($this->admin) ? get_class($this->admin) : 'N/A'));
+            error_log('[PDF Builder] Template processor: ' . (isset($this->admin->template_processor) ? 'SET' : 'NOT SET'));
+            if (isset($this->admin->template_processor)) {
+                error_log('[PDF Builder] Template processor class: ' . get_class($this->admin->template_processor));
+            }
+
             // Vérifier que template_processor existe
             if (!isset($this->admin->template_processor) || !$this->admin->template_processor) {
                 error_log('[PDF Builder] ERROR: template_processor not available');
