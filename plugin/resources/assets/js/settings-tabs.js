@@ -307,8 +307,9 @@
                 }));
             } else {
                 console.error('PDF Builder - Erreur de sauvegarde:', data);
+                console.error('PDF Builder - Détails de l\'erreur:', data.data);
                 // Afficher un message d'erreur
-                showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'), 'error');
+                showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data || data.message || 'Erreur inconnue'), 'error');
             }
         })
         .catch(error => {

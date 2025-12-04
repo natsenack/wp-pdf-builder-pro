@@ -111,18 +111,29 @@ $settings = get_option('pdf_builder_settings', array());
     background: linear-gradient(135deg, #007cba 0%, #005a87 100%) !important;
     color: white !important;
     border: none !important;
-    padding: 15px 25px !important;
-    font-size: 16px !important;
+    padding: 10px 18px !important;
+    font-size: 14px !important;
     font-weight: 600 !important;
-    border-radius: 50px !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+    border-radius: 25px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
     transition: all 0.3s ease !important;
-    min-width: 160px;
+    min-width: 120px;
+    max-width: 140px;
     display: flex;
     align-items: center;
-    gap: 8px;
     justify-content: center;
+    gap: 6px;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pdf-builder-save-btn .dashicons {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0;
 }
 
 .pdf-builder-save-btn:hover {

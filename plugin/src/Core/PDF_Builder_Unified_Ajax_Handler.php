@@ -373,6 +373,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         } catch (Exception $e) {
             error_log('[PDF Builder AJAX] Erreur sauvegarde tous: ' . $e->getMessage());
+            error_log('[PDF Builder AJAX] Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error(['message' => 'Erreur interne du serveur: ' . $e->getMessage()]);
         }
     }
@@ -521,6 +522,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             throw new Exception('Données JSON invalides: ' . json_last_error_msg());
         }
 
+        error_log('[PDF Builder AJAX] Données JSON décodées, ' . count($form_data) . ' formulaires à traiter');
+
         $saved_count = 0;
 
         // Traiter chaque formulaire
@@ -528,6 +531,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             if (!is_array($form_fields)) {
                 continue;
             }
+
+            error_log('[PDF Builder AJAX] Traitement formulaire: ' . $form_id . ' avec ' . count($form_fields) . ' champs');
 
             foreach ($form_fields as $field_name => $field_value) {
                 // Nettoyer et valider les données selon le type de champ
@@ -539,6 +544,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 if ($option_name) {
                     update_option($option_name, $clean_value);
                     $saved_count++;
+                    error_log('[PDF Builder AJAX] Sauvegardé: ' . $option_name . ' = ' . substr($clean_value, 0, 50));
+                } else {
+                    error_log('[PDF Builder AJAX] Option name vide pour ' . $form_id . '.' . $field_name);
                 }
             }
         }
