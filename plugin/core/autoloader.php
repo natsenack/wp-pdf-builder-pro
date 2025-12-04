@@ -50,7 +50,13 @@ class PdfBuilderAutoloader
 
         // Skip Dompdf classes to avoid conflicts
         if (strpos($class, 'Dompdf') !== false) {
-            error_log("Autoloader skipping Dompdf class: $class");
+            error_log("Autoloader SKIPPING Dompdf-related class: $class");
+            return false;
+        }
+
+        // Special check for the problematic class
+        if ($class === 'PDF_Builder\\Managers\\Dompdf\\Dompdf') {
+            error_log("Autoloader SKIPPING specific problematic class: $class");
             return false;
         }
 
