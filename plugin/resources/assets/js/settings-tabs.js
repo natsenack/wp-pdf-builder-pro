@@ -121,10 +121,11 @@
                 const allFormData = collectAllFormData();
 
                 if (Object.keys(allFormData).length > 0) {
+                    console.log('PDF Builder - Données collectées pour sauvegarde:', allFormData);
                     // Sauvegarder via AJAX
                     saveAllSettings(allFormData);
                 } else {
-                    console.warn('PDF Builder - Aucune donnée de formulaire trouvée');
+                    console.error('PDF Builder - Aucune donnée de formulaire trouvée à sauvegarder');
                 }
             });
 
@@ -266,6 +267,7 @@
      */
     function saveAllSettings(formData) {
         console.log('PDF Builder - Sauvegarde de toutes les données...');
+        console.log('PDF Builder - Données à envoyer:', formData);
 
         // Afficher un indicateur de chargement
         const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
@@ -280,6 +282,8 @@
             form_data: JSON.stringify(formData)
         };
 
+        console.log('PDF Builder - Données AJAX préparées:', ajaxData);
+
         // Envoyer via AJAX
         fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
             method: 'POST',
@@ -293,6 +297,7 @@
             console.log('PDF Builder - Réponse de sauvegarde:', data);
 
             if (data.success) {
+                console.log('PDF Builder - Sauvegarde réussie, données sauvegardées:', data.saved_count);
                 // Afficher un message de succès
                 showSaveMessage('Toutes les données ont été sauvegardées avec succès!', 'success');
 
@@ -301,6 +306,7 @@
                     detail: { formData: formData, response: data }
                 }));
             } else {
+                console.error('PDF Builder - Erreur de sauvegarde:', data);
                 // Afficher un message d'erreur
                 showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'), 'error');
             }

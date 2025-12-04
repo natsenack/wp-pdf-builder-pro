@@ -108,16 +108,43 @@ $settings = get_option('pdf_builder_settings', array());
 }
 
 .pdf-builder-save-btn {
-    padding: 12px 24px !important;
-    font-size: 14px !important;
+    background: linear-gradient(135deg, #007cba 0%, #005a87 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 15px 25px !important;
+    font-size: 16px !important;
     font-weight: 600 !important;
-    border-radius: 8px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 50px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
     transition: all 0.3s ease !important;
-    min-width: 140px;
+    min-width: 160px;
     display: flex;
     align-items: center;
     gap: 8px;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.pdf-builder-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.4) !important;
+}
+
+.pdf-builder-save-btn:active {
+    transform: translateY(0);
+}
+
+.pdf-builder-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.pdf-builder-save-btn .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
 }
 
 .pdf-builder-save-btn:hover {

@@ -352,12 +352,15 @@ class PDF_Builder_Unified_Ajax_Handler {
         try {
             // Vérifier si les données sont envoyées en JSON (nouveau format)
             $form_data_json = $_POST['form_data'] ?? '';
+            error_log('[PDF Builder AJAX] handle_save_all_settings called with form_data: ' . substr($form_data_json, 0, 500));
             if (!empty($form_data_json)) {
                 $saved_count = $this->save_all_settings_from_json($form_data_json);
             } else {
                 // Ancien format - sauvegarde spécifique
                 $saved_count = $this->save_all_settings();
             }
+
+            error_log('[PDF Builder AJAX] Saved ' . $saved_count . ' settings');
 
             $saved_options = $this->get_saved_options_for_tab('all');
 
