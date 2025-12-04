@@ -159,7 +159,16 @@ class PdfBuilderAdmin
         }
 
         $this->data_utils = new DataUtils($this);
-        $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
+        
+        // Try-catch pour la création du template_processor
+        try {
+            $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
+            $this->debug_log('PDF_Builder_Admin constructor: template_processor created successfully');
+        } catch (Exception $e) {
+            $this->debug_log('PDF_Builder_Admin constructor: ERROR creating template_processor: ' . $e->getMessage());
+            $this->template_processor = null;
+        }
+        
         $this->pdf_generator = new \PDF_Builder\Admin\Generators\PDFGenerator($this);
         $this->utils = new Utils($this);
 

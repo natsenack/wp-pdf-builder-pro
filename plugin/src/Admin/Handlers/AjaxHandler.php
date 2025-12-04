@@ -341,6 +341,11 @@ class AjaxHandler
             // Vérifier que template_processor existe
             if (!isset($this->admin->template_processor) || !$this->admin->template_processor) {
                 error_log('[PDF Builder] ERROR: template_processor not available');
+                error_log('[PDF Builder] Admin instance: ' . (isset($this->admin) ? 'EXISTS' : 'NULL'));
+                if (isset($this->admin)) {
+                    error_log('[PDF Builder] Admin class: ' . get_class($this->admin));
+                    error_log('[PDF Builder] Admin properties: ' . print_r(get_object_vars($this->admin), true));
+                }
                 wp_send_json_error('Erreur interne: template_processor non disponible');
                 return;
             }
