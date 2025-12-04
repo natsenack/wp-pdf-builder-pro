@@ -350,7 +350,15 @@ class PDF_Builder_Unified_Ajax_Handler {
         // }
 
         try {
-            $saved_count = $this->save_all_settings();
+            // Vérifier si les données sont envoyées en JSON (nouveau format)
+            $form_data_json = $_POST['form_data'] ?? '';
+            if (!empty($form_data_json)) {
+                $saved_count = $this->save_all_settings_from_json($form_data_json);
+            } else {
+                // Ancien format - sauvegarde spécifique
+                $saved_count = $this->save_all_settings();
+            }
+
             $saved_options = $this->get_saved_options_for_tab('all');
 
             wp_send_json_success([
@@ -362,7 +370,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         } catch (Exception $e) {
             error_log('[PDF Builder AJAX] Erreur sauvegarde tous: ' . $e->getMessage());
-            wp_send_json_error(['message' => 'Erreur interne du serveur']);
+            wp_send_json_error(['message' => 'Erreur interne du serveur: ' . $e->getMessage()]);
         }
     }
 
@@ -498,6 +506,118 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         return $saved_count;
+    }
+
+    /**
+     * Sauvegarde tous les paramètres depuis les données JSON
+     */
+    private function save_all_settings_from_json($form_data_json) {
+        $form_data = json_decode($form_data_json, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Données JSON invalides: ' . json_last_error_msg());
+        }
+
+        $saved_count = 0;
+
+        // Traiter chaque formulaire
+        foreach ($form_data as $form_id => $form_fields) {
+            if (!is_array($form_fields)) {
+                continue;
+            }
+
+            foreach ($form_fields as $field_name => $field_value) {
+                // Nettoyer et valider les données selon le type de champ
+                $clean_value = $this->sanitize_field_value($field_name, $field_value);
+
+                // Déterminer le nom de l'option WordPress selon le formulaire
+                $option_name = $this->get_option_name_for_field($form_id, $field_name);
+
+                if ($option_name) {
+                    update_option($option_name, $clean_value);
+                    $saved_count++;
+                }
+            }
+        }
+
+        return $saved_count;
+    }
+
+    /**
+     * Nettoie la valeur d'un champ selon son type
+     */
+    private function sanitize_field_value($field_name, $value) {
+        // Gérer les tableaux (cases à cocher multiples)
+        if (is_array($value)) {
+            return array_map('sanitize_text_field', $value);
+        }
+
+        // Gérer les champs booléens
+        if (strpos($field_name, 'enabled') !== false ||
+            strpos($field_name, 'auto') !== false ||
+            strpos($field_name, 'test_mode') !== false ||
+            strpos($field_name, 'compression') !== false ||
+            strpos($field_name, 'monitoring') !== false ||
+            strpos($field_name, 'reporting') !== false) {
+            return !empty($value) ? '1' : '0';
+        }
+
+        // Gérer les champs numériques
+        if (strpos($field_name, 'ttl') !== false ||
+            strpos($field_name, 'size') !== false ||
+            strpos($field_name, 'retention') !== false ||
+            strpos($field_name, 'capital') !== false) {
+            return intval($value);
+        }
+
+        // Par défaut, nettoyer comme texte
+        return sanitize_text_field($value);
+    }
+
+    /**
+     * Détermine le nom de l'option WordPress pour un champ
+     */
+    private function get_option_name_for_field($form_id, $field_name) {
+        // Mapping des formulaires vers les préfixes d'options
+        $form_mappings = [
+            'developpeur-form' => 'pdf_builder_dev_',
+            'canvas-form' => 'pdf_builder_canvas_',
+            'securite-settings-form' => 'pdf_builder_security_',
+            'pdf-settings-form' => 'pdf_builder_pdf_',
+            'templates-status-form' => 'pdf_builder_templates_',
+            'cache-status-form' => 'pdf_builder_cache_',
+            'canvas-dimensions-form' => 'pdf_builder_canvas_dimensions_',
+            'zoom-form' => 'pdf_builder_zoom_',
+            'canvas-apparence-form' => 'pdf_builder_canvas_appearance_',
+            'canvas-grille-form' => 'pdf_builder_canvas_grid_',
+            'canvas-interactions-form' => 'pdf_builder_canvas_interactions_',
+            'canvas-export-form' => 'pdf_builder_canvas_export_',
+            'canvas-performance-form' => 'pdf_builder_canvas_performance_',
+            'canvas-debug-form' => 'pdf_builder_canvas_debug_'
+        ];
+
+        $prefix = $form_mappings[$form_id] ?? 'pdf_builder_';
+
+        // Certains champs ont des noms d'options spécifiques
+        $special_mappings = [
+            'company_phone_manual' => 'pdf_builder_company_phone_manual',
+            'company_siret' => 'pdf_builder_company_siret',
+            'company_vat' => 'pdf_builder_company_vat',
+            'company_rcs' => 'pdf_builder_company_rcs',
+            'company_capital' => 'pdf_builder_company_capital',
+            'license_test_mode' => 'pdf_builder_license_test_mode',
+            'cache_enabled' => 'pdf_builder_cache_enabled',
+            'cache_ttl' => 'pdf_builder_cache_ttl',
+            'cache_compression' => 'pdf_builder_cache_compression',
+            'cache_auto_cleanup' => 'pdf_builder_cache_auto_cleanup',
+            'cache_max_size' => 'pdf_builder_cache_max_size',
+            'auto_maintenance' => 'pdf_builder_auto_maintenance',
+            'auto_backup' => 'pdf_builder_auto_backup',
+            'auto_backup_frequency' => 'pdf_builder_auto_backup_frequency',
+            'backup_retention' => 'pdf_builder_backup_retention'
+        ];
+
+        return $special_mappings[$field_name] ?? $prefix . $field_name;
     }
 
     /**

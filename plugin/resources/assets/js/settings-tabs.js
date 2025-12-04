@@ -117,14 +117,14 @@
                 e.preventDefault();
                 console.log('PDF Builder - Clic sur le bouton flottant');
 
-                // Trouver le formulaire de sauvegarde principal
-                const mainForm = document.getElementById('pdf-builder-settings-form') || document.querySelector('form');
-                if (mainForm) {
-                    // Simuler la soumission du formulaire principal
-                    const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                    mainForm.dispatchEvent(submitEvent);
+                // Collecter toutes les données de tous les formulaires de tous les onglets
+                const allFormData = collectAllFormData();
+
+                if (Object.keys(allFormData).length > 0) {
+                    // Sauvegarder via AJAX
+                    saveAllSettings(allFormData);
                 } else {
-                    console.error('PDF Builder - Formulaire principal non trouvé');
+                    console.warn('PDF Builder - Aucune donnée de formulaire trouvée');
                 }
             });
 
@@ -174,5 +174,162 @@
             }
         }
     };
+
+    /**
+     * Collecte toutes les données de tous les formulaires de tous les onglets
+     */
+    function collectAllFormData() {
+        console.log('PDF Builder - Collecte des données de tous les formulaires...');
+
+        const allData = {};
+
+        // Liste des IDs de formulaires à collecter
+        const formIds = [
+            'developpeur-form',
+            'canvas-form',
+            'securite-settings-form',
+            'pdf-settings-form',
+            'templates-status-form',
+            'cache-status-form',
+            'canvas-dimensions-form',
+            'zoom-form',
+            'canvas-apparence-form',
+            'canvas-grille-form',
+            'canvas-interactions-form',
+            'canvas-export-form',
+            'canvas-performance-form',
+            'canvas-debug-form'
+        ];
+
+        // Collecter les données de chaque formulaire
+        formIds.forEach(formId => {
+            const form = document.getElementById(formId);
+            if (form) {
+                console.log(`PDF Builder - Collecte du formulaire: ${formId}`);
+                const formData = new FormData(form);
+                const formObject = {};
+
+                // Convertir FormData en objet
+                for (let [key, value] of formData.entries()) {
+                    // Gérer les cases à cocher multiples
+                    if (formObject[key]) {
+                        if (Array.isArray(formObject[key])) {
+                            formObject[key].push(value);
+                        } else {
+                            formObject[key] = [formObject[key], value];
+                        }
+                    } else {
+                        formObject[key] = value;
+                    }
+                }
+
+                // Ajouter les données du formulaire à allData
+                allData[formId] = formObject;
+            }
+        });
+
+        // Collecter aussi tous les champs input, select, textarea qui ne sont pas dans des formulaires
+        const allInputs = document.querySelectorAll('input[name], select[name], textarea[name]');
+        allInputs.forEach(input => {
+            if (input.name && input.name !== '') {
+                const inputForm = input.closest('form');
+                // Ne collecter que si ce n'est pas déjà dans un formulaire traité
+                if (!inputForm || !formIds.includes(inputForm.id)) {
+                    if (input.type === 'checkbox') {
+                        allData[input.name] = input.checked ? input.value : '';
+                    } else if (input.type === 'radio') {
+                        if (input.checked) {
+                            allData[input.name] = input.value;
+                        }
+                    } else {
+                        allData[input.name] = input.value;
+                    }
+                }
+            }
+        });
+
+        console.log('PDF Builder - Données collectées:', allData);
+        return allData;
+    }
+
+    /**
+     * Sauvegarde toutes les données via AJAX
+     */
+    function saveAllSettings(formData) {
+        console.log('PDF Builder - Sauvegarde de toutes les données...');
+
+        // Afficher un indicateur de chargement
+        const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = 'Sauvegarde...';
+        saveBtn.disabled = true;
+
+        // Préparer les données pour AJAX
+        const ajaxData = {
+            action: 'pdf_builder_save_all_settings',
+            nonce: pdfBuilderSettings ? pdfBuilderSettings.nonce : '',
+            form_data: JSON.stringify(formData)
+        };
+
+        // Envoyer via AJAX
+        fetch(ajaxurl || '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(ajaxData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('PDF Builder - Réponse de sauvegarde:', data);
+
+            if (data.success) {
+                // Afficher un message de succès
+                showSaveMessage('Toutes les données ont été sauvegardées avec succès!', 'success');
+
+                // Déclencher un événement personnalisé pour que d'autres scripts puissent réagir
+                document.dispatchEvent(new CustomEvent('pdfBuilderSettingsSaved', {
+                    detail: { formData: formData, response: data }
+                }));
+            } else {
+                // Afficher un message d'erreur
+                showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data || 'Erreur inconnue'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('PDF Builder - Erreur AJAX:', error);
+            showSaveMessage('Erreur de communication avec le serveur', 'error');
+        })
+        .finally(() => {
+            // Restaurer le bouton
+            saveBtn.textContent = originalText;
+            saveBtn.disabled = false;
+        });
+    }
+
+    /**
+     * Affiche un message de sauvegarde
+     */
+    function showSaveMessage(message, type) {
+        // Supprimer les anciens messages
+        const existingMessages = document.querySelectorAll('.pdf-builder-save-message');
+        existingMessages.forEach(msg => msg.remove());
+
+        // Créer le nouveau message
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `pdf-builder-save-message notice notice-${type === 'success' ? 'success' : 'error'} is-dismissible`;
+        messageDiv.innerHTML = `<p>${message}</p>`;
+
+        // Ajouter au conteneur de messages ou au début de la page
+        const container = document.querySelector('.wrap') || document.body;
+        container.insertBefore(messageDiv, container.firstChild);
+
+        // Auto-suppression après 5 secondes
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.remove();
+            }
+        }, 5000);
+    }
 
 })();
