@@ -137,10 +137,34 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         error_log("[AJAX HANDLER] process_all_settings called");
         error_log("[AJAX HANDLER] POST data received: " . json_encode(array_keys($_POST)));
 
+        // Check if form_data is sent as JSON
+        if (isset($_POST['form_data'])) {
+            $form_data_json = stripslashes($_POST['form_data']);
+            $all_form_data = json_decode($form_data_json, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log('JSON decode error: ' . json_last_error_msg() . ' for data: ' . substr($form_data_json, 0, 500));
+                throw new Exception('Données JSON invalides: ' . json_last_error_msg());
+            }
+            error_log("[AJAX HANDLER] Parsed form_data successfully, forms: " . implode(', ', array_keys($all_form_data)));
+        } else {
+            // Fallback: assume data is sent as individual fields
+            $all_form_data = ['global' => $_POST];
+        }
+
+        // Flatten the data for processing
+        $flattened_data = [];
+        foreach ($all_form_data as $form_id => $form_fields) {
+            if (is_array($form_fields)) {
+                foreach ($form_fields as $key => $value) {
+                    $flattened_data[$key] = $value;
+                }
+            }
+        }
+
         // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
         error_log("=== AJAX HANDLER DEBUG JAVASCRIPT ANALYSIS ===");
-        error_log("pdf_builder_debug_javascript in POST: " . (isset($_POST['pdf_builder_debug_javascript']) ? $_POST['pdf_builder_debug_javascript'] : 'NOT_SET'));
-        error_log("debug_javascript in POST: " . (isset($_POST['debug_javascript']) ? $_POST['debug_javascript'] : 'NOT_SET'));
+        error_log("pdf_builder_debug_javascript in flattened_data: " . (isset($flattened_data['pdf_builder_debug_javascript']) ? $flattened_data['pdf_builder_debug_javascript'] : 'NOT_SET'));
+        error_log("debug_javascript in flattened_data: " . (isset($flattened_data['debug_javascript']) ? $flattened_data['debug_javascript'] : 'NOT_SET'));
 
         // Définir les règles de validation des champs (même que dans settings-main.php)
         $field_rules = [
@@ -177,7 +201,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         ];
 
         // Traiter tous les champs POST
-        foreach ($_POST as $key => $value) {
+        foreach ($flattened_data as $key => $value) {
             // Sauter les champs WordPress internes
             if (in_array($key, ['action', 'nonce', 'current_tab'])) {
                 continue;
@@ -231,23 +255,23 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 // Special handling for canvas fields
                 if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
                     $option_key = 'pdf_builder_canvas_' . $key;
-                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
+                    $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
-                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
+                    $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
                 } elseif (strpos($key, 'debug_') === 0) {
                     // Debug fields need pdf_builder_ prefix
                     $option_key = 'pdf_builder_' . $key;
-                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
+                    $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
                 } else {
                     $option_key = 'pdf_builder_' . $key;
-                    $option_value = isset($_POST[$key]) && $_POST[$key] === '1' ? 1 : 0;
+                    $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
                 }
                 update_option($option_key, $option_value);
                 $saved_count++;
                 // DEBUG: Log bool field processing
-                error_log("[AJAX DEBUG] Bool field processed: key='$key', option_key='$option_key', value='$option_value', isset=" . (isset($_POST[$key]) ? 'true' : 'false') . ", POST_value='" . ($_POST[$key] ?? 'null') . "'");
+                error_log("[AJAX DEBUG] Bool field processed: key='$key', option_key='$option_key', value='$option_value', isset=" . (isset($flattened_data[$key]) ? 'true' : 'false') . ", data_value='" . ($flattened_data[$key] ?? 'null') . "'");
 
                 // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT
                 if (strpos($key, 'debug_javascript') !== false) {
