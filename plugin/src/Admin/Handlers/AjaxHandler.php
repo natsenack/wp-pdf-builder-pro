@@ -26,6 +26,10 @@ class AjaxHandler
     public function __construct($admin)
     {
         $this->admin = $admin;
+        error_log('[PDF Builder] AjaxHandler constructor called, admin instance: ' . (isset($this->admin) ? 'SET' : 'NOT SET'));
+        if (isset($this->admin)) {
+            error_log('[PDF Builder] AjaxHandler admin has template_processor: ' . (isset($this->admin->template_processor) ? 'YES' : 'NO'));
+        }
         $this->registerHooks();
     }
 

@@ -163,6 +163,10 @@ class PdfBuilderAdmin
         $this->pdf_generator = new \PDF_Builder\Admin\Generators\PDFGenerator($this);
         $this->utils = new Utils($this);
 
+        // Debug logging
+        $this->debug_log('PDF_Builder_Admin constructor: data_utils created: ' . (isset($this->data_utils) ? 'YES' : 'NO'));
+        $this->debug_log('PDF_Builder_Admin constructor: template_processor created: ' . (isset($this->template_processor) ? 'YES' : 'NO'));
+
         // Initialiser l'intégration WooCommerce si disponible
         if (class_exists('PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration')) {
             $this->woocommerce_integration = new \PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration($this->core);
