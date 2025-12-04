@@ -145,7 +145,6 @@ class PdfBuilderAdmin
 
         // Initialiser les managers spécialisés
         $this->settings_manager = new SettingsManager($this);
-        $this->ajax_handler = new AjaxHandler($this);
 
         // Initialiser les nouveaux modules spécialisés
         $this->html_renderer = new \PDF_Builder\Admin\Renderers\HTMLRenderer($this);
@@ -168,6 +167,9 @@ class PdfBuilderAdmin
             $this->debug_log('PDF_Builder_Admin constructor: ERROR creating template_processor: ' . $e->getMessage());
             $this->template_processor = null;
         }
+
+        // Initialiser AjaxHandler APRÈS template_processor
+        $this->ajax_handler = new AjaxHandler($this);
         
         $this->pdf_generator = new \PDF_Builder\Admin\Generators\PDFGenerator($this);
         $this->utils = new Utils($this);
