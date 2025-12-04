@@ -18,10 +18,25 @@
         // Check if pdfBuilderReact exists
         if (typeof window.pdfBuilderReact !== 'undefined') {
             console.log('✅ [pdf-builder-init] window.pdfBuilderReact is now available!');
-            console.log('✅ [pdf-builder-init] Dispatching pdfBuilderReactReady event');
+            console.log('✅ [pdf-builder-init] Dispatching pdfBuilderReactLoaded event');
             
             // Dispatch the ready event for the initialization script
-            document.dispatchEvent(new Event('pdfBuilderReactReady'));
+            document.dispatchEvent(new Event('pdfBuilderReactLoaded'));
+            
+            // Auto-initialize React if the container exists
+            const container = document.getElementById('pdf-builder-react-root');
+            if (container && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+                console.log('🚀 [pdf-builder-init] Auto-initializing React...');
+                try {
+                    const result = window.pdfBuilderReact.initPDFBuilderReact();
+                    console.log('✅ [pdf-builder-init] React auto-initialization result:', result);
+                } catch (error) {
+                    console.error('❌ [pdf-builder-init] React auto-initialization failed:', error);
+                }
+            } else {
+                console.log('⚠️ [pdf-builder-init] Container not found or initPDFBuilderReact not available, skipping auto-init');
+            }
+            
             return true;
         }
         
