@@ -78,11 +78,17 @@ class PdfBuilderPreviewGenerator
      */
     private function initDompdf()
     {
+        // Désactiver temporairement l'autoloader pour éviter les conflits
+        if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
+            spl_autoload_unregister(['PDF_Builder\Core\PdfBuilderAutoloader', 'autoload']);
+        }
+
         // Charger Dompdf de manière directe pour éviter les conflits d'autoload
         $vendor_dir = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/';
 
         // Liste des fichiers à charger dans l'ordre de dépendance
         $files_to_load = array(
+            'dompdf/src/Dompdf.php',
             'dompdf/src/Options.php',
             'dompdf/src/Helpers.php',
             'dompdf/src/Css/Color.php',
@@ -92,8 +98,7 @@ class PdfBuilderPreviewGenerator
             'dompdf/src/Canvas.php',
             'dompdf/src/Frame.php',
             'dompdf/src/Frame/FrameTree.php',
-            'dompdf/src/FontMetrics.php',
-            'dompdf/src/Dompdf.php'
+            'dompdf/src/FontMetrics.php'
         );
 
         // Charger chaque fichier seulement s'il n'est pas déjà chargé
@@ -102,6 +107,11 @@ class PdfBuilderPreviewGenerator
             if (file_exists($full_path) && !class_exists($this->getClassNameFromPath($file_path))) {
                 require_once $full_path;
             }
+        }
+
+        // Réactiver l'autoloader
+        if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
+            spl_autoload_register(['PDF_Builder\Core\PdfBuilderAutoloader', 'autoload']);
         }
 
         // Vérifier que Dompdf est disponible
