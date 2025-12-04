@@ -302,6 +302,19 @@
  * Canvas Configuration Modals
  * Updated: 2025-12-03 00:30:00
  */
+
+// Définir les formats de papier si pas déjà défini
+if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
+    define('PDF_BUILDER_PAPER_FORMATS', [
+        'A4' => ['width' => 210.0, 'height' => 297.0],
+        'A3' => ['width' => 297.0, 'height' => 420.0],
+        'A5' => ['width' => 148.0, 'height' => 210.0],
+        'Letter' => ['width' => 215.9, 'height' => 279.4],
+        'Legal' => ['width' => 215.9, 'height' => 355.6],
+        'Tabloid' => ['width' => 279.4, 'height' => 431.8]
+    ]);
+}
+?>
 ?>
                         <tr>
                             <th scope="row"><label>Dimensions calculées</label></th>
@@ -423,18 +436,6 @@
                  * Paramètres canvas pour les modales
                  * Définit les valeurs par défaut depuis les options séparées (synchronisées)
                  */
-
-                // Définir les formats de papier si pas déjà défini
-                if (!defined('PDF_BUILDER_PAPER_FORMATS')) {
-                    define('PDF_BUILDER_PAPER_FORMATS', [
-                        'A4' => ['width' => 210.0, 'height' => 297.0],
-                        'A3' => ['width' => 297.0, 'height' => 420.0],
-                        'A5' => ['width' => 148.0, 'height' => 210.0],
-                        'Letter' => ['width' => 215.9, 'height' => 279.4],
-                        'Legal' => ['width' => 215.9, 'height' => 355.6],
-                        'Tabloid' => ['width' => 279.4, 'height' => 431.8]
-                    ]);
-                }
 
                 // Les modales lisent depuis les options séparées pour cohérence
                 ?>
