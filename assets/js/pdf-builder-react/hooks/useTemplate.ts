@@ -53,10 +53,12 @@ export function useTemplate() {
         console.log('🔄 [useTemplate] templateData._db_name:', templateData?._db_name);
         console.log('🔄 [useTemplate] templateData keys:', Object.keys(templateData || {}));
 
-        // Utiliser le nom du JSON en priorité, sinon le nom de la DB, sinon fallback
-        const templateName = templateData?.name ||
-                           templateData?._db_name ||
-                           `Template ${templateId}`;
+        // Utiliser le nom du JSON en priorité (s'il existe et n'est pas vide), sinon le nom de la DB, sinon fallback explicite
+        const templateName = (templateData?.name && templateData.name.trim() !== '') ?
+                           templateData.name :
+                           (templateData?._db_name && templateData._db_name.trim() !== '') ?
+                           templateData._db_name :
+                           `[NOM NON RÉCUPÉRÉ - ID: ${templateId}]`;
         console.log('🔄 [useTemplate] Final template name:', templateName);
         // console.log('📋 [LOAD TEMPLATE] Utilisation des données localisées pour template:', templateId, 'Nom:', templateData.name);
 
