@@ -16,6 +16,30 @@
         };
     }
 
+    // Fonctions de debug conditionnel
+    function isDebugEnabled() {
+        return window.location.search.includes('debug=force') ||
+               (typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript);
+    }
+
+    function debugLog(...args) {
+        if (isDebugEnabled()) {
+            debugLog(...args);
+        }
+    }
+
+    function debugError(...args) {
+        if (isDebugEnabled()) {
+            debugError(...args);
+        }
+    }
+
+    function debugWarn(...args) {
+        if (isDebugEnabled()) {
+            debugWarn(...args);
+        }
+    }
+
     // Système de navigation des onglets
     function initTabs() {
         const tabsContainer = document.getElementById('pdf-builder-tabs');
@@ -95,27 +119,27 @@
     function initSaveButton() {
         // Vérifier si on est sur la page de paramètres
         if (typeof window !== 'undefined' && window.location && window.location.href.indexOf('page=pdf-builder-settings') === -1) {
-            console.log('PDF Builder - Bouton flottant: Pas sur la page de paramètres, skip');
+            debugLog('PDF Builder - Bouton flottant: Pas sur la page de paramètres, skip');
             return;
         }
 
         if (saveButtonInitialized) {
-            console.log('PDF Builder - Bouton flottant: Déjà initialisé');
+            debugLog('PDF Builder - Bouton flottant: Déjà initialisé');
             return;
         }
 
-        console.log('PDF Builder - Initialisation du bouton flottant...');
+        debugLog('PDF Builder - Initialisation du bouton flottant...');
 
         const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
 
-        console.log('   - Bouton #pdf-builder-save-floating-btn:', saveBtn ? 'trouvé' : 'manquant');
-        console.log('   - Conteneur #pdf-builder-save-floating:', floatingContainer ? 'trouvé' : 'manquant');
+        debugLog('   - Bouton #pdf-builder-save-floating-btn:', saveBtn ? 'trouvé' : 'manquant');
+        debugLog('   - Conteneur #pdf-builder-save-floating:', floatingContainer ? 'trouvé' : 'manquant');
 
         if (saveBtn && floatingContainer) {
             saveBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('PDF Builder - Clic sur le bouton flottant');
+                debugLog('PDF Builder - Clic sur le bouton flottant');
 
                 // Trouver le formulaire de sauvegarde principal
                 const mainForm = document.getElementById('pdf-builder-settings-form') || document.querySelector('form');
@@ -124,14 +148,14 @@
                     const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
                     mainForm.dispatchEvent(submitEvent);
                 } else {
-                    console.error('PDF Builder - Formulaire principal non trouvé');
+                    debugError('PDF Builder - Formulaire principal non trouvé');
                 }
             });
 
             saveButtonInitialized = true;
-            console.log('PDF Builder - Bouton flottant initialisé avec succès');
+            debugLog('PDF Builder - Bouton flottant initialisé avec succès');
         } else {
-            console.log('PDF Builder - Éléments du bouton flottant manquants, retry dans 1s...');
+            debugLog('PDF Builder - Éléments du bouton flottant manquants, retry dans 1s...');
             setTimeout(initSaveButton, 1000);
         }
     }

@@ -16,6 +16,30 @@
         };
     }
 
+    // Fonctions de debug conditionnel
+    function isDebugEnabled() {
+        return window.location.search.includes('debug=force') ||
+               (typeof window.pdfBuilderDebugSettings !== 'undefined' && window.pdfBuilderDebugSettings?.javascript);
+    }
+
+    function debugLog(...args) {
+        if (isDebugEnabled()) {
+            debugLog(...args);
+        }
+    }
+
+    function debugError(...args) {
+        if (isDebugEnabled()) {
+            debugError(...args);
+        }
+    }
+
+    function debugWarn(...args) {
+        if (isDebugEnabled()) {
+            debugWarn(...args);
+        }
+    }
+
     // Système de navigation des onglets
     function initTabs() {
         const tabsContainer = document.getElementById('pdf-builder-tabs');
@@ -95,44 +119,44 @@
     function initSaveButton() {
         // Vérifier si on est sur la page de paramètres
         if (typeof window !== 'undefined' && window.location && window.location.href.indexOf('page=pdf-builder-settings') === -1) {
-            console.log('PDF Builder - Bouton flottant: Pas sur la page de paramètres, skip');
+            debugLog('PDF Builder - Bouton flottant: Pas sur la page de paramètres, skip');
             return;
         }
 
         if (saveButtonInitialized) {
-            console.log('PDF Builder - Bouton flottant: Déjà initialisé');
+            debugLog('PDF Builder - Bouton flottant: Déjà initialisé');
             return;
         }
 
-        console.log('PDF Builder - Initialisation du bouton flottant...');
+        debugLog('PDF Builder - Initialisation du bouton flottant...');
 
         const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
         const floatingContainer = document.getElementById('pdf-builder-save-floating');
 
-        console.log('   - Bouton #pdf-builder-save-floating-btn:', saveBtn ? 'trouvé' : 'manquant');
-        console.log('   - Conteneur #pdf-builder-save-floating:', floatingContainer ? 'trouvé' : 'manquant');
+        debugLog('   - Bouton #pdf-builder-save-floating-btn:', saveBtn ? 'trouvé' : 'manquant');
+        debugLog('   - Conteneur #pdf-builder-save-floating:', floatingContainer ? 'trouvé' : 'manquant');
 
         if (saveBtn && floatingContainer) {
             saveBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('PDF Builder - Clic sur le bouton flottant');
+                debugLog('PDF Builder - Clic sur le bouton flottant');
 
                 // Collecter toutes les données de tous les formulaires de tous les onglets
                 const allFormData = collectAllFormData();
 
                 if (Object.keys(allFormData).length > 0) {
-                    console.log('PDF Builder - Données collectées pour sauvegarde:', allFormData);
+                    debugLog('PDF Builder - Données collectées pour sauvegarde:', allFormData);
                     // Sauvegarder via AJAX
                     saveAllSettings(allFormData);
                 } else {
-                    console.error('PDF Builder - Aucune donnée de formulaire trouvée à sauvegarder');
+                    debugError('PDF Builder - Aucune donnée de formulaire trouvée à sauvegarder');
                 }
             });
 
             saveButtonInitialized = true;
-            console.log('PDF Builder - Bouton flottant initialisé avec succès');
+            debugLog('PDF Builder - Bouton flottant initialisé avec succès');
         } else {
-            console.log('PDF Builder - Éléments du bouton flottant manquants, retry dans 1s...');
+            debugLog('PDF Builder - Éléments du bouton flottant manquants, retry dans 1s...');
             setTimeout(initSaveButton, 1000);
         }
     }
@@ -180,7 +204,7 @@
      * Collecte toutes les données de tous les formulaires de tous les onglets
      */
     function collectAllFormData() {
-        console.log('PDF Builder - Collecte des données de tous les formulaires...');
+        debugLog('PDF Builder - Collecte des données de tous les formulaires...');
 
         const allData = {};
 
@@ -207,7 +231,7 @@
         formIds.forEach(formId => {
             const form = document.getElementById(formId);
             if (form) {
-                console.log(`PDF Builder - Collecte du formulaire: ${formId}`);
+                debugLog(`PDF Builder - Collecte du formulaire: ${formId}`);
                 const formData = new FormData(form);
                 const formObject = {};
 
@@ -258,7 +282,7 @@
             }
         });
 
-        console.log('PDF Builder - Données collectées:', allData);
+        debugLog('PDF Builder - Données collectées:', allData);
         return allData;
     }
 
@@ -266,8 +290,8 @@
      * Sauvegarde toutes les données via AJAX
      */
     function saveAllSettings(formData) {
-        console.log('PDF Builder - Sauvegarde de toutes les données...');
-        console.log('PDF Builder - Données à envoyer:', formData);
+        debugLog('PDF Builder - Sauvegarde de toutes les données...');
+        debugLog('PDF Builder - Données à envoyer:', formData);
 
         // Afficher un indicateur de chargement
         const saveBtn = document.getElementById('pdf-builder-save-floating-btn');
@@ -289,8 +313,8 @@
 
         // DEBUG: Log debug fields being sent
         const debugFields = Object.keys(flattenedData).filter(key => key.includes('debug'));
-        console.log('PDF Builder - Debug fields being sent:', debugFields);
-        console.log('PDF Builder - pdf_builder_debug_javascript value:', flattenedData['pdf_builder_debug_javascript']);
+        debugLog('PDF Builder - Debug fields being sent:', debugFields);
+        debugLog('PDF Builder - pdf_builder_debug_javascript value:', flattenedData['pdf_builder_debug_javascript']);
 
         // Préparer les données pour AJAX
         const ajaxData = {
@@ -299,7 +323,7 @@
             ...flattenedData
         };
 
-        console.log('PDF Builder - Données AJAX préparées (aplaties):', ajaxData);
+        debugLog('PDF Builder - Données AJAX préparées (aplaties):', ajaxData);
 
         // Envoyer via AJAX
         fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
@@ -311,10 +335,10 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log('PDF Builder - Réponse de sauvegarde:', data);
+            debugLog('PDF Builder - Réponse de sauvegarde:', data);
 
             if (data.success) {
-                console.log('PDF Builder - Sauvegarde réussie, données sauvegardées:', data.saved_count);
+                debugLog('PDF Builder - Sauvegarde réussie, données sauvegardées:', data.saved_count);
                 // Afficher un message de succès
                 showSaveMessage('Toutes les données ont été sauvegardées avec succès!', 'success');
 
@@ -323,14 +347,14 @@
                     detail: { formData: formData, response: data }
                 }));
             } else {
-                console.error('PDF Builder - Erreur de sauvegarde:', data);
-                console.error('PDF Builder - Détails de l\'erreur:', data.data);
+                debugError('PDF Builder - Erreur de sauvegarde:', data);
+                debugError('PDF Builder - Détails de l\'erreur:', data.data);
                 // Afficher un message d'erreur
                 showSaveMessage('Erreur lors de la sauvegarde: ' + (data.data || data.message || 'Erreur inconnue'), 'error');
             }
         })
         .catch(error => {
-            console.error('PDF Builder - Erreur AJAX:', error);
+            debugError('PDF Builder - Erreur AJAX:', error);
             showSaveMessage('Erreur de communication avec le serveur', 'error');
         })
         .finally(() => {

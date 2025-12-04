@@ -3,8 +3,30 @@
  * This must be loaded BEFORE the React bundle to make hooks available to Babel JSX
  */
 
+// Debug functions for conditional logging
+function isDebugEnabled() {
+  if (typeof window !== 'undefined' &&
+      window.pdfBuilderDebugSettings &&
+      typeof window.pdfBuilderDebugSettings === 'object') {
+    return !!window.pdfBuilderDebugSettings.javascript;
+  }
+  return false;
+}
+
+function debugLog(...args) {
+  if (isDebugEnabled()) {
+    console.log(...args);
+  }
+}
+
+function debugWarn(...args) {
+  if (isDebugEnabled()) {
+    console.warn(...args);
+  }
+}
+
 if (typeof window !== 'undefined' && window.React) {
-  console.log('🔧 [react-shim] Setting up React shim for hooks...');
+  debugLog('🔧 [react-shim] Setting up React shim for hooks...');
   
   // Get the original React object
   const OriginalReact = window.React;
@@ -50,7 +72,7 @@ if (typeof window !== 'undefined' && window.React) {
       // Log hook access for debugging
       if (typeof prop === 'string' && (prop.startsWith('use') || prop === 'createElement')) {
         if (!value) {
-          console.warn(`⚠️ [react-shim] Hook ${prop} is undefined on React object`, { target, value });
+          debugWarn(`⚠️ [react-shim] Hook ${prop} is undefined on React object`, { target, value });
         }
       }
       
@@ -89,8 +111,8 @@ if (typeof window !== 'undefined' && window.React) {
   window.React.StrictMode = StrictMode;
   window.React.Profiler = Profiler;
   
-  console.log('✅ [react-shim] React shim initialized, all hooks available on window.React');
-  console.log('✅ [react-shim] window.React.useRef:', typeof window.React.useRef);
-  console.log('✅ [react-shim] window.React.useState:', typeof window.React.useState);
-  console.log('✅ [react-shim] window.React.useEffect:', typeof window.React.useEffect);
+  debugLog('✅ [react-shim] React shim initialized, all hooks available on window.React');
+  debugLog('✅ [react-shim] window.React.useRef:', typeof window.React.useRef);
+  debugLog('✅ [react-shim] window.React.useState:', typeof window.React.useState);
+  debugLog('✅ [react-shim] window.React.useEffect:', typeof window.React.useEffect);
 }

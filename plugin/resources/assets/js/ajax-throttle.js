@@ -3,6 +3,22 @@
  * Prevents "Too many connections" errors by limiting concurrent requests
  */
 
+// Debug functions
+function isDebugEnabled() {
+    if (typeof window !== 'undefined' &&
+        window.pdfBuilderDebugSettings &&
+        typeof window.pdfBuilderDebugSettings === 'object') {
+        return !!window.pdfBuilderDebugSettings.javascript;
+    }
+    return false;
+}
+
+function debugLog(...args) {
+    if (isDebugEnabled()) {
+        console.log(...args);
+    }
+}
+
 (function() {
     'use strict';
 
@@ -55,5 +71,5 @@
         };
     };
 
-    console.log('✅ [AJAX Throttle] Connection pool manager initialized (max ' + MAX_CONCURRENT_REQUESTS + ' concurrent)');
+    debugLog('✅ [AJAX Throttle] Connection pool manager initialized (max ' + MAX_CONCURRENT_REQUESTS + ' concurrent)');
 })();

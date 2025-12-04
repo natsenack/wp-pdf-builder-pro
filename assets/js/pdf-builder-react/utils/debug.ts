@@ -65,29 +65,34 @@ declare global {
 
 // Fonction de logging conditionnel
 export function debugLog(...args: unknown[]) {
-  // TEMP: Always log for debugging
-  console.log(...args);
+  if (isDebugEnabled()) {
+    console.log(...args);
+  }
 }
 
 // Fonction de debug pour les sauvegardes (activable séparément)
 export function debugSave(...args: unknown[]) {
-  // TEMP: Always log for debugging
-  console.log(...args);
+  if (isDebugEnabled()) {
+    console.log(...args);
+  }
 }
 
 export function debugError(...args: unknown[]) {
-  // TEMP: Always log for debugging
-  console.error(...args);
+  if (isDebugEnabled()) {
+    console.error(...args);
+  }
 }
 
 export function debugWarn(...args: unknown[]) {
-  // TEMP: Always log for debugging
-  console.warn(...args);
+  if (isDebugEnabled()) {
+    console.warn(...args);
+  }
 }
 
 export function debugTable(data: unknown) {
-  // TEMP: Always log for debugging
-  console.table(data);
+  if (isDebugEnabled()) {
+    console.table(data);
+  }
 }
 
 // Keep an internal verbose flag in sync with window.pdfBuilderDebugSettings

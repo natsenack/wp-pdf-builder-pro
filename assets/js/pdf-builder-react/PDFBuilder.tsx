@@ -3,10 +3,11 @@ import { BuilderProvider } from './contexts/builder/BuilderContext';
 import { CanvasSettingsProvider } from './contexts/CanvasSettingsContext';
 import { PDFBuilderContent } from './components/PDFBuilderContent';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from './constants/canvas';
+import { debugLog } from './utils/debug';
 
-console.log('🔧 [PDFBuilder.tsx] Import successful. React:', typeof React, 'useState:', typeof useState, 'useEffect:', typeof useEffect);
-console.log('🔧 [PDFBuilder.tsx] window.pdfBuilderData at import time:', window.pdfBuilderData);
-console.log('🔧 [PDFBuilder.tsx] window keys at import time:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
+debugLog('🔧 [PDFBuilder.tsx] Import successful. React:', typeof React, 'useState:', typeof useState, 'useEffect:', typeof useEffect);
+debugLog('🔧 [PDFBuilder.tsx] window.pdfBuilderData at import time:', window.pdfBuilderData);
+debugLog('🔧 [PDFBuilder.tsx] window keys at import time:', Object.keys(window).filter(key => key.includes('pdfBuilder')));
 
 interface PDFBuilderProps {
   width?: number;
@@ -19,39 +20,39 @@ export function PDFBuilder({
   height: initialHeight = DEFAULT_CANVAS_HEIGHT,
   className
 }: PDFBuilderProps) {
-  console.log('🔧 PDFBuilder: Component initialized with props:', { initialWidth, initialHeight, className });
-  console.log('🔧 PDFBuilder: window.pdfBuilderData at component init:', window.pdfBuilderData);
-  console.log('🔧 PDFBuilder: window.pdfBuilderData?.ajaxUrl:', window.pdfBuilderData?.ajaxUrl);
-  console.log('🔧 PDFBuilder: window.pdfBuilderData?.nonce:', window.pdfBuilderData?.nonce);
+  debugLog('🔧 PDFBuilder: Component initialized with props:', { initialWidth, initialHeight, className });
+  debugLog('🔧 PDFBuilder: window.pdfBuilderData at component init:', window.pdfBuilderData);
+  debugLog('🔧 PDFBuilder: window.pdfBuilderData?.ajaxUrl:', window.pdfBuilderData?.ajaxUrl);
+  debugLog('🔧 PDFBuilder: window.pdfBuilderData?.nonce:', window.pdfBuilderData?.nonce);
 
   const [dimensions, setDimensions] = useState({
     width: initialWidth,
     height: initialHeight
   });
 
-  console.log('📏 PDFBuilder: Initial dimensions set:', dimensions);
+  debugLog('📏 PDFBuilder: Initial dimensions set:', dimensions);
 
   // Écouter les changements de dimensions depuis l'API globale
   useEffect(() => {
-    console.log('🎧 PDFBuilder: Setting up dimension change listener');
+    debugLog('🎧 PDFBuilder: Setting up dimension change listener');
 
     const handleUpdateDimensions = (event: CustomEvent) => {
-      console.log('📡 PDFBuilder: Received dimension update event:', event.detail);
+      debugLog('📡 PDFBuilder: Received dimension update event:', event.detail);
       const { width, height } = event.detail;
-      console.log('🔄 PDFBuilder: Updating dimensions to:', { width, height });
+      debugLog('🔄 PDFBuilder: Updating dimensions to:', { width, height });
       setDimensions({ width, height });
     };
 
     document.addEventListener('pdfBuilderUpdateCanvasDimensions', handleUpdateDimensions as EventListener, { passive: true });
-    console.log('✅ PDFBuilder: Dimension change listener added');
+    debugLog('✅ PDFBuilder: Dimension change listener added');
 
     return () => {
-      console.log('🧹 PDFBuilder: Cleaning up dimension change listener');
+      debugLog('🧹 PDFBuilder: Cleaning up dimension change listener');
       document.removeEventListener('pdfBuilderUpdateCanvasDimensions', handleUpdateDimensions as EventListener);
     };
   }, []);
 
-  console.log('🎨 PDFBuilder: Rendering with dimensions:', dimensions);
+  debugLog('🎨 PDFBuilder: Rendering with dimensions:', dimensions);
 
   return (
     <CanvasSettingsProvider>
