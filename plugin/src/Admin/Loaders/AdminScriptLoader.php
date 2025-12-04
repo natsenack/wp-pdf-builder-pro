@@ -79,6 +79,7 @@ class AdminScriptLoader
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_notifications'),
                 'settings' => [
+                    'enabled' => true,
                     'position' => 'top-right',
                     'duration' => 5000,
                     'max_notifications' => 5,
@@ -187,6 +188,7 @@ class AdminScriptLoader
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_notifications'),
             'settings' => [
+                'enabled' => true,
                 'position' => 'top-right',
                 'duration' => 5000,
                 'max_notifications' => 5,
