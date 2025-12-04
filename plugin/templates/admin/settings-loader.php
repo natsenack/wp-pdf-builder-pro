@@ -44,17 +44,6 @@ function pdf_builder_load_settings_assets($hook) {
         PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
         false // Chargé dans le header pour une exécution précoce
     );
-
-    // Passer les paramètres de debug au JavaScript
-    $settings = get_option('pdf_builder_settings', []);
-    $debug_config = array(
-        'debug' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
-        'verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
-        'ajax_debug' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax'],
-        'developer_mode' => isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled']
-    );
-    
-    wp_localize_script('pdf-builder-settings-tabs', 'PDF_BUILDER_CONFIG', $debug_config);
 }
 
 // Enregistrer le hook pour charger les assets
