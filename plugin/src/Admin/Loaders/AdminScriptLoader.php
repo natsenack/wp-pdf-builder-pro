@@ -145,6 +145,8 @@ class AdminScriptLoader
                 $localize_data['existingTemplate'] = $existing_template_data;
                 $localize_data['hasExistingData'] = true;
                 error_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id);
+                error_log('[WP AdminScriptLoader] Template name in data: ' . ($existing_template_data['name'] ?? 'NOT FOUND'));
+                error_log('[WP AdminScriptLoader] Full template data structure: ' . json_encode($existing_template_data));
             } else {
                 error_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true));
             }

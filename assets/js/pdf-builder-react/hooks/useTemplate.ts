@@ -48,6 +48,9 @@ export function useTemplate() {
       if (window.pdfBuilderData?.existingTemplate && window.pdfBuilderData?.hasExistingData) {
         console.log('🔄 [useTemplate] Using localized data for template:', templateId);
         const templateData = window.pdfBuilderData.existingTemplate;
+        console.log('🔄 [useTemplate] templateData:', templateData);
+        console.log('🔄 [useTemplate] templateData.name:', templateData?.name);
+        console.log('🔄 [useTemplate] templateData keys:', Object.keys(templateData || {}));
         // console.log('📋 [LOAD TEMPLATE] Utilisation des données localisées pour template:', templateId, 'Nom:', templateData.name);
 
         // Parse JSON strings if needed
