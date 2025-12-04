@@ -190,6 +190,7 @@
             'securite-settings-form',
             'pdf-settings-form',
             'templates-status-form',
+            'general-form',
             'cache-status-form',
             'canvas-dimensions-form',
             'zoom-form',
@@ -235,14 +236,22 @@
                 const inputForm = input.closest('form');
                 // Ne collecter que si ce n'est pas déjà dans un formulaire traité
                 if (!inputForm || !formIds.includes(inputForm.id)) {
+                    // Collecter aussi les champs dans des sections spécifiques (comme licence)
+                    const section = input.closest('section');
+                    const sectionId = section ? section.id : 'global';
+
+                    if (!allData[sectionId]) {
+                        allData[sectionId] = {};
+                    }
+
                     if (input.type === 'checkbox') {
-                        allData[input.name] = input.checked ? input.value : '';
+                        allData[sectionId][input.name] = input.checked ? input.value : '';
                     } else if (input.type === 'radio') {
                         if (input.checked) {
-                            allData[input.name] = input.value;
+                            allData[sectionId][input.name] = input.value;
                         }
                     } else {
-                        allData[input.name] = input.value;
+                        allData[sectionId][input.name] = input.value;
                     }
                 }
             }

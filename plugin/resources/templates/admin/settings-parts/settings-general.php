@@ -12,7 +12,7 @@ require_once __DIR__ . '/settings-helpers.php';
             <section class="general-section">
                 <h3>🏢 Informations Entreprise</h3>
 
-                <form method="post" action="">
+                <form method="post" action="" id="general-form">
                     <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_company_nonce'); ?>
                     <input type="hidden" name="current_tab" value="general">
                     <!-- Le bouton submit est supprimé car on utilise le système AJAX global -->
