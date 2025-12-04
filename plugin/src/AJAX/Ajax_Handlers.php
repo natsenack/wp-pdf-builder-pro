@@ -137,7 +137,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         error_log("[AJAX HANDLER] process_all_settings called");
         error_log("[AJAX HANDLER] POST data received: " . json_encode(array_keys($_POST)));
 
-        // Check if form_data is sent as JSON
+        // Check if form_data is sent as JSON (legacy) or flattened data
         if (isset($_POST['form_data'])) {
             $form_data_json = stripslashes($_POST['form_data']);
             $all_form_data = json_decode($form_data_json, true);
@@ -145,20 +145,20 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 error_log('JSON decode error: ' . json_last_error_msg() . ' for data: ' . substr($form_data_json, 0, 500));
                 throw new Exception('Données JSON invalides: ' . json_last_error_msg());
             }
-            error_log("[AJAX HANDLER] Parsed form_data successfully, forms: " . implode(', ', array_keys($all_form_data)));
-        } else {
-            // Fallback: assume data is sent as individual fields
-            $all_form_data = ['global' => $_POST];
-        }
-
-        // Flatten the data for processing
-        $flattened_data = [];
-        foreach ($all_form_data as $form_id => $form_fields) {
-            if (is_array($form_fields)) {
-                foreach ($form_fields as $key => $value) {
-                    $flattened_data[$key] = $value;
+            error_log("[AJAX HANDLER] Parsed legacy form_data successfully, forms: " . implode(', ', array_keys($all_form_data)));
+            // Flatten the data
+            $flattened_data = [];
+            foreach ($all_form_data as $form_id => $form_fields) {
+                if (is_array($form_fields)) {
+                    foreach ($form_fields as $key => $value) {
+                        $flattened_data[$key] = $value;
+                    }
                 }
             }
+        } else {
+            // Use flattened data directly from POST
+            $flattened_data = $_POST;
+            error_log("[AJAX HANDLER] Using flattened data directly from POST, fields: " . count($flattened_data));
         }
 
         // LOG SPÉCIFIQUE POUR DEBUG_JAVASCRIPT

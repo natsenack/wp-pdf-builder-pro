@@ -275,14 +275,26 @@
         saveBtn.textContent = 'Sauvegarde...';
         saveBtn.disabled = true;
 
+        // Aplatir les données pour éviter les problèmes de taille JSON
+        const flattenedData = {};
+        for (const formId in formData) {
+            if (formData.hasOwnProperty(formId) && typeof formData[formId] === 'object') {
+                for (const key in formData[formId]) {
+                    if (formData[formId].hasOwnProperty(key)) {
+                        flattenedData[key] = formData[formId][key];
+                    }
+                }
+            }
+        }
+
         // Préparer les données pour AJAX
         const ajaxData = {
             action: 'pdf_builder_save_all_settings',
             nonce: pdfBuilderAjax ? pdfBuilderAjax.nonce : '',
-            form_data: JSON.stringify(formData)
+            ...flattenedData
         };
 
-        console.log('PDF Builder - Données AJAX préparées:', ajaxData);
+        console.log('PDF Builder - Données AJAX préparées (aplaties):', ajaxData);
 
         // Envoyer via AJAX
         fetch(pdfBuilderAjax ? pdfBuilderAjax.ajaxurl : '/wp-admin/admin-ajax.php', {
