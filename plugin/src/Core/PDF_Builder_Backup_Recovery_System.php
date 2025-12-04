@@ -203,8 +203,8 @@ class PDF_Builder_Backup_Recovery_System {
      */
     private function backup_files() {
         $files_to_backup = [
-            'templates' => PDF_BUILDER_PLUGIN_DIR . 'templates/',
-            'assets' => PDF_BUILDER_PLUGIN_DIR . 'assets/',
+            'templates' => PDF_BUILDER_PLUGIN_DIR . 'resources/templates/',
+            'assets' => PDF_BUILDER_PLUGIN_DIR . 'resources/assets/',
             'config' => PDF_BUILDER_PLUGIN_DIR . 'config/',
             'uploads' => WP_CONTENT_DIR . '/uploads/pdf-builder/'
         ];

@@ -21,7 +21,7 @@ function pdf_builder_load_settings_assets($hook) {
     // Charger les styles CSS
     wp_enqueue_style(
         'pdf-builder-settings',
-        PDF_BUILDER_PLUGIN_URL . 'assets/css/settings.css',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/settings.css',
         array(),
         PDF_BUILDER_VERSION . '-' . time(),
         'all'
@@ -30,7 +30,7 @@ function pdf_builder_load_settings_assets($hook) {
     // Charger les styles pour les onglets (nav-tab-wrapper)
     wp_enqueue_style(
         'pdf-builder-tabs',
-        PDF_BUILDER_PLUGIN_URL . 'assets/css/settings-tabs.css',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/settings-tabs.css',
         array(),
         PDF_BUILDER_VERSION . '-' . time(),
         'all'
@@ -39,7 +39,7 @@ function pdf_builder_load_settings_assets($hook) {
     // Charger le JavaScript pour la navigation par onglets
     wp_enqueue_script(
         'pdf-builder-settings-tabs',
-        PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.js',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/settings-tabs.js',
         array('jquery'),
         PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
         false // Chargé dans le header pour une exécution précoce
@@ -56,7 +56,7 @@ function pdf_builder_load_global_admin_assets($hook) {
     // Styles globaux pour l'admin
     wp_enqueue_style(
         'pdf-builder-admin-global',
-        PDF_BUILDER_PLUGIN_URL . 'assets/css/admin-global.css',
+        PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/admin-global.css',
         array(),
         PDF_BUILDER_VERSION . '-' . time(),
         'all'

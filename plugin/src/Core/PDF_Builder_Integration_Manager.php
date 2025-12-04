@@ -182,7 +182,7 @@ class PDF_Builder_Integration_Manager {
         $services = $this->get_available_services();
         $connections = $this->get_connections_status();
 
-        include PDF_BUILDER_PLUGIN_DIR . 'templates/admin/integrations-management.php';
+        include PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/integrations-management.php';
     }
 
     /**

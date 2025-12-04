@@ -422,8 +422,8 @@ class SettingsManager
     {
         // Charger les styles seulement sur les pages d'administration du plugin
         if (strpos($hook, 'pdf-builder') !== false || strpos($hook, 'settings_page_pdf_builder') !== false) {
-            $css_file = plugin_dir_url(dirname(dirname(dirname(__FILE__)))) . 'assets/css/settings.css';
-            $css_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'assets/css/settings.css';
+            $css_file = plugin_dir_url(dirname(dirname(dirname(__FILE__)))) . 'resources/assets/css/settings.css';
+            $css_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'resources/assets/css/settings.css';
 
             // Vérifier que le fichier existe avant de le charger
             if (file_exists($css_path)) {

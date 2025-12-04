@@ -11,13 +11,13 @@ if (!defined('ABSPATH')) {
 // Inclure TemplateDefaults si pas déjà chargé
 if (!class_exists('PDF_Builder\TemplateDefaults')) {
     // Chemin absolu vers TemplateDefaults.php
-    $template_defaults_path = dirname(__DIR__, 2) . '/core/TemplateDefaults.php';
+    $template_defaults_path = dirname(__DIR__, 2) . '/src/Core/TemplateDefaults.php';
     if (file_exists($template_defaults_path)) {
         require_once $template_defaults_path;
     } else {
         // Fallback: essayer avec plugin_dir_path si disponible
         if (defined('PDF_BUILDER_PLUGIN_DIR')) {
-            $template_defaults_path = PDF_BUILDER_PLUGIN_DIR . 'plugin/core/TemplateDefaults.php';
+            $template_defaults_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/TemplateDefaults.php';
             if (file_exists($template_defaults_path)) {
                 require_once $template_defaults_path;
             }

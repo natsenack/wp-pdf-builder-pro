@@ -50,7 +50,7 @@ class PdfBuilderSettingsManager
             echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . '</p></div>';
         }
 
-        include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/settings-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . '../../resources/templates/admin/settings-page.php';
     }
 
 

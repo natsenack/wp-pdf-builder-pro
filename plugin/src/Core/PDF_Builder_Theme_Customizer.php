@@ -164,7 +164,7 @@ class PDF_Builder_Theme_Customizer {
         $font_family = $this->get_font_family();
         $font_size = $this->get_font_size();
 
-        include PDF_BUILDER_PLUGIN_DIR . 'templates/admin/theme-customizer.php';
+        include PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/theme-customizer.php';
     }
 
     /**

@@ -88,7 +88,7 @@ if (!defined('PDF_BUILDER_PLUGIN_URL')) {
 
 // Core paths
 if (!defined('PDF_BUILDER_CORE_DIR')) {
-    define('PDF_BUILDER_CORE_DIR', PDF_BUILDER_PLUGIN_DIR . 'core/');
+    define('PDF_BUILDER_CORE_DIR', PDF_BUILDER_PLUGIN_DIR . 'src/Core/');
 }
 
 if (!defined('PDF_BUILDER_SRC_DIR')) {
@@ -96,11 +96,11 @@ if (!defined('PDF_BUILDER_SRC_DIR')) {
 }
 
 if (!defined('PDF_BUILDER_ASSETS_DIR')) {
-    define('PDF_BUILDER_ASSETS_DIR', PDF_BUILDER_PLUGIN_DIR . 'assets/');
+    define('PDF_BUILDER_ASSETS_DIR', PDF_BUILDER_PLUGIN_DIR . 'resources/assets/');
 }
 
 if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
-    define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
+    define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'resources/assets/');
 }
 
 if (!defined('PDF_BUILDER_RESOURCES_DIR')) {
@@ -108,7 +108,7 @@ if (!defined('PDF_BUILDER_RESOURCES_DIR')) {
 }
 
 if (!defined('PDF_BUILDER_TEMPLATES_DIR')) {
-    define('PDF_BUILDER_TEMPLATES_DIR', PDF_BUILDER_PLUGIN_DIR . 'templates/');
+    define('PDF_BUILDER_TEMPLATES_DIR', PDF_BUILDER_PLUGIN_DIR . 'resources/templates/');
 }
 
 if (!defined('PDF_BUILDER_CONFIG_DIR')) {
@@ -116,7 +116,7 @@ if (!defined('PDF_BUILDER_CONFIG_DIR')) {
 }
 
 if (!defined('PDF_BUILDER_LANGUAGES_DIR')) {
-    define('PDF_BUILDER_LANGUAGES_DIR', PDF_BUILDER_PLUGIN_DIR . 'languages/');
+    define('PDF_BUILDER_LANGUAGES_DIR', PDF_BUILDER_PLUGIN_DIR . 'resources/languages/');
 }
 
 // Upload paths

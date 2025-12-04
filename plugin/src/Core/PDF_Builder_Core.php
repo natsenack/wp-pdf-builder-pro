@@ -316,7 +316,7 @@ class PdfBuilderCore
         }
 
         // Inclure la page templates comme dans PDF_Builder_Admin
-        $templates_page_path = plugin_dir_path(__FILE__) . '../templates/admin/templates-page.php';
+        $templates_page_path = plugin_dir_path(__FILE__) . '../resources/templates/admin/templates-page.php';
         if (file_exists($templates_page_path)) {
             include $templates_page_path;
         } else {
@@ -438,7 +438,7 @@ class PdfBuilderCore
     public function settingsPage()
     {
         // Inclure le template principal des paramètres avec onglets
-        $template_path = PDF_BUILDER_PLUGIN_DIR . 'templates/admin/settings-page.php';
+        $template_path = PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/settings-page.php';
         if (file_exists($template_path)) {
             include $template_path;
         } else {
@@ -461,7 +461,7 @@ class PdfBuilderCore
         wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
 
         // Charger seulement l'API globale de PDF Builder React
-        $react_script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/dist/pdf-builder-react.js';
+        $react_script_url = PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/dist/pdf-builder-react.js';
         $cache_bust = time();
         $version_param = $this->version . '-' . $cache_bust;
         wp_enqueue_script('pdf-builder-react-api-only', $react_script_url, ['react', 'react-dom'], $version_param, true);

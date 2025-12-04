@@ -573,7 +573,7 @@ class PDF_Builder_Onboarding_Manager {
             case 'completed':
                 // Récupérer les informations de configuration
                 $has_woocommerce = class_exists('WooCommerce');
-                $template_count = count(glob(plugin_dir_path(dirname(__FILE__)) . '../templates/predefined/*.json'));
+                $template_count = count(glob(plugin_dir_path(dirname(__FILE__)) . '../resources/templates/predefined/*.json'));
                 $current_user = wp_get_current_user();
                 return '
                     <div class="onboarding-completed">
@@ -1204,7 +1204,7 @@ class PDF_Builder_Onboarding_Manager {
      */
     private function get_predefined_templates() {
         $templates = [];
-        $template_dir = plugin_dir_path(dirname(__FILE__)) . '../templates/predefined/';
+        $template_dir = plugin_dir_path(dirname(__FILE__)) . '../resources/templates/predefined/';
         // Scanner les fichiers .json dans le dossier predefined
         $template_files = glob($template_dir . '*.json');
         foreach ($template_files as $file_path) {

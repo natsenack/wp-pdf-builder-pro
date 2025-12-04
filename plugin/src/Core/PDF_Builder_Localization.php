@@ -64,13 +64,13 @@ class PDF_Builder_Localization {
     public function load_textdomain() {
         $locale = apply_filters('plugin_locale', $this->current_locale, self::TEXT_DOMAIN);
 
-        $mofile = PDF_BUILDER_PLUGIN_DIR . 'languages/' . self::TEXT_DOMAIN . '-' . $locale . '.mo';
+        $mofile = PDF_BUILDER_PLUGIN_DIR . 'resources/languages/' . self::TEXT_DOMAIN . '-' . $locale . '.mo';
 
         if (file_exists($mofile)) {
             load_textdomain(self::TEXT_DOMAIN, $mofile);
         } else {
             // Fallback vers la langue par défaut
-            load_plugin_textdomain(self::TEXT_DOMAIN, false, dirname(plugin_basename(PDF_BUILDER_PLUGIN_FILE)) . '/languages/');
+            load_plugin_textdomain(self::TEXT_DOMAIN, false, dirname(plugin_basename(PDF_BUILDER_PLUGIN_FILE)) . '/resources/languages/');
         }
     }
 

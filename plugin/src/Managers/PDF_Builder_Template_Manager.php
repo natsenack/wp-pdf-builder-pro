@@ -82,7 +82,7 @@ class PdfBuilderTemplateManager
         // Récupérer tous les templates
         $templates = $wpdb->get_results("SELECT * FROM $table_templates ORDER BY updated_at DESC", ARRAY_A);
 
-        include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/templates-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . '../../resources/templates/admin/templates-page.php';
     }
 
     /**

@@ -64,8 +64,8 @@ function pdf_builder_builtin_templates_list_page()
 {
 
     // Enqueue les scripts et styles nécessaires
-    wp_enqueue_script('pdf-builder-builtin-editor', plugins_url('assets/js/builtin-editor.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.1.0', true);
-    wp_enqueue_style('pdf-builder-builtin-editor', plugins_url('assets/css/builtin-editor.css', PDF_BUILDER_PLUGIN_FILE), array(), '1.1.0');
+    wp_enqueue_script('pdf-builder-builtin-editor', plugins_url('resources/assets/js/builtin-editor.js', PDF_BUILDER_PLUGIN_FILE), array('jquery'), '1.1.0', true);
+    wp_enqueue_style('pdf-builder-builtin-editor', plugins_url('resources/assets/css/builtin-editor.css', PDF_BUILDER_PLUGIN_FILE), array(), '1.1.0');
 // Localiser le script
     wp_localize_script('pdf-builder-builtin-editor', 'pdfBuilderBuiltinEditor', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
@@ -240,7 +240,7 @@ function pdf_builder_ajax_load_builtin_template()
     }
 
     // Chemin vers le fichier
-    $file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/builtin/' . $template_id . '.json';
+    $file_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/builtin/' . $template_id . '.json';
     if (!file_exists($file_path)) {
         wp_send_json_error('Template non trouvé');
     }

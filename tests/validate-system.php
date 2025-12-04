@@ -9,11 +9,11 @@ echo "=== PDF Builder Save System Validation ===\n\n";
 // Test 1: File structure validation
 echo "Test 1: File structure validation\n";
 $required_files = [
-    '../plugin/templates/admin/settings-parts/settings-main.php',
+    '../plugin/resources/templates/admin/settings-parts/settings-main.php',
     '../plugin/pdf-builder-pro.php',
-    '../assets/js/pdf-builder-wrap.js',
-    '../assets/js/ajax-throttle.js',
-    '../assets/js/settings-global-save.js'
+    '../plugin/resources/assets/js/pdf-builder-wrap.js',
+    '../plugin/resources/assets/js/ajax-throttle.js',
+    '../plugin/resources/assets/js/settings-global-save.js'
 ];
 
 $files_exist = 0;
@@ -31,7 +31,7 @@ echo "Files found: $files_exist/" . count($required_files) . "\n\n";
 
 // Test 2: Code analysis - check for main settings file
 echo "Test 2: Code analysis - main settings file\n";
-$main_settings_file = __DIR__ . '/../plugin/templates/admin/settings-parts/settings-main.php';
+$main_settings_file = __DIR__ . '/../plugin/resources/templates/admin/settings-parts/settings-main.php';
 
 if (file_exists($main_settings_file)) {
     $content = file_get_contents($main_settings_file);
@@ -61,7 +61,7 @@ if (file_exists($main_settings_file)) {
 
 // Test 3: JavaScript validation
 echo "Test 3: JavaScript validation\n";
-$js_file = __DIR__ . '/../assets/js/settings-global-save.js';
+$js_file = __DIR__ . '/../plugin/resources/assets/js/settings-global-save.js';
 
 if (file_exists($js_file)) {
     $js_content = file_get_contents($js_file);
@@ -186,7 +186,7 @@ if (file_exists($js_file)) {
     }
 
     // Check for AJAX throttling
-    $throttle_file = __DIR__ . '/../assets/js/ajax-throttle.js';
+    $throttle_file = __DIR__ . '/../plugin/resources/assets/js/ajax-throttle.js';
     if (file_exists($throttle_file)) {
         echo "[PASS] AJAX throttling mechanism exists\n";
     } else {

@@ -400,7 +400,7 @@ class PdfBuilderAdmin
         // add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
 
         // Inclure le gestionnaire de modèles prédéfinis
-        include_once plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/predefined-templates-manager.php';
+        include_once plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/predefined-templates-manager.php';
 
         // Instancier le gestionnaire de modèles prédéfinis
         // new PDF_Builder_Predefined_Templates_Manager();
@@ -737,7 +737,7 @@ class PdfBuilderAdmin
         }
 
         // Inclure la page dédiée de gestion des templates
-        $templates_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/templates-page.php';
+        $templates_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/templates-page.php';
         if (file_exists($templates_file)) {
             include $templates_file;
         } else {
@@ -759,7 +759,7 @@ class PdfBuilderAdmin
         }
 
         // Inclure le fichier des paramètres avec les onglets
-        $settings_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-page.php';
+        $settings_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'resources/templates/admin/settings-page.php';
         if (file_exists($settings_file)) {
             include $settings_file;
         } else {

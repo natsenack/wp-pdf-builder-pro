@@ -599,7 +599,7 @@ function pdf_builder_init()
     }
 
     // Initialiser notre autoloader personnalisé
-    require_once plugin_dir_path(__FILE__) . 'core/autoloader.php';
+    require_once plugin_dir_path(__FILE__) . 'src/Core/autoloader.php';
     if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
         \PDF_Builder\Core\PdfBuilderAutoloader::init(plugin_dir_path(__FILE__));
     }
@@ -681,8 +681,8 @@ function pdf_builder_add_asset_cache_headers()
     // Pour les assets JavaScript
     if (
         isset($_SERVER['REQUEST_URI']) &&
-        (strpos($_SERVER['REQUEST_URI'], '/wp-content/plugins/wp-pdf-builder-pro/assets/js/') !== false ||
-         strpos($_SERVER['REQUEST_URI'], '/wp-content/plugins/wp-pdf-builder-pro/assets/css/') !== false)
+        (strpos($_SERVER['REQUEST_URI'], '/wp-content/plugins/wp-pdf-builder-pro/resources/assets/js/') !== false ||
+         strpos($_SERVER['REQUEST_URI'], '/wp-content/plugins/wp-pdf-builder-pro/resources/assets/css/') !== false)
     ) {
 // Headers de cache
         header('Cache-Control: public, max-age=' . $cache_time);

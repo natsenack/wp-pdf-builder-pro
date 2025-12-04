@@ -141,7 +141,7 @@ class PDF_Builder_License_Manager {
         $limits = $this->get_current_limits();
         $usage = $this->get_current_usage();
 
-        include PDF_BUILDER_PLUGIN_DIR . 'templates/admin/license-management.php';
+        include PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/license-management.php';
     }
 
     /**

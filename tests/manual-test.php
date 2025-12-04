@@ -8,7 +8,7 @@ echo "=== PDF Builder Save System Manual Tests ===\n\n";
 
 // Load required files
 define('ABSPATH', dirname(__DIR__) . '/'); // Simulate WordPress ABSPATH
-require_once __DIR__ . '/../plugin/templates/admin/settings-parts/settings-main.php';
+require_once __DIR__ . '/../plugin/resources/templates/admin/settings-parts/settings-main.php';
 
 // Test 1: Check if main settings functions exist
 echo "Test 1: Main settings functions availability\n";

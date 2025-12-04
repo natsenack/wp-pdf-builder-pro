@@ -277,8 +277,8 @@ function pdf_builder_load_core()
     // }
 
     // Charger les constantes
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/constants.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'core/constants.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/constants.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/constants.php';
     }
 
     // Initialiser le système de migration après le chargement des constantes
@@ -440,21 +440,21 @@ function pdf_builder_load_core()
     }
 
     // Charger TemplateDefaults depuis core/
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/TemplateDefaults.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'core/TemplateDefaults.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/TemplateDefaults.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/TemplateDefaults.php';
     }
 
     // Charger les gestionnaires centralisés
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/security-manager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'core/security-manager.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/security-manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/security-manager.php';
     }
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/sanitizer.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'core/sanitizer.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/sanitizer.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/sanitizer.php';
     }
 
     // Charger les mappings centralisés
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/mappings.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'core/mappings.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/mappings.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/mappings.php';
     }
 
     // Charger la classe d'administration depuis src/
@@ -468,8 +468,8 @@ function pdf_builder_load_core()
     }
 
     // Charger le gestionnaire de modèles prédéfinis
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'plugin/templates/admin/predefined-templates-manager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'plugin/templates/admin/predefined-templates-manager.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/predefined-templates-manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/predefined-templates-manager.php';
     }
 
     // Charger le contrôleur PDF
@@ -529,7 +529,7 @@ function pdf_builder_load_core()
             wp_enqueue_script('react-dom', false, ['react'], false, true);
 
             // Charger le bundle PDF Builder (optimisé avec code splitting)
-            $bundle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/dist/pdf-builder-react.js';
+            $bundle_url = PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/dist/pdf-builder-react.js';
             wp_enqueue_script(
                 'pdf-builder-react-bundle',
                 $bundle_url,
@@ -596,9 +596,9 @@ function pdf_builder_load_new_classes()
 
     // Charger les interfaces et classes de données
     $data_classes = [
-        'interfaces/DataProviderInterface.php',
-        'data/SampleDataProvider.php',
-        'data/WooCommerceDataProvider.php'
+        'src/Interfaces/DataProviderInterface.php',
+        'config/data/SampleDataProvider.php',
+        'config/data/WooCommerceDataProvider.php'
     ];
     foreach ($data_classes as $class_file) {
         $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
@@ -609,9 +609,9 @@ function pdf_builder_load_new_classes()
 
     // Charger les générateurs
     $generator_classes = [
-        'generators/BaseGenerator.php',
-        'generators/PDFGenerator.php',
-        'generators/GeneratorManager.php'
+        'src/Generators/BaseGenerator.php',
+        'src/Generators/PDFGenerator.php',
+        'src/Generators/GeneratorManager.php'
     ];
     foreach ($generator_classes as $class_file) {
         $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
@@ -622,7 +622,7 @@ function pdf_builder_load_new_classes()
 
     // Charger les éléments et contrats
     $element_classes = [
-        'elements/ElementContracts.php'
+        'src/Elements/ElementContracts.php'
     ];
     foreach ($element_classes as $class_file) {
         $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
@@ -633,7 +633,7 @@ function pdf_builder_load_new_classes()
 
     // Charger le core et conventions
     $core_classes = [
-        'core/Conventions.php'
+        'src/Core/Conventions.php'
     ];
     foreach ($core_classes as $class_file) {
         $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
@@ -657,7 +657,7 @@ function pdf_builder_load_new_classes()
 
     // Charger les états
     $state_classes = [
-        'states/PreviewStateManager.php'
+        'config/states/PreviewStateManager.php'
     ];
     foreach ($state_classes as $class_file) {
         $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
@@ -769,10 +769,10 @@ function pdf_builder_load_bootstrap()
     // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS
     add_action('admin_enqueue_scripts', function() {
         // Charger le CSS des notifications
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'plugin/assets/css/notifications.css')) {
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/css/notifications.css')) {
             wp_enqueue_style(
                 'pdf-builder-notifications',
-                PDF_BUILDER_PLUGIN_URL . 'plugin/assets/css/notifications.css',
+                PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/notifications.css',
                 array(),
                 PDF_BUILDER_VERSION . '-' . time(),
                 'all'
@@ -780,10 +780,10 @@ function pdf_builder_load_bootstrap()
         }
 
         // Charger le JavaScript des notifications
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'plugin/assets/js/notifications.js')) {
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/js/notifications.js')) {
             wp_enqueue_script(
                 'pdf-builder-notifications',
-                PDF_BUILDER_PLUGIN_URL . 'plugin/assets/js/notifications.js',
+                PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/notifications.js',
                 array('jquery'),
                 PDF_BUILDER_VERSION . '-' . time(),
                 true
@@ -1525,7 +1525,7 @@ pdf_builder_initialize_canvas_defaults();
 // ============================================================================
 // Charge le CSS de settings au moment approprié (admin_print_styles)
 if (is_admin()) {
-    require_once __DIR__ . '/templates/admin/settings-loader.php';
+    require_once __DIR__ . '/resources/templates/admin/settings-loader.php';
 }
 
 // ============================================================================

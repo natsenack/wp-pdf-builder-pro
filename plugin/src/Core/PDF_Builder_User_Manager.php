@@ -221,7 +221,7 @@ class PDF_Builder_User_Manager {
         $roles = $this->get_pdf_roles();
         $capabilities = $this->get_all_capabilities();
 
-        include PDF_BUILDER_PLUGIN_DIR . 'templates/admin/user-management.php';
+        include PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/user-management.php';
     }
 
     /**

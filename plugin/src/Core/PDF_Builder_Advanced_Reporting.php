@@ -175,7 +175,7 @@ class PDF_Builder_Advanced_Reporting {
         $scheduled_reports = $this->get_scheduled_reports();
         $recent_reports = $this->get_recent_reports(10);
 
-        include PDF_BUILDER_PLUGIN_DIR . 'templates/admin/reporting-management.php';
+        include PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/reporting-management.php';
     }
 
     /**
@@ -1077,7 +1077,7 @@ class PDF_Builder_Advanced_Reporting {
         $recent_reports = $this->get_recent_reports(5);
         $available_reports = $this->get_available_reports();
 
-        include PDF_BUILDER_PLUGIN_DIR . 'templates/admin/dashboard-reports-widget.php';
+        include PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/dashboard-reports-widget.php';
     }
 
     /**

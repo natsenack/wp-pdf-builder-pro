@@ -162,8 +162,8 @@ class PDF_Builder_Loader {
      * Charge les composants de sécurité
      */
     private function load_security_components() {
-        $this->require_file('core/security-manager.php');
-        $this->require_file('core/sanitizer.php');
+        $this->require_file('src/Core/security-manager.php');
+        $this->require_file('src/Core/sanitizer.php');
     }
 
     /**
@@ -171,8 +171,8 @@ class PDF_Builder_Loader {
      */
     private function load_core() {
         $this->require_file('src/Core/PDF_Builder_Core.php');
-        $this->require_file('core/constants.php');
-        $this->require_file('core/TemplateDefaults.php');
+        $this->require_file('src/Core/constants.php');
+        $this->require_file('src/Core/TemplateDefaults.php');
     }
 
     /**
@@ -260,7 +260,7 @@ class PDF_Builder_Loader {
      */
     private function load_minimal_core() {
         // Charger seulement les composants essentiels pour le frontend
-        $this->require_file('core/constants.php');
+        $this->require_file('src/Core/constants.php');
     }
 
     /**

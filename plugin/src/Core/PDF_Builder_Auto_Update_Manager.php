@@ -173,7 +173,7 @@ class PDF_Builder_Auto_Update_Manager {
         $history = $this->get_update_history(10);
         $security_patches = $this->get_security_patches();
 
-        include PDF_BUILDER_PLUGIN_DIR . 'templates/admin/update-management.php';
+        include PDF_BUILDER_PLUGIN_DIR . 'resources/templates/admin/update-management.php';
     }
 
     /**

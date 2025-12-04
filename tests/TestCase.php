@@ -23,7 +23,7 @@ class PDF_Builder_TestCase extends WP_UnitTestCase {
 
         // Ensure our plugin functions are loaded
         if (!function_exists('pdf_builder_switch_tab')) {
-            require_once plugin_dir_path(dirname(__DIR__)) . 'plugin/templates/admin/settings-parts/settings-main.php';
+            require_once plugin_dir_path(dirname(__DIR__)) . 'plugin/resources/templates/admin/settings-parts/settings-main.php';
         }
     }
 

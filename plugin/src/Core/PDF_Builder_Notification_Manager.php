@@ -94,14 +94,14 @@ class PDF_Builder_Notification_Manager {
 
         wp_enqueue_style(
             'pdf-builder-notifications',
-            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/notifications.css',
+            plugin_dir_url(dirname(dirname(__FILE__))) . 'resources/assets/css/notifications.css',
             [],
             '1.0.0'
         );
 
         wp_enqueue_script(
             'pdf-builder-notifications',
-            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/notifications.js',
+            plugin_dir_url(dirname(dirname(__FILE__))) . 'resources/assets/js/notifications.js',
             ['jquery'],
             '1.0.0',
             true
