@@ -89,6 +89,9 @@ $settings = get_option('pdf_builder_settings', array());
         <span class="dashicons dashicons-yes"></span>
         💾 Enregistrer
     </button>
+    <div id="save-status-indicator" class="save-status-indicator">
+        <span id="save-status-text">Prêt à enregistrer</span>
+    </div>
 </div>
 
 <!-- Styles pour le bouton flottant -->
@@ -105,47 +108,25 @@ $settings = get_option('pdf_builder_settings', array());
 }
 
 .pdf-builder-save-btn {
-    background: linear-gradient(135deg, #007cba 0%, #005a87 100%) !important;
-    color: white !important;
-    border: none !important;
+    padding: 12px 24px !important;
     font-size: 14px !important;
     font-weight: 600 !important;
-    border-radius: 25px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     transition: all 0.3s ease !important;
-    min-width: 120px;
-    max-width: 140px;
+    min-width: 140px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.pdf-builder-save-btn .dashicons {
-    font-size: 16px !important;
-    width: 16px !important;
-    height: 16px !important;
-    flex-shrink: 0;
-    margin-right: 4px;
+    gap: 8px;
 }
 
 .pdf-builder-save-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.4) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
 }
 
 .pdf-builder-save-btn:active {
     transform: translateY(0);
-}
-
-.pdf-builder-save-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
 }
 
 .pdf-builder-save-btn.saving {
@@ -169,6 +150,30 @@ $settings = get_option('pdf_builder_settings', array());
     100% { transform: rotate(360deg); }
 }
 
+.save-status-indicator {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.save-status-indicator.visible {
+    opacity: 1;
+}
+
+.save-status-indicator.success {
+    background: rgba(40, 167, 69, 0.9);
+}
+
+.save-status-indicator.error {
+    background: rgba(220, 53, 69, 0.9);
+}
+
 /* Responsive */
 @media (max-width: 782px) {
     .pdf-builder-save-floating {
@@ -177,6 +182,7 @@ $settings = get_option('pdf_builder_settings', array());
     }
 
     .pdf-builder-save-btn {
+        padding: 10px 20px !important;
         font-size: 13px !important;
         min-width: 120px;
     }
