@@ -51,7 +51,16 @@ class PdfBuilderAutoloader
                      (strpos($class, 'PDF_Builder') === 0 && strpos($class, 'Dompdf') !== false);
 
         if ($should_log) {
-            error_log("FOCUSED AUTOLOADER: Called for class: $class");
+            // Add stack trace to see where this is being called from
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
+            $caller_info = '';
+            if (isset($trace[1])) {
+                $caller = $trace[1];
+                $caller_info = (isset($caller['file']) ? basename($caller['file']) : 'unknown') . ':' .
+                              (isset($caller['line']) ? $caller['line'] : 'unknown') . ' ' .
+                              (isset($caller['function']) ? $caller['function'] : 'unknown');
+            }
+            error_log("FOCUSED AUTOLOADER: Called for class: $class from $caller_info");
         }
 
         // Skip Dompdf classes to avoid conflicts
