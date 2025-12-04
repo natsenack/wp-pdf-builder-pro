@@ -45,24 +45,34 @@ class PdfBuilderAutoloader
      */
     public static function autoload($class)
     {
-        // Debug: log all autoload calls
-        error_log("Autoloader called for class: $class");
+        // Special focus: only log Dompdf-related classes and the problematic one
+        $should_log = ($class === 'PDF_Builder\\Managers\\Dompdf\\Dompdf') ||
+                     (strpos($class, 'Dompdf') !== false) ||
+                     (strpos($class, 'PDF_Builder') === 0 && strpos($class, 'Dompdf') !== false);
+
+        if ($should_log) {
+            error_log("FOCUSED AUTOLOADER: Called for class: $class");
+        }
 
         // Skip Dompdf classes to avoid conflicts
         if (strpos($class, 'Dompdf') !== false) {
-            error_log("Autoloader SKIPPING Dompdf-related class: $class");
+            if ($should_log) {
+                error_log("FOCUSED AUTOLOADER: SKIPPING Dompdf-related class: $class");
+            }
             return false;
         }
 
         // Special check for the problematic class
         if ($class === 'PDF_Builder\\Managers\\Dompdf\\Dompdf') {
-            error_log("Autoloader SKIPPING specific problematic class: $class");
+            error_log("FOCUSED AUTOLOADER: SKIPPING specific problematic class: $class");
             return false;
         }
 
         // Fallback: if any class contains 'Dompdf' and is in PDF_Builder namespace, skip it
         if (strpos($class, 'PDF_Builder') === 0 && strpos($class, 'Dompdf') !== false) {
-            error_log("Autoloader SKIPPING PDF_Builder class with Dompdf: $class");
+            if ($should_log) {
+                error_log("FOCUSED AUTOLOADER: SKIPPING PDF_Builder class with Dompdf: $class");
+            }
             return false;
         }
 
