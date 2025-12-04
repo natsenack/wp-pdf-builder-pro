@@ -385,20 +385,14 @@ class PreviewImageAPI
      */
     private function validateTemplateData($data)
     {
-        error_log('PDF Builder Debug: validateTemplateData called with data length: ' . strlen($data ?? ''));
-
         if (empty($data)) {
-            error_log('PDF Builder Debug: validateTemplateData - data is empty, returning default template');
             return $this->getDefaultTemplate();
         }
 
         $decoded = json_decode(stripslashes($data), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('PDF Builder Debug: validateTemplateData - JSON decode error: ' . json_last_error_msg());
             $this->sendJsonError('Invalid template data: ' . json_last_error_msg(), 400);
         }
-
-        error_log('PDF Builder Debug: validateTemplateData - JSON decoded successfully');
 
         // Validation structure de base - accepter les deux formats
         // Format 1: {template: {elements: [...]}}
