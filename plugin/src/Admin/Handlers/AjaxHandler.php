@@ -317,7 +317,7 @@ class AjaxHandler
                 if ($db_template && !empty($db_template['name'])) {
                     $template_name = $db_template['name'];
                 } else {
-                    $template_name = 'Template ' . $template_id;
+                    $template_name = 'Templatess ' . $template_id;
                 }
             }                // Debug logging
                 error_log('[PDF Builder] ajaxGetTemplate - Template ID: ' . $template_id);
