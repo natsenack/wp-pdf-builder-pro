@@ -24,19 +24,19 @@
 
     function debugLog(...args) {
         if (isDebugEnabled()) {
-            debugLog(...args);
+            console.log(...args);
         }
     }
 
     function debugError(...args) {
         if (isDebugEnabled()) {
-            debugError(...args);
+            console.error(...args);
         }
     }
 
     function debugWarn(...args) {
         if (isDebugEnabled()) {
-            debugWarn(...args);
+            console.warn(...args);
         }
     }
 
