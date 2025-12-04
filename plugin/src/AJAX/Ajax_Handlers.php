@@ -169,6 +169,12 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         error_log("pdf_builder_debug_javascript in flattened_data: " . (isset($flattened_data['pdf_builder_debug_javascript']) ? $flattened_data['pdf_builder_debug_javascript'] : 'NOT_SET'));
         error_log("debug_javascript in flattened_data: " . (isset($flattened_data['debug_javascript']) ? $flattened_data['debug_javascript'] : 'NOT_SET'));
 
+        // DEBUG: Log all debug-related fields
+        $debug_fields = array_filter($flattened_data, function($key) {
+            return strpos($key, 'debug') !== false;
+        }, ARRAY_FILTER_USE_KEY);
+        error_log("All debug fields in request: " . json_encode($debug_fields));
+
         // Définir les règles de validation des champs (même que dans settings-main.php)
         $field_rules = [
             'text_fields' => [
@@ -392,6 +398,12 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         } else {
             error_log("[DEBUG JAVASCRIPT TOGGLE] VERIFICATION: pdf_builder_debug_javascript NOT FOUND in saved settings");
         }
+
+        // DEBUG: Log all saved debug fields
+        $saved_debug_fields = array_filter($saved_settings_check, function($key) {
+            return strpos($key, 'debug') !== false;
+        }, ARRAY_FILTER_USE_KEY);
+        error_log("All saved debug fields: " . json_encode($saved_debug_fields));
 
         return [
             'saved_count' => $saved_count,

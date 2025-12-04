@@ -287,6 +287,11 @@
             }
         }
 
+        // DEBUG: Log debug fields being sent
+        const debugFields = Object.keys(flattenedData).filter(key => key.includes('debug'));
+        console.log('PDF Builder - Debug fields being sent:', debugFields);
+        console.log('PDF Builder - pdf_builder_debug_javascript value:', flattenedData['pdf_builder_debug_javascript']);
+
         // Préparer les données pour AJAX
         const ajaxData = {
             action: 'pdf_builder_save_all_settings',
