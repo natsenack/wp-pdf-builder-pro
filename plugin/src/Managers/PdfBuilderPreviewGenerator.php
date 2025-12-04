@@ -78,6 +78,21 @@ class PdfBuilderPreviewGenerator
      */
     private function initDompdf()
     {
+        // Vérifier si Dompdf est déjà chargé par un autre autoloader
+        if (class_exists('Dompdf\\Dompdf')) {
+            // Dompdf est déjà disponible, utiliser directement
+            $this->dompdf = new Dompdf\Dompdf();
+            $this->dompdf->set_option('isRemoteEnabled', true);
+            $this->dompdf->set_option('isHtml5ParserEnabled', false); // Désactiver pour éviter les conflits HTML5
+            $this->dompdf->set_option('defaultFont', 'Arial');
+
+            // Récupérer les paramètres PDF depuis les options pour la prévisualisation
+            $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');
+            $pdf_orientation = get_option('pdf_builder_pdf_orientation', 'portrait');
+            $this->dompdf->setPaper($pdf_page_size, $pdf_orientation);
+            return;
+        }
+
         // Désactiver temporairement l'autoloader pour éviter les conflits
         if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
             spl_autoload_unregister(['PDF_Builder\Core\PdfBuilderAutoloader', 'autoload']);
