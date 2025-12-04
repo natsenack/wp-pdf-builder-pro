@@ -226,7 +226,14 @@ export function useTemplate() {
       }
 
       const templateData = result.data ? result.data.template : result.template;
-      const templateName = result.data ? (result.data.template_name || result.data.name) : (result.name || result.template_name);
+      const ajaxTemplateName = result.data ? (result.data.template_name || result.data.name) : (result.name || result.template_name);
+
+      // Appliquer la même logique de fallback que pour les données localisées
+      const templateName = (ajaxTemplateName && ajaxTemplateName.trim() !== '') ?
+                         ajaxTemplateName :
+                         (templateData?.name && templateData.name.trim() !== '') ?
+                         templateData.name :
+                         `[NOM NON RÉCUPÉRÉ - ID: ${templateId}]`;
 
       
       // 🔍 Tracer les éléments reçus du serveur
@@ -349,7 +356,7 @@ export function useTemplate() {
         type: 'LOAD_TEMPLATE',
         payload: {
           id: templateId,
-          name: templateName || templateData.name,
+          name: templateName,
           elements: enrichedElements,
           canvas: canvasData,
           lastSaved: lastSavedDate
