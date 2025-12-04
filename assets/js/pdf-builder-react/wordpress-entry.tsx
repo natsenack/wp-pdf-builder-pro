@@ -44,6 +44,11 @@ declare global {
       registerEditorInstance: typeof registerEditorInstance;
       resetAPI: typeof resetAPI;
     };
+    // Notification functions
+    showSuccessNotification?: (message: string, options?: any) => void;
+    showErrorNotification?: (message: string, options?: any) => void;
+    showWarningNotification?: (message: string, options?: any) => void;
+    showInfoNotification?: (message: string, options?: any) => void;
   }
 }
 

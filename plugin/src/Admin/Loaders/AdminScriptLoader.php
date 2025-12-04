@@ -65,6 +65,35 @@ class AdminScriptLoader
                 );
             }
 
+            // Charger le système de notifications pour les pages de paramètres
+            wp_enqueue_script(
+                'pdf-builder-notifications',
+                PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js',
+                ['jquery'],
+                PDF_BUILDER_PRO_VERSION,
+                true
+            );
+
+            // Localize notifications data pour les pages de paramètres
+            wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_notifications'),
+                'settings' => [
+                    'position' => 'top-right',
+                    'duration' => 5000,
+                    'max_notifications' => 5,
+                    'animation' => 'slide',
+                    'theme' => 'modern'
+                ],
+                'strings' => [
+                    'success' => __('Succès', 'pdf-builder-pro'),
+                    'error' => __('Erreur', 'pdf-builder-pro'),
+                    'warning' => __('Avertissement', 'pdf-builder-pro'),
+                    'info' => __('Information', 'pdf-builder-pro'),
+                    'close' => __('Fermer', 'pdf-builder-pro')
+                ]
+            ]);
+
             // Localiser les variables AJAX
             wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', [
                 'ajaxurl' => admin_url('admin-ajax.php'),
@@ -148,9 +177,34 @@ class AdminScriptLoader
         wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $cache_bust, true);
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url);
 
+        // Notifications system
+        $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.js';
+        wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery'], $cache_bust, true);
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url);
+
+        // Localize notifications data
+        wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_notifications'),
+            'settings' => [
+                'position' => 'top-right',
+                'duration' => 5000,
+                'max_notifications' => 5,
+                'animation' => 'slide',
+                'theme' => 'modern'
+            ],
+            'strings' => [
+                'success' => __('Succès', 'pdf-builder-pro'),
+                'error' => __('Erreur', 'pdf-builder-pro'),
+                'warning' => __('Avertissement', 'pdf-builder-pro'),
+                'info' => __('Information', 'pdf-builder-pro'),
+                'close' => __('Fermer', 'pdf-builder-pro')
+            ]
+        ]);
+
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.js';
-        wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle'], $cache_bust, true);
+        wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
         // Bundle React

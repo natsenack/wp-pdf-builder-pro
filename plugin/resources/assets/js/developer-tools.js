@@ -678,9 +678,15 @@
 
             this.addNotificationLog(`🔔 Test ${type}: "${messages[type].substring(0, 50)}..."`, type);
 
-            if (window.pdfBuilderNotify && window.pdfBuilderNotify[type]) {
+            // Try to use the real notification system first
+            const notificationFunction = window[`show${type.charAt(0).toUpperCase() + type.slice(1)}Notification`];
+            if (notificationFunction && typeof notificationFunction === 'function') {
+                notificationFunction(messages[type], { duration: 4000 });
+                this.addNotificationLog(`✅ ${type} notification affichée via système réel`, 'success');
+            } else if (window.pdfBuilderNotify && window.pdfBuilderNotify[type]) {
+                // Fallback to the old system
                 window.pdfBuilderNotify[type](messages[type], 4000);
-                this.addNotificationLog(`✅ ${type} notification affichée`, 'success');
+                this.addNotificationLog(`✅ ${type} notification affichée via fallback`, 'success');
             } else {
                 this.showError(`Système de notification ${type} non disponible`);
                 this.addNotificationLog(`❌ ${type} notification échouée`, 'error');
