@@ -133,6 +133,9 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         $saved_count = 0;
         $saved_settings = [];
 
+        // Get current settings
+        $settings = get_option('pdf_builder_settings', []);
+
         // DEBUG: Log that this function is being executed
         error_log("[AJAX HANDLER] process_all_settings called");
         error_log("[AJAX HANDLER] POST data received: " . json_encode(array_keys($_POST)));
@@ -218,57 +221,72 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
                     $option_key = 'pdf_builder_canvas_' . $key;
                     $option_value = sanitize_text_field($value ?? '');
+                    update_option($option_key, $option_value); // Canvas fields saved separately
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
                     $option_value = sanitize_text_field($value ?? '');
+                    $settings[$option_key] = $option_value;
                 } elseif (strpos($key, 'debug_') === 0) {
                     // Debug fields need pdf_builder_ prefix
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = sanitize_text_field($value ?? '');
+                    $settings[$option_key] = $option_value;
                 } else {
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = sanitize_text_field($value ?? '');
+                    $settings[$option_key] = $option_value;
                 }
-                update_option($option_key, $option_value);
                 $saved_count++;
             } elseif (in_array($key, $field_rules['int_fields'])) {
                 // Special handling for canvas fields
                 if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
                     $option_key = 'pdf_builder_canvas_' . $key;
                     $option_value = intval($value ?? 0);
+                    update_option($option_key, $option_value); // Canvas fields saved separately
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
                     $option_value = intval($value ?? 0);
+                    $settings[$option_key] = $option_value;
                 } elseif (strpos($key, 'debug_') === 0) {
                     // Debug fields need pdf_builder_ prefix
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = intval($value ?? 0);
+                    $settings[$option_key] = $option_value;
                 } else {
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = intval($value ?? 0);
+                    $settings[$option_key] = $option_value;
                 }
-                update_option($option_key, $option_value);
+                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
+                    update_option($option_key, $option_value); // Canvas fields saved separately
+                }
                 $saved_count++;
             } elseif (in_array($key, $field_rules['bool_fields'])) {
                 // Special handling for canvas fields
                 if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
                     $option_key = 'pdf_builder_canvas_' . $key;
                     $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
+                    update_option($option_key, $option_value); // Canvas fields saved separately
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
                     $option_key = $key;
                     $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
+                    $settings[$option_key] = $option_value;
                 } elseif (strpos($key, 'debug_') === 0) {
                     // Debug fields need pdf_builder_ prefix
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
+                    $settings[$option_key] = $option_value;
                 } else {
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = isset($flattened_data[$key]) && $flattened_data[$key] === '1' ? 1 : 0;
+                    $settings[$option_key] = $option_value;
                 }
-                update_option($option_key, $option_value);
+                if (strpos($key, 'canvas_') === 0 || strpos($key, 'zoom_') === 0 || strpos($key, 'default_canvas_') === 0) {
+                    update_option($option_key, $option_value); // Canvas fields saved separately
+                }
                 $saved_count++;
                 // DEBUG: Log bool field processing
                 error_log("[AJAX DEBUG] Bool field processed: key='$key', option_key='$option_key', value='$option_value', isset=" . (isset($flattened_data[$key]) ? 'true' : 'false') . ", data_value='" . ($flattened_data[$key] ?? 'null') . "'");
@@ -296,11 +314,12 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 if (is_array($value)) {
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = array_map('sanitize_text_field', $value);
+                    $settings[$option_key] = $option_value;
                 } else {
                     $option_key = 'pdf_builder_' . $key;
                     $option_value = [];
+                    $settings[$option_key] = $option_value;
                 }
-                update_option($option_key, $option_value);
                 $saved_count++;
             } else {
                 // Pour les champs non définis, essayer de deviner le type
@@ -325,7 +344,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                         $option_value = sanitize_text_field($value ?? '');
                     }
                 }
-                update_option($option_key, $option_value);
+                $settings[$option_key] = $option_value;
                 $saved_count++;
             }
 
@@ -351,6 +370,10 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 error_log("[AJAX DEBUG RECOVERY] Récupéré depuis DB: '$debug_field' = '$db_value'");
             }
         }
+
+        // Save the settings array
+        update_option('pdf_builder_settings', $settings);
+        error_log("[AJAX HANDLER] Saved " . count($settings) . " settings to pdf_builder_settings option");
 
         return [
             'saved_count' => $saved_count,
