@@ -77,16 +77,18 @@ class PdfBuilderTemplateManager
 
         try {
             // Log pour debug - TEMPORAIRE
-            error_log('PDF Builder Save: ajaxSaveTemplateV3 started');
-            error_log('PDF Builder Save: REQUEST: ' . print_r($_REQUEST, true));
-            error_log('PDF Builder Save: POST keys: ' . implode(', ', array_keys($_POST)));
-            error_log('PDF Builder Save: SERVER CONTENT_TYPE: ' . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
+            $debugLog('ajaxSaveTemplateV3 started');
+            $debugLog('REQUEST: ' . print_r($_REQUEST, true));
+            $debugLog('POST keys: ' . implode(', ', array_keys($_POST)));
+            $debugLog('SERVER CONTENT_TYPE: ' . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
 
-            // Write to uploads directory for guaranteed access
-            $upload_dir = wp_upload_dir();
-            $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-            file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVE START - REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
-            file_put_contents($log_file, date('Y-m-d H:i:s') . ' POST data keys: ' . implode(', ', array_keys($_POST)) . "\n", FILE_APPEND);
+            // Write to uploads directory for guaranteed access (only in debug mode)
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                $upload_dir = wp_upload_dir();
+                $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVE START - REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
+                file_put_contents($log_file, date('Y-m-d H:i:s') . ' POST data keys: ' . implode(', ', array_keys($_POST)) . "\n", FILE_APPEND);
+            }
 
             // Vérification des permissions
             if (!\current_user_can('manage_options')) {
@@ -225,25 +227,26 @@ class PdfBuilderTemplateManager
 
                 
 
-                // Log détaillé des éléments pour vérifier les propriétés
-                
-                $upload_dir = wp_upload_dir();
-                $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
+                // Log détaillé des éléments pour vérifier les propriétés (only in debug mode)
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    $upload_dir = wp_upload_dir();
+                    $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
+                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
 
-                // Log order_number elements specifically BEFORE saving
-                foreach ($elements_data as $el) {
-                    if (isset($el['type']) && $el['type'] === 'order_number') {
-                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' ORDER ELEMENT BEFORE SAVE: ' . json_encode($el) . "\n", FILE_APPEND);
+                    // Log order_number elements specifically BEFORE saving
+                    foreach ($elements_data as $el) {
+                        if (isset($el['type']) && $el['type'] === 'order_number') {
+                            file_put_contents($log_file, date('Y-m-d H:i:s') . ' ORDER ELEMENT BEFORE SAVE: ' . json_encode($el) . "\n", FILE_APPEND);
+                        }
                     }
-                }
 
-                // ✅ CRITICAL: Log TOUTES les propriétés de tous les éléments avant de créer template_structure
-                file_put_contents($log_file, date('Y-m-d H:i:s') . ' ===== COMPLETE ELEMENTS BEFORE STRUCTURE =====' . "\n", FILE_APPEND);
-                foreach ($elements_data as $idx => $el) {
-                    file_put_contents($log_file, date('Y-m-d H:i:s') . " Element[$idx] " . ($el['type'] ?? 'unknown') . " keys: " . implode(',', array_keys($el)) . "\n", FILE_APPEND);
-                    if (isset($el['type']) && $el['type'] === 'order_number') {
-                        file_put_contents($log_file, date('Y-m-d H:i:s') . " >>> ORDER_NUMBER DETAILS: " . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
+                    // ✅ CRITICAL: Log TOUTES les propriétés de tous les éléments avant de créer template_structure
+                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' ===== COMPLETE ELEMENTS BEFORE STRUCTURE =====' . "\n", FILE_APPEND);
+                    foreach ($elements_data as $idx => $el) {
+                        file_put_contents($log_file, date('Y-m-d H:i:s') . " Element[$idx] " . ($el['type'] ?? 'unknown') . " keys: " . implode(',', array_keys($el)) . "\n", FILE_APPEND);
+                        if (isset($el['type']) && $el['type'] === 'order_number') {
+                            file_put_contents($log_file, date('Y-m-d H:i:s') . " >>> ORDER_NUMBER DETAILS: " . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
+                        }
                     }
                 }
 
@@ -405,19 +408,21 @@ class PdfBuilderTemplateManager
                         $thumbnail_manager->updateTemplateThumbnail($template_id, $thumbnail_url);
                     }
                     
-                    // ✅ CRITICAL: Log what was actually saved - especially order_number elements
-                    $upload_dir = wp_upload_dir();
-                    $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
-                    
-                    // Re-check what was saved
-                    if (isset($saved_decoded['elements'])) {
-                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED ELEMENTS COUNT: ' . count($saved_decoded['elements']) . "\n", FILE_APPEND);
+                    // ✅ CRITICAL: Log what was actually saved - especially order_number elements (only in debug mode)
+                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                        $upload_dir = wp_upload_dir();
+                        $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
+                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
                         
-                        // Find order_number in saved data
-                        foreach ($saved_decoded['elements'] as $el) {
-                            if (isset($el['type']) && $el['type'] === 'order_number') {
-                                file_put_contents($log_file, date('Y-m-d H:i:s') . ' >>> SAVED ORDER_NUMBER: ' . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
+                        // Re-check what was saved
+                        if (isset($saved_decoded['elements'])) {
+                            file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED ELEMENTS COUNT: ' . count($saved_decoded['elements']) . "\n", FILE_APPEND);
+                            
+                            // Find order_number in saved data
+                            foreach ($saved_decoded['elements'] as $el) {
+                                if (isset($el['type']) && $el['type'] === 'order_number') {
+                                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' >>> SAVED ORDER_NUMBER: ' . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
+                                }
                             }
                         }
                     }
@@ -460,11 +465,13 @@ class PdfBuilderTemplateManager
                     // Sauvegarder les données du template dans les métadonnées
                     \update_post_meta($template_id, '_pdf_template_data', $template_data);
                     
-                    // Log what was actually saved
-                    $upload_dir = wp_upload_dir();
-                    $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
-                    file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
+                    // Log what was actually saved (only in debug mode)
+                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                        $upload_dir = wp_upload_dir();
+                        $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
+                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
+                        file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
+                    }
                 }
             } catch (\Exception $e) {
                 \wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
@@ -768,48 +775,50 @@ class PdfBuilderTemplateManager
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        // Log pour débogage
-        $log_file = WP_CONTENT_DIR . '/debug_pdf_template.log';
-        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Loading template ID: $template_id\n", FILE_APPEND);
-        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table: $table_templates\n", FILE_APPEND);
+        // Log pour débogage (only in debug mode)
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            $log_file = WP_CONTENT_DIR . '/debug_pdf_template.log';
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Loading template ID: $template_id\n", FILE_APPEND);
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table: $table_templates\n", FILE_APPEND);
 
-        // Vérifier si la table existe
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_templates'") === $table_templates;
-        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table exists: " . ($table_exists ? 'YES' : 'NO') . "\n", FILE_APPEND);
+            // Vérifier si la table existe
+            $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_templates'") === $table_templates;
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table exists: " . ($table_exists ? 'YES' : 'NO') . "\n", FILE_APPEND);
 
-        if (!$table_exists) {
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Table does not exist\n", FILE_APPEND);
-            return false;
-        }
+            if (!$table_exists) {
+                file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Table does not exist\n", FILE_APPEND);
+                return false;
+            }
 
-        $template = $wpdb->get_row(
-            $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-            ARRAY_A
-        );
+            $template = $wpdb->get_row(
+                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                ARRAY_A
+            );
 
-        file_put_contents($log_file, date('Y-m-d H:i:s') . " - SQL Result: " . ($template ? 'FOUND' : 'NOT FOUND') . "\n", FILE_APPEND);
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - SQL Result: " . ($template ? 'FOUND' : 'NOT FOUND') . "\n", FILE_APPEND);
 
-        if (!$template) {
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Template not found in database\n", FILE_APPEND);
-            return false;
-        }
+            if (!$template) {
+                file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Template not found in database\n", FILE_APPEND);
+                return false;
+            }
 
-        $template_data_raw = $template['template_data'];
-        file_put_contents($log_file, date('Y-m-d H:i:s') . " - Raw template data length: " . strlen($template_data_raw) . "\n", FILE_APPEND);
+            $template_data_raw = $template['template_data'];
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Raw template data length: " . strlen($template_data_raw) . "\n", FILE_APPEND);
 
-        // Vérifier si les données contiennent des backslashes (échappement PHP)
-        if (strpos($template_data_raw, '\\') !== false) {
-            $template_data_raw = stripslashes($template_data_raw);
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - Applied stripslashes\n", FILE_APPEND);
-        }
+            // Vérifier si les données contiennent des backslashes (échappement PHP)
+            if (strpos($template_data_raw, '\\') !== false) {
+                $template_data_raw = stripslashes($template_data_raw);
+                file_put_contents($log_file, date('Y-m-d H:i:s') . " - Applied stripslashes\n", FILE_APPEND);
+            }
 
-        $template_data = json_decode($template_data_raw, true);
-        $json_error = json_last_error();
-        file_put_contents($log_file, date('Y-m-d H:i:s') . " - JSON decode result: " . ($template_data === null ? 'NULL' : 'VALID') . ", Error: " . $json_error . "\n", FILE_APPEND);
+            $template_data = json_decode($template_data_raw, true);
+            $json_error = json_last_error();
+            file_put_contents($log_file, date('Y-m-d H:i:s') . " - JSON decode result: " . ($template_data === null ? 'NULL' : 'VALID') . ", Error: " . $json_error . "\n", FILE_APPEND);
 
-        if ($template_data === null && $json_error !== JSON_ERROR_NONE) {
-            file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Invalid JSON data\n", FILE_APPEND);
-            return false;
+            if ($template_data === null && $json_error !== JSON_ERROR_NONE) {
+                file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Invalid JSON data\n", FILE_APPEND);
+                return false;
+            }
         }
 
         file_put_contents($log_file, date('Y-m-d H:i:s') . " - SUCCESS: Template loaded successfully\n", FILE_APPEND);
