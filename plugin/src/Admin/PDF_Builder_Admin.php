@@ -601,7 +601,7 @@ class PdfBuilderAdmin
             gap: 20px;
         }
 
-        .pdf-builder-loading .spinner {
+        .pdf-builder-loading .loading-content .spinner {
             width: 40px !important;
             height: 40px !important;
             border: 4px solid #f3f3f3 !important;
