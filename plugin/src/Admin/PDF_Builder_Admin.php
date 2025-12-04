@@ -556,166 +556,143 @@ class PdfBuilderAdmin
 
         ?>
         <div class="wrap">
-            <!-- Loading State -->
-            <div id="pdf-builder-react-loading" class="pdf-builder-loading">
-                <div class="loading-content">
-                    <div id="pdf-builder-loading-spinner" class="spinner is-active"></div>
-                    <p><?php esc_html_e('Initialisation de l\'éditeur React...', 'pdf-builder-pro'); ?></p>
+            <!-- PDF Builder Loading Screen -->
+            <div id="pdf-builder-loader" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.95);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 999999;
+                text-align: center;
+            ">
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 20px;
+                ">
+                    <!-- Custom Spinner - no global classes -->
+                    <div id="pdf-builder-custom-spinner" style="
+                        width: 40px;
+                        height: 40px;
+                        border: 4px solid #f3f3f3;
+                        border-top: 4px solid #007cba;
+                        border-radius: 50%;
+                        animation: pdfBuilderSpin 1s linear infinite;
+                    "></div>
+                    <p style="
+                        color: #666;
+                        font-size: 16px;
+                        margin: 0;
+                        font-weight: 500;
+                        animation: none;
+                        transform: none;
+                    "><?php esc_html_e('Chargement de l\'éditeur PDF...', 'pdf-builder-pro'); ?></p>
                 </div>
             </div>
 
             <!-- Main React Editor Container -->
-            <div id="pdf-builder-react-editor" class="pdf-builder-react-editor" style="display: none;">
+            <div id="pdf-builder-editor-container" style="
+                display: none;
+                background: #fff;
+                border: 1px solid #ccd0d4;
+                border-radius: 8px;
+                min-height: 600px;
+            ">
                 <div id="pdf-builder-react-root"></div>
             </div>
         </div>
 
         <style>
-        /* Cache bust: <?php echo time(); ?> */
-        .pdf-builder-react-editor {
-            background: #fff;
-            border: 1px solid #ccd0d4;
-            border-radius: 8px;
-            min-height: 600px;
-        }
-
-        .pdf-builder-loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            text-align: center;
-        }
-
-        .pdf-builder-loading .loading-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .pdf-builder-loading .loading-content .spinner {
-            width: 40px !important;
-            height: 40px !important;
-            border: 4px solid #f3f3f3 !important;
-            border-top: 4px solid #007cba !important;
-            border-radius: 50% !important;
-            animation: pdf-spinner-<?php echo time(); ?> 1s linear infinite !important;
-            float: none !important;
-            margin: 0 !important;
-        }
-
-        /* Style spécifique pour notre spinner avec ID unique */
-        #pdf-builder-loading-spinner {
-            width: 40px !important;
-            height: 40px !important;
-            border: 4px solid #f3f3f3 !important;
-            border-top: 4px solid #007cba !important;
-            border-radius: 50% !important;
-            animation: pdf-spinner-<?php echo time(); ?> 1s linear infinite !important;
-            float: none !important;
-            margin: 0 !important;
-            display: block !important;
-        }
-
-        @keyframes pdf-spinner-<?php echo time(); ?> {
+        /* Custom spinner animation - completely isolated */
+        @keyframes pdfBuilderSpin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        .pdf-builder-loading p {
-            color: #666;
-            font-size: 16px;
-            margin: 0;
-            font-weight: 500;
-            animation: none !important; /* Empêcher l'animation du texte */
-            transform: none !important; /* S'assurer que le texte ne tourne pas */
-            display: block !important;
+        /* Ensure no interference from global styles */
+        #pdf-builder-custom-spinner {
+            box-sizing: border-box !important;
         }
         </style>
 
         <script>
-        // Fonction utilitaire pour masquer le loader
-        function hideLoader() {
-            console.log('🎨 [PDF Builder] Hiding loader...');
-            const loader = document.getElementById('pdf-builder-react-loading');
-            const editor = document.getElementById('pdf-builder-react-editor');
+        (function() {
+            'use strict';
 
-            if (loader) {
-                loader.style.display = 'none';
-                console.log('✅ [PDF Builder] Loader hidden');
-            } else {
-                console.warn('⚠️ [PDF Builder] Loader element not found');
-            }
+            // Simple loader management
+            const loader = {
+                element: null,
+                editor: null,
 
-            if (editor) {
-                editor.style.display = 'block';
-                console.log('✅ [PDF Builder] Editor shown');
-            } else {
-                console.warn('⚠️ [PDF Builder] Editor element not found');
-            }
-        }
+                init: function() {
+                    this.element = document.getElementById('pdf-builder-loader');
+                    this.editor = document.getElementById('pdf-builder-editor-container');
 
-        // Fonction pour vérifier si React est prêt
-        function checkReactReady() {
-            console.log('🔍 [PDF Builder] Checking if React is ready...');
-            console.log('🔍 [PDF Builder] window.pdfBuilderReact:', typeof window.pdfBuilderReact);
-            console.log('🔍 [PDF Builder] window.pdfBuilderReact.initPDFBuilderReact:', typeof window.pdfBuilderReact?.initPDFBuilderReact);
+                    if (!this.element || !this.editor) {
+                        console.error('[PDF Builder] Loader elements not found');
+                        return;
+                    }
 
-            if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-                console.log('✅ [PDF Builder] React is ready, initializing...');
-                try {
-                    const result = window.pdfBuilderReact.initPDFBuilderReact();
-                    console.log('📊 [PDF Builder] initPDFBuilderReact result:', result);
-                    setTimeout(hideLoader, 500);
-                    return true;
-                } catch (error) {
-                    console.error('❌ [PDF Builder] Error calling initPDFBuilderReact:', error);
-                    return false;
+                    this.startChecking();
+                },
+
+                hide: function() {
+                    if (this.element && this.editor) {
+                        this.element.style.display = 'none';
+                        this.editor.style.display = 'block';
+                        console.log('[PDF Builder] Editor loaded and displayed');
+                    }
+                },
+
+                startChecking: function() {
+                    let attempts = 0;
+                    const maxAttempts = 60; // 30 seconds at 500ms intervals
+
+                    const checkInterval = setInterval(() => {
+                        attempts++;
+
+                        if (this.isReactReady()) {
+                            clearInterval(checkInterval);
+                            setTimeout(() => this.hide(), 300); // Small delay for smooth transition
+                            return;
+                        }
+
+                        if (attempts >= maxAttempts) {
+                            clearInterval(checkInterval);
+                            console.warn('[PDF Builder] React loading timeout - showing editor anyway');
+                            this.hide();
+                        }
+                    }, 500);
+                },
+
+                isReactReady: function() {
+                    return typeof window.pdfBuilderReact !== 'undefined' &&
+                           window.pdfBuilderReact &&
+                           typeof window.pdfBuilderReact.initPDFBuilderReact === 'function';
                 }
+            };
+
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => loader.init());
             } else {
-                console.log('⏳ [PDF Builder] React not ready yet');
-                return false;
+                loader.init();
             }
-        }
 
-        // Écouter l'événement de disponibilité de React
-        document.addEventListener('pdfBuilderReactLoaded', function() {
-            console.log('🎯 [PDF Builder] pdfBuilderReactLoaded event received');
-            checkReactReady();
-        });
+            // Listen for React ready event
+            document.addEventListener('pdfBuilderReactLoaded', function() {
+                console.log('[PDF Builder] React loaded event received');
+                setTimeout(() => loader.hide(), 300);
+            });
 
-        // Vérifier périodiquement si React devient disponible
-        const checkInterval = setInterval(function() {
-            if (checkReactReady()) {
-                clearInterval(checkInterval);
-                console.log('🛑 [PDF Builder] Stopped checking for React availability');
-            }
-        }, 500);
-
-        // Fallback: essayer d'initialiser après un délai plus long
-        setTimeout(function() {
-            console.log('🔄 [PDF Builder] Fallback initialization attempt...');
-            if (checkReactReady()) {
-                console.log('✅ [PDF Builder] Fallback initialization successful');
-            } else {
-                console.warn('⚠️ [PDF Builder] Fallback initialization failed');
-            }
-        }, 5000);
-
-        // Triple sécurité: masquer le loader après 15 secondes quoi qu'il arrive
-        setTimeout(function() {
-            console.log('⏰ [PDF Builder] Safety timeout: forcing loader hide after 15s');
-            hideLoader();
-            clearInterval(checkInterval);
-        }, 15000);
+        })();
         </script>
         <?php
     }

@@ -130,8 +130,8 @@ async function initPDFBuilderReact() {
     if (DEBUG_VERBOSE) debugLog('✅ Components loaded synchronously, initializing React...');
 
     // Masquer le loading et afficher l'éditeur
-    const loadingEl = document.getElementById('pdf-builder-react-loading');
-    const editorEl = document.getElementById('pdf-builder-react-editor');
+    const loadingEl = document.getElementById('pdf-builder-loader');
+    const editorEl = document.getElementById('pdf-builder-editor-container');
 
     if (loadingEl) loadingEl.style.display = 'none';
     if (editorEl) editorEl.style.display = 'block';
