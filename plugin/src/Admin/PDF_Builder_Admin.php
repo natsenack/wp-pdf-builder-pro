@@ -648,38 +648,59 @@ class PdfBuilderAdmin
             }
         }
 
+        // Fonction pour vérifier si React est prêt
+        function checkReactReady() {
+            console.log('🔍 [PDF Builder] Checking if React is ready...');
+            console.log('🔍 [PDF Builder] window.pdfBuilderReact:', typeof window.pdfBuilderReact);
+            console.log('🔍 [PDF Builder] window.pdfBuilderReact.initPDFBuilderReact:', typeof window.pdfBuilderReact?.initPDFBuilderReact);
+
+            if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
+                console.log('✅ [PDF Builder] React is ready, initializing...');
+                try {
+                    const result = window.pdfBuilderReact.initPDFBuilderReact();
+                    console.log('📊 [PDF Builder] initPDFBuilderReact result:', result);
+                    setTimeout(hideLoader, 500);
+                    return true;
+                } catch (error) {
+                    console.error('❌ [PDF Builder] Error calling initPDFBuilderReact:', error);
+                    return false;
+                }
+            } else {
+                console.log('⏳ [PDF Builder] React not ready yet');
+                return false;
+            }
+        }
+
         // Écouter l'événement de disponibilité de React
         document.addEventListener('pdfBuilderReactLoaded', function() {
-            console.log('🎯 [PDF Builder] React is ready, initializing editor...');
-            if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
-                console.log('🚀 [PDF Builder] Calling initPDFBuilderReact...');
-                const result = window.pdfBuilderReact.initPDFBuilderReact();
-                console.log('📊 [PDF Builder] initPDFBuilderReact result:', result);
-
-                // Masquer le loader immédiatement après l'appel
-                setTimeout(hideLoader, 100);
-            } else {
-                console.error('❌ [PDF Builder] React API not available');
-            }
+            console.log('🎯 [PDF Builder] pdfBuilderReactLoaded event received');
+            checkReactReady();
         });
 
-        // Fallback: essayer d'initialiser après un délai
-        setTimeout(function() {
-            if (typeof window.pdfBuilderReact !== 'undefined' && window.pdfBuilderReact.initPDFBuilderReact) {
-                console.log('🔄 [PDF Builder] Fallback initialization...');
-                const result = window.pdfBuilderReact.initPDFBuilderReact();
-                console.log('📊 [PDF Builder] Fallback init result:', result);
-                setTimeout(hideLoader, 100);
-            } else {
-                console.warn('⚠️ [PDF Builder] React not available for fallback initialization');
+        // Vérifier périodiquement si React devient disponible
+        const checkInterval = setInterval(function() {
+            if (checkReactReady()) {
+                clearInterval(checkInterval);
+                console.log('🛑 [PDF Builder] Stopped checking for React availability');
             }
-        }, 3000);
+        }, 500);
 
-        // Double sécurité: masquer le loader après 10 secondes quoi qu'il arrive
+        // Fallback: essayer d'initialiser après un délai plus long
         setTimeout(function() {
-            console.log('⏰ [PDF Builder] Safety timeout: forcing loader hide');
+            console.log('🔄 [PDF Builder] Fallback initialization attempt...');
+            if (checkReactReady()) {
+                console.log('✅ [PDF Builder] Fallback initialization successful');
+            } else {
+                console.warn('⚠️ [PDF Builder] Fallback initialization failed');
+            }
+        }, 5000);
+
+        // Triple sécurité: masquer le loader après 15 secondes quoi qu'il arrive
+        setTimeout(function() {
+            console.log('⏰ [PDF Builder] Safety timeout: forcing loader hide after 15s');
             hideLoader();
-        }, 10000);
+            clearInterval(checkInterval);
+        }, 15000);
         </script>
         <?php
     }

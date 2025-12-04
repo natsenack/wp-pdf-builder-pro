@@ -213,8 +213,8 @@ if (DEBUG_VERBOSE) debugLog('🌐 Assigning to window...');
 
 // ✅ CRITICAL: Assign to window SYNCHRONOUSLY
 if (typeof window !== 'undefined') {
-  // Removed manual assignment - let webpack handle it
-  console.log('✅ [WEBPACK BUNDLE] Exports object created, webpack will assign to window.pdfBuilderReact');
+  window.pdfBuilderReact = exports;
+  console.log('✅ [WEBPACK BUNDLE] window.pdfBuilderReact assigned manually in index.js');
 }
 
 // No complex exports - let webpack UMD handle it with the assignment above

@@ -28,6 +28,10 @@ export const _isWebpackBundle = true;
 // Also signal when loaded
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   try {
+    // Assigner manuellement à window pour s'assurer que c'est disponible
+    window.pdfBuilderReact = moduleExports;
+    console.log('✅ [pdf-builder-wrapper] window.pdfBuilderReact assigned manually');
+
     const event = new Event('pdfBuilderReactLoaded');
     document.dispatchEvent(event);
     console.log('✅ [pdf-builder-wrapper] pdfBuilderReactLoaded event dispatched');
