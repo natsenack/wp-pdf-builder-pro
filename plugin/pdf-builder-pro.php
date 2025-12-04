@@ -195,7 +195,16 @@ if (function_exists('add_action')) {
 }
 
 /**
- * Enregistrer les handlers AJAX
+ * Enregistrer les handlers AJAX (SYSTÈME DÉPRÉCIÉ)
+ *
+ * ⚠️ ATTENTION: Ce système est déprécié et partiellement redondant
+ *
+ * Le système de sauvegarde unifié utilise maintenant:
+ * - PDF_Builder_Settings_Ajax_Handler dans Ajax_Handlers.php
+ * - Action: wp_ajax_pdf_builder_save_all_settings
+ *
+ * Les handlers spécialisés (cache, templates, etc.) sont gérés séparément.
+ * Éviter d'ajouter de nouveaux handlers ici - utiliser le système unifié.
  */
 function pdf_builder_register_ajax_handlers() {
     // Simplified AJAX handlers registration - complex factory system removed
@@ -436,14 +445,16 @@ function pdf_builder_ajax_handler_dispatch() {
         error_log('PDF BUILDER AJAX DISPATCHER: Processing action: ' . $action);
 
         // Dispatcher vers le handler approprié selon l'action
+        // ⚠️ DÉPRÉCIÉ: La plupart des actions sont maintenant gérées par le système unifié
+        // Voir: pdf_builder_init_ajax_handlers() dans Ajax_Handlers.php
         switch ($action) {
             case 'pdf_builder_save_settings':
-                // REMOVED: Duplicate handler - now handled by factory system
-                wp_send_json_error('Handler not available - use factory system');
+                // REMOVED: Duplicate handler - now handled by unified AJAX system
+                wp_send_json_error('Handler not available - use unified AJAX system');
                 break;
             case 'pdf_builder_save_all_settings':
-                error_log('PDF BUILDER AJAX DISPATCHER: Routing to pdf_builder_save_all_settings_handler');
-                pdf_builder_save_all_settings_handler();
+                // REMOVED: Handled by PDF_Builder_Settings_Ajax_Handler in Ajax_Handlers.php
+                wp_send_json_error('Use unified AJAX system - handled by PDF_Builder_Settings_Ajax_Handler');
                 break;
             case 'pdf_builder_get_fresh_nonce':
                 pdf_builder_get_fresh_nonce_ajax();

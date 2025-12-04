@@ -494,18 +494,38 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
 }
 
 // Fonction d'initialisation des handlers AJAX
+/**
+ * Initialise les handlers AJAX unifiés pour PDF Builder Pro
+ *
+ * SYSTÈME CENTRALISÉ DE SAUVEGARDE :
+ * ================================
+ *
+ * 1. PDF_Builder_Settings_Ajax_Handler (settings-tabs.js)
+ *    - Action: pdf_builder_save_all_settings
+ *    - Gère: Tous les paramètres principaux via le bouton flottant
+ *    - Stockage: pdf_builder_settings (array), pdf_builder_canvas_settings (array)
+ *
+ * 2. PDF_Builder_Template_Ajax_Handler (templates)
+ *    - Actions: pdf_builder_save_template, pdf_builder_load_template, pdf_builder_delete_template
+ *    - Gère: Sauvegarde/chargement/suppression de templates
+ *    - Stockage: Tables wp_pdf_builder_templates
+ *
+ * 3. Handlers spécialisés (cache-handlers.php, etc.)
+ *    - Gèrent leurs domaines spécifiques (cache, maintenance, etc.)
+ *    - Stockage: Leurs propres options WordPress
+ */
 function pdf_builder_init_ajax_handlers() {
-    // Settings handler - Réactivé pour le système unifié
+    // Settings handler - Système unifié principal
     $settings_handler = new PDF_Builder_Settings_Ajax_Handler();
     add_action('wp_ajax_pdf_builder_save_all_settings', [$settings_handler, 'handle']);
 
-    // Template handler
+    // Template handler - Gestion des templates
     $template_handler = new PDF_Builder_Template_Ajax_Handler();
     add_action('wp_ajax_pdf_builder_save_template', [$template_handler, 'handle']);
     add_action('wp_ajax_pdf_builder_load_template', [$template_handler, 'handle']);
     add_action('wp_ajax_pdf_builder_delete_template', [$template_handler, 'handle']);
 }
 
-// Initialiser les handlers
+// Initialiser les handlers unifiés
 add_action('init', 'pdf_builder_init_ajax_handlers');
 ?>
