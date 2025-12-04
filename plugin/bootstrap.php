@@ -802,6 +802,37 @@ function pdf_builder_load_bootstrap()
                     'success' => __('Succès', 'pdf-builder-pro'),
                 ]
             ]);
+
+            // Localiser les données de notifications pour JavaScript
+            wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_notifications'),
+                'settings' => [
+                    'enabled' => true,
+                    'position' => 'top-right',
+                    'duration' => 5000,
+                    'max_notifications' => 5,
+                    'animation' => 'slide',
+                    'theme' => 'modern'
+                ],
+                'strings' => [
+                    'success' => __('Succès', 'pdf-builder-pro'),
+                    'error' => __('Erreur', 'pdf-builder-pro'),
+                    'warning' => __('Avertissement', 'pdf-builder-pro'),
+                    'info' => __('Information', 'pdf-builder-pro'),
+                    'close' => __('Fermer', 'pdf-builder-pro')
+                ]
+            ]);
+
+            // Définir les paramètres de debug JavaScript pour notifications.js
+            $settings = get_option('pdf_builder_settings', array());
+            $debug_settings = [
+                'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
+                'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
+                'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
+                'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
+            ];
+            wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
         }
     });
 
