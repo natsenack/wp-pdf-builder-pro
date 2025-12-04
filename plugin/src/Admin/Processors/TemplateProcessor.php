@@ -57,8 +57,8 @@ class TemplateProcessor
             // Essayer de décoder le JSON
             $template_data = json_decode($template['template_data'], true);
             if (json_last_error() === JSON_ERROR_NONE) {
-                // S'assurer qu'il y a toujours un nom de template
-                if (!isset($template_data['name']) || empty($template_data['name'])) {
+                // S'assurer qu'il y a toujours un nom de template valide
+                if (!isset($template_data['name']) || empty($template_data['name']) || preg_match('/^Template \d+$/', $template_data['name'])) {
                     $template_data['name'] = !empty($template['name']) ? $template['name'] : 'Template ' . $template_id;
                 }
                 // Ajouter les métadonnées du template
@@ -73,7 +73,7 @@ class TemplateProcessor
                 $template_data = json_decode($clean_json, true);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     // Ajouter le nom du template depuis la base de données
-                    if (isset($template['name']) && !isset($template_data['name'])) {
+                    if (isset($template['name']) && (!isset($template_data['name']) || empty($template_data['name']) || preg_match('/^Template \d+$/', $template_data['name']))) {
                         $template_data['name'] = $template['name'];
                     }
                     // Ajouter les métadonnées du template
@@ -89,7 +89,7 @@ class TemplateProcessor
                 $template_data = json_decode($aggressive_clean, true);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     // Ajouter le nom du template depuis la base de données
-                    if (isset($template['name']) && !isset($template_data['name'])) {
+                    if (isset($template['name']) && (!isset($template_data['name']) || empty($template_data['name']) || preg_match('/^Template \d+$/', $template_data['name']))) {
                         $template_data['name'] = $template['name'];
                     }
                     // Ajouter les métadonnées du template

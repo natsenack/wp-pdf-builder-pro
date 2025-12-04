@@ -317,7 +317,7 @@ class AjaxHandler
                 if ($db_template && !empty($db_template['name'])) {
                     $template_name = $db_template['name'];
                 } else {
-                    $template_name = 'Templatess ' . $template_id;
+                    $template_name = 'Template ' . $template_id;
                 }
             }                // Debug logging
                 error_log('[PDF Builder] ajaxGetTemplate - Template ID: ' . $template_id);
@@ -1409,8 +1409,12 @@ class AjaxHandler
             // Essayer de décoder le JSON
             $template_data = json_decode($template['template_data'], true);
             if (json_last_error() === JSON_ERROR_NONE) {
-                // S'assurer qu'il y a toujours un nom de template
-                if (!isset($template_data['name']) || empty($template_data['name'])) {
+                // Ajouter les métadonnées de la base de données
+                $template_data['_db_name'] = $template['name'];
+                $template_data['_db_id'] = $template['id'];
+
+                // S'assurer qu'il y a toujours un nom de template valide
+                if (!isset($template_data['name']) || empty($template_data['name']) || preg_match('/^Template \d+$/', $template_data['name'])) {
                     $template_data['name'] = !empty($template['name']) ? $template['name'] : 'Template ' . $template_id;
                 }
                 $this->sendTemplateSuccessResponse($template_data, $template);
@@ -1423,8 +1427,12 @@ class AjaxHandler
                 if ($clean_json !== $template['template_data']) {
                     $template_data = json_decode($clean_json, true);
                     if (json_last_error() === JSON_ERROR_NONE) {
+                        // Ajouter les métadonnées de la base de données
+                        $template_data['_db_name'] = $template['name'];
+                        $template_data['_db_id'] = $template['id'];
+
                         // Ajouter le nom du template depuis la base de données
-                        if (isset($template['name']) && !isset($template_data['name'])) {
+                        if (isset($template['name']) && (!isset($template_data['name']) || empty($template_data['name']) || preg_match('/^Template \d+$/', $template_data['name']))) {
                             $template_data['name'] = $template['name'];
                         }
                         $this->sendTemplateSuccessResponse($template_data, $template);
@@ -1439,8 +1447,12 @@ class AjaxHandler
                 if ($aggressive_clean !== $template['template_data']) {
                     $template_data = json_decode($aggressive_clean, true);
                     if (json_last_error() === JSON_ERROR_NONE) {
+                        // Ajouter les métadonnées de la base de données
+                        $template_data['_db_name'] = $template['name'];
+                        $template_data['_db_id'] = $template['id'];
+
                         // Ajouter le nom du template depuis la base de données
-                        if (isset($template['name']) && !isset($template_data['name'])) {
+                        if (isset($template['name']) && (!isset($template_data['name']) || empty($template_data['name']) || preg_match('/^Template \d+$/', $template_data['name']))) {
                             $template_data['name'] = $template['name'];
                         }
                         $this->sendTemplateSuccessResponse($template_data, $template);
@@ -1463,10 +1475,14 @@ class AjaxHandler
      */
     private function sendTemplateSuccessResponse($template_data, $template_info)
     {
-        // Récupérer le nom du template depuis les données JSON en priorité, sinon depuis la DB
+        // Récupérer le nom du template depuis les métadonnées DB en priorité, sinon depuis la DB
         $template_name = '';
-        if (isset($template_data['name']) && !empty($template_data['name'])) {
+        if (isset($template_data['_db_name']) && !empty($template_data['_db_name'])) {
+            $template_name = $template_data['_db_name'];
+        } elseif (isset($template_data['name']) && !empty($template_data['name'])) {
             $template_name = $template_data['name'];
+        } elseif (isset($template_data['template_name']) && !empty($template_data['template_name'])) {
+            $template_name = $template_data['template_name'];
         } elseif (isset($template_info['name']) && !empty($template_info['name'])) {
             $template_name = $template_info['name'];
         } else {
