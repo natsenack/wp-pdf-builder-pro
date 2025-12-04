@@ -106,11 +106,6 @@ class PdfBuilderPreviewGenerator
             throw new Exception('Autoloader de Composer introuvable. Vérifiez que les dépendances sont installées.');
         }
 
-        // Réactiver l'autoloader personnalisé
-        if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
-            spl_autoload_register(['PDF_Builder\Core\PdfBuilderAutoloader', 'autoload']);
-        }
-
         // Vérifier que Dompdf est disponible
         if (!class_exists('\Dompdf\Dompdf')) {
             throw new Exception('Impossible de charger Dompdf via Composer. Vérifiez que le package est installé.');
