@@ -81,7 +81,7 @@
             toggle.prop('checked', consented);
 
             // Sauvegarder automatiquement si configuré
-            if (pdfBuilderGdpr.auto_save) {
+            if (pdfBuilderGDPR.auto_save) {
                 var preferences = this.getCurrentPreferences();
                 this.savePreferencesAjax(preferences);
             }
@@ -116,7 +116,7 @@
             }, function(response) {
                 if (response.success) {
                     // Afficher un message de succès
-                    self.showMessage(pdfBuilderGdpr.messages.saved || 'Préférences sauvegardées');
+                    self.showMessage(pdfBuilderGDPR.messages.saved || 'Préférences sauvegardées');
                 }
             });
         },
@@ -163,11 +163,11 @@
 
         ajaxRequest: function(action, data, callback) {
             $.ajax({
-                url: pdfBuilderGdpr.ajax_url,
+                url: pdfBuilderGDPR.ajax_url,
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_' + action,
-                    nonce: pdfBuilderGdpr.nonce,
+                    nonce: pdfBuilderGDPR.nonce,
                     data: data
                 },
                 success: function(response) {
