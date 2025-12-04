@@ -736,6 +736,10 @@ $totalFiles = $filesToDeploy.Count
 $totalSize = ($filesToDeploy | Measure-Object -Property Length -Sum).Sum
 
 # DEBUG: Compter les fichiers templates
+$templateFilesBefore = $filesToDeploy | Where-Object { $_.FullName -like "*resources*templates*" }
+Write-Host "   • DEBUG: Fichiers templates avant filtrage: $($templateFilesBefore.Count)" -ForegroundColor Cyan
+
+# DEBUG: Compter les fichiers templates
 $templateFiles = $filesToDeploy | Where-Object { $_.FullName -like "*resources*templates*" }
 Write-Host "   DEBUG: Fichiers templates détectés: $($templateFiles.Count)" -ForegroundColor Yellow
 
@@ -888,6 +892,10 @@ if ($FileFilter -ne "all") {
     
     Write-Host "   • Avant filtre: $beforeFilterCount fichiers" -ForegroundColor White
     Write-Host "   • Après filtre: $($filteredFiles.Count) fichiers" -ForegroundColor Cyan
+    
+    # DEBUG: Après filtre fichiers
+    $templateFilesAfterFileFilter = $filteredFiles | Where-Object { $_.FullName -like "*resources*templates*" }
+    Write-Host "   DEBUG: Fichiers templates après filtre fichiers: $($templateFilesAfterFileFilter.Count)" -ForegroundColor Yellow
 }
 
 # Appliquer le filtre de dossiers sélectionnés
@@ -924,6 +932,10 @@ if ($FolderFilter -ne "all") {
     Write-Host "   • Avant filtre: $beforeFolderFilterCount fichiers" -ForegroundColor White
     Write-Host "   • Après filtre: $($filteredFiles.Count) fichiers" -ForegroundColor Cyan
     
+    # DEBUG: Après filtre dossiers
+    $templateFilesAfterFolderFilter = $filteredFiles | Where-Object { $_.FullName -like "*resources*templates*" }
+    Write-Host "   DEBUG: Fichiers templates après filtre dossiers: $($templateFilesAfterFolderFilter.Count)" -ForegroundColor Yellow
+    
     if ($CustomFolders.Count -gt 0) {
         Write-Host "   • Dossiers sélectionnés: $($CustomFolders -join ', ')" -ForegroundColor White
     }
@@ -950,6 +962,10 @@ $filteredFiles | Select-Object -First 15 | ForEach-Object {
 if ($finalFileCount -gt 15) {
     Write-Host "  ... et $($finalFileCount - 15) autres fichiers" -ForegroundColor Gray
 }
+
+# DEBUG: Final count before upload
+$finalTemplateFiles = $filteredFiles | Where-Object { $_.FullName -like "*resources*templates*" }
+Write-Host "   DEBUG: Fichiers templates finaux avant upload: $($finalTemplateFiles.Count)" -ForegroundColor Magenta
 
 # 4. Créer la structure de répertoires
 Write-Host "`n🏗️ STRUCTURE DE RÉPERTOIRES :" -ForegroundColor Cyan
