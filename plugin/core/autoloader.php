@@ -60,6 +60,12 @@ class PdfBuilderAutoloader
             return false;
         }
 
+        // Fallback: if any class contains 'Dompdf' and is in PDF_Builder namespace, skip it
+        if (strpos($class, 'PDF_Builder') === 0 && strpos($class, 'Dompdf') !== false) {
+            error_log("Autoloader SKIPPING PDF_Builder class with Dompdf: $class");
+            return false;
+        }
+
         // Check if the class uses our namespace prefix
         foreach (self::$prefixes as $prefix => $base_dir) {
             $len = strlen($prefix);
