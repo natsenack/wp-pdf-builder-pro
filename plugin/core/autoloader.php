@@ -45,6 +45,11 @@ class PdfBuilderAutoloader
      */
     public static function autoload($class)
     {
+        // Skip Dompdf classes to avoid conflicts
+        if (strpos($class, 'Dompdf\\') === 0) {
+            return false;
+        }
+
         // Check if the class uses our namespace prefix
         foreach (self::$prefixes as $prefix => $base_dir) {
             $len = strlen($prefix);
