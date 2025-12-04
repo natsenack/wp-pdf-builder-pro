@@ -129,6 +129,11 @@ class PDF_Builder_Logger {
             error_log('[PDF Builder Debug] ' . $message);
         }
     }
+
+    /**
+     * Handler pour les erreurs PHP fatales au shutdown
+     */
+    public function shutdown_handler() {
         // Vérifier si le debug PHP errors est activé
         $settings = get_option('pdf_builder_settings', []);
         $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
